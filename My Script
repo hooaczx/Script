@@ -1674,26 +1674,26 @@ TextButton.MouseButton1Down:connect(function()
 			localplayer.Character.Humanoid.PlatformStand=true
 			local new=gyro.cframe - gyro.cframe.p + pos.position
 			if not keys.w and not keys.s and not keys.a and not keys.d then
-				speed=50
+				speed=100
 			end
 			if keys.w then 
 				new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
-				speed=speed+50
+				speed=speed+100
 			end
 			if keys.s then 
 				new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
-				speed=speed+50
+				speed=speed+100
 			end
 			if keys.d then 
-				new = new * CFrame.new(speed,50,50)
-				speed=speed+50
+				new = new * CFrame.new(speed,0,0)
+				speed=speed+100
 			end
 			if keys.a then 
-				new = new * CFrame.new(-speed,50,50)
-				speed=speed+50
+				new = new * CFrame.new(-speed,0,0)
+				speed=speed+100
 			end
-			if speed>50 then
-				speed=10
+			if speed>100 then
+				speed=100
 			end
 			pos.position=new.p
 			if keys.w then
@@ -1708,7 +1708,7 @@ TextButton.MouseButton1Down:connect(function()
 		if pos then pos:Destroy() end
 		flying=false
 		localplayer.Character.Humanoid.PlatformStand=false
-		speed=50
+		speed=100
 	end
 	e1=mouse.KeyDown:connect(function(key)
 		if not torso or not torso.Parent then flying=false e1:disconnect() e2:disconnect() return end
