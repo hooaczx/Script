@@ -29,6 +29,130 @@ getgenv().DisableWebhook = false
 loadstring(game:HttpGet("https://eternityhub.xyz/HostStuff/JayzRoblox.lua"))()
 end) 
 
+Tab:CreateButton("inf jump gui",function()
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local InfJumpGui = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local Top = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local close = Instance.new("TextButton")
+local InfiniteJump = Instance.new("TextButton")
+local infjumpenabled = false
+--Properties:
+
+InfJumpGui.Name = "InfJumpGui"
+InfJumpGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+InfJumpGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Main.Name = "Main"
+Main.Parent = InfJumpGui
+Main.BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+Main.Position = UDim2.new(0.414008319, 0, 0.424691409, 0)
+Main.Size = UDim2.new(0.171983361, 0, 0.0987654254, 0)
+
+Top.Name = "Top"
+Top.Parent = Main
+Top.BackgroundColor3 = Color3.fromRGB(54, 54, 54)
+Top.BorderSizePixel = 0
+Top.Size = UDim2.new(1, 0, 0.231244698, 0)
+
+TextLabel.Parent = Top
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.Size = UDim2.new(0.92806381, 0, 1, 0)
+TextLabel.Font = Enum.Font.Code
+TextLabel.Text = "Infinite Jump by mug#1941"
+TextLabel.TextColor3 = Color3.fromRGB(74, 74, 74)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+close.Name = "close"
+close.Parent = Top
+close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+close.BackgroundTransparency = 1.000
+close.Position = UDim2.new(0.946004272, 0, 0, 0)
+close.Size = UDim2.new(0.0539956801, 0, 1, 0)
+close.Font = Enum.Font.Code
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(74, 74, 74)
+close.TextScaled = true
+close.TextSize = 14.000
+close.TextWrapped = true
+
+InfiniteJump.Name = "InfiniteJump"
+InfiniteJump.Parent = Main
+InfiniteJump.BackgroundColor3 = Color3.fromRGB(58, 58, 58)
+InfiniteJump.BorderColor3 = Color3.fromRGB(74, 74, 74)
+InfiniteJump.Position = UDim2.new(0.112903222, 0, 0.325633258, 1)
+InfiniteJump.Size = UDim2.new(0.774193406, 0, 0.535669923, 0)
+InfiniteJump.Font = Enum.Font.Code
+InfiniteJump.Text = "Disabled"
+InfiniteJump.TextColor3 = Color3.fromRGB(74, 74, 74)
+InfiniteJump.TextSize = 24.000
+InfiniteJump.TextWrapped = true
+
+-- Scripts:
+
+local function CFFF_fake_script() -- close.LocalScript 
+	local script = Instance.new('LocalScript', close)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		local frame = script.Parent.Parent.Parent
+		frame:TweenPosition(UDim2.new(0.4, 0,1.5, 0))
+		infjumpenabled = false
+		wait(1)
+		frame.Parent:Destroy()
+	end)
+end
+coroutine.wrap(CFFF_fake_script)()
+local function VESU_fake_script() -- InfiniteJump.EnableDisableInfJump 
+	local script = Instance.new('LocalScript', InfiniteJump)
+
+	
+	script.Parent.MouseButton1Click:Connect(function()
+		if infjumpenabled == false then
+			infjumpenabled = true
+			script.Parent.Text = "Enabled"
+		elseif infjumpenabled == true then
+			infjumpenabled = false
+			script.Parent.Text = "Disabled"
+		end
+	end)
+end
+coroutine.wrap(VESU_fake_script)()
+local function GSJXM_fake_script() -- Main.Draggable 
+	local script = Instance.new('LocalScript', Main)
+
+	local Frame = script.Parent
+	Frame.Selectable = true
+	Frame.Active = true
+	Frame.Draggable = true
+end
+coroutine.wrap(GSJXM_fake_script)()
+local function MZUWYOR_fake_script() -- Main.Opening 
+	local script = Instance.new('LocalScript', Main)
+
+	script.Parent.Position = UDim2.new(0.33, 0,2, 0)
+	script.Parent:TweenPosition(UDim2.new(0.33, 0,0.3, 0))
+end
+coroutine.wrap(MZUWYOR_fake_script)()
+local function HLKTLMK_fake_script() -- Main.infjumpscript 
+	local script = Instance.new('LocalScript', Main)
+
+	game:GetService("UserInputService").JumpRequest:Connect(function()
+		if infjumpenabled == true then
+			game.Players.LocalPlayer.Character:FindFirstChild("Humanoid"):ChangeState("Jumping")
+		end
+	end)
+end
+coroutine.wrap(HLKTLMK_fake_script)()
+end) 
+
 Tab:CreateButton("Fe Animation Gui ",function()
 _, Protected_by_MoonSecV2, Discord = 'discord.gg/gQEH2uZxUk'
 
