@@ -1,0 +1,426 @@
+function GetPlayer(String)
+   local Found = {}
+   local strl = String:lower()
+   if strl == "all" then
+       for i,v in pairs(game.Players:GetPlayers()) do
+           table.insert(Found,v.Name)
+       end
+   elseif strl == "others" then
+       for i,v in pairs(game.Players:GetPlayers()) do
+           if v.Name ~= game.Players.LocalPlayer.Name then
+               table.insert(Found,v.Name)
+           end
+       end   
+elseif strl == "me" then
+       for i,v in pairs(game.Players:GetPlayers()) do
+           if v.Name == game.Players.LocalPlayer.Name then
+               table.insert(Found,v.Name)
+           end
+       end  
+   else
+       for i,v in pairs(game.Players:GetPlayers()) do
+           if v.Name:lower():sub(1, #String) == String:lower() then
+               table.insert(Found,v.Name)
+           end
+       end    
+   end
+   return Found    
+end
+
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local killbtn = Instance.new("TextButton")
+local ragdollbtn = Instance.new("TextButton")
+local nkdbtn = Instance.new("TextButton")
+local punishbtn = Instance.new("TextButton")
+local kickbtn = Instance.new("TextButton")
+local banbtn = Instance.new("TextButton")
+local btlsbtn = Instance.new("TextButton")
+local minebtn = Instance.new("TextButton")
+local gunbtn = Instance.new("TextButton")
+local TextLabel = Instance.new("TextLabel")
+local nlmbsbtn = Instance.new("TextButton")
+--Properties:
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.Active = true
+Frame.Draggable = true
+Frame.BackgroundColor3 = Color3.new(0.239216, 0.505882, 1)
+Frame.BackgroundTransparency = 0.6
+Frame.BorderSizePixel = 3
+Frame.Position = UDim2.new(0.284962386, 0, 0.290381104, 0)
+Frame.Size = UDim2.new(0, 299, 0, 317)
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+TextBox.BackgroundTransparency = 0.40000000596046
+TextBox.Position = UDim2.new(0.101983935, 0, 0.102293611, 0)
+TextBox.Size = UDim2.new(0, 236, 0, 36)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.new(0, 0, 0)
+TextBox.TextSize = 14
+
+killbtn.Name = "killbtn"
+killbtn.Parent = Frame
+killbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+killbtn.BackgroundTransparency = 0.40000000596046
+killbtn.Position = UDim2.new(0.0374149643, 0, 0.25294295, 0)
+killbtn.Size = UDim2.new(0, 126, 0, 33)
+killbtn.Font = Enum.Font.SourceSans
+killbtn.Text = "Kill"
+killbtn.TextColor3 = Color3.new(0, 0, 0)
+killbtn.TextScaled = true
+killbtn.TextSize = 14
+killbtn.TextWrapped = true
+
+ragdollbtn.Name = "ragdollbtn"
+ragdollbtn.Parent = Frame
+ragdollbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+ragdollbtn.BackgroundTransparency = 0.40000000596046
+ragdollbtn.Position = UDim2.new(0.506802738, 0, 0.25294295, 0)
+ragdollbtn.Size = UDim2.new(0, 126, 0, 33)
+ragdollbtn.Font = Enum.Font.SourceSans
+ragdollbtn.Text = "Ragdoll"
+ragdollbtn.TextColor3 = Color3.new(0, 0, 0)
+ragdollbtn.TextScaled = true
+ragdollbtn.TextSize = 14
+ragdollbtn.TextWrapped = true
+
+nkdbtn.Name = "nkdbtn"
+nkdbtn.Parent = Frame
+nkdbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+nkdbtn.BackgroundTransparency = 0.40000000596046
+nkdbtn.Position = UDim2.new(0.037414968, 0, 0.404260665, 0)
+nkdbtn.Size = UDim2.new(0, 126, 0, 33)
+nkdbtn.Font = Enum.Font.SourceSans
+nkdbtn.Text = "Naked"
+nkdbtn.TextColor3 = Color3.new(0, 0, 0)
+nkdbtn.TextScaled = true
+nkdbtn.TextSize = 14
+nkdbtn.TextWrapped = true
+
+punishbtn.Name = "punishbtn"
+punishbtn.Parent = Frame
+punishbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+punishbtn.BackgroundTransparency = 0.40000000596046
+punishbtn.Position = UDim2.new(0.506802738, 0, 0.404260665, 0)
+punishbtn.Size = UDim2.new(0, 126, 0, 33)
+punishbtn.Font = Enum.Font.SourceSans
+punishbtn.Text = "Punish"
+punishbtn.TextColor3 = Color3.new(0, 0, 0)
+punishbtn.TextScaled = true
+punishbtn.TextSize = 14
+punishbtn.TextWrapped = true
+
+kickbtn.Name = "kickbtn"
+kickbtn.Parent = Frame
+kickbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+kickbtn.BackgroundTransparency = 0.40000000596046
+kickbtn.Position = UDim2.new(0.037414968, 0, 0.544862092, 0)
+kickbtn.Size = UDim2.new(0, 126, 0, 33)
+kickbtn.Font = Enum.Font.SourceSans
+kickbtn.Text = "Kick"
+kickbtn.TextColor3 = Color3.new(0, 0, 0)
+kickbtn.TextScaled = true
+kickbtn.TextSize = 14
+kickbtn.TextWrapped = true
+
+banbtn.Name = "banbtn"
+banbtn.Parent = Frame
+banbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+banbtn.BackgroundTransparency = 0.40000000596046
+banbtn.Position = UDim2.new(0.506802738, 0, 0.544862151, 0)
+banbtn.Size = UDim2.new(0, 126, 0, 33)
+banbtn.Font = Enum.Font.SourceSans
+banbtn.Text = "Ban"
+banbtn.TextColor3 = Color3.new(0, 0, 0)
+banbtn.TextScaled = true
+banbtn.TextSize = 14
+banbtn.TextWrapped = true
+
+btlsbtn.Name = "btlsbtn"
+btlsbtn.Parent = Frame
+btlsbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+btlsbtn.BackgroundTransparency = 0.40000000596046
+btlsbtn.Position = UDim2.new(0.0352308452, 0, 0.679365039, 0)
+btlsbtn.Size = UDim2.new(0, 126, 0, 33)
+btlsbtn.Font = Enum.Font.SourceSans
+btlsbtn.Text = "btools"
+btlsbtn.TextColor3 = Color3.new(0, 0, 0)
+btlsbtn.TextScaled = true
+btlsbtn.TextSize = 14
+btlsbtn.TextWrapped = true
+
+minebtn.Name = "minebtn"
+minebtn.Parent = Frame
+minebtn.BackgroundColor3 = Color3.new(1, 1, 1)
+minebtn.BackgroundTransparency = 0.40000000596046
+minebtn.Position = UDim2.new(0.506802738, 0, 0.828487813, 0)
+minebtn.Size = UDim2.new(0, 126, 0, 33)
+minebtn.Font = Enum.Font.SourceSans
+minebtn.Text = "Mine (C4)"
+minebtn.TextColor3 = Color3.new(0, 0, 0)
+minebtn.TextScaled = true
+minebtn.TextSize = 14
+minebtn.TextWrapped = true
+
+gunbtn.Name = "gunbtn"
+gunbtn.Parent = Frame
+gunbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+gunbtn.BackgroundTransparency = 0.40000000596046
+gunbtn.Position = UDim2.new(0.0352308452, 0, 0.828487873, 0)
+gunbtn.Size = UDim2.new(0, 126, 0, 33)
+gunbtn.Font = Enum.Font.SourceSans
+gunbtn.Text = "Tommy Gun"
+gunbtn.TextColor3 = Color3.new(0, 0, 0)
+gunbtn.TextScaled = true
+gunbtn.TextSize = 14
+gunbtn.TextWrapped = true
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel.BackgroundTransparency = 0.40000000596046
+TextLabel.Size = UDim2.new(0, 298, 0, 21)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "2 Player Super Hero Tycoon GUI - ScriptX#3145"
+TextLabel.TextColor3 = Color3.new(0, 0, 0)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14
+TextLabel.TextWrapped = true
+
+nlmbsbtn.Name = "nlmbsbtn"
+nlmbsbtn.Parent = Frame
+nlmbsbtn.BackgroundColor3 = Color3.new(1, 1, 1)
+nlmbsbtn.BackgroundTransparency = 0.40000000596046
+nlmbsbtn.Position = UDim2.new(0.506802738, 0, 0.679365039, 0)
+nlmbsbtn.Size = UDim2.new(0, 126, 0, 33)
+nlmbsbtn.Font = Enum.Font.SourceSans
+nlmbsbtn.Text = "NoLimbs"
+nlmbsbtn.TextColor3 = Color3.new(0, 0, 0)
+nlmbsbtn.TextScaled = true
+nlmbsbtn.TextSize = 14
+nlmbsbtn.TextWrapped = true
+-- Scripts:
+function SCRIPT_JDNF69_FAKESCRIPT() -- killbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = killbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+			
+				game.ReplicatedStorage.events.destroyObject:FireServer(game.Players[v].Character.Torso.Neck)
+			
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_JDNF69_FAKESCRIPT))
+function SCRIPT_KFFS86_FAKESCRIPT() -- ragdollbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = ragdollbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+			
+				game.ReplicatedStorage.events.destroyObject:FireServer(game.Players[v].Character.Humanoid)
+			
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_KFFS86_FAKESCRIPT))
+function SCRIPT_LCJY70_FAKESCRIPT() -- nkdbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = nkdbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+				for i,val in pairs(game.Players[v].Character:GetChildren()) do
+					if val.ClassName == "Shirt" or val.ClassName == "Pants" or val.ClassName == "ShirtGraphic" then
+						game.ReplicatedStorage.events.destroyObject:FireServer(val)
+					end
+				end
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_LCJY70_FAKESCRIPT))
+function SCRIPT_ZKXC85_FAKESCRIPT() -- punishbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = punishbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+			
+				game.ReplicatedStorage.events.destroyObject:FireServer(game.Players[v].Character)
+			
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_ZKXC85_FAKESCRIPT))
+function SCRIPT_ADRT82_FAKESCRIPT() -- kickbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = kickbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+			
+				game.ReplicatedStorage.events.destroyObject:FireServer(game.Players[v])
+			
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_ADRT82_FAKESCRIPT))
+function SCRIPT_VNYD81_FAKESCRIPT() -- banbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = banbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+				while wait() do
+					if game.Players:FindFirstChild(v) then
+						game.ReplicatedStorage.events.destroyObject:FireServer(game.Players[v])
+					end
+				end
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_VNYD81_FAKESCRIPT))
+function SCRIPT_IIVV87_FAKESCRIPT() -- btlsbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = btlsbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		spawn(function()
+			
+			spawn(function()
+				game.StarterGui:SetCoreGuiEnabled(2, true)
+			end)
+	
+			local loltool = Instance.new("Tool", game.Players.LocalPlayer.Backpack)
+	
+			loltool.RequiresHandle = false
+			loltool.Name = "Click Delete"
+			loltool.ToolTip = "Click Delete"
+			mouse = game.Players.LocalPlayer:GetMouse()
+	
+			loltool.Activated:Connect(function()
+				obj = mouse.Target
+				game.ReplicatedStorage.events.destroyObject:FireServer(obj)
+			end)
+			
+		end)
+	
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_IIVV87_FAKESCRIPT))
+function SCRIPT_LORU81_FAKESCRIPT() -- minebtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = minebtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		spawn(function()
+			
+			game.ReplicatedStorage.Events.CrateClaim:FireServer("Gear",game.ReplicatedStorage.BoxItems["Mine"])
+			
+		end)
+	
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_LORU81_FAKESCRIPT))
+function SCRIPT_FACF69_FAKESCRIPT() -- gunbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = gunbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		spawn(function()
+			
+			game.ReplicatedStorage.Events.CrateClaim:FireServer("Gear",game.ReplicatedStorage.BoxItems["TommyGun"])
+			
+		end)
+	
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_FACF69_FAKESCRIPT))
+function SCRIPT_WRXV75_FAKESCRIPT() -- nlmbsbtn.LocalScript 
+	local script = Instance.new('LocalScript')
+	script.Parent = nlmbsbtn
+	script.Parent.MouseButton1Click:Connect(function()
+		
+		local targets = GetPlayer(script.Parent.Parent.TextBox.Text)
+		
+		for i,v in pairs(targets)do
+			spawn(function()
+				for i,val in pairs(game.Players[v].Character:GetChildren()) do
+					if val.Name == "Right Arm" or val.Name == "Left Arm" or val.Name == "Right Leg" or val.Name == "Left Leg" then
+						game.ReplicatedStorage.events.destroyObject:FireServer(val)
+					end
+				end
+			end)
+		end
+		
+	end)
+
+end
+coroutine.resume(coroutine.create(SCRIPT_WRXV75_FAKESCRIPT))
+
+
+spawn(function()
+	
+local function zigzag(X) return math.acos(math.cos(X*math.pi))/math.pi end
+			
+local counter = 0
+wait()
+
+spawn(function()
+
+while wait() do
+ Frame.BackgroundColor3 = Color3.fromHSV(zigzag(counter),1,1)
+
+ counter = counter + 0.0076
+
+end
+end)
+end)
