@@ -179,6 +179,62 @@ Tab:CreateButton("God Mode",function()
 loadstring(game:HttpGet("https://pastebin.com/raw/FwfNEqYz", true))()
 end) 
 
+Tab:CreateButton("Float Tools🛠️",function()
+local tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "Float"
+
+local function unfloatCharacter(character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart then
+        local bodyVelocity = humanoidRootPart:FindFirstChild("BodyVelocity")
+        if bodyVelocity then
+            bodyVelocity:Destroy()
+        end
+    end
+end
+
+local function flingCharacter(character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart then
+        local bodyVelocity = humanoidRootPart:FindFirstChild("BodyVelocity")
+        if not bodyVelocity then
+            bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Velocity = Vector3.new(0, 7, 0) -- Adjust the values as needed
+            bodyVelocity.MaxForce = Vector3.new(0, math.huge, 0)
+            bodyVelocity.Parent = humanoidRootPart
+        else
+            bodyVelocity.Velocity = Vector3.new(0, 7, 0) -- Adjust the values as needed
+        end
+    end
+end
+
+tool.Activated:Connect(function()
+    if tool.Name == "Float" then
+        tool.RequiresHandle = false -- Allow multiple uses without needing to re-equip the tool
+        tool.Name = "Unfloat"
+        
+        local character = game.Players.LocalPlayer.Character
+        if character then
+            while tool.Name == "Unfloat" do
+                flingCharacter(character)
+                wait()
+            end
+        end
+    else
+        tool.RequiresHandle = true -- Set back to true to prevent continuous activation
+        tool.Name = "Float"
+        
+        local character = game.Players.LocalPlayer.Character
+        if character then
+            unfloatCharacter(character)
+        end
+    end
+end)
+
+tool.Parent = game.Players.LocalPlayer.Backpack
+end) 
+
 Tab:CreateButton("bomb Tools🛠️",function()
 game:GetObjects("rbxassetid://287003625")[1].Parent = game.Players.LocalPlayer.Backpack
 end) 
