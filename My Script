@@ -20,6 +20,92 @@ Tab:CreateButton("SimpleSpy",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
 end) 
 
+Tab:CreateButton("Notepad other test0",function()
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "NotepadGui"
+screenGui.Parent = playerGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.BorderSizePixel = 0
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+mainFrame.Size = UDim2.new(0, 400, 0, 300)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+local closeButton = Instance.new("TextButton")
+closeButton.Text = "Close"
+closeButton.Size = UDim2.new(0, 100, 0, 40)
+closeButton.Position = UDim2.new(1, -110, 0, 10)
+closeButton.Parent = mainFrame
+
+local saveButton = Instance.new("TextButton")
+saveButton.Text = "Save"
+saveButton.Size = UDim2.new(0, 100, 0, 40)
+saveButton.Position = UDim2.new(0, 10, 0, 10)
+saveButton.Parent = mainFrame
+
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(0, 380, 0, 220)
+scrollFrame.Position = UDim2.new(0, 10, 0, 60)
+scrollFrame.Parent = mainFrame
+
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(1, 0, 1, 0)
+textBox.Parent = scrollFrame
+
+local creatorLabel = Instance.new("TextLabel")
+creatorLabel.Text = "Made by Facility_Worker1"
+creatorLabel.Size = UDim2.new(0, 200, 0, 20)
+creatorLabel.Position = UDim2.new(0, 10, 1, -30)
+creatorLabel.Parent = mainFrame
+
+local isDragging = false
+
+local function dragNotepad(input)
+    if isDragging then
+        local newPosition = UDim2.new(0, input.Position.X - mainFrame.AbsolutePosition.X, 0, input.Position.Y - mainFrame.AbsolutePosition.Y)
+        mainFrame.Position = newPosition
+    end
+end
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+saveButton.MouseButton1Click:Connect(function()
+    local textToSave = textBox.Text
+    -- Save functionality goes here
+    print("Text saved: " .. textToSave)
+end)
+
+textBox.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        isDragging = true
+    end
+end)
+
+textBox.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        isDragging = false
+    end
+end)
+
+textBox.InputChanged:Connect(dragNotepad)
+end) 
+
+Tab:CreateButton("Notepad",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/JustAScripts/Favorable/main/NotePad.lua"))()
+end) 
+
+Tab:CreateButton("Fathom hub",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/Y4AGJALY"))();
+end) 
+
 Tab:CreateButton("big head",function()
 --body sizes: BodyHeightScale: 105%
 --            BodyWidthScale: 100%
