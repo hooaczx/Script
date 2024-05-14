@@ -20,6 +20,96 @@ Tab:CreateButton("SimpleSpy",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
 end) 
 
+Tab:CreateButton("MUMYA HIZ (#Set Speed Gui)⚡",function()
+local uis = game:GetService("UserInputService")
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- Create the menu
+local menu = Instance.new("ScreenGui")
+menu.Name = "SpeedMenu"
+menu.Parent = player.PlayerGui
+
+local menuFrame = Instance.new("Frame")
+menuFrame.Name = "MenuFrame"
+menuFrame.Size = UDim2.new(0.2, 0, 0.2, 0)
+menuFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
+menuFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+menuFrame.Parent = menu
+
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Name = "SpeedLabel"
+speedLabel.Text = "Please enter a number"
+speedLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
+speedLabel.Position = UDim2.new(0.1, 0, 0.2, 0)
+speedLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+speedLabel.Parent = menuFrame
+
+local speedInput = Instance.new("TextBox")
+speedInput.Name = "SpeedInput"
+speedInput.PlaceholderText = "Enter speed"
+speedInput.Size = UDim2.new(0.8, 0, 0.2, 0)
+speedInput.Position = UDim2.new(0.1, 0, 0.4, 0)
+speedInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+speedInput.Parent = menuFrame
+
+local speedButton = Instance.new("TextButton")
+speedButton.Name = "SpeedButton"
+speedButton.Text = "Boost"
+speedButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+speedButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+speedButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+speedButton.Parent = menuFrame
+
+-- Drag the menu
+local dragging = false
+local dragInput, dragStart, startPos
+
+menuFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = menuFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+menuFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+uis.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        menuFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Speed boost functionality
+speedButton.MouseButton1Click:Connect(function()
+    local speed = tonumber(speedInput.Text)
+    if speed then
+        player.Character.Humanoid.WalkSpeed = speed
+        game.StarterGui:SetSuccess("Speed Boost Activated")
+    else
+        game.StarterGui:SetFailure("Please use only numbers")
+    end
+end)
+
+speedInput.FocusLost:Connect(function()
+    local speed = tonumber(speedInput.Text)
+    if not speed then
+        game.StarterGui:SetFailure("Please use only numbers")
+    end
+end)
+end) 
+
 Tab:CreateButton("Keyboard Ranibow",function()
 game.StarterGui:SetCore("SendNotification", {
     Title = "Keybind J";
