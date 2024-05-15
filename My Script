@@ -24,6 +24,87 @@ Tab:CreateButton("SimpleSpy 2",function()
 loadstring(game:HttpGet("https://pastebin.com/raw/7JKhfPp6", true))()
 end) 
 
+Tab:CreateButton("Sit Gui",function()
+-- Create a ScreenGui object to hold the draggable GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "DraggableGui"
+gui.Parent = game.CoreGui
+
+-- Create a Frame object to hold the text label and button
+local frame = Instance.new("Frame")
+frame.Name = "DraggableFrame"
+frame.Size = UDim2.new(0, 150, 0, 60)
+frame.Position = UDim2.new(0.5, -75, 0.5, -30)
+frame.BackgroundColor3 = Color3.new(1, 1, 1)
+frame.BackgroundTransparency = 0.5
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+-- Create a TextLabel object to show the text
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "TextLabel"
+textLabel.Size = UDim2.new(1, 0, 0.5, 0)
+textLabel.Position = UDim2.new(0, 0, 0, 0)
+textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.Text = "MADE BY IAB"
+textLabel.Font = Enum.Font.SourceSansBold
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.TextSize = 18
+textLabel.Parent = frame
+
+-- Create a TextButton object to act as the "SIT" button
+local sitButton = Instance.new("TextButton")
+sitButton.Name = "SitButton"
+sitButton.Size = UDim2.new(1, 0, 0.5, 0)
+sitButton.Position = UDim2.new(0, 0, 0.5, 0)
+sitButton.BackgroundColor3 = Color3.new(0, 0, 0)
+sitButton.BackgroundTransparency = 0.5
+sitButton.Text = "SIT"
+sitButton.Font = Enum.Font.SourceSansBold
+sitButton.TextColor3 = Color3.new(1, 1, 1)
+sitButton.TextSize = 18
+sitButton.Parent = frame
+
+-- Define a function to make the player character sit
+local function sit()
+    local character = game.Players.LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Sit = true
+        end
+    end
+end
+
+-- Define a function to make the player character stand up
+local function standUp()
+    local character = game.Players.LocalPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Sit = false
+        end
+    end
+end
+
+-- Connect the SitButton to the sit() function
+sitButton.MouseButton1Click:Connect(function()
+    sit()
+end)
+
+-- Connect the Humanoid.Jumping event to the standUp() function
+game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Jumping:Connect(function()
+            standUp()
+        end)
+    end
+end)
+end) 
+
 Tab:CreateButton("Alysse Gui",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Alysse%20Gui"))()
 end) 
