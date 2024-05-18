@@ -128,6 +128,584 @@ Tab:CreateButton("SimpleSpy 2",function()
 loadstring(game:HttpGet("https://pastebin.com/raw/7JKhfPp6", true))()
 end) 
 
+Tab:CreateButton("Lazium Tools",function()
+loadstring(game:HttpGet"https://raw.githubusercontent.com/CheapeeWastaken/Lazium/main/TheMain")()
+end) 
+
+Tab:CreateButton("White Room",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/NFMS-1/WRUI/main/1", true))()
+end) 
+
+Tab:CreateButton("Rainbow Fps Counter",function()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
+
+local colors = {
+    Color3.fromRGB(255, 0, 0), 
+    Color3.fromRGB(255, 165, 0), 
+    Color3.fromRGB(255, 255, 0), 
+    Color3.fromRGB(0, 128, 0), 
+    Color3.fromRGB(0, 0, 255), 
+    Color3.fromRGB(75, 0, 130), 
+    Color3.fromRGB(238, 130, 238)
+}
+local colorIndex = 1
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local head = character:WaitForChild("Head")
+
+local fpsLabel = Instance.new("BillboardGui")
+fpsLabel.Parent = head
+fpsLabel.Size = UDim2.new(0, 100, 0, 50)
+fpsLabel.StudsOffset = Vector3.new(0, 2, 0)
+
+local fpsTextLabel = Instance.new("TextLabel")
+fpsTextLabel.Parent = fpsLabel
+fpsTextLabel.Size = UDim2.new(1, 0, 1, 0)
+fpsTextLabel.TextColor3 = Color3.new(1, 1, 1)
+fpsTextLabel.BackgroundTransparency = 1
+fpsTextLabel.TextScaled = true
+
+local function formatFPS(fps)
+    return string.format("%d FPS", math.floor(fps + 0.5))
+end
+
+local lastFrameTime = tick()
+local frameCount = 0
+
+RunService.RenderStepped:Connect(function()
+    local currentTime = tick()
+    frameCount += 1
+    if currentTime - lastFrameTime >= 1 then
+        local fps = frameCount / (currentTime - lastFrameTime)
+        fpsTextLabel.Text = formatFPS(fps)
+        frameCount = 0
+        lastFrameTime = currentTime
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(inputObject)
+    if inputObject.KeyCode == Enum.KeyCode.F then
+        fpsLabel.Enabled = not fpsLabel.Enabled
+    end
+end)
+
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+
+while true do
+    fpsTextLabel.TextColor3 = colors[colorIndex]
+    colorIndex = colorIndex % #colors + 1
+    wait(0.10)
+end
+
+--open source
+end) 
+
+Tab:CreateButton("DarkCheatClient",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/VaniaPerets/FolderGui-FolderHub/main/loader.lua", true))()
+end) 
+
+Tab:CreateButton("Weinz: Revamp",function()
+loadstring(game:HttpGet('https://weinzspace.com/revamp.lua'))()
+end) 
+
+Tab:CreateButton("Free Avatar Items",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/scripthubekitten/fakelimitedsv2/main/fakelimitedsv2", true))()
+end) 
+
+Tab:CreateButton("Orca",function()
+loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/richie0866/orca/master/public/snapshot.lua"))()
+end) 
+
+Tab:CreateButton("Cookie Clicker",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/RedEvl/cookieclickerez/main/cookieclickerez"))()
+end) 
+
+Tab:CreateButton("Anything GUI",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MariyaFurmanova/Library/main/Let'sParty", true))()
+end) 
+
+Tab:CreateButton("Anti Crash, Anti FEChecker",function()
+--// Rewrote By YellowGreg \\-- 
+--// Original Creator: FionaWolfgang \\--
+
+
+
+
+--// Version of Whitelisted System i guess
+local version = "1.0"
+--// Variables  
+local players = game:GetService("Players")
+local user = players.LocalPlayer
+local name = user.Name
+local a = Instance.new("Message",workspace)
+a.Name = "Anti Stuff"
+
+ 
+--// Blacklisted Username[Also these are random account that are Blacklisted]
+local BL = {
+"Gregjohndoeguest666",
+"Hellopeople292929",
+}
+--// Blacklisted Code
+BLACKLISTED=false
+table.foreach(BL,function(a,b)
+    if name == tostring(b) then BLACKLISTED=true
+       table.foreach(workspace:GetChildren(),function(a,b) if b.Name == "Anti Stuff" then b:Destroy() end end)
+       user:Kick('Sorry, It appears you are blacklisted! '..name..'  DM YellowGreg#7993 for appeal.')
+       game.StarterGui:SetCore('SendNotification', {Title='Blacklisted'; Text='Player : '..game:GetService("Players").LocalPlayer.Name..' You are Blacklisted!'})
+       end       
+end)
+--// Whitelisted Username[Also these are random account that are Whitelisted]
+local WL = {
+"Randomash8091",
+"Randomash8092",
+"Randomash8093",
+"Randomash8094",
+"Randomash8095",
+"Randomash8096",
+}
+--// Whitelisted Code
+table.foreach(WL,function(a,b)
+    if name == tostring(b) and not BLACKLISTED then WHITELISTED=true end
+end)
+if WHITELISTED then
+    game.StarterGui:SetCore('SendNotification', {Title='Certified Premium'; Text='Player : '..name..' You are Whitelisted! Your script will execute in a second.'})
+a.Text = "Whitelisted!"
+elseif not WHITELISTED and not BLACKLISTED then
+    user:Kick('It appears you arent whitelisted! '..name..' Try to DM YellowGreg#7993  in discord')
+    a.Text = "Not Whitelisted, DM YellowGreg#7993 to be Whitelisted."
+end
+
+--// Anti Crash Script \\--
+function AntiCrash()
+function Part1()
+game:GetService("RunService").RenderStepped:connect(function() 
+    table.foreach(user.Backpack:GetChildren(),function(a,b) if b.Name == "-" then game.StarterGui:SetCore('SendNotification', {Title='AntiCrash'; Text='Hey '..name..'! Someone tried to crash you!'}) end end)
+end)
+end
+function nou()
+    aa=Instance.new("Model",workspace);a.Name=name
+    Instance.new("Humanoid",aa)
+    b=Instance.new("Part",aa);b.Name="Torso";b.CanCollide=false;b.Transparency=1
+    user.Character=aa
+end
+function aaa()
+game:GetService("RunService").RenderStepped:connect(function() 
+    table.foreach(user.Backpack:GetChildren(),function(a,b) if b.Name == "-" then nou() end end)
+end)
+end
+game:GetService("RunService").RenderStepped:connect(function() 
+    table.foreach(user.Backpack:GetChildren(),function(a,b) if b.Name == "-" then user.Backpack:ClearAllChildren() end end)
+end)
+Part1()
+aaa()
+game.StarterGui:SetCore('SendNotification', {Title='AntiCrash'; Text='Hey '..name..'! AntiCrash ran successfully'})
+a.Text = "(Might not work) Anti Crash loaded"
+end
+
+--// FE Checker \\--
+function FEChecker()
+FE = game:GetService("Workspace").FilteringEnabled
+if FE == true then
+game.StarterGui:SetCore('SendNotification', {Title='FilteringEnabled'; Text='Hey '..name..'! Filtering is enabled! D:'})
+a.Text = "Game is FilteringEnabled"
+else
+game.StarterGui:SetCore('SendNotification', {Title='FilteringEnabled'; Text='Hey '..name..'! Filtering is disabled! :D'})
+a.Text = "Game is FilteringDisabled"
+end
+end
+
+--// Anti Fling Script \\--
+function AntiFling()
+function Part2()
+game:GetService("RunService").RenderStepped:connect(function()
+table.foreach(user.Character:GetDescendants(),function(a,b) if b:IsA("BodyForce") then game.StarterGui:SetCore('SendNotification', {Title='AntiFling'; Text='Hey '..name..'! Someone attempted to fling you!'}) end end)
+    table.foreach(user.Character:GetDescendants(), function(a,b) if b:IsA("BodyForce") then user.Character.Humanoid.Sit = false end end)
+end)
+end
+game:GetService("RunService").RenderStepped:connect(function()
+    table.foreach(user.Character:GetDescendants(),function(a,b) if b:IsA("BodyForce") then b:Destroy() end end)
+end)
+Part2()
+game.StarterGui:SetCore('SendNotification', {Title='AntiFling'; Text='Hey '..name..'! AntiFling ran successfully'})
+a.Text = "Anti Fling Loaded"
+end
+
+--// Anti Freeze Script \\--
+function AntiFreeze()
+function Part3()
+game:GetService("RunService").RenderStepped:connect(function()
+table.foreach(user.Character:GetDescendants(),function(a,b) if b.Name == "Torso" and b.Anchored then 
+game.StarterGui:SetCore('SendNotification', {Title='AntiFreeze'; Text='Hey '..name..'! Someone tried to freeze you!'}) end end)
+end)
+end
+    game:GetService("RunService").RenderStepped:connect(function()
+        table.foreach(user.Character:GetDescendants(),function(a,b) if b:IsA("Part") and b.Anchored then b.Anchored = false end end)
+    end)
+Part3()
+game.StarterGui:SetCore('SendNotification', {Title='AntiFreeze'; Text='Hey '..name..'! AntiFreeze ran successfully'})
+a.Text = "Anti Freeze Loaded"
+end
+
+--// Anti Punish Script \\--
+function AntiPunish()
+game:GetService("RunService").Stepped:connect(function()
+    if user.Character then
+        if user.Character.Parent~=workspace then
+            user.Character.Parent=workspace
+            game.StarterGui:SetCore('SendNotification', {Title='AntiPunish'; Text='Hey '..name..'! Someone tried to punish you! (or you died xd)'})
+        end
+    end
+end)
+game.StarterGui:SetCore('SendNotification', {Title='AntiPunish'; Text='Hey '..name..'! AntiPunish ran successfully'})
+a.Text = "Anti Punish Loaded"
+end
+
+--// Anti Punish Clone Deleter \\--
+function CloneDelete()
+game:GetService("RunService").RenderStepped:connect(function()
+for i,v in pairs(workspace:GetChildren()) do
+    if v.Name==game:GetService("Players").LocalPlayer.Name then
+        if game:GetService("Players").LocalPlayer.Character~=v then
+            v:Destroy()
+            game.StarterGui:SetCore('SendNotification', {Title='CloneDeleter'; Text='Hey '..name..'! Clone Deletion was successful'})
+ 
+        end
+    end
+end
+end)
+game.StarterGui:SetCore('SendNotification', {Title='CloneDeleter'; Text='Hey '..name..'! CloneDeleter ran successfully'})
+a.Text = "Clone deleter loaded"
+end
+
+wait(1)
+if WHITELISTED then
+AntiCrash()
+wait(4)
+FEChecker()
+wait(4)
+AntiFling()
+wait(4)
+AntiFreeze()
+wait(4)
+AntiPunish()
+
+print("Made By: YellowGreg")
+wait(2)
+table.foreach(workspace:GetChildren(),function(a,b) if b.Name == "Anti Stuff" then b:Destroy() end end)
+warn("This Script Could Have Some Bug")
+warn("Whitelisted System Version "..version.."")
+end
+
+print("Script Here")
+--[[
+Script Here
+]]--
+end) 
+
+Tab:CreateButton("anti death",function()
+player = game.Players.LocalPlayer
+function damage(hit)
+	if hit then
+		plr = game.Players:GetPlayerFromCharacter(hit.Parent)
+		if plr then
+			char = plr.Character
+			testchar = game.Workspace:FindFirstChild(char.Name)
+			if char and testchar and plr.Name ~= player.Name then
+				humanoid = char:FindFirstChild("Humanoid")
+				if humanoid:FindFirstChild("ACIDSLIP") == nil then
+					acidslip=Instance.new("StringValue",humanoid)
+					acidslip.Name = "ACIDSLIP"
+					game:GetService("Debris"):AddItem(acidslip,1)
+					humanoid:TakeDamage(5)
+					clonehit = hit:Clone()
+					clonehit.CanCollide = true
+					clonehit.Parent = plr.Character
+					clonehit.Material = Enum.Material.CorrodedMetal
+					clonehit.CFrame = clonehit.CFrame			
+					clonehit.Name="CorrodedBodyPart"
+					weld=Instance.new("Weld",clonehit) weld.Part0 = weld.Parent weld.Part1 = hit
+					cd=math.random(1,2)
+					hit.Transparency = 1
+					game:GetService("Debris"):AddItem(clonehit,cd)
+					game:GetService("Debris"):AddItem(hit,cd)
+				end
+			end
+		end
+	end
+end
+
+
+
+
+part2 = Instance.new("Part")
+tool2 = Instance.new("Tool")
+part2.Parent = tool2
+tool2.Parent = game.Players.timothy_teakettle.Backpack
+tool2.Name = "off you go"
+part2.Name = "Handle"
+part2.Size = Vector3.new(1,1,1)
+
+function activate2()
+	print("Activated.")
+	torso = game.Players.timothy_teakettle.Character:FindFirstChild("UpperTorso")
+	if torso then
+		for i,v in pairs(game.Workspace:GetChildren()) do
+			torso2 = v:FindFirstChild("UpperTorso")
+			if torso2 and v ~= game.Workspace.timothy_teakettle then
+				if game.Players.timothy_teakettle:DistanceFromCharacter(torso2.Position) < 5 then
+					infront = torso.CFrame * CFrame.new(0,0,-3)
+					infrontpos = infront.p
+					kiddo = game.Players:GetPlayerFromCharacter(v)
+					if kiddo then
+						if kiddo:DistanceFromCharacter(infrontpos) <= 10 then
+							if v:FindFirstChild("Humanoid") then
+								v.Humanoid.Sit = true
+							end
+							velocity = Instance.new("BodyVelocity")
+							velocity.Velocity = torso.CFrame.lookVector * 100 + Vector3.new(0,20,0)
+							velocity.MaxForce = Vector3.new(1000000,1000000,1000000)
+							velocity.Parent = torso2
+							game:GetService("Debris"):AddItem(velocity,0.2)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+tool2.Activated:connect(activate2)
+
+
+
+
+tool3 = Instance.new("Tool")
+part3 = Instance.new("Part")
+part3.Name = "Handle"
+tool3.Name = "no gaster pls"
+part3.Parent = tool3
+tool3.Parent = game.Players.timothy_teakettle.Backpack
+
+function activate3()
+	for i,v in pairs(game.Workspace:GetChildren()) do
+		plra = game.Players:GetPlayerFromCharacter(v)
+		if plra then
+			for a,b in pairs(v:GetChildren()) do
+				if b.className == "Part" then
+					for c,d in pairs(b:GetChildren()) do
+						if d.className == "Decal" then
+							if d.Texture == "rbxassetid://400387868" then
+								v:BreakJoints()
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+tool3.Activated:connect(activate3)
+
+
+tool4 = Instance.new("Tool")
+tool4.Name = "lets go over there"
+tool4.RequiresHandle = false
+tool4.Parent = game.Players.timothy_teakettle.Backpack
+
+function activate4()
+	game.Players.timothy_teakettle.Character.UpperTorso.CFrame = game.Players.timothy_teakettle.Character.UpperTorso.CFrame * CFrame.new(0,0,-15)
+end
+tool4.Activated:connect(activate4)
+
+
+
+
+tool5 = Instance.new("Tool")
+tool5.Name = "no thanks"
+tool5.RequiresHandle = false
+tool5.Parent = game.Players.timothy_teakettle.Backpack
+
+function activate5()
+	for i,v in pairs(game.Workspace:GetChildren()) do
+		for a,b in pairs(v:GetChildren()) do
+			if b.Name == "Head" then
+				if game.Players.timothy_teakettle:DistanceFromCharacter(b.Position) < 11 then
+					if v:FindFirstChild("Humanoid") then
+						v.Humanoid.Health = 0
+					end
+				end
+			end
+		end
+	end
+end
+tool5.Activated:connect(activate5)
+
+
+tool6 = Instance.new("Tool")
+part6 = Instance.new("Part")
+part6.Name = "Handle"
+tool6.Name = "respawn kiddos"
+part6.Parent = tool6
+tool6.Parent = game.Players.timothy_teakettle.Backpack
+
+function activate6()
+	print("activited")
+	for i,v in pairs(game.Workspace:GetChildren()) do
+		player = game.Players:GetPlayerFromCharacter(v)
+		if player then
+			if v:FindFirstChild("Head") then
+				if game.Players.timothy_teakettle:DistanceFromCharacter(v.Head.Position) < 11 then
+					print("hey now")
+					cframe = v.UpperTorso.CFrame
+					player:LoadCharacter()
+					if player.Character:FindFirstChild("UpperTorso") then
+						player.Character.UpperTorso.CFrame = cframe
+					end
+				end
+			end
+		end
+	end
+end
+tool6.Activated:connect(tool6)
+
+
+
+
+
+
+
+
+
+
+
+USER = "timothy_teakettle"
+function revive()
+	plr = game.Players:FindFirstChild(USER)
+	if plr then
+		char = plr.Character
+		torso = char:FindFirstChild("UpperTorso")
+		if torso then
+			torsocframe = torso.CFrame
+			plr:LoadCharacter()
+			plr.Character.UpperTorso.CFrame = torsocframe
+			game.Players:FindFirstChild(USER).Character.Humanoid.HealthChanged:connect(hpchange)
+			game.Players:FindFirstChild(USER).Character.Humanoid.Died:connect(revive)
+			tool.Parent = plr.Backpack
+			tool2.Parent = plr.Backpack
+			tool3.Parent = plr.Backpack
+			tool4.Parent = plr.Backpack
+			tool5.Parent = plr.Backpack
+		end
+	end
+end
+function heal()
+	plr = game.Players:FindFirstChild(USER)
+	if plr then
+		char = plr.Character
+		humanoid = char:FindFirstChild("Humanoid")
+		if humanoid then
+			if humanoid.Health ~= 100 then
+				wait()
+				humanoid.Health = humanoid.Health + 100
+				heal() -- because you should make sure your healed
+			end
+		end
+	end
+end
+function hpchange()
+	plr = game.Players:FindFirstChild(USER)
+	if plr then
+		char = plr.Character
+		humanoid = char:FindFirstChild("Humanoid")
+		if humanoid then
+			health = humanoid.Health
+			if health < 1 then
+				revive()
+			else
+				heal()
+			end
+		end
+	end
+end
+game.Players:FindFirstChild(USER).Character.Humanoid.HealthChanged:connect(hpchange)
+game.Players:FindFirstChild(USER).Character.Humanoid.Died:connect(revive)
+
+part = Instance.new("Part")
+part.Name = "Handle"
+ 
+tool = Instance.new("Tool")
+function activate()
+    emp(Workspace)
+end
+tool.Activated:connect(activate)
+
+tool.Name = "rip weapons"
+part.Parent = tool
+part.TopSurface = "Smooth"
+part.BottomSurface = "Smooth"
+part.Size = Vector3.new(1,1,1)
+tool.Parent = game.Players.timothy_teakettle.Backpack
+ 
+function emp(where)
+    for i,v in pairs(where:GetChildren()) do
+        if v.className == "Part" and v ~= part and v.Parent ~= game.Players.timothy_teakettle.Character and v.Parent.className ~= "Hat" then
+            if v.Size.X < 100 and v.Size.Y < 100 and v.Size.Z < 100 then
+                if game.Players.timothy_teakettle:DistanceFromCharacter(v.Position) < 25 and v.Name ~= "Left Leg" and v.Name ~= "Right Leg" and v.Name ~= "Left Arm" and v.Name ~= "Right Arm" and v.Name ~= "Torso" and v.Name ~= "Head" and v.Name ~= "HumanoidRootPart" then
+                    v.Parent = nil
+                end
+            end
+        end
+        emp(v)
+    end
+end
+
+
+while true do
+	wait(0.2)
+	player.Character.Humanoid.WalkSpeed = 25
+	player.Character.Humanoid.JumpPower = 0
+	test = PhysicalProperties.new(0,0,0,30,0)
+	acid=Instance.new("Part")
+	acid.Touched:connect(damage)
+	acid.CustomPhysicalProperties = test
+	acid.CanCollide = true
+	acid.Anchored = true
+	acid.Shape = "Cylinder"
+	acid.BrickColor = BrickColor.new("Slime green")
+	ab = math.random(12,16)
+	acid.Size=Vector3.new(0.1,ab,ab)
+	acid.Parent = player.Character
+	acid.Material = Enum.Material.Neon
+	--
+	acid.TopSurface = "SmoothNoOutlines"
+	acid.BottomSurface = "SmoothNoOutlines"
+	acid.LeftSurface = "SmoothNoOutlines"
+	acid.RightSurface = "SmoothNoOutlines"
+	acid.BackSurface = "SmoothNoOutlines"
+	acid.FrontSurface = "SmoothNoOutlines"
+	
+	
+	--
+	ray = Ray.new(player.Character.UpperTorso.Position,(player.Character.UpperTorso.CFrame * CFrame.Angles(math.pi/-2,0,0)).lookVector * 200)
+	ignore = player.Character
+	hit,pos, normal = game.Workspace:FindPartOnRay(ray,ignore)
+	distance = (player.Character.UpperTorso.Position - pos).magnitude
+	if hit and distance < 5  and not game.Players:GetPlayerFromCharacter(hit.Parent) and hit.Name ~= "Handle" then
+		if hit.Material == Enum.Material.Metal then
+			a = coroutine.create(nice) coroutine.resume(a,hit)
+		end
+		acid.CFrame = CFrame.new(pos)
+		acid.CFrame = acid.CFrame * CFrame.Angles(0,0,math.pi/2)
+		acid:MakeJoints()
+		game:GetService("Debris"):AddItem(acid,4)
+	end
+end
+end) 
+
 Tab:CreateButton("Cyclone Admin",function()
 -- Made by Cyclically | Cyclone
 -- Version: 0.2a
