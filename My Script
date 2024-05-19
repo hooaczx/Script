@@ -39,6 +39,162 @@ Tab:CreateButton("SimpleSpy 2",function()
 loadstring(game:HttpGet("https://pastebin.com/raw/7JKhfPp6", true))()
 end) 
 
+Tab:CreateButton("Animation Logger",function()
+--This script made by WaveStorag and ChatGPT
+local gui = Instance.new("ScreenGui")
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.3, 0, 0.4, 0)
+frame.Position = UDim2.new(0.35, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0  -- Remove border
+frame.Parent = gui
+
+frame.Draggable = true
+frame.Active = true
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+topBar.BorderSizePixel = 0  -- Remove border
+topBar.Parent = frame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -380, 1, 0)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Animation Logger"
+titleLabel.Font = Enum.Font.SourceSans
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.TextSize = 20
+titleLabel.Parent = topBar
+
+local clearButton = Instance.new("TextButton")
+clearButton.Size = UDim2.new(0, 60, 0, 30)
+clearButton.Position = UDim2.new(1, -140, 0, 0)
+clearButton.BackgroundColor3 = Color3.new(1, 0, 0)
+clearButton.Text = "Clear All"
+clearButton.TextColor3 = Color3.new(1, 1, 1)
+clearButton.TextSize = 19
+clearButton.Font = Enum.Font.SourceSans
+clearButton.BackgroundTransparency = 1
+clearButton.Parent = topBar
+
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, 0, 1, -30)
+scrollFrame.Position = UDim2.new(0, 0, 0, 30)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ScrollBarThickness = 10
+scrollFrame.Parent = frame
+scrollFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+
+local logLayout = Instance.new("UIListLayout")
+logLayout.Parent = scrollFrame
+logLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local loggedAnimations = {}
+
+local function logAnimation(animationName, animationId)
+    if loggedAnimations[animationId] then
+        return -- Animation already logged, exit function
+    end
+    
+    loggedAnimations[animationId] = true -- Mark animation as logged
+    
+    local logEntry = Instance.new("TextButton")
+    logEntry.Size = UDim2.new(1, -10, 0, 60) -- Increased height to accommodate both name and ID
+    logEntry.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+    logEntry.Text = string.format("%s\nAnimation ID: %s", animationName, animationId) -- Display animation name and ID
+    logEntry.TextWrapped = true -- Wrap text to fit within button
+    logEntry.Font = Enum.Font.SourceSans
+    logEntry.TextColor3 = Color3.new(1, 1, 1)
+    logEntry.TextSize = 18
+    logEntry.Parent = scrollFrame
+
+    logEntry.MouseButton1Click:Connect(function()
+        setclipboard(animationId)
+    end)
+
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, logLayout.AbsoluteContentSize.Y)
+end
+
+logLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, logLayout.AbsoluteContentSize.Y)
+end)
+
+local function onAnimationPlayed(animationTrack)
+    local animation = animationTrack.Animation
+    if animation then
+        local animationId = animation.AnimationId
+        local animationName = animation.Name or "Unknown Animation"
+        logAnimation(animationName, animationId)
+    end
+end
+
+local function trackPlayerAnimations()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    
+    humanoid.AnimationPlayed:Connect(onAnimationPlayed)
+end
+
+trackPlayerAnimations()
+
+clearButton.MouseButton1Click:Connect(function()
+    for _, child in ipairs(scrollFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    loggedAnimations = {}
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+end)
+
+local xButton = Instance.new("TextButton")
+xButton.Size = UDim2.new(0, 30, 0, 30)
+xButton.Position = UDim2.new(1, -30, 0, 0)
+xButton.BackgroundColor3 = Color3.new(1, 0, 0)
+xButton.Text = "X"
+xButton.TextColor3 = Color3.new(1, 1, 1)
+xButton.TextSize = 24
+xButton.Font = Enum.Font.SourceSans
+xButton.BackgroundTransparency = 1
+xButton.Parent = topBar
+
+xButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+minimizeButton.Position = UDim2.new(1, -60, 0, 0)
+minimizeButton.BackgroundColor3 = Color3.new(0, 0, 1)
+minimizeButton.Text = "–"
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.TextSize = 24
+minimizeButton.Font = Enum.Font.SourceSans
+minimizeButton.BackgroundTransparency = 1
+minimizeButton.Parent = topBar
+
+-- Functionality to minimize/maximize the GUI when minimize button is clicked
+local isMinimized = false
+local originalSize = frame.Size
+minimizeButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        minimizeButton.Text = "+"
+        frame.Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset, 0, 30) -- Minimized size
+        scrollFrame.Visible = false
+    else
+        minimizeButton.Text = "–"
+        frame.Size = originalSize -- Restore to original size
+        scrollFrame.Visible = true
+    end
+end)
+end) 
+
 Tab:CreateButton("Symphony hub",function()
 local a,b,c,d=loadstring,request or http_request or(http and http.request)or(syn and syn.request),assert,"https://lhr.synteamenv.workers.dev/?page=script"c(a and b,"Your executor does not support.")a(b({Url=d,Method="POST",Headers={["Authorization"]="revamp patch 2024"}}).Body)()
 end) 
