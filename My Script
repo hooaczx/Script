@@ -40,11 +40,15 @@ loadstring(game:HttpGet("https://pastebin.com/raw/7JKhfPp6", true))()
 end) 
 
 Tab:CreateButton("Chat logs",function()
+-- Farewell Infortality.
+-- Version: 2.82
+-- Instances:
 local ChatGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local LogPanel = Instance.new("ScrollingFrame")
 local Close = Instance.new("TextButton")
 local Mini = Instance.new("TextButton")
+local Log = Instance.new("TextButton")
 local title = Instance.new("TextLabel")
 --Properties:
 ChatGui.Name = "ChatGui"
@@ -91,6 +95,17 @@ Mini.Text = "Minimize"
 Mini.TextColor3 = Color3.new(1, 1, 1)
 Mini.TextSize = 14
 
+Log.Name = "Log"
+Log.Parent = Frame
+Log.BackgroundColor3 = Color3.new(1, 1, 1)
+Log.BackgroundTransparency = 1
+Log.Position = UDim2.new(0.293367326, 0, 0, 0)
+Log.Size = UDim2.new(0, 69, 0, 24)
+Log.Font = Enum.Font.SourceSans
+Log.Text = "Log Chat [ON]"
+Log.TextColor3 = Color3.new(1, 1, 1)
+Log.TextSize = 14
+
 title.Name = "title"
 title.Parent = Frame
 title.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -104,6 +119,9 @@ title.TextXAlignment = Enum.TextXAlignment.Left
 -- Scripts:
 local logging = true
 local minimized = false
+Log.MouseButton1Down:Connect(function()
+	logging = not logging
+	if logging then Log.Text = "Log Chat [ON]" else Log.Text = "Log Chat [OFF]" end
 end)
 Mini.MouseButton1Down:Connect(function()
 	if minimized then
@@ -121,9 +139,9 @@ local prevOutputPos = 0
 function output(plr, msg)
 	if not logging then return end
 	local colour = Color3.fromRGB(255,255,255)
-	
+
 	if string.sub(msg, 1,1) == ":" or string.sub(msg,1,1) == ";" then colour = Color3.fromRGB(255,0,0) elseif string.sub(msg,1,2) == "/w" or string.sub(msg,1,7) == "/whisper" or string.sub(msg,1,5) == "/team" or string.sub(msg,1,2) == "/t" then colour = Color3.fromRGB(0,0,255) else colour = Color3.fromRGB(255,255,255) end
-	
+
  	local o = Instance.new("TextLabel",LogPanel)
  	o.Text = plr.Name .. ": " .. msg
  	o.Size = UDim2.new(0.5,0,.006,0)
