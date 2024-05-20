@@ -117,94 +117,30 @@ for i, v in pairs(game:GetService("Players"):GetChildren()) do
 						end
 end) 
 
-Tab:CreateButton("Server Destruction",function()
--- input
-function GetRecursiveChildren(Part, Children)
-       for _, Part in pairs(Part:GetChildren()) do
-               pcall(function()
-                       table.insert(Children, Part)
-                       GetRecursiveChildren(Part, Children)
-               end)
-       end
-       return Children
+Tab:CreateButton("Destroy Script",function()
+function getAll(obj)
+for i, v in pairs(obj:getChildren()) do
+if v:IsA("BasePart") then
+v.Anchored = false
+v.BrickColor = BrickColor.new(0)
+bv = Instance.new("BodyVelocity")
+bv.Parent = v
+bv.maxForce = Vector3.new(100000000,100000000,100000000)
 end
-
-
-
-
-Textures = {
-       "http://www.roblox.com/Asset/?id=59515602",
-       "http://www.roblox.com/Asset/?id=48308661",
-       "http://www.roblox.com/Asset/?id=42198984",
-       "http://www.roblox.com/Asset/?id=59421095",
-       "http://www.roblox.com/Asset/?id=59454680",
-       "http://www.roblox.com/Asset/?id=59784967",
-       "http://www.roblox.com/Asset/?id=45791014",
-       "http://www.roblox.com/Asset/?id=58492970",
-       "http://www.roblox.com/Asset/?id=59278856"
-}
-
-
-Instance.new("Sky", game:GetService("Lighting")).CelestialBodiesShown = false
-Instance.new("Message", Workspace)
-Instance.new("Hint", Workspace)
-
-
-while true do
-       for _, Part in pairs(GetRecursiveChildren(game, {})) do
-               pcall(function()
-                       if not Part:IsA("Player")then
-                               pcall(function() Part.Name = Phrases[math.random(1, #Phrases)] end)
-                               pcall(function() Part.Text = Phrases[math.random(1, #Phrases)] end)
-                               pcall(function() Part.Image = Textures[math.random(1, #Textures)] end)
-                               pcall(function() Part.TextureId = Textures[math.random(1, #Textures)] end)
-                               pcall(function() Part.Texture = Textures[math.random(1, #Textures)] end)
-                               pcall(function() Part.ShirtTemplate = Textures[math.random(1, #Textures)] end)
-                               pcall(function() Part.PantsTemplate = Textures[math.random(1, #Textures)] end)
-                               pcall(function() Part.Graphic = Textures[math.random(1, #Textures)] end)
-                               pcall(function() Part.Color = Color3.new(math.random(), math.random(), math.random()) end)
-                               pcall(function() Part.Color3 = Color3.new(math.random(), math.random(), math.random()) end)
-                               pcall(function()
-                                       Part.SkyboxUp = Textures[math.random(1, #Textures)]
-                                       Part.SkyboxDn = Textures[math.random(1, #Textures)]
-                                       Part.SkyboxLf = Textures[math.random(1, #Textures)]
-                                       Part.SkyboxRt = Textures[math.random(1, #Textures)]
-                                       Part.SkyboxFt = Textures[math.random(1, #Textures)]
-                                       Part.SkyboxBk = Textures[math.random(1, #Textures)]
-                               end)
-                               pcall(function()
-                                       Part.TextColor3 = Color3.new(math.random(), math.random(), math.random())
-                                       Part.BackgroundColor3 = Color3.new(math.random(), math.random(), math.random())
-                                       Part.BorderColor3 = Color3.new(math.random(), math.random(), math.random())
-                               end)
-                               pcall(function()
-                                       Part.Pitch = math.random() * 5
-                                       Part.Volume = 1
-                                       Part.Looped = true
-                                       Part:Play()
-                               end)
-                               pcall(function()
-                                       if math.random(1, 5) == 1 then Part.Anchored = false end
-                                       if Part.Anchored == false then
-                                               Part.Velocity = Vector3.new(math.random(-10, 10), math.random(0, 50), math.random(-10, 10))
-                                               Part.RotVelocity = Vector3.new(math.random(-100, 100), math.random(-100, 100), math.random(-100, 100))
-                                       end
-                                       Part.Locked = false
-                                       Part.BrickColor = BrickColor.random()
-                                       Part.TopSurface = "Weld"
-                                       Part.BottomSurface = "Weld"
-                                       Part.FrontSurface = "Weld"
-                                       Part.BackSurface = "Weld"
-                                       Part.LeftSurface = "Weld"
-                                       Part.RightSurface = "Weld"
-                                       Part:BreakJoints()
-                               end)
-                       end
-               end)
-               if math.random(1, 50) == 1 then wait() end
-       end
+getAll(v)
 end
-s.Parent = game.workspace
+end
+getAll(workspace)
+game.Lighting.TimeOfDay = "07:00:00"
+game.Lighting.Ambient = Color3.new(0,0,0)
+sky = Instance.new("Sky")
+sky.Parent = game.Lighting
+sky.SkyboxBk = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxDn = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxFt = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxLf = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxRt = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxUp = "http://www.roblox.com/asset/?id=138667781"function getAll(obj)
 end) 
 
 Tab:CreateButton("Fling and Invisible Tool⚒️",function()
