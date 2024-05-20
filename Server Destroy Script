@@ -1,0 +1,101 @@
+function getAll(obj)
+for i, v in pairs(obj:getChildren()) do
+if v:IsA("BasePart") then
+v.Anchored = false
+v.BrickColor = BrickColor.new(0)
+bv = Instance.new("BodyVelocity")
+bv.Parent = v
+bv.maxForce = Vector3.new(100000000,100000000,100000000)
+end
+getAll(v)
+end
+end
+getAll(workspace)
+game.Lighting.TimeOfDay = "07:00:00"
+game.Lighting.Ambient = Color3.new(0,0,0)
+sky = Instance.new("Sky")
+sky.Parent = game.Lighting
+sky.SkyboxBk = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxDn = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxFt = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxLf = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxRt = "http://www.roblox.com/asset/?id=138667781"
+sky.SkyboxUp = "http://www.roblox.com/asset/?id=138667781"
+end) 
+
+Tab:CreateButton("BEGONE server destroy",function()
+while wait() do
+for i, v in pairs(game:GetService("Players"):GetChildren()) do
+	wait()
+	pcall(function()
+		local vcharacter = v.Character
+						local torso = vcharacter:FindFirstChild("Torso")
+						local uppertorso = vcharacter:FindFirstChild("UpperTorso")
+						if torso ~= nil then
+							local sound = Instance.new("Sound", torso)
+							sound.Volume = 10
+							sound.EmitterSize = 99e99
+							sound.SoundId = "rbxassetid://1809280396"
+							local particles = Instance.new("ParticleEmitter", torso)
+							particles.Texture = "rbxassetid://280516525"
+							particles.Rate = 99e99
+							particles.Rotation = NumberRange.new(0, 360)
+							particles.RotSpeed = NumberRange.new(360, 360)
+							particles.SpreadAngle = Vector2.new(10000,10000)
+							sound:Play()
+							wait(4)
+							pcall(function()
+								local boom = Instance.new("Explosion", game.Workspace)
+								boom.BlastRadius = 0
+								boom.BlastPressure = 1000000000000000
+								boom.Position = torso.Position
+								boom.Visible = true
+								pcall(function()
+									for i, v in pairs(game.Workspace:GetChildren()) do
+										if v:FindFirstChild("Humanoid") ~= nil then
+											v:FindFirstChild("Humanoid"):Destroy()
+										elseif v:FindFirstChild("Head") then
+											v:FindFirstChild("Head"):Destroy()
+										elseif v:IsA("Part") then
+											v:Destroy()
+										end
+									end
+								end)
+								particles:Destroy()
+							end)
+						elseif uppertorso ~= nil then
+							local sound = Instance.new("Sound", uppertorso)
+							sound.Volume = 10
+							sound.EmitterSize = 99e99
+							sound.SoundId = "rbxassetid://1809280396"
+							local particles = Instance.new("ParticleEmitter", uppertorso)
+							particles.Texture = "rbxassetid://280516525"
+							particles.Rate = 99e99
+							particles.Rotation = NumberRange.new(0, 360)
+							particles.RotSpeed = NumberRange.new(360, 360)
+							particles.SpreadAngle = Vector2.new(10000,10000)
+							sound:Play()
+							wait(4)
+							pcall(function()
+								local boom = Instance.new("Explosion", game.Workspace)
+								boom.BlastRadius = 0
+								boom.BlastPressure = 200000000200000000e200000000200000000
+								boom.Position = uppertorso.Position
+								boom.Visible = true
+								pcall(function()
+									for i, v in pairs(game.Workspace:GetChildren()) do
+										if v:FindFirstChild("Humanoid") ~= nil then
+											v:FindFirstChild("Humanoid"):Destroy()
+										elseif v:FindFirstChild("Head") then
+											v:FindFirstChild("Head"):Destroy()
+										elseif v:IsA("Part") then
+											v:Destroy()
+										end
+									end
+								end)
+								particles:Destroy()
+							end)
+						end
+						end)
+						end
+						end
