@@ -1,0 +1,244 @@
+if not decompile then decompile = loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-SimpleDecompile-V2-12641"))() end
+
+function tableloop(tbl, indent, equal, meta)
+    meta = meta or 0
+    indent = indent or 0
+    local result = (not equal and string.rep('  ', indent) or '') .. '{'
+    equal = false
+    if typeof(tbl) ~= 'table' then return Handle(tbl, indent) end
+    local _AM = 0
+    for key, value in pairs(tbl) do
+        _AM = _AM + 1
+        if typeof(value) == 'table' then
+            if getmetatable(value) then
+                result = result .. string.rep('  ', indent) .. 'local meta' .. (meta ~= 0 and tostring(meta) or '') .. ' = ' .. tableloop(getrawmetatable(value), indent, true, meta+1)
+                meta = meta + 1
+            else
+                result = result .. '\n' .. (not equal and string.rep('  ', indent + 1) or '') .. keyF(key) .. tableloop(value, indent + 1, true, meta)
+            end
+        else
+            result = result .. '\n' .. (not equal and string.rep('  ', indent + 1) or '') .. keyF(key) .. Handle(value, indent + 1, keyE(key, value)) .. ';'
+        end
+    end
+    return _AM > 0 and (result .. '\n' .. string.rep('  ', indent) .. '}') or '{}'
+end
+function StartsDigit(str)
+ return str:match("%d")==str:sub(1,1)
+end
+local History = {}
+
+function GetFullName(instance)
+    if instance == game:GetService("Players").LocalPlayer then return 'game:GetService("Players").LocalPlayer' end
+    local p = instance
+    local lo = {}
+    while (p ~= game and p.Parent ~= nil) do
+        table.insert(lo, p)
+        p = p.Parent
+    end
+    local fullName
+    if #lo == 0 then
+        return "nil --[[ PARENTED TO NIL OR DESTROYED ]]"
+    end
+    if lo[#lo].ClassName ~= "Workspace" then
+        fullName = 'game:GetService("' .. lo[#lo].ClassName .. '")'
+    else
+        fullName = "workspace"
+    end
+    for i = #lo - 1, 1, -1 do
+     if lo[i] then
+        fullName = fullName .. ':FindFirstChild("' .. lo[i].Name .. '")'
+     end
+    end
+    return fullName:gsub(":FindFirstChild%(." .. game:GetService("Players").LocalPlayer.Name .. '.%)', '.LocalPlayer')
+end
+
+function MakeIdentifier(instance, fullpath)
+ local name = instance and instance.Name or 'nil_'
+ local allowed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_'
+ local cases = {
+  ['\n'] = '_',
+  ['\\'] = '_',
+  ["'"] = '_',
+  ['"'] = '_',
+  ['%.'] = '_',
+  ['%$'] = '_',
+  ['%%'] = '_',
+  ['%^'] = '_',
+  ['%('] = '_',
+  ['%)'] = '_',
+  ['%['] = '_',
+  ['%]'] = '_',
+  ['%+'] = '_',
+  ['%-'] = '_',
+  ['?'] = '_'
+ }
+ if fullpath then
+  name = GetFullName(instance)
+ else
+  local letters = {}
+  for i = 1, #name do
+   local p = name:sub(i,i)
+   if not allowed:find(p) then
+    if cases[p] then
+     table.insert(letters, cases[p])
+    else
+     table.insert(letters, '_')
+    end
+   elseif allowed:find(p) then
+    table.insert(letters, p)
+   end
+  end
+  name = table.concat(letters, '')
+ end
+ if StartsDigit(name) then
+  name = '_' .. name
+ end
+ if not fullpath then
+  for _, v in cases do
+   name = name:gsub(_, v)
+  end
+ end
+ local count = 1
+ for i, v in History do
+  if v.Name:gsub('_%d+', '') == name:gsub("_%d+", '') then
+   count = count + 1
+  end
+ end
+ if count ~= 1 then name = name .. '_' .. tostring(count) end
+ History[instance] = {Name=name}
+ return name
+end
+function GetIdentifier(instance)
+ return History[instance] and History[instance].Name or nil
+end
+local url = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/roblox/API-Dump.json"
+local HttpService = game:GetService('HttpService');
+local jsonData = HttpService:JSONDecode(game:HttpGet(url))
+local Properties = {}
+local BlacklistedProps = {
+ 'Transparency',
+ 'BackgroundColor',
+ 'TextColor'
+}
+
+for _, class in ipairs(jsonData.Classes) do
+    if class.MemoryCategory == 'Instances' or class.MemoryCategory == 'Gui' then
+      Properties[class.Name] = {}
+      for i, v in ipairs(class.Members) do
+       if class and class.Name then
+       local Ignore = false
+       if v.Tags then
+        if table.find(v.Tags, 'ReadOnly') then Ignore = true end
+       end
+       if v.MemberType == 'Property' and not Ignore and v and not table.find(BlacklistedProps, v.Name) then
+        table.insert(Properties[class.Name], v)
+       end
+       end
+      end
+     end
+    end
+function getproperties(class) return Properties[class] or {} end
+table.insert(Properties['ScreenGui'], {Name='Enabled'})
+for i, v in Properties['GuiObject'] do
+ table.insert(Properties['TextLabel'], v)
+ table.insert(Properties['TextButton'], v)
+ table.insert(Properties['ScrollingFrame'], v)
+ table.insert(Properties['Frame'], v)
+ table.insert(Properties['ImageLabel'], v)
+ table.insert(Properties['ImageButton'], v)
+end -- Do this to not miss properties like position & size, thanks to pcall it won't error out due to properties that arent in these classes.
+function Handle(data, indent, identifier)
+    local dataType = typeof(data)
+    local constructors = {
+        ['string'] = function(data) return "'" .. data:gsub("'", "\\'"):gsub('\\', '\\\\'):gsub('\n', '\\n') .. "'" end,
+        ['table'] = function(data) return tableloop(data, indent and indent + 1 or 1, identifier and true or false) end,
+        ['number'] = function(data) return tostring(data) end,
+        ['Vector3'] = function(data) return string.format("Vector3.new(%f, %f, %f)", data.X, data.Y, data.Z) end,
+        ['Vector2'] = function(data) return string.format("Vector2.new(%f, %f)", data.X, data.Y) end,
+        ['UDim'] = function(data) return string.format("UDim.new(%f, %f)", data.Scale, data.Offset) end,
+        ['UDim2'] = function(data) return string.format("UDim2.new(%f, %f, %f, %f)", data.X.Scale, data.X.Offset, data.Y.Scale, data.Y.Offset) end,
+        ['CFrame'] = function(data) local components = {data:GetComponents()} return string.format("CFrame.new(%s)", table.concat(components, ", ")) end,
+        ['Color3'] = function(data) return string.format("Color3.fromRGB(%d, %d, %d)", math.floor(data.R * 255), math.floor(data.G * 255), math.floor(data.B * 255)) end,
+        ['BrickColor'] = function(data) return string.format("BrickColor.new('%s')", tostring(data)) end,
+        ['Enum'] = function(data) return string.format("%s", tostring(data)) end,
+        ['EnumItem'] = function(data) return string.format("%s", tostring(data)) end,
+        ['Instance'] = function(data) return ('%s'):format(GetFullName(data)) end,
+        ['boolean'] = function(data) return tostring(data) end,
+        ['ColorSequence'] = function(data) 
+            local colorSeqCode = 'ColorSequence.new({'
+            for i, keypoint in ipairs(data.Keypoints) do
+                local color = keypoint.Value
+                local time = keypoint.Time
+                colorSeqCode = colorSeqCode .. ('ColorSequenceKeypoint.new(%f, Color3.fromRGB(%d, %d, %d)),'):format(time, color.R * 255, color.G * 255, color.B * 255)
+            end
+            colorSeqCode = colorSeqCode:sub(1, -2)
+            colorSeqCode = colorSeqCode .. '})'
+            return colorSeqCode
+        end,
+        ['NumberSequence'] = function(data) 
+            local numSeqCode = 'NumberSequence.new({'
+            for i, keypoint in ipairs(data.Keypoints) do
+                local value = keypoint.Value
+                local time = keypoint.Time
+                numSeqCode = numSeqCode .. ('NumberSequenceKeypoint.new(%f, %f),'):format(time, value)
+            end
+            numSeqCode = numSeqCode:sub(1, -2)
+            numSeqCode = numSeqCode .. '})'
+            return numSeqCode
+        end,
+        ['Font'] = function(data)
+          return ('Font.new("%s", %s, %s)'):format(tostring(data.Family), tostring(data.Weight), tostring(data.Style))
+        end
+    }
+    if constructors[dataType] then
+        return constructors[dataType](data)
+    else
+        return tostring(typeof(data)) .. '.new(' .. tostring(data):gsub(', ', ','):gsub(' ', ''):gsub(',', ', ') .. ')'
+    end
+end
+
+function stealgui(gui, parentIdentifier)
+    local Instances = {gui}
+    for _, descendant in ipairs(gui:GetDescendants()) do
+        table.insert(Instances, descendant)
+    end
+    local Code = ''
+    for _, instance in ipairs(Instances) do
+        task.wait() -- Reduce the lag.
+        if instance and instance.Parent then
+            local Identifier = MakeIdentifier(instance)
+            local parent = GetIdentifier(instance.Parent) or MakeIdentifier(instance.Parent, true)
+            if instance.ClassName == 'LocalScript' and decompile then
+             Code = Code .. Identifier .. (' = Instance.new(\'' .. instance.ClassName .. '\', %s)\n'):format(parent)
+             Code = Code .. Identifier .. '.Name = ' .. Handle(instance.Name) .. '\n'
+             Code = Code .. 'function SCRIPT_' .. Identifier:upper() .. '()\n' .. decompile(instance, 1) .. '\nend\ntask.spawn(SCRIPT_' .. Identifier..')'
+            elseif instance.ClassName == 'ModuleScript' and decompile then
+             Code = Code .. Identifier .. (' = Instance.new(\'' .. instance.ClassName .. '\', %s)\n'):format(parent)
+             Code = Code .. Identifier .. '.Name = ' .. Handle(instance.Name) .. '\n'
+             Code = Code .. 'function MODULE_' .. Identifier:upper() .. '()\n' .. decompile(instance, 1) .. '\nend'
+            elseif instance.ClassName ~= 'ModuleScript' and instance.ClassName ~= 'LocalScript' then
+             Code = Code .. Identifier .. (' = Instance.new(\'' .. instance.ClassName .. '\', %s)\n'):format(parent)
+             Code = Code .. Identifier .. '.Name = ' .. Handle(instance.Name) .. '\n'
+             local pr = getproperties(instance.ClassName)
+             for _, property in ipairs(pr) do
+                local s,e = pcall(function()
+                    local def = Instance.new(instance.ClassName)[property.Name]
+                    if property and def ~= instance[property.Name] then
+                     local Handled = Handle(instance[property.Name])
+                     Code = Code .. Identifier .. '.' .. property.Name .. ' = ' .. Handled .. '\n'
+                    end
+                end)
+             end
+             Code = Code .. '\n'
+            end
+        end
+    end
+    print('finished stealing gui!')
+    return "--[[GENERATED WITH GUISTEALER, JOIN THE DISCORD OR REPORT BUGS IN https://discord.gg/gYhqMRBeZV]]\n" ..Code
+end
+
+getgenv().stealui = stealgui
+getgenv().stealgui = stealgui
+getgenv().uiaslua = stealgui
+
+return stealgui
