@@ -92,8 +92,82 @@ Tab:CreateButton("SimpleSpy",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
 end) 
 
+Tab:CreateButton("Computer",function()
+loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Computer"))()
+end) 
+
+Tab:CreateButton("Anti....",function()
+loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Anti...."))()
+end) 
+
+Tab:CreateButton("GuiStealer",function()
+loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/GuiStealer"))()
+end) 
+
+Tab:CreateButton("F3X",function()
+
+end) 
+
+Tab:CreateButton("Anti Teleport",function()
+local Players = game:GetService("Players")
+local LastPosition = {}
+ 
+local function NewPlayer(player)
+    player.CharacterAdded:Connect(function()
+        LastPosition[player.UserId] = nil
+    end)
+    spawn(function()
+        while true do
+            wait(1)
+            local char = player.Character
+            if char ~= nil then
+                local humanoid = char:FindFirstChildOfClass("Humanoid")
+                if humanoid ~= nil and char.PrimaryPart ~= nil then
+                    local CurrentPosition = char:GetPrimaryPartCFrame()
+                    local TempLastPosition = LastPosition[player.UserId]
+                    if TempLastPosition ~= nil then
+                        local BeforePosition = Vector3.new(TempLastPosition.X, 0, TempLastPosition.Z)
+                        local NewPosition = Vector3.new(CurrentPosition.X, 0, CurrentPosition.Z)
+                        
+                        local Distance = (BeforePosition - NewPosition).magnitude
+                        local MaxDistance = humanoid.WalkSpeed * 2
+                        if Distance > MaxDistance then
+                            char:SetPrimaryPartCFrame(TempLastPosition)
+                            continue
+                        end
+                    end
+                    LastPosition[player.UserId] = CurrentPosition
+                end
+            end
+        end
+    end)
+end
+ 
+Players.PlayerAdded:Connect(NewPlayer)
+for _, player in pairs(Players:GetPlayers()) do
+    NewPlayer(player)
+end
+end) 
+
+Tab:CreateButton("TP all players to you",function()
+while true do wait(0.1)
+local plr = game:GetService("Players").LocalPlayer
+for i,v in pairs(game:GetService("Players"):GetChildren()) do
+    if v.ClassName == "Player" and v.Name ~= plr.Name then
+        if v.Character:FindFirstChild("HumanoidRootPart") then
+            v.Character.HumanoidRootPart.CFrame = CFrame.new(plr.Character.HumanoidRootPart.Position)
+        end
+    end
+end
+end
+end) 
+
 Tab:CreateButton("SimpleSpy 2",function()
 loadstring(game:HttpGet("https://pastebin.com/raw/7JKhfPp6", true))()
+end) 
+
+Tab:CreateButton("Aimer X (Gui Esp)",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Aimer_loader.lua'))()
 end) 
 
 Tab:CreateButton("Universal Aimbot N Esp V2",function()
