@@ -101,6 +101,19 @@ loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75c
 end) 
 
 Tab:CreateButton("FF",function()
+local Player = game.Players.LocalPlayer
+local Character = Player.Character
+local Humanoid = Character.Humanoid
+ 
+Humanoid.MaxHealth = 999999999999999999999999999999999999999999999999999999999999
+Humanoid.Health = Humanoid.MaxHealth / 999999999999999999999999999999999999999999999999999999999999
+ 
+Humanoid.HealthChanged:connect(function()
+    if Humanoid.Health < 999999999999999999999999999999999999999999999999999999999999 then
+        Humanoid.Health = Humanoid.MaxHealth
+    end
+end) 
+wait(1)
 ff = Instance.new("ForceField", game.Players.LocalPlayer.Character)
 ff.Visible = true
 end) 
