@@ -116,6 +116,20 @@ Tab:CreateButton("SimpleSpy 3",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("Remove Tool",function()
+local Plr = game.Players.LocalPlayer
+local Tool = Plr.Backpack:FindFirstChild('Remove')
+local Event = Tool.Event
+ 
+Tool.Equipped:connect(function(mouse)
+    mouse.Button1Down:connect(function()
+        if mouse.Target then
+            Event:FireServer(mouse.Target)
+        end
+    end)
+end)
+end) 
+
 Tab:CreateButton("Rso Script | Noclip",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/RSOscrip/Noclip/main/Noclip"))()
 end) 
