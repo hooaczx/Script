@@ -72,6 +72,41 @@ local Win = Lib:CreateWindow("1hooaczx1")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Real Time Clock⏰"",function()
+while true do wait(1)
+local player = game:GetService("Players").LocalPlayer
+local gui = Instance.new("ScreenGui")
+local textLabel = Instance.new("TextLabel")
+local frame = Instance.new("Frame")
+ 
+gui.Name = "TimeDisplay"
+frame.Name = "Background"
+frame.Parent = gui
+frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+frame.Position = UDim2.new(0.5, 0, 0, 0)
+frame.Size = UDim2.new(0, 150, 0, 30)
+frame.AnchorPoint = Vector2.new(0.5, 0)
+ 
+textLabel.Name = "Time"
+textLabel.Parent = frame
+textLabel.Text = tostring(os.date("%X"))
+textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+textLabel.Size = UDim2.new(0, 100, 0, 50)
+textLabel.TextScaled = true
+textLabel.TextWrapped = true
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.BackgroundTransparency = 1
+textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+ 
+gui.Parent = player:WaitForChild("PlayerGui")
+ 
+while true do
+    wait(1)
+    textLabel.Text = tostring(os.date("%X"))
+end
+end
+end) 
+
 Tab:CreateButton("F3X",function()
 loadstring(game:GetObjects("rbxassetid://6695644299")[1].Source)()
 end) 
@@ -110,6 +145,203 @@ end)
 
 Tab:CreateButton("SimpleSpy 3",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
+end) 
+
+Tab:CreateButton("The sun sets quickly and then rises quickly☀&🌕",function()
+-- settings --
+
+local DayLength = 14.40
+local InitialTime = 8
+
+-- script --
+-- script by Kaivex, credit is not needed but would be appreciated
+
+local days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+local RS = game:GetService("RunService")
+local CurrentDay = 1
+local playerList = {}
+local start = tick()-(InitialTime/24*DayLength)
+local AM = true
+
+RS.Stepped:Connect(function()
+	local t = (tick()-start)/DayLength*24
+	if t >= 12 then AM = false end
+	if t >= 24 then
+		start = tick()
+		CurrentDay = math.fmod(CurrentDay, 7)+1
+		AM = true
+	end
+	game.Lighting.ClockTime = math.fmod(t, 24)
+	for i, plr in pairs(playerList) do
+		local day = plr.PlayerGui.TimeGui.Day
+		local Time = plr.PlayerGui.TimeGui.Time
+		local AMPM = plr.PlayerGui.TimeGui.AMPM
+		day.Text = days[CurrentDay]
+		local hour = tonumber(string.sub(string.sub(game.Lighting.TimeOfDay, 0, 5), 0, string.find(game.Lighting.TimeOfDay, ":")-1))
+		local minute = tonumber(string.sub(string.sub(game.Lighting.TimeOfDay, 0, 5), string.find(game.Lighting.TimeOfDay, ":")+1))
+		if hour >= 13 then
+			hour -= 12
+		end
+		if string.len(tostring(minute)) == 1 then minute = "0"..minute end
+		Time.Text = hour..":"..minute
+		AMPM.Text = if AM then "AM" else "PM"
+	end
+end)
+
+game.Players.PlayerAdded:Connect(function(plr)
+	plr.PlayerGui:WaitForChild("TimeGui")
+	table.insert(playerList, plr)
+end)
+
+game.Players.PlayerRemoving:Connect(function(plr)
+	if table.find(playerList, plr) then
+		table.remove(playerList, table.find(playerList, plr))
+	end
+end)
+end) 
+
+Tab:CreateButton("Vehicle Legends",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/AaronS69420/WheelHub/main/MainFile", true))()
+end) 
+
+Tab:CreateButton("SCRIPTER HUB",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/uaahjajajqoqiqkqhwhwhw/SCRIPTERV3/main/SCRIPTER%20HUB%20V5"))()
+end) 
+
+Tab:CreateButton("Set Time of Day Gui☀&🌕",function()
+-- Script made by Tadachii
+-- Press (F9) to see a printed message of the current/default time of day.
+
+local lighting = game:GetService("Lighting")
+local OriginalTime = lighting.TimeOfDay
+print(OriginalTime)
+
+-- Create GUI
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create ScreenGui
+local timeOfDayGUI = Instance.new("ScreenGui")
+timeOfDayGUI.Name = "TimeOfDayGUI"
+timeOfDayGUI.Parent = playerGui
+
+-- Create draggable frame
+local holder = Instance.new("Frame")
+holder.Name = "Holder"
+holder.Size = UDim2.new(0, 200, 0, 200)
+holder.Position = UDim2.new(0, 10, 0, 10)
+holder.BackgroundTransparency = 0.5
+holder.BackgroundColor3 = Color3.new(0, 0, 0)
+holder.Active = true
+holder.Draggable = true
+holder.Parent = timeOfDayGUI
+
+-- Create Time of Day label
+local timeLabel = Instance.new("TextLabel")
+timeLabel.Name = "TimeLabel"
+timeLabel.Size = UDim2.new(1, 0, 0, 30)
+timeLabel.BackgroundTransparency = 1
+timeLabel.Text = "Time of Day"
+timeLabel.TextScaled = true
+timeLabel.TextColor3 = Color3.new(1, 1, 1) -- Set text color to Constitutional white
+timeLabel.Parent = holder
+
+-- Create Time Entry box
+local timeEntryBox = Instance.new("TextBox")
+timeEntryBox.Name = "TimeEntryBox"
+timeEntryBox.Size = UDim2.new(0.8, 0, 0, 30)
+timeEntryBox.Position = UDim2.new(0.1, 0, 0, 40)
+timeEntryBox.BackgroundTransparency = 0.5
+timeEntryBox.BackgroundColor3 = Color3.new(0, 0, 0) -- Set background color to black
+timeEntryBox.Text = ""
+timeEntryBox.TextScaled = true
+timeEntryBox.TextColor3 = Color3.new(0.851, 0.851, 0.851) -- Set text color to Constitutional white
+timeEntryBox.PlaceholderText = "1 ~ 2400 hours"
+timeEntryBox.Parent = holder
+
+-- Create Set Time button
+local setTimeButton = Instance.new("TextButton")
+setTimeButton.Name = "SetTimeButton"
+setTimeButton.Size = UDim2.new(0.8, 0, 0, 30)
+setTimeButton.Position = UDim2.new(0.1, 0, 0, 80)
+setTimeButton.BackgroundTransparency = 0.5
+setTimeButton.BackgroundColor3 = Color3.new(0, 1, 0) -- Set background color to bright green
+setTimeButton.Text = "Set Time"
+setTimeButton.TextScaled = true
+setTimeButton.TextColor3 = Color3.new(0, 0, 0) -- Set text color to black
+setTimeButton.Parent = holder
+
+-- Create Print Time button
+local printTimeButton = Instance.new("TextButton")
+printTimeButton.Name = "PrintTimeButton"
+printTimeButton.Size = UDim2.new(0.8, 0, 0, 30)
+printTimeButton.Position = UDim2.new(0.1, 0, 0, 120)
+printTimeButton.BackgroundTransparency = 0.5
+printTimeButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5) -- Set background color to gray
+printTimeButton.Text = "Print Time (F9)"
+printTimeButton.TextScaled = true
+printTimeButton.TextColor3 = Color3.new(0, 0, 0) -- Set text color to black
+printTimeButton.Parent = holder
+
+-- Create Destroy GUI button
+local destroyGUIButton = Instance.new("TextButton")
+destroyGUIButton.Name = "DestroyGUIButton"
+destroyGUIButton.Size = UDim2.new(0.8, 0, 0, 30)
+destroyGUIButton.Position = UDim2.new(0.1, 0, 0, 160)
+destroyGUIButton.BackgroundTransparency = 0.5
+destroyGUIButton.BackgroundColor3 = Color3.new(1, 0, 0) -- Set background color to bright red
+destroyGUIButton.Text = "Destroy GUI"
+destroyGUIButton.TextScaled = true
+destroyGUIButton.TextColor3 = Color3.new(0, 0, 0) -- Set text color to black
+destroyGUIButton.Parent = holder
+
+-- Function to set the time of day
+local function setTimeOfDay()
+    local timeStr = timeEntryBox.Text
+    local timeNum = tonumber(timeStr)
+
+    -- Check if the entered value is a valid numerical digit between 1 and 2400
+    if timeNum and timeNum >= 1 and timeNum <= 2400 and math.floor(timeNum) == timeNum then
+        lighting.TimeOfDay = timeNum
+    else
+        -- Clear the text field and restore the hint
+        timeEntryBox.Text = ""
+        timeEntryBox.PlaceholderText = "1 ~ 2400 hours"
+    end
+end
+
+-- Set Time button click event
+setTimeButton.MouseButton1Click:Connect(function()
+    if timeEntryBox.Text == "" then
+        -- Do nothing if the time entry box is empty
+    else
+        setTimeOfDay()
+        local ChangedTime = lighting.TimeOfDay
+        if ChangedTime == 24 then
+            print("The time of day has been changed to: ", ChangedTime, " or 2400")
+        else
+            print("The time of day has been changed to: ", ChangedTime)
+        end
+    end
+end)
+
+-- Print Time button click event
+printTimeButton.MouseButton1Click:Connect(function()
+    local currentTime = lighting.TimeOfDay
+    if currentTime == 24 then
+        print("The time of day is currently: ",currentTime, " or 2400")
+    else
+        print("The time of day is currently: ",currentTime)
+    end
+end)
+
+-- Destroy GUI button click event
+destroyGUIButton.MouseButton1Click:Connect(function()
+    timeOfDayGUI:Destroy()
+end)
+
+-- Add GUI to player's PlayerGui
+timeOfDayGUI.Parent = playerGui
 end) 
 
 Tab:CreateButton("Punkz OG Hub",function()
@@ -1930,7 +2162,7 @@ Tab:CreateButton("Calculator",function()
 loadstring(game:HttpGet("https://rawscripts.net/raw/Calculator_229", true))()
 end) 
 
-Tab:CreateButton("Account Age",function()
+Tab:CreateButton("Account Age🕐",function()
 -- Load the Kavo UI library
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
 
@@ -3464,7 +3696,7 @@ Tab:CreateButton("Dh ios fly",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/scripthubekitten/dahoodios/main/hoodcustomfly", true))()
 end) 
 
-Tab:CreateButton("Real time clock",function()
+Tab:CreateButton("Real time clock Gui🕐",function()
 -- Load the Kavo UI library
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
 
