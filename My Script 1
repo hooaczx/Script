@@ -149,6 +149,72 @@ Tab:CreateButton("SimpleSpy 3",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("Bot Walk Afk",function()
+function roll()
+action = math.random(1,4)
+return action
+end
+ 
+function walkandjump()
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local move = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):MoveTo(Vector3.new(math.random(-100,100), 10, math.random(-100,100)))
+wait(math.random(1,10))
+LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Jump = true
+end
+ 
+function jump()
+local LocalPlayer = game:GetService("Players").LocalPlayer
+LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Jump = true
+end
+ 
+function walk()
+local move = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):MoveTo(Vector3.new(math.random(-100,100), 10, math.random(-100,100)))
+end
+ 
+function talk()
+localaction = math.random(1,4)
+ 
+if localaction == 1 then
+chatString = "Hello World"
+end
+if localaction == 2 then
+chatString = "Message Recieved from 'Alice' >> 'SGksIEJvYiE='"
+end
+if localaction == 3 then
+chatString = "Message Recieved from 'Bob' >> 'SGksIEFsaWNlIQ=='"
+end
+if localaction == 4 then
+chatString = "Uncaught Error: Your mom"
+end
+game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(chatString, "All")
+end
+ 
+while true do
+wait(math.random(1,(10)))
+roll()
+if action == 1 then
+print("walking and jumping")
+walkandjump()
+end
+if action == 2 then
+print("walking")
+walk()
+end
+if action == 3 then
+print("jumping")
+jump()
+end
+if action == 4 then
+print("talking")
+talk()
+end
+end
+end) 
+
+Tab:CreateButton("Tracker",function()
+loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Tracker"))()
+end) 
+
 Tab:CreateButton("Goku",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Goku"))()
 end) 
