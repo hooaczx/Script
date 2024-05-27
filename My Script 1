@@ -149,6 +149,244 @@ Tab:CreateButton("SimpleSpy 3",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("Fly (ReSet Character To Un Fly)",function()
+-- [ This is not my scripts, I just put them together, credit to THREESPY712 for the noclip script and a guest for the fly, lol ]
+-- [ IF NOCLIP DOES NOT WORK EXECUTE IT BY ITSELF ]
+-- Fly Script
+loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
+wait(1)
+repeat wait() 
+	until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Torso") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid") 
+local mouse = game.Players.LocalPlayer:GetMouse() 
+repeat wait() until mouse
+local plr = game.Players.LocalPlayer 
+local torso = plr.Character.Torso 
+local flying = true
+local deb = true 
+local ctrl = {f = 0, b = 0, l = 0, r = 0} 
+local lastctrl = {f = 0, b = 0, l = 0, r = 0} 
+local maxspeed = 50 
+local speed = 0 
+
+function Fly() 
+local bg = Instance.new("BodyGyro", torso) 
+bg.P = 9e4 
+bg.maxTorque = Vector3.new(9e9, 9e9, 9e9) 
+bg.cframe = torso.CFrame 
+local bv = Instance.new("BodyVelocity", torso) 
+bv.velocity = Vector3.new(0,0.1,0) 
+bv.maxForce = Vector3.new(9e9, 9e9, 9e9) 
+repeat wait() 
+plr.Character.Humanoid.PlatformStand = true 
+if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then 
+speed = speed+.5+(speed/maxspeed) 
+if speed > maxspeed then 
+speed = maxspeed 
+end 
+elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then 
+speed = speed-1 
+if speed < 5 then 
+speed = 5 
+end 
+end 
+if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then 
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed 
+lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r} 
+elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then 
+bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed 
+else 
+bv.velocity = Vector3.new(0,0.1,0) 
+end 
+bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0) 
+until not flying 
+ctrl = {f = 0, b = 0, l = 0, r = 0} 
+lastctrl = {f = 0, b = 0, l = 0, r = 0} 
+speed = 0 
+bg:Destroy() 
+bv:Destroy() 
+plr.Character.Humanoid.PlatformStand = false 
+end 
+mouse.KeyDown:connect(function(key) 
+if key:lower() == "e" then 
+if flying then flying = false 
+else 
+flying = true 
+Fly() 
+end 
+elseif key:lower() == "w" then 
+ctrl.f = 1 
+elseif key:lower() == "s" then 
+ctrl.b = -1 
+elseif key:lower() == "a" then 
+ctrl.l = -1 
+elseif key:lower() == "d" then 
+ctrl.r = 1 
+end 
+end) 
+mouse.KeyUp:connect(function(key) 
+if key:lower() == "w" then 
+ctrl.f = 0 
+elseif key:lower() == "s" then 
+ctrl.b = 0 
+elseif key:lower() == "a" then 
+ctrl.l = 0 
+elseif key:lower() == "d" then 
+ctrl.r = 0 
+end 
+end)
+Fly()
+
+-- Noclip Script
+
+local noclip = true -- Gets if you want the noclip
+char = game.Players.LocalPlayer.Character -- Gets your player
+while true do -- Make sure someone is in game
+if noclip == true then
+for _,v in pairs(char:children()) do
+pcall(function()
+if v.className == "Part" then
+v.CanCollide = false
+end
+end)
+end
+end
+game:service("RunService").Stepped:wait()
+end
+end) 
+
+Tab:CreateButton("Fly (F To Fly And Un Fly",function()
+loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
+wait(1)
+local speed = 50
+local bodyvelocityenabled = true
+
+local Imput = game:GetService("UserInputService")
+local Plr = game.Players.LocalPlayer
+local nextmsgspd = false
+local nextmsgrc = false
+local flying = true
+local rc = 5
+local Mouse = Plr:GetMouse()
+local cn
+local cn1
+local cn2
+local cn3
+local cn4
+local currentTween
+
+local speedPart = Instance.new("Part", workspace)
+speedPart.Anchored = true
+speedPart.Transparency = 1
+speedPart.CanCollide = false
+speedPart.Size = Vector3.new(10, 25, 10)
+
+function To(position)
+if not flying then return end
+local Chr = Plr.Character
+if Chr ~= nil then
+local ts = game:GetService("TweenService")
+local char = game.Players.LocalPlayer.Character
+local hm = char.HumanoidRootPart
+local dist = (hm.Position - Mouse.Hit.p).magnitude
+local tweenspeed = dist/tonumber(speed)
+local ti = TweenInfo.new(tonumber(tweenspeed), Enum.EasingStyle.Linear)
+local tp = {CFrame = CFrame.new(position)}
+currentTween = ts:Create(hm, ti, tp)
+currentTween:Play()
+if bodyvelocityenabled == true then
+local bv = Instance.new("BodyVelocity")
+bv.Name = "BypassedFlyBodyVelocity"
+bv.Parent = hm
+bv.MaxForce = Vector3.new(100000,100000,100000)
+bv.Velocity = Vector3.new(0,0,0)
+wait(tonumber(tweenspeed))
+bv:Destroy()
+end
+end
+end
+
+cn4 = Imput.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.F then
+		flying = not flying
+		for i,v in pairs(Plr.Character:GetDescendants()) do
+            if v.Name == "BypassedFlyBodyVelocity" then
+				v:Destroy()
+			end
+	    end
+    end
+end)
+
+cn = Plr.Chatted:Connect(function(msg)
+    if nextmsgspd then
+		speed = tonumber(msg)
+		nextmsgspd = false
+	end
+	if nextmsgrc then
+		rc = tonumber(msg)
+		nextmsgrc = false
+	end
+    if string.lower(tostring(msg)) == "set fly speed" then
+        nextmsgspd = true
+	end
+	if string.lower(tostring(msg)) == "toggle visibility" then
+        if speedPart.Transparency == 1 then
+			speedPart.Transparency = .75
+		else speedPart.Transparency = 1
+		end
+	end
+	if string.lower(tostring(msg)) == "set rc" then
+        nextmsgrc = true
+	end
+	if string.lower(tostring(msg)) == "unload fly" then
+		cn:Disconnect()
+		cn1:Disconnect()
+		cn2:Disconnect()
+        cn3:Disconnect()
+		cn4:Disconnect()
+		speedPart:Destroy()
+		flying = false
+		wait(.1)
+		for i,v in pairs(Plr.Character:GetDescendants()) do
+            if v.Name == "BypassedFlyBodyVelocity" then
+				v:Destroy()
+			end
+	    end
+		spawn(function()
+		    currentTween:Cancel()
+		end)
+		print("Unloaded.")
+	end
+end)
+
+local mousePressed = false
+
+cn1 = Mouse.Button1Down:Connect(function()
+    mousePressed = true
+end)
+
+cn2 = Mouse.Button1Up:Connect(function()
+    mousePressed = false
+	if currentTween then
+	    currentTween:Cancel()
+	end
+end)
+
+local btz = 0
+cn3 = game:GetService("RunService").Heartbeat:Connect(function()
+    speedPart.CFrame = CFrame.new(Plr.Character.HumanoidRootPart.Position + (Mouse.UnitRay.Direction * 15), Plr.Character.HumanoidRootPart.Position)
+    if flying and mousePressed and btz >= rc then
+		btz = 0
+		if currentTween then
+	        currentTween:Cancel()
+		end
+        To(Plr.Character.HumanoidRootPart.Position + (Mouse.UnitRay.Direction * 50) + Vector3.new(0, 2.5, 0))
+	end
+	btz = btz + 1
+end)
+wait(.03)
+print("Bypassed fly loaded")
+end) 
+
 Tab:CreateButton("Server shutdown",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Server%20shutdown"))()
 end) 
@@ -13451,7 +13689,7 @@ game.Players.LocalPlayer.Character.Animate.Disabled = true
 end
 end) 
 
-Tab:CreateButton("Fly Pc R15", function()
+Tab:CreateButton("Fly R15 (X To Fly And Un Fly)", function()
 loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
