@@ -149,6 +149,63 @@ Tab:CreateButton("SimpleSpy 3",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("2D Camera",function()
+local Camera = game.Workspace.Camera
+local Player = game.Players.LocalPlayer
+ 
+repeat
+	wait()
+until Player.Character
+ 
+local Player = Player.Character
+local HumanoidRootPart = Player.HumanoidRootPart
+ 
+local Positioner = Instance.new("BodyPosition", HumanoidRootPart)
+Positioner.MaxForce = Vector3.new(0, 0, math.huge)
+Positioner.Position = Vector3.new(0, 0,HumanoidRootPart.Position.Z)
+ 
+Camera.CameraType = Enum.CameraType.Scriptable
+Camera.CameraSubject = Player.HumanoidRootPart
+ 
+game:GetService("RunService").RenderStepped:connect(function()
+	Camera.CFrame = CFrame.new(HumanoidRootPart.CFrame.X, HumanoidRootPart.CFrame.Y, HumanoidRootPart.CFrame.Z + 30)
+	Camera.FieldOfView = 50
+end)
+end) 
+
+Tab:CreateButton("first person camara",function()
+local runService = game:GetService("RunService")
+ 
+-- By 08kz!
+ 
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+ 
+workspace:FindFirstChild(player.Name):WaitForChild("Humanoid").CameraOffset = Vector3.new(0, 0, -1.1)
+ 
+runService.RenderStepped:Connect(function()
+    for i, v in pairs(character:GetChildren()) do
+        if v:IsA("MeshPart") and v.Name ~= "Head" then
+            v.LocalTransparencyModifier = 0
+        end     
+    end
+end)
+ 
+player.Character:WaitForChild("Humanoid"):GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+    if player.Character.Humanoid.WalkSpeed == 12 then
+        for i = 1,5 do
+            wait(.01)
+            workspace.CurrentCamera.FieldOfView -= (i*2)
+        end
+    else
+        for i = 1,5 do
+            wait(.01)
+            workspace.CurrentCamera.FieldOfView += (i*2)
+        end
+    end
+end)
+end) 
+
 Tab:CreateButton("Skybox Gui",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Skybox%20Gui"))()
 end) 
