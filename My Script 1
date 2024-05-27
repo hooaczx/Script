@@ -149,6 +149,28 @@ Tab:CreateButton("SimpleSpy 3",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("Camera Bobble",function()
+local plr = game.Players.LocalPlayer
+local Humanoid = plr.Character.Humanoid
+local RS = game:GetService("RunService")
+ 
+function Update()
+    local CT = tick()
+    if Humanoid.MoveDirection.Magnitude > 0 then
+        local BobX = math.cos(CT * 10) * 1
+        local BobY = math.abs(math.sin(CT * 10)) * 1
+        
+        local Bob = Vector3.new(BobX, BobY, 0)
+        
+        Humanoid.CameraOffset = Humanoid.CameraOffset:Lerp(Bob, .1)
+    else
+        Humanoid.CameraOffset = Humanoid.CameraOffset * .5
+    end
+end
+ 
+RS.RenderStepped:Connect(Update)
+end) 
+
 Tab:CreateButton("2D Camera",function()
 local Camera = game.Workspace.Camera
 local Player = game.Players.LocalPlayer
