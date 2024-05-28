@@ -2,7 +2,6 @@
 -- [ IF NOCLIP DOES NOT WORK EXECUTE IT BY ITSELF ]
 -- Fly Script
 loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
-wait(1)
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
@@ -91,8 +90,8 @@ speed = maxspeed
 end 
 elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then 
 speed = speed-1 
-if speed < 0 then 
-speed = 0 
+if speed < 5 then 
+speed = 5 
 end 
 end 
 if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then 
@@ -139,5 +138,42 @@ ctrl.l = 0
 elseif key:lower() == "d" then 
 ctrl.r = 0 
 end 
-end) 
+end)
+Fly()
+
+-- Noclip Script
+
+local noclip = true -- Gets if you want the noclip
+char = game.Players.LocalPlayer.Character -- Gets your player
+while true do -- Make sure someone is in game
+if noclip == true then
+for _,v in pairs(char:children()) do
+pcall(function()
+if v.className == "Part" then
+v.CanCollide = false
+end
+end)
+end
+end
+game:service("RunService").Stepped:wait()
+end
+Fly()
+
+-- Noclip Script
+
+local noclip = true -- Gets if you want the noclip
+char = game.Players.LocalPlayer.Character -- Gets your player
+while true do -- Make sure someone is in game
+if noclip == true then
+for _,v in pairs(char:children()) do
+pcall(function()
+if v.className == "Part" then
+v.CanCollide = false
+end
+end)
+end
+end
+game:service("RunService").Stepped:wait()
+end)
+end
 end) 
