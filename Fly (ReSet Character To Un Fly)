@@ -2,7 +2,6 @@
 -- [ IF NOCLIP DOES NOT WORK EXECUTE IT BY ITSELF ]
 -- Fly Script
 loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
-wait(1)
 repeat wait() 
 	until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Torso") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid") 
 local mouse = game.Players.LocalPlayer:GetMouse() 
@@ -13,8 +12,8 @@ local flying = true
 local deb = true 
 local ctrl = {f = 0, b = 0, l = 0, r = 0} 
 local lastctrl = {f = 0, b = 0, l = 0, r = 0} 
-local maxspeed = 150 
-local speed = 25 
+local maxspeed = 50 
+local speed = 0 
 
 function Fly() 
 local bg = Instance.new("BodyGyro", torso) 
@@ -33,8 +32,8 @@ speed = maxspeed
 end 
 elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then 
 speed = speed-1 
-if speed < 5 then 
-speed = 5 
+if speed < 0 then 
+speed = 0 
 end 
 end 
 if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then 
@@ -82,24 +81,6 @@ elseif key:lower() == "d" then
 ctrl.r = 0 
 end 
 end)
-Fly()
-
--- Noclip Script
-
-local noclip = true -- Gets if you want the noclip
-char = game.Players.LocalPlayer.Character -- Gets your player
-while true do -- Make sure someone is in game
-if noclip == true then
-for _,v in pairs(char:children()) do
-pcall(function()
-if v.className == "Part" then
-v.CanCollide = false
-end
-end)
-end
-end
-game:service("RunService").Stepped:wait()
-end
 Fly()
 
 -- Noclip Script
