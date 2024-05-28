@@ -1,0 +1,33 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local down
+local mtarget
+
+clickmoveon = true
+
+function clickObj()
+if mouse.Target ~= nil then
+mtarget = mouse.Target
+down = true
+mouse.TargetFilter = mtarget
+end
+end
+mouse.Button1Down:connect(clickObj)
+
+function mouseMove()
+if down and mtarget then
+local posX,posY,posZ = mouse.hit.X, mouse.hit.Y, mouse.hit.Z
+if clickmoveon then
+mtarget.Position = Vector3.new(posX,posY,posZ)
+end
+end
+end
+
+mouse.Move:connect(mouseMove)
+
+function mouseDown()
+down = false
+mouse.TargetFilter = nil
+end
+
+mouse.Button1Up:connect(mouseDown)
