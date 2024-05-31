@@ -93,6 +93,34 @@ Tab:CreateButton("QuirkyCMD",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("Position Lock Loop Teleport",function()
+getgenv().teleport = true
+
+local player = game.Players.LocalPlayer
+local character = player.Character
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local currentPosition = humanoidRootPart.CFrame
+local targetPosition = Vector3.new(currentPosition.X, humanoidRootPart.Position.Y, currentPosition.Z) 
+
+while getgenv().teleport do
+    wait(2) -- Teleport Delay (freeze char. under 1 second)
+    local TweenService = game:GetService('TweenService')
+    local currentCFrame = humanoidRootPart.CFrame
+    local rotation = currentCFrame - currentCFrame.p
+
+    local targetCFrame = CFrame.new(targetPosition) * rotation
+
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear)
+    local tweenProperties = {
+        CFrame = targetCFrame
+    }
+
+    local tween = TweenService:Create(humanoidRootPart, tweenInfo, tweenProperties)
+    tween:Play()
+end
+end) 
+
 Tab:CreateButton("Infinite yield Reborn",function()
 loadstring(Game:HttpGet("https://scriptblox.com/raw/Universal-Script-Infinite-Yield-Reborn-12940"))()
 end) 
