@@ -1597,11 +1597,29 @@ Tab:CreateButton("dash script (press e to dash)",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/dash%20script"))()
 end) 
 
-Tab:CreateButton("Character Follow Mouse",function()
+Tab:CreateButton("Head Follow Camera R15",function()
+local cam = workspace.CurrentCamera
+local player = game.Players.LocalPlayer
+ 
+local character = player.Character or player.CharacterAdded:Wait()
+local rootpart = character:WaitForChild("HumanoidRootPart")
+local neck = character:FindFirstChild("Neck", true)
+ 
+local y = neck.C0.Y
+ 
+game:GetService("RunService").RenderStepped:Connect(function()
+    if neck then
+        local direction = rootpart.CFrame:ToObjectSpace(cam.CFrame).LookVector
+        neck.C0 = CFrame.new(0, y, 0) * CFrame.Angles(0, -direction.X, 0) * CFrame.Angles(direction.Y, 0, 0)
+    end
+end)
+end) 
+
+Tab:CreateButton("Head Character Follow Mouse",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Character%20Follow%20Mouse"))()
 end) 
 
-Tab:CreateButton("Head Follow Camera",function()
+Tab:CreateButton("Click for Head Follow Camera",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Head%20Follow%20Camera"))()
 end) 
 
