@@ -127,6 +127,80 @@ Tab:CreateButton("QuirkyCMD",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("Sword Tools🛠️",function()
+print("Finding player... (This may take a little!)")
+wait (1)
+print("Found player. Now giving the sword.")
+local user = game.Players.LocalPlayer.Backpack
+local sword = Instance.new("Tool",user)
+print("Gave the player the sword. Enjoy!")
+local handle = Instance.new("Part",sword)
+local mesh = Instance.new("SpecialMesh",handle)
+local DAMAGE = 35
+local sound = Instance.new("Sound",handle)
+local sound2 = Instance.new("Sound",handle)
+sword.Name = "Sword"
+script.Parent = sword
+script.Name = "SwordScript"
+--local animation = Instance.new("Animation",script)
+ 
+--animation.AnimationId = "http://www.roblox.com/Asset?ID=992817684"
+ 
+sound.SoundId = "rbxasset://sounds//swordlunge.wav"
+sound.Volume = 3
+sound.PlaybackSpeed = 1.17
+sound.Name = "Slash"
+sound2.SoundId = "rbxasset://sounds//unsheath.wav"
+sound2.Volume = 3
+sound2.PlaybackSpeed = 0.8
+sound2.Volume = 3
+sound2.Name = "Unsheath"
+ 
+function unsheathanimation()
+   sword.GripPos = sword.GripPos + Vector3.new(0,5,0)
+   for i = 1,5 do
+    sword.GripPos = sword.GripPos + Vector3.new(0,-1,0)
+    wait (0.1)
+end 
+end
+ 
+function unsheathsound()
+    sound2:Play()
+end
+ 
+function damage(hit)
+ 
+    local h = hit.Parent:FindFirstChild("Humanoid")
+    if (h ~= nil) then
+        h:TakeDamage(DAMAGE / 4)
+    end
+end
+ 
+function animate()
+   --4
+   sound:Play()
+   for i = 1,5 do
+    sword.GripUp = sword.GripUp + Vector3.new(0,0,1)
+    wait (0)
+end
+sword.GripUp = sword.GripUp + Vector3.new(0,0,-1)
+end
+handle.Size = handle.Size + Vector3.new(-4,-1,-2)
+handle.Size = handle.Size + Vector3.new(0.6, 3.6, 0.4)
+handle.Name = "Handle"
+ 
+mesh.MeshType = "FileMesh"
+mesh.MeshId = "http://www.roblox.com/asset/?id=94746028"
+mesh.TextureId = "http://www.roblox.com/asset/?ID=94746105"
+mesh.Offset = mesh.Offset + Vector3.new(0,1,0)
+ 
+sword.Equipped:connect(unsheathanimation)
+sword.Equipped:connect(unsheathsound)
+wait(sound2.TimeLength)
+sword.Activated:connect(animate)
+handle.Touched:connect(damage)
+end) 
+
 Tab:CreateButton("Soninha Hub",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/SoninhaHub/Universal/main/SoninhaHub.Lua", True))()
 end) 
