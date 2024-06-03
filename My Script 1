@@ -250,6 +250,68 @@ Tab:CreateButton("QuirkyCMD",function()
 loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
 end) 
 
+Tab:CreateButton("bypass lagback",function()
+local players = game:GetService('Players')
+local lplr = players.LocalPlayer
+local lastCF, stop, heartbeatConnection
+local function start()
+    heartbeatConnection = game:GetService('RunService').Heartbeat:Connect(function()
+        if stop then
+            return 
+        end 
+        lastCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
+    end)
+    lplr.Character:FindFirstChildOfClass('Humanoid').RootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
+        stop = true
+        lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
+        game:GetService('RunService').Heartbeat:Wait()
+        stop = false
+    end)    
+    lplr.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
+        heartbeatConnection:Disconnect()
+    end)
+end
+
+lplr.CharacterAdded:Connect(function(character)
+    repeat 
+        game:GetService('RunService').Heartbeat:Wait() 
+    until character:FindFirstChildOfClass('Humanoid')
+    repeat 
+        game:GetService('RunService').Heartbeat:Wait() 
+    until character:FindFirstChildOfClass('Humanoid').RootPart
+    start()
+end)
+
+lplr.CharacterRemoving:Connect(function()
+    heartbeatConnection:Disconnect()
+end)
+
+start()
+end) 
+
+Tab:CreateButton("Scaffolding",function()
+print('Script by rozxino')
+-- this is v2
+
+local player = game.Players.LocalPlayer
+local humanoid = player.Character:WaitForChild("Humanoid")
+
+local blockAppearTime = 0.20 -- Change the time for the block to appear
+
+humanoid.StateChanged:Connect(function(oldState, newState)
+    if newState == Enum.HumanoidStateType.Running or newState == Enum.HumanoidStateType.Jumping then
+        wait(blockAppearTime)
+        
+        local block = Instance.new("Part")
+        block.Size = Vector3.new(4, 4, 4) 
+        block.Position = humanoid.RootPart.Position + Vector3.new(0, -block.Size.Y / 2, 0)
+        block.BrickColor = BrickColor.new("Bright blue") 
+        block.Anchored = true --set the Anchored thing
+        block.Parent = workspace
+    end
+end)
+end) 
+
 Tab:CreateButton("Trolling Gui",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub/main/FE%20Trolling%20GUI.luau"))()
 end) 
