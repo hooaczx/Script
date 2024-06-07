@@ -186,6 +186,109 @@ game.Players.LocalPlayer.Character.Humanoid.MaxHealth =  99999999999999999999999
 game.Players.LocalPlayer.Character.Humanoid.Health = 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
 end) 
 
+Ui:Button("Hard BlurAmount","Leave Game To false",function()
+BlurAmount = 600 -- Change this to increase or decrease the blur size
+ 
+--//Declarations
+Camera 	= game.Workspace.CurrentCamera
+Last 	= Camera.CFrame.lookVector
+Blur 	= Instance.new("BlurEffect",Camera)
+ 
+--//Logic
+game.Workspace.Changed:connect(function(p) -- Feels a bit hacky. Updates the Camera and Blur if the Camera object is changed.
+	if p == "CurrentCamera" then
+		Camera = game.Workspace.CurrentCamera
+		if Blur and Blur.Parent then
+			Blur.Parent = Camera
+		else
+			Blur = Instance.new("BlurEffect",Camera)
+		end
+	end
+end)
+ 
+game:GetService("RunService").Heartbeat:connect(function()
+	if not Blur or Blur.Parent == nil then Blur = Instance.new("BlurEffect",Camera) end -- Feels a bit hacky. Creates a new Blur if it is destroyed.
+ 
+	local magnitude = (Camera.CFrame.lookVector - Last).magnitude -- How much the camera has rotated since the last frame
+	Blur.Size = math.abs(magnitude)*BlurAmount -- Set the blur size
+	Last = Camera.CFrame.lookVector -- Update the previous camera rotation
+end)
+end) 
+
+Ui:Button("Medium BlurAmount","Leave Game To false",function()
+BlurAmount = 200 -- Change this to increase or decrease the blur size
+ 
+--//Declarations
+Camera 	= game.Workspace.CurrentCamera
+Last 	= Camera.CFrame.lookVector
+Blur 	= Instance.new("BlurEffect",Camera)
+ 
+--//Logic
+game.Workspace.Changed:connect(function(p) -- Feels a bit hacky. Updates the Camera and Blur if the Camera object is changed.
+	if p == "CurrentCamera" then
+		Camera = game.Workspace.CurrentCamera
+		if Blur and Blur.Parent then
+			Blur.Parent = Camera
+		else
+			Blur = Instance.new("BlurEffect",Camera)
+		end
+	end
+end)
+ 
+game:GetService("RunService").Heartbeat:connect(function()
+	if not Blur or Blur.Parent == nil then Blur = Instance.new("BlurEffect",Camera) end -- Feels a bit hacky. Creates a new Blur if it is destroyed.
+ 
+	local magnitude = (Camera.CFrame.lookVector - Last).magnitude -- How much the camera has rotated since the last frame
+	Blur.Size = math.abs(magnitude)*BlurAmount -- Set the blur size
+	Last = Camera.CFrame.lookVector -- Update the previous camera rotation
+end)
+end) 
+
+Ui:Button("Low BlurAmount","Leave Game To false",function()
+BlurAmount = 75 -- Change this to increase or decrease the blur size
+ 
+--//Declarations
+Camera 	= game.Workspace.CurrentCamera
+Last 	= Camera.CFrame.lookVector
+Blur 	= Instance.new("BlurEffect",Camera)
+ 
+--//Logic
+game.Workspace.Changed:connect(function(p) -- Feels a bit hacky. Updates the Camera and Blur if the Camera object is changed.
+	if p == "CurrentCamera" then
+		Camera = game.Workspace.CurrentCamera
+		if Blur and Blur.Parent then
+			Blur.Parent = Camera
+		else
+			Blur = Instance.new("BlurEffect",Camera)
+		end
+	end
+end)
+ 
+game:GetService("RunService").Heartbeat:connect(function()
+	if not Blur or Blur.Parent == nil then Blur = Instance.new("BlurEffect",Camera) end -- Feels a bit hacky. Creates a new Blur if it is destroyed.
+ 
+	local magnitude = (Camera.CFrame.lookVector - Last).magnitude -- How much the camera has rotated since the last frame
+	Blur.Size = math.abs(magnitude)*BlurAmount -- Set the blur size
+	Last = Camera.CFrame.lookVector -- Update the previous camera rotation
+end)
+end) 
+
+Ui:Button("Blur Camara","Reset Character To false",function()
+local colorEffect = Instance.new("ColorCorrectionEffect", game.Lighting)
+local blurEffect = Instance.new("BlurEffect", game.Lighting)
+ 
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    local humanoid = game.Players.LocalPlayer.Character:WaitForChild("Humanoid")
+    while humanoid.Health > 0 do
+        colorEffect.TintColor = Color3.new(1, humanoid.Health / humanoid.MaxHealth, humanoid.Health / humanoid.MaxHealth)
+        blurEffect.Size = 1555555 * (1 - humanoid.Health / humanoid.MaxHealth)
+        wait()
+    end
+    colorEffect.TintColor = Color3.new(1,0,0)
+    blurEffect.Size = 1555555
+end)
+end) 
+
 Ui:Button("Check Health","Check Your Health",function()
 game.StarterGui:SetCore("SendNotification", {
 Title = "Hi",
