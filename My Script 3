@@ -2510,8 +2510,95 @@ Tab:CreateButton("Flamingo Animated Skybox",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Flamingo%20Animated%20Skybox"))()
 end) 
 
-Tab:CreateButton("RGB Universal ESP",function()
-loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/RGB%20Universal%20ESP"))()
+Tab:CreateButton("RGB ESP V2","Esp",function()
+-- RGB ESP Highlight Script for Solara
+
+-- function to create the ESP highlight
+local function createESP(character)
+    if not character then
+        warn("no worky :(")
+        return
+    end
+
+    -- creates a highlight instance
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "ESP"
+    highlight.Adornee = character
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0.2
+    highlight.Parent = game.CoreGui
+
+    -- function to cycle rgb colors
+    local function rgbCycle()
+        local hue = 0
+        while true do
+            hue = hue + 1
+            if hue > 360 then hue = 0 end
+            local color = Color3.fromHSV(hue / 360, 1, 1)
+            highlight.FillColor = color
+            highlight.OutlineColor = color
+            wait(0.1)
+        end
+    end
+
+    -- spawn rgb cycle
+    spawn(rgbCycle)
+end
+
+-- highlight every player in the game (even you)
+local function highlightPlayers()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character then
+            createESP(player.Character)
+        end
+    end
+end
+
+-- highlighting skibidi
+highlightPlayers()
+
+-- waits for new players joining game
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        createESP(character)
+    end)
+end)
+
+print("script worky :)")
+end) 
+
+Tab:CreateButton("RGB ESP V1",function()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = game.Workspace.CurrentCamera
+
+local function ESP()
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            local TeamColor = Player.TeamColor
+            local Box = Player.Character:FindFirstChild("ESP_Box")
+            if not Box then
+                Box = Instance.new("BoxHandleAdornment")
+                Box.Name = "ESP_Box"
+                Box.Parent = Player.Character
+                Box.Adornee = Player.Character.HumanoidRootPart
+                Box.Size = Player.Character.HumanoidRootPart.Size * 1.1
+                Box.ZIndex = 5
+                Box.AlwaysOnTop = true -- Ensure the box is always visible
+                Box.AlwaysOnTop = true -- Ensure the box ignores occlusion
+            end
+            local hue = (tick() % 5) / 5
+            local rgbColor = Color3.fromHSV(hue, 1, 1)
+            Box.Color3 = rgbColor
+            Box.Transparency = 0.5 -- Adjust transparency as needed
+        end
+    end
+end
+
+while true do
+    ESP()
+    wait(0.01) -- Adjust the speed of color change by changing the wait time
+end
 end) 
 
 Tab:CreateButton("Universal Head Hitbox",function()
