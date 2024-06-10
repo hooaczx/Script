@@ -148,6 +148,50 @@ Ui:Button("Invite friends","Invite friends to play too",function()
 game.SocialService:PromptGameInvite(game.Players.LocalPlayer)
 end) 
 
+Ui:Button("Leave","Leave Button",function()
+local gui = Instance.new("ScreenGui")
+gui.Name = "DraggableGui"
+gui.Parent = game.CoreGui
+
+local frame = Instance.new("Frame")
+frame.Name = "DraggableFrame"
+frame.Size = UDim2.new(0, 150, 0, 60)
+frame.Position = UDim2.new(0.5, -75, 0.5, -30)
+frame.BackgroundColor3 = Color3.new(1, 1, 1)
+frame.BackgroundTransparency = 0.5
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "TextLabel"
+textLabel.Size = UDim2.new(1, 0, 0.5, 0)
+textLabel.Position = UDim2.new(0, 0, 0, 0)
+textLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.Text = "By hooaczx & 1hooaczx1"
+textLabel.Font = Enum.Font.SourceSansBold
+textLabel.TextColor3 = Color3.new(1, 1, 1)
+textLabel.TextSize = 18
+textLabel.Parent = frame
+
+local LeaveButton = Instance.new("TextButton")
+LeaveButton.Name = "LeaveButton"
+LeaveButton.Size = UDim2.new(1, 0, 0.5, 0)
+LeaveButton.Position = UDim2.new(0, 0, 0.5, 0)
+LeaveButton.BackgroundColor3 = Color3.new(0, 0, 0)
+LeaveButton.BackgroundTransparency = 0.5
+LeaveButton.Text = "Leave Games"
+LeaveButton.Font = Enum.Font.SourceSansBold
+LeaveButton.TextColor3 = Color3.new(1, 1, 1)
+LeaveButton.TextSize = 18
+LeaveButton.Parent = frame
+
+LeaveButton.MouseButton1Click:Connect(function()
+game:Shutdown()
+end)
+end) 
+
 Ui:Button("Console","Menu",function()
 game:GetService("StarterGui"):SetCore("DevConsoleVisible",true)
 end) 
