@@ -364,7 +364,25 @@ game:GetService("RunService").Heartbeat:connect(function()
 end)
 end) 
 
-Tab:CreateButton("Blur Camara (Reset Character To false)",function()
+colorEffect = Instance.new("ColorCorrectionEffect", game.Lighting)
+local blurEffect = Instance.new("BlurEffect", game.Lighting)
+ 
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    local humanoid = game.Players.LocalPlayer.Character:WaitForChild("Humanoid")
+    while humanoid.Health > 0 do
+        colorEffect.TintColor = Color3.new(1, humanoid.Health / humanoid.MaxHealth, humanoid.Health / humanoid.MaxHealth)
+        blurEffect.Size = 1555555 * (1 - humanoid.Health / humanoid.MaxHealth)
+        wait()
+    end
+    colorEffect.TintColor = Color3.new(1,0,0)
+    blurEffect.Size = 1555555
+end)
+end) 
+
+Ui:Button("Blur Camara loop (Reset Character To false)🔁",function()
+_G.H = true
+while _G.H do wait()
+wait(.0)
 local colorEffect = Instance.new("ColorCorrectionEffect", game.Lighting)
 local blurEffect = Instance.new("BlurEffect", game.Lighting)
  
@@ -378,6 +396,27 @@ game.Players.LocalPlayer.CharacterAdded:Connect(function()
     colorEffect.TintColor = Color3.new(1,0,0)
     blurEffect.Size = 1555555
 end)
+end
+end) 
+
+Tab:CreateButton("Blur Camara false loop (Reset Character To false)🔁",function()
+_G.H = false
+while _G.H do wait()
+wait(.0)
+local colorEffect = Instance.new("ColorCorrectionEffect", game.Lighting)
+local blurEffect = Instance.new("BlurEffect", game.Lighting)
+ 
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    local humanoid = game.Players.LocalPlayer.Character:WaitForChild("Humanoid")
+    while humanoid.Health > 0 do
+        colorEffect.TintColor = Color3.new(1, humanoid.Health / humanoid.MaxHealth, humanoid.Health / humanoid.MaxHealth)
+        blurEffect.Size = 1555555 * (1 - humanoid.Health / humanoid.MaxHealth)
+        wait()
+    end
+    colorEffect.TintColor = Color3.new(1,0,0)
+    blurEffect.Size = 1555555
+end)
+end
 end) 
 
 Tab:CreateButton("print Position",function()
