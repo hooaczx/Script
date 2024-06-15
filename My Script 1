@@ -10264,46 +10264,6 @@ end)
 return gui:SetCore('SendNotification', {Title = 'Anti-TP Loaded', Text = 'Written by Amiriki'})
 end) 
 
-Ui:Button("Anti Teleport Server + Adonis bypass","No Tp Server + Adonie",function()
-loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Adonis%20Anti%20Cheat%20Bypass"))()
-wait(1)
-local gui = game:GetService('StarterGui')
-local tele = game:GetService('TeleportService')
-local LocalPlayer = game:GetService('Players').LocalPlayer
-
-namecall = hookmetamethod(game, '__namecall', newcclosure(function(...)
-    if not checkcaller() then
-        local args = {...}
-        local self = args[1]
-        local method = getnamecallmethod()
-        
-        if method == 'Teleport' or method == 'TeleportToPlaceInstance' then
-            return gui:SetCore('SendNotification', {Title = 'Teleport Blocked', Text = 'Teleport successfully blocked'})
-        end
-    end
-
-    return namecall(...)
-end))
-
-local oldtp = hookfunction(tele.Teleport, function(...)
-    local plr, id = ...
-    if plr == LocalPlayer then
-        return gui:SetCore('SendNotification', {Title = 'Teleport Blocked', Text = 'Teleport successfully blocked'})
-    end
-    return oldtp(...)
-end)
-
-local oldttpi = hookfunction(tele.TeleportToPlaceInstance, function(...)
-    local plr, id = ...
-    if plr == LocalPlayer then
-        return gui:SetCore('SendNotification', {Title = 'Teleport Blocked', Text = 'Teleport successfully blocked'})
-    end
-    return oldttpi(...)
-end)
-
-return gui:SetCore('SendNotification', {Title = 'Anti-TP Loaded', Text = 'Written by Amiriki'})
-end) 
-
 Ui:Button("Universe X Extra","",function()
 loadstring(game:HttpGet("https://pastefy.app/47r5XCWG/raw"))()
 end) 
