@@ -297,6 +297,49 @@ Ui:Button("Invite friends","Invite friends to play too",function()
 game.SocialService:PromptGameInvite(game.Players.LocalPlayer)
 end) 
 
+Ui:Button("Equip Tools","Equip Tools Button",function()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/youngstar"))();
+
+local Window1 = library:CreateWindow("By hooaczx & 1hooaczx1")
+
+Window1:Button("Equip Tools",function()
+for i,v in pairs(game:GetService("Players").LocalPlayer.Backpack:GetChildren())do
+if v.ClassName == "Tool" then
+v.Parent = game:GetService("Players").LocalPlayer.Character
+end
+end
+for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetChildren())do
+if v.ClassName == "Tool" then
+v:Disabled()
+end
+end
+end);
+
+Window1:Button("UnEquip Tools",function()
+for _,plr in pairs(game.Players:GetPlayers()) do
+    if plr.Character then 
+        local tool = plr.Character:FindFirstChildOfClass("Tool")
+        if tool then
+            tool.Parent = plr.Backpack  
+tool:Disabled()
+        end
+    end
+end
+end);
+
+Window1:Button("Delete Tools",function()
+for _,plr in pairs(game.Players:GetPlayers()) do
+    if plr.Character then 
+        local tool = plr.Character:FindFirstChildOfClass("Tool")
+        if tool then
+            tool.Parent = plr.Backpack  
+tool:Destroy()
+        end
+    end
+end
+end);
+end) 
+
 Ui:Button("Leave","Leave Button",function()
 local gui = Instance.new("ScreenGui")
 gui.Name = "DraggableGui"
