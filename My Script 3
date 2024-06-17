@@ -4515,16 +4515,6 @@ Player.CharacterAdded:connect(OnCharacterAdded)
 SubFrame.Rigtype.Text = ('Your Rigtype - %s'):format(CheckRig())
 end) 
 
-Ui:Button("false Topbar","false",function()
-local starterGui = game:GetService('StarterGui')
-starterGui:SetCore("TopbarEnabled", false)
-end) 
-
-Ui:Button("true Topbar","true",function()
-local starterGui = game:GetService('StarterGui')
-starterGui:SetCore("TopbarEnabled", true)
-end)
-
 Ui:Button("KENNHUB","Hub",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Berliandakhensy/Kennhub/main/im_dev0-obfuscated.lua%20(1).txt"))()
 end) 
@@ -8006,8 +7996,36 @@ Ui:Button("Music Manu","Music",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Music%20Manu"))()
 end) 
 
-Ui:Button("Position Lock Loop Teleport","Position",function()
+Ui:Button("Position Lock Loop Teleport true","Position",function()
 getgenv().teleport = true
+
+local player = game.Players.LocalPlayer
+local character = player.Character
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local currentPosition = humanoidRootPart.CFrame
+local targetPosition = Vector3.new(currentPosition.X, humanoidRootPart.Position.Y, currentPosition.Z) 
+
+while getgenv().teleport do
+    wait(2) -- Teleport Delay (freeze char. under 1 second)
+    local TweenService = game:GetService('TweenService')
+    local currentCFrame = humanoidRootPart.CFrame
+    local rotation = currentCFrame - currentCFrame.p
+
+    local targetCFrame = CFrame.new(targetPosition) * rotation
+
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear)
+    local tweenProperties = {
+        CFrame = targetCFrame
+    }
+
+    local tween = TweenService:Create(humanoidRootPart, tweenInfo, tweenProperties)
+    tween:Play()
+end
+end) 
+
+Ui:Button("Position Lock Loop Teleport false","Position",function()
+getgenv().teleport = false
 
 local player = game.Players.LocalPlayer
 local character = player.Character
@@ -8429,14 +8447,6 @@ Ui:Button("Universe Reset converted","Reset Character",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Universe%20Reset%20converted"))()
 end) 
 
-Ui:Button("false reset button","reset button",function()
-loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/false%20reset%20button"))()
-end) 
-
-Ui:Button("true reset button","reset button",function()
-loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/true%20reset%20button"))()
-end) 
-
 Ui:Button("Freecam Pc","(R To un)",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Freecam%20Pc%20(R%20To%20un)"))()
 end) 
@@ -8451,13 +8461,6 @@ end)
 
 Ui:Button("DEFAULT THIRD PERSON PERSPECTIVE","Camara",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/DEFAULT%20THIRD%20PERSON%20PERSPECTIVE"))()
-end) 
-
-Ui:Button("ClearAllChildren","(Exit game re-enter to close script)",function()
-local plr = game.Players.LocalPlayer
-local humanoid = plr.Character.Humanoid
-local position = plr.Character.HumanoidRootPart.CFrame
-plr:ClearAllChildren()
 end) 
 
 Ui:Button("Script","BY Cookiemonstr",function()
