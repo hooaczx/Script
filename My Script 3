@@ -6,32 +6,6 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Duration = 5
 })
 wait(1)
-local PlaceId = game.PlaceId
-local PlaceId = game.PlaceId
-local MarketplaceService = game:GetService("MarketplaceService")
-local Asset = MarketplaceService:GetProductInfo(PlaceId)
-local starterGui = game:GetService("StarterGui")
-
-game.Players.PlayerAdded:Connect(function(player)
-  local starterGui = game:GetService("StarterGui")
-
-    starterGui:SetCore("SendNotification", {
-        Title = "Detected Player Join The game",
-        Text = player.Name.." Join the game "..Asset.Name,
-        Duration = 8
-    })
-end)
-
-game.Players.PlayerRemoving:Connect(function(player)
-    local starterGui = game:GetService("StarterGui")
-
-    starterGui:SetCore("SendNotification", {
-        Title = "Detected Player Leave The game",
-        Text = player.Name.." Leave from "..Asset.Name,
-        Duration = 8
-    })
-end)
-wait(1)
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
@@ -349,6 +323,56 @@ end)
 
 Ui:Button("Invite friends","Invite friends to play too",function()
 game.SocialService:PromptGameInvite(game.Players.LocalPlayer)
+end) 
+
+Ui:Button("Notification Players Join/Leave No ProFile","Check Players Join/Leave The Games",function()
+local PlaceId = game.PlaceId
+local MarketplaceService = game:GetService("MarketplaceService")
+local Asset = MarketplaceService:GetProductInfo(PlaceId)
+local starterGui = game:GetService("StarterGui")
+
+game.Players.PlayerAdded:Connect(function(player)
+  local starterGui = game:GetService("StarterGui")
+
+    starterGui:SetCore("SendNotification", {
+        Title = "Detected Player Join The game",
+        Text = player.Name.." Join the game "..Asset.Name,
+        Duration = 8
+    })
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    local starterGui = game:GetService("StarterGui")
+
+    starterGui:SetCore("SendNotification", {
+        Title = "Detected Player Leave The game",
+        Text = player.Name.." Leave from "..Asset.Name,
+        Duration = 8
+    })
+end)
+end) 
+
+Ui:Button("Notification Players Join/Leave ProFile","Check Players Join/Leave The Games",function()
+if not game:IsLoaded() then
+game.Loaded:Wait()
+end
+game.Players.ChildAdded:Connect(function(player)
+    game:GetService('StarterGui'):SetCore('SendNotification', {
+Title = player.Name,
+Text = 'He Join the server. .\n[AGE: ' ..player.AccountAge.. ']',
+Icon = [[http://www.roblox.com/Thumbs/Avatar.ashx?x=100&y=100&Format=Png&userName=]]..player.Name..[[&RAND]] .. math.random(1,100000000),
+Duration = 5,
+})
+end)
+-- player leaves
+game.Players.ChildRemoved:Connect(function(player)
+    game:GetService('StarterGui'):SetCore('SendNotification', {
+Title = player.Name,
+Text = 'He Leave the server. .\n[AGE: ' ..player.AccountAge.. ']',
+Icon = [[http://www.roblox.com/Thumbs/Avatar.ashx?x=100&y=100&Format=Png&userName=]]..player.Name..[[&RAND]] .. math.random(1,100000000),
+Duration = 5,
+})
+   end)
 end) 
 
 Ui:Button("Equip Tools","By hooaczx & 1hooaczx1 • TH",function()
