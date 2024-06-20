@@ -199,7 +199,7 @@ end
 game.Players.ChildAdded:Connect(function(player)
     game:GetService('StarterGui'):SetCore('SendNotification', {
 Title = player.Name,
-Text = 'Join Server. .\n[AGE: ' ..player.AccountAge.. ']',
+Text = 'Join Server',
 Icon = [[http://www.roblox.com/Thumbs/Avatar.ashx?x=100&y=100&Format=Png&userName=]]..player.Name..[[&RAND]] .. math.random(1,100000000),
 Duration = 8,
 })
@@ -208,7 +208,7 @@ end)
 game.Players.ChildRemoved:Connect(function(player)
     game:GetService('StarterGui'):SetCore('SendNotification', {
 Title = player.Name,
-Text = 'Leave Server. .\n[AGE: ' ..player.AccountAge.. ']',
+Text = 'Leave Server',
 Icon = [[http://www.roblox.com/Thumbs/Avatar.ashx?x=100&y=100&Format=Png&userName=]]..player.Name..[[&RAND]] .. math.random(1,100000000),
 Duration = 8,
 })
@@ -217,7 +217,7 @@ end)
 
 Ui:Button("Sprint Speed","Button Run",function()
 local NormalWalkSpeed = 16
-local SprintSpeed = 30
+local SprintSpeed = 32
 local CameraEffect = true
  
 local cas = game:GetService("ContextActionService")
@@ -245,7 +245,7 @@ UIS.InputEnded:Connect(function(key, gameProcessed)
 	if gameProcessed then return end
 	if key.KeyCode == Enum.KeyCode.LeftShift then
 		if CameraEffect == true then
-			TweenService:Create(Camera, TweenInfo.new(0.5), {FieldOfView = 70}):Play()
+			TweenService:Create(Camera, TweenInfo.new(1), {FieldOfView = 90}):Play()
 		end
 		Humanoid.WalkSpeed = NormalWalkSpeed
 	end
@@ -256,12 +256,12 @@ end)
 local function handleContext(name, state, input)
 	if state == Enum.UserInputState.Begin then
 		if CameraEffect == true then
-			TweenService:Create(Camera, TweenInfo.new(0.5), {FieldOfView = 90}):Play()
+			TweenService:Create(Camera, TweenInfo.new(1), {FieldOfView = 100}):Play()
 		end
 		Humanoid.WalkSpeed = SprintSpeed
 	else
 		if CameraEffect == true then
-			TweenService:Create(Camera, TweenInfo.new(0.5), {FieldOfView = 70}):Play()
+			TweenService:Create(Camera, TweenInfo.new(1), {FieldOfView = 80}):Play()
 		end
 		Humanoid.WalkSpeed = NormalWalkSpeed
 	end
