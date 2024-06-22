@@ -4,6 +4,26 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Delete everything in workspace",function()
+asgw = game.Workspace:GetChildren()
+ 
+for i,v in pairs(asgw) do
+    if v.Name ~= "Terrain" and v.Name ~= "Camera" then
+        v:Destroy()
+    end
+end
+end)
+
+Tab:CreateButton("Fire all RemoteEvents in ReplicatedStorage",function()
+local remoteEvents = game:GetService("ReplicatedStorage"):GetChildren()
+
+for _, event in pairs(remoteEvents) do
+  if event:IsA("RemoteEvent") then
+    event:FireServer()
+  end
+end
+end)
+
 Tab:CreateButton("flip character",function()
 local player = game.Players.LocalPlayer
 local character = player.Character
