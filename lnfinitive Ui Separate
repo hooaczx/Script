@@ -4,6 +4,26 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("flip character",function()
+local player = game.Players.LocalPlayer
+local character = player.Character
+
+local function flipCharacter()
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local rootPart = character.HumanoidRootPart
+        local currentOrientation = rootPart.Orientation
+        local newOrientation = Vector3.new(currentOrientation.X + 180, currentOrientation.Y, currentOrientation.Z)
+        rootPart.Orientation = newOrientation
+    end
+end
+
+flipCharacter()
+end) 
+
+Tab:CreateButton("Aimer Z5b",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Aimer%20Z5.lol'))()
+end) 
+
 Tab:CreateButton("Aimer Z4s",function()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Aimer%20Z4.lol'))()
 end) 
