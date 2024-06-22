@@ -4,6 +4,301 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("D3xWare",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/D3x-Scripts/D3xWare/main/src.lua'))()
+end) 
+
+Tab:CreateButton("Remote spy",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/RS/main/SimpleSpyMobile"))()
+end) 
+
+Tab:CreateButton("Gui Button Path",function()
+local stringg = "https://raw.githubusercontent.com/pid4k/scripts/main/getguibuttonpath.lua"
+loadstring(game:HttpGet(stringg, true))()
+end) 
+
+Tab:CreateButton("Aimer Z1",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Aimer%20Z1.lol"))()
+end) 
+
+Tab:CreateButton("Limited Script ALL EXECUTORS SUPPORTED",function()
+
+getgenv().Time = 1 -- Adjust the time waited before adding the items
+
+getgenv().Head = {
+    74891470,
+    439946249,
+    323476364,
+    -- Add more head accessory IDs
+}
+
+getgenv().Torso = {
+    0000000000
+    -- Add more torso accessory IDs
+}
+
+--//------------------------------------------------------------------------------------------\\--
+
+local function weldParts(part0, part1, c0, c1)
+    local weld = Instance.new("Weld")
+    weld.Part0 = part0
+    weld.Part1 = part1
+    weld.C0 = c0
+    weld.C1 = c1
+    weld.Parent = part0
+    return weld
+end
+
+local function findAttachment(rootPart, name)
+    for _, descendant in pairs(rootPart:GetDescendants()) do
+        if descendant:IsA("Attachment") and descendant.Name == name then
+            return descendant
+        end
+    end
+end
+
+local function addAccessoryToCharacter(accessoryId, parentPart)
+    local accessory = game:GetObjects("rbxassetid://" .. tostring(accessoryId))[1]
+    local character = game.Players.LocalPlayer.Character
+
+    accessory.Parent = game.Workspace
+
+    local handle = accessory:FindFirstChild("Handle")
+    if handle then
+        local attachment = handle:FindFirstChildOfClass("Attachment")
+        if attachment then
+            local parentAttachment = findAttachment(parentPart, attachment.Name)
+            if parentAttachment then
+                weldParts(parentPart, handle, parentAttachment.CFrame, attachment.CFrame)
+            end
+        else
+            local parent = character:FindFirstChild(parentPart.Name)
+            if parent then
+                local attachmentPoint = accessory.AttachmentPoint
+                weldParts(parent, handle, CFrame.new(0, 0.5, 0), attachmentPoint.CFrame)
+            end
+        end
+    end
+
+    accessory.Parent = game.Players.LocalPlayer.Character
+end
+
+local function onCharacterAdded(character)
+    wait(getgenv().Time) -- Wait for the character to fully load
+
+    for _, accessoryId in ipairs(getgenv().Head) do
+        addAccessoryToCharacter(accessoryId, character.Head)
+    end
+
+    for _, accessoryId in ipairs(getgenv().Torso) do
+        addAccessoryToCharacter(accessoryId, character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso"))
+    end
+end
+
+game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+if game.Players.LocalPlayer.Character then
+    onCharacterAdded(game.Players.LocalPlayer.Character)
+end
+end) 
+
+Tab:CreateButton("some random solara hub",function()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Solara Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local Tab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Main"
+})
+
+Tab:AddButton({
+	Name = "Infinite Yield",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Dex Explorer",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Simple Spy",
+	Callback = function()
+      		loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Blox Fruits",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Blox Fruits"
+})
+
+Tab:AddButton({
+	Name = "Mukuro Hub",
+	Callback = function()
+      		loadstring(game:HttpGet"https://raw.githubusercontent.com/xQuartyx/DonateMe/main/ScriptLoader")()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hoho Hub",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI'))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zen Hub",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/Kaizenofficiall/ZenHub/main/Loader'))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ripper Hub V3",
+	Callback = function()
+      		_G.Version = "V3"
+loadstring(game:HttpGet('https://raw.githubusercontent.com/xDestinyx/RipperHub/main/Loader.lua'))();
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Uranium Hub",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/Augustzyzx/UraniumMobile/main/UraniumKak.lua"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Neva Hub",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/VEZ2/NEVAHUB/main/2'))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Makima Hub",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/Piwwy0909/MakimaRemake/main/Cumback.lua'))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sonic Hub",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/NickelHUBB/SonicTuru/main/Protected-25.lua"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zee Hub",
+	Callback = function()
+      		loadstring(game:HttpGet("https://zKuzy.link/ZeeHub.lua"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Madox Hub",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/Fiend1sh/FiendMain/main/MadoxHubKey", true))()
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Doors",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Doors"
+})
+
+Tab:AddButton({
+	Name = "Vynixius",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Doors/Script.lua"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Nerd V4",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/MrNeRD0/Doors-Hack/main/NeRDV4.lua"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Darkrai X",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingScripter/Darkrai-X/main/Games/Doors"))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Doors GUI V2",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/zoophiliaphobic/POOPDOORS/main/script.lua'))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Doors GUI V4",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/OminousVibes-Exploit/Scripts/main/doors/main.lua"))()
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Bedwars",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Bedwars"
+})
+
+Tab:AddButton({
+	Name = "Vape V4",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Jn HH Gaming",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/JNHHGaming123/JN-HH-Gaming-Pro/main/JN%20HH%20Gaming%20Pro",true))()
+  	end    
+})
+
+OrionLib:Init()
+end) 
+
+Tab:CreateButton("Just a another utmm game",function()
+_G.Universal = "Utmm" 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Justaverageguym/Hub/main/Loader.lua"))()
+end) 
+
+Tab:CreateButton("Delta executor remake",function()
+loadstring(game:HttpGet("https://freenote.biz/raw/hdouytjsbo"))()
+end) 
+
 Tab:CreateButton("Fire Remotes",function()
 loadstring(game:HttpGet('https://gist.githubusercontent.com/Andergraun/6c8e5f9d340e149eb3ae1b9ca96727d1/raw/0b22ae66786655ec3cb80110d3c2103f78ac28f3/LordiRemote'))()
 end) 
