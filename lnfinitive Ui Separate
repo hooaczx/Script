@@ -4,6 +4,302 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Anti Fling V2",function()
+-- // Constants \\ --
+-- [ Services ] --
+local Services = setmetatable({}, {__index = function(Self, Index)
+local NewService = game.GetService(game, Index)
+if NewService then
+Self[Index] = NewService
+end
+return NewService
+end})
+
+-- [ LocalPlayer ] --
+local LocalPlayer = Services.Players.LocalPlayer
+
+-- // Functions \\ --
+local function PlayerAdded(Player)
+   local Detected = false
+   local Character;
+   local PrimaryPart;
+
+   local function CharacterAdded(NewCharacter)
+       Character = NewCharacter
+       repeat
+           wait()
+           PrimaryPart = NewCharacter:FindFirstChild("HumanoidRootPart")
+       until PrimaryPart
+       Detected = false
+   end
+
+   CharacterAdded(Player.Character or Player.CharacterAdded:Wait())
+   Player.CharacterAdded:Connect(CharacterAdded)
+   Services.RunService.Heartbeat:Connect(function()
+       if (Character and Character:IsDescendantOf(workspace)) and (PrimaryPart and PrimaryPart:IsDescendantOf(Character)) then
+           if PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 or PrimaryPart.AssemblyLinearVelocity.Magnitude > 100 then
+               if Detected == false then
+                   game.StarterGui:SetCore("ChatMakeSystemMessage", {
+                       Text = "Fling Exploit detected, Player: " .. tostring(Player);
+                       Color = Color3.fromRGB(255, 200, 0);
+                   })
+               end
+               Detected = true
+               for i,v in ipairs(Character:GetDescendants()) do
+                   if v:IsA("BasePart") then
+                       v.CanCollide = false
+                       v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                       v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                       v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                   end
+               end
+               PrimaryPart.CanCollide = false
+               PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+           end
+       end
+   end)
+end
+
+-- // Event Listeners \\ --
+for i,v in ipairs(Services.Players:GetPlayers()) do
+   if v ~= LocalPlayer then
+       PlayerAdded(v)
+   end
+end
+Services.Players.PlayerAdded:Connect(PlayerAdded)
+
+local LastPosition = nil
+Services.RunService.Heartbeat:Connect(function()
+   pcall(function()
+       local PrimaryPart = LocalPlayer.Character.PrimaryPart
+       if PrimaryPart.AssemblyLinearVelocity.Magnitude > 250 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 250 then
+           PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.CFrame = LastPosition
+
+           game.StarterGui:SetCore("ChatMakeSystemMessage", {
+               Text = "You were flung. Neutralizing velocity.";
+               Color = Color3.fromRGB(255, 0, 0);
+           })
+       elseif PrimaryPart.AssemblyLinearVelocity.Magnitude < 50 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 then
+           LastPosition = PrimaryPart.CFrame
+       end
+   end)
+end)
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/212's%20Notification%20Library"))()
+
+library:CreateNotification(3, "CenterThenBottom", "Anti Fling V2", "Succeed", "rbxassetid://16855304544")
+end) 
+
+Tab:CreateButton("Front Flip Tools🛠️",function()
+game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Success!",["Text"] = "@Narlascripts on youtube..",["Duration"] = 5,["Button1"] = "Okay."})
+player = game.Players.LocalPlayer
+        local Dive = Instance.new("HopperBin", player.Backpack)
+
+        Dive.Name = "Dive"
+
+                local debounce = false
+                function _restoreproperties()
+                    Holder = player.Character
+                    Torso = Holder:FindFirstChild("Torso")
+                    RightS = Torso:FindFirstChild("Right Shoulder")
+                    LeftS = Torso:FindFirstChild("Left Shoulder")
+                    RightH = Torso:FindFirstChild("Right Hip")
+                    LeftH = Torso:FindFirstChild("Left Hip")
+                    RightS.MaxVelocity = .15
+                    LeftS.MaxVelocity = .15
+                    RightH.MaxVelocity = .1
+                    LeftH.MaxVelocity = .1
+                    RightS.DesiredAngle = 0
+                    LeftS.DesiredAngle = 0
+                    LeftH.DesiredAngle = 0
+                    RightH.DesiredAngle = 0
+                end
+                function ManageAnimation(value)
+                    Holder = player.Character
+                    Player = player
+                    if value == "no anim" then
+                        Anim = Holder:FindFirstChild("Animate")
+                        if Anim ~= nil then
+                            Anim.Disabled = true
+                            Anim.Parent = Player
+                        end
+                    elseif value == "re-anim" then
+                        Anim = Player:FindFirstChild("Animate")
+                        if Anim ~= nil then
+                            Anim.Disabled = false
+                            Anim.Parent = Holder
+                        end
+                    end
+                end
+                function Down(ml)
+                    for i = 1, ml.velocity.y / 3 do
+                        ml.velocity = ml.velocity + Vector3.new(0, -4.25, 0)
+                        wait()
+                    end
+                    ml:Remove()
+                end
+                function Flip()
+                    if debounce == true then
+                        return
+                    end
+                    debounce = true
+                    Char = player.Character
+                    Human = Char.Humanoid
+                    Torso = Char.Torso
+                    CF = Torso.CFrame
+                    Human.PlatformStand = true
+                    VelUp = Instance.new("BodyVelocity")
+                    VelUp.velocity = Vector3.new(0, 45, 0) + Torso.CFrame.lookVector * 30 --Middle (0,0,0). Change for height.
+                    VelUp.P = VelUp.P * 2
+                    VelUp.maxForce = Vector3.new(10000, 10000, 10000) * 999
+                    VelUp.Parent = Torso
+                    coroutine.resume(coroutine.create(Down), VelUp)
+                    Gyro = Instance.new("BodyGyro")
+                    Gyro.P = Gyro.P * 10
+                    Gyro.maxTorque = Vector3.new(100000, 100000, 100000) * 999
+                    Gyro.cframe = CF
+                    Gyro.Parent = Torso
+                    for i = 1, 3 do --The amount of time your guy flips.
+                        Gyro.cframe = Gyro.cframe * CFrame.fromEulerAnglesXYZ(math.pi / -7, 0, 0) --The amount of flips. 1 = -16, 2 = -8
+                        wait()
+                    end
+                    for i = 1, 6 do --The amount of time your guy flips.
+                        Gyro.cframe = Gyro.cframe * CFrame.fromEulerAnglesXYZ(math.pi / -40, 0, 0) --The amount of flips. 1 = -16, 2 = -8
+                        wait()
+                    end
+                    wait(0.2)
+                    for i = 1, 10 do --The amount of time your guy flips.
+                        Gyro.cframe = Gyro.cframe * CFrame.fromEulerAnglesXYZ(math.pi / -7, 0, 0) --The amount of flips. 1 = -16, 2 = -8
+                        wait()
+                    end
+                    Gyro.cframe = CF
+                    wait()
+                    Gyro:Remove()
+                    Human.PlatformStand = false
+                    _restoreproperties()
+                    debounce = false
+                end
+                function onActive(mouse)
+                    player = game.Players.LocalPlayer
+                    if player == nil then
+                        return
+                    end
+                    mouse.Button1Down:connect(
+                        function()
+                            Flip()
+                        end
+                    )
+                end
+                Dive.Selected:connect(onActive)
+                
+game.Players.LocalPlayer.CharacterAdded:Connect(
+    function(character)
+        character:WaitForChild("HumanoidRootPart")
+        local Dive = Instance.new("HopperBin", player.Backpack)
+
+        Dive.Name = "Dive"
+
+                local debounce = false
+                function _restoreproperties()
+                    Holder = player.Character
+                    Torso = Holder:FindFirstChild("Torso")
+                    RightS = Torso:FindFirstChild("Right Shoulder")
+                    LeftS = Torso:FindFirstChild("Left Shoulder")
+                    RightH = Torso:FindFirstChild("Right Hip")
+                    LeftH = Torso:FindFirstChild("Left Hip")
+                    RightS.MaxVelocity = .15
+                    LeftS.MaxVelocity = .15
+                    RightH.MaxVelocity = .1
+                    LeftH.MaxVelocity = .1
+                    RightS.DesiredAngle = 0
+                    LeftS.DesiredAngle = 0
+                    LeftH.DesiredAngle = 0
+                    RightH.DesiredAngle = 0
+                end
+                function ManageAnimation(value)
+                    Holder = player.Character
+                    Player = player
+                    if value == "no anim" then
+                        Anim = Holder:FindFirstChild("Animate")
+                        if Anim ~= nil then
+                            Anim.Disabled = true
+                            Anim.Parent = Player
+                        end
+                    elseif value == "re-anim" then
+                        Anim = Player:FindFirstChild("Animate")
+                        if Anim ~= nil then
+                            Anim.Disabled = false
+                            Anim.Parent = Holder
+                        end
+                    end
+                end
+                function Down(ml)
+                    for i = 1, ml.velocity.y / 3 do
+                        ml.velocity = ml.velocity + Vector3.new(0, -4.25, 0)
+                        wait()
+                    end
+                    ml:Remove()
+                end
+                function Flip()
+                    if debounce == true then
+                        return
+                    end
+                    debounce = true
+                    Char = player.Character
+                    Human = Char.Humanoid
+                    Torso = Char.Torso
+                    CF = Torso.CFrame
+                    Human.PlatformStand = true
+                    VelUp = Instance.new("BodyVelocity")
+                    VelUp.velocity = Vector3.new(0, 45, 0) + Torso.CFrame.lookVector * 30 --Middle (0,0,0). Change for height.
+                    VelUp.P = VelUp.P * 2
+                    VelUp.maxForce = Vector3.new(10000, 10000, 10000) * 999
+                    VelUp.Parent = Torso
+                    coroutine.resume(coroutine.create(Down), VelUp)
+                    Gyro = Instance.new("BodyGyro")
+                    Gyro.P = Gyro.P * 10
+                    Gyro.maxTorque = Vector3.new(100000, 100000, 100000) * 999
+                    Gyro.cframe = CF
+                    Gyro.Parent = Torso
+                    for i = 1, 3 do --The amount of time your guy flips.
+                        Gyro.cframe = Gyro.cframe * CFrame.fromEulerAnglesXYZ(math.pi / -7, 0, 0) --The amount of flips. 1 = -16, 2 = -8
+                        wait()
+                    end
+                    for i = 1, 6 do --The amount of time your guy flips.
+                        Gyro.cframe = Gyro.cframe * CFrame.fromEulerAnglesXYZ(math.pi / -40, 0, 0) --The amount of flips. 1 = -16, 2 = -8
+                        wait()
+                    end
+                    wait(0.2)
+                    for i = 1, 10 do --The amount of time your guy flips.
+                        Gyro.cframe = Gyro.cframe * CFrame.fromEulerAnglesXYZ(math.pi / -7, 0, 0) --The amount of flips. 1 = -16, 2 = -8
+                        wait()
+                    end
+                    Gyro.cframe = CF
+                    wait()
+                    Gyro:Remove()
+                    Human.PlatformStand = false
+                    _restoreproperties()
+                    debounce = false
+                end
+                function onActive(mouse)
+                    player = game.Players.LocalPlayer
+                    if player == nil then
+                        return
+                    end
+                    mouse.Button1Down:connect(
+                        function()
+                            Flip()
+                        end
+                    )
+                end
+                Dive.Selected:connect(onActive)
+            end
+        )
+end) 
+
 Tab:CreateButton("Universal aimbot | By armengeimsss",function()
 	local ScreenGui = Instance.new("ScreenGui")
 	local main = Instance.new("Frame")
