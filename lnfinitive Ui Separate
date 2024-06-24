@@ -4,6 +4,230 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("teleport to random player and instantly go back",function()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TeleportService = game:GetService("TeleportService")
+
+local function teleportToRandomPlayer()
+    local players = Players:GetPlayers()
+    if #players < 2 then
+        warn("Not enough players to teleport")
+        return
+    end
+
+    local randomPlayer
+    repeat
+        randomPlayer = players[math.random(1, #players)]
+    until randomPlayer ~= LocalPlayer
+
+    local originalPosition = LocalPlayer.Character.HumanoidRootPart.CFrame
+    LocalPlayer.Character.HumanoidRootPart.CFrame = randomPlayer.Character.HumanoidRootPart.CFrame
+
+    wait(0.1)  -- The time after which we returned to our starting position.
+
+    LocalPlayer.Character.HumanoidRootPart.CFrame = originalPosition
+end
+
+teleportToRandomPlayer()
+end) 
+
+Tab:CreateButton("Alucard hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/JJTChannel/Alucard_hub/main/main.lua"))()
+end) 
+
+Tab:CreateButton("emote menu",function()
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- List of R15 and R6 emotes with their respective animation asset IDs
+local emotes = {
+    {name = "Wave", idR15 = "rbxassetid://507770239", idR6 = "rbxassetid://128777973"},
+    {name = "Point", idR15 = "rbxassetid://507770453", idR6 = "rbxassetid://128853357"},
+    {name = "Dance", idR15 = "rbxassetid://507771019", idR6 = "rbxassetid://182435998"},
+    {name = "Laugh", idR15 = "rbxassetid://507770818", idR6 = "rbxassetid://129423131"},
+    {name = "Cheer", idR15 = "rbxassetid://507770677", idR6 = "rbxassetid://129423030"}
+}
+
+local playingEmotes = {}
+
+local function createDraggableUI()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.3, 0, 0.5, 0)
+    frame.Position = UDim2.new(0.35, 0, 0.25, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    frame.BackgroundTransparency = 0.3
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
+
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0, 10)
+    uiCorner.Parent = frame
+
+    local uiListLayout = Instance.new("UIListLayout")
+    uiListLayout.Parent = frame
+    uiListLayout.Padding = UDim.new(0, 5)
+    uiListLayout.FillDirection = Enum.FillDirection.Vertical
+    uiListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    uiListLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+
+    local titleBar = Instance.new("TextLabel")
+    titleBar.Size = UDim2.new(1, -30, 0.1, 0)
+    titleBar.Text = "Emote Menu"
+    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleBar.BackgroundTransparency = 1
+    titleBar.Font = Enum.Font.SourceSansBold
+    titleBar.TextSize = 24
+    titleBar.Parent = frame
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0, 30, 0, 30)
+    closeButton.Position = UDim2.new(1, -30, 0, 0)
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    closeButton.Font = Enum.Font.SourceSansBold
+    closeButton.TextSize = 24
+    closeButton.Parent = frame
+
+    local speedTextBox = Instance.new("TextBox")
+    speedTextBox.Size = UDim2.new(0.9, 0, 0.1, 0)
+    speedTextBox.PlaceholderText = "Enter Emote Speed"
+    speedTextBox.Text = ""
+    speedTextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+    speedTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    speedTextBox.Font = Enum.Font.SourceSans
+    speedTextBox.TextSize = 18
+    speedTextBox.Parent = frame
+
+    local uiCornerTextBox = Instance.new("UICorner")
+    uiCornerTextBox.CornerRadius = UDim.new(0, 5)
+    uiCornerTextBox.Parent = speedTextBox
+
+    local function playEmote(emoteId, speed, rigType)
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local emoteAnim = Instance.new("Animation")
+            emoteAnim.AnimationId = emoteId
+            local emoteTrack = humanoid:LoadAnimation(emoteAnim)
+            emoteTrack:Play()
+            emoteTrack:AdjustSpeed(speed)
+            if rigType == Enum.HumanoidRigType.R6 then
+                emoteTrack.Looped = true
+            end
+            return emoteTrack
+        else
+            warn("Humanoid not found in character")
+            return nil
+        end
+    end
+
+    for _, emote in ipairs(emotes) do
+        local button = Instance.new("TextButton")
+        button.Size = UDim2.new(0.9, 0, 0.1, 0)
+        button.Text = emote.name
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        button.Font = Enum.Font.SourceSans
+        button.TextSize = 18
+        button.Parent = frame
+
+        local uiCornerButton = Instance.new("UICorner")
+        uiCornerButton.CornerRadius = UDim.new(0, 5)
+        uiCornerButton.Parent = button
+
+        button.MouseButton1Click:Connect(function()
+            local speed = tonumber(speedTextBox.Text) or 1
+            if playingEmotes[emote.name] then
+                playingEmotes[emote.name]:Stop()
+                playingEmotes[emote.name] = nil
+            else
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                local rigType = humanoid.RigType
+                local emoteId = rigType == Enum.HumanoidRigType.R15 and emote.idR15 or emote.idR6
+                local emoteTrack = playEmote(emoteId, speed, rigType)
+                if emoteTrack then
+                    playingEmotes[emote.name] = emoteTrack
+                end
+            end
+        end)
+    end
+
+    local stopAllButton = Instance.new("TextButton")
+    stopAllButton.Size = UDim2.new(0.9, 0, 0.1, 0)
+    stopAllButton.Text = "Stop All Emotes"
+    stopAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    stopAllButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    stopAllButton.Font = Enum.Font.SourceSans
+    stopAllButton.TextSize = 18
+    stopAllButton.Parent = frame
+
+    local uiCornerStopAllButton = Instance.new("UICorner")
+    uiCornerStopAllButton.CornerRadius = UDim.new(0, 5)
+    uiCornerStopAllButton.Parent = stopAllButton
+
+    stopAllButton.MouseButton1Click:Connect(function()
+        for _, emoteTrack in pairs(playingEmotes) do
+            emoteTrack:Stop()
+        end
+        playingEmotes = {}
+    end)
+
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui.Enabled = false
+    end)
+
+    local dragging = false
+    local dragInput, mousePos, framePos
+
+    local function update(input)
+        local delta = input.Position - mousePos
+        frame.Position = UDim2.new(
+            framePos.X.Scale, framePos.X.Offset + delta.X,
+            framePos.Y.Scale, framePos.Y.Offset + delta.Y
+        )
+    end
+
+    titleBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            mousePos = input.Position
+            framePos = frame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    titleBar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
+        end
+    end)
+end
+
+local function onCharacterAdded(newCharacter)
+    character = newCharacter
+    createDraggableUI()
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+createDraggableUI()
+end) 
+
 Tab:CreateButton("Press g to fly",function()
 repeat wait() 
     until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Head") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid") 
