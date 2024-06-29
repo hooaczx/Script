@@ -4,6 +4,521 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Index Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/IndexZHub/Loader/main/Loader"))()
+end) 
+
+Tab:CreateButton("Syr Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/CorruptedClan/BackOnTop/main/SyrHubRemastered.lua"))()
+end) 
+
+Tab:CreateButton("Server info",function()
+local Players = game:GetService("Players")
+
+local placeid = game.PlaceId
+local placev = game.PlaceVersion
+local placecr = game:GetService("MarketplaceService"):GetProductInfo(placeid).Created
+local placeup = game:GetService("MarketplaceService"):GetProductInfo(placeid).Updated
+local placena = game:GetService("MarketplaceService"):GetProductInfo(placeid).Name
+
+local grav = game.Workspace.Gravity
+local time = game.Workspace.DistributedGameTime
+local countplr = #Players:GetPlayers()
+
+local respawnti = game.Players.RespawnTime
+local maxplr = game.Players.MaxPlayers
+local canres = game.Players.CharacterAutoLoads
+
+local creatorna = game:GetService("MarketplaceService"):GetProductInfo(placeid).Creator.Name
+local creatorid = game:GetService("MarketplaceService"):GetProductInfo(placeid).Creator.Id
+
+local function printPlayerInfo(player)
+    local Age = player.AccountAge
+    local name = player.Name
+    local display = player.DisplayName
+    local Us = player.UserId
+    local charap = player.CharacterAppearance
+    local charapid = player.CharacterAppearanceId
+    local teamch = player.TeamColor
+    local locale = player.LocaleId
+    local memsh = player.MembershipType
+    
+    local health = player.Character.Humanoid.Health
+    local maxh = player.Character.Humanoid.MaxHealth
+    local speed = player.Character.Humanoid.WalkSpeed
+    local jump = player.Character.Humanoid.JumpPower
+    local jumph = player.Character.Humanoid.JumpHeight
+    local hiph = player.Character.Humanoid.HipHeight
+    local cframe = player.Character.HumanoidRootPart.CFrame
+    local vector = player.Character.HumanoidRootPart.Position
+    local state = player.Character.Humanoid:GetState()
+    
+    local backpack = player.Backpack
+    local toolsnum = 0
+    
+   local toolCount = 0
+    for _, item in pairs(player.Backpack:GetChildren()) do
+        if item:IsA("Tool") then
+            toolCount = toolCount + 1
+        end
+    end
+   toolsnum = toolCount
+   
+  local toolname = ""
+    local character = player.Character
+    if character and character:FindFirstChildOfClass("Tool") then
+        toolname = character:FindFirstChildOfClass("Tool").Name
+    else
+        toolname = "Nothing"
+    end
+   
+    local animation = ""
+local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+if humanoid then
+  local animator = humanoid:FindFirstChildOfClass("Animator")
+  if animator then
+    local playingAnimation = animator:GetPlayingAnimationTracks()[1].Animation
+    if playingAnimation then
+      animation = playingAnimation.AnimationId
+    else
+      animation = "Animation doesn't play"
+    end
+  else
+    animation = "Animation not found"
+  end
+else
+  animation = "Player not found"
+end
+    
+    local playerCountry = ""
+  if player == game.Players.LocalPlayer then
+    playerCountry = game:GetService("LocalizationService"):GetCountryRegionForPlayerAsync(player)
+    else
+    playerCountry = "This possible only on local player"
+  end
+  
+    local device = ""
+    UserInputService = game:GetService("UserInputService")
+
+    if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled and not UserInputService.MouseEnabled then
+        device = "Mobile"
+    elseif not UserInputService.TouchEnabled and UserInputService.KeyboardEnabled and UserInputService.MouseEnabled then
+        device = "Computer"
+    else
+        device = "Unknown"
+    end
+
+    print("Player Name:", name, "(", display, ")")
+    print("Client – Account Age:", Age, "Days", ";Id:", Us, ";Character Appearance:", charap, ";DeviceType:", device, ";Player Contry:", playerCountry, ";Team Chat Color:", teamch, ";Locale Id:", locale, ";Membership Type:", memsh)
+   print("Humanoid – Health:", health, "/" , maxh ,";Walk Speed:", speed, ";Jump Power:", jump, ";Jump Height:", jumph, ";Hip Height:", hiph, ";CFrame:", cframe, ";Position:", vector, ";Animation Id:", animation, ";State Type:", state, "\n")
+   print("Backpack – Number of Tools:", toolsnum, ";Equipped Tool Name:", toolname)
+end
+
+print("Place info – Place Id:", placeid, ";Place Version:", placev, ";Place Name:", placena, ";Created:", placecr, ";Last Update:", placeup, ";Respawn Time:", respawnti, ";Players on server:", countplr, "/", maxplr, ";Can Respawn:", canres, ";Global Gravity:", grav, ";Your presence:", time)
+print("Place Creator info – Creator name:", creatorna, ";Creator Id:", creatorid, "\n")
+for _, player in ipairs(Players:GetPlayers()) do
+    printPlayerInfo(player)
+end
+end) 
+
+Tab:CreateButton("Unstoppable Ejaculation Force",function()
+while wait() do
+local modelId = "rbxassetid://5168800671"
+
+-- Function to load the model
+local function loadModel(modelId)
+    -- Use GetObjects to load the model
+    local model = game:GetObjects(modelId)[1]
+
+    -- Make sure the model is loaded correctly
+    if model then
+        -- Anchor the model
+        for _, part in ipairs(model:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Anchored = true
+            end
+        end
+
+        -- Set the parent of the model to workspace
+        model.Parent = game.Workspace
+
+        -- Optionally, set the position of the model
+        model.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame - Vector3.yAxis * (game.Players.LocalPlayer.Character.HumanoidRootPart.Size.Y / 2)
+        model.Velocity = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.LookVector * 35        model.CanCollide = false
+        model.Name = "Cum"
+        game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = -game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.LookVector * 35
+        game.Debris:AddItem(model, 10)
+
+        print("Model loaded successfully!")
+    else
+        warn("Failed to load model.")
+    end
+end
+
+-- Call the function to load the model
+loadModel(modelId)
+end
+end) 
+
+Tab:CreateButton("Sypaze X",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/max96git/max96git-s-stuff/main/sypz/main.lua",true))()
+end) 
+
+Tab:CreateButton("Bysuskhmer",function()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/UhGbaaaa/Android-Value/main/Bysyskhmwr.txt'),true))()
+end) 
+
+Tab:CreateButton("Teleport To Players (By FeliciaXxx",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FeliciaXxxTop/ExE/main/main.lua"))()
+end) 
+
+Tab:CreateButton("speed coil gravity coil OP Dual God Mode Admin Coil Tools",function()
+_G.speedcoil=game:GetObjects("rbxassetid://99119158")[1];_G.speedcoil.Parent=game.Players.LocalPlayer.Backpack;_G.speedcoil.Equipped:Connect(function() game.Players.LocalPlayer.Character.Humanoid.WalkSpeed=32;local v5=Instance.new("Sound");local v6="99173388";v5.Parent=game.Workspace;v5.SoundId="rbxassetid://"   .. v6 ;v5.Playing=true;v5.Looped=false;v5.Volume=1;end);_G.speedcoil.Unequipped:Connect(function() game.Players.LocalPlayer.Character.Humanoid.WalkSpeed=16;end);wait(1);_G.gravitycoil=game:GetObjects("rbxassetid://16688968")[1];_G.gravitycoil.Parent=game.Players.LocalPlayer.Backpack;_G.gravitycoil.Equipped:Connect(function() game.workspace.Gravity=50;local v15=Instance.new("Sound");local v16="16619553";v15.Parent=game.Workspace;v15.SoundId="rbxassetid://"   .. v16 ;v15.Playing=true;v15.Looped=false;v15.Volume=1;end);_G.gravitycoil.Unequipped:Connect(function() game.workspace.Gravity=196.2;end);wait(1);_G.Super_Coil=game:GetObjects("rbxassetid://14917011895")[1];_G.Super_Coil.Parent=game.Players.LocalPlayer.Backpack;_G.Super_Coil.Equipped:Connect(function() game.workspace.Gravity=50;game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed=120;game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower=120;local v27=Instance.new("Sound");local v28="99173388";v27.Parent=game.Workspace;v27.SoundId="rbxassetid://"   .. v28 ;v27.Playing=true;v27.Looped=false;v27.Volume=1;end);_G.Super_Coil.Unequipped:Connect(function() game.workspace.Gravity=200;game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed=16;game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower=50;end);
+end) 
+
+Tab:CreateButton("EXTREMELY",function()
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TopBar = Instance.new("Frame")
+local DragText = Instance.new("TextLabel")
+local FlyButton = Instance.new("TextButton")
+local SpeedInput = Instance.new("TextBox")
+local SpeedButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame.Position = UDim2.new(0.5, -100, 0.5, -75)
+Frame.Size = UDim2.new(0, 200, 0, 150)
+
+TopBar.Parent = Frame
+TopBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TopBar.Size = UDim2.new(1, 0, 0.2, 0)
+
+DragText.Parent = TopBar
+DragText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+DragText.BackgroundTransparency = 1
+DragText.Size = UDim2.new(1, 0, 1, 0)
+DragText.Font = Enum.Font.SourceSans
+DragText.Text = "Drag the black spot"
+DragText.TextColor3 = Color3.fromRGB(255, 255, 255)
+DragText.TextSize = 14
+
+FlyButton.Parent = Frame
+FlyButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+FlyButton.Position = UDim2.new(0.1, 0, 0.25, 0)
+FlyButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+FlyButton.Font = Enum.Font.SourceSans
+FlyButton.Text = "Infinite Jump"
+FlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyButton.TextSize = 24
+
+SpeedInput.Parent = Frame
+SpeedInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SpeedInput.Position = UDim2.new(0.1, 0, 0.5, 0)
+SpeedInput.Size = UDim2.new(0.8, 0, 0.1, 0)
+SpeedInput.Font = Enum.Font.SourceSans
+SpeedInput.PlaceholderText = "Enter Speed"
+SpeedInput.Text = ""
+SpeedInput.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedInput.TextSize = 18
+
+SpeedButton.Parent = Frame
+SpeedButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+SpeedButton.Position = UDim2.new(0.1, 0, 0.65, 0)
+SpeedButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+SpeedButton.Font = Enum.Font.SourceSans
+SpeedButton.Text = "Set Super Speed"
+SpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedButton.TextSize = 24
+
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+TopBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Frame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+TopBar.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
+
+FlyButton.MouseButton1Click:Connect(function()
+	local player = game.Players.LocalPlayer
+	local mouse = player:GetMouse()
+
+	mouse.KeyDown:Connect(function(key)
+		if key == " " then
+			player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+		end
+	end)
+end)
+
+SpeedButton.MouseButton1Click:Connect(function()
+	local player = game.Players.LocalPlayer
+	local speed = tonumber(SpeedInput.Text)
+end) 
+
+Tab:CreateButton("HONOURED",function()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Honored.lua'),true))()
+end) 
+
+Tab:CreateButton("Midnightcc",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/laeraz/midnightcc/main/public.lua"))()
+end) 
+
+Tab:CreateButton("Cat hub",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/catter-y/cat-hub/main/main'))()
+end) 
+
+Tab:CreateButton("NUT HUB",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Qrto1/working/main/pc"))()
+end) 
+
+Tab:CreateButton("EmojiBypasser",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/v3rmie/EmojiBypasser/main/main.lua",true))()
+end) 
+
+Tab:CreateButton("humanoid settings",function()
+local player = Game.Players.localPlayer
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Humanoid Settings", HidePremium = false, SaveConfig = true, ConfigFolder = "Humanoid"})
+
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
+
+local Tab = Window:MakeTab({
+	Name = "Game",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <tring> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+
+Tab:AddTextbox({
+	Name = "WalkSpeed",
+	Default = "16",
+	TextDisappear = true,
+	Callback = function(Value)
+		player.Character.Humanoid.WalkSpeed = Value
+	end	  
+})
+
+--[[
+Name = <string> - The name of the textbox.
+Default = <string> - The default value of the textbox.
+TextDisappear = <bool> - Makes the text disappear in the textbox after losing focus.
+Callback = <function> - The function of the textbox.
+]]
+
+Tab:AddTextbox({
+	Name = "JumpPower",
+	Default = "50",
+	TextDisappear = true,
+	Callback = function(Value)
+		player.Character.Humanoid.JumpPower = Value
+	end	  
+})
+
+--[[
+Name = <string> - The name of the textbox.
+Default = <string> - The default value of the textbox.
+TextDisappear = <bool> - Makes the text disappear in the textbox after losing focus.
+Callback = <function> - The function of the textbox.
+]]
+
+Tab:AddTextbox({
+	Name = "Health",
+	Default = "100",
+	TextDisappear = true,
+	Callback = function(Value)
+		player.Character.Humanoid.Health = Value
+	end	  
+})
+
+--[[
+Name = <string> - The name of the textbox.
+Default = <string> - The default value of the textbox.
+TextDisappear = <bool> - Makes the text disappear in the textbox after losing focus.
+Callback = <function> - The function of the textbox.
+]]
+
+Tab:AddTextbox({
+	Name = "MaxHealth",
+	Default = "100",
+	TextDisappear = true,
+	Callback = function(Value)
+		player.Character.Humanoid.MaxHealth = Value
+	end	  
+})
+
+--[[
+Name = <string> - The name of the textbox.
+Default = <string> - The default value of the textbox.
+TextDisappear = <bool> - Makes the text disappear in the textbox after losing focus.
+Callback = <function> - The function of the textbox.
+]]
+
+Tab:AddTextbox({
+	Name = "HipHeignt",
+	Default = "0",
+	TextDisappear = true,
+	Callback = function(Value)
+		player.Character.Humanoid.HipHeignt = Value
+	end	  
+})
+
+--[[
+Name = <string> - The name of the textbox.
+Default = <string> - The default value of the textbox.
+TextDisappear = <bool> - Makes the text disappear in the textbox after losing focus.
+Callback = <function> - The function of the textbox.
+]]
+
+local Tab = Window:MakeTab({
+	Name = "Game2",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "Sit",
+	Callback = function()
+      		player.Character.Humanoid.Sit = true
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+
+Tab:AddButton({
+	Name = "Jump",
+	Callback = function()
+      		player.Character.Humanoid.Jump = true
+  	end    
+})
+
+Tab:AddToggle({
+	Name = "AutoRotate",
+	Default = true,
+	Callback = function(Value)
+		player.Character.Humanoid.AutoRotate = Value
+	end    
+})
+
+--[[
+Name = <string> - The name of the toggle.
+Default = <bool> - The default value of the toggle.
+Callback = <function> - The function of the toggle.
+]]
+
+Tab:AddToggle({
+	Name = "PatformStand",
+	Default = true,
+	Callback = function(Value)
+		player.Character.Humanoid.PatformStand = Value
+	end    
+})
+
+--[[
+Name = <string> - The name of the toggle.
+Default = <bool> - The default value of the toggle.
+Callback = <function> - The function of the toggle.
+]]
+
+end) 
+
+Tab:CreateButton("speed demonstrator",function()
+-- ServerScript veya LocalScript içinde
+
+-- Oyuncunun GUI'sini bulun
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- ScreenGui oluşturun
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SpeedGui"  -- GUI'nin adını ayarlayın
+screenGui.Parent = playerGui -- GUI'yi PlayerGui'nin altına ekleyin
+
+-- TextLabel oluşturun
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "SpeedLabel"   -- Label'in adını ayarlayın
+textLabel.Size = UDim2.new(0, 200, 0, 50)   -- Boyutunu ayarlayın
+textLabel.Position = UDim2.new(0, 10, 0, 10)   -- Konumunu ayarlayın
+textLabel.Text = "Hız: 0"  -- Başlangıçta gösterilecek metin
+textLabel.TextSize = 24   -- Metin boyutunu ayarlayın
+textLabel.BackgroundTransparency = 0.5   -- Arka planın yarı saydamlığını ayarlayın
+textLabel.Parent = screenGui   -- Label'i ScreenGui'nin altına ekleyin
+
+-- Hızı güncelleyen fonksiyon
+local function updateSpeed()
+    while true do
+        local character = player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                local speed = humanoid.WalkSpeed
+                textLabel.Text = "Hız: " .. tostring(speed)
+            end
+        end
+        wait(0.1) -- Her 0.1 saniyede bir günceller
+    end
+end
+
+-- Oyuncu karakteri yüklendiğinde hızı güncelle
+player.CharacterAdded:Connect(function(character)
+    updateSpeed()
+end)
+
+-- İlk karakter yüklendiyse hemen başlat
+if player.Character then
+    updateSpeed()
+end
+end) 
+
 Tab:CreateButton("Cmd Admin",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"))()
 end) 
