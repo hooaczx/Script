@@ -4,6 +4,50 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Esp Script (By apakekbebas",function()
+_G.Settings = {
+    ShowNames = true, -- Change to false to turn off
+    ShowDistance = true, -- Change to false to turn off
+}
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/apakekbebas/esp-lib/main/lib.lua", true))()
+end) 
+
+Tab:CreateButton("Ping spoofer",function()
+--[[ DISCORD LINK FOR SOLARA HELP/ANNOUNCEMENTS: https://discord.gg/2juhJsUUX4 --]]
+
+
+getgenv().PingSpoofer = {
+    SpoofPing = true,
+    StartOfPingSpoofer = 31,
+    EndOfPingSpoofer = 69
+}
+
+local Memory
+
+for __, v in pairs(game.CoreGui.RobloxGui.PerformanceStats:GetChildren()) do
+    if v.Name == 'PS_Button' and v.StatsMiniTextPanelClass.TitleLabel.Text == 'Ping' then 
+        Memory = v.StatsMiniTextPanelClass.ValueLabel
+    end
+end
+
+Memory:GetPropertyChangedSignal('Text'):Connect(function()
+    if getgenv().PingSpoofer.SpoofPing then
+        local Random = math.random(getgenv().PingSpoofer.StartOfPingSpoofer, getgenv().PingSpoofer.EndOfPingSpoofer)
+        Random = Random * 1.23
+        Memory.Text = Random .. ' ms'
+    end
+end)
+end) 
+
+Tab:CreateButton("Cash Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/cashiolaa/-cash-hub/main/%24%20cash%20hub"))()
+end) 
+
+Tab:CreateButton("KENNHUB V32",function()
+loadstring(game:HttpGet("https://cdn.discordapp.com/attachments/1256468572507734026/1256469036586504254/Obfuscated-SvdCcGMU4lX3MJqj53AQoYcn9clh-1.lua?ex=6680e17a&is=667f8ffa&hm=86c0931a8b968c58206b9e8b478ae289fca5ffcf5fab27e6c80092cd43300d0b&"))()
+end) 
+
 Tab:CreateButton("Unstoppable Ejaculation Force💀",function()
 while wait() do
 local modelId = "rbxassetid://5168800671"
