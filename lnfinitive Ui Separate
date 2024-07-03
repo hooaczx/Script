@@ -4,6 +4,199 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("D3xWare",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/D3x-Scripts/D3xWare/main/src.lua"))()
+end) 
+
+Tab:CreateButton("Retrofiy",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy.lua"))()
+end) 
+
+Tab:CreateButton("Replay mod",function()
+local Gui = Instance.new("ScreenGui", game.CoreGui)
+Gui.Name = "Replay! (w1zlm)"
+Gui.IgnoreGuiInset = true
+Gui.ZIndexBehavior = "Global"
+
+Gui.ChildAdded:Connect(function(child)
+	if child.ClassName ~= "ImageLabel" then
+		child.AnchorPoint = Vector2.new(0.5, 0.5)
+		Instance.new("UICorner", child)
+	end
+end)
+
+local Mouse = game.Players.LocalPlayer:GetMouse()
+
+Mouse.Icon = "http://www.roblox.com/asset/?id=9659120290"
+
+local TS = game:GetService("TweenService")
+
+local UIS = game:GetService("UserInputService")
+
+local ShiftLock = false
+
+UIS:GetPropertyChangedSignal("MouseBehavior"):Connect(function()
+    if UIS.MouseBehavior == Enum.MouseBehavior.LockCenter then
+        ShiftLock = true
+	elseif UIS.MouseBehavior == Enum.MouseBehavior.Default then
+		ShiftLock = false
+    end
+end)
+
+local Frame = Instance.new("Frame", Gui)
+Frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+Frame.Size = UDim2.new(0, 0, 0, 200)
+Frame.Position = UDim2.new(0, 200, 0, ((Mouse.ViewSizeY + 36) / 2))
+Frame.ClipsDescendants = true
+
+Frame.ChildAdded:Connect(function(child)
+	child.AnchorPoint = Vector2.new(0.5, 0.5)
+	Instance.new("UICorner", child)
+end)
+
+local FT = TS:Create(Frame, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Size = UDim2.new(0, 150, 0, 200)})
+FT:Play()
+
+local BRecord = Instance.new("TextButton", Frame)
+BRecord.BackgroundColor3 = Color3.new(0, 1, 0)
+BRecord.Size = UDim2.new(0, 100, 0, 20)
+BRecord.Position = UDim2.new(0, 0, 0, 80)
+BRecord.TextScaled = true
+BRecord.Text = "Record"
+BRecord.Font = "GothamBlack"
+
+local BRT = TS:Create(BRecord, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 75, 0, 80)})
+BRT:Play()
+
+local BPlay = Instance.new("TextButton", Frame)
+BPlay.BackgroundColor3 = Color3.new(0, 1, 0)
+BPlay.Size = UDim2.new(0, 100, 0, 20)
+BPlay.Position = UDim2.new(0, 0, 0, 120)
+BPlay.TextScaled = true
+BPlay.Text = "Play"
+BPlay.Font = "GothamBlack"
+
+local BPT = TS:Create(BPlay, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 75, 0, 120)})
+BPT:Play()
+
+local Recording = false
+
+local function Record()
+	local R6 = false
+	Recording = true
+	local Frames = {}
+	local FrameID = 1
+	local Character = game.Players.LocalPlayer.Character
+	if Character:FindFirstChild("Left Leg") then
+		R6 = true
+	end
+	local Camera = game.Workspace.Camera
+	local Player = game.Players.LocalPlayer
+	print("Record Start")
+	if R6 == true then
+		while game:GetService("RunService").RenderStepped:wait() do
+			if Recording == false then
+				break
+			end
+			local Bool = false
+			if ShiftLock == true then
+				Bool = true
+			end
+			Frames[#Frames+1] = {{Character.HumanoidRootPart.CFrame, Character.Head.CFrame, Character.Torso.CFrame, Character.Head.Parent["Left Arm"].CFrame, Character.Head.Parent["Right Arm"].CFrame, Character.Head.Parent["Left Leg"].CFrame, Character.Head.Parent["Right Leg"].CFrame}, Camera.CFrame, (Camera.CFrame.Position - Camera.Focus.Position).Magnitude, UDim2.new(0, (Mouse.X - 30), 0, (Mouse.Y + 5)), Bool}
+			FrameID = FrameID + 1
+		end
+	end
+	print("Record End")
+	return {Frames, FrameID}
+end
+
+local Recorded
+
+BRecord.MouseButton1Click:Connect(function()
+	if Recording == false then
+		BRecord.Text = "Stop Recording"
+		Recorded = Record()
+	else
+		BRecord.Text = "Record"
+		Recording = false
+	end
+end)
+
+local function Play(Recorded2)
+	local R6 = false
+	local Character = game.Players.LocalPlayer.Character
+	if Character:FindFirstChild("Left Leg") then
+		R6 = true
+	end
+	local Camera = game.Workspace.Camera
+	local Player = game.Players.LocalPlayer
+	print("Play Start")
+	local BaseMaxZoom = tonumber(Player.CameraMaxZoomDistance)
+	local BaseMinZoom = tonumber(Player.CameraMinZoomDistance)
+	Camera.CameraType = "Scriptable"
+	local FrameID = 1
+	local MouseIcon = Instance.new("ImageLabel", Gui)
+	MouseIcon.Size = UDim2.new(0, 60, 0, 59)
+	MouseIcon.Image = "http://www.roblox.com/asset/?id=9659120290"
+	MouseIcon.BackgroundTransparency = 1
+	
+	if R6 == true then
+		Character.HumanoidRootPart.Anchored = true
+		Character.Head.Anchored = true
+		Character.Torso.Anchored = true
+		Character.Head.Parent["Left Arm"].Anchored = true
+		Character.Head.Parent["Right Arm"].Anchored = true
+		Character.Head.Parent["Left Leg"].Anchored = true
+		Character.Head.Parent["Right Leg"].Anchored = true
+		while game:GetService("RunService").RenderStepped:wait() do
+			UIS.MouseIconEnabled = false
+			if FrameID == Recorded2[2] then
+				break
+			else
+				Character.HumanoidRootPart.CFrame = Recorded2[1][FrameID][1][1]
+				Character.Head.CFrame = Recorded2[1][FrameID][1][2]
+				Character.Torso.CFrame = Recorded2[1][FrameID][1][3]
+				Character.Head.Parent["Left Arm"].CFrame = Recorded2[1][FrameID][1][4]
+				Character.Head.Parent["Right Arm"].CFrame = Recorded2[1][FrameID][1][5]
+				Character.Head.Parent["Left Leg"].CFrame = Recorded2[1][FrameID][1][6]
+				Character.Head.Parent["Right Leg"].CFrame = Recorded2[1][FrameID][1][7]
+				Camera.CFrame = Recorded2[1][FrameID][2]
+				Player.CameraMaxZoomDistance = Recorded2[1][FrameID][3]
+				Player.CameraMinZoomDistance = Recorded2[1][FrameID][3]
+				MouseIcon.Position = Recorded2[1][FrameID][4]
+				if Recorded2[1][FrameID][5] == true then
+					MouseIcon.Image = "http://www.roblox.com/asset/?id=9659187216"
+					MouseIcon.Size = UDim2.new(0, 35, 0, 35)
+				else
+					MouseIcon.Image = "http://www.roblox.com/asset/?id=9659120290"
+					MouseIcon.Size = UDim2.new(0, 60, 0, 59)
+				end
+			end
+			FrameID = FrameID + 1
+		end
+		Character.HumanoidRootPart.Anchored = false
+		Character.Head.Anchored = false
+		Character.Torso.Anchored = false
+		Character.Head.Parent["Left Arm"].Anchored = false
+		Character.Head.Parent["Right Arm"].Anchored = false
+		Character.Head.Parent["Left Leg"].Anchored = false
+		Character.Head.Parent["Right Leg"].Anchored = false
+	end
+	UIS.MouseIconEnabled = true
+	MouseIcon:Remove()
+	print("Play End")
+	
+	Player.CameraMaxZoomDistance = BaseMaxZoom
+	Player.CameraMinZoomDistance = BaseMinZoom
+	Camera.CameraType = "Custom"
+end
+
+BPlay.MouseButton1Click:Connect(function()
+	Play(Recorded)
+end)
+end) 
+
+
 Tab:CreateButton("Chat Tag Infinity",function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Chat%20Tag%20Infinity"))()
 end) 
