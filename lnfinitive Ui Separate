@@ -4,6 +4,97 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("1x2x3x4x5x6",function()
+loadstring(game:HttpGet(('https://pastebin.com/raw/ykgVjBiP'),true))()
+end) 
+
+Tab:CreateButton("Voidware V5",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SumitScripts/vapevoidware/main/README.md", true))()
+end) 
+
+Tab:CreateButton("Executor X for lazy person",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/PfDZPPc8"))()
+end) 
+
+Tab:CreateButton("fireproximityprompt",function()
+getgenv().fireproximityprompt=function(pp)
+    local oldpos=game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    local oldenabled=pp.Enabled
+    local oldhold=pp.HoldDuration
+    local oldrlos=pp.RequiresLineOfSight
+    pp.Enabled=true
+    pp.HoldDuration=0
+    pp.RequiresLineOfSight=false
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=pp.Parent.CFrame
+    wait(.23)
+    pp:InputHoldBegin()
+    task.wait()
+    pp:InputHoldEnd()
+    wait(.1)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=oldpos
+    pp.Enabled=pp.Enabled
+    pp.HoldDuration=pp.HoldDuration
+    pp.RequiresLineOfSight=pp.RequiresLineOfSight
+end
+end) 
+
+Tab:CreateButton("Current Location XYZ",function()
+if not _G.OrionLib then
+    _G.OrionLib = loadstring(game:HttpGet(('https://bloxxyserverfiles.netlify.app/LIB')))()
+
+    -- Join the discord link for more scripts like this.
+    setclipboard(tostring("https://discord.gg/NkKa3uAg"))
+end
+
+_G.ConfigurationCurrenLocation = _G.ConfigurationCurrenLocation or 45
+
+-- Gets the local player
+local player = game.Players.LocalPlayer
+
+-- Function to print the player's position
+local function printPlayerPosition()
+    -- Gets the player's Character
+    local character = player.Character
+    
+    -- Checks if the Character exists
+    if character then
+        -- Gets the HumanoidRootPart of the Character
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        
+        -- Checks if HumanoidRootPart exists
+        if humanoidRootPart then
+            -- Gets the current position of the player
+            local position = humanoidRootPart.Position
+            
+            -- Prints the coordinates x, y, z
+            _G.OrionLib:MakeNotification({
+                Name = "Current Location!",
+                Content = "" .. "(X=" .. position.X .. ") (Y=" .. position.Y .. ") (Z=" .. position.Z .. ")",
+                Image = "rbxassetid://4483345998",
+                Time = _G.ConfigurationCurrenLocation
+            })
+
+            print("x:", position.X, "y:", position.Y, "z:", position.Z)
+        else
+            print("HumanoidRootPart not found.")
+        end
+    else
+        print("Character not found.")
+    end
+end
+
+-- Connects the function to the RenderStepped event to update every frame
+printPlayerPosition()
+end) 
+
+Tab:CreateButton("Script X",function()
+loadstring(game:HttpGet(('https://pastebin.com/raw/hcc9JFY6'),true))()
+end) 
+
+Tab:CreateButton("GuiStealer REUPLOAD",function()
+local StealGUI = loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-GuiStealer-12751", true))()
+end) 
+
 Tab:CreateButton("infinite yield in delta x",function()
 loadstring(game:HttpGet("https://gist.githubusercontent.com/lxnnydev/c533c374ca4c1dcef4e1e10e33fa4a0c/raw/03e74f184f801dad77d3ebe1e2f18c6ac87ca612/delta___IY.gistfile1.txt.lua"))()
 end) 
