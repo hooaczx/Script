@@ -4,6 +4,1273 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("movement visuals (by chatgpt",function()
+-- Reference to services and players
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+-- Configuration
+local lineColor = Color3.fromRGB(0, 191, 255) -- Neon sky blue color for the line (RGB: 0, 191, 255)
+local lineThickness = 0.2 -- Thickness of the line in studs
+local lineHeight = 2 -- Height of the line above the ground
+local lineDuration = 1 -- Duration in seconds to display the line
+local lineTransparency = 0.5 -- Transparency of the line (0 = opaque, 1 = fully transparent)
+
+-- Dictionary to store line parts per player
+local playerLines = {}
+
+-- Function to create a glowing line from a starting position to an ending position
+local function createGlowingLine(player, startPosition, endPosition)
+    local line = playerLines[player]
+    if not line then
+        line = Instance.new("Model")
+        line.Name = player.Name .. "_MovementLine"
+        line.Parent = game.Workspace
+        playerLines[player] = line
+    end
+    
+    local direction = (endPosition - startPosition).unit
+    local distance = (endPosition - startPosition).magnitude
+    local segments = math.floor(distance / lineThickness)
+    local increment = distance / segments
+
+    -- Create a line segment
+    local part = Instance.new("Part")
+    part.Anchored = true
+    part.Size = Vector3.new(lineThickness, lineThickness, distance)
+    part.CFrame = CFrame.new(startPosition, endPosition) * CFrame.new(0, -lineHeight, -distance / 2) -- Adjusted height here
+    part.Color = lineColor
+    part.Transparency = lineTransparency -- Adjust transparency if needed
+    part.Material = Enum.Material.Neon -- Neon material for glowing effect
+    part.CanCollide = false
+    part.Parent = line
+    
+    -- Destroy the line segment after a certain duration
+    spawn(function()
+        wait(lineDuration)
+        part:Destroy()
+    end)
+end
+
+-- Function to handle player movements
+local function handlePlayerMovement(player)
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local rootPart = player.Character.HumanoidRootPart
+        local previousPosition = playerLines[player] and playerLines[player]:FindFirstChild("SegmentEnd") or rootPart.Position
+        
+        -- Wait for a short time to detect movement
+        wait(0.1)
+        
+        -- Check if the player has moved significantly
+        local currentPosition = rootPart.Position
+        if (currentPosition - previousPosition).magnitude >= lineThickness then
+            createGlowingLine(player, previousPosition, currentPosition) -- Create a glowing line between previous and current positions
+        end
+        
+        -- Update the end position of the current line segment
+        if playerLines[player] then
+            local segmentEnd = playerLines[player]:FindFirstChild("SegmentEnd")
+            if segmentEnd then
+                segmentEnd.Position = currentPosition
+            end
+        end
+    end
+end
+
+-- Listen for new players and their movements
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        character:WaitForChild("HumanoidRootPart")
+        handlePlayerMovement(player)
+    end)
+end)
+
+-- Continuous check for existing players' movements
+RunService.Stepped:Connect(function()
+    for _, player in ipairs(Players:GetPlayers()) do
+        handlePlayerMovement(player)
+    end
+end)
+end) 
+
+Tab:CreateButton("Redz hub ui",function()
+---library1----
+local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/RedzLibV5/main/Source.Lua"))()
+
+local Window = redzlib:MakeWindow({
+  Title = "redz Hub : Blox Fruits",
+  SubTitle = "by redz9999",
+  SaveFolder = "testando | redz lib v5.lua"
+})
+local Tab1 = Window:MakeTab({"Um", "cherry"})
+local Tab2 = Window:MakeTab({"Dois", "swords"})
+local Tab3 = Window:MakeTab({"Trรชs", "user"})
+
+Tab1:AddButton({"Dark Theme", function()
+  redzlib:SetTheme("Dark")
+end})
+
+Tab1:AddButton({"Darker Theme", function()
+  redzlib:SetTheme("Darker")
+end})
+
+Tab1:AddButton({"Dark Purple", function()
+  redzlib:SetTheme("Purple")
+end})
+
+Window:SelectTab(Tab2)
+local Section = Tab2:AddSection({"Section"})
+local Paragraph = Tab2:AddParagraph({"Paragraph", "This is a Paragraph\nSecond Line"})
+
+local Number = 0
+local Button = Tab2:AddButton({"Button", function()
+  Number = Number + 1
+  Section:Set("Number : " .. tostring(Number))
+  local Dialog = Window:Dialog({
+    Title = "Dialog",
+    Text = "This is a Dialog",
+    Options = {
+      {"Confirm", function()
+        
+      end},
+      {"Maybe", function()
+        
+      end},
+      {"Cancel", function()
+        
+      end}
+    }
+  })
+end})
+
+local Button = Tab2:AddButton({
+  Name = "Invisible Toggle",
+  Description = "Makes the Toggles Invisible"
+})
+
+local Toggle1 = Tab2:AddToggle({
+  Name = "Toggle 1",
+  Description = "This is a <font color='rgb(88, 101, 242)'>Toggle</font> Example",
+  Default = false
+})
+
+local Toggle2 = Tab2:AddToggle({
+  Name = "Toggle 2",
+  Default = true
+})
+
+Button:Callback(Toggle1.Visible)
+Button:Callback(Toggle2.Visible)
+
+Toggle1:Callback(function(Value)
+  Toggle2:Set(false)
+end)
+Toggle2:Callback(function(Value)
+  Toggle1:Set(false)
+end)
+
+Tab2:AddSlider({
+  Name = "Slider",
+  Min = 1,
+  Max = 10,
+  Increase = 1,
+  Default = 5,
+  Callback = function(Value)
+    
+  end
+})
+
+
+ local Button = Tab2:AddButton({"Refresh Dropdown"})
+
+local Dropdown = Tab2:AddDropdown({
+  Name = "Players List",
+  Description = "Select the <font color='rgb(88, 101, 242)'>Number</font>",
+  Options = {"one", "two", "three"},
+  Default = "two",
+  Flag = "dropdown teste",
+  Callback = function(Value)
+    
+  end
+})
+
+
+
+-----library2----
+
+
+loadstring(game:HttpGet(("https://raw.githubusercontent.com/REDzHUB/LibraryV2/main/redzLib")))()
+
+MakeWindow({
+  Hub = {
+    Title = "REDz HUB",
+    Animation = "by : redz9999"
+  },
+  Key = {
+    KeySystem = false,
+    Title = "Key System",
+    Description = "",
+    KeyLink = "",
+    Keys = {"1234"},
+    Notifi = {
+      Notifications = true,
+      CorrectKey = "Running the Script...",
+      Incorrectkey = "The key is incorrect",
+      CopyKeyLink = "Copied to Clipboard"
+    }
+  }
+})
+
+
+MinimizeButton({
+  Image = "",
+  Size = {40, 40},
+  Color = Color3.fromRGB(10, 10, 10),
+  Corner = true,
+  Stroke = false,
+  StrokeColor = Color3.fromRGB(255, 0, 0)
+})
+
+local Main = MakeTab({Name = "Main"})
+
+
+
+MakeNotifi({
+  Title = "REDz HUB",
+  Text = "Notificaรงรฃo teste",
+  Time = 5
+})
+
+local section = AddSection(Main, {"Teste"})
+
+
+AddButton(Main, {
+  Name = "Botรฃo teste",
+  Callback = function()
+    
+  end
+})
+
+local Toggle = AddToggle(Main, {
+  Name = "Toggle teste",
+  Default = false,
+  Callback = function(Value)
+    
+  end
+})
+
+
+
+local Slider = AddSlider(Main, {
+  Name = "Slider teste",
+  MinValue = 10,
+  MaxValue = 100,
+  Default = 25,
+  Increase = 1,
+  Callback = function(Value)
+    
+  end
+})
+
+AddKeybind(Main, {
+  Name = "Keybind teste",
+  KeyCode = "E",
+  Default = false,
+  Callback = function(Value)
+    
+  end
+})
+
+
+AddTextBox(Main, {
+  Name = "TextBox teste",
+  Default = "bom dia",
+  PlaceholderText = "teste",
+  ClearText = true,
+  Callback = function(Value)
+    
+  end
+})
+
+
+local Dropdown = AddDropdown(Main, {
+  Name = "Dropdown teste",
+  Options = {"1", "2", "3"},
+  Default = "2",
+  Callback = function(Value)
+    
+  end
+})
+
+
+
+AddColorPicker(Main, {
+  Name = "Color picker teste",
+  Default = Color3.fromRGB(255, 255, 0),
+  Callback = function(Value)
+    
+  end
+})
+
+local Label = AddTextLabel(Main, "AutoFarm")
+
+local Paragraph = AddParagraph(Main, {"Paragraph teste", "bom dia meus manos"})
+
+local Image = AddImageLabel(Main, {
+  Name = "Cool Image",
+  Image = "rbxassetid://"
+})
+
+
+
+local MobileToggle = AddMobileToggle({
+  Name = "Toggle",
+  Visible = true,
+  Callback = function(Value)
+    
+  end
+})
+end) 
+
+Tab:CreateButton("Another gui",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Logicmp4/Lua_test/main/Cr1ckeyy%20gui"))()
+end) 
+
+Tab:CreateButton("TOGGLECON GUI",function()
+loadstring(game:HttpGet(('https://pastefy.app/yCSURIwA/raw'),true))()
+end) 
+
+Tab:CreateButton("Slots Hub",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/pQVfCbL2"))()
+end) 
+
+Tab:CreateButton("Someones script looks incomplete",function()
+--Orginal Script Of Lyno Paid/Privte
+local HttpService = game:GetService("HttpService")
+function LynoPaidWarning(info1, delay)
+	--Warning Script
+	local LynoWarningScript = Instance.new("ScreenGui")
+	local Frame = Instance.new("Frame")
+	local UICorner = Instance.new("UICorner")
+	local ImageLabel = Instance.new("ImageLabel")
+	local UICorner_2 = Instance.new("UICorner")
+	local UIGradient = Instance.new("UIGradient")
+	local labelwarning = Instance.new("TextLabel")
+	local info = Instance.new("TextLabel")
+
+	--Properties:
+
+	LynoWarningScript.Name = "Lyno WarningScript"
+	LynoWarningScript.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	LynoWarningScript.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	LynoWarningScript.ResetOnSpawn = true
+
+	Frame.Parent = LynoWarningScript
+	Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Frame.BorderSizePixel = 0
+	Frame.Position = UDim2.new(0.783584774, 0, 0.784246564, 0)
+	Frame.Size = UDim2.new(0.173469394, 0, 0.198630139, 0)
+
+	UICorner.Parent = Frame
+
+	ImageLabel.Parent = Frame
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel.BorderSizePixel = 0
+	ImageLabel.Size = UDim2.new(0.99999994, 0, 1, 0)
+	ImageLabel.Image = "http://www.roblox.com/asset/?id=16878488901"
+	ImageLabel.ImageTransparency = 0.560
+
+	UICorner_2.Parent = ImageLabel
+
+	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 127)), ColorSequenceKeypoint.new(0.51, Color3.fromRGB(0, 170, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(85, 255, 127))}
+	UIGradient.Parent = ImageLabel
+
+	labelwarning.Name = "labelwarning"
+	labelwarning.Parent = Frame
+	labelwarning.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	labelwarning.BackgroundTransparency = 1.000
+	labelwarning.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	labelwarning.BorderSizePixel = 0
+	labelwarning.Position = UDim2.new(-6.42452278e-07, 0, 0, 0)
+	labelwarning.Size = UDim2.new(1.00000012, 0, 0.206896558, 0)
+	labelwarning.Font = Enum.Font.JosefinSans
+	labelwarning.Text = "Lyno Paid V1 Warning"
+	labelwarning.TextColor3 = Color3.fromRGB(255, 255, 255)
+	labelwarning.TextScaled = true
+	labelwarning.TextSize = 14.000
+	labelwarning.TextWrapped = true
+
+	info.Name = "info"
+	info.Parent = Frame
+	info.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	info.BackgroundTransparency = 1.000
+	info.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	info.BorderSizePixel = 0
+	info.Position = UDim2.new(0.134366959, 0, 0.301724136, 0)
+	info.Size = UDim2.new(0.720740378, 0, 0.387931049, 0)
+	info.Font = Enum.Font.JosefinSans
+	info.Text = info1
+	info.TextColor3 = Color3.fromRGB(255, 255, 255)
+	info.TextScaled = true
+	info.TextSize = 14.000
+	info.TextWrapped = true
+	if delay then
+		wait(delay)
+		LynoWarningScript:Destroy()
+	end
+end
+
+
+-- Function to check if a player is on the whitelist
+local function isPlayerWhitelisted(player)
+    -- This function is no longer needed since we are allowing all players to join
+    return true  -- Always return true to allow all players
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    -- Allow all players to join without any whitelist check
+    print(player.Name .. " has joined the game.")
+end)
+
+game.Players.PlayerAdded:Connect(function(player)
+	if not isPlayerWhitelisted(player) then
+		player:Kick("Public Is Soon!")
+		print("Public Is Soon!!")
+	else
+
+		local LynoPaidV0 = Instance.new("ScreenGui")
+		local Name = Instance.new("TextLabel")
+		local Movement = Instance.new("Frame")
+		local MUC = Instance.new("UICorner")
+		local MovementFrame = Instance.new("ScrollingFrame")
+		local AS = Instance.new("TextButton")
+		local UICorner = Instance.new("UICorner")
+		local IJ = Instance.new("TextButton")
+		local UICorner_2 = Instance.new("UICorner")
+		local MovementText = Instance.new("TextLabel")
+		local Version = Instance.new("TextLabel")
+		local Combat = Instance.new("Frame")
+		local CUC = Instance.new("UICorner")
+		local CombatFrame = Instance.new("ScrollingFrame")
+		local CombatText = Instance.new("TextLabel")
+		local Misc = Instance.new("Frame")
+		local MIUC = Instance.new("UICorner")
+		local MiscFrame = Instance.new("ScrollingFrame")
+		local ANS = Instance.new("TextButton")
+		local UICorner_3 = Instance.new("UICorner")
+		local MiscText = Instance.new("TextLabel")
+
+		--Properties:
+
+		LynoPaidV0.Name = "Lyno Paid V0"
+		LynoPaidV0.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+		LynoPaidV0.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+		Name.Name = "Name"
+		Name.Parent = LynoPaidV0
+		Name.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+		Name.BackgroundTransparency = 1.000
+		Name.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Name.BorderSizePixel = 0
+		Name.Position = UDim2.new(0.809799135, 0, 0.0205479451, 0)
+		Name.Size = UDim2.new(0.182592809, 0, 0.0859106556, 0)
+		Name.Font = Enum.Font.JosefinSans
+		Name.Text = "Lyno Paid"
+		Name.TextColor3 = Color3.fromRGB(255, 255, 255)
+		Name.TextScaled = true
+		Name.TextSize = 14.000
+		Name.TextWrapped = true
+
+		Movement.Name = "Movement"
+		Movement.Parent = LynoPaidV0
+		Movement.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+		Movement.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Movement.BorderSizePixel = 0
+		Movement.Position = UDim2.new(0.217998236, 0, 0.0650684908, 0)
+		Movement.Size = UDim2.new(0.127943486, 0, 0.491438359, 0)
+
+		MUC.Name = "MUC"
+		MUC.Parent = Movement
+
+		MovementFrame.Name = "MovementFrame"
+		MovementFrame.Parent = Movement
+		MovementFrame.Active = true
+		MovementFrame.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+		MovementFrame.BackgroundTransparency = 0.150
+		MovementFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		MovementFrame.BorderSizePixel = 0
+		MovementFrame.Position = UDim2.new(0, 0, 0.149825811, 0)
+		MovementFrame.Size = UDim2.new(1, 0, 0.850174189, 0)
+		MovementFrame.ScrollBarThickness = 7
+
+		AS.Name = "AS"
+		AS.Parent = MovementFrame
+		AS.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+		AS.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		AS.BorderSizePixel = 0
+		AS.Position = UDim2.new(0.0499498323, 0, 0.166256964, 0)
+		AS.Size = UDim2.new(0.888000011, 0, 0.0810000002, 0)
+		AS.Font = Enum.Font.JosefinSans
+		AS.Text = "Auto Sprint"
+		AS.TextColor3 = Color3.fromRGB(255, 255, 255)
+		AS.TextSize = 14.000
+		AS.TextWrapped = true
+
+		UICorner.Parent = AS
+
+		IJ.Name = "IJ"
+		IJ.Parent = MovementFrame
+		IJ.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+		IJ.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		IJ.BorderSizePixel = 0
+		IJ.Position = UDim2.new(0.0570856743, 0, 0.0369376391, 0)
+		IJ.Size = UDim2.new(0.888000011, 0, 0.0810000002, 0)
+		IJ.Font = Enum.Font.JosefinSans
+		IJ.Text = "Infinite Jump"
+		IJ.TextColor3 = Color3.fromRGB(255, 255, 255)
+		IJ.TextSize = 14.000
+		IJ.TextWrapped = true
+
+		UICorner_2.Parent = IJ
+
+		MovementText.Name = "MovementText"
+		MovementText.Parent = Movement
+		MovementText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		MovementText.BackgroundTransparency = 1.000
+		MovementText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		MovementText.BorderSizePixel = 0
+		MovementText.Position = UDim2.new(0.14320311, 0, 0.0278745703, 0)
+		MovementText.Size = UDim2.new(0.711656511, 0, 0.0940766558, 0)
+		MovementText.Font = Enum.Font.Unknown
+		MovementText.Text = "Movement"
+		MovementText.TextColor3 = Color3.fromRGB(255, 255, 255)
+		MovementText.TextScaled = true
+		MovementText.TextSize = 14.000
+		MovementText.TextWrapped = true
+
+		Version.Name = "Version"
+		Version.Parent = LynoPaidV0
+		Version.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+		Version.BackgroundTransparency = 1.000
+		Version.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Version.BorderSizePixel = 0
+		Version.Position = UDim2.new(0.935821712, 0, 0.105547972, 0)
+		Version.Size = UDim2.new(0.0556908064, 0, 0.0859106556, 0)
+		Version.Font = Enum.Font.JosefinSans
+		Version.Text = "V0"
+		Version.TextColor3 = Color3.fromRGB(255, 255, 255)
+		Version.TextScaled = true
+		Version.TextSize = 14.000
+		Version.TextWrapped = true
+
+		Combat.Name = "Combat"
+		Combat.Parent = LynoPaidV0
+		Combat.BackgroundColor3 = Color3.fromRGB(255, 170, 127)
+		Combat.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Combat.BorderSizePixel = 0
+		Combat.Position = UDim2.new(0.0627943501, 0, 0.0650684908, 0)
+		Combat.Size = UDim2.new(0.127943486, 0, 0.491438359, 0)
+
+		CUC.Name = "CUC"
+		CUC.Parent = Combat
+
+		CombatFrame.Name = "CombatFrame"
+		CombatFrame.Parent = Combat
+		CombatFrame.Active = true
+		CombatFrame.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+		CombatFrame.BackgroundTransparency = 0.150
+		CombatFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		CombatFrame.BorderSizePixel = 0
+		CombatFrame.Position = UDim2.new(0, 0, 0.149825782, 0)
+		CombatFrame.Size = UDim2.new(1, 0, 0.850174189, 0)
+		CombatFrame.ScrollBarThickness = 7
+
+		CombatText.Name = "CombatText"
+		CombatText.Parent = Combat
+		CombatText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		CombatText.BackgroundTransparency = 1.000
+		CombatText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		CombatText.BorderSizePixel = 0
+		CombatText.Position = UDim2.new(0.143841669, 0, 0.0278745703, 0)
+		CombatText.Size = UDim2.new(0.712000012, 0, 0.0939999968, 0)
+		CombatText.Font = Enum.Font.Unknown
+		CombatText.Text = "Combat"
+		CombatText.TextColor3 = Color3.fromRGB(255, 255, 255)
+		CombatText.TextScaled = true
+		CombatText.TextSize = 14.000
+		CombatText.TextWrapped = true
+
+		Misc.Name = "Misc"
+		Misc.Parent = LynoPaidV0
+		Misc.BackgroundColor3 = Color3.fromRGB(108, 108, 108)
+		Misc.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Misc.BorderSizePixel = 0
+		Misc.Position = UDim2.new(0.374115109, 0, 0.0650684834, 0)
+		Misc.Size = UDim2.new(0.127943486, 0, 0.491438359, 0)
+
+		MIUC.Name = "MIUC"
+		MIUC.Parent = Misc
+
+		MiscFrame.Name = "MiscFrame"
+		MiscFrame.Parent = Misc
+		MiscFrame.Active = true
+		MiscFrame.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+		MiscFrame.BackgroundTransparency = 0.150
+		MiscFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		MiscFrame.BorderSizePixel = 0
+		MiscFrame.Position = UDim2.new(0, 0, 0.149825811, 0)
+		MiscFrame.Size = UDim2.new(1, 0, 0.850174189, 0)
+		MiscFrame.ScrollBarThickness = 7
+
+		ANS.Name = "ANS"
+		ANS.Parent = MiscFrame
+		ANS.BackgroundColor3 = Color3.fromRGB(108, 108, 108)
+		ANS.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ANS.BorderSizePixel = 0
+		ANS.Position = UDim2.new(0.049928166, 0, 0.0368430987, 0)
+		ANS.Size = UDim2.new(0.887525618, 0, 0.0809462517, 0)
+		ANS.Font = Enum.Font.JosefinSans
+		ANS.Text = "Anti-Cheat Bypass"
+		ANS.TextColor3 = Color3.fromRGB(255, 255, 255)
+		ANS.TextSize = 14.000
+		ANS.TextWrapped = true
+
+		UICorner_3.Parent = ANS
+
+		MiscText.Name = "MiscText"
+		MiscText.Parent = Misc
+		MiscText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		MiscText.BackgroundTransparency = 1.000
+		MiscText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		MiscText.BorderSizePixel = 0
+		MiscText.Position = UDim2.new(0.139774919, 0, 0.0278745703, 0)
+		MiscText.Size = UDim2.new(0.712000012, 0, 0.0939999968, 0)
+		MiscText.Font = Enum.Font.Unknown
+		MiscText.Text = "Misc"
+		MiscText.TextColor3 = Color3.fromRGB(255, 255, 255)
+		MiscText.TextScaled = true
+		MiscText.TextSize = 14.000
+		MiscText.TextWrapped = true
+
+		-- Scripts:
+
+		local function IIKUVWI_fake_script() -- AS.Script 
+			local script = Instance.new('Script', AS)
+
+			-- Credits To Vxpe V4 and Ai For Fixing
+
+			local playersService = game:GetService('Players')
+			local lplr = playersService.LocalPlayer
+			local inputService = game:GetService('UserInputService')
+			local KnitGotten, KnitClient
+
+			-- Function to get the Knit client
+			local function getKnitClient()
+				return debug.getupvalue(require(lplr.PlayerScripts.TS.knit).setup, 6)
+			end
+
+			-- Function to wait for Knit client to be available
+			local function waitForKnitClient()
+				repeat
+					KnitGotten, KnitClient = pcall(getKnitClient)
+					task.wait()
+				until KnitGotten
+			end
+
+			-- Wait for Knit client
+			waitForKnitClient()
+
+			repeat
+				task.wait()
+			until debug.getupvalue(KnitClient.Start, 1)
+
+			local SprintController = KnitClient.Controllers.SprintController
+
+			local Enabled = false
+
+			local function toggleSprinting()
+				if Enabled then
+					SprintController:stopSprinting()
+					Enabled = false
+					if inputService.TouchEnabled then
+						pcall(function() lplr.PlayerGui.MobileUI['2'].Visible = true end)
+					end
+				else
+					if inputService.TouchEnabled then
+						pcall(function() lplr.PlayerGui.MobileUI['2'].Visible = false end)
+					end
+					Enabled = true
+					SprintController:startSprinting()
+				end
+			end
+
+			script.Parent.MouseButton1Down:Connect(toggleSprinting)
+			local notification = false
+			script.Parent.MouseButton1Down:Connect(function()
+				if notification == false then
+					notification = true
+					LynoPaidWarning("Auto Sprint Enabled", 3)
+				else
+					notification = false
+					LynoPaidWarning("Auto Sprint Disabled", 3)
+				end
+			end)
+		end
+		coroutine.wrap(IIKUVWI_fake_script)()
+		local function VQLODHB_fake_script() -- IJ.Script 
+			local script = Instance.new('Script', IJ)
+
+			local InfiniteJumpEnabled = false
+
+			game:GetService("UserInputService").JumpRequest:Connect(function()
+				if InfiniteJumpEnabled then
+					game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+				end
+			end)
+
+			script.Parent.MouseButton1Down:Connect(function()
+				InfiniteJumpEnabled = not InfiniteJumpEnabled
+				LynoPaidWarning(InfiniteJumpEnabled and "Inf Jump Enabled" or "Inf Jump Disabled", 3)
+			end)
+		end
+		coroutine.wrap(VQLODHB_fake_script)()
+		local function TATIFO_fake_script() -- ANS.Script 
+			local script = Instance.new('Script', ANS)
+
+			local Enabled = false
+
+			script.Parent.MouseButton1Down:Connect(function()
+				if Enabled == false then
+					Enabled = true
+					LynoPaidWarning("ACBypass Enabled", 3)
+				else
+					Enabled = false
+					LynoPaidWarning("ACBypass Disabled", 3)
+				end
+			end)
+
+			repeat
+				task.wait()
+				game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("RocketImpulse"):InvokeServer(unpack({
+					[1] = {
+						["velocity"] = Vector3.new(math.huge, math.huge, math.huge)
+					}
+				}))
+			until not Enabled
+
+		end
+		coroutine.wrap(TATIFO_fake_script)()
+
+	end
+end)
+end) 
+
+Tab:CreateButton("Someone gui",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/g0Avtf6w"))()
+end) 
+
+Tab:CreateButton("Someones nuke script open source",function()
+local plr = game.Players.LocalPlayer
+local ch = plr.Character
+if ch:FindFirstChild("R6Convert") or ch:FindFirstChild("Bear Suit") then
+    local mypos = ch.HumanoidRootPart.CFrame
+    ch.HumanoidRootPart.CFrame = CFrame.new(0,10000000,0)
+    ch.HumanoidRootPart.Velocity = Vector3.new(0,50,0) -- prevent fall damage in some shitty game
+    task.wait(0.5)
+    for i,v in pairs(ch:GetChildren()) do
+        if v:IsA("Accessory") or v:IsA("Accoutrement") then
+            if v.Name == "R6Convert" or v.Name == "Bear Suit" then
+                pcall(function()
+                    v.Handle.Anchored = true
+                    v.Handle.AccessoryWeld:Destroy()
+                end)
+            end
+        end    
+    end
+    ch.HumanoidRootPart.CFrame = mypos
+    game.StarterGui:SetCore("SendNotification", {Title = "Invisible Body", Text = "Made by: System-Cali#6958\nCopied to your clipboard", Duration = 8})
+    setclipboard("System-Cali#6958")
+else
+    game.StarterGui:SetCore("SendNotification", {Title = "Avtor Scripts", Text = "ัะบั€ะธะฟั ะฝะฐ No Fe Nuke server(ัะบั€ะธะฟั ะฟะพะทะฒะพะปัะตั ะฟะพััะฐะฒะธัั ะธ ะฒะทะพั€ะฒะฐัั ะฒะธะทัะฐะปัะฝะพ ะฑะพะผะฑั)", Duration = 5})
+    game.StarterGui:SetCore("SendNotification", {Title = " Avtor1zaTion", Text = "ั€ะฐะทั€ะฐะฑั ะดะตะปััั ะธะฝะฒะฐะปะธะดั", Duration = 8})
+    setclipboard("https://t.me/AvtorScripts")
+end
+-- Made by axew on vermillion
+for i,v in pairs (game.Workspace:GetChildren()) do
+if v.Name == "Nuke" then
+v:Destroy()
+end
+end
+wait(1)
+local Tool = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+Tool.Name = "๐’ฅะฒะทะพั€ะฒะฐัั๐’ฅ"
+local Mouse = game.Players.LocalPlayer:GetMouse()
+
+local Place = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+Place.Name = "๐’ฃะฟะพััะฐะฒะธัั๐’ฃ"
+Nuke = Instance.new("Model")
+Nuke.Parent = game.Workspace
+Nuke.Name = "Nuke"
+local SG = game:GetService("StarterGui")
+local PL = game:GetService("Players")
+local TL = Instance.new("TextLabel")
+local SG1 = Instance.new("ScreenGui")
+-- -- --
+SG1.Name = "Avtor1zaTionGui"
+SG1.Parent = SG
+-- -- --
+TL.Name = "By Avtor Scripts"
+TL.Parent = SG.Avtor1zaTionGui
+-- -- --
+SG1.Parent = PL.LocalPlayer.PlayerGui
+-- -- --
+TL.LayoutOrder = 100
+TL.BackgroundTransparency = 1
+TL.TextScaled = true
+TL.Text = "Avtor Scripts"
+TL.FontFace = Font.new("rbxasset://fonts/families/Bangers.json")
+TL.TextColor3 = Color3.fromRGB(255, 255, 255)
+TL.Size = UDim2.new(1,1,1,1)
+TL.TextStrokeTransparency = 0
+-- -- --
+wait(5)
+-- -- --
+SG1:Destroy()
+-- -- --
+x5 = 1
+Mouse.Button1Down:connect(function()
+if x5 == 1 then
+if Place.Active == true then
+local name = game.Players.LocalPlayer.Name
+local Part1 = Instance.new("Part")
+Part1.Name = "Part"
+Part1.Parent = Nuke
+Part1.Size = Vector3.new(12,1,6)
+Part1.Position = Mouse.Hit.p
+Part1.BottomSurface = "Smooth"
+Part1.TopSurface = "Smooth"
+Part1.Material = "Metal"
+Part1.BrickColor = BrickColor.new("Really black")
+Part1.Anchored = true
+local x1 = game.Workspace.Nuke.Part.Position.X
+local y1 = game.Workspace.Nuke.Part.Position.Y
+local z1 = game.Workspace.Nuke.Part.Position.Z
+local Part2 = Instance.new("Part")
+Part2.Name = "Detonate"
+Part2.Parent = Nuke
+Part2.Size = Vector3.new(10, 5, 5)
+Part2.Position = Vector3.new(x1,y1+2,z1)
+Part2.BottomSurface = "Smooth"
+Part2.TopSurface = "Smooth"
+Part2.Material = "Metal"
+Part2.BrickColor = BrickColor.new("Really black")
+Part2.Anchored = true
+Part2.Shape = "Cylinder"
+x5 = x5+1
+local Decal = Instance.new("Decal")
+Decal.Texture = "http://www.roblox.com/asset/?id=14301975"
+Decal.Parent = Part2
+Decal.Face = "Back"
+end
+end
+end)
+
+
+Mouse.Button1Down:connect(function()
+if Tool.Active == true then
+local nuke = Instance.new("Part")
+nuke.Position = game.Workspace.Nuke.Detonate.Position
+nuke.Anchored = true
+nuke.Parent = game.Workspace
+local x, y, z = 5, 5, 5
+nuke.BrickColor = BrickColor.new ("New Yeller")
+nuke.Size = Vector3.new(x, y, z)
+nuke.CanCollide = false
+nuke.Name = "nuke"
+nuke.Shape = "Ball"
+nuke.Transparency = 0.3
+nuke.Material = "Neon"
+nuke.Locked = true
+game.Workspace.Nuke:Destroy()
+while x <= 100 do
+x, y, z = x+1, y+1, z+1
+nuke.Size = Vector3.new(x, y, z)
+local explosion = Instance.new("Explosion")
+explosion.BlastPressure = 1000000
+explosion.BlastRadius = x-15
+explosion.DestroyJointRadiusPercent = 1
+explosion.ExplosionType = "Craters"
+explosion.Parent = game.Workspace
+explosion.Position = game.Workspace.nuke.Position
+explosion.Hit:connect(function(Part, Distance)
+if Part.Name ~= "nuke" then
+Part.Anchored = false
+Part:BreakJoints()
+end
+end)
+wait(0.01)
+end
+while x <= 200 do
+x, y, z = x+3, y+3, z+3
+nuke.Size = Vector3.new(x, y, z)
+local explosion = Instance.new("Explosion")
+explosion.BlastPressure = 1000000
+explosion.BlastRadius = x+50
+explosion.DestroyJointRadiusPercent = 1
+explosion.ExplosionType = "Craters"
+explosion.Parent = game.Workspace
+explosion.Position = game.Workspace.nuke.Position
+explosion.Hit:connect(function(Part, Distance)
+if Part.Name ~= "nuke" then
+Part.Anchored = false
+Part:BreakJoints()
+end
+end)
+wait(0.01)
+end
+game.Workspace.nuke:Destroy()
+x5 = 1
+Nuke = Instance.new("Model")
+Nuke.Parent = game.Workspace
+Nuke.Name = "Nuke"
+Tool.Active = false
+end
+end)
+end) 
+
+Tab:CreateButton("Someones loader src",function()
+local gui = 
+{
+	blazedLoader = Instance.new("ScreenGui"),
+	Frame = Instance.new("Frame"),
+	UICorner = Instance.new("UICorner"),
+	TextLabel = Instance.new("TextLabel"),
+	TextLabel_1 = Instance.new("TextLabel"),
+	signin_load = Instance.new("TextButton"),
+	UICorner_1 = Instance.new("UICorner"),
+	UIStroke = Instance.new("UIStroke"),
+	TextLabel_2 = Instance.new("TextLabel"),
+	fps_checkbox = Instance.new("Frame"),
+	UICorner_2 = Instance.new("UICorner"),
+	UICorner_3 = Instance.new("UICorner"),
+	UIStroke_1 = Instance.new("UIStroke"),
+	ImageLabel = Instance.new("ImageLabel"),
+	fpscheckbox_button = Instance.new("TextButton"),
+	TextLabel_3 = Instance.new("TextLabel"),
+	UICorner_4 = Instance.new("UICorner"),
+	UIStroke_2 = Instance.new("UIStroke"),
+	UIStroke_3 = Instance.new("UIStroke"),
+}
+
+gui.blazedLoader.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.blazedLoader.Name = "ysidora_loader"
+gui.blazedLoader.Parent = game:GetService("CoreGui")
+
+gui.Frame.BorderSizePixel = 0
+gui.Frame.Size = UDim2.new(0, 396, 0, 249)
+gui.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.Frame.Name = "Frame"
+gui.Frame.Position = UDim2.new(0.396226, 0, 0.362031, 0)
+gui.Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+gui.Frame.Parent = gui.blazedLoader
+
+gui.UICorner.Name = "UICorner"
+gui.UICorner.CornerRadius = UDim.new(0, 12)
+gui.UICorner.Parent = gui.Frame
+
+gui.TextLabel.BorderSizePixel = 0
+gui.TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+gui.TextLabel.FontFace = Font.new("rbxassetid://11702779517", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+gui.TextLabel.TextSize = 30
+gui.TextLabel.Position = UDim2.new(0.244949, 0, 0.11245, 0)
+gui.TextLabel.Size = UDim2.new(0, 147, 0, 50)
+gui.TextLabel.Name = "TextLabel"
+gui.TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+gui.TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.TextLabel.Text = "YSIDORA"
+gui.TextLabel.BackgroundTransparency = 1
+gui.TextLabel.Parent = gui.Frame
+
+gui.TextLabel_1.BorderSizePixel = 0
+gui.TextLabel_1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+gui.TextLabel_1.FontFace = Font.new("rbxassetid://11702779517", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+gui.TextLabel_1.TextSize = 20
+gui.TextLabel_1.Position = UDim2.new(0.479798, 0, 0.11245, 0)
+gui.TextLabel_1.Size = UDim2.new(0, 106, 0, 57)
+gui.TextLabel_1.Name = "TextLabel"
+gui.TextLabel_1.TextColor3 = Color3.fromRGB(227, 181, 200)
+gui.TextLabel_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.TextLabel_1.Text = "v3.1.1"
+gui.TextLabel_1.BackgroundTransparency = 1
+gui.TextLabel_1.Parent = gui.Frame
+
+gui.signin_load.BorderSizePixel = 0
+gui.signin_load.BackgroundColor3 = Color3.fromRGB(157, 125, 138)
+gui.signin_load.FontFace = Font.new("rbxassetid://11702779517", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+gui.signin_load.TextColor3 = Color3.fromRGB(255, 255, 255)
+gui.signin_load.Position = UDim2.new(0.161616, 0, 0.598394, 0)
+gui.signin_load.TextSize = 14
+gui.signin_load.Size = UDim2.new(0, 274, 0, 31)
+gui.signin_load.Name = "signin_load"
+gui.signin_load.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.signin_load.Text = "Sign In"
+gui.signin_load.Active = true
+gui.signin_load.Selectable = true
+gui.signin_load.Parent = gui.Frame
+
+gui.UICorner_1.Name = "UICorner"
+gui.UICorner_1.Parent = gui.signin_load
+
+gui.UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+gui.UIStroke.Name = "UIStroke"
+gui.UIStroke.Thickness = 1.4
+gui.UIStroke.Color = Color3.fromRGB(25, 25, 25)
+gui.UIStroke.Parent = gui.signin_load
+
+gui.TextLabel_2.BorderSizePixel = 0
+gui.TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+gui.TextLabel_2.FontFace = Font.new("rbxassetid://11702779517", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+gui.TextLabel_2.TextSize = 15
+gui.TextLabel_2.Position = UDim2.new(0.290404, 0, 0.690763, 0)
+gui.TextLabel_2.Size = UDim2.new(0, 200, 0, 50)
+gui.TextLabel_2.Name = "TextLabel"
+gui.TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+gui.TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.TextLabel_2.Text = "Boost FPS"
+gui.TextLabel_2.BackgroundTransparency = 1
+gui.TextLabel_2.Parent = gui.Frame
+
+gui.fps_checkbox.BorderSizePixel = 0
+gui.fps_checkbox.Size = UDim2.new(0, 20, 0, 20)
+gui.fps_checkbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.fps_checkbox.Name = "fps_checkbox"
+gui.fps_checkbox.Position = UDim2.new(0.383838, 0, 0.751004, 0)
+gui.fps_checkbox.BackgroundColor3 = Color3.fromRGB(157, 125, 138)
+gui.fps_checkbox.Parent = gui.Frame
+
+gui.UICorner_2.Name = "UICorner"
+gui.UICorner_2.CornerRadius = UDim.new(0, 5)
+gui.UICorner_2.Parent = gui.fps_checkbox
+
+gui.UICorner_3.Name = "UICorner"
+gui.UICorner_3.Parent = gui.fps_checkbox
+
+gui.UIStroke_1.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+gui.UIStroke_1.Name = "UIStroke"
+gui.UIStroke_1.Thickness = 1.4
+gui.UIStroke_1.Color = Color3.fromRGB(25, 25, 25)
+gui.UIStroke_1.Parent = gui.fps_checkbox
+
+gui.ImageLabel.BorderSizePixel = 0
+gui.ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+gui.ImageLabel.Image = "http://www.roblox.com/asset/?id=9754130783"
+gui.ImageLabel.Size = UDim2.new(0, 20, 0, 20)
+gui.ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.ImageLabel.Name = "ImageLabel"
+gui.ImageLabel.BackgroundTransparency = 1
+gui.ImageLabel.Parent = gui.fps_checkbox
+
+gui.fpscheckbox_button.BorderSizePixel = 0
+gui.fpscheckbox_button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+gui.fpscheckbox_button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+gui.fpscheckbox_button.TextColor3 = Color3.fromRGB(0, 0, 0)
+gui.fpscheckbox_button.Position = UDim2.new(-2.7, 0, 0, 0)
+gui.fpscheckbox_button.TextSize = 14
+gui.fpscheckbox_button.Size = UDim2.new(0, 200, 0, 20)
+gui.fpscheckbox_button.Name = "fpscheckbox_button"
+gui.fpscheckbox_button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.fpscheckbox_button.Text = ""
+gui.fpscheckbox_button.Active = true
+gui.fpscheckbox_button.BackgroundTransparency = 1
+gui.fpscheckbox_button.Selectable = true
+gui.fpscheckbox_button.Parent = gui.fps_checkbox
+
+gui.TextLabel_3.BorderSizePixel = 0
+gui.TextLabel_3.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+gui.TextLabel_3.FontFace = Font.new("rbxassetid://11702779517", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+gui.TextLabel_3.TextSize = 14
+gui.TextLabel_3.Position = UDim2.new(0.161616, 0, 0.425703, 0)
+gui.TextLabel_3.Size = UDim2.new(0, 274, 0, 36)
+gui.TextLabel_3.Name = "TextLabel"
+gui.TextLabel_3.TextColor3 = Color3.fromRGB(50, 50, 50)
+gui.TextLabel_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+gui.TextLabel_3.Text = "   "..tostring(LRM_LinkedDiscordID)..""
+gui.TextLabel_3.TextXAlignment = Enum.TextXAlignment.Left
+gui.TextLabel_3.Parent = gui.Frame
+
+gui.UICorner_4.Name = "UICorner"
+gui.UICorner_4.Parent = gui.TextLabel_3
+
+gui.UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+gui.UIStroke_2.Name = "UIStroke"
+gui.UIStroke_2.Thickness = 1.4
+gui.UIStroke_2.Color = Color3.fromRGB(25, 25, 25)
+gui.UIStroke_2.Parent = gui.TextLabel_3
+
+gui.UIStroke_3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+gui.UIStroke_3.Name = "UIStroke"
+gui.UIStroke_3.Thickness = 1.4
+gui.UIStroke_3.Color = Color3.fromRGB(25, 25, 25)
+gui.UIStroke_3.Parent = gui.Frame
+
+
+
+gui.fpscheckbox_button.MouseButton1Click:Connect(function()
+	if gui.fps_checkbox.BackgroundColor3 == Color3.fromRGB(157, 125, 138) then
+		gui.fps_checkbox.BackgroundColor3 = Color3.fromRGB(20,20,20) 
+		gui.ImageLabel.Visible = false
+		getgenv().boostframes = false
+	elseif gui.fps_checkbox.BackgroundColor3 == Color3.fromRGB(20,20,20) then
+		getgenv().boostframes = true
+		gui.fps_checkbox.BackgroundColor3 = Color3.fromRGB(157, 125, 138)
+		gui.ImageLabel.Visible = true
+		end
+end)
+end) 
+
+Tab:CreateButton("ProtectMI",function()
+local util = {}
+
+function util:egg()
+    local chars = "~!@#?$%^&*()_"
+    local result = ""
+    for i = 1, 9 do -- You can replace in 9 your own length.
+        local index = math.random(1, #chars)
+        result = result .. chars:sub(index, index)
+    end
+    return result
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ScreenGui-" .. util:egg()
+ScreenGui.Parent = game:GetService("CoreGui")
+end) 
+
+Tab:CreateButton("gear stealer gui v1",function()
+local GUI = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local UpdateButton = Instance.new("TextButton")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+
+GUI.Name = "GUI"
+GUI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+Frame.Parent = GUI
+Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame.Size = UDim2.new(0, 200, 0, 300)
+Frame.Position = UDim2.new(0.5, -100, 0.5, -150)
+Frame.Name = "Frame"
+Frame.Active = true -- This is important for mobile dragging
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.Size = UDim2.new(1, 0, 0, 50)
+TextLabel.Position = UDim2.new(0, 0, 0, 0)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "GUI Gear Stealer"
+TextLabel.Name = "TextLabel"
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextSize = 14.000
+
+UpdateButton.Parent = Frame
+UpdateButton.Name = "UpdateButton"
+UpdateButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+UpdateButton.Position = UDim2.new(0, 0, 0, 50)
+UpdateButton.Size = UDim2.new(1, 0, 0, 50)
+UpdateButton.Font = Enum.Font.SourceSans
+UpdateButton.Text = "Update Gear List"
+UpdateButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+UpdateButton.TextSize = 14.000
+
+ScrollingFrame.Parent = Frame
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ScrollingFrame.Size = UDim2.new(1, 0, 0, 200)
+ScrollingFrame.Position = UDim2.new(0, 0, 0, 100)
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScrollingFrame.ScrollBarThickness = 10
+ScrollingFrame.Name = "ScrollingFrame"
+
+-- Dragging functionality
+local dragging = false
+local dragInput, mousePos, framePos
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        mousePos = input.Position
+        framePos = Frame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        Frame.Position = UDim2.new(
+            framePos.X.Scale,
+            framePos.X.Offset + delta.X,
+            framePos.Y.Scale,
+            framePos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+UpdateButton.MouseButton1Click:Connect(function()
+    -- Clear existing buttons
+    for _, child in ipairs(ScrollingFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    local yOffset = 0
+    
+    -- Loop through all players
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            -- Loop through tools in the player's backpack
+            for _, tool in pairs(player.Backpack:GetDescendants()) do
+                if tool:IsA("Tool") then
+                    local ToolButton = Instance.new("TextButton")
+                    ToolButton.Parent = ScrollingFrame
+                    ToolButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    ToolButton.Size = UDim2.new(1, 0, 0, 50)
+                    ToolButton.Position = UDim2.new(0, 0, 0, yOffset)
+                    ToolButton.Font = Enum.Font.SourceSans
+                    ToolButton.Text = tool.Name
+                    ToolButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+                    ToolButton.TextSize = 14.000
+                    
+                    ToolButton.MouseButton1Click:Connect(function()
+                        local clonedTool = tool:Clone()
+                        clonedTool.Parent = game.Players.LocalPlayer.Backpack
+                    end)
+                    
+                    yOffset = yOffset + 50
+                end
+            end
+        end
+    end
+    
+    -- Update the canvas size to fit all buttons
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
+end)
+end) 
+
 Tab:CreateButton("TSB",function()
 getgenv().AutoReport = true -- turn off if executor blocks ReportAbuse function or if you just want it off
 if getgenv().KadeHubLoaded ~= true then
