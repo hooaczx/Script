@@ -1,0 +1,1924 @@
+local StrToNumber = tonumber;
+local Byte = string.byte;
+local Char = string.char;
+local Sub = string.sub;
+local Subg = string.gsub;
+local Rep = string.rep;
+local Concat = table.concat;
+local Insert = table.insert;
+local LDExp = math.ldexp;
+local GetFEnv = getfenv or function()
+	return _ENV;
+end;
+local Setmetatable = setmetatable;
+local PCall = pcall;
+local Select = select;
+local Unpack = unpack or table.unpack;
+local ToNumber = tonumber;
+local function VMCall(ByteString, vmenv, ...)
+	local DIP = 1;
+	local repeatNext;
+	ByteString = Subg(Sub(ByteString, 5), "..", function(byte)
+		if (Byte(byte, 2) == 79) then
+			repeatNext = StrToNumber(Sub(byte, 1, 1));
+			return "";
+		else
+			local FlatIdent_76979 = 0;
+			local a;
+			while true do
+				if (FlatIdent_76979 == 0) then
+					a = Char(StrToNumber(byte, 16));
+					if repeatNext then
+						local b = Rep(a, repeatNext);
+						repeatNext = nil;
+						return b;
+					else
+						return a;
+					end
+					break;
+				end
+			end
+		end
+	end);
+	local function gBit(Bit, Start, End)
+		if End then
+			local Res = (Bit / (2 ^ (Start - 1))) % (2 ^ (((End - 1) - (Start - 1)) + 1));
+			return Res - (Res % 1);
+		else
+			local Plc = 2 ^ (Start - 1);
+			return (((Bit % (Plc + Plc)) >= Plc) and 1) or 0;
+		end
+	end
+	local function gBits8()
+		local a = Byte(ByteString, DIP, DIP);
+		DIP = DIP + 1;
+		return a;
+	end
+	local function gBits16()
+		local FlatIdent_69270 = 0;
+		local a;
+		local b;
+		while true do
+			if (FlatIdent_69270 == 1) then
+				return (b * 256) + a;
+			end
+			if (FlatIdent_69270 == 0) then
+				a, b = Byte(ByteString, DIP, DIP + 2);
+				DIP = DIP + 2;
+				FlatIdent_69270 = 1;
+			end
+		end
+	end
+	local function gBits32()
+		local FlatIdent_7126A = 0;
+		local a;
+		local b;
+		local c;
+		local d;
+		while true do
+			if (FlatIdent_7126A == 1) then
+				return (d * 16777216) + (c * 65536) + (b * 256) + a;
+			end
+			if (FlatIdent_7126A == 0) then
+				a, b, c, d = Byte(ByteString, DIP, DIP + 3);
+				DIP = DIP + 4;
+				FlatIdent_7126A = 1;
+			end
+		end
+	end
+	local function gFloat()
+		local Left = gBits32();
+		local Right = gBits32();
+		local IsNormal = 1;
+		local Mantissa = (gBit(Right, 1, 20) * (2 ^ 32)) + Left;
+		local Exponent = gBit(Right, 21, 31);
+		local Sign = ((gBit(Right, 32) == 1) and -1) or 1;
+		if (Exponent == 0) then
+			if (Mantissa == 0) then
+				return Sign * 0;
+			else
+				local FlatIdent_2661B = 0;
+				while true do
+					if (FlatIdent_2661B == 0) then
+						Exponent = 1;
+						IsNormal = 0;
+						break;
+					end
+				end
+			end
+		elseif (Exponent == 2047) then
+			return ((Mantissa == 0) and (Sign * (1 / 0))) or (Sign * NaN);
+		end
+		return LDExp(Sign, Exponent - 1023) * (IsNormal + (Mantissa / (2 ^ 52)));
+	end
+	local function gString(Len)
+		local FlatIdent_475BC = 0;
+		local Str;
+		local FStr;
+		while true do
+			if (FlatIdent_475BC == 3) then
+				return Concat(FStr);
+			end
+			if (FlatIdent_475BC == 1) then
+				Str = Sub(ByteString, DIP, (DIP + Len) - 1);
+				DIP = DIP + Len;
+				FlatIdent_475BC = 2;
+			end
+			if (FlatIdent_475BC == 2) then
+				FStr = {};
+				for Idx = 1, #Str do
+					FStr[Idx] = Char(Byte(Sub(Str, Idx, Idx)));
+				end
+				FlatIdent_475BC = 3;
+			end
+			if (FlatIdent_475BC == 0) then
+				Str = nil;
+				if not Len then
+					local FlatIdent_1076E = 0;
+					while true do
+						if (FlatIdent_1076E == 0) then
+							Len = gBits32();
+							if (Len == 0) then
+								return "";
+							end
+							break;
+						end
+					end
+				end
+				FlatIdent_475BC = 1;
+			end
+		end
+	end
+	local gInt = gBits32;
+	local function _R(...)
+		return {...}, Select("#", ...);
+	end
+	local function Deserialize()
+		local Instrs = {};
+		local Functions = {};
+		local Lines = {};
+		local Chunk = {Instrs,Functions,nil,Lines};
+		local ConstCount = gBits32();
+		local Consts = {};
+		for Idx = 1, ConstCount do
+			local FlatIdent_7F35E = 0;
+			local Type;
+			local Cons;
+			while true do
+				if (1 == FlatIdent_7F35E) then
+					if (Type == 1) then
+						Cons = gBits8() ~= 0;
+					elseif (Type == 2) then
+						Cons = gFloat();
+					elseif (Type == 3) then
+						Cons = gString();
+					end
+					Consts[Idx] = Cons;
+					break;
+				end
+				if (FlatIdent_7F35E == 0) then
+					Type = gBits8();
+					Cons = nil;
+					FlatIdent_7F35E = 1;
+				end
+			end
+		end
+		Chunk[3] = gBits8();
+		for Idx = 1, gBits32() do
+			local Descriptor = gBits8();
+			if (gBit(Descriptor, 1, 1) == 0) then
+				local Type = gBit(Descriptor, 2, 3);
+				local Mask = gBit(Descriptor, 4, 6);
+				local Inst = {gBits16(),gBits16(),nil,nil};
+				if (Type == 0) then
+					Inst[3] = gBits16();
+					Inst[4] = gBits16();
+				elseif (Type == 1) then
+					Inst[3] = gBits32();
+				elseif (Type == 2) then
+					Inst[3] = gBits32() - (2 ^ 16);
+				elseif (Type == 3) then
+					local FlatIdent_455BF = 0;
+					while true do
+						if (FlatIdent_455BF == 0) then
+							Inst[3] = gBits32() - (2 ^ 16);
+							Inst[4] = gBits16();
+							break;
+						end
+					end
+				end
+				if (gBit(Mask, 1, 1) == 1) then
+					Inst[2] = Consts[Inst[2]];
+				end
+				if (gBit(Mask, 2, 2) == 1) then
+					Inst[3] = Consts[Inst[3]];
+				end
+				if (gBit(Mask, 3, 3) == 1) then
+					Inst[4] = Consts[Inst[4]];
+				end
+				Instrs[Idx] = Inst;
+			end
+		end
+		for Idx = 1, gBits32() do
+			Functions[Idx - 1] = Deserialize();
+		end
+		return Chunk;
+	end
+	local function Wrap(Chunk, Upvalues, Env)
+		local Instr = Chunk[1];
+		local Proto = Chunk[2];
+		local Params = Chunk[3];
+		return function(...)
+			local Instr = Instr;
+			local Proto = Proto;
+			local Params = Params;
+			local _R = _R;
+			local VIP = 1;
+			local Top = -1;
+			local Vararg = {};
+			local Args = {...};
+			local PCount = Select("#", ...) - 1;
+			local Lupvals = {};
+			local Stk = {};
+			for Idx = 0, PCount do
+				if (Idx >= Params) then
+					Vararg[Idx - Params] = Args[Idx + 1];
+				else
+					Stk[Idx] = Args[Idx + 1];
+				end
+			end
+			local Varargsz = (PCount - Params) + 1;
+			local Inst;
+			local Enum;
+			while true do
+				local FlatIdent_79536 = 0;
+				while true do
+					if (FlatIdent_79536 == 0) then
+						Inst = Instr[VIP];
+						Enum = Inst[1];
+						FlatIdent_79536 = 1;
+					end
+					if (FlatIdent_79536 == 1) then
+						if (Enum <= 25) then
+							if (Enum <= 12) then
+								if (Enum <= 5) then
+									if (Enum <= 2) then
+										if (Enum <= 0) then
+											local FlatIdent_6A83E = 0;
+											local B;
+											local A;
+											while true do
+												if (FlatIdent_6A83E == 0) then
+													B = nil;
+													A = nil;
+													A = Inst[2];
+													B = Stk[Inst[3]];
+													Stk[A + 1] = B;
+													Stk[A] = B[Inst[4]];
+													FlatIdent_6A83E = 1;
+												end
+												if (FlatIdent_6A83E == 4) then
+													Stk[Inst[2]] = Env[Inst[3]];
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													FlatIdent_6A83E = 5;
+												end
+												if (FlatIdent_6A83E == 6) then
+													A = Inst[2];
+													Stk[A](Unpack(Stk, A + 1, Inst[3]));
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													VIP = Inst[3];
+													break;
+												end
+												if (FlatIdent_6A83E == 5) then
+													Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													Stk[Inst[2]] = Inst[3] ~= 0;
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													FlatIdent_6A83E = 6;
+												end
+												if (FlatIdent_6A83E == 3) then
+													A = Inst[2];
+													B = Stk[Inst[3]];
+													Stk[A + 1] = B;
+													Stk[A] = B[Inst[4]];
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													FlatIdent_6A83E = 4;
+												end
+												if (FlatIdent_6A83E == 1) then
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													Stk[Inst[2]] = Inst[3];
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													A = Inst[2];
+													FlatIdent_6A83E = 2;
+												end
+												if (FlatIdent_6A83E == 2) then
+													Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													Stk[Inst[2]] = Stk[Inst[3]];
+													VIP = VIP + 1;
+													Inst = Instr[VIP];
+													FlatIdent_6A83E = 3;
+												end
+											end
+										elseif (Enum == 1) then
+											Stk[Inst[2]] = Stk[Inst[3]];
+										else
+											local B;
+											local A;
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]][Inst[3]] = Stk[Inst[4]];
+										end
+									elseif (Enum <= 3) then
+										local A = Inst[2];
+										local Results, Limit = _R(Stk[A](Unpack(Stk, A + 1, Inst[3])));
+										Top = (Limit + A) - 1;
+										local Edx = 0;
+										for Idx = A, Top do
+											local FlatIdent_494DF = 0;
+											while true do
+												if (FlatIdent_494DF == 0) then
+													Edx = Edx + 1;
+													Stk[Idx] = Results[Edx];
+													break;
+												end
+											end
+										end
+									elseif (Enum == 4) then
+										local A = Inst[2];
+										local C = Inst[4];
+										local CB = A + 2;
+										local Result = {Stk[A](Stk[A + 1], Stk[CB])};
+										for Idx = 1, C do
+											Stk[CB + Idx] = Result[Idx];
+										end
+										local R = Result[1];
+										if R then
+											Stk[CB] = R;
+											VIP = Inst[3];
+										else
+											VIP = VIP + 1;
+										end
+									else
+										local FlatIdent_27404 = 0;
+										local B;
+										local A;
+										while true do
+											if (FlatIdent_27404 == 0) then
+												B = nil;
+												A = nil;
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												FlatIdent_27404 = 1;
+											end
+											if (FlatIdent_27404 == 7) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												Stk[A] = Stk[A](Stk[A + 1]);
+												VIP = VIP + 1;
+												FlatIdent_27404 = 8;
+											end
+											if (FlatIdent_27404 == 4) then
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												FlatIdent_27404 = 5;
+											end
+											if (FlatIdent_27404 == 2) then
+												Inst = Instr[VIP];
+												A = Inst[2];
+												Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_27404 = 3;
+											end
+											if (FlatIdent_27404 == 1) then
+												Stk[A] = B[Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3];
+												VIP = VIP + 1;
+												FlatIdent_27404 = 2;
+											end
+											if (FlatIdent_27404 == 3) then
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Env[Inst[3]];
+												VIP = VIP + 1;
+												FlatIdent_27404 = 4;
+											end
+											if (FlatIdent_27404 == 6) then
+												Inst = Instr[VIP];
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												Stk[A] = B[Inst[4]];
+												FlatIdent_27404 = 7;
+											end
+											if (9 == FlatIdent_27404) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												VIP = Inst[3];
+												break;
+											end
+											if (8 == FlatIdent_27404) then
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3];
+												FlatIdent_27404 = 9;
+											end
+											if (FlatIdent_27404 == 5) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												Stk[A] = Stk[A](Stk[A + 1]);
+												VIP = VIP + 1;
+												FlatIdent_27404 = 6;
+											end
+										end
+									end
+								elseif (Enum <= 8) then
+									if (Enum <= 6) then
+										Stk[Inst[2]][Inst[3]] = Stk[Inst[4]];
+									elseif (Enum > 7) then
+										local FlatIdent_5B2CE = 0;
+										local B;
+										local A;
+										while true do
+											if (FlatIdent_5B2CE == 6) then
+												A = Inst[2];
+												Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												VIP = Inst[3];
+												break;
+											end
+											if (FlatIdent_5B2CE == 5) then
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3] ~= 0;
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_5B2CE = 6;
+											end
+											if (FlatIdent_5B2CE == 1) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												FlatIdent_5B2CE = 2;
+											end
+											if (FlatIdent_5B2CE == 3) then
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												Stk[A] = B[Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_5B2CE = 4;
+											end
+											if (4 == FlatIdent_5B2CE) then
+												Stk[Inst[2]] = Env[Inst[3]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_5B2CE = 5;
+											end
+											if (2 == FlatIdent_5B2CE) then
+												Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_5B2CE = 3;
+											end
+											if (FlatIdent_5B2CE == 0) then
+												B = nil;
+												A = nil;
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												Stk[A] = B[Inst[4]];
+												FlatIdent_5B2CE = 1;
+											end
+										end
+									else
+										local FlatIdent_22216 = 0;
+										local B;
+										local A;
+										while true do
+											if (FlatIdent_22216 == 5) then
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3] ~= 0;
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_22216 = 6;
+											end
+											if (FlatIdent_22216 == 4) then
+												Stk[Inst[2]] = Env[Inst[3]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_22216 = 5;
+											end
+											if (FlatIdent_22216 == 3) then
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												Stk[A] = B[Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_22216 = 4;
+											end
+											if (FlatIdent_22216 == 2) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_22216 = 3;
+											end
+											if (FlatIdent_22216 == 6) then
+												A = Inst[2];
+												Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												do
+													return;
+												end
+												break;
+											end
+											if (FlatIdent_22216 == 0) then
+												B = nil;
+												A = nil;
+												Stk[Inst[2]] = Env[Inst[3]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												FlatIdent_22216 = 1;
+											end
+											if (FlatIdent_22216 == 1) then
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												Stk[A] = B[Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3];
+												FlatIdent_22216 = 2;
+											end
+										end
+									end
+								elseif (Enum <= 10) then
+									if (Enum == 9) then
+										local B;
+										local A;
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Stk[A](Stk[A + 1]);
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										VIP = Inst[3];
+									else
+										local FlatIdent_4508F = 0;
+										local B;
+										local A;
+										while true do
+											if (3 == FlatIdent_4508F) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												FlatIdent_4508F = 4;
+											end
+											if (FlatIdent_4508F == 0) then
+												B = nil;
+												A = nil;
+												Stk[Inst[2]] = Env[Inst[3]];
+												VIP = VIP + 1;
+												FlatIdent_4508F = 1;
+											end
+											if (FlatIdent_4508F == 8) then
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3] ~= 0;
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_4508F = 9;
+											end
+											if (7 == FlatIdent_4508F) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												VIP = VIP + 1;
+												FlatIdent_4508F = 8;
+											end
+											if (9 == FlatIdent_4508F) then
+												A = Inst[2];
+												Stk[A](Unpack(Stk, A + 1, Inst[3]));
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_4508F = 10;
+											end
+											if (FlatIdent_4508F == 2) then
+												Stk[A] = B[Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Inst[3];
+												FlatIdent_4508F = 3;
+											end
+											if (FlatIdent_4508F == 4) then
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												FlatIdent_4508F = 5;
+											end
+											if (FlatIdent_4508F == 5) then
+												Stk[A + 1] = B;
+												Stk[A] = B[Inst[4]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												FlatIdent_4508F = 6;
+											end
+											if (FlatIdent_4508F == 1) then
+												Inst = Instr[VIP];
+												A = Inst[2];
+												B = Stk[Inst[3]];
+												Stk[A + 1] = B;
+												FlatIdent_4508F = 2;
+											end
+											if (FlatIdent_4508F == 6) then
+												Stk[Inst[2]] = Env[Inst[3]];
+												VIP = VIP + 1;
+												Inst = Instr[VIP];
+												Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+												FlatIdent_4508F = 7;
+											end
+											if (FlatIdent_4508F == 10) then
+												do
+													return;
+												end
+												break;
+											end
+										end
+									end
+								elseif (Enum == 11) then
+									local FlatIdent_2DA99 = 0;
+									local A;
+									while true do
+										if (FlatIdent_2DA99 == 0) then
+											A = Inst[2];
+											Stk[A](Stk[A + 1]);
+											break;
+										end
+									end
+								else
+									local FlatIdent_31ECC = 0;
+									local B;
+									local A;
+									while true do
+										if (FlatIdent_31ECC == 0) then
+											B = nil;
+											A = nil;
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											FlatIdent_31ECC = 1;
+										end
+										if (7 == FlatIdent_31ECC) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+											VIP = VIP + 1;
+											FlatIdent_31ECC = 8;
+										end
+										if (FlatIdent_31ECC == 3) then
+											Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]];
+											FlatIdent_31ECC = 4;
+										end
+										if (4 == FlatIdent_31ECC) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											FlatIdent_31ECC = 5;
+										end
+										if (FlatIdent_31ECC == 6) then
+											Stk[Inst[2]] = Env[Inst[3]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+											FlatIdent_31ECC = 7;
+										end
+										if (5 == FlatIdent_31ECC) then
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_31ECC = 6;
+										end
+										if (FlatIdent_31ECC == 10) then
+											VIP = Inst[3];
+											break;
+										end
+										if (FlatIdent_31ECC == 1) then
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_31ECC = 2;
+										end
+										if (FlatIdent_31ECC == 8) then
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3] ~= 0;
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_31ECC = 9;
+										end
+										if (9 == FlatIdent_31ECC) then
+											A = Inst[2];
+											Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_31ECC = 10;
+										end
+										if (FlatIdent_31ECC == 2) then
+											Stk[Inst[2]] = Inst[3];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											FlatIdent_31ECC = 3;
+										end
+									end
+								end
+							elseif (Enum <= 18) then
+								if (Enum <= 15) then
+									if (Enum <= 13) then
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									elseif (Enum == 14) then
+										local A = Inst[2];
+										Stk[A] = Stk[A](Stk[A + 1]);
+									else
+										local FlatIdent_3CDED = 0;
+										local A;
+										while true do
+											if (0 == FlatIdent_3CDED) then
+												A = Inst[2];
+												Stk[A] = Stk[A](Unpack(Stk, A + 1, Top));
+												break;
+											end
+										end
+									end
+								elseif (Enum <= 16) then
+									Stk[Inst[2]] = Wrap(Proto[Inst[3]], nil, Env);
+								elseif (Enum == 17) then
+									local FlatIdent_6E549 = 0;
+									local B;
+									local A;
+									while true do
+										if (FlatIdent_6E549 == 3) then
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											FlatIdent_6E549 = 4;
+										end
+										if (FlatIdent_6E549 == 1) then
+											Inst = Instr[VIP];
+											A = Inst[2];
+											Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											VIP = VIP + 1;
+											FlatIdent_6E549 = 2;
+										end
+										if (4 == FlatIdent_6E549) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3];
+											break;
+										end
+										if (FlatIdent_6E549 == 0) then
+											B = nil;
+											A = nil;
+											Stk[Inst[2]] = Inst[3];
+											VIP = VIP + 1;
+											FlatIdent_6E549 = 1;
+										end
+										if (2 == FlatIdent_6E549) then
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_6E549 = 3;
+										end
+									end
+								else
+									local Results;
+									local Edx;
+									local Results, Limit;
+									local B;
+									local A;
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Results, Limit = _R(Stk[A](Stk[A + 1]));
+									Top = (Limit + A) - 1;
+									Edx = 0;
+									for Idx = A, Top do
+										Edx = Edx + 1;
+										Stk[Idx] = Results[Edx];
+									end
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Results = {Stk[A](Unpack(Stk, A + 1, Top))};
+									Edx = 0;
+									for Idx = A, Inst[4] do
+										Edx = Edx + 1;
+										Stk[Idx] = Results[Edx];
+									end
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								end
+							elseif (Enum <= 21) then
+								if (Enum <= 19) then
+									local FlatIdent_3ACCC = 0;
+									local A;
+									while true do
+										if (FlatIdent_3ACCC == 0) then
+											A = Inst[2];
+											Stk[A] = Stk[A]();
+											break;
+										end
+									end
+								elseif (Enum > 20) then
+									do
+										return;
+									end
+								elseif Stk[Inst[2]] then
+									VIP = VIP + 1;
+								else
+									VIP = Inst[3];
+								end
+							elseif (Enum <= 23) then
+								if (Enum > 22) then
+									local FlatIdent_77478 = 0;
+									local B;
+									local A;
+									while true do
+										if (FlatIdent_77478 == 6) then
+											Stk[Inst[2]] = Inst[3];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3] ~= 0;
+											FlatIdent_77478 = 7;
+										end
+										if (5 == FlatIdent_77478) then
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_77478 = 6;
+										end
+										if (FlatIdent_77478 == 8) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											do
+												return;
+											end
+											break;
+										end
+										if (FlatIdent_77478 == 4) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											FlatIdent_77478 = 5;
+										end
+										if (0 == FlatIdent_77478) then
+											B = nil;
+											A = nil;
+											Stk[Inst[2]] = Env[Inst[3]];
+											VIP = VIP + 1;
+											FlatIdent_77478 = 1;
+										end
+										if (FlatIdent_77478 == 3) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											FlatIdent_77478 = 4;
+										end
+										if (FlatIdent_77478 == 2) then
+											Stk[A] = B[Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3];
+											FlatIdent_77478 = 3;
+										end
+										if (1 == FlatIdent_77478) then
+											Inst = Instr[VIP];
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											Stk[A + 1] = B;
+											FlatIdent_77478 = 2;
+										end
+										if (FlatIdent_77478 == 7) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											FlatIdent_77478 = 8;
+										end
+									end
+								else
+									for Idx = Inst[2], Inst[3] do
+										Stk[Idx] = nil;
+									end
+								end
+							elseif (Enum > 24) then
+								local A = Inst[2];
+								Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+							else
+								Stk[Inst[2]] = Env[Inst[3]];
+							end
+						elseif (Enum <= 38) then
+							if (Enum <= 31) then
+								if (Enum <= 28) then
+									if (Enum <= 26) then
+										local Results;
+										local Edx;
+										local Results, Limit;
+										local B;
+										local A;
+										Stk[Inst[2]] = Env[Inst[3]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Env[Inst[3]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Results, Limit = _R(Stk[A](Stk[A + 1]));
+										Top = (Limit + A) - 1;
+										Edx = 0;
+										for Idx = A, Top do
+											Edx = Edx + 1;
+											Stk[Idx] = Results[Edx];
+										end
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Results = {Stk[A](Unpack(Stk, A + 1, Top))};
+										Edx = 0;
+										for Idx = A, Inst[4] do
+											local FlatIdent_229D1 = 0;
+											while true do
+												if (FlatIdent_229D1 == 0) then
+													Edx = Edx + 1;
+													Stk[Idx] = Results[Edx];
+													break;
+												end
+											end
+										end
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										VIP = Inst[3];
+									elseif (Enum == 27) then
+										local A = Inst[2];
+										local Results = {Stk[A](Unpack(Stk, A + 1, Top))};
+										local Edx = 0;
+										for Idx = A, Inst[4] do
+											Edx = Edx + 1;
+											Stk[Idx] = Results[Edx];
+										end
+									elseif (Inst[2] == Stk[Inst[4]]) then
+										VIP = VIP + 1;
+									else
+										VIP = Inst[3];
+									end
+								elseif (Enum <= 29) then
+									Stk[Inst[2]] = Inst[3];
+								elseif (Enum > 30) then
+									local B;
+									local A;
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3] ~= 0;
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								else
+									local Results;
+									local Edx;
+									local Results, Limit;
+									local B;
+									local A;
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Results, Limit = _R(Stk[A](Stk[A + 1]));
+									Top = (Limit + A) - 1;
+									Edx = 0;
+									for Idx = A, Top do
+										Edx = Edx + 1;
+										Stk[Idx] = Results[Edx];
+									end
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Results = {Stk[A](Unpack(Stk, A + 1, Top))};
+									Edx = 0;
+									for Idx = A, Inst[4] do
+										Edx = Edx + 1;
+										Stk[Idx] = Results[Edx];
+									end
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								end
+							elseif (Enum <= 34) then
+								if (Enum <= 32) then
+									local B;
+									local A;
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3] ~= 0;
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								elseif (Enum > 33) then
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								else
+									local B;
+									local A;
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									if Stk[Inst[2]] then
+										VIP = VIP + 1;
+									else
+										VIP = Inst[3];
+									end
+								end
+							elseif (Enum <= 36) then
+								if (Enum > 35) then
+									local B;
+									local A;
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									if Stk[Inst[2]] then
+										VIP = VIP + 1;
+									else
+										VIP = Inst[3];
+									end
+								else
+									local FlatIdent_71E8F = 0;
+									local B;
+									local A;
+									while true do
+										if (FlatIdent_71E8F == 1) then
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											A = Inst[2];
+											FlatIdent_71E8F = 2;
+										end
+										if (FlatIdent_71E8F == 0) then
+											B = nil;
+											A = nil;
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											FlatIdent_71E8F = 1;
+										end
+										if (FlatIdent_71E8F == 2) then
+											Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_71E8F = 3;
+										end
+										if (FlatIdent_71E8F == 4) then
+											Stk[Inst[2]] = Env[Inst[3]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_71E8F = 5;
+										end
+										if (FlatIdent_71E8F == 5) then
+											Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											Stk[Inst[2]] = Inst[3] ~= 0;
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_71E8F = 6;
+										end
+										if (FlatIdent_71E8F == 3) then
+											A = Inst[2];
+											B = Stk[Inst[3]];
+											Stk[A + 1] = B;
+											Stk[A] = B[Inst[4]];
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											FlatIdent_71E8F = 4;
+										end
+										if (FlatIdent_71E8F == 6) then
+											A = Inst[2];
+											Stk[A](Unpack(Stk, A + 1, Inst[3]));
+											VIP = VIP + 1;
+											Inst = Instr[VIP];
+											VIP = Inst[3];
+											break;
+										end
+									end
+								end
+							elseif (Enum == 37) then
+								local FlatIdent_8B7B0 = 0;
+								local Edx;
+								local Results;
+								local Limit;
+								local B;
+								local A;
+								while true do
+									if (3 == FlatIdent_8B7B0) then
+										Top = (Limit + A) - 1;
+										Edx = 0;
+										for Idx = A, Top do
+											Edx = Edx + 1;
+											Stk[Idx] = Results[Edx];
+										end
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										FlatIdent_8B7B0 = 4;
+									end
+									if (FlatIdent_8B7B0 == 2) then
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Inst[3];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Results, Limit = _R(Stk[A](Unpack(Stk, A + 1, Inst[3])));
+										FlatIdent_8B7B0 = 3;
+									end
+									if (0 == FlatIdent_8B7B0) then
+										Edx = nil;
+										Results, Limit = nil;
+										B = nil;
+										A = nil;
+										Stk[Inst[2]] = Env[Inst[3]];
+										VIP = VIP + 1;
+										FlatIdent_8B7B0 = 1;
+									end
+									if (FlatIdent_8B7B0 == 5) then
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										FlatIdent_8B7B0 = 6;
+									end
+									if (FlatIdent_8B7B0 == 7) then
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+										break;
+									end
+									if (4 == FlatIdent_8B7B0) then
+										Stk[A] = Stk[A](Unpack(Stk, A + 1, Top));
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Stk[A] = Stk[A]();
+										VIP = VIP + 1;
+										FlatIdent_8B7B0 = 5;
+									end
+									if (FlatIdent_8B7B0 == 6) then
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Inst[3];
+										VIP = VIP + 1;
+										FlatIdent_8B7B0 = 7;
+									end
+									if (1 == FlatIdent_8B7B0) then
+										Inst = Instr[VIP];
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										FlatIdent_8B7B0 = 2;
+									end
+								end
+							else
+								local B;
+								local A;
+								A = Inst[2];
+								B = Stk[Inst[3]];
+								Stk[A + 1] = B;
+								Stk[A] = B[Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Inst[3];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								A = Inst[2];
+								Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Stk[Inst[3]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								A = Inst[2];
+								B = Stk[Inst[3]];
+								Stk[A + 1] = B;
+								Stk[A] = B[Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Env[Inst[3]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Inst[3] ~= 0;
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								A = Inst[2];
+								Stk[A](Unpack(Stk, A + 1, Inst[3]));
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								VIP = Inst[3];
+							end
+						elseif (Enum <= 44) then
+							if (Enum <= 41) then
+								if (Enum <= 39) then
+									local Results;
+									local Edx;
+									local Results, Limit;
+									local B;
+									local A;
+									Stk[Inst[2]] = Env[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Results, Limit = _R(Stk[A](Stk[A + 1]));
+									Top = (Limit + A) - 1;
+									Edx = 0;
+									for Idx = A, Top do
+										Edx = Edx + 1;
+										Stk[Idx] = Results[Edx];
+									end
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Results = {Stk[A](Unpack(Stk, A + 1, Top))};
+									Edx = 0;
+									for Idx = A, Inst[4] do
+										Edx = Edx + 1;
+										Stk[Idx] = Results[Edx];
+									end
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								elseif (Enum == 40) then
+									local B;
+									local A;
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3] ~= 0;
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									VIP = Inst[3];
+								else
+									local B;
+									local A;
+									A = Inst[2];
+									Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									B = Stk[Inst[3]];
+									Stk[A + 1] = B;
+									Stk[A] = B[Inst[4]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									A = Inst[2];
+									Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Stk[Inst[3]];
+									VIP = VIP + 1;
+									Inst = Instr[VIP];
+									Stk[Inst[2]] = Inst[3];
+								end
+							elseif (Enum <= 42) then
+								local FlatIdent_11AA1 = 0;
+								local A;
+								local Results;
+								local Limit;
+								local Edx;
+								while true do
+									if (FlatIdent_11AA1 == 2) then
+										for Idx = A, Top do
+											local FlatIdent_7D3C9 = 0;
+											while true do
+												if (0 == FlatIdent_7D3C9) then
+													Edx = Edx + 1;
+													Stk[Idx] = Results[Edx];
+													break;
+												end
+											end
+										end
+										break;
+									end
+									if (FlatIdent_11AA1 == 0) then
+										A = Inst[2];
+										Results, Limit = _R(Stk[A](Stk[A + 1]));
+										FlatIdent_11AA1 = 1;
+									end
+									if (1 == FlatIdent_11AA1) then
+										Top = (Limit + A) - 1;
+										Edx = 0;
+										FlatIdent_11AA1 = 2;
+									end
+								end
+							elseif (Enum == 43) then
+								local FlatIdent_270C = 0;
+								local B;
+								local A;
+								while true do
+									if (FlatIdent_270C == 0) then
+										B = nil;
+										A = nil;
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										FlatIdent_270C = 1;
+									end
+									if (FlatIdent_270C == 11) then
+										Stk[Inst[2]] = Inst[3];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										VIP = Inst[3];
+										break;
+									end
+									if (FlatIdent_270C == 5) then
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										FlatIdent_270C = 6;
+									end
+									if (FlatIdent_270C == 3) then
+										Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										FlatIdent_270C = 4;
+									end
+									if (FlatIdent_270C == 6) then
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										FlatIdent_270C = 7;
+									end
+									if (FlatIdent_270C == 1) then
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										FlatIdent_270C = 2;
+									end
+									if (FlatIdent_270C == 7) then
+										Stk[A] = Stk[A](Stk[A + 1]);
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										FlatIdent_270C = 8;
+									end
+									if (FlatIdent_270C == 2) then
+										Stk[Inst[2]] = Inst[3];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										FlatIdent_270C = 3;
+									end
+									if (FlatIdent_270C == 10) then
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										FlatIdent_270C = 11;
+									end
+									if (FlatIdent_270C == 4) then
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Env[Inst[3]];
+										VIP = VIP + 1;
+										FlatIdent_270C = 5;
+									end
+									if (FlatIdent_270C == 8) then
+										B = Stk[Inst[3]];
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										FlatIdent_270C = 9;
+									end
+									if (FlatIdent_270C == 9) then
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Stk[A] = Stk[A](Stk[A + 1]);
+										VIP = VIP + 1;
+										FlatIdent_270C = 10;
+									end
+								end
+							else
+								local FlatIdent_4058F = 0;
+								local A;
+								local B;
+								while true do
+									if (FlatIdent_4058F == 1) then
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										break;
+									end
+									if (FlatIdent_4058F == 0) then
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										FlatIdent_4058F = 1;
+									end
+								end
+							end
+						elseif (Enum <= 47) then
+							if (Enum <= 45) then
+								if (Stk[Inst[2]] == Inst[4]) then
+									VIP = VIP + 1;
+								else
+									VIP = Inst[3];
+								end
+							elseif (Enum == 46) then
+								local A = Inst[2];
+								Stk[A](Unpack(Stk, A + 1, Inst[3]));
+							else
+								Stk[Inst[2]] = Inst[3] ~= 0;
+							end
+						elseif (Enum <= 49) then
+							if (Enum == 48) then
+								local B;
+								local A;
+								A = Inst[2];
+								B = Stk[Inst[3]];
+								Stk[A + 1] = B;
+								Stk[A] = B[Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Inst[3];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								A = Inst[2];
+								Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Stk[Inst[3]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								A = Inst[2];
+								B = Stk[Inst[3]];
+								Stk[A + 1] = B;
+								Stk[A] = B[Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Env[Inst[3]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								Stk[Inst[2]] = Inst[3] ~= 0;
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								A = Inst[2];
+								Stk[A](Unpack(Stk, A + 1, Inst[3]));
+								VIP = VIP + 1;
+								Inst = Instr[VIP];
+								VIP = Inst[3];
+							else
+								local FlatIdent_243F3 = 0;
+								local B;
+								local A;
+								while true do
+									if (FlatIdent_243F3 == 4) then
+										Stk[A + 1] = B;
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Env[Inst[3]];
+										FlatIdent_243F3 = 5;
+									end
+									if (FlatIdent_243F3 == 7) then
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Stk[A](Unpack(Stk, A + 1, Inst[3]));
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										FlatIdent_243F3 = 8;
+									end
+									if (FlatIdent_243F3 == 5) then
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										FlatIdent_243F3 = 6;
+									end
+									if (FlatIdent_243F3 == 0) then
+										B = nil;
+										A = nil;
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										Stk[A + 1] = B;
+										FlatIdent_243F3 = 1;
+									end
+									if (FlatIdent_243F3 == 1) then
+										Stk[A] = B[Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Inst[3];
+										VIP = VIP + 1;
+										FlatIdent_243F3 = 2;
+									end
+									if (FlatIdent_243F3 == 6) then
+										Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										Stk[Inst[2]] = Inst[3] ~= 0;
+										VIP = VIP + 1;
+										FlatIdent_243F3 = 7;
+									end
+									if (FlatIdent_243F3 == 3) then
+										Stk[Inst[2]] = Stk[Inst[3]];
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										A = Inst[2];
+										B = Stk[Inst[3]];
+										FlatIdent_243F3 = 4;
+									end
+									if (FlatIdent_243F3 == 2) then
+										Inst = Instr[VIP];
+										A = Inst[2];
+										Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+										VIP = VIP + 1;
+										Inst = Instr[VIP];
+										FlatIdent_243F3 = 3;
+									end
+									if (FlatIdent_243F3 == 8) then
+										VIP = Inst[3];
+										break;
+									end
+								end
+							end
+						elseif (Enum > 50) then
+							local B;
+							local A;
+							A = Inst[2];
+							B = Stk[Inst[3]];
+							Stk[A + 1] = B;
+							Stk[A] = B[Inst[4]];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							Stk[Inst[2]] = Inst[3];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							A = Inst[2];
+							Stk[A] = Stk[A](Unpack(Stk, A + 1, Inst[3]));
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							Stk[Inst[2]] = Stk[Inst[3]];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							A = Inst[2];
+							B = Stk[Inst[3]];
+							Stk[A + 1] = B;
+							Stk[A] = B[Inst[4]];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							Stk[Inst[2]] = Env[Inst[3]];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							Stk[Inst[2]] = Stk[Inst[3]][Inst[4]];
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							Stk[Inst[2]] = Inst[3] ~= 0;
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							A = Inst[2];
+							Stk[A](Unpack(Stk, A + 1, Inst[3]));
+							VIP = VIP + 1;
+							Inst = Instr[VIP];
+							VIP = Inst[3];
+						else
+							VIP = Inst[3];
+						end
+						VIP = VIP + 1;
+						break;
+					end
+				end
+			end
+		end;
+	end
+	return Wrap(Deserialize(), {}, vmenv)(...);
+end
+return VMCall("LOL!233O00028O00026O00144003063O0042752O746F6E03103O00456D6F7465734D656E752066616C736503103O00436C656172412O6C4368696C6472656E026O00F03F03143O00436F72654775695479706520412O6C2074727565026O001840030D3O00556E457175697020542O6F6C73030C3O0044656C65746520542O6F6C73030C3O0043726561746557696E646F77030B3O00436F726547756954797065027O0040026O000840030C3O004865616C74682066616C7365030D3O004261636B7061636B2074727565030E3O004261636B7061636B2066616C7365026O00104003153O00436F72654775695479706520412O6C2066616C7365030D3O00436F6E74726F6C732074727565030E3O00436F6E74726F6C732066616C7365026O001C4003093O00436861742074727565030A3O00436861742066616C7365030F3O00456D6F7465734D656E75207472756503103O00506C617965724C6973746C207472756503113O00506C617965724C6973746C2066616C7365030B3O004865616C74682074727565030A3O006C6F6164737472696E6703043O0067616D6503073O00482O747047657403423O00682O7470733A2O2F7261772E67697468756275736572636F6E74656E742E636F6D2F682O6F61637A782F5363726970742F6D61696E2F55692532306C696272617279030B3O00457175697020542O6F6C7303103O00526573657442752O746F6E207472756503113O00526573657442752O746F6E2066616C736500A83O00121D3O00014O0016000100043O00262D3O0019000100020004323O0019000100121D000500013O00262D00050010000100010004323O0010000100202C00060003000300121D000800043O00021000096O002E00060009000100202C00060003000300121D000800053O000210000900014O002E00060009000100121D000500063O000E1C00060005000100050004323O0005000100202C00060003000300121D000800073O000210000900024O002E00060009000100121D3O00083O0004323O001900010004323O0005000100262D3O0028000100060004323O0028000100202C00050002000300121D000700093O000210000800034O002E00050008000100202C00050002000300121D0007000A3O000210000800044O002900050008000100202O00050001000B00122O0007000C6O0005000700024O000300053O00124O000D3O00262D3O00370001000E0004323O0037000100202C00050003000300121D0007000F3O000210000800054O002E00050008000100202C00050003000300121D000700103O000210000800064O002E00050008000100202C00050003000300121D000700113O000210000800074O002E00050008000100121D3O00123O00262D3O004E000100080004323O004E000100121D000500013O000E1C00010045000100050004323O0045000100202C00060003000300121D000800133O000210000900084O002E00060009000100202C00060003000300121D000800143O000210000900094O002E00060009000100121D000500063O00262D0005003A000100060004323O003A000100202C00060003000300121D000800153O0002100009000A4O002E00060009000100121D3O00163O0004323O004E00010004323O003A000100262D3O0065000100120004323O0065000100121D000500013O00262D0005005C000100010004323O005C000100202C00060003000300121D000800173O0002100009000B4O002E00060009000100202C00060003000300121D000800183O0002100009000C4O002E00060009000100121D000500063O00262D00050051000100060004323O0051000100202C00060003000300121D000800193O0002100009000D4O002E00060009000100121D3O00023O0004323O006500010004323O0051000100262D3O007C0001000D0004323O007C000100121D000500013O00262D00050073000100010004323O0073000100202C00060003000300121D0008001A3O0002100009000E4O002E00060009000100202C00060003000300121D0008001B3O0002100009000F4O002E00060009000100121D000500063O00262D00050068000100060004323O0068000100202C00060003000300121D0008001C3O000210000900104O002E00060009000100121D3O000E3O0004323O007C00010004323O0068000100262D3O0097000100010004323O0097000100121D000500013O00262D0005008E000100010004323O008E00010012180006001D3O0012250007001E3O00202O00070007001F00122O000900206O000700096O00063O00024O0006000100024O000100063O00202O00060001000B00122O000800216O0006000800022O0001000200063O00121D000500063O00262D0005007F000100060004323O007F000100202C00060002000300121D000800213O000210000900114O002E00060009000100121D3O00063O0004323O009700010004323O007F000100262D3O0002000100160004323O0002000100202C00050001000B001211000700036O0005000700024O000400053O00202O00050004000300122O000700223O000210000800124O002E00050008000100202C00050004000300121D000700233O000210000800134O002E0005000800010004323O00A700010004323O000200012O00153O00013O00143O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F726547756954797065030A3O00456D6F7465734D656E7500123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O00058O00020005000100044O001100010004323O000200012O00153O00017O000A3O00028O00026O00F03F03093O0043686172616374657203103O0048756D616E6F6964522O6F745061727403063O00434672616D6503103O00436C656172412O6C4368696C6472656E03043O0067616D6503073O00506C6179657273030B3O004C6F63616C506C6179657203083O0048756D616E6F696400143O00121D3O00014O0016000100033O00262D3O000A000100020004323O000A000100200D00040001000300200900040004000400202O00030004000500202O0004000100064O00040002000100044O0013000100262D3O0002000100010004323O00020001001218000400073O00202200040004000800202O00010004000900202O00040001000300202O00020004000A00124O00023O00044O000200012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F7265477569547970652O033O00412O6C00123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O000500016O00020005000100044O001100010004323O000200012O00153O00017O000B3O0003053O00706169727303043O0067616D6503073O00506C6179657273030A3O00476574506C617965727303093O00436861726163746572028O0003153O0046696E6446697273744368696C644F66436C612O7303043O00542O6F6C03063O00506172656E7403083O004261636B7061636B03083O0044697361626C656400293O00121A3O00013O00122O000100023O00202O00010001000300202O0001000100044O000100029O00000200044O0026000100200D0005000400050006140005002600013O0004323O0026000100121D000500064O0016000600063O00262D0005000C000100060004323O000C000100200D00070004000500202400070007000700122O000900086O0007000900024O000600073O00062O0006002600013O0004323O0026000100121D000700064O0016000800083O000E1C00060017000100070004323O0017000100121D000800063O00262D0008001A000100060004323O001A000100200D00090004000A00100600060009000900202C00090006000B2O000B0009000200010004323O002600010004323O001A00010004323O002600010004323O001700010004323O002600010004323O000C00010006043O0007000100020004323O000700012O00153O00017O000B3O0003053O00706169727303043O0067616D6503073O00506C6179657273030A3O00476574506C617965727303093O00436861726163746572028O0003153O0046696E6446697273744368696C644F66436C612O7303043O00542O6F6C03063O00506172656E7403083O004261636B7061636B03073O0044657374726F7900293O00121A3O00013O00122O000100023O00202O00010001000300202O0001000100044O000100029O00000200044O0026000100200D0005000400050006140005002600013O0004323O0026000100121D000500064O0016000600063O00262D0005000C000100060004323O000C000100200D00070004000500202400070007000700122O000900086O0007000900024O000600073O00062O0006002600013O0004323O0026000100121D000700064O0016000800083O00262D00070017000100060004323O0017000100121D000800063O00262D0008001A000100060004323O001A000100200D00090004000A00100600060009000900202C00090006000B2O000B0009000200010004323O002600010004323O001A00010004323O002600010004323O001700010004323O002600010004323O000C00010006043O0007000100020004323O000700012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F72654775695479706503063O004865616C746800123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O00058O00020005000100044O001100010004323O000200012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F72654775695479706503083O004261636B7061636B00123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O000500016O00020005000100044O001100010004323O000200012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F72654775695479706503083O004261636B7061636B00123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O00058O00020005000100044O001100010004323O000200012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F7265477569547970652O033O00412O6C00123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O00058O00020005000100044O001100010004323O000200012O00153O00017O000B3O00028O00026O00F03F03083O00416374697661746503043O0067616D65030A3O004765745365727669636503073O00506C6179657273030B3O004C6F63616C506C6179657203073O0072657175697265030D3O00506C6179657253637269707473030C3O00506C617965724D6F64756C65030B3O00476574436F6E74726F6C7300183O00121D3O00014O0016000100023O00262D3O0007000100020004323O0007000100202C0003000200032O000B0003000200010004323O0017000100262D3O0002000100010004323O00020001001218000300043O00200500030003000500122O000500066O00030005000200202O00010003000700122O000300083O00202O00040001000900202O00040004000A4O00030002000200202O00030003000B4O0003000200024O000200033O00124O00023O00044O000200012O00153O00017O000B3O00028O00026O00F03F03073O0044697361626C6503043O0067616D65030A3O004765745365727669636503073O00506C6179657273030B3O004C6F63616C506C6179657203073O0072657175697265030D3O00506C6179657253637269707473030C3O00506C617965724D6F64756C65030B3O00476574436F6E74726F6C73002A3O00121D3O00014O0016000100033O00262D3O0023000100020004323O002300012O0016000300033O00262D0001000A000100020004323O000A000100202C0004000300032O000B0004000200010004323O0029000100262D00010005000100010004323O0005000100121D000400013O00262D00040011000100020004323O0011000100121D000100023O0004323O0005000100262D0004000D000100010004323O000D0001001218000500043O00200500050005000500122O000700066O00050007000200202O00020005000700122O000500083O00202O00060002000900202O00060006000A4O00050002000200202O00050005000B4O0005000200024O000300053O00122O000400023O00044O000D00010004323O000500010004323O0029000100262D3O0002000100010004323O0002000100121D000100014O0016000200023O00121D3O00023O0004323O000200012O00153O00017O00073O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F72654775695479706503043O0043686174000B3O0012073O00013O00206O000200122O000200038O0002000200202O00013O000400122O000300053O00202O00030003000600202O0003000300074O000400016O0001000400016O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F72654775695479706503043O004368617400123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O00058O00020005000100044O001100010004323O000200012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F726547756954797065030A3O00456D6F7465734D656E7500123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O000500016O00020005000100044O001100010004323O000200012O00153O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F726547756954797065030A3O00506C617965724C69737400123O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O000500016O00020005000100044O001100010004323O000200012O00153O00017O00073O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F726547756954797065030A3O00506C617965724C697374000B3O0012073O00013O00206O000200122O000200038O0002000200202O00013O000400122O000300053O00202O00030003000600202O0003000300074O00048O0001000400016O00017O00083O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903113O00536574436F7265477569456E61626C656403043O00456E756D030B3O00436F72654775695479706503063O004865616C746800123O00121D3O00014O0016000100013O000E1C0001000200013O0004323O00020001001218000200023O00202600020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400063O00202O00040004000700202O0004000400084O000500016O00020005000100044O001100010004323O000200012O00153O00017O000C3O0003053O00706169727303043O0067616D65030A3O004765745365727669636503073O00506C6179657273030B3O004C6F63616C506C6179657203083O004261636B7061636B030B3O004765744368696C6472656E03093O00436C612O734E616D6503043O00542O6F6C03063O00506172656E7403093O0043686172616374657203083O0044697361626C6564002A3O002O123O00013O00122O000100023O00202O00010001000300122O000300046O00010003000200202O00010001000500202O00010001000600202O0001000100074O000100029O00000200044O0015000100200D00050004000800262D00050015000100090004323O00150001001218000500023O00200200050005000300122O000700046O00050007000200202O00050005000500202O00050005000B00102O0004000A00050006043O000B000100020004323O000B00010012183O00013O001227000100023O00202O00010001000300122O000300046O00010003000200202O00010001000500202O00010001000B00202O0001000100074O000100029O00000200044O0027000100200D00050004000800262D00050027000100090004323O0027000100202C00050004000C2O000B0005000200010006043O0022000100020004323O002200012O00153O00017O00063O00028O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903073O00536574436F726503133O00526573657442752O746F6E43612O6C6261636B00103O00121D3O00014O0016000100013O00262D3O0002000100010004323O00020001001218000200023O00202800020002000300122O000400046O0002000400024O000100023O00202O00020001000500122O000400066O000500016O00020005000100044O000F00010004323O000200012O00153O00017O00053O0003043O0067616D65030A3O0047657453657276696365030A3O005374617274657247756903073O00536574436F726503133O00526573657442752O746F6E43612O6C6261636B00093O0012173O00013O00206O000200122O000200038O0002000200202O00013O000400122O000300056O00048O0001000400016O00017O00", GetFEnv(), ...);
