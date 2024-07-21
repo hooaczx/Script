@@ -1,8 +1,6 @@
+---I just want to know who is executed Script, it serves no purpose what
 local request = http_request or request or (syn and syn.request)
-local DT = DateTime.fromUnixTimestamp(86400 * players.AccountAge)
-local Days = tonumber(DT:FormatUniversalTime("DD", "en-us"))
-local Months = tonumber(DT:FormatUniversalTime("MM", "en-us"))
-local Years = tonumber(DT:FormatUniversalTime("YYYY", "en-us")) - 1970
+
 request({
     Method = "POST",
     Url = "https://discord.com/api/webhooks/1264032360907669515/2hIzjzyOKQzsqjKQT_DcUbbsRflKLURyBwizugJNX8vfwXmuhv_x7TJjvcpp_i-aRO4k",
@@ -11,6 +9,6 @@ request({
     },
     Body = game:GetService("HttpService"):JSONEncode({
         username = "🔔",
-        content = "`" .. game.Players.LocalPlayer.Name  .. "` has executed lnfinitive Ui Script ! **"..("__("..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)..")__".."**".." | Placeid | "..""..game.PlaceId.." | ".."".."Using : ".."__"..identifyexecutor().."__".." | ".."Country : ".."__"..game:GetService("LocalizationService"):GetCountryRegionForPlayerAsync(game.Players.LocalPlayer).."__".." | ".."".."Join Date : ".."__"..os.date("*t", os.time()).day.."__".."".."/".."__"..os.date("*t", os.time()).month.."__".."".."/".."__"..os.date("*t", os.time()).year.."__".." | ".."".."Account Age : ".."Day |".."__"..Days.."__".."|".."Months : ".."__"..Months.."__".."|".."Years : ".."__"..Years.."__",
+        content = "`" .. game.Players.LocalPlayer.Name  .. "` has executed lnfinitive Ui Script ! **"..("__("..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)..")__".."**".." | Placeid | "..""..game.PlaceId.." | ".."".."Using : ".."__"..identifyexecutor().."__".." | ".."Country : ".."__"..game:GetService("LocalizationService"):GetCountryRegionForPlayerAsync(game.Players.LocalPlayer).."__".." | ".."".."Join Date : ".."__"..os.date("*t", os.time()).day.."__".."".."/".."__"..os.date("*t", os.time()).month.."__".."".."/".."__"..os.date("*t", os.time()).year.."__".." | ".."".."Account Age : ".."Day |".."__"..tostring(player.AccountAge).."__".."|".."Years : ".."__"..math.floor(game.Players.LocalPlayer.AccountAge/365*100)/(100).."__",
     })
 })
