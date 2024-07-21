@@ -7,6 +7,1351 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Nja Hub",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Script-Blox/Script/main/N-Ja.Lua'))()
+end) 
+
+Tab:CreateButton("Mars Hub",function()
+-- Mars Hub discord server:
+-- https://discord.gg/hr43CMJNkc
+-- Join for any issues / problems
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/1andonlymars/MarsHub/main/lua"))()
+end) 
+
+Tab:CreateButton("easier saveinstance use",function()
+-- yes this script is extremely not made by me Credit to luau from github
+-- ORIGINAL POST https://github.com/luau/UniversalSynSaveInstance/tree/main
+-- if your script isn't saving any localscript / modules try executing MOREUNC from vxsty the cool alien guy
+-- MOREUNC POST https://scriptblox.com/script/Universal-Script-MoreUNC-13110
+
+local PATH_TO_SAVE = game --can be saved as model for example like --> game.Workspace.Map .. if only put game it will save the whole game
+local SAVE_PLAYERS = true --//true/false\\--
+local ANTI_AFK_KICK = true --//true/false\\--
+local REMOVE_CHRACTERS = false --//true/false\\--
+local SAVE_BYTECODES = false --//true/false\\-- "this kinda useless tho"
+local LOADING_TIME = 0.5 --any numbers here
+local SAFE_MODE = true --//true/false\\--"kick you before saving it should help you stay undetected from the game i think"
+local ANONYMOUS_MODE = false --//true/false\\-- "idk what this does tbh"
+local README_NOTES = true --//true/false\\-- "Enable, Disable ReadMe Notes"
+local SHOW_STATUS = true --//true/false\\-- "The text on the top right thingly"
+
+--[[
+    you may ask "Why do i need MOREUNC from cool alien dude?????????"
+    1. your using solara and solara is flipping missing base64decode function (bruh)
+    2. (i dont flipping know)
+uwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwuuwu
+    "Why did you exactly make this"
+    1. for myself
+    2. easier use (yes)
+    3. im a psychopath
+]]
+
+-- Script
+local Params = {
+    RepoURL = "https://raw.githubusercontent.com/luau/SynSaveInstance/main/",
+    SSI = "saveinstance",
+}
+local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+local CustomOptions = {
+    SafeMode = SAFE_MODE,
+    timeout = LOADING_TIME,
+    SaveBytecode = SAVE_BYTECODES,
+    RemovePlayerCharacters = REMOVECHRACTERS,
+    IsolatePlayers = SAVE_PLAYERS,
+    Object = PATH_TO_SAVE,
+    Anonymous = ANONYMOUS_MODE,
+    ReadMe = README_NOTES,
+    ShowStatus = SHOW_STATUS
+}
+synsaveinstance(CustomOptions)
+print("Runned Saveinstance. Please wait...")
+
+local vim = game:GetService('VirtualInputManager')
+
+while ANTI_AFK_KICK do
+    task.wait(60)
+    vim:SendKeyEvent(true, "%", false, game)
+    print("uwuwuwuw skinidit oitelt eim so brainrot xdxcdxdxdxdxd")
+end
+end) 
+
+Tab:CreateButton("Universal Esp(Open Source",function()
+--// Made By Zans \\--
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+local Window = OrionLib:MakeWindow({Name = "Universal Esp", HidePremium = false, SaveConfig = false, ConfigFolder = "OrionConfig"})
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local ESPEnabled = false
+local HighlightEnabled = false
+local TracerEnabled = false
+local BoxEnabled = false
+local Box2DEnabled = false
+
+local function createNameESP(player)
+    local BillboardGui = Instance.new("BillboardGui")
+    local TextLabel = Instance.new("TextLabel")
+
+    BillboardGui.Name = "NameESP"
+    BillboardGui.Adornee = player.Character:WaitForChild("Head")
+    BillboardGui.Size = UDim2.new(0, 100, 0, 50)
+    BillboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    BillboardGui.AlwaysOnTop = true
+
+    TextLabel.Parent = BillboardGui
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Text = player.Name
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.TextColor3 = Color3.new(1, 1, 1)
+    TextLabel.TextScaled = true
+
+    local distanceLabel = Instance.new("TextLabel")
+    distanceLabel.Parent = BillboardGui
+    distanceLabel.BackgroundTransparency = 1
+    distanceLabel.Position = UDim2.new(0, 0, 0, 30)
+    distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    distanceLabel.TextColor3 = Color3.new(1, 1, 1)
+    distanceLabel.TextScaled = true
+
+    local function updateDistance()
+        if BillboardGui.Parent then
+            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+            distanceLabel.Text = string.format("%.2f studs", distance)
+        end
+    end
+
+    spawn(function()
+        while BillboardGui.Parent do
+            updateDistance()
+            wait(0.1)
+        end
+    end)
+
+    BillboardGui.Parent = player.Character:WaitForChild("Head")
+end
+
+local function removeESP(player)
+    if player.Character and player.Character:FindFirstChild("Head") then
+        if player.Character.Head:FindFirstChild("NameESP") then
+            player.Character.Head.NameESP:Destroy()
+        end
+    end
+end
+
+local function createHighlightESP(player)
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "HighlightESP"
+    highlight.Adornee = player.Character
+    highlight.FillTransparency = 0.5
+    highlight.OutlineColor = Color3.new(1, 1, 1)
+    highlight.OutlineTransparency = 0
+    highlight.Parent = player.Character
+    
+    local function updateFillColor()
+        if player.Team and player.Team.TeamColor then
+            highlight.FillColor = player.Team.TeamColor.Color
+        else
+            highlight.FillColor = Color3.new(1, 1, 1) -- Default color if team or team color is not available
+        end
+    end
+    
+    updateFillColor()
+    player:GetPropertyChangedSignal("Team"):Connect(updateFillColor)
+end
+
+local function removeHigh(player)
+    if player.Character and player.Character:FindFirstChild("Head") then
+        if player.Character:FindFirstChild("HighlightESP") then
+            player.Character.HighlightESP:Destroy()
+        end
+    end
+end
+
+local function createTracerESP(player)
+    local Tracer = Drawing.new("Line")
+    Tracer.Visible = false
+    Tracer.Color = Color3.new(1, 1, 1)
+    Tracer.Thickness = 1
+    Tracer.Transparency = 1
+
+    local function updateTracer()
+        if TracerEnabled and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            Tracer.Visible = true
+            local rootPart = player.Character.HumanoidRootPart
+            local rootPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(rootPart.Position)
+            if onScreen then
+                Tracer.From = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y)
+                Tracer.To = Vector2.new(rootPos.X, rootPos.Y)
+            else
+                Tracer.Visible = false
+            end
+        else
+            Tracer.Visible = false
+        end
+    end
+
+    RunService.RenderStepped:Connect(updateTracer)
+
+    player.CharacterRemoving:Connect(function()
+        Tracer:Remove()
+    end)
+end
+
+local function removeTracer(player)
+    if player:FindFirstChild("TracerESP") then
+        player.TracerESP:Destroy()
+    end
+end
+
+local function createBoxESP(player)
+    local box = Instance.new("BoxHandleAdornment")
+    box.Name = "BoxESP"
+    box.Size = player.Character:GetExtentsSize() * 1.1
+    box.Adornee = player.Character
+    box.AlwaysOnTop = true
+    box.ZIndex = 5
+    box.Transparency = 0.5
+    box.Color3 = Color3.new(1, 0, 0)
+    box.Parent = player.Character
+end
+
+local function removeBoxESP(player)
+    if player.Character:FindFirstChild("BoxESP") then
+        player.Character.BoxESP:Destroy()
+    end
+end
+
+local function createBoxESP2D(player)
+    local Box = Drawing.new("Square")
+    Box.Visible = false
+    Box.Transparency = 0.5
+    Box.Color = Color3.new(1, 0, 0)
+    Box.Thickness = 2
+
+    local function updateBox()
+        if Box2DEnabled and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            Box.Visible = true
+            local rootPart = player.Character.HumanoidRootPart
+            local pos, visible = workspace.CurrentCamera:WorldToViewportPoint(rootPart.Position)
+            if visible then
+                local size = player.Character:GetExtentsSize()
+                local topLeft = workspace.CurrentCamera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(size.X/-2, size.Y/2, 0)).p)
+                local bottomRight = workspace.CurrentCamera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(size.X/2, -size.Y/2, 0)).p)
+                Box.Size = Vector2.new(bottomRight.X - topLeft.X, bottomRight.Y - topLeft.Y)
+                Box.Position = Vector2.new(topLeft.X, topLeft.Y)
+            else
+                Box.Visible = false
+            end
+        else
+            Box.Visible = false
+        end
+    end
+
+    RunService.RenderStepped:Connect(updateBox)
+
+    player.CharacterRemoving:Connect(function()
+        Box:Remove()
+    end)
+end
+
+local function removeBoxESP2D(player)
+    -- Implement if needed to remove Box ESP 2D
+end
+
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(function(character)
+        wait(1)
+        if ESPEnabled then
+            createNameESP(player)
+        end
+        if HighlightEnabled then
+            createHighlightESP(player)
+        end
+        if TracerEnabled then
+            createTracerESP(player)
+        end
+        if BoxEnabled then
+            createBoxESP(player)
+        end
+        if Box2DEnabled then
+            createBoxESP2D(player)
+        end
+    end)
+end
+
+local function onPlayerRemoving(player)
+    removeESP(player)
+    removeHigh(player)
+    removeTracer(player)
+    removeBoxESP(player)
+    -- Remove Box ESP 2D if needed
+    -- removeBoxESP2D(player)
+end
+
+local function toggleESP(value)
+    ESPEnabled = value
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if ESPEnabled then
+                if player.Character and player.Character:FindFirstChild("Head") then
+                    createNameESP(player)
+                end
+            else
+                removeESP(player)
+            end
+        end
+    end
+end
+
+local function toggleHighlight(value)
+    HighlightEnabled = value
+    for _, player in pairs(Players:GetChildren()) do
+        if player ~= LocalPlayer then
+            if HighlightEnabled then
+                if player.Character or player.TeamColor then
+                    createHighlightESP(player)
+                end
+            else
+                removeHigh(player)
+            end
+        end
+    end
+end
+
+local function toggleTracer(value)
+    TracerEnabled = value
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if TracerEnabled then
+                createTracerESP(player)
+            else
+                removeTracer(player)
+            end
+        end
+    end
+end
+
+local function toggleBox(value)
+    BoxEnabled = value
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if BoxEnabled then
+                createBoxESP(player)
+            else
+                removeBoxESP(player)
+            end
+        end
+    end
+end
+
+local function toggleBox2D(value)
+    Box2DEnabled = value
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if Box2DEnabled then
+                createBoxESP2D(player)
+            else
+                removeBoxESP2D(player)
+            end
+        end
+    end
+end
+
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        onPlayerAdded(player)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        onPlayerAdded(player)
+    end
+end)
+
+Players.PlayerRemoving:Connect(onPlayerRemoving)
+
+local EspTab = Window:MakeTab({
+    Name = "Esp",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+EspTab:AddToggle({
+    Name = "Name",
+    Default = false,
+    Callback = function(value)
+        toggleESP(value)
+    end
+})
+
+EspTab:AddToggle({
+    Name = "Highlight",
+    Default = false,
+    Callback = function(value)
+        toggleHighlight(value)
+    end
+})
+
+EspTab:AddToggle({
+    Name = "Tracer",
+    Default = false,
+    Callback = function(value)
+        toggleTracer(value)
+    end
+})
+
+EspTab:AddToggle({
+    Name = "Box 3D",
+    Default = false,
+    Callback = function(value)
+        toggleBox(value)
+    end
+})
+
+EspTab:AddToggle({
+    Name = "Box 2D",
+    Default = false,
+    Callback = function(value)
+        toggleBox2D(value)
+    end
+})
+
+OrionLib:Init()
+end) 
+
+Tab:CreateButton("Stickman esp Open source",function()
+-- made by jamjam none other else
+local camera = workspace.CurrentCamera
+local entities = game:GetService("Players")
+local localplayer = entities.LocalPlayer
+local runservice = game:GetService("RunService")
+
+local esp_settings = {
+    enabled = true,
+    skel = true,
+    skel_col = Color3.fromRGB(255, 255, 255)
+}
+
+local function draw(player, character)
+    local skel_head = Drawing.new("Line")
+    skel_head.Visible = false
+    skel_head.Thickness = 2
+    skel_head.Color = esp_settings.skel_col
+
+    local skel_torso = Drawing.new("Line")
+    skel_torso.Visible = false
+    skel_torso.Thickness = 2
+    skel_torso.Color = esp_settings.skel_col
+
+    local skel_leftarm = Drawing.new("Line")
+    skel_leftarm.Visible = false
+    skel_leftarm.Thickness = 2
+    skel_leftarm.Color = esp_settings.skel_col
+
+    local skel_rightarm = Drawing.new("Line")
+    skel_rightarm.Visible = false
+    skel_rightarm.Thickness = 2
+    skel_rightarm.Color = esp_settings.skel_col
+
+    local skel_leftleg = Drawing.new("Line")
+    skel_leftleg.Visible = false
+    skel_leftleg.Thickness = 2
+    skel_leftleg.Color = esp_settings.skel_col
+
+    local skel_rightleg = Drawing.new("Line")
+    skel_rightleg.Visible = false
+    skel_rightleg.Thickness = 2
+    skel_rightleg.Color = esp_settings.skel_col
+
+    local function update()
+        local connection
+        connection = runservice.RenderStepped:Connect(function()
+            if workspace:FindFirstChild(player.Name) and character and character:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("Humanoid") and character.Humanoid.Health ~= 0 then
+                local character_rootpart_3d = character.HumanoidRootPart.Position
+                local character_rootpart_2d, rootpart_onscreen = camera:WorldToViewportPoint(character_rootpart_3d)
+
+                if rootpart_onscreen and esp_settings.enabled then
+                    local head, torso_upper, torso_lower, leftarm, rightarm, leftleg, rightleg
+
+                    if character.Humanoid.RigType == Enum.HumanoidRigType.R6 then
+                        head = character:FindFirstChild("Head")
+                        torso_upper = character:FindFirstChild("Torso")
+                        torso_lower = torso_upper
+                        leftarm = character:FindFirstChild("Left Arm")
+                        rightarm = character:FindFirstChild("Right Arm")
+                        leftleg = character:FindFirstChild("Left Leg")
+                        rightleg = character:FindFirstChild("Right Leg")
+                    else
+                        head = character:FindFirstChild("Head")
+                        torso_upper = character:FindFirstChild("UpperTorso")
+                        torso_lower = character:FindFirstChild("LowerTorso")
+                        leftarm = character:FindFirstChild("LeftUpperArm")
+                        rightarm = character:FindFirstChild("RightUpperArm")
+                        leftleg = character:FindFirstChild("LeftUpperLeg")
+                        rightleg = character:FindFirstChild("RightUpperLeg")
+                    end
+
+                    if head and torso_upper and torso_lower and leftarm and rightarm and leftleg and rightleg then
+                        local head_2d = camera:WorldToViewportPoint(head.Position)
+                        local torso_upper_2d = camera:WorldToViewportPoint(torso_upper.Position + Vector3.new(0, 1.1, 0))
+                        local torso_lower_2d = camera:WorldToViewportPoint(torso_lower.Position + Vector3.new(0, -1.1, 0))
+
+                        local leftarm_2d = camera:WorldToViewportPoint(leftarm.Position + Vector3.new(0, -1.1, 0))
+                        local rightarm_2d = camera:WorldToViewportPoint(rightarm.Position + Vector3.new(0, -1.1, 0))
+                        local leftleg_2d = camera:WorldToViewportPoint(leftleg.Position + Vector3.new(0, -1.3, 0))
+                        local rightleg_2d = camera:WorldToViewportPoint(rightleg.Position + Vector3.new(0, -1.3, 0))
+
+                        skel_head.From = Vector2.new(head_2d.X, head_2d.Y)
+                        skel_head.To = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+
+                        skel_torso.From = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+                        skel_torso.To = Vector2.new(torso_lower_2d.X, torso_lower_2d.Y)
+
+                        skel_leftarm.From = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+                        skel_leftarm.To = Vector2.new(leftarm_2d.X, leftarm_2d.Y)
+
+                        skel_rightarm.From = Vector2.new(torso_upper_2d.X, torso_upper_2d.Y)
+                        skel_rightarm.To = Vector2.new(rightarm_2d.X, rightarm_2d.Y)
+
+                        skel_leftleg.From = Vector2.new(torso_lower_2d.X, torso_lower_2d.Y)
+                        skel_leftleg.To = Vector2.new(leftleg_2d.X, leftleg_2d.Y)
+
+                        skel_rightleg.From = Vector2.new(torso_lower_2d.X, torso_lower_2d.Y)
+                        skel_rightleg.To = Vector2.new(rightleg_2d.X, rightleg_2d.Y)
+
+                        skel_head.Visible = esp_settings.skel
+                        skel_torso.Visible = esp_settings.skel
+                        skel_leftarm.Visible = esp_settings.skel
+                        skel_rightarm.Visible = esp_settings.skel
+                        skel_leftleg.Visible = esp_settings.skel
+                        skel_rightleg.Visible = esp_settings.skel
+                    else
+                        skel_head.Visible = false
+                        skel_torso.Visible = false
+                        skel_leftarm.Visible = false
+                        skel_rightarm.Visible = false
+                        skel_leftleg.Visible = false
+                        skel_rightleg.Visible = false
+                    end
+                else
+                    skel_head.Visible = false
+                    skel_torso.Visible = false
+                    skel_leftarm.Visible = false
+                    skel_rightarm.Visible = false
+                    skel_leftleg.Visible = false
+                    skel_rightleg.Visible = false
+                end
+            else
+                if player == nil then
+                    connection:Disconnect()
+                    connection = nil
+                end
+
+                skel_head.Visible = false
+                skel_torso.Visible = false
+                skel_leftarm.Visible = false
+                skel_rightarm.Visible = false
+                skel_leftleg.Visible = false
+                skel_rightleg.Visible = false
+            end
+        end)
+    end
+    coroutine.wrap(update)()
+end
+
+local function playeradded(player)
+    if player.Character then
+        coroutine.wrap(draw)(player, player.Character)
+    end
+    player.CharacterAdded:Connect(function(character)
+        coroutine.wrap(draw)(player, character)
+    end)
+end
+
+for _, player in next, entities:GetPlayers() do
+    if player ~= localplayer then
+        playeradded(player)
+    end
+end
+
+entities.PlayerAdded:Connect(playeradded)
+end) 
+
+Tab:CreateButton("Tp Player Script",function()
+--// Made By Zans \\--
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+local Window = OrionLib:MakeWindow({Name = "Tp Player Script", HidePremium = false, SaveConfig = true, ConfigFolder = "TeleportConfig"})
+
+local Tab = Window:MakeTab({
+    Name = "Player Tp",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Dropdown"
+})
+
+local selectedPlayer
+local function updateDropdown()
+    local players = game:GetService("Players"):GetPlayers()
+    local playerNames = {}
+
+    for _, player in ipairs(players) do
+        table.insert(playerNames, player.Name)
+    end
+
+    return playerNames
+end
+
+local d
+Tab:AddButton({
+    Name = "Refresh Player List",
+    Callback = function()
+    d:Refresh(updateDropdown(), true)
+    end
+})
+
+d = Tab:AddDropdown({
+    Name = "Select Player",
+    Default = "",
+    Options = updateDropdown(),
+    Callback = function(value)
+        selectedPlayer = value
+    end
+})
+
+local function teleportToPlayer(playerName)
+    local player = game:GetService("Players"):FindFirstChild(playerName)
+    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = player.Character.HumanoidRootPart
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = hrp.CFrame
+    end
+end
+
+local function teleportToPlayer2(playerName)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = playerName
+end
+
+Tab:AddButton({
+    Name = "Tp To Player",
+    Callback = function()
+        if selectedPlayer then
+            teleportToPlayer(selectedPlayer)
+        else
+            print("No player selected.")
+        end
+    end
+})
+
+local Section = Tab:AddSection({
+	Name = "TextBox(Very Good)"
+})
+
+local function getPlayerByName(name)
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Name:lower():find(name:lower()) or player.DisplayName:lower():find(name:lower()) then
+            return player
+        end
+    end
+    return nil
+end
+
+Tab:AddTextbox({
+	Name = "Player Username",
+	Default = "",
+	TextDisappear = true,
+	Callback = function(Value)
+		user = Value
+	end	  
+})
+
+Tab:AddButton({
+    Name = "Tp To Player",
+    Callback = function()
+    local nameuser = getPlayerByName(user)
+        if nameuser then
+            teleportToPlayer2(nameuser.Character.HumanoidRootPart.CFrame)
+        else
+            print("No player selected.")
+        end
+    end
+})
+
+OrionLib:Init()
+end) 
+
+Tab:CreateButton("Lockv2 (Key C",function()
+--51cles lock v2 what got added? a GUI to change ur prediction and i also added--
+--air prediction and a revert changes button just incase if you wanna go back to the settings that are already made for you--
+--also i changed it from head to UpperTorso so its more easy to air kids-- 
+
+local Settings = {
+    ["Key"] = Enum.KeyCode.C,
+    ["Part"] = "UpperTorso",
+    ["Prediction"] = 0.126749,
+}
+
+local AirPrediction = {
+    ["UseAirPrediction"] = true,
+    ["AirPrediction"] = 0.1241,
+}
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+local locking = false
+local targetPart = nil
+
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "CameraLockGui"
+ScreenGui.Parent = LocalPlayer.PlayerGui
+
+local function createDraggableFrame()
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 400, 0, 400)  
+    frame.Position = UDim2.new(0.5, -200, 0.5, -200)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    frame.BorderSizePixel = 2
+    frame.BorderColor3 = Color3.fromRGB(200, 200, 200)
+    frame.Parent = ScreenGui
+
+    local titleBar = Instance.new("TextLabel")
+    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    titleBar.Text = "Camera Lock Settings"
+    titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleBar.TextSize = 16
+    titleBar.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    titleBar.TextStrokeTransparency = 0.7
+    titleBar.Parent = frame
+
+    local dragInput, dragStart, startPos
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    titleBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragInput = input
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragInput = nil
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput then
+            update(input)
+        end
+    end)
+
+    return frame
+end
+
+local frame = createDraggableFrame()
+
+
+local function createSetting(name, position, defaultValue, callback)
+    local settingFrame = Instance.new("Frame")
+    settingFrame.Size = UDim2.new(0.5, -10, 0, 30)  
+    settingFrame.Position = position
+    settingFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    settingFrame.BorderSizePixel = 0
+    settingFrame.Parent = frame
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0.6, -10, 1, 0)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.Text = name
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 12
+    label.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    label.BorderSizePixel = 0
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = settingFrame
+
+    local textBox = Instance.new("TextBox")
+    textBox.Size = UDim2.new(0.4, -10, 1, 0)
+    textBox.Position = UDim2.new(0.6, 0, 0, 0)
+    textBox.Text = tostring(defaultValue)
+    textBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+    textBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    textBox.TextSize = 12
+    textBox.ClearTextOnFocus = false
+    textBox.BorderSizePixel = 0
+    textBox.Parent = settingFrame
+
+    textBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local value = tonumber(textBox.Text)
+            if value then
+                callback(value)
+            end
+        end
+    end)
+
+    return textBox
+end
+
+local airPredictionBox = createSetting("Air Prediction", UDim2.new(0, 10, 0, 40), AirPrediction.AirPrediction, function(value)
+    AirPrediction.AirPrediction = value
+end)
+
+local predictionBox = createSetting("Prediction", UDim2.new(0.5, 10, 0, 40), Settings.Prediction, function(value)
+    Settings.Prediction = value
+end)
+
+
+local revertButton = Instance.new("TextButton")
+revertButton.Size = UDim2.new(1, -20, 0, 40)
+revertButton.Position = UDim2.new(0, 10, 0, 340)
+revertButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+revertButton.Text = "Revert All Changes"
+revertButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+revertButton.TextSize = 16
+revertButton.BorderSizePixel = 0
+revertButton.Parent = frame
+
+revertButton.MouseButton1Click:Connect(function()
+    AirPrediction.AirPrediction = 0.110
+    Settings.Prediction = 0.110
+
+    airPredictionBox.Text = tostring(AirPrediction.AirPrediction)
+    predictionBox.Text = tostring(Settings.Prediction)
+end)
+
+
+local guiVisible = true
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.P and not gameProcessed then
+        guiVisible = not guiVisible
+        ScreenGui.Enabled = guiVisible
+    end
+end)
+
+
+local function getClosestPlayerToMouse()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(Settings.Part) then
+            local partPosition = player.Character[Settings.Part].Position
+            local screenPoint = Camera:WorldToScreenPoint(partPosition)
+            local distance = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(screenPoint.X, screenPoint.Y)).magnitude
+            
+            if distance < shortestDistance then
+                closestPlayer = player
+                shortestDistance = distance
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
+local function lockCameraToPlayer(player)
+    if player and player.Character and player.Character:FindFirstChild(Settings.Part) then
+        targetPart = player.Character[Settings.Part]
+        Camera.CFrame = CFrame.new(Camera.CFrame.Position, targetPart.Position)
+    end
+end
+
+local function toggleLock()
+    locking = not locking
+    if locking then
+        local closestPlayer = getClosestPlayerToMouse()
+        if closestPlayer then
+            lockCameraToPlayer(closestPlayer)
+        end
+    else
+        targetPart = nil
+    end
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Settings.Key and not gameProcessed then
+        toggleLock()
+    end
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if locking and targetPart then
+        local targetPosition = targetPart.Position
+        local cameraPosition = Camera.CFrame.Position
+        local direction = (targetPosition - cameraPosition).unit
+
+        local prediction = AirPrediction.UseAirPrediction and AirPrediction.AirPrediction or Settings.Prediction
+
+        local smoothedPosition = cameraPosition + direction * prediction
+
+        local cameraLookAt = CFrame.new(cameraPosition, targetPosition)
+
+       
+        Camera.CFrame = cameraLookAt + (Camera.CFrame.Position - cameraPosition)
+    end
+end)
+end) 
+
+Tab:CreateButton("Byte Hub v1",function()
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local UICorner = Instance.new("UICorner")
+local ImageLabel = Instance.new("ImageLabel")
+local TextLabel = Instance.new("TextLabel")
+local textbutton6 = Instance.new("TextButton")
+local UICorner_2 = Instance.new("UICorner")
+local UICorner_3 = Instance.new("UICorner")
+local UICorner_4 = Instance.new("UICorner")
+local textbutton5 = Instance.new("TextButton")
+local UICorner_5 = Instance.new("UICorner")
+local textbutton4 = Instance.new("TextButton")
+local UICorner_6 = Instance.new("UICorner")
+local textbutton3 = Instance.new("TextButton")
+local UICorner_7 = Instance.new("UICorner")
+local textbutton2 = Instance.new("TextButton")
+local UICorner_8 = Instance.new("UICorner")
+local textbutton7 = Instance.new("TextButton")
+local UICorner_9 = Instance.new("UICorner")
+local textbutton8 = Instance.new("TextButton")
+local UICorner_10 = Instance.new("UICorner")
+local textbutton9 = Instance.new("TextButton")
+local UICorner_11 = Instance.new("UICorner")
+local textbutton1 = Instance.new("TextButton")
+local UICorner_12 = Instance.new("UICorner")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+ScrollingFrame.Parent = ScreenGui
+ScrollingFrame.Active = true
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.Position = UDim2.new(0.463984609, 0, 0.268072873, 0)
+ScrollingFrame.Size = UDim2.new(0, 395, 0, 407)
+
+UICorner.Parent = ScrollingFrame
+
+ImageLabel.Parent = ScrollingFrame
+ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ImageLabel.BorderSizePixel = 0
+ImageLabel.Size = UDim2.new(0, 395, 0, 999)
+ImageLabel.Image = "rbxassetid://18581217608"
+
+TextLabel.Parent = ScrollingFrame
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Size = UDim2.new(0, 369, 0, 39)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "BYTERS OP GUI FE V1"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+textbutton6.Name = "textbutton6"
+textbutton6.Parent = TextLabel
+textbutton6.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton6.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton6.BorderSizePixel = 0
+textbutton6.Position = UDim2.new(0.566253901, 0, 1.6166836, 0)
+textbutton6.Size = UDim2.new(0, 160, 0, 41)
+textbutton6.Font = Enum.Font.SourceSans
+textbutton6.Text = "FE DESTROY PIZZA PLACE"
+textbutton6.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton6.TextSize = 14.000
+
+UICorner_2.Parent = textbutton6
+
+UICorner_3.Parent = textbutton6
+
+UICorner_4.Parent = TextLabel
+
+textbutton5.Name = "textbutton5"
+textbutton5.Parent = TextLabel
+textbutton5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton5.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton5.BorderSizePixel = 0
+textbutton5.Position = UDim2.new(0.56458658, 0, 3.01143479, 0)
+textbutton5.Size = UDim2.new(0, 160, 0, 41)
+textbutton5.Font = Enum.Font.SourceSans
+textbutton5.Text = "nullware v2.33"
+textbutton5.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton5.TextSize = 14.000
+
+UICorner_5.Parent = textbutton5
+
+textbutton4.Name = "textbutton4"
+textbutton4.Parent = TextLabel
+textbutton4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton4.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton4.BorderSizePixel = 0
+textbutton4.Position = UDim2.new(0.0892891437, 0, 4.47947502, 0)
+textbutton4.Size = UDim2.new(0, 160, 0, 41)
+textbutton4.Font = Enum.Font.SourceSans
+textbutton4.Text = "fe audio panel [some games]"
+textbutton4.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton4.TextSize = 14.000
+
+UICorner_6.Parent = textbutton4
+
+textbutton3.Name = "textbutton3"
+textbutton3.Parent = TextLabel
+textbutton3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton3.BorderSizePixel = 0
+textbutton3.Position = UDim2.new(0.0903318673, 0, 1.63596284, 0)
+textbutton3.Size = UDim2.new(0, 160, 0, 41)
+textbutton3.Font = Enum.Font.SourceSans
+textbutton3.Text = "destructed hex"
+textbutton3.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton3.TextSize = 14.000
+
+UICorner_7.Parent = textbutton3
+
+textbutton2.Name = "textbutton2"
+textbutton2.Parent = TextLabel
+textbutton2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton2.BorderSizePixel = 0
+textbutton2.Position = UDim2.new(0.0892891437, 0, 3.02997303, 0)
+textbutton2.Size = UDim2.new(0, 160, 0, 41)
+textbutton2.Font = Enum.Font.SourceSans
+textbutton2.Text = "fe yeet gui"
+textbutton2.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton2.TextSize = 14.000
+
+UICorner_8.Parent = textbutton2
+
+textbutton7.Name = "textbutton7"
+textbutton7.Parent = TextLabel
+textbutton7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton7.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton7.BorderSizePixel = 0
+textbutton7.Position = UDim2.new(0.56458658, 0, 4.4821167, 0)
+textbutton7.Size = UDim2.new(0, 160, 0, 41)
+textbutton7.Font = Enum.Font.SourceSans
+textbutton7.Text = "C00LGUI FE"
+textbutton7.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton7.TextSize = 14.000
+
+UICorner_9.Parent = textbutton7
+
+textbutton8.Name = "textbutton8"
+textbutton8.Parent = TextLabel
+textbutton8.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton8.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton8.BorderSizePixel = 0
+textbutton8.Position = UDim2.new(0.0876218379, 0, 5.94365597, 0)
+textbutton8.Size = UDim2.new(0, 160, 0, 41)
+textbutton8.Font = Enum.Font.SourceSans
+textbutton8.Text = "C00LMAN SCRIPT HUB"
+textbutton8.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton8.TextSize = 14.000
+
+UICorner_10.Parent = textbutton8
+
+textbutton9.Name = "textbutton9"
+textbutton9.Parent = TextLabel
+textbutton9.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton9.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton9.BorderSizePixel = 0
+textbutton9.Position = UDim2.new(0.583556771, 0, 5.94365597, 0)
+textbutton9.Size = UDim2.new(0, 160, 0, 41)
+textbutton9.Font = Enum.Font.SourceSans
+textbutton9.Text = "GH0"
+textbutton9.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton9.TextSize = 14.000
+
+UICorner_11.Parent = textbutton9
+
+textbutton1.Name = "textbutton1"
+textbutton1.Parent = TextLabel
+textbutton1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textbutton1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+textbutton1.BorderSizePixel = 0
+textbutton1.Position = UDim2.new(0.583556771, 0, 7.27442837, 0)
+textbutton1.Size = UDim2.new(0, 160, 0, 41)
+textbutton1.Font = Enum.Font.SourceSans
+textbutton1.Text = "infinite yield"
+textbutton1.TextColor3 = Color3.fromRGB(0, 0, 0)
+textbutton1.TextSize = 14.000
+
+UICorner_12.Parent = textbutton1
+
+-- Scripts:
+
+local function SNYC_fake_script() -- ScrollingFrame.Dragify 
+	local script = Instance.new('LocalScript', ScrollingFrame)
+
+	local UIS = game:GetService("UserInputService")
+	function dragify(Frame)
+	    dragToggle = nil
+	    local dragSpeed = 0
+	    dragInput = nil
+	    dragStart = nil
+	    local dragPos = nil
+	    function updateInput(input)
+	        local Delta = input.Position - dragStart
+	        local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+	        game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.25), {Position = Position}):Play()
+	    end
+	    Frame.InputBegan:Connect(function(input)
+	        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
+	            dragToggle = true
+	            dragStart = input.Position
+	            startPos = Frame.Position
+	            input.Changed:Connect(function()
+	                if input.UserInputState == Enum.UserInputState.End then
+	                    dragToggle = false
+	                end
+	            end)
+	        end
+	    end)
+	    Frame.InputChanged:Connect(function(input)
+	        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+	            dragInput = input
+	        end
+	    end)
+	    game:GetService("UserInputService").InputChanged:Connect(function(input)
+	        if input == dragInput and dragToggle then
+	            updateInput(input)
+	        end
+	    end)
+	end
+	
+	dragify(script.Parent)
+end
+coroutine.wrap(SNYC_fake_script)()
+local function RIKFZ_fake_script() -- textbutton6.Script 
+	local script = Instance.new('Script', textbutton6)
+
+	textbutton6.MouseButton1Down:connect(function()
+		loadstring(game:HttpGetAsync("https://gist.githubusercontent.com/M6HqVBcddw2qaN4s/dabc2500988785fbec1ce7c7aaee105d/raw/hVQJXfF4sR6yqSfJ"))()
+	end)
+end
+coroutine.wrap(RIKFZ_fake_script)()
+local function JVDRFA_fake_script() -- textbutton5.Script 
+	local script = Instance.new('Script', textbutton5)
+
+	textbutton5.MouseButton1Down:connect(function()
+		loadstring(game:HttpGetAsync("https://gist.githubusercontent.com/M6HqVBcddw2qaN4s/dabc2500988785fbec1ce7c7aaee105d/raw/hVQJXfF4sR6yqSfJ"))()
+	end)
+end
+coroutine.wrap(JVDRFA_fake_script)()
+local function OZKEMG_fake_script() -- textbutton4.Script 
+	local script = Instance.new('Script', textbutton4)
+
+	textbutton4.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://rentry.co/XO86MCCLNLUJ4CWGDZCT8NP6AA7843QIO2PX3X453LQ2LFLD5I7EXRNEL76MLQHAIHLPHUOLM3B4Q752KSEAZKKMPMXFQ0DZK8WC/raw"))()
+	end)
+end
+coroutine.wrap(OZKEMG_fake_script)()
+local function DZMLC_fake_script() -- textbutton3.Script 
+	local script = Instance.new('Script', textbutton3)
+
+	textbutton3.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://pastebin.com/raw/S28p8fN9"))()
+	end)
+end
+coroutine.wrap(DZMLC_fake_script)()
+local function AQTBG_fake_script() -- textbutton2.Script 
+	local script = Instance.new('Script', textbutton2)
+
+	textbutton2.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fe-yeet-gui-7351"))()
+	end)
+end
+coroutine.wrap(AQTBG_fake_script)()
+local function NXJLMVD_fake_script() -- textbutton7.Script 
+	local script = Instance.new('Script', textbutton7)
+
+	textbutton7.MouseButton1Down:connect(function()
+		loadstring(game:GetObjects("rbxassetid://9827584846")[1].Source)()
+	end)
+end
+coroutine.wrap(NXJLMVD_fake_script)()
+local function VXWPV_fake_script() -- textbutton8.Script 
+	local script = Instance.new('Script', textbutton8)
+
+	textbutton8.MouseButton1Down:connect(function()
+	   local a=loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()local a=a.CreateLib("c00lman/colkidclone hax panel","Ocean")local b=a:NewTab("Credits/Info")local c=b:NewSection("Made By C00LMAN Scripts made by")local c=b:NewSection("Harked Options : PandaExploits#3098")local c=b:NewSection("Destructed_Hex's GUI Scripts : Luca and luq")local b=b:NewSection("quirkyCMD adm : ____")local b=a:NewTab("GUIS ABUSIVE")local b=b:NewSection("Scripts For Hacking")b:NewButton("Harked V2","Harked With Kick Kill Ban Blockhead BlockChar ETC",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/JxcExploit/Harkedv2-script/main/Leaked-v2hardked"))()end)b:NewButton("Destruction_Hex's GUI","Harked But With more options like Shutodwn Nuke ETC",function()loadstring(game:HttpGet("https://pastebin.com/raw/S28p8fN9"))()end)b:NewButton("QuirkyCmd","The Best ADM Script",function()loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()end)b:NewButton("Bring GUI","a simple bring script",function()loadstring(game:HttpGet(('https://pastebin.com/raw/iThJgCAS'),true))()end)b:NewButton("Nameless Admin","Universal GOOD Admin Script",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()end)b:NewButton("Infinite Yeld Admin","OLD AND GOOD ADMIN",function()loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()end)b:NewButton("R15 TO R6","Animations r15 to animations r6",function()loadstring(game:HttpGet(('https://raw.githubusercontent.com/Imagnir/r6_anims_for_r15/main/r6_anims.lua'),true))()end)b:NewButton("Parkour","heh",function()loadstring(game:HttpGet(('https://pastefy.app/6HAb8rAj/raw'),true))()end)b:NewButton("Punch","PUNCH THE GUY U HATE",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/fedoratums/Base-Script/Base-Script/fedoratum punch fling",true))()end)b:NewButton("(cook burgers 100ppl only) Cooked","Harked Vcooked",function()loadstring(game:HttpGet("https://pastebin.com/raw/LMWCkgnm"))()end)b:NewButton("Cook Burgers GUI","T",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/NOOBARMYSCRIPTER/NOOBARMYSCRIPTER/main/cook%20burgers"))()end)b:NewButton("GIGACHAD HUB","(gigachad very giga warning)",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/OWJBWKQLAISH/GigaChad-Hub/main/Protected_3038811338432694.lua.txt"))()end)b:NewButton("Invisible","bye bye",function()loadstring(game:HttpGet("https://pastebin.com/raw/K0khSQFN"))()end)b:NewButton("Animation PACK","/e pack frfrfrfr",function()loadstring(game:HttpGet("https://pastebin.com/raw/tcTds0ky"))()end)b:NewButton("B2S ADM GUI","adm btools and much move to troll (also have kick)",function()loadstring(game:HttpGet("https://pastebin.com/raw/jEUmUnQC"))()end)b:NewButton("tool rotator","rerereeeeeeeeeeeeeeeeeeeeeeeeeeee",function()loadstring(game:HttpGet(('https://pastebin.com/raw/dkufMsdA'),true))()end)b:NewButton("Game Hub V5","lots of fun",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader"))()end)b:NewButton("AUDIO BREAKER","dont work all games",function()loadstring(game:HttpGet("https://pastebin.com/raw/JmQMG0ct"))()end)b:NewButton("Destruction Game Destroyer","dont work all games",function()setclipboard("https://www.roblox.com/games/6550894018/Destruction-Game")game:GetService("StarterGui"):SetCore("SendNotification",{Title="GAME",Text="only work in the game copyied in clipboard",Icon="rbxassetid://1234567890"})loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/main/Destruction%20Game"))()end)b:NewButton("Free gamepass","l robux",function()loadstring(game:HttpGet("https://gist.githubusercontent.com/dark-modz/6982de484735e730494b2d5a10fd6a2a/raw/a92563b0cd6a63683341a09f54baccea5349ed69/feGamepassV2",true))()end)b:NewButton("unchor gui","hehehhe",function()loadstring(game:HttpGet("https://pastebin.com/raw/ShnqV5Vr",true))()end)local b=a:NewTab("F3X GAMES")local b=b:NewSection("Scripts For Hacking")b:NewButton("Exploit1.Form.Exe","hax ss fe bypass fe disabler fe joifb",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/fggdfgbdrtgbdrt/Exploit1.Form.Exe/main/Exploit1.Form.Exe"))()end)b:NewButton("c00lkidd f3x","f3x destruction",function()loadstring(game:HttpGet("https://pastebin.com/raw/Dyh2BUeu"))()end)local b=a:NewTab("FE SCRIPTS")local c=b:NewSection("Fun")c:NewButton("Chat Art","art can bypass chat also btw",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/omegachadgaming/mongus/main/main.lua",true))()end)c:NewButton("Multi Gears","GEAR CHAOS",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/zephyr10101/MultiToolsV1/main/script"))()end)c:NewButton("FREE OBBY GAMEPASS","-1 everytime u execute robux",function()for a,a in pairs(game:GetDescendants())do if a.ClassName=="RemoteEvent"then if a.Parent.Name=="WeaponsRemotes"or a.Parent.Name=="VipRemotes"or a.Parent.Name=="Remotes"then a:FireServer()end end end end)c:NewButton("Walk On Walls","spiodermanse",function()loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()end)c:NewTextBox("flood escape crasher (crash ammount)","crash game",function(a)game:GetService("StarterGui"):SetCore("SendNotification",{Title="HOW TO DO IT",Text="1st grab gun and the switch the crash trigger... enjoy :D",Icon="rbxassetid://1234567890"})game:GetService("StarterGui"):SetCore("SendNotification",{Title="CREDITS",Text="https://scriptblox.com/u/Tomato",Icon="rbxassetid://1234567890"})game:GetService("StarterGui"):SetCore("SendNotification",{Title="CREDITS",Text="https://scriptblox.com/u/Tomato",Icon="rbxassetid://1234567890"})local a=a;local b=game:GetService("RunService")local b=game:GetService("Players").LocalPlayer.Character;local c=game:GetService("Players").LocalPlayer.Backpack;local d=loadstring(game:HttpGet("https://pastebin.com/raw/eKwyeQa0",true))()local e=d:CreateTab("Crash Script",true)getgenv().crash=false;workspace.svcl_com.ShopExtra:FireServer("BRAINSAW")local d=d:MakeToggle(e,"Crash Toggle",false,function(a)local a=a.Text;if a=="ON"then crash=true else crash=false end end)local c=c:WaitForChild("BRAINSAW").Pew;while wait()do if crash==true then local b=b.Head.Position;for a=1,a,1 do c:FireServer(b)end end end end)c:NewButton("HD ADMIN ABUSIVE","admen",function()game:GetService("StarterGui"):SetCore("SendNotification",{Title="pls",Text="for more cmds say ;customcmds",Icon="rbxassetid://1234567890"})loadstring(game:HttpGet("https://raw.githubusercontent.com/zephyr10101/showcases/main/fedoratumadmin",true))()end)c:NewButton("PART UNACHORED MOVER","/e move",function()loadstring(game:HttpGet(('https://pastefy.app/Vcuyg09O/raw'),true))()end)c:NewButton("ZOMBIE FLING","",function()loadstring(game:HttpGet(('https://pastefy.app/w7KnPY70/raw'),true))()end)c:NewButton("control npcs","",function()loadstring(game:HttpGet(('https://pastefy.app/x8nWWq0M/raw'),true))()end)local b=b:NewSection("work at a pizza place")b:NewButton("COOK ROOM DUCKER","room dies",function()loadstring(game:HttpGet("https://pastebin.com/raw/PMCUVLj0"))()end)b:NewButton("COOK ROOM DUCKER OFF","room dies",function()loadstring(game:HttpGet("https://pastebin.com/raw/pFFf3Tcf"))()end)b:NewButton("GUI WAAP","room dies",function()loadstring(game:HttpGet("https://pastebin.com/raw/7Q5sN2wY",true))()end)b:NewButton("AUDIO PLAYER FE","room dies",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/zephyr10101/pizza-place-audio-player/main/script"))()end)b:NewButton("MANAGER COMMAND","room dies",function()spawn(loadstring(game:HttpGet("https://pastebin.com/raw/q817HYb9",true)))end)b:NewButton("KICK ALL","room dies",function()loadstring(game:HttpGet('https://raw.githubusercontent.com/Hydro4Music/Others/main/WorkAtPizzaPlaceKickAll'))()end)local b=a:NewTab("Brookhaven Rp ๐ก")local b=b:NewSection("Scripts For Hacking")b:NewButton("R15 TO R6","Animations r15 to animations r6",function()loadstring(game:HttpGet(('https://raw.githubusercontent.com/Imagnir/r6_anims_for_r15/main/r6_anims.lua'),true))()end)b:NewButton("Redz Hub","hub",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/REDzHUB/main/REDzHUB"))()end)b:NewButton("Ice Hub","hub",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMael7/NewIceHub/main/Brookhaven"))()end)b:NewButton("tb","tttt",function()loadstring(game:HttpGet("https://pastefy.app/tIiioko4/raw"))()end)local b=a:NewTab("Fake Executors")local b=b:NewSection("Executors")b:NewButton("RC7","EXPLOIT",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/rc7"))()end)b:NewButton("Krnl","EXPLOIT",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/wtfplayer/redemption/main/krnlnoui.lua"))()end)b:NewButton("Synapse X","EXNOTPLOIT",function()loadstring(game:HttpGet("https://pastebin.com/raw/2qjBZB1Y"))()end)local b=a:NewTab("Barrys Prison")local c=b:NewSection("Morphs (execute gamepass)")c:NewButton("Free Gamepass","free gamepass gears",function()for a,a in pairs(game:GetDescendants())do if a.ClassName=="RemoteEvent"then if a.Parent.Name=="WeaponsRemotes"or a.Parent.Name=="VipRemotes"or a.Parent.Name=="Remotes"then a:FireServer()end end end end)c:NewButton("Become Barrys","BRRYS NOT BARRYS",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(164.482285,107.406891,-20.2540112,-0.392119616,-4.18371542e-08,-0.919914246,-5.41307841e-12,1,-4.54770976e-08,0.919914246,-1.78274835e-08,-0.392119616)end)c:NewButton("Become Pizza Guy (not mario)","pizza",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(95.4371109,104.737022,-20.1365261,0.999057412,4.13396783e-09,-0.0434087291,-3.30724857e-12,1,9.51574464e-08,0.0434087291,-9.50676053e-08,0.999057412)end)c:NewButton("Become Police But a Doll Ugly","ugly",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(108.916046,106.567535,-18.5824261,-0.979165018,3.85838117e-09,0.203066275,3.97604172e-09,1,1.71468756e-10,-0.203066275,9.75296177e-10,-0.979165018)end)c:NewButton("Become Funni Ugly Doll","ugly",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(136.070724,107.01152,-20.4083557,-0.103358306,-8.48401849e-10,-0.994644165,3.80977194e-10,1,-8.92559415e-10,0.994644165,-4.71190198e-10,-0.103358306)end)c:NewButton("Enable Jump","Enable Jumps for morphs",function()game.Players.LocalPlayer.Character.Humanoid.JumpPower=50 end)local b=b:NewSection("Tps")b:NewButton("Prision tp","/etp",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(-2.19999719,103.197998,-43.3999939,1,0,0,0,1,0,0,0,1)end)b:NewButton("lvl 4 tp","Ye",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(-25.8886013,103.197998,-76.470108,0.999480724,2.88266513e-08,0.0322222672,-3.04456904e-08,1,4.97553536e-08,-0.0322222672,-5.07105469e-08,0.999480724)end)b:NewButton("Gamepass Place","Ye",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(105.225609,103.19799,-69.9990387,-0.998112321,4.39675052e-09,0.0614152141,3.23092197e-09,1,-1.90820373e-08,-0.0614152141,-1.88475884e-08,-0.998112321)end)local a=a:NewTab("Animations")local a=a:NewSection("๐ฅ")a:NewButton("2007 animations","OLD ANIMATIONS",function()loadstring(game:HttpGet("https://pastebin.com/raw/SPfYLTyK"))()end)a:NewButton("custom sit animation",";sit",function()loadstring(game:HttpGet("https://pastefy.app/XKxQtK2K/raw"))()end)a:NewButton("Upsidedown","/e flip",function()game:GetService("StarterGui"):SetCore("SendNotification",{Title="Upside Down Note :";Text="You Cant See This Script But Other Players In Server Can.";Icon=""})Duration=5;loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/upsidedown/main/main"))()end)
+	end)
+end
+coroutine.wrap(VXWPV_fake_script)()
+local function KDCP_fake_script() -- textbutton9.Script 
+	local script = Instance.new('Script', textbutton9)
+
+	textbutton9.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://pastebin.com/raw/TgAaXKhx"))()
+	end)
+end
+coroutine.wrap(KDCP_fake_script)()
+local function LNZFHC_fake_script() -- textbutton1.Script 
+	local script = Instance.new('Script', textbutton1)
+
+	textbutton1.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
+	end)
+end
+coroutine.wrap(LNZFHC_fake_script)()
+end) 
+
+Tab:CreateButton("FE Multi Gear User Script Remade",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/E3mJbG9t"))()
+end) 
+
+Tab:CreateButton("zee hub",function()
+loadstring(game:HttpGet("https://link.trwxz.com/LS-Zee-Hub-VIP"))()
+end) 
+
+Tab:CreateButton("da hood cam lock",function()
+--[[ 
+Credits 
+scarletbackup#3582
+
+This Works For Pc And Mobile
+]]--
+loadstring(game:HttpGet("https://pastecode.dev/raw/iwj6n0m0/Da%20hood%20aim%20lock"))()
+end) 
+
+Tab:CreateButton("kill aura gui but it for tool",function()
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+local currentSize = 12
+local currentTransparency = 0.9
+
+local function resizeAndSetTransparency(handle, size, transparency)
+    if handle:IsA("BasePart") then
+        handle.Size = Vector3.new(size, size, size)
+        handle.Transparency = transparency
+    end
+end
+
+local function resizeSwordHandles(backpack, size, transparency)
+    for _, item in pairs(backpack:GetChildren()) do
+        if item:IsA("Tool") and item:FindFirstChild("Handle") then
+            resizeAndSetTransparency(item.Handle, size, transparency)
+        end
+    end
+end
+
+local function setupBackpackListener()
+    local backpack = player:WaitForChild("Backpack")
+
+    -- Resize handles for existing items
+    resizeSwordHandles(backpack, currentSize, currentTransparency)
+
+    -- Connect to the ChildAdded event to resize handles for new items
+    backpack.ChildAdded:Connect(function(child)
+        if child:IsA("Tool") and child:FindFirstChild("Handle") then
+            resizeAndSetTransparency(child.Handle, currentSize, currentTransparency)
+        end
+    end)
+end
+
+local function onCharacterAdded(character)
+    -- Wait for the backpack to be available
+    player:WaitForChild("Backpack")
+
+    -- Setup the backpack listener with current values
+    setupBackpackListener()
+end
+
+-- Connect to CharacterAdded event to handle respawns
+player.CharacterAdded:Connect(onCharacterAdded)
+
+-- Initial setup
+if player.Character then
+    onCharacterAdded(player.Character)
+end
+
+-- Create GUI
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+
+local function createSlider(name, min, max, default, callback)
+    local frame = Instance.new("Frame", ScreenGui)
+    frame.Size = UDim2.new(0, 200, 0, 50)
+    frame.Position = UDim2.new(0, 50, 0, name == "Size" and 50 or 120)
+    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    
+    local textLabel = Instance.new("TextLabel", frame)
+    textLabel.Size = UDim2.new(0, 200, 0, 20)
+    textLabel.Position = UDim2.new(0, 0, 0, 0)
+    textLabel.Text = name
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.BackgroundTransparency = 1
+
+    local sliderFrame = Instance.new("Frame", frame)
+    sliderFrame.Size = UDim2.new(0, 180, 0, 10)
+    sliderFrame.Position = UDim2.new(0, 10, 0, 30)
+    sliderFrame.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+
+    local sliderButton = Instance.new("TextButton", sliderFrame)
+    sliderButton.Size = UDim2.new(0, 10, 0, 10)
+    sliderButton.Position = UDim2.new((default - min) / (max - min), -5, 0, 0)
+    sliderButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    sliderButton.Text = ""
+
+    local dragging = false
+
+    sliderButton.MouseButton1Down:Connect(function()
+        dragging = true
+    end)
+
+    UIS.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local relativeX = math.clamp((input.Position.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X, 0, 1)
+            sliderButton.Position = UDim2.new(relativeX, -5, 0, 0)
+            callback(min + (max - min) * relativeX)
+        end
+    end)
+end
+
+createSlider("Size", 1, 15, currentSize, function(value)
+    currentSize = value
+    resizeSwordHandles(player.Backpack, currentSize, currentTransparency)
+end)
+
+createSlider("Transparency", 0, 1, currentTransparency, function(value)
+    currentTransparency = value
+    resizeSwordHandles(player.Backpack, currentSize, currentTransparency)
+end)
+end) 
+
 Tab:CreateButton("Fe Silly Sadboy",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Fe%20Silly%20Sadboy"))()
 end) 
