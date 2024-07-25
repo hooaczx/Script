@@ -7,6 +7,2616 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("ChatBlox V1",function()
+--;esp
+--;flashstep on/off
+--;walkthrough
+--;set point
+--;teleport to point
+--;object esp on/off
+--;lookitem
+--;seeinv
+--;menu
+--;bridgeclear
+--;bridge
+--;jumpboost
+--;bring
+--;brall
+--;serverage
+--;fly
+--;info
+--;stats
+--;execute
+--;tp
+--;showplayers
+--;openmenu
+--;closemenu
+-- menu
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+
+-- Function to make a frame draggable
+local function makeDraggable(frame)
+    local dragToggle = nil
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragToggle then
+            update(input)
+        end
+    end)
+end
+
+-- Function to create the main menu UI
+local function createMainMenu()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "ChatBloxMainMenu"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = Player:WaitForChild("PlayerGui")
+
+    local menuFrame = Instance.new("Frame")
+    menuFrame.Size = UDim2.new(0.4, 0, 0.5, 0)
+    menuFrame.Position = UDim2.new(0.3, 0, 0.25, 0)
+    menuFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    menuFrame.BorderSizePixel = 0
+    menuFrame.BackgroundTransparency = 0.2
+    menuFrame.Parent = screenGui
+
+    makeDraggable(menuFrame)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    titleLabel.Text = "Chat Blox"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    titleLabel.TextScaled = true
+    titleLabel.Parent = menuFrame
+
+    local infoLabel = Instance.new("TextLabel")
+    infoLabel.Size = UDim2.new(1, 0, 0.6, 0)
+    infoLabel.Position = UDim2.new(0, 0, 0.2, 0)
+    infoLabel.Text = [[
+This script is developed by ChatBlox team, the version you're using is an early version of ChatBlox! More massive updates are soon to come! โบ๏ธ
+Join our discord today!
+Check Commands to know about existing commands
+To report existing bugs please contact us at our discord server!
+
+--- ChatBlox, Version 1.0 early alpha ---
+]]
+    infoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    infoLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    infoLabel.TextScaled = true
+    infoLabel.TextWrapped = true
+    infoLabel.Parent = menuFrame
+
+    local commandsButton = Instance.new("TextButton")
+    commandsButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+    commandsButton.Position = UDim2.new(0.1, 0, 0.8, 0)
+    commandsButton.Text = "Commands"
+    commandsButton.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+    commandsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    commandsButton.TextScaled = true
+    commandsButton.Parent = menuFrame
+
+    local discordButton = Instance.new("TextButton")
+    discordButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+    discordButton.Position = UDim2.new(0.1, 0, 0.9, 0)
+    discordButton.Text = "Join Discord"
+    discordButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    discordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    discordButton.TextScaled = true
+    discordButton.Parent = menuFrame
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+    closeButton.Position = UDim2.new(0.9, 0, 0, 0)
+    closeButton.Text = "X"
+    closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextScaled = true
+    closeButton.Parent = menuFrame
+
+    -- Function to create the commands UI
+    local function createCommandsMenu()
+        local commandsScreenGui = Instance.new("ScreenGui")
+        commandsScreenGui.Name = "ChatBloxCommandsMenu"
+        commandsScreenGui.ResetOnSpawn = false
+        commandsScreenGui.Parent = Player:WaitForChild("PlayerGui")
+
+        local commandsFrame = Instance.new("Frame")
+        commandsFrame.Size = UDim2.new(0.4, 0, 0.6, 0)
+        commandsFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
+        commandsFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        commandsFrame.BorderSizePixel = 0
+        commandsFrame.BackgroundTransparency = 0.2
+        commandsFrame.Parent = commandsScreenGui
+
+        makeDraggable(commandsFrame)
+
+        local commandsTitleLabel = Instance.new("TextLabel")
+        commandsTitleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+        commandsTitleLabel.Text = "Available Commands"
+        commandsTitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        commandsTitleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        commandsTitleLabel.TextScaled = true
+        commandsTitleLabel.Parent = commandsFrame
+
+        local commandsList = Instance.new("ScrollingFrame")
+        commandsList.Size = UDim2.new(1, 0, 0.8, 0)
+        commandsList.Position = UDim2.new(0, 0, 0.2, 0)
+        commandsList.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        commandsList.BorderSizePixel = 0
+        commandsList.CanvasSize = UDim2.new(0, 0, 12, 0)
+        commandsList.Parent = commandsFrame
+
+        local commandsListLayout = Instance.new("UIListLayout")
+        commandsListLayout.Parent = commandsList
+
+        local commands = {
+            ";openmenu",
+            ";closemenu",
+            ";tp username",
+            ";showplayers",
+            ";execute",
+            ";stats",
+            ";info username",
+            ";fly (pc)",
+            ";unfly",
+            ";fly mobile",
+            ";serverage",
+            ";esp",
+            ";esp off",
+            ";bring username",
+            ";brall",
+            ";reset",
+            ";jumpboost",
+            ";bridge",
+            ";bridgeclear",
+            ";lookitem",
+            ";checkinv username",
+            ";flashstep on",
+            ";flashstep off",
+            ";object esp",
+            ";wall on",
+            ";wall off",
+            ";spectate username",
+            ";spectate end",
+            ";clone username",
+            ";set point",
+            ";teleport to point",
+            ";walkthrough",
+            ";walkthrough off",
+            "Scale (use ;execute and run the trial code)"
+        }
+
+        for _, command in ipairs(commands) do
+            local commandLabel = Instance.new("TextLabel")
+            commandLabel.Size = UDim2.new(1, 0, 0, 40)
+            commandLabel.Text = command
+            commandLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            commandLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            commandLabel.TextScaled = true
+            commandLabel.TextWrapped = true
+            commandLabel.Parent = commandsList
+        end
+
+        local closeCommandsButton = Instance.new("TextButton")
+        closeCommandsButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+        closeCommandsButton.Position = UDim2.new(0.9, 0, 0, 0)
+        closeCommandsButton.Text = "X"
+        closeCommandsButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        closeCommandsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeCommandsButton.TextScaled = true
+        closeCommandsButton.Parent = commandsFrame
+
+        -- Function to close the commands menu
+        closeCommandsButton.MouseButton1Click:Connect(function()
+            commandsScreenGui:Destroy()
+        end)
+    end
+
+    -- Open commands menu when the Commands button is clicked
+    commandsButton.MouseButton1Click:Connect(function()
+        createCommandsMenu()
+    end)
+
+    -- Join Discord button functionality
+    discordButton.MouseButton1Click:Connect(function()
+        setclipboard("www.discord.com")
+        discordButton.Text = "Copied link"
+    end)
+
+    -- Close main menu functionality
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+end
+
+-- Function to open the main menu
+local function openMainMenu()
+    if not Player:FindFirstChild("ChatBloxMainMenu") then
+        createMainMenu()
+    end
+end
+
+-- Open main menu when the chat command ";openmenu" is used
+game:GetService("Players").LocalPlayer.Chatted:Connect(function(message)
+    if message:lower() == ";openmenu" then
+        openMainMenu()
+    end
+end)
+--Teleport-start1
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Chat = game:GetService("Chat")
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- Function to create GUI elements
+local function createAdminPanel()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "AdminPanel"
+    ScreenGui.Parent = PlayerGui
+
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0.2, 0, 0.8, 0)
+    Frame.Position = UDim2.new(0.8, 0, 0.1, 0)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.BorderSizePixel = 0
+    Frame.Visible = false
+    Frame.Parent = ScreenGui
+
+    local Header = Instance.new("TextLabel")
+    Header.Size = UDim2.new(1, 0, 0, 50)
+    Header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Header.Text = "Admin Panel"
+    Header.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Header.TextScaled = true
+    Header.TextStrokeTransparency = 0.8
+    Header.Parent = Frame
+
+    local ScrollingFrame = Instance.new("ScrollingFrame")
+    ScrollingFrame.Size = UDim2.new(1, 0, 0.8, -50)
+    ScrollingFrame.Position = UDim2.new(0, 0, 0, 50)
+    ScrollingFrame.BackgroundTransparency = 1
+    ScrollingFrame.ScrollBarThickness = 8
+    ScrollingFrame.ClipsDescendants = true
+    ScrollingFrame.Parent = Frame
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = ScrollingFrame
+    UIListLayout.Padding = UDim.new(0, 10)
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Size = UDim2.new(1, 0, 0, 50)
+    CloseButton.Position = UDim2.new(0, 0, 1, 0)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    CloseButton.Text = "Close"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextScaled = true
+    CloseButton.TextStrokeTransparency = 0.8
+    CloseButton.BorderSizePixel = 0
+    CloseButton.Parent = Frame
+
+    CloseButton.MouseButton1Click:Connect(function()
+        Frame.Visible = false
+    end)
+
+    return ScreenGui, Frame, ScrollingFrame, UIListLayout
+end
+
+-- Function to update player list
+local function updatePlayerList(ScrollingFrame, UIListLayout)
+    for _, child in ipairs(ScrollingFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+
+    local playerList = Players:GetPlayers()
+    local playerCount = #playerList
+
+    if playerCount == 0 then
+        local noPlayersLabel = Instance.new("TextLabel")
+        noPlayersLabel.Size = UDim2.new(1, 0, 1, 0)
+        noPlayersLabel.BackgroundTransparency = 1
+        noPlayersLabel.Text = "No players available."
+        noPlayersLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        noPlayersLabel.TextScaled = true
+        noPlayersLabel.TextStrokeTransparency = 0.8
+        noPlayersLabel.Parent = ScrollingFrame
+        return
+    end
+
+    for _, player in ipairs(playerList) do
+        if player.Name ~= Player.Name then
+            local button = Instance.new("TextButton")
+            button.Size = UDim2.new(1, 0, 0, 50)
+            button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            button.Text = player.Name
+            button.TextColor3 = Color3.fromRGB(255, 255, 255)
+            button.TextScaled = true
+            button.TextStrokeTransparency = 0.8
+            button.BorderSizePixel = 0
+            button.Parent = ScrollingFrame
+
+            button.MouseButton1Click:Connect(function()
+                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    Player.Character:SetPrimaryPartCFrame(player.Character.HumanoidRootPart.CFrame)
+                end
+            end)
+        end
+    end
+
+    local layoutSize = UIListLayout.AbsoluteContentSize
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, layoutSize.Y)
+end
+
+-- Function to handle chat commands
+local function onChatted(message, Frame, ScrollingFrame, UIListLayout)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";tp" then
+        local targetName = args[2]
+        if targetName then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player.Name:lower():find(targetName:lower()) then
+                    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        Player.Character:SetPrimaryPartCFrame(player.Character.HumanoidRootPart.CFrame)
+                        return
+                    end
+                end
+            end
+            Chat:Chat(Player.Character:FindFirstChild("Head"), "Player not found.", Enum.ChatColor.Red)
+        else
+            Chat:Chat(Player.Character:FindFirstChild("Head"), "Please specify a player name.", Enum.ChatColor.Red)
+        end
+
+    elseif command == ";list" then
+        updatePlayerList(ScrollingFrame, UIListLayout)
+        Frame.Visible = true
+
+    elseif command == ";close" then
+        Frame.Visible = false
+    end
+end
+
+-- Main script execution
+local ScreenGui, Frame, ScrollingFrame, UIListLayout = createAdminPanel()
+Player.Chatted:Connect(function(message)
+    onChatted(message, Frame, ScrollingFrame, UIListLayout)
+end)
+
+Player.CharacterAdded:Connect(function()
+    if not PlayerGui:FindFirstChild("AdminPanel") then
+        ScreenGui, Frame, ScrollingFrame, UIListLayout = createAdminPanel()
+        Player.Chatted:Connect(function(message)
+            onChatted(message, Frame, ScrollingFrame, UIListLayout)
+        end)
+    end
+end)
+-- Executor-start2
+-- LocalScript in StarterPlayerScripts
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LuaExecutorGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.Enabled = false -- Start hidden
+
+-- Create Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.7, 0, 0.8, 0)
+frame.Position = UDim2.new(0.15, 0, 0.1, 0)
+frame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+-- Create Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0.1, 0)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+title.BorderSizePixel = 0
+title.Text = "ChatBlox Executor"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 24
+title.Parent = frame
+
+-- Create ScrollingFrame for Code Input
+local scrollingFrame = Instance.new("ScrollingFrame")
+scrollingFrame.Size = UDim2.new(1, 0, 0.7, 0)
+scrollingFrame.Position = UDim2.new(0, 0, 0.1, 0)
+scrollingFrame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+scrollingFrame.BorderSizePixel = 0
+scrollingFrame.ScrollBarThickness = 8
+scrollingFrame.ScrollBarImageColor3 = Color3.new(0.4, 0.4, 0.4)
+scrollingFrame.CanvasSize = UDim2.new(0, 0, 10000, 0) -- Set scrollable height
+scrollingFrame.Parent = frame
+
+-- Create TextBox inside ScrollingFrame for Code Input
+local codeInput = Instance.new("TextBox")
+codeInput.Size = UDim2.new(1, -8, 1, -8)
+codeInput.Position = UDim2.new(0, 4, 0, 4)
+codeInput.BackgroundTransparency = 1
+codeInput.TextColor3 = Color3.new(1, 1, 1)
+codeInput.TextXAlignment = Enum.TextXAlignment.Left
+codeInput.TextYAlignment = Enum.TextYAlignment.Top
+codeInput.Font = Enum.Font.Code
+codeInput.TextSize = 16
+codeInput.ClearTextOnFocus = false
+codeInput.MultiLine = true
+codeInput.TextWrapped = true
+codeInput.Text = "-- Type your Lua code here"
+codeInput.RichText = true
+codeInput.Parent = scrollingFrame
+
+-- Create Execute Button
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+executeButton.Position = UDim2.new(0.8, 0, 0.8, 0)
+executeButton.BackgroundColor3 = Color3.new(0.3, 0.7, 0.3)
+executeButton.TextColor3 = Color3.new(1, 1, 1)
+executeButton.Text = "Execute"
+executeButton.Font = Enum.Font.SourceSansBold
+executeButton.TextSize = 18
+executeButton.Parent = frame
+
+-- Create Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+closeButton.Position = UDim2.new(0.9, 0, 0, 0)
+closeButton.BackgroundColor3 = Color3.new(1, 0, 0)
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.SourceSansBold
+closeButton.TextSize = 18
+closeButton.Parent = frame
+
+-- Create Minimize Button
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+minimizeButton.Position = UDim2.new(0.8, 0, 0, 0)
+minimizeButton.BackgroundColor3 = Color3.new(1, 1, 0)
+minimizeButton.TextColor3 = Color3.new(0, 0, 0)
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.SourceSansBold
+minimizeButton.TextSize = 18
+minimizeButton.Parent = frame
+
+-- Create Minimized State Icon
+local minimizedIcon = Instance.new("TextButton")
+minimizedIcon.Size = UDim2.new(0.2, 0, 0.2, 0)
+minimizedIcon.Position = UDim2.new(0.8, 0, 0.8, 0)
+minimizedIcon.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+minimizedIcon.TextColor3 = Color3.new(1, 1, 1)
+minimizedIcon.Text = "Ex"
+minimizedIcon.Font = Enum.Font.SourceSansBold
+minimizedIcon.TextSize = 18
+minimizedIcon.Visible = false
+minimizedIcon.Parent = screenGui
+
+-- Function to execute code
+local function executeCode()
+    local code = codeInput.Text
+    local success, errorMsg = pcall(function()
+        local loadFunc = loadstring(code)
+        if loadFunc then
+            loadFunc()
+        else
+            error("Failed to load code")
+        end
+    end)
+    
+    if not success then
+        warn("Error executing code: " .. errorMsg)
+    end
+end
+
+-- Function to close the GUI
+local function closeGui()
+    screenGui.Enabled = false
+end
+
+-- Function to minimize the GUI
+local function minimizeGui()
+    frame.Visible = false
+    minimizedIcon.Visible = true
+end
+
+-- Function to maximize the GUI
+local function maximizeGui()
+    frame.Visible = true
+    minimizedIcon.Visible = false
+end
+
+-- Connect button clicks to functions
+executeButton.MouseButton1Click:Connect(executeCode)
+closeButton.MouseButton1Click:Connect(closeGui)
+minimizeButton.MouseButton1Click:Connect(minimizeGui)
+minimizedIcon.MouseButton1Click:Connect(maximizeGui)
+
+-- Make the frame draggable
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+-- Make the minimized icon draggable
+minimizedIcon.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = minimizedIcon.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+minimizedIcon.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+-- Chat command to open executor
+player.Chatted:Connect(function(message)
+    if message:match("^;execute") then
+        screenGui.Enabled = not screenGui.Enabled
+    end
+end)
+
+--start3
+--stats
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local UserInputService = game:GetService("UserInputService")
+
+-- Function to create the UI
+local function createUI()
+    -- Create GUI elements
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "StatsPanel"
+    ScreenGui.Parent = PlayerGui
+
+    -- Main Frame
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0.3, 0, 0.4, 0)
+    Frame.Position = UDim2.new(0.35, 0, 0.3, 0)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.BorderSizePixel = 0
+    Frame.Visible = false
+    Frame.Parent = ScreenGui
+
+    -- Header
+    local Header = Instance.new("TextLabel")
+    Header.Size = UDim2.new(1, 0, 0, 50)
+    Header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Header.Text = "Player Stats"
+    Header.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Header.TextScaled = true
+    Header.TextStrokeTransparency = 0.8
+    Header.Parent = Frame
+
+    -- Walk Speed
+    local WalkSpeedLabel = Instance.new("TextLabel")
+    WalkSpeedLabel.Size = UDim2.new(1, 0, 0, 30)
+    WalkSpeedLabel.Position = UDim2.new(0, 0, 0.15, 0)
+    WalkSpeedLabel.BackgroundTransparency = 1
+    WalkSpeedLabel.Text = "Walk Speed:"
+    WalkSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    WalkSpeedLabel.TextScaled = true
+    WalkSpeedLabel.TextStrokeTransparency = 0.8
+    WalkSpeedLabel.Parent = Frame
+
+    local WalkSpeedBox = Instance.new("TextBox")
+    WalkSpeedBox.Size = UDim2.new(1, 0, 0, 30)
+    WalkSpeedBox.Position = UDim2.new(0, 0, 0.25, 0)
+    WalkSpeedBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    WalkSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    WalkSpeedBox.TextScaled = true
+    WalkSpeedBox.PlaceholderText = "Set walk speed"
+    WalkSpeedBox.Parent = Frame
+
+    -- Jump Power
+    local JumpPowerLabel = Instance.new("TextLabel")
+    JumpPowerLabel.Size = UDim2.new(1, 0, 0, 30)
+    JumpPowerLabel.Position = UDim2.new(0, 0, 0.35, 0)
+    JumpPowerLabel.BackgroundTransparency = 1
+    JumpPowerLabel.Text = "Jump Power:"
+    JumpPowerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    JumpPowerLabel.TextScaled = true
+    JumpPowerLabel.TextStrokeTransparency = 0.8
+    JumpPowerLabel.Parent = Frame
+
+    local JumpPowerBox = Instance.new("TextBox")
+    JumpPowerBox.Size = UDim2.new(1, 0, 0, 30)
+    JumpPowerBox.Position = UDim2.new(0, 0, 0.45, 0)
+    JumpPowerBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    JumpPowerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    JumpPowerBox.TextScaled = true
+    JumpPowerBox.PlaceholderText = "Set jump power"
+    JumpPowerBox.Parent = Frame
+
+    -- Health
+    local HealthLabel = Instance.new("TextLabel")
+    HealthLabel.Size = UDim2.new(1, 0, 0, 30)
+    HealthLabel.Position = UDim2.new(0, 0, 0.55, 0)
+    HealthLabel.BackgroundTransparency = 1
+    HealthLabel.Text = "Health:"
+    HealthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    HealthLabel.TextScaled = true
+    HealthLabel.TextStrokeTransparency = 0.8
+    HealthLabel.Parent = Frame
+
+    local HealthBox = Instance.new("TextBox")
+    HealthBox.Size = UDim2.new(1, 0, 0, 30)
+    HealthBox.Position = UDim2.new(0, 0, 0.65, 0)
+    HealthBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    HealthBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    HealthBox.TextScaled = true
+    HealthBox.PlaceholderText = "Set health"
+    HealthBox.Parent = Frame
+
+    -- Apply Button
+    local ApplyButton = Instance.new("TextButton")
+    ApplyButton.Size = UDim2.new(1, 0, 0, 50)
+    ApplyButton.Position = UDim2.new(0, 0, 0.75, 0)
+    ApplyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    ApplyButton.Text = "Apply"
+    ApplyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ApplyButton.TextScaled = true
+    ApplyButton.TextStrokeTransparency = 0.8
+    ApplyButton.BorderSizePixel = 0
+    ApplyButton.Parent = Frame
+
+    -- Close Button
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Size = UDim2.new(1, 0, 0, 50)
+    CloseButton.Position = UDim2.new(0, 0, 0.95, 0)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    CloseButton.Text = "Close"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextScaled = true
+    CloseButton.TextStrokeTransparency = 0.8
+    CloseButton.BorderSizePixel = 0
+    CloseButton.Parent = Frame
+
+    -- Function to apply stats
+    local function applyStats()
+        local walkSpeed = tonumber(WalkSpeedBox.Text)
+        local jumpPower = tonumber(JumpPowerBox.Text)
+        local health = tonumber(HealthBox.Text)
+
+        if walkSpeed then
+            Player.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = walkSpeed
+        end
+
+        if jumpPower then
+            Player.Character:FindFirstChildOfClass("Humanoid").JumpPower = jumpPower
+        end
+
+        if health then
+            local humanoid = Player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = health
+                humanoid.MaxHealth = health
+            end
+        end
+    end
+
+    -- Function to handle chat commands
+    local function onChatted(message)
+        local args = message:split(" ")
+        local command = args[1]:lower()
+
+        if command == ";stats" then
+            Frame.Visible = true
+        elseif command == ";close" then
+            Frame.Visible = false
+        end
+    end
+
+    -- Connect chat command function
+    Player.Chatted:Connect(onChatted)
+
+    -- Handle apply button click
+    ApplyButton.MouseButton1Click:Connect(function()
+        applyStats()
+    end)
+
+    -- Handle close button click
+    CloseButton.MouseButton1Click:Connect(function()
+        Frame.Visible = false
+    end)
+
+    -- Function to make the frame draggable
+    local function makeDraggable(frame)
+        local dragging
+        local dragInput
+        local dragStart
+        local startPos
+
+        local function update(input)
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+
+        frame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                dragStart = input.Position
+                startPos = frame.Position
+
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        dragging = false
+                    end
+                end)
+            end
+        end)
+
+        frame.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                dragInput = input
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(input)
+            if input == dragInput and dragging then
+                update(input)
+            end
+        end)
+    end
+
+    -- Make the stats panel draggable
+    makeDraggable(Frame)
+end
+
+-- Function to initialize the stats panel
+local function initialize()
+    createUI()
+
+    -- Recreate UI on respawn
+    Player.CharacterAdded:Connect(function()
+        createUI()
+    end)
+end
+
+-- Initialize the stats panel
+initialize()
+
+--start4
+-- LocalScript placed in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local UserInputService = game:GetService("UserInputService")
+
+-- Create GUI elements
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PlayerInfoPanel"
+ScreenGui.Parent = PlayerGui
+
+-- Main Frame
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0.5, 0, 0.6, 0)
+Frame.Position = UDim2.new(0.25, 0, 0.2, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.Visible = false
+Frame.Parent = ScreenGui
+
+-- Header
+local Header = Instance.new("TextLabel")
+Header.Size = UDim2.new(1, 0, 0, 50)
+Header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Header.Text = "Player Info"
+Header.TextColor3 = Color3.fromRGB(255, 255, 255)
+Header.TextScaled = true
+Header.TextStrokeTransparency = 0.8
+Header.Parent = Frame
+
+-- Info Details
+local InfoFrame = Instance.new("Frame")
+InfoFrame.Size = UDim2.new(1, -20, 0.8, -60)
+InfoFrame.Position = UDim2.new(0, 10, 0.1, 0)
+InfoFrame.BackgroundTransparency = 1
+InfoFrame.Parent = Frame
+
+local InfoText = Instance.new("TextLabel")
+InfoText.Size = UDim2.new(1, 0, 1, 0)
+InfoText.BackgroundTransparency = 1
+InfoText.Text = "No player selected."
+InfoText.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfoText.TextScaled = true
+InfoText.TextStrokeTransparency = 0.8
+InfoText.TextWrapped = true
+InfoText.Parent = InfoFrame
+
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0.3, 0, 0, 50)
+CloseButton.Position = UDim2.new(0.35, 0, 0.9, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.Text = "Close"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextScaled = true
+CloseButton.TextStrokeTransparency = 0.8
+CloseButton.BorderSizePixel = 0
+CloseButton.Parent = Frame
+
+-- Function to update player info
+local function updatePlayerInfo(player)
+    if player then
+        local playerName = player.Name
+        local accountAge = player.AccountAge
+        local friendsCount = #player:GetFriends()
+        local roles = {} -- Placeholder for roles, modify as needed
+
+        -- Construct player info text
+        local infoText = string.format(
+            "Name: %s\nAccount Age: %d days\nFriends: %d\nRoles: %s",
+            playerName,
+            accountAge,
+            friendsCount,
+            table.concat(roles, ", ") -- Joining roles with comma
+        )
+
+        -- Update InfoText
+        InfoText.Text = infoText
+    else
+        InfoText.Text = "Player not found."
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+    local targetName = args[2]
+
+    if command == ";info" and targetName then
+        local targetPlayer = Players:FindFirstChild(targetName)
+        updatePlayerInfo(targetPlayer)
+        Frame.Visible = true
+    elseif command == ";close" then
+        Frame.Visible = false
+    end
+end
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatted)
+
+-- Handle close button click
+CloseButton.MouseButton1Click:Connect(function()
+    Frame.Visible = false
+end)
+
+-- Function to make the frame draggable
+local function makeDraggable(frame)
+    local dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    update(input)
+                end
+            end)
+            UserInputService.InputChanged:Connect(update)
+        end
+    end)
+end
+
+-- Make the Player Info Panel draggable
+makeDraggable(Frame)
+
+-- Ensure script is persistent
+local function onCharacterAdded()
+    -- Ensure GUI persists across resets
+    if not PlayerGui:FindFirstChild("PlayerInfoPanel") then
+        ScreenGui.Parent = PlayerGui
+    end
+end
+
+-- Connect to Player.CharacterAdded event to keep GUI persistent
+Player.CharacterAdded:Connect(onCharacterAdded)
+
+-- Initialize GUI for current character
+onCharacterAdded()
+--start5
+--fly
+-- LocalScript placed in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Chat = game:GetService("Chat")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local flying = false
+local flightSpeed = 50 -- Adjust the speed as needed
+
+-- Function to start flying
+local function startFlying()
+    if not flying then
+        flying = true
+        local character = Player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local humanoidRootPart = character.HumanoidRootPart
+            humanoidRootPart.Anchored = false
+
+            -- Create and configure BodyVelocity and BodyGyro
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Name = "FlyVelocity"
+            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+            bodyVelocity.Parent = humanoidRootPart
+
+            local bodyGyro = Instance.new("BodyGyro")
+            bodyGyro.Name = "FlyGyro"
+            bodyGyro.CFrame = humanoidRootPart.CFrame
+            bodyGyro.MaxTorque = Vector3.new(4000, 4000, 4000)
+            bodyGyro.P = 9e4
+            bodyGyro.Parent = humanoidRootPart
+
+            -- Function to update the flying movement
+            local function onUpdate()
+                if flying then
+                    local mouse = Player:GetMouse()
+                    local direction = (mouse.Hit.p - humanoidRootPart.Position).unit
+                    local moveVector = Vector3.new(0, 0, 0)
+                    
+                    -- Movement controls
+                    local moveDirection = Vector3.new()
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                        moveDirection = moveDirection + direction
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                        moveDirection = moveDirection - direction
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                        moveDirection = moveDirection - (direction:Cross(Vector3.new(0, 1, 0))).unit
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                        moveDirection = moveDirection + (direction:Cross(Vector3.new(0, 1, 0))).unit
+                    end
+
+                    bodyVelocity.Velocity = moveDirection.unit * flightSpeed
+                    bodyGyro.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + direction)
+                end
+            end
+
+            RunService.Heartbeat:Connect(onUpdate)
+        end
+    end
+end
+
+-- Function to stop flying
+local function stopFlying()
+    if flying then
+        flying = false
+        local character = Player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local humanoidRootPart = character.HumanoidRootPart
+            humanoidRootPart.Anchored = false
+            local bodyVelocity = humanoidRootPart:FindFirstChild("FlyVelocity")
+            local bodyGyro = humanoidRootPart:FindFirstChild("FlyGyro")
+            if bodyVelocity then bodyVelocity:Destroy() end
+            if bodyGyro then bodyGyro:Destroy() end
+        end
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";fly" then
+        startFlying()
+    elseif command == ";unfly" then
+        stopFlying()
+    end
+end
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatted)
+--start6
+-- serverage
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Create a BindableEvent for server age update
+local ServerAgeUpdateEvent = Instance.new("BindableEvent")
+ServerAgeUpdateEvent.Name = "ServerAgeUpdateEvent"
+ServerAgeUpdateEvent.Parent = ReplicatedStorage
+
+-- Record server start time (for the duration of this session)
+local SERVER_START_TIME = tick()
+
+-- Function to update server age
+local function updateServerAge()
+    local elapsedTime = tick() - SERVER_START_TIME
+    local minutes = math.floor(elapsedTime / 60)
+    local serverAgeText = "Server Age: " .. minutes .. " minutes"
+    ServerAgeUpdateEvent:Fire(serverAgeText)
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";serverage" then
+        updateServerAge()
+        ReplicatedStorage.ServerAgeUpdateEvent:Fire()
+
+    elseif command == ";close" then
+        ReplicatedStorage.ServerAgeUpdateEvent:Fire()
+    end
+end
+
+-- Create GUI elements
+local function createGui()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "AdminPanel"
+    ScreenGui.Parent = PlayerGui
+
+    -- Main Frame
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0.3, 0, 0.4, 0)
+    Frame.Position = UDim2.new(0.7, 0, 0.3, 0)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.BorderSizePixel = 0
+    Frame.Visible = false
+    Frame.Parent = ScreenGui
+
+    -- Header
+    local Header = Instance.new("TextLabel")
+    Header.Size = UDim2.new(1, 0, 0, 50)
+    Header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Header.Text = "Server Info"
+    Header.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Header.TextScaled = true
+    Header.TextStrokeTransparency = 0.8
+    Header.Parent = Frame
+
+    -- Server Age Label
+    local ServerAgeLabel = Instance.new("TextLabel")
+    ServerAgeLabel.Size = UDim2.new(1, 0, 0, 30)
+    ServerAgeLabel.Position = UDim2.new(0, 0, 0.2, 0)
+    ServerAgeLabel.BackgroundTransparency = 1
+    ServerAgeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ServerAgeLabel.TextScaled = true
+    ServerAgeLabel.TextStrokeTransparency = 0.8
+    ServerAgeLabel.Parent = Frame
+
+    -- Close Button
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Size = UDim2.new(1, 0, 0, 50)
+    CloseButton.Position = UDim2.new(0, 0, 1, 0)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    CloseButton.Text = "Close"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextScaled = true
+    CloseButton.TextStrokeTransparency = 0.8
+    CloseButton.BorderSizePixel = 0
+    CloseButton.Parent = Frame
+
+    -- Handle close button click
+    CloseButton.MouseButton1Click:Connect(function()
+        Frame.Visible = false
+    end)
+
+    -- Handle server age update event
+    ServerAgeUpdateEvent.Event:Connect(function(serverAgeText)
+        ServerAgeLabel.Text = serverAgeText
+        Frame.Visible = true
+    end)
+
+    return Frame
+end
+
+-- Initialize GUI and events
+local function initialize()
+    local guiFrame = createGui()
+    Player.Chatted:Connect(onChatted)
+
+    -- Handle player respawn
+    Player.CharacterAdded:Connect(function()
+        wait(1) -- Wait for the character to fully load
+        guiFrame:Destroy()
+        local newGuiFrame = createGui()
+        Player.Chatted:Connect(onChatted)
+    end)
+end
+
+-- Initialize on script start
+initialize()
+
+--start7
+--esp
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local ESP_ENABLED = false
+local highlights = {}
+
+-- Function to create ESP for a player
+local function createESP(player)
+    if player == LocalPlayer or highlights[player] then return end
+    local character = player.Character
+    if not character then return end
+    
+    -- Create Highlight for the player's body
+    local highlight = Instance.new("Highlight")
+    highlight.FillColor = Color3.fromRGB(0, 255, 0)
+    highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+    highlight.FillTransparency = 0.5
+    highlight.Parent = character
+    highlights[player] = highlight
+
+    -- Create BillboardGui for player's name and role
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = character:WaitForChild("Head")
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+    billboard.AlwaysOnTop = true
+    billboard.Parent = character:WaitForChild("Head")
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.TextStrokeTransparency = 0
+    textLabel.Text = player.Name .. " - " .. (player:GetRoleInGroup(1) or "Role: None")
+    textLabel.TextScaled = true
+    textLabel.Parent = billboard
+end
+
+-- Function to remove ESP from a player
+local function removeESP(player)
+    if highlights[player] then
+        highlights[player]:Destroy()
+        highlights[player] = nil
+    end
+    local character = player.Character
+    if character then
+        for _, gui in pairs(character:GetDescendants()) do
+            if gui:IsA("BillboardGui") then
+                gui:Destroy()
+            end
+        end
+    end
+end
+
+-- Function to handle character addition
+local function onCharacterAdded(character)
+    local player = Players:GetPlayerFromCharacter(character)
+    if player and ESP_ENABLED then
+        createESP(player)
+    end
+end
+
+-- Function to handle player addition
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character and ESP_ENABLED then
+        createESP(player)
+    end
+end
+
+-- Function to toggle ESP
+local function toggleESP(state)
+    ESP_ENABLED = state
+    if ESP_ENABLED then
+        for _, player in pairs(Players:GetPlayers()) do
+            createESP(player)
+        end
+    else
+        for _, player in pairs(Players:GetPlayers()) do
+            removeESP(player)
+        end
+    end
+end
+
+-- Connect player and character addition events
+Players.PlayerAdded:Connect(onPlayerAdded)
+for _, player in pairs(Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+-- Handle chat commands
+LocalPlayer.Chatted:Connect(function(message)
+    if message:lower() == ";esp" then
+        toggleESP(true)
+    elseif message:lower() == ";esp off" then
+        toggleESP(false)
+    end
+end)
+
+-- Handle persistence on player reset or death
+LocalPlayer.CharacterAdded:Connect(function(character)
+    -- Apply ESP to all players when local player respawns
+    wait(1)  -- Slight delay to ensure character has fully loaded
+    if ESP_ENABLED then
+        for _, player in pairs(Players:GetPlayers()) do
+            createESP(player)
+        end
+    end
+end)
+
+-- Update ESP for new players joining while ESP is enabled
+RunService.Heartbeat:Connect(function()
+    if ESP_ENABLED then
+        for _, player in pairs(Players:GetPlayers()) do
+            if not highlights[player] then
+                createESP(player)
+            end
+        end
+    end
+end)
+--start8
+--bring
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local ChatService = game:GetService("Chat")
+
+local OriginalPositions = {}
+
+-- Function to store original positions of players
+local function storeOriginalPositions()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            OriginalPositions[p.Name] = p.Character.HumanoidRootPart.Position
+        end
+    end
+end
+
+-- Function to bring a specific player to the local player's position
+local function bringPlayer(targetPlayer)
+    if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local humanoidRootPart = targetPlayer.Character.HumanoidRootPart
+        local targetPosition = Player.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 5)
+        humanoidRootPart.CFrame = CFrame.new(targetPosition)
+        humanoidRootPart.Anchored = true
+    end
+end
+
+-- Function to bring all players to the local player's position
+local function bringAllPlayers()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= Player then
+            bringPlayer(p)
+        end
+    end
+end
+
+-- Function to reset players to their original positions
+local function resetPlayers()
+    for playerName, position in pairs(OriginalPositions) do
+        local p = Players:FindFirstChild(playerName)
+        if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local humanoidRootPart = p.Character.HumanoidRootPart
+            humanoidRootPart.Position = position
+            humanoidRootPart.Anchored = false
+        end
+    end
+    OriginalPositions = {}  -- Clear the stored positions after resetting
+end
+
+-- Function to find a player by partial name
+local function findPlayerByPartialName(partialName)
+    partialName = partialName:lower()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Name:lower():sub(1, #partialName) == partialName then
+            return p
+        end
+    end
+    return nil
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";bring" and args[2] then
+        local partialName = args[2]
+        local targetPlayer = findPlayerByPartialName(partialName)
+        if targetPlayer then
+            bringPlayer(targetPlayer)
+        else
+            ChatService:Chat(Player.Character.Head, "Player not found!", Enum.ChatColor.Red)
+        end
+    elseif command == ";brall" then
+        storeOriginalPositions()  -- Store positions before bringing all players
+        bringAllPlayers()
+    elseif command == ";reset" then
+        resetPlayers()
+    end
+end
+
+-- Function to initialize the script
+local function initialize()
+    Player.Chatted:Connect(onChatted)
+    Players.PlayerAdded:Connect(storeOriginalPositions)
+    storeOriginalPositions()
+end
+
+-- Connect to character added event to reinitialize after death/reset
+Player.CharacterAdded:Connect(initialize)
+
+-- Initial call to setup
+initialize()
+--start9
+--jumpboost
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Player = Players.LocalPlayer
+
+local doubleJumpEnabled = false
+local canDoubleJump = false
+local hasDoubleJumped = false
+
+-- Function to handle jump boosting
+local function onJumpRequest()
+    if not doubleJumpEnabled then return end
+
+    local character = Player.Character
+    if not character or not character:FindFirstChild("Humanoid") then return end
+    local humanoid = character.Humanoid
+
+    if humanoid:GetState() == Enum.HumanoidStateType.Freefall and not hasDoubleJumped then
+        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        humanoid:Move(Vector3.new(0, 50, 0), true)
+        hasDoubleJumped = true
+    end
+end
+
+-- Function to reset jump states on landing
+local function onStateChanged(oldState, newState)
+    if newState == Enum.HumanoidStateType.Landed then
+        hasDoubleJumped = false
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";jumpboost" then
+        doubleJumpEnabled = not doubleJumpEnabled
+        if doubleJumpEnabled then
+            Player.Character.Humanoid.JumpPower = 100
+            print("Double jump enabled!")
+        else
+            Player.Character.Humanoid.JumpPower = 50
+            print("Double jump disabled!")
+        end
+    end
+end
+
+-- Connect jump request event
+UserInputService.JumpRequest:Connect(onJumpRequest)
+
+-- Connect state changed event to reset double jump
+Player.CharacterAdded:Connect(function(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    humanoid.StateChanged:Connect(onStateChanged)
+end)
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatted)
+
+-- Initialize for current character
+if Player.Character then
+    Player.Character:WaitForChild("Humanoid").StateChanged:Connect(onStateChanged)
+end
+--start10
+--bridge
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Player = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+local infiniteJumpEnabled = false
+local isJumpButtonPressed = false
+local createdPlatforms = {} -- Table to keep track of created platforms
+
+-- Function to create a platform below the player
+local function createPlatform()
+    local character = Player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local hrp = character.HumanoidRootPart
+        local platform = Instance.new("Part")
+        platform.Size = Vector3.new(10, 1, 10)
+        platform.Position = hrp.Position - Vector3.new(0, 5, 0) -- Position it below the player
+        platform.Anchored = true
+        platform.Parent = Workspace
+        table.insert(createdPlatforms, platform) -- Keep track of the created platform
+    end
+end
+
+-- Function to clear all created platforms
+local function clearPlatforms()
+    for _, platform in ipairs(createdPlatforms) do
+        if platform and platform.Parent then
+            platform:Destroy()
+        end
+    end
+    createdPlatforms = {} -- Reset the table
+end
+
+-- Function to handle jump boosting
+local function startInfiniteJumping()
+    while isJumpButtonPressed and infiniteJumpEnabled do
+        createPlatform() -- Create a platform each time the player jumps
+        wait(0.1) -- Delay between jumps to prevent excessive jumping
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";bridge" then
+        infiniteJumpEnabled = not infiniteJumpEnabled
+        if infiniteJumpEnabled then
+            print("Infinite jump enabled!")
+        else
+            print("Infinite jump disabled!")
+        end
+    elseif command == ";bridgeclear" then
+        clearPlatforms()
+        print("Cleared all platforms!")
+    end
+end
+
+-- Connect jump request event
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch then
+        isJumpButtonPressed = true
+        startInfiniteJumping()
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch then
+        isJumpButtonPressed = false
+    end
+end)
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatted)
+
+-- Function to handle player character respawning
+local function onCharacterAdded(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    humanoid.StateChanged:Connect(function(_, newState)
+        if newState == Enum.HumanoidStateType.Landed or newState == Enum.HumanoidStateType.Seated then
+            isJumpButtonPressed = false
+        end
+    end)
+end
+
+-- Initialize for current character and handle respawns
+if Player.Character then
+    onCharacterAdded(Player.Character)
+end
+
+Player.CharacterAdded:Connect(onCharacterAdded)
+-- start11
+--lookitem
+--bugged
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+local function makeDraggable(frame)
+    local dragToggle = nil
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragToggle then
+            update(input)
+        end
+    end)
+end
+
+-- Function to create a simple UI with scrolling capability
+local function createScrollingUI(titleText, items)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = Player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.4, 0, 0.5, 0)
+    frame.Position = UDim2.new(0.3, 0, 0.25, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    frame.BorderSizePixel = 0
+    frame.BackgroundTransparency = 0.2
+    frame.Parent = screenGui
+
+    makeDraggable(frame)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.1, 0)
+    titleLabel.Text = titleText
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    titleLabel.TextScaled = true
+    titleLabel.Parent = frame
+
+    local scrollingFrame = Instance.new("ScrollingFrame")
+    scrollingFrame.Size = UDim2.new(1, 0, 0.7, 0)
+    scrollingFrame.Position = UDim2.new(0, 0, 0.1, 0)
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, #items * 30)
+    scrollingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    scrollingFrame.BorderSizePixel = 0
+    scrollingFrame.ScrollBarThickness = 10
+    scrollingFrame.Parent = frame
+
+    local uiListLayout = Instance.new("UIListLayout")
+    uiListLayout.Parent = scrollingFrame
+
+    for _, item in ipairs(items) do
+        local itemLabel = Instance.new("TextLabel")
+        itemLabel.Size = UDim2.new(1, 0, 0, 30)
+        itemLabel.Text = item
+        itemLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        itemLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        itemLabel.TextScaled = true
+        itemLabel.Parent = scrollingFrame
+    end
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+    closeButton.Position = UDim2.new(0.1, 0, 0.85, 0)
+    closeButton.Text = "Close"
+    closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextScaled = true
+    closeButton.Parent = frame
+
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+end
+
+-- Function to check the inventory of a specific player
+local function checkInventory(playerName)
+    local matchedPlayers = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if string.find(player.Name:lower(), playerName:lower()) then
+            table.insert(matchedPlayers, player)
+        end
+    end
+
+    if #matchedPlayers == 0 then
+        createScrollingUI("Error", {"Player " .. playerName .. " not found"})
+        return
+    end
+
+    for _, targetPlayer in ipairs(matchedPlayers) do
+        local inventory = targetPlayer:FindFirstChild("Backpack")
+        if inventory then
+            local items = {}
+            for _, item in ipairs(inventory:GetChildren()) do
+                table.insert(items, item.Name)
+            end
+            createScrollingUI(targetPlayer.Name .. "'s Inventory", items)
+        else
+            createScrollingUI("Error", {"No inventory found for " .. targetPlayer.Name})
+        end
+    end
+end
+
+-- Function to look for a specific item across all players
+local function lookForItem(itemName)
+    local playersWithItem = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        local inventory = player:FindFirstChild("Backpack")
+        if inventory then
+            for _, item in ipairs(inventory:GetChildren()) do
+                if string.find(item.Name:lower(), itemName:lower()) then
+                    table.insert(playersWithItem, player.Name)
+                    break
+                end
+            end
+        end
+    end
+    if #playersWithItem > 0 then
+        createScrollingUI("Players with " .. itemName, playersWithItem)
+    else
+        createScrollingUI("No Players Found", {"No players have the item " .. itemName})
+    end
+end
+
+-- Handle chat commands to check inventory or look for item
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";seeinv" and #args > 1 then
+        checkInventory(args[2])
+    elseif command == ";lookitem" and #args > 1 then
+        lookForItem(args[2])
+    end
+end
+
+Player.Chatted:Connect(onChatted)
+-- start12
+--flashstep
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local flashstepEnabled = false
+
+local function teleportToClick()
+    local mouseLocation = UserInputService:GetMouseLocation()
+    local camera = workspace.CurrentCamera
+    local unitRay = camera:ScreenPointToRay(mouseLocation.X, mouseLocation.Y)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {Player.Character}
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+    local raycastResult = workspace:Raycast(unitRay.Origin, unitRay.Direction * 1000, raycastParams)
+    if raycastResult then
+        Player.Character:SetPrimaryPartCFrame(CFrame.new(raycastResult.Position))
+    end
+end
+
+local function enableFlashstep()
+    flashstepEnabled = true
+    if UserInputService.TouchEnabled then
+        UserInputService.TouchTap:Connect(function()
+            if flashstepEnabled then
+                teleportToClick()
+            end
+        end)
+    else
+        UserInputService.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 and flashstepEnabled then
+                teleportToClick()
+            end
+        end)
+    end
+end
+
+local function disableFlashstep()
+    flashstepEnabled = false
+end
+
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";flashstep" and #args > 1 then
+        if args[2] == "on" then
+            enableFlashstep()
+        elseif args[2] == "off" then
+            disableFlashstep()
+        end
+    end
+end
+
+Player.Chatted:Connect(onChatted)
+
+Player.CharacterAdded:Connect(function()
+    if flashstepEnabled then
+        enableFlashstep()
+    end
+end)
+-- start13
+-- object esp
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Chat = game:GetService("Chat")
+local Workspace = game:GetService("Workspace")
+
+-- ESP state
+local espEnabled = false
+
+-- Function to create ESP
+local function createESP(part)
+    local esp = Instance.new("BillboardGui")
+    esp.Adornee = part
+    esp.Name = "ESP"
+    esp.Size = UDim2.new(0, 100, 0, 50)
+    esp.StudsOffset = Vector3.new(0, 2, 0)
+    esp.AlwaysOnTop = true
+    esp.Parent = part
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    textLabel.TextStrokeTransparency = 0.5
+    textLabel.Text = part.Name
+    textLabel.Parent = esp
+end
+
+-- Update ESP for all parts in the workspace
+local function updateESP()
+    if espEnabled then
+        for _, part in pairs(Workspace:GetDescendants()) do
+            if part:IsA("BasePart") and not part:FindFirstChild("ESP") then
+                createESP(part)
+            end
+        end
+    end
+end
+
+-- Handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";object" then
+        if args[2] == "esp" then
+            if args[3] == "on" then
+                espEnabled = true
+                updateESP()
+                print("ESP enabled")
+            elseif args[3] == "off" then
+                espEnabled = false
+                for _, part in pairs(Workspace:GetDescendants()) do
+                    if part:IsA("BasePart") and part:FindFirstChild("ESP") then
+                        part:FindFirstChild("ESP"):Destroy()
+                    end
+                end
+                print("ESP disabled")
+            end
+        end
+    elseif command == ";openmenu" then
+        if not Player:FindFirstChild("PlayerGui"):FindFirstChild("ChatBloxMainMenu") then
+            createMainMenu()
+        end
+    elseif command == ";closemenu" then
+        local menu = Player:FindFirstChild("PlayerGui"):FindFirstChild("ChatBloxMainMenu")
+        if menu then
+            menu:Destroy()
+        end
+
+        local commandsMenu = Player:FindFirstChild("PlayerGui"):FindFirstChild("ChatBloxCommandsMenu")
+        if commandsMenu then
+            commandsMenu:Destroy()
+        end
+    end
+end
+
+-- Connect chat listener
+Player.Chatted:Connect(onChatted)
+
+-- Update ESP periodically when enabled
+RunService.RenderStepped:Connect(function()
+    if espEnabled then
+        updateESP()
+    end
+end)
+
+-- Ensure the UI persists after death
+Player.CharacterAdded:Connect(function()
+    wait(1) -- Wait for the character to fully load
+    local existingMenu = Player:FindFirstChild("PlayerGui"):FindFirstChild("ChatBloxMainMenu")
+    if existingMenu then
+        existingMenu:Destroy()
+        createMainMenu()
+    end
+
+    local existingCommandsMenu = Player:FindFirstChild("PlayerGui"):FindFirstChild("ChatBloxCommandsMenu")
+    if existingCommandsMenu then
+        existingCommandsMenu:Destroy()
+        createCommandsMenu()
+    end
+end)
+-- start14
+-- walktrough
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local collisionEnabled = false
+local selectedParts = {}
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";wall" then
+        if args[2] == "on" then
+            collisionEnabled = true
+            print("Wall pass enabled")
+        elseif args[2] == "off" then
+            collisionEnabled = false
+            for part, state in pairs(selectedParts) do
+                part.Color = state[1]
+                part.CanCollide = state[2]
+            end
+            selectedParts = {}
+            print("Wall pass disabled")
+        end
+    end
+end
+
+-- Function to handle selection/deselection of parts
+local function handlePartSelection(part)
+    if collisionEnabled and part and part:IsA("BasePart") then
+        local state = selectedParts[part]
+        
+        if not state then
+            -- Highlight the object with red color
+            local originalColor = part.Color
+            local originalCanCollide = part.CanCollide
+            selectedParts[part] = {originalColor, originalCanCollide, "Red"}
+            part.Color = Color3.new(1, 0, 0) -- Red color
+        elseif state[3] == "Red" then
+            -- Change the color to green and make it non-collidable
+            selectedParts[part] = {state[1], state[2], "Green"}
+            part.Color = Color3.new(0, 1, 0) -- Green color
+            part.CanCollide = false
+        elseif state[3] == "Green" then
+            -- Deselect the object, restore its original color and CanCollide state
+            part.Color = state[1]
+            part.CanCollide = state[2]
+            selectedParts[part] = nil
+        end
+    end
+end
+
+-- Connect chat listener
+Player.Chatted:Connect(onChatted)
+
+-- Handle input for both desktop and mobile
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local mouse = Player:GetMouse()
+        handlePartSelection(mouse.Target)
+    elseif input.UserInputType == Enum.UserInputType.Touch then
+        local touchLocation = input.Position
+        local touchRay = Workspace.CurrentCamera:ScreenPointToRay(touchLocation.X, touchLocation.Y)
+        local ray = Ray.new(touchRay.Origin, touchRay.Direction * 1000)
+        local part, position = Workspace:FindPartOnRay(ray, Player.Character, false, true)
+        handlePartSelection(part)
+    end
+end)
+
+-- Ensure collision settings persist after death
+Player.CharacterAdded:Connect(function(character)
+    -- Wait for the character to fully load
+    repeat wait() until character:FindFirstChild("HumanoidRootPart")
+    if not collisionEnabled then
+        for part, state in pairs(selectedParts) do
+            part.Color = state[1]
+            part.CanCollide = state[2]
+        end
+        selectedParts = {}
+    end
+end)
+-- start15
+-- spectate
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local Camera = game.Workspace.CurrentCamera
+
+local isSpectating = false
+local spectatingPlayer = nil
+local originalCameraSubject = nil
+
+-- Function to find player by partial name
+local function findPlayerByPartialName(partialName)
+    local lowerPartialName = partialName:lower()
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        if otherPlayer.Name:lower():sub(1, #lowerPartialName) == lowerPartialName then
+            return otherPlayer
+        end
+    end
+    return nil
+end
+
+-- Function to spectate a player
+local function spectatePlayer(targetPlayerName)
+    local targetPlayer = findPlayerByPartialName(targetPlayerName)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+        isSpectating = true
+        spectatingPlayer = targetPlayer
+        originalCameraSubject = Camera.CameraSubject
+        Camera.CameraSubject = targetPlayer.Character.Humanoid
+        print("Spectating " .. targetPlayer.Name)
+    else
+        print("Player not found or not in game")
+    end
+end
+
+-- Function to end spectating
+local function endSpectate()
+    if isSpectating then
+        Camera.CameraSubject = originalCameraSubject
+        isSpectating = false
+        spectatingPlayer = nil
+        print("Ended spectating")
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";spectate" then
+        if args[2] then
+            local targetPlayerName = args[2]
+            spectatePlayer(targetPlayerName)
+        else
+            print("Specify a player to spectate")
+        end
+    elseif command == ";end" and args[2] and args[2]:lower() == "sp" then
+        endSpectate()
+    end
+end
+
+Player.Chatted:Connect(onChatted)
+
+-- Ensure spectate mode persists after admin's death
+RunService.Heartbeat:Connect(function()
+    if isSpectating and spectatingPlayer and spectatingPlayer.Character then
+        if Camera.CameraSubject ~= spectatingPlayer.Character.Humanoid then
+            Camera.CameraSubject = spectatingPlayer.Character.Humanoid
+        end
+    end
+end)
+
+Player.CharacterAdded:Connect(function(character)
+    if isSpectating and spectatingPlayer and spectatingPlayer.Character then
+        repeat wait() until character:FindFirstChild("HumanoidRootPart")
+        Camera.CameraSubject = spectatingPlayer.Character.Humanoid
+    end
+end)
+
+-- start16
+-- clone
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+-- Function to clone a player
+local function clonePlayer(playerToClone)
+    local character = playerToClone.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local clone = character:Clone()
+        clone.Parent = Workspace
+        clone:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.new(5, 0, 0)) -- Position the clone next to the original character
+        clone.Name = playerToClone.Name .. "_Clone"
+        for _, part in pairs(clone:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";clone" and args[2] then
+        local playerName = args[2]:lower()
+        for _, player in pairs(Players:GetPlayers()) do
+            if player.Name:lower():sub(1, #playerName) == playerName then
+                clonePlayer(player)
+                print("Cloned player: " .. player.Name)
+                break
+            end
+        end
+    end
+end
+
+-- Connect chat listener
+Player.Chatted:Connect(onChatted)
+
+
+-- start17
+-- teleport to point
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local TeleportPoint = nil
+
+-- Function to handle chat commands
+local function onChatted(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";set point" then
+        -- Save the player's current position as the teleport point
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            TeleportPoint = Player.Character.HumanoidRootPart.Position
+            Player:SendNotification({
+                Title = "Teleport Point Set",
+                Text = "The teleport point has been set to your current location.",
+                Duration = 3
+            })
+        end
+
+    elseif command == ";teleport to point" then
+        -- Teleport the player to the saved teleport point
+        if TeleportPoint then
+            if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                Player.Character.HumanoidRootPart.CFrame = CFrame.new(TeleportPoint)
+                Player:SendNotification({
+                    Title = "Teleported",
+                    Text = "You have been teleported to the saved point.",
+                    Duration = 3
+                })
+            end
+        else
+            Player:SendNotification({
+                Title = "Error",
+                Text = "No teleport point has been set.",
+                Duration = 3
+            })
+        end
+    end
+end
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatted)
+
+-- start18
+-- walkthrough
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local WalkThroughActive = false
+local OriginalCollisions = {}
+
+local function setWalkThrough(state)
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            if state then
+                OriginalCollisions[part] = part.CanCollide
+                part.CanCollide = false
+            else
+                if OriginalCollisions[part] ~= nil then
+                    part.CanCollide = OriginalCollisions[part]
+                end
+            end
+        end
+    end
+    if not state then
+        OriginalCollisions = {}
+    end
+end
+
+game:GetService("Players").LocalPlayer.Chatted:Connect(function(msg)
+    if msg == ";walkthrough" and not WalkThroughActive then
+        WalkThroughActive = true
+        setWalkThrough(true)
+        print("Walk-through enabled")
+    elseif msg == ";walkthrough off" and WalkThroughActive then
+        WalkThroughActive = false
+        setWalkThrough(false)
+        print("Walk-through disabled")
+    end
+end)
+
+-- start19
+-- teleport
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
+
+-- Function to make a frame draggable
+local function makeDraggable(frame)
+    local dragToggle = nil
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragToggle then
+            update(input)
+        end
+    end)
+end
+
+-- Function to create the teleport UI
+local function createTeleportUI()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TeleportUI"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = Player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.4, 0, 0.3, 0)
+    frame.Position = UDim2.new(0.3, 0, 0.35, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    frame.BorderSizePixel = 0
+    frame.BackgroundTransparency = 0.2
+    frame.Parent = screenGui
+
+    makeDraggable(frame)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    titleLabel.Text = "Teleport"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    titleLabel.TextScaled = true
+    titleLabel.Parent = frame
+
+    local xInput = Instance.new("TextBox")
+    xInput.Size = UDim2.new(0.8, 0, 0.1, 0)
+    xInput.Position = UDim2.new(0.1, 0, 0.3, 0)
+    xInput.PlaceholderText = "X Coordinate"
+    xInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    xInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    xInput.TextScaled = true
+    xInput.Parent = frame
+
+    local yInput = Instance.new("TextBox")
+    yInput.Size = UDim2.new(0.8, 0, 0.1, 0)
+    yInput.Position = UDim2.new(0.1, 0, 0.45, 0)
+    yInput.PlaceholderText = "Y Coordinate"
+    yInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    yInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    yInput.TextScaled = true
+    yInput.Parent = frame
+
+    local zInput = Instance.new("TextBox")
+    zInput.Size = UDim2.new(0.8, 0, 0.1, 0)
+    zInput.Position = UDim2.new(0.1, 0, 0.6, 0)
+    zInput.PlaceholderText = "Z Coordinate"
+    zInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    zInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    zInput.TextScaled = true
+    zInput.Parent = frame
+
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+    teleportButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+    teleportButton.Text = "Teleport"
+    teleportButton.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.TextScaled = true
+    teleportButton.Parent = frame
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+    closeButton.Position = UDim2.new(0.8, 0, 0, 0)
+    closeButton.Text = "Close"
+    closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextScaled = true
+    closeButton.Parent = frame
+
+    teleportButton.MouseButton1Click:Connect(function()
+        local x = tonumber(xInput.Text)
+        local y = tonumber(yInput.Text)
+        local z = tonumber(zInput.Text)
+
+        if x and y and z then
+            local character = Player.Character
+            if character then
+                local hrp = character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.CFrame = CFrame.new(x, y, z)
+                end
+            end
+        end
+    end)
+
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+end
+
+-- Function to handle chat commands
+local function onChatCommand(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";teleport" then
+        if not Player.PlayerGui:FindFirstChild("TeleportUI") then
+            createTeleportUI()
+        end
+    elseif command == ";nightvision" then
+        if not Player.PlayerScripts:FindFirstChild("NightVision") then
+            local nightVision = Instance.new("LocalScript")
+            nightVision.Name = "NightVision"
+            nightVision.Source = [[
+                while true do
+                    wait(0.1)
+                    local lighting = game:GetService("Lighting")
+                    lighting.Brightness = 2
+                    lighting.OutdoorAmbient = Color3.fromRGB(0, 0, 0)
+                    lighting.Ambient = Color3.fromRGB(0, 0, 0)
+                end
+            ]]
+            nightVision.Parent = Player.PlayerScripts
+        end
+    elseif command == ";godmode" then
+        local character = Player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = humanoid.MaxHealth
+                humanoid.MaxHealth = math.huge
+                humanoid.Died:Connect(function()
+                    humanoid.Health = humanoid.MaxHealth
+                end)
+            end
+        end
+    end
+end
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatCommand)
+
+-- Ensure the UI persists after death
+Player.CharacterAdded:Connect(function()
+    wait(1) -- Wait for the character to fully load
+    local existingNightVision = Player.PlayerScripts:FindFirstChild("NightVision")
+    if existingNightVision then
+        existingNightVision:Destroy()
+    end
+
+    local existingTeleportUI = Player.PlayerGui:FindFirstChild("TeleportUI")
+    if existingTeleportUI then
+        existingTeleportUI:Destroy()
+    end
+end)
+
+-- start20
+-- playerlist
+-- LocalScript in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Player = Players.LocalPlayer
+
+-- Function to make a frame draggable
+local function makeDraggable(frame)
+    local dragToggle = nil
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragToggle then
+            update(input)
+        end
+    end)
+end
+
+-- Function to create the player list UI
+local function createPlayerListUI()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "PlayerListUI"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = Player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.6, 0, 0.7, 0)
+    frame.Position = UDim2.new(0.2, 0, 0.15, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    frame.BorderSizePixel = 0
+    frame.BackgroundTransparency = 0.4
+    frame.Parent = screenGui
+
+    makeDraggable(frame)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.1, 0)
+    titleLabel.Text = "Player List"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextSize = 28
+    titleLabel.TextStrokeTransparency = 0.8
+    titleLabel.Parent = frame
+
+    local playerListFrame = Instance.new("ScrollingFrame")
+    playerListFrame.Size = UDim2.new(1, 0, 0.85, 0)
+    playerListFrame.Position = UDim2.new(0, 0, 0.1, 0)
+    playerListFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    playerListFrame.BackgroundTransparency = 0.5
+    playerListFrame.BorderSizePixel = 0
+    playerListFrame.ScrollBarThickness = 10
+    playerListFrame.Parent = frame
+
+    local playerListLayout = Instance.new("UIListLayout")
+    playerListLayout.FillDirection = Enum.FillDirection.Vertical
+    playerListLayout.Padding = UDim.new(0, 15)
+    playerListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    playerListLayout.Parent = playerListFrame
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+    closeButton.Position = UDim2.new(0.9, 0, 0, 0)
+    closeButton.Text = "Close"
+    closeButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+    closeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    closeButton.BackgroundTransparency = 0.5
+    closeButton.Font = Enum.Font.GothamBold
+    closeButton.TextSize = 20
+    closeButton.TextStrokeTransparency = 0.8
+    closeButton.Parent = frame
+
+    local function updatePlayerList()
+        -- Clear existing entries
+        for _, child in ipairs(playerListFrame:GetChildren()) do
+            if child:IsA("TextLabel") then
+                child:Destroy()
+            end
+        end
+
+        local playerList = Players:GetPlayers()
+
+        for _, player in ipairs(playerList) do
+            local playerLabel = Instance.new("TextLabel")
+            playerLabel.Size = UDim2.new(1, -10, 0, 40)
+            playerLabel.Text = player.Name
+            playerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            playerLabel.BackgroundTransparency = 1
+            playerLabel.Font = Enum.Font.GothamBold
+            playerLabel.TextSize = 24
+            playerLabel.TextXAlignment = Enum.TextXAlignment.Center
+            playerLabel.TextYAlignment = Enum.TextYAlignment.Center
+            playerLabel.LayoutOrder = _ -- Ensure correct row placement
+            playerLabel.Parent = playerListFrame
+        end
+    end
+
+    updatePlayerList()
+
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+end
+
+-- Function to handle chat commands
+local function onChatCommand(message)
+    local args = message:split(" ")
+    local command = args[1]:lower()
+
+    if command == ";playerlist" then
+        if not Player.PlayerGui:FindFirstChild("PlayerListUI") then
+            createPlayerListUI()
+        end
+    end
+end
+
+-- Connect chat command function
+Player.Chatted:Connect(onChatCommand)
+
+-- Ensure the UI persists after death
+Player.CharacterAdded:Connect(function()
+    wait(1) -- Wait for the character to fully load
+    local existingPlayerListUI = Player.PlayerGui:FindFirstChild("PlayerListUI")
+    if existingPlayerListUI then
+        existingPlayerListUI:Destroy()
+    end
+end)
+-- start21
+end) 
+
 Tab:CreateButton("Universal Esp (By  Luvinq_FL0WERS",function()
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
