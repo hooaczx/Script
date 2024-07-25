@@ -7,6 +7,818 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Universal Esp (By  Luvinq_FL0WERS",function()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({
+    Name = "Universal Esp",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionESPHack"
+})
+
+local ESPTab = Window:MakeTab({
+    Name = "ESP",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local ESPSection = ESPTab:AddSection({
+    Name = "ESP Settings"
+})
+
+-- ESP Settings
+local ESPEnabled = false
+local BoxESPEnabled = false
+local HealthESPEnabled = false
+local NameESPEnabled = false
+
+-- ESP Colors
+local BoxESPColor = Color3.fromRGB(255, 0, 0)
+local HealthESPColor = Color3.fromRGB(0, 255, 0)
+local NameESPColor = Color3.fromRGB(255, 255, 255)
+
+-- ESP Functions
+local function CreateESP(player)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
+    local head = character:WaitForChild("Head")
+
+    -- Box ESP
+    local boxESP = Drawing.new("Square")
+    boxESP.Visible = false
+    boxESP.Color = BoxESPColor
+    boxESP.Thickness = 1
+    boxESP.Transparency = 1
+    boxESP.Filled = false
+
+    -- Health ESP
+    local healthESP = Drawing.new("Text")
+    healthESP.Visible = false
+    healthESP.Color = HealthESPColor
+    healthESP.Size = 14
+    healthESP.Center = true
+    healthESP.Outline = true
+
+    -- Name ESP
+    local nameESP = Drawing.new("Text")
+    nameESP.Visible = false
+    nameESP.Color = NameESPColor
+    nameESP.Size = 18
+    nameESP.Center = true
+    nameESP.Outline = true
+
+    local function UpdateESP()
+        if not character:IsDescendantOf(game.Workspace) then
+            boxESP.Visible = false
+            healthESP.Visible = false
+            nameESP.Visible = false
+            return
+        end
+
+        local vector, onScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
+
+        if onScreen and ESPEnabled then
+            -- Update Box ESP
+            if BoxESPEnabled then
+                local rootPos, _ = game.Workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
+                local headPos, _ = game.Workspace.CurrentCamera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                local legPos, _ = game.Workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position - Vector3.new(0, 3, 0))
+
+                boxESP.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
+                boxESP.Position = Vector2.new(rootPos.X - boxESP.Size.X / 2, rootPos.Y - boxESP.Size.Y / 2)
+                boxESP.Color = BoxESPColor
+                boxESP.Visible = true
+            else
+                boxESP.Visible = false
+            end
+
+            -- Update Health ESP
+            if HealthESPEnabled then
+                local health = math.floor(humanoid.Health)
+                local maxHealth = math.floor(humanoid.MaxHealth)
+                healthESP.Text = health .. "/" .. maxHealth
+                healthESP.Position = Vector2.new(vector.X, vector.Y + 40)
+                healthESP.Color = HealthESPColor
+                healthESP.Visible = true
+            else
+                healthESP.Visible = false
+            end
+
+            -- Update Name ESP
+            if NameESPEnabled then
+                nameESP.Text = player.Name
+                nameESP.Position = Vector2.new(vector.X, vector.Y - 40)
+                nameESP.Color = NameESPColor
+                nameESP.Visible = true
+            else
+                nameESP.Visible = false
+            end
+        else
+            boxESP.Visible = false
+            healthESP.Visible = false
+            nameESP.Visible = false
+        end
+    end
+
+    game:GetService("RunService").RenderStepped:Connect(UpdateESP)
+end
+
+-- Create ESP for existing players
+for _, player in ipairs(game.Players:GetPlayers()) do
+    if player ~= game.Players.LocalPlayer then
+        CreateESP(player)
+    end
+end
+
+-- Create ESP for new players
+game.Players.PlayerAdded:Connect(function(player)
+    CreateESP(player)
+end)
+
+-- ESP Toggles
+ESPSection:AddToggle({
+    Name = "Enable ESP",
+    Default = false,
+    Callback = function(Value)
+        ESPEnabled = Value
+    end
+})
+
+ESPSection:AddToggle({
+    Name = "Box ESP",
+    Default = false,
+    Callback = function(Value)
+        BoxESPEnabled = Value
+    end
+})
+
+ESPSection:AddToggle({
+    Name = "Health ESP",
+    Default = false,
+    Callback = function(Value)
+        HealthESPEnabled = Value
+    end
+})
+
+ESPSection:AddToggle({
+    Name = "Name ESP",
+    Default = false,
+    Callback = function(Value)
+        NameESPEnabled = Value
+    end
+})
+
+-- Color Pickers
+ESPSection:AddColorpicker({
+    Name = "Box ESP Color",
+    Default = BoxESPColor,
+    Callback = function(Value)
+        BoxESPColor = Value
+    end
+})
+
+ESPSection:AddColorpicker({
+    Name = "Health ESP Color",
+    Default = HealthESPColor,
+    Callback = function(Value)
+        HealthESPColor = Value
+    end
+})
+
+ESPSection:AddColorpicker({
+    Name = "Name ESP Color",
+    Default = NameESPColor,
+    Callback = function(Value)
+        NameESPColor = Value
+    end
+})
+
+OrionLib:Init()
+end) 
+
+Tab:CreateButton("EC Hub",function()
+loadstring(game:HttpGet('https://pastebin.com/raw/dmxgE63g'))()
+end) 
+
+Tab:CreateButton("Free Interface UI",function()
+-- Parent this script to StarterPlayer -> StarterPlayerScripts
+
+-- Function to create Ley Hub GUI
+local function createLeyHub()
+    local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- Create the main ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "LeyHub"
+    screenGui.Parent = playerGui
+
+    -- Create a main frame for the hub with image background
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 700, 0, 500)
+    mainFrame.Position = UDim2.new(0.5, -350, 0.5, -250)
+    mainFrame.BackgroundTransparency = 1
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    mainFrame.Parent = screenGui
+
+    -- Add a background image
+    local bgImage = Instance.new("ImageLabel")
+    bgImage.Size = UDim2.new(1, 0, 1, 0)
+    bgImage.Position = UDim2.new(0, 0, 0, 0)
+    bgImage.BackgroundTransparency = 1
+    bgImage.Image = "rbxassetid://INSERT_BACKGROUND_IMAGE_ID" -- Replace with your image asset ID
+    bgImage.Parent = mainFrame
+
+    -- Create a rounded corner for the main frame
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 30)
+    UICorner.Parent = mainFrame
+
+    -- Create a shadow effect
+    local shadow = Instance.new("Frame")
+    shadow.Size = UDim2.new(1, 10, 1, 10)
+    shadow.Position = UDim2.new(0, -5, 0, -5)
+    shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.BackgroundTransparency = 0.5
+    shadow.ZIndex = mainFrame.ZIndex - 1
+    shadow.Parent = mainFrame
+
+    -- Create a left frame for the menu
+    local leftFrame = Instance.new("Frame")
+    leftFrame.Size = UDim2.new(0, 250, 1, 0)
+    leftFrame.Position = UDim2.new(0, 0, 0, 0)
+    leftFrame.BackgroundTransparency = 0.5
+    leftFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    leftFrame.BorderSizePixel = 0
+    leftFrame.Parent = mainFrame
+
+    -- Add a title label in the left frame
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0, 60)
+    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+    titleLabel.BackgroundTransparency = 0.3
+    titleLabel.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    titleLabel.Text = "Ley Hub"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextScaled = true
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextStrokeTransparency = 0.5
+    titleLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    titleLabel.Parent = leftFrame
+
+    -- Create a "Main" button with custom styling
+    local mainButton = Instance.new("TextButton")
+    mainButton.Size = UDim2.new(1, -20, 0, 60)
+    mainButton.Position = UDim2.new(0, 10, 0, 80)
+    mainButton.BackgroundTransparency = 0.7
+    mainButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    mainButton.BorderSizePixel = 0
+    mainButton.Text = "Main"
+    mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    mainButton.TextScaled = true
+    mainButton.Font = Enum.Font.GothamBold
+    mainButton.TextStrokeTransparency = 0.5
+    mainButton.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    mainButton.Parent = leftFrame
+
+    -- Create a content frame on the right side with enhanced styling
+    local contentFrame = Instance.new("Frame")
+    contentFrame.Size = UDim2.new(1, -250, 1, 0)
+    contentFrame.Position = UDim2.new(0, 250, 0, 0)
+    contentFrame.BackgroundTransparency = 0.2
+    contentFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    contentFrame.BorderSizePixel = 0
+    contentFrame.Visible = false -- Hidden by default
+    contentFrame.Parent = mainFrame
+
+    -- Add rounded corners and shadow to the content frame
+    local contentUICorner = Instance.new("UICorner")
+    contentUICorner.CornerRadius = UDim.new(0, 30)
+    contentUICorner.Parent = contentFrame
+
+    local contentShadow = Instance.new("Frame")
+    contentShadow.Size = UDim2.new(1, 10, 1, 10)
+    contentShadow.Position = UDim2.new(0, -5, 0, -5)
+    contentShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    contentShadow.BackgroundTransparency = 0.5
+    contentShadow.ZIndex = contentFrame.ZIndex - 1
+    contentShadow.Parent = contentFrame
+
+    -- Create the info labels for the content frame
+    local function createInfoLabel(parent, text, position)
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, -10, 0, 40)
+        label.Position = position
+        label.BackgroundTransparency = 1
+        label.Text = text
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.TextScaled = true
+        label.Font = Enum.Font.Gotham
+        label.TextStrokeTransparency = 0.5
+        label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Parent = parent
+        return label
+    end
+
+    -- Function to update the content frame with information
+    local function updateContentFrame()
+        local gameTitle = "Game Title" -- Replace with actual game title
+        local playerName = player.Name
+        local gameId = tostring(game.PlaceId)
+        local creatorId = tostring(game.CreatorId)
+
+        contentFrame:ClearAllChildren() -- Clear existing content
+
+        createInfoLabel(contentFrame, "Game: " .. gameTitle, UDim2.new(0, 10, 0, 20))
+        createInfoLabel(contentFrame, "User: " .. playerName, UDim2.new(0, 10, 0, 70))
+        createInfoLabel(contentFrame, "Game ID: " .. gameId, UDim2.new(0, 10, 0, 120))
+        createInfoLabel(contentFrame, "Creator ID: " .. creatorId, UDim2.new(0, 10, 0, 170))
+    end
+
+    -- Connect the "Main" button to toggle the content frame
+    mainButton.MouseButton1Click:Connect(function()
+        contentFrame.Visible = not contentFrame.Visible
+        if contentFrame.Visible then
+            updateContentFrame() -- Update content when shown
+        end
+    end)
+
+    -- Function to create a button with enhanced animation
+    local function createButton(parent, buttonName, position, callback)
+        local button = Instance.new("TextButton")
+        button.Size = UDim2.new(0, 300, 0, 60)
+        button.Position = position
+        button.BackgroundTransparency = 0.3
+        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        button.BorderSizePixel = 0
+        button.Text = buttonName
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.TextScaled = true
+        button.Font = Enum.Font.GothamBold
+        button.TextStrokeTransparency = 0.5
+        button.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+        button.Parent = contentFrame
+
+        -- Hover effects
+        button.MouseEnter:Connect(function()
+            button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+            button:TweenSize(UDim2.new(0, 310, 0, 65), "Out", "Quad", 0.2, true)
+        end)
+        button.MouseLeave:Connect(function()
+            button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            button:TweenSize(UDim2.new(0, 300, 0, 60), "Out", "Quad", 0.2, true)
+        end)
+        button.MouseButton1Click:Connect(callback)
+    end
+
+    -- Function to create a close button with animation
+    local function createCloseButton()
+        local closeButton = Instance.new("TextButton")
+        closeButton.Size = UDim2.new(0, 50, 0, 50)
+        closeButton.Position = UDim2.new(1, -60, 0, 10)
+        closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        closeButton.BorderSizePixel = 0
+        closeButton.Text = "X"
+        closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeButton.TextScaled = true
+        closeButton.Font = Enum.Font.GothamBold
+        closeButton.TextStrokeTransparency = 0.5
+        closeButton.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+        closeButton.Parent = mainFrame
+
+        -- Close button animations
+        closeButton.MouseEnter:Connect(function()
+            closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        end)
+        closeButton.MouseLeave:Connect(function()
+            closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        end)
+        closeButton.MouseButton1Click:Connect(function()
+            -- Animate closing
+            for i = 1, 20 do
+                wait(0.05)
+                mainFrame.BackgroundTransparency = i * 0.05
+                mainFrame.Size = UDim2.new(0, 700 * (1 - i * 0.05), 0, 500 * (1 - i * 0.05))
+                mainFrame.Position = UDim2.new(0.5, -350 * (1 - i * 0.05), 0.5, -250 * (1 - i * 0.05))
+            end
+            mainFrame:Destroy()
+        end)
+    end
+
+    -- Create buttons for the content frame
+    createButton(contentFrame, "Button 1", UDim2.new(0, 20, 0, 20), function()
+        print("Button 1 clicked")
+    end)
+    createButton(contentFrame, "Button 2", UDim2.new(0, 20, 0, 90), function()
+        print("Button 2 clicked")
+    end)
+    createCloseButton()
+end
+
+-- Run the function to create Ley Hub
+createLeyHub()
+end) 
+
+Tab:CreateButton("Drop",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/scripthubekitten/SCRIPTHUBV3/main/SCRIPTHUBV3", true))()
+end) 
+
+Tab:CreateButton("OrzPanel v1",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/OrzScript/Orz-Panel-1.0/main/OrzPanel_v1.7_OBFUSCATED.txt",true))()
+end) 
+
+Tab:CreateButton("UX test",function()
+loadstring(game:HttpGet("https://pastefy.app/TC3sUi0I/raw"))()
+end) 
+
+Tab:CreateButton("Shows Ur coordinate",function()
+-- Parent this script to StarterPlayer -> StarterPlayerScripts
+
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = playerGui
+
+-- Create a TextLabel to display the coordinates
+local coordLabel = Instance.new("TextLabel")
+coordLabel.Size = UDim2.new(0, 200, 0, 50)
+coordLabel.Position = UDim2.new(0, 10, 0, 10)
+coordLabel.BackgroundTransparency = 0.5
+coordLabel.TextScaled = true
+coordLabel.Parent = screenGui
+
+-- Update the TextLabel with the player's coordinates
+game:GetService("RunService").RenderStepped:Connect(function()
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local position = character.HumanoidRootPart.Position
+        coordLabel.Text = string.format("X: %.2f, Y: %.2f, Z: %.2f", position.X, position.Y, position.Z)
+    end
+end)
+end) 
+
+Tab:CreateButton("Nether Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MamacoAzulOWU/MamacoAzulOWU/main/MamacoAzulOWU-Nether-Hub"))()
+end) 
+
+Tab:CreateButton("Anti Chat Logger",function()
+-- Roblox -- Universal -- Anti Chat Logger
+-- Made by LuckyScripters
+-- Only works with LegacyChatService
+
+local CoreGui = game:GetService("CoreGui")
+local StarterGui = game:GetService("StarterGui")
+local TextChatService = game:GetService("TextChatService")
+
+local rawMetatable = getrawmetatable(StarterGui)
+
+local oldIndex = rawMetatable.__index
+local oldNamecall = rawMetatable.__namecall
+
+setreadonly(rawMetatable, false)
+
+local function fakeFire(... : any)
+    return
+end
+
+local notifySound = Instance.new("Sound", CoreGui)
+notifySound.Name = "Notification"
+notifySound.Volume = 0.25
+notifySound.SoundId = "rbxassetid://261072074"
+
+rawMetatable.__index = newcclosure(function(self : Instance, index : any)
+    if self == StarterGui and index == "SetCore" then
+        return function(self : StarterGui, parameterName : string, bindableEvents : {[string] : any})
+            if parameterName == "CoreGuiChatConnections" then
+                if bindableEvents.ChatWindow and bindableEvents.ChatWindow.MessagePosted then
+                    bindableEvents.ChatWindow.MessagePosted = nil
+                end
+            end
+        end
+    end
+    return oldIndex(self, index)
+end)
+
+rawMetatable.__namecall = newcclosure(function(self : Instance, ... : any)
+    if self == StarterGui and getnamecallmethod() == "SetCore" then
+        local arguments = {...}
+        local parameterName = arguments[1]
+        local bindableEvents = arguments[2]
+        if parameterName == "CoreGuiChatConnections" then
+            if bindableEvents.ChatWindow and bindableEvents.ChatWindow.MessagePosted then
+                bindableEvents.ChatWindow.MessagePosted = nil
+            end
+        end
+    end
+    return oldNamecall(self, ...)
+end)
+
+for index, value in getgc(true) do
+    if typeof(value) == "table" and value.MessagePosted then
+        for name, signalFunction in value.MessagePosted do
+            if name ~= "fire" then
+                continue
+            end
+            hookfunction(signalFunction, fakeFire)
+        end
+    end
+end
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+if TextChatService.ChatVersion ~= Enum.ChatVersion.LegacyChatService then
+    StarterGui:SetCore("SendNotification", {
+        Title = "Anti Chat Logger",
+        Text = "Failed to disable chat logs, this game is using TextChatService and not LegacyChatService",
+        Icon = "",
+        Duration = 5,
+        Callback = nil,
+        Button1 = "Okay",
+        Button2 = nil
+    })
+else
+    StarterGui:SetCore("SendNotification", {
+        Title = "Anti Chat Logger",
+        Text = "Successfully disabled chat logs, you are now unbannable, enjoy!",
+        Icon = "",
+        Duration = 5,
+        Callback = nil,
+        Button1 = "Okay",
+        Button2 = nil
+    })
+end
+notifySound:Play()
+notifySound.Ended:Wait()
+notifySound:Destroy()
+end) 
+
+Tab:CreateButton("UI Loader Testing",function()
+
+-- \\ UI Loader Test by mxkxkks//
+
+-- Github : https://github.com/mxkxkks1
+-- The wording is "LOOEJ" if you were wondering.
+
+getgenv().cfg = {
+    art = {
+        "<font color='#FF0000'>  _      </font><font color='#00FF00'>____   </font><font color='#0000FF'>____  </font><font color='#FFFF00'>______    </font><font color='#FF00FF'>_______ </font>",
+        "<font color='#FF0000'> | |    </font><font color='#00FF00'>/ __ \\ </font><font color='#0000FF'>/ __ \\</font><font color='#FFFF00'>|  ____|  </font><font color='#FF00FF'>|__   __|</font>",
+        "<font color='#FF0000'> | |   </font><font color='#00FF00'>| |  | |</font><font color='#0000FF'> |  | |</font><font color='#FFFF00'> |__     </font><font color='#FF00FF'>___| |   </font>",
+        "<font color='#FF0000'> | |   </font><font color='#00FF00'>| |  | |</font><font color='#0000FF'> |  | |</font><font color='#FFFF00'>  __|   </font><font color='#FF00FF'>|__ | |   </font>",
+        "<font color='#FF0000'> | |___</font><font color='#00FF00'>| |__| |</font><font color='#0000FF'> |__| |</font><font color='#FFFF00'> |____   </font><font color='#FF00FF'>___| |   </font>",
+        "<font color='#FF0000'> |____</font><font color='#00FF00'>_\\____/ </font><font color='#0000FF'>\\____/</font><font color='#FFFF00'>|______|</font><font color='#FF00FF'> |____/    </font>"
+    },
+    dispT = 5, -- display timing
+    fdeT = 1, -- fade dur
+    textCol = Color3.fromRGB(255, 255, 255), -- text color (white)
+    shadowCol = Color3.fromRGB(0, 0, 0), -- shadow color (black)
+    outlineCol = Color3.fromRGB(0, 0, 0), -- outline (black)
+    shadowOffset = UDim2.new(0, 3, 0, 3)
+}
+
+local p = game:GetService("Players").LocalPlayer
+local g = Instance.new("ScreenGui")
+local b = Instance.new("Frame")
+local t = Instance.new("TextLabel")
+local s = Instance.new("TextLabel")
+
+b.Parent = g
+b.Size = UDim2.new(1, 0, 1, 0)
+b.Position = UDim2.new(0, 0, 0, 0)
+b.BackgroundTransparency = 1
+
+t.Parent = b
+t.BackgroundTransparency = 1
+t.Size = UDim2.new(1, 0, 1, 0)
+t.TextColor3 = getgenv().cfg.textCol
+t.TextStrokeColor3 = getgenv().cfg.outlineCol
+t.TextStrokeTransparency = 0.5
+t.Font = Enum.Font.Code
+t.TextSize = 20
+t.TextWrapped = true
+t.RichText = true
+t.Text = table.concat(getgenv().cfg.art, "\n")
+
+s.Parent = b
+s.BackgroundTransparency = 1
+s.Size = UDim2.new(1, 0, 1, 0)
+s.TextColor3 = getgenv().cfg.shadowCol
+s.TextStrokeColor3 = getgenv().cfg.shadowCol
+s.TextStrokeTransparency = 1
+s.Font = Enum.Font.Code
+s.TextSize = 20
+s.TextWrapped = true
+s.RichText = true
+s.Text = table.concat(getgenv().cfg.art, "\n")
+s.Position = getgenv().cfg.shadowOffset
+
+local snd = Instance.new("Sound")
+snd.SoundId = "rbxassetid://4416840411" -- change ID to your liking.
+snd.Volume = 1
+snd.Parent = g
+
+local function f1()
+    local a = 20
+    local b = 50
+    local c = 10
+    local d = (b - a) / c
+
+    for i = 1, c do
+        t.TextSize = a + (d * i)
+        s.TextSize = a + (d * i)
+        wait(getgenv().cfg.fdeT / c)
+    end
+end
+
+-- \\ TWEENING //
+
+local function f2()
+    local t1 = 0.5
+    local t2 = 100
+
+    local r = Vector2.new(math.random(-t2, t2), math.random(-t2, t2))
+    t:TweenPosition(t.Position + UDim2.new(0, r.X, 0, r.Y), "Out", "Quad", t1, true)
+    s:TweenPosition(s.Position + UDim2.new(0, r.X, 0, r.Y), "Out", "Quad", t1, true)
+
+    t.Rotation = 360
+    s.Rotation = 360 -- 360 trigger [BROKE]
+
+    for i = 1, 10 do
+        t.TextTransparency = i * 0.1
+        s.TextTransparency = i * 0.1
+        wait(0.05)
+    end
+end
+
+local function f3()
+    local c = table.concat(getgenv().cfg.art, "\n")
+    t.Text = c
+    s.Text = c
+    wait(getgenv().cfg.dispT - getgenv().cfg.fdeT)
+    f1()
+    f2()
+    t.Text = ""
+    s.Text = ""
+    t.TextTransparency = 0
+    s.TextTransparency = 0
+    t.TextSize = 20
+    s.TextSize = 20
+end
+
+g.Parent = p:WaitForChild("PlayerGui")
+
+delay(3.5, function() -- Sound delay, 3.5 is recommended
+    snd:Play()
+end)
+
+f3()
+end) 
+
+Tab:CreateButton("Lunar Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GrandmasterOfLife123/lua/main/lunarhub.lua"))()
+end) 
+
+Tab:CreateButton("Quiz Script",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/PmjmwSg2"))()
+end) 
+
+Tab:CreateButton("Hyperion V",function()
+-- THIS SCRIPT WAS MADE BY: GodofLove076 --
+
+-- Send notifications
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Hello",
+    Text = "hello lol",
+})
+
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Wait...",
+    Text = "Loading...",
+})
+
+wait()
+
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Loaded!",
+    Text = "Thank You For using my script!",
+})
+
+-- Load the library
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
+
+-- Create the main window
+local Window = Library.CreateLib("Hyperion V", "Ocean")
+
+-- Create tabs and sections
+local HomeTab = Window:NewTab("Home")
+local WelcomeSection = HomeTab:NewSection("Welcome To HyperionV!")
+local ScriptsSection = HomeTab:NewSection("Scripts In section tabs!")
+local CreditSection = HomeTab:NewSection("Roblox: GodofLove076")
+
+local ScriptsTab = Window:NewTab("Scripts")
+local ScriptsSection = ScriptsTab:NewSection("Scripts")
+
+ScriptsSection:NewButton("BABFT Scripts [OLD]", "BABFT Old quests", function()
+    print("Clicked")
+    loadstring(game:HttpGet('https://pastebin.com/raw/wZcf0PwT'))()
+end)
+
+ScriptsSection:NewButton("Prison Life Admin [WORKS]", "Prison life Admin", function()
+    print("Clicked")
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/elliexmln/PrizzLife/main/pladmin.lua'))()
+end)
+
+local AdminTab = Window:NewTab("Admin")
+local AdminSection = AdminTab:NewSection("Admin")
+
+AdminSection:NewButton("Simple Spy", "Admin ig?", function()
+    print("Clicked")
+    loadstring(game:HttpGet("https://pastebin.com/raw/GE6Yii93", true))()
+end)
+
+AdminSection:NewButton("Infinite yield", "this good", function()
+    print("Clicked")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source", true))()
+end)
+
+AdminSection:NewButton("Fates Admin", "Admin ig???", function()
+    print("Clicked")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/fatesc/fates-admin/main/main.lua", true))()
+end)
+
+AdminSection:NewButton("Fedora Admin", "Admin", function()
+    print("Clicked")
+loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()   
+end)
+
+AdminSection:NewButton("Nameless Admin", "nameless i think", function()
+    print("Clicked")
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source", true))()
+end)
+
+local HubTab = Window:NewTab("Hubs")
+local HubSection = HubTab:NewSection("Hubs")
+
+
+HubSection:NewButton("OP Trolling Hub", "...", function()
+    --[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+loadstring(game:HttpGet("https://pastebin.com/raw/bZFnsBZv"))();
+end)
+
+
+HubSection:NewButton("Syntax Hub ", "... ", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Memeboiyot/SyntaxRebornOfficial/main/SyntaxReborn", true))()
+end)
+
+HubSection:NewButton("Sky hub", "Sky", function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub/main/SkyHub.txt"))()  
+end)
+
+
+HubSection:NewButton("Domain X Hub", "Domain X script", function()
+    print("Clicked")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/DomainX/main/source", true))()
+end)
+
+HubSection:NewButton("JulzHub", "Brookheaven", function()
+    print("Clicked")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/JulHubz/JulHub/main/JulHub"))()
+end)
+
+HubSection:NewButton("Owl Hub", "MM2 Script", function()
+    print("Clicked")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt"))()
+end)
+
+HubSection:NewButton("Tiger X V3 Hub", "Tiger like rawr", function()
+    print("Clicked")
+loadstring(game:HttpGet("https://raw.githubusercontent.com/balintTheDevX/Tiger-X-V3/main/Tiger%20X%20its%20Back"))()
+end)
+
+-- Create and play the sound
+local Sound = Instance.new("Sound")
+Sound.SoundId = "rbxassetid://6712558779"
+Sound.Volume = 1
+Sound.Parent = game:GetService("Workspace")
+Sound:Play()
+
+-- Ensure the sound stops and cleans up after it finishes playing
+Sound.Ended:Connect(function()
+    Sound:Destroy()
+end)
+end) 
+
 Tab:CreateButton("Drop Item Mobile GUI",function()
 -- Zub Hub --
 loadstring(game:HttpGet(('https://raw.githubusercontent.com/Xiam0i/Zub-Hub/main/Universal%20Scripts/Drop%20Item%20%7C%20Mobile%20GUI')))()
