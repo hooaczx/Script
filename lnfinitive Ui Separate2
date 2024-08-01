@@ -7,6 +7,457 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Frostsi",function()
+
+end) 
+
+Tab:CreateButton("Kaov Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Koryxha/Kaov/main/KaovHub.md"))()
+end) 
+
+Tab:CreateButton("Answer The Quiz (By Luvinq_FL0WERS",function()
+-- Create the ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create a Frame to hold the quiz
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.5, 0, 0.5, 0)
+frame.Position = UDim2.new(0.25, 0, 0.25, 0)
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+frame.Parent = screenGui
+
+-- Create the close button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 50, 0, 50)
+closeButton.Position = UDim2.new(1, -50, 0, 0)
+closeButton.Text = "X"
+closeButton.TextScaled = true
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Parent = frame
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- Create a TextLabel for the question number
+local questionNumberLabel = Instance.new("TextLabel")
+questionNumberLabel.Size = UDim2.new(1, 0, 0.1, 0)
+questionNumberLabel.Position = UDim2.new(0, 0, 0, 0)
+questionNumberLabel.TextScaled = true
+questionNumberLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+questionNumberLabel.Parent = frame
+
+-- Create a TextLabel for the question
+local questionLabel = Instance.new("TextLabel")
+questionLabel.Size = UDim2.new(1, 0, 0.3, 0)
+questionLabel.Position = UDim2.new(0, 0, 0.1, 0)
+questionLabel.TextScaled = true
+questionLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+questionLabel.Parent = frame
+
+-- Create a TextLabel for the timer
+local timerLabel = Instance.new("TextLabel")
+timerLabel.Size = UDim2.new(1, 0, 0.1, 0)
+timerLabel.Position = UDim2.new(0, 0, 0.4, 0)
+timerLabel.TextScaled = true
+timerLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+timerLabel.Parent = frame
+
+-- Create a TextLabel for the score
+local scoreLabel = Instance.new("TextLabel")
+scoreLabel.Size = UDim2.new(1, 0, 0.1, 0)
+scoreLabel.Position = UDim2.new(0, 0, 0.5, 0)
+scoreLabel.TextScaled = true
+scoreLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+scoreLabel.Parent = frame
+
+-- Function to create a new button
+local function createButton(text, position)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0.8, 0, 0.1, 0)
+    button.Position = position
+    button.Text = text
+    button.TextScaled = true
+    button.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    button.Parent = frame
+    return button
+end
+
+-- Quiz data
+local quizzes = {
+    {question = "What is the capital of France?", answers = {"Paris", "London", "Berlin", "Madrid"}, correctAnswer = "Paris"},
+    {question = "What is 2 + 2?", answers = {"3", "4", "5", "6"}, correctAnswer = "4"},
+    {question = "What color is the sky?", answers = {"Blue", "Red", "Green", "Yellow"}, correctAnswer = "Blue"},
+    {question = "What is the largest planet?", answers = {"Earth", "Mars", "Jupiter", "Saturn"}, correctAnswer = "Jupiter"},
+    {question = "How many continents are there?", answers = {"5", "6", "7", "8"}, correctAnswer = "7"},
+    {question = "What is the capital of Japan?", answers = {"Beijing", "Tokyo", "Seoul", "Bangkok"}, correctAnswer = "Tokyo"},
+    {question = "Which ocean is the largest?", answers = {"Atlantic", "Indian", "Pacific", "Arctic"}, correctAnswer = "Pacific"},
+    {question = "What is H2O?", answers = {"Oxygen", "Hydrogen", "Water", "Carbon Dioxide"}, correctAnswer = "Water"},
+    {question = "What is the speed of light?", answers = {"300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"}, correctAnswer = "300,000 km/s"},
+    {question = "Which country is known as the Land of the Rising Sun?", answers = {"China", "South Korea", "Japan", "Thailand"}, correctAnswer = "Japan"},
+}
+
+-- Initialize variables
+local currentQuestionIndex = 1
+local score = 0
+local timeLimit = 30 -- seconds per question
+local timer = timeLimit
+
+-- Rainbow effect variables
+local isRainbow = false
+local colors = {Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 127, 0), Color3.fromRGB(255, 255, 0), Color3.fromRGB(0, 255, 0), Color3.fromRGB(0, 0, 255), Color3.fromRGB(75, 0, 130), Color3.fromRGB(148, 0, 211)}
+local colorIndex = 1
+
+-- Function to display a question
+local function displayQuestion()
+    if currentQuestionIndex > #quizzes then
+        questionLabel.Text = "Quiz Complete! Your score: " .. score .. "/" .. #quizzes
+        questionNumberLabel.Text = ""
+        scoreLabel.Text = ""
+        timerLabel.Text = ""
+        wait(3)
+        screenGui:Destroy()
+        return
+    end
+
+    local quiz = quizzes[currentQuestionIndex]
+
+    questionNumberLabel.Text = "Question " .. currentQuestionIndex .. " of " .. #quizzes
+    questionLabel.Text = quiz.question
+    scoreLabel.Text = "Score: " .. score
+    timer = timeLimit
+
+    -- Remove old answer buttons
+    for _, button in pairs(frame:GetChildren()) do
+        if button:IsA("TextButton") and button ~= closeButton then
+            button:Destroy()
+        end
+    end
+
+    -- Create new answer buttons
+    for i, answer in ipairs(quiz.answers) do
+        local button = createButton(answer, UDim2.new(0.1, 0, 0.6 + (i-1) * 0.1, 0))
+        button.MouseButton1Click:Connect(function()
+            if button.Text == quiz.correctAnswer then
+                score = score + 1
+                questionLabel.Text = "Correct!"
+                questionLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+                isRainbow = true
+            else
+                questionLabel.Text = "Incorrect!"
+                questionLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+                isRainbow = false
+            end
+            currentQuestionIndex = currentQuestionIndex + 1
+            wait(2)
+            displayQuestion()
+        end)
+    end
+end
+
+-- Function to update the timer
+local function updateTimer()
+    while currentQuestionIndex <= #quizzes do
+        if timer > 0 then
+            timer = timer - 1
+            timerLabel.Text = "Time left: " .. timer .. "s"
+        else
+            questionLabel.Text = "Time's up!"
+            questionLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+            isRainbow = false
+            currentQuestionIndex = currentQuestionIndex + 1
+            wait(2)
+            displayQuestion()
+        end
+        wait(1)
+    end
+end
+
+-- Function to handle the rainbow effect
+local function rainbowEffect()
+    while true do
+        if isRainbow then
+            frame.BackgroundColor3 = colors[colorIndex]
+            colorIndex = (colorIndex % #colors) + 1
+        else
+            frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        end
+        wait(0.1)
+    end
+end
+
+-- Start the quiz
+displayQuestion()
+spawn(updateTimer)
+spawn(rainbowEffect)
+end) 
+
+Tab:CreateButton("Client Event Tracker(BETA",function()
+local Configs = {
+    ["Numbers"] = true,
+    ["Path"] = true,
+    ["Debug Mode"] = true
+}
+
+local blacklist = {
+    ["Example Remote"] = true -- Example
+}
+
+for _, v in pairs(game:GetDescendants()) do
+    if (v:IsA("RemoteEvent") or v:IsA("Event")) and not blacklist[v.Name] then
+        v.OnClientEvent:Connect(
+            function(...)
+                local args = {...}
+                print("-------------------------------------------------")
+                if Configs["Path"] then
+                    print("Path: " .. v:GetFullName())
+                end
+                if next(args) ~= nil then
+                    local niltable = {}
+                    local function is_empty(t)
+                        return next(t) == nil
+                    end
+
+                    if is_empty(niltable) then
+                        print("nil")
+                    end
+                else
+                    print("No Args")
+                end
+                print("-------------------------------------------------")
+            end
+        )
+    end
+end
+end) 
+
+Tab:CreateButton("Null Zone",function()
+-- https://discord.gg/PwrSGtuEnc join for more scripts
+game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Vector3.new(100, 4500000, 100))
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local brickWidth = 9999999999
+local brickHeight = 1
+local brickDepth = 9999999999
+
+local function placeBrick()
+    local brick = Instance.new("Part")
+    brick.Size = Vector3.new(brickWidth, brickHeight, brickDepth)
+    brick.Position = character.HumanoidRootPart.Position - Vector3.new(0, 3, 0)
+    brick.Anchored = true
+    brick.Transparency = 0.95 -- Make the brick invisible
+    brick.CanCollide = true -- Ensure the brick is still collidable
+    brick.Parent = workspace
+end
+
+placeBrick()
+
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+    placeBrick()
+end)
+end) 
+
+Tab:CreateButton("Star Project Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/StarProjectz/StarProjectHub/main/Hub"))()
+end) 
+
+Tab:CreateButton("Take A Screenshot",function()
+-- Load the Orion Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+-- Create a window
+local Window = OrionLib:MakeWindow({Name = "Screenshot", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionExample"})
+
+-- Create a tab
+local Tab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Add a section
+local Section = Tab:AddSection({
+    Name = "Section 1"
+})
+
+-- Add a button to take a screenshot
+Tab:AddButton({
+    Name = "Take Screenshot",
+    Callback = function()
+        game:GetService("CoreGui"):TakeScreenshot()
+        OrionLib:MakeNotification({
+            Name = "Screenshot Taken",
+            Content = "A screenshot has been successfully taken.",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end    
+})
+
+-- Initialize the GUI
+OrionLib:Init()
+end) 
+
+Tab:CreateButton("Syr0nix Chat Spy And Custom Chat Box",function()
+local ChatGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local LogPanel = Instance.new("ScrollingFrame")
+local Close = Instance.new("TextButton")
+local Mini = Instance.new("TextButton")
+local Log = Instance.new("TextButton")
+local title = Instance.new("TextLabel")
+local UIListLayoutt = Instance.new("UIListLayout", LogPanel)
+UIListLayoutt.VerticalAlignment = "Bottom"
+UIListLayoutt.Padding = UDim.new(0, 0) 
+ChatGui.Name = "ChatGui"
+ChatGui.Parent = game.Players.LocalPlayer.PlayerGui
+ChatGui.ResetOnSpawn = false
+Frame.Parent = ChatGui
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0.0278396439, 0, 0.565217376, 0)
+Frame.Size = UDim2.new(0, 600, 0, 400) 
+Frame.Active = true
+Frame.Draggable = true
+LogPanel.Name = "LogPanel"
+LogPanel.Parent = Frame
+LogPanel.BackgroundColor3 = Color3.new(0, 0, 0)
+LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+LogPanel.Position = UDim2.new(0, 0, 0.0625, 0) 
+LogPanel.Size = UDim2.new(1, 0, 0.875, 0) 
+LogPanel.ScrollBarThickness = 5
+LogPanel.ScrollingEnabled = true
+LogPanel.CanvasSize = UDim2.new(2, 0, 100, 0)
+Close.Name = "Close"
+Close.Parent = Frame
+Close.BackgroundColor3 = Color3.new(1, 1, 1)
+Close.BackgroundTransparency = 1
+Close.Position = UDim2.new(0.823979557, 0, 0, 0) 
+Close.Size = UDim2.new(0.176020443, 0, 0.0625, 0) 
+Close.Font = Enum.Font.SourceSans
+Close.Text = "Close"
+Close.TextColor3 = Color3.new(1, 1, 1)
+Close.TextSize = 14
+Mini.Name = "Mini"
+Mini.Parent = Frame
+Mini.BackgroundColor3 = Color3.new(1, 1, 1)
+Mini.BackgroundTransparency = 1
+Mini.Position = UDim2.new(0.647959173, 0, 0, 0)
+Mini.Size = UDim2.new(0.176020443, 0, 0.0625, 0) 
+Mini.Font = Enum.Font.SourceSans
+Mini.Text = "Minimize"
+Mini.TextColor3 = Color3.new(1, 1, 1)
+Mini.TextSize = 14
+Log.Name = "Log"
+Log.Parent = Frame
+Log.BackgroundColor3 = Color3.new(1, 1, 1)
+Log.BackgroundTransparency = 1
+Log.Position = UDim2.new(0.293367326, 0, 0, 0) 
+Log.Size = UDim2.new(0.354591837, 0, 0.0625, 0) 
+Log.Font = Enum.Font.SourceSans
+Log.Text = "Log Chat [ON]"
+Log.TextColor3 = Color3.new(1, 1, 1)
+Log.TextSize = 14
+title.Name = "title"
+title.Parent = Frame
+title.BackgroundColor3 = Color3.new(1, 1, 1)
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(0.293367326, 0, 0.0625, 0)
+title.Font = Enum.Font.SourceSans
+title.Text = "Syr0nix Chat GUI"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 14
+title.TextXAlignment = Enum.TextXAlignment.Left
+local ChatBox = Instance.new("TextBox")
+ChatBox.Name = "ChatBox"
+ChatBox.Parent = Frame
+ChatBox.Size = UDim2.new(1, 0, 0.0625, 0) 
+ChatBox.Position = UDim2.new(0, 0, 0.9375, 0) 
+ChatBox.PlaceholderText = "Type your message here..."
+ChatBox.ClearTextOnFocus = false
+ChatBox.Font = Enum.Font.SourceSans
+ChatBox.TextSize = 14
+ChatBox.TextColor3 = Color3.new(1, 1, 1)
+ChatBox.BackgroundTransparency = 0.5
+ChatBox.BackgroundColor3 = Color3.new(0, 0, 0)
+ChatBox.BorderSizePixel = 0
+local logging = true
+local minimized = false
+Log.MouseButton1Down:Connect(function()
+    logging = not logging
+    if logging then Log.Text = "Log Chat [ON]" else Log.Text = "Log Chat [OFF]" end
+end)
+Mini.MouseButton1Down:Connect(function()
+    if minimized then
+        LogPanel:TweenSize(UDim2.new(0, 600, 0, 350), "InOut", "Sine", 0.5, false, nil)
+    else
+        LogPanel:TweenSize(UDim2.new(0, 600, 0, 0), "InOut", "Sine", 0.5, false, nil)
+    end
+    minimized = not minimized
+end)
+Close.MouseButton1Down:Connect(function()
+    ChatGui:Destroy()
+end)
+local prevOutputPos = 0
+function output(plr, msg)
+    if not logging then return end
+    local colour = Color3.fromRGB(255, 255, 255)
+    if string.sub(msg, 1, 1) == ":" or string.sub(msg, 1, 1) == ";" then
+        colour = Color3.fromRGB(255, 0, 0)
+    elseif string.sub(msg, 1, 2) == "/w" or string.sub(msg, 1, 7) == "/whisper" or string.sub(msg, 1, 5) == "/team" or string.sub(msg, 1, 2) == "/t" then
+        colour = Color3.fromRGB(0, 0, 255)
+    else
+        colour = Color3.fromRGB(255, 255, 255)
+    end
+    local o = Instance.new("TextLabel", LogPanel)
+    o.Text = plr.Name .. ": " .. msg
+    o.Size = UDim2.new(0.5, 0, .003, 0)
+    o.Position = UDim2.new(0, 0, .007 + prevOutputPos, 0)
+    o.Font = Enum.Font.SourceSansSemibold
+    o.TextColor3 = colour
+    o.TextStrokeTransparency = 0
+    o.BackgroundTransparency = 0
+    o.BackgroundColor3 = Color3.new(0, 0, 0)
+    o.BorderSizePixel = 0
+    o.BorderColor3 = Color3.new(0, 0, 0)
+    o.FontSize = "Size14"
+    o.TextXAlignment = Enum.TextXAlignment.Left
+    o.ClipsDescendants = true
+    prevOutputPos = prevOutputPos + 0.003
+end
+for i, v in pairs(game.Players:GetChildren()) do
+    v.Chatted:Connect(function(msg)
+        output(v, msg)
+    end)
+end
+game.Players.ChildAdded:Connect(function(plr)
+    if plr:IsA("Player") then
+        plr.Chatted:Connect(function(msg)
+            output(plr, msg)
+        end)
+    end
+end)
+ChatBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local message = ChatBox.Text
+        ChatBox.Text = "" 
+        game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+    end
+end)
+
+-- Focus ChatBox when / key is pressed
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.Slash and not gameProcessed then
+        ChatBox:CaptureFocus()
+    end
+end)
+end) 
+
 Tab:CreateButton("Universe Viewer acrylix",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Universe%20Viewer%20acrylix"))()
 end) 
