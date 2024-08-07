@@ -7,6 +7,463 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Menace Hub",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/ChainGotStucked/a55af82d82574/main/Menace%20Hub'))()
+end) 
+
+Tab:CreateButton("Kawaii chat bypass",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-BYPASS/main/kawaii-bypass",true))()
+end) 
+
+Tab:CreateButton("DioHub V5",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/qAxAp/Key-system/main/obf_hu6WvgMhBKaJ00bWiwn11vH1t6550jgTf7IW6Ze16cPZMIR9KCplxC4E04iI9hg8.lua'))()
+end) 
+
+Tab:CreateButton("Kurd hub",function()
+loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116\104\117\98\117\115\101\114\99\111\110\116\101\110\116\46\99\111\109\47\78\105\110\106\97\49\48\57\48\56\47\83\52\47\109\97\105\110\47\75\117\114\100\104\117\98"))()
+end) 
+
+Tab:CreateButton("Vortex Hub",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Vortex3775/Vortex-Hub/main/Xenon'))()
+end) 
+
+Tab:CreateButton("projectcmdbar",function()
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.3, 0, 0.5, 0)
+frame.Position = UDim2.new(0.35, 0, 0.25, 0)
+frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+frame.BorderColor3 = Color3.fromRGB(0, 255, 0)
+frame.Parent = screenGui
+frame.Active = true
+frame.Draggable = true
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 0.2, 0)
+textLabel.Position = UDim2.new(0, 0, 0, 0)
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.Text = "projectcmdbar v1"
+textLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+textLabel.BorderColor3 = Color3.fromRGB(0, 255, 0)
+textLabel.Parent = frame
+
+-- Button 1
+
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0.9, 0, 0.4,0, 0)
+textBox.Position = UDim2.new(0.05, 0, 0.27, 0)
+textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+textBox.Text = ""
+textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+textBox.BorderColor3 = Color3.fromRGB(0, 255, 0)
+textBox.Parent = frame
+textBox.ClearTextOnFocus = false
+
+
+-- Bottom Button 1
+local bottomButton1 = Instance.new("TextButton")
+bottomButton1.Size = UDim2.new(0.45, 0, 0.1, 0)
+bottomButton1.Position = UDim2.new(0.05, 0, 0.8, 0)
+bottomButton1.TextColor3 = Color3.fromRGB(255, 255, 255)
+bottomButton1.Text = "Execute"
+bottomButton1.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+bottomButton1.BorderColor3 = Color3.fromRGB(0, 255, 0)
+bottomButton1.Parent = frame
+
+-- Bottom Button 2
+local bottomButton2 = Instance.new("TextButton")
+bottomButton2.Size = UDim2.new(0.45, 0, 0.1, 0)
+bottomButton2.Position = UDim2.new(0.5, 0, 0.8, 0)
+bottomButton2.TextColor3 = Color3.fromRGB(255, 255, 255)
+bottomButton2.Text = "Clear"
+bottomButton2.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+bottomButton2.BorderColor3 = Color3.fromRGB(0, 255, 0)
+bottomButton2.Parent = frame
+
+-- Funรงรฃo para limpar o conteรบdo do TextBox
+local function clr()
+    textBox.Text = ""
+end
+
+-- Funรงรฃo para executar o conteรบdo do TextBox
+local function exe()
+    local args = {
+    [1] = textBox.Text
+}
+
+game:GetService("ReplicatedStorage").HDAdminClient.Signals.RequestCommand:InvokeServer(unpack(args))
+
+end
+
+
+
+bottomButton2.MouseButton1Down:Connect(clr)
+bottomButton1.MouseButton1Down:Connect(exe)
+
+-- // hello
+
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+end) 
+
+Tab:CreateButton("CustomExecutorGUI",function()
+local UserInputService = game:GetService('UserInputService')
+
+-- tworzenie gui
+local ScreenGui = Instance.new('ScreenGui')
+local ExecutorFrame = Instance.new('Frame')
+local ExecuteButton = Instance.new('TextButton')
+local ClearButton = Instance.new('TextButton')
+local ScriptBox = Instance.new('TextBox')
+
+-- screen gui config
+ScreenGui.Name = 'CustomExecutorGUI'
+ScreenGui.Parent = game.CoreGui
+
+-- executor frame config
+ExecutorFrame.Name = 'MainFrame'
+ExecutorFrame.Parent = ScreenGui
+ExecutorFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+ExecutorFrame.BorderSizePixel = 0
+ExecutorFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+ExecutorFrame.Size = UDim2.new(0, 300, 0, 200)
+
+-- script box config
+ScriptBox.Name = 'ScriptBox'
+ScriptBox.Parent = ExecutorFrame
+ScriptBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ScriptBox.BorderSizePixel = 0
+ScriptBox.Position = UDim2.new(0, 5, 0, 5)
+ScriptBox.Size = UDim2.new(0, 290, 0, 150)
+ScriptBox.Font = Enum.Font.Code
+ScriptBox.Text = ''
+ScriptBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ScriptBox.TextSize = 14
+ScriptBox.TextXAlignment = Enum.TextXAlignment.Left
+ScriptBox.TextYAlignment = Enum.TextYAlignment.Top
+
+-- execute button config
+ExecuteButton.Name = 'ExecuteButton'
+ExecuteButton.Parent = ExecutorFrame
+ExecuteButton.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+ExecuteButton.BorderSizePixel = 0
+ExecuteButton.Position = UDim2.new(0, 5, 0, 160)
+ExecuteButton.Size = UDim2.new(0, 145, 0, 35)
+ExecuteButton.Font = Enum.Font.SourceSans
+ExecuteButton.Text = 'Execute'
+ExecuteButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExecuteButton.TextSize = 18
+
+-- clear button config
+ClearButton.Name = 'ClearButton'
+ClearButton.Parent = ExecutorFrame
+ClearButton.BackgroundColor3 = Color3.fromRGB(64, 64, 64)
+ClearButton.BorderSizePixel = 0
+ClearButton.Position = UDim2.new(0, 155, 0, 160)
+ClearButton.Size = UDim2.new(0, 140, 0, 35)
+ClearButton.Font = Enum.Font.SourceSans
+ClearButton.Text = 'Clear'
+ClearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ClearButton.TextSize = 18
+
+-- button functionality
+ExecuteButton.MouseButton1Click:Connect(function()
+    local script = ScriptBox.Text
+    local func = loadstring(script)
+    if func then
+        func()
+    end
+end)
+
+ClearButton.MouseButton1Click:Connect(function()
+    ScriptBox.Text = ''
+end)
+
+-- draggable functionality
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    ExecutorFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+ExecutorFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = ExecutorFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+ExecutorFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+game.Players.LocalPlayer.PlayerGui:WaitForChild('CustomExecutorGUI').Enabled = true
+end) 
+
+Tab:CreateButton("break roblox camera cus funny",function()
+getgenv().breakcamera = true -- change to false to disable
+while breakcamera == true do
+    task.wait()
+local player = game.Players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+local function flipCamera()
+    local currentCFrame = camera.CFrame
+   
+    local flippedCFrame = currentCFrame * CFrame.Angles(math.pi, 0, 0) -- rotate 180 degrees
+   
+    camera.CFrame = flippedCFrame
+end
+
+flipCamera()
+end
+end) 
+
+Tab:CreateButton("Executor (By Luvinq_FL0WERS",function()
+-- Variables
+getgenv().Key = "Riceman90"
+
+-- Key GUI
+local KeyGUI = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local SubmitButton = Instance.new("TextButton")
+
+KeyGUI.Name = "KeyGUI"
+KeyGUI.Parent = game.CoreGui
+Frame.Parent = KeyGUI
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+Frame.Size = UDim2.new(0, 200, 0, 100)
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+TextBox.Position = UDim2.new(0.5, -90, 0.5, -20)
+TextBox.Size = UDim2.new(0, 180, 0, 40)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.PlaceholderText = "Enter Key"
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.TextSize = 20
+
+SubmitButton.Parent = Frame
+SubmitButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+SubmitButton.Position = UDim2.new(0.5, -40, 0.5, 30)
+SubmitButton.Size = UDim2.new(0, 80, 0, 30)
+SubmitButton.Font = Enum.Font.SourceSans
+SubmitButton.Text = "Submit"
+SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubmitButton.TextSize = 20
+
+SubmitButton.MouseButton1Click:Connect(function()
+    if TextBox.Text == getgenv().Key then
+        KeyGUI:Destroy()
+        
+        -- Executor GUI
+        local ExecutorGUI = Instance.new("ScreenGui")
+        local ExecFrame = Instance.new("Frame")
+        local ExecScrollFrame = Instance.new("ScrollingFrame")
+        local ExecTextBox = Instance.new("TextBox")
+        local ExecButton = Instance.new("TextButton")
+        local ClearButton = Instance.new("TextButton")
+        local WalkSpeedButton = Instance.new("TextButton")
+
+        ExecutorGUI.Name = "ExecutorGUI"
+        ExecutorGUI.Parent = game.CoreGui
+        ExecFrame.Parent = ExecutorGUI
+        ExecFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        ExecFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+        ExecFrame.Size = UDim2.new(0, 300, 0, 200)
+        ExecFrame.Active = true
+        ExecFrame.Draggable = true
+
+        ExecScrollFrame.Parent = ExecFrame
+        ExecScrollFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        ExecScrollFrame.Position = UDim2.new(0.5, -140, 0.3, -20)
+        ExecScrollFrame.Size = UDim2.new(0, 280, 0, 100)
+        ExecScrollFrame.CanvasSize = UDim2.new(0, 0, 2, 0)
+        ExecScrollFrame.ScrollBarThickness = 10
+
+        ExecTextBox.Parent = ExecScrollFrame
+        ExecTextBox.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+        ExecTextBox.Size = UDim2.new(1, 0, 1, 0)
+        ExecTextBox.ClearTextOnFocus = false
+        ExecTextBox.Font = Enum.Font.SourceSans
+        ExecTextBox.PlaceholderText = "Enter script here..."
+        ExecTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ExecTextBox.TextSize = 18
+        ExecTextBox.TextWrapped = true
+        ExecTextBox.TextXAlignment = Enum.TextXAlignment.Left
+        ExecTextBox.TextYAlignment = Enum.TextYAlignment.Top
+        ExecTextBox.MultiLine = true
+
+        ExecButton.Parent = ExecFrame
+        ExecButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+        ExecButton.Position = UDim2.new(0.25, -40, 0.85, -15)
+        ExecButton.Size = UDim2.new(0, 80, 0, 30)
+        ExecButton.Font = Enum.Font.SourceSans
+        ExecButton.Text = "Execute"
+        ExecButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ExecButton.TextSize = 20
+        ExecButton.MouseButton1Click:Connect(function()
+            local script = ExecTextBox.Text
+            local func, err = loadstring(script)
+            if func then
+                func()
+            else
+                warn("Error: "..err)
+            end
+            ExecTextBox.Text = ""  -- Clear the TextBox after execution
+        end)
+
+        ClearButton.Parent = ExecFrame
+        ClearButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+        ClearButton.Position = UDim2.new(0.5, -40, 0.85, -15)
+        ClearButton.Size = UDim2.new(0, 80, 0, 30)
+        ClearButton.Font = Enum.Font.SourceSans
+        ClearButton.Text = "Clear"
+        ClearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        ClearButton.TextSize = 20
+        ClearButton.MouseButton1Click:Connect(function()
+            ExecTextBox.Text = ""  -- Clear the TextBox manually
+        end)
+
+        WalkSpeedButton.Parent = ExecFrame
+        WalkSpeedButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+        WalkSpeedButton.Position = UDim2.new(0.75, -40, 0.85, -15)
+        WalkSpeedButton.Size = UDim2.new(0, 80, 0, 30)
+        WalkSpeedButton.Font = Enum.Font.SourceSans
+        WalkSpeedButton.Text = "WalkSpeed"
+        WalkSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        WalkSpeedButton.TextSize = 20
+        WalkSpeedButton.MouseButton1Click:Connect(function()
+            ExecFrame.Visible = false
+            local WalkSpeedFrame = Instance.new("Frame")
+            local WalkSpeedTextBox = Instance.new("TextBox")
+            local SetWalkSpeedButton = Instance.new("TextButton")
+            local BackButton = Instance.new("TextButton")
+
+            WalkSpeedFrame.Parent = ExecutorGUI
+            WalkSpeedFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+            WalkSpeedFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+            WalkSpeedFrame.Size = UDim2.new(0, 300, 0, 200)
+            WalkSpeedFrame.Active = true
+            WalkSpeedFrame.Draggable = true
+
+            WalkSpeedTextBox.Parent = WalkSpeedFrame
+            WalkSpeedTextBox.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+            WalkSpeedTextBox.Position = UDim2.new(0.5, -140, 0.3, -20)
+            WalkSpeedTextBox.Size = UDim2.new(0, 280, 0, 40)
+            WalkSpeedTextBox.Font = Enum.Font.SourceSans
+            WalkSpeedTextBox.PlaceholderText = "Enter walk speed"
+            WalkSpeedTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+            WalkSpeedTextBox.TextSize = 18
+
+            SetWalkSpeedButton.Parent = WalkSpeedFrame
+            SetWalkSpeedButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+            SetWalkSpeedButton.Position = UDim2.new(0.5, -60, 0.6, 20)
+            SetWalkSpeedButton.Size = UDim2.new(0, 120, 0, 30)
+            SetWalkSpeedButton.Font = Enum.Font.SourceSans
+            SetWalkSpeedButton.Text = "Set"
+            SetWalkSpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            SetWalkSpeedButton.TextSize = 20
+            SetWalkSpeedButton.MouseButton1Click:Connect(function()
+                local speed = tonumber(WalkSpeedTextBox.Text)
+                if speed then
+                    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = speed
+                end
+            end)
+
+            BackButton.Parent = WalkSpeedFrame
+            BackButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+            BackButton.Position = UDim2.new(0.5, -60, 0.8, 20)
+            BackButton.Size = UDim2.new(0, 120, 0, 30)
+            BackButton.Font = Enum.Font.SourceSans
+            BackButton.Text = "Back"
+            BackButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            BackButton.TextSize = 20
+            BackButton.MouseButton1Click:Connect(function()
+                WalkSpeedFrame:Destroy()
+                ExecFrame.Visible = true
+            end)
+        end)
+    else
+        TextBox.Text = "Incorrect Key"
+        wait(1)
+        TextBox.Text = ""
+    end
+end)
+end) 
+
+Tab:CreateButton("Equinox Hub aimbot",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Xxtan31/Equinox-Hub/main/aimbot.lua", true))()
+end) 
+
+Tab:CreateButton("Nami hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FrostLua/Krakles/main/NamiHub/CrackedLoader.lua"))()
+end) 
+
+Tab:CreateButton("Central solara HUB",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Centralsolara/CentralSolara/main/Solara%20%7C%20HUB"))()
+end) 
+
+Tab:CreateButton("ChatBlox refined",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Kamalsaras/ChatBloxV2Release/main/ChatBlox'))() 
+end) 
+
 Tab:CreateButton("ESP V1 X",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/FeliciaXxxTop/ExE/main/ESP_V1.lua"))()
 end) 
