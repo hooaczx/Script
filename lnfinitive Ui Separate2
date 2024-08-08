@@ -7,6 +7,984 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("AFEM-Emote",function()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AFEM-14048"))()
+end) 
+
+Tab:CreateButton("EggdenDotCC",function()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = game.Players.LocalPlayer:GetMouse()
+local CamlockState = false
+local Prediction = 0.1768521
+local HorizontalPrediction = 0.111076110
+local VerticalPrediction = 0.11034856
+local XPrediction = 20
+local YPrediction = 20
+
+function FindNearestEnemy()
+    local ClosestDistance, ClosestPlayer = math.huge, nil
+    local CenterPosition = Vector2.new(game:GetService("GuiService"):GetScreenResolution().X / 2, game:GetService("GuiService"):GetScreenResolution().Y / 2)
+
+    for _, Player in ipairs(game:GetService("Players"):GetPlayers()) do
+        if Player ~= LocalPlayer then
+            local Character = Player.Character
+            if Character and Character:FindFirstChild("HumanoidRootPart") and Character.Humanoid.Health > 0 then
+                local Position, IsVisibleOnViewport = game:GetService("Workspace").CurrentCamera:WorldToViewportPoint(Character.HumanoidRootPart.Position)
+                if IsVisibleOnViewport then
+                    local Distance = (CenterPosition - Vector2.new(Position.X, Position.Y)).Magnitude
+                    if Distance < ClosestDistance then
+                        ClosestPlayer = Character.HumanoidRootPart
+                        ClosestDistance = Distance
+                    end
+                end
+            end
+        end
+    end
+
+    return ClosestPlayer
+end
+
+local enemy = nil
+local glowingPart = nil
+
+-- Function to aim the camera at the nearest enemy's HumanoidRootPart
+RunService.Heartbeat:Connect(function()
+    if CamlockState == true then
+        if enemy then
+            local camera = workspace.CurrentCamera
+            camera.CFrame = CFrame.new(camera.CFrame.p, enemy.Position + enemy.Velocity * Prediction)
+            
+            if glowingPart then
+                glowingPart.Enabled = true
+                glowingPart.Parent = enemy
+                glowingPart.Face = Enum.NormalId.Front
+            end
+        end
+    else
+        if glowingPart then
+            glowingPart:Destroy() -- Remove glowing effect by destroying the part
+        end
+    end
+end)
+
+local EggdenDotCC = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local TextButton = Instance.new("TextButton")
+local UICorner_2 = Instance.new("UICorner")
+
+-- Properties:
+EggdenDotCC.Name = "EggdenDotCC"
+EggdenDotCC.Parent = game.CoreGui
+EggdenDotCC.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = EggdenDotCC
+Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Fully red color
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0.133798108, 0, 0.20107238, 0)
+Frame.Size = UDim2.new(0, 202, 0, 70)
+Frame.Active = true
+Frame.Draggable = true
+
+local function TopContainer()
+    Frame.Position = UDim2.new(0.5, -Frame.AbsoluteSize.X / 2, 0, -Frame.AbsoluteSize.Y / 2)
+end
+
+TopContainer()
+Frame:GetPropertyChangedSignal("AbsoluteSize"):Connect(TopContainer)
+
+UICorner.Parent = Frame
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.BackgroundTransparency = 5.000
+TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.0792079195, 0, 0.18571429, 0)
+TextButton.Size = UDim2.new(0, 170, 0, 44)
+TextButton.Font = Enum.Font.SourceSansSemibold
+TextButton.Text = "Eggden.cc OFF" -- Initial text
+TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.TextScaled = true
+TextButton.TextSize = 11.000
+TextButton.TextWrapped = true
+
+TextButton.MouseButton1Click:Connect(function()
+    CamlockState = not CamlockState
+    TextButton.Text = CamlockState and "Eggden.cc ON" or "Eggden.cc OFF"
+    enemy = CamlockState and FindNearestEnemy() or nil
+    
+    if CamlockState then
+        glowingPart = Instance.new("SurfaceLight")
+        glowingPart.Color = Color3.fromRGB(255, 0, 0) -- Red glow color
+        glowingPart.Brightness = 10 -- Brighter glow
+    else
+        if glowingPart then
+            glowingPart:Destroy() -- Remove glowing effect by destroying the part
+        end
+    end
+end)
+
+UICorner_2.Parent = TextButton
+end) 
+
+Tab:CreateButton("gui stuff",function()
+-- // hi -duck aka ads and door :)
+-- // v1.5
+-- // chatgpt generated script
+-- // yeah idk what else to put here
+-- // but thanks for using my script :)
+-- // this script will forever remain keyless and unpaid
+-- // please do not claim this as yours cuz its not	its not even mine [ads/ duck] its from chatgpt
+-- // refer to me as ads or duck
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+ 
+-- Variable to track if the script has been executed
+local scriptExecuted = false
+ 
+-- Function to initialize and run the script
+local function initializeScript()
+    if scriptExecuted then
+        print("Script has already been executed.")
+        return
+    end
+ 
+    scriptExecuted = true
+ 
+    -- Create a ScreenGui and its components
+    local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+ 
+    -- Create the main ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "MyGui"
+    screenGui.Parent = playerGui
+ 
+    -- Create a draggable frame as the main container
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.new(0, 300, 0, 200)
+    mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+ 
+    -- Apply rounded corners to the main frame
+    local mainFrameCorner = Instance.new("UICorner")
+    mainFrameCorner.CornerRadius = UDim.new(0, 12)
+    mainFrameCorner.Parent = mainFrame
+ 
+    -- Add a title bar to the frame
+    local titleBar = Instance.new("Frame")
+    titleBar.Name = "TitleBar"
+    titleBar.Size = UDim2.new(1, 0, 0, 30)
+    titleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    titleBar.BorderSizePixel = 0
+    titleBar.Parent = mainFrame
+ 
+    -- Apply rounded corners to the title bar
+    local titleBarCorner = Instance.new("UICorner")
+    titleBarCorner.CornerRadius = UDim.new(0, 12)
+    titleBarCorner.Parent = titleBar
+ 
+    -- Create a title text
+    local titleText = Instance.new("TextLabel")
+    titleText.Name = "TitleText"
+    titleText.Size = UDim2.new(1, -60, 1, 0)
+    titleText.Position = UDim2.new(0, 0, 0, 0)
+    titleText.Text = "duck's gui"
+    titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleText.BackgroundTransparency = 1
+    titleText.TextScaled = true
+    titleText.TextStrokeTransparency = 0
+    titleText.Parent = titleBar
+ 
+    -- Create a close button
+    local closeButton = Instance.new("TextButton")
+    closeButton.Name = "CloseButton"
+    closeButton.Size = UDim2.new(0, 30, 1, 0)
+    closeButton.Position = UDim2.new(1, -30, 0, 0)
+    closeButton.Text = "X"
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.BorderSizePixel = 0
+    closeButton.Parent = titleBar
+ 
+    -- Apply rounded corners to the close button
+    local closeButtonCorner = Instance.new("UICorner")
+    closeButtonCorner.CornerRadius = UDim.new(0, 12)
+    closeButtonCorner.Parent = closeButton
+ 
+    -- Create a minimize button with '-' to drop down
+    local minimizeButton = Instance.new("TextButton")
+    minimizeButton.Name = "MinimizeButton"
+    minimizeButton.Size = UDim2.new(0, 30, 1, 0)
+    minimizeButton.Position = UDim2.new(1, -60, 0, 0)
+    minimizeButton.Text = "-"
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButton.BorderSizePixel = 0
+    minimizeButton.Parent = titleBar
+ 
+    -- Apply rounded corners to the minimize button
+    local minimizeButtonCorner = Instance.new("UICorner")
+    minimizeButtonCorner.CornerRadius = UDim.new(0, 12)
+    minimizeButtonCorner.Parent = minimizeButton
+ 
+    -- Create a frame for buttons
+    local buttonFrame = Instance.new("Frame")
+    buttonFrame.Name = "ButtonFrame"
+    buttonFrame.Size = UDim2.new(0, 120, 0, 165)
+    buttonFrame.Position = UDim2.new(0, 10, 0, 30)
+    buttonFrame.BackgroundTransparency = 1
+    buttonFrame.Parent = mainFrame
+ 
+    -- Function to create a button
+    local function createButton(name, positionY, text)
+        local button = Instance.new("TextButton")
+        button.Name = name
+        button.Size = UDim2.new(1, -20, 0, 30)
+        button.Position = UDim2.new(0, 0, 0, positionY)
+        button.Text = text
+        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.BorderSizePixel = 0
+        button.Parent = buttonFrame
+ 
+        -- Apply rounded corners to each button
+        local buttonCorner = Instance.new("UICorner")
+        buttonCorner.CornerRadius = UDim.new(0, 8)
+        buttonCorner.Parent = button
+ 
+        -- Connect the button click event
+        button.MouseButton1Click:Connect(function()
+            if name == "TestButton" then
+                showTemporaryGui()
+            elseif name == "DYButton" then
+                loadstring(game:HttpGet("https://pastebin.com/raw/Tqt4Zn2t"))()
+            elseif name == "MM2Button" then
+                loadstring(game:HttpGet("https://pastebin.com/raw/2cjjasx8"))()
+            end
+        end)
+    end
+ 
+    -- Create buttons stacked directly on top of each other, with no gap
+    local buttonHeight = 30
+    createButton("TestButton", 0, "Test")
+    createButton("DYButton", buttonHeight, "DY")
+    createButton("MM2Button", buttonHeight * 2, "MM2")
+ 
+    -- Function to create tweens for dropdown effect
+    local function createTween(frame, position, size)
+        local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local goal = {Position = position, Size = size}
+        local tween = TweenService:Create(frame, tweenInfo, goal)
+        return tween
+    end
+ 
+    -- Function to toggle the dropdown effect
+    local function toggleDropdown()
+        if mainFrame.Size == UDim2.new(0, 300, 0, 200) then
+            -- Minimize the frame
+            local slideUpTween = createTween(mainFrame, mainFrame.Position, UDim2.new(0, 300, 0, 30))
+            slideUpTween:Play()
+            -- Hide the buttons
+            buttonFrame.Visible = false
+        else
+            -- Expand the frame
+            local slideDownTween = createTween(mainFrame, mainFrame.Position, UDim2.new(0, 300, 0, 200))
+            slideDownTween:Play()
+            -- Wait for the tween to complete before showing the buttons
+            slideDownTween.Completed:Connect(function()
+                buttonFrame.Visible = true
+            end)
+        end
+    end
+ 
+    -- Connect the minimize button click event
+    minimizeButton.MouseButton1Click:Connect(toggleDropdown)
+ 
+    -- Function to close GUI with sliding effect
+    local function closeGui()
+        local slideUpTween = createTween(mainFrame, UDim2.new(mainFrame.Position.X.Scale, mainFrame.Position.X.Offset, -1, 0), UDim2.new(0, 300, 0, 0))
+        slideUpTween:Play()
+        slideUpTween.Completed:Connect(function()
+            screenGui:Destroy()  -- Close the main GUI after slide up animation
+        end)
+    end
+ 
+    -- Connect the close button click event
+    closeButton.MouseButton1Click:Connect(closeGui)
+ 
+    -- Function to make a GUI draggable
+    local function makeDraggable(frame)
+        local dragging = false
+        local dragInput, mousePos, framePos
+ 
+        frame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                mousePos = input.Position
+                framePos = frame.Position
+ 
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        dragging = false
+                    end
+                end)
+            end
+        end)
+ 
+        frame.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                dragInput = input
+            end
+        end)
+ 
+        UserInputService.InputChanged:Connect(function(input)
+            if input == dragInput and dragging then
+                local delta = input.Position - mousePos
+                frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            end
+        end)
+    end
+ 
+    -- Make the main frame draggable
+    makeDraggable(mainFrame)
+ 
+    -- Function to create and show temporary GUI
+    local function showTemporaryGui()
+        local tempScreenGui = Instance.new("ScreenGui")
+        tempScreenGui.Name = "TempGui"
+        tempScreenGui.Parent = playerGui
+ 
+        local tempFrame = Instance.new("Frame")
+        tempFrame.Size = UDim2.new(0, 200, 0, 100)
+        tempFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+        tempFrame.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        tempFrame.BorderSizePixel = 0
+        tempFrame.Parent = tempScreenGui
+ 
+        local tempText = Instance.new("TextLabel")
+        tempText.Size = UDim2.new(1, 0, 1, 0)
+        tempText.Text = "Temporary GUI"
+        tempText.BackgroundTransparency = 1
+        tempText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tempText.TextScaled = true
+        tempText.Parent = tempFrame
+ 
+        -- Remove the temporary GUI after 2 seconds
+        wait(2)
+        tempScreenGui:Destroy()
+    end
+end
+ 
+-- Run the script
+initializeScript()
+-- // hi -duck aka ads and doorknob :)
+end) 
+
+Tab:CreateButton("Baddies script",function()
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/18439c4b95e984ecf61dbad6a481c952.lua"))()
+end) 
+
+Tab:CreateButton("n0tagui sounds edition",function()
+-- Monstrum's Gui to Lua\n-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local TextLabel = Instance.new("TextLabel")
+local TextLabel_2 = Instance.new("TextLabel")
+local TextLabel_3 = Instance.new("TextLabel")
+local _666 = Instance.new("TextButton")
+local decal = Instance.new("TextButton")
+local disco = Instance.new("TextButton")
+local hint = Instance.new("TextButton")
+local jump = Instance.new("TextButton")
+local message = Instance.new("TextButton")
+local parts = Instance.new("TextButton")
+local theme = Instance.new("TextButton")
+local shut = Instance.new("TextButton")
+local sky = Instance.new("TextButton")
+local eses = Instance.new("TextButton")
+local unanchor = Instance.new("TextButton")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(255, 256, 255)
+Frame.BorderSizePixel = 5
+Frame.Position = UDim2.new(0.358271539, 0, 0.266487002, 0)
+Frame.Size = UDim2.new(0, 386, 0, 349)
+
+ScrollingFrame.Parent = Frame
+ScrollingFrame.Active = true
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingFrame.Position = UDim2.new(0.0542240441, 0, 0.06919498, 0)
+ScrollingFrame.Size = UDim2.new(0, 347, 0, 298)
+ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+
+TextLabel.Parent = ScrollingFrame
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.Position = UDim2.new(0.271820426, 0, 0.0183245987, 0)
+TextLabel.Size = UDim2.new(0, 170, 0, 32)
+TextLabel.Font = Enum.Font.Arial
+TextLabel.Text = "n0tagui [Sounds Edition]"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+TextLabel_2.Parent = TextLabel
+TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.BackgroundTransparency = 1.000
+TextLabel_2.Position = UDim2.new(-0.00465016067, 0, 1.28959417, 0)
+TextLabel_2.Size = UDim2.new(0, 170, 0, 32)
+TextLabel_2.Font = Enum.Font.Arial
+TextLabel_2.Text = "some sounds may not work"
+TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.TextScaled = true
+TextLabel_2.TextSize = 14.000
+TextLabel_2.TextWrapped = true
+
+TextLabel_3.Parent = TextLabel_2
+TextLabel_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_3.BackgroundTransparency = 1.000
+TextLabel_3.Position = UDim2.new(0.395349801, 0, 21.8208447, 0)
+TextLabel_3.Size = UDim2.new(0, 170, 0, 14)
+TextLabel_3.Font = Enum.Font.Arial
+TextLabel_3.Text = "yes"
+TextLabel_3.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_3.TextScaled = true
+TextLabel_3.TextSize = 14.000
+TextLabel_3.TextWrapped = true
+
+_666.Name = "666"
+_666.Parent = TextLabel_3
+_666.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+_666.BorderColor3 = Color3.fromRGB(255, 255, 254)
+_666.Position = UDim2.new(-0.241176382, 0, -43, 0)
+_666.Size = UDim2.new(0, 99, 0, 39)
+_666.Font = Enum.Font.SourceSans
+_666.Text = "Sound 1"
+_666.TextColor3 = Color3.fromRGB(255, 255, 255)
+_666.TextScaled = true
+_666.TextSize = 14.000
+_666.TextWrapped = true
+_666.MouseButton1Down:Connect(function()
+  local sound = Instance.new("Sound",game.Workspace)
+  sound.Name = "H4xed By not4player214"
+  sound.SoundId = "rbxassetid://1839246711"
+  sound.Volume = 999999999999999999999
+  sound.PlaybackSpeed = 0.9
+  sound:Play()
+end)
+decal.Name = "decal"
+decal.Parent = TextLabel_3
+decal.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+decal.BorderColor3 = Color3.fromRGB(255, 255, 255)
+decal.Position = UDim2.new(-0.864705801, 0, -46.5, 0)
+decal.Size = UDim2.new(0, 99, 0, 39)
+decal.Font = Enum.Font.SourceSans
+decal.Text = "Sound 2"
+decal.TextColor3 = Color3.fromRGB(255, 255, 255)
+decal.TextScaled = true
+decal.TextSize = 14.000
+decal.TextWrapped = true
+decal.MouseButton1Down:Connect(function()
+  local sound = Instance.new("Sound",game.Workspace)
+  sound.Name = "H4xed By not4player214"
+  sound.SoundId = "rbxassetid://6953866301"
+  sound.Volume = 999999999999999999999
+  sound:Play()
+end)
+
+disco.Name = "disco"
+disco.Parent = TextLabel_3
+disco.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+disco.BorderColor3 = Color3.fromRGB(255, 255, 255)
+disco.Position = UDim2.new(0.394117653, 0, -39.5714302, 0)
+disco.Size = UDim2.new(0, 99, 0, 39)
+disco.Font = Enum.Font.SourceSans
+disco.Text = "Sound 3"
+disco.TextColor3 = Color3.fromRGB(255, 255, 255)
+disco.TextScaled = true
+disco.TextSize = 14.000
+disco.TextWrapped = true
+disco.MouseButton1Down:Connect(function()
+  local sound = Instance.new("Sound",game.Workspace)
+  sound.Name = "H4xed By not4player214"
+  sound.SoundId = "rbxassetid://6970996018"
+  sound.Volume = 999999999999999999999
+  sound.PlaybackSpeed = 0.9
+  sound:Play()
+end)
+hint.Name = "hint"
+hint.Parent = TextLabel_3
+hint.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+hint.BorderColor3 = Color3.fromRGB(255, 255, 255)
+hint.Position = UDim2.new(0.394117713, 0, -46.5, 0)
+hint.Size = UDim2.new(0, 99, 0, 39)
+hint.Font = Enum.Font.SourceSans
+hint.Text = "Br00khaven siren"
+hint.TextColor3 = Color3.fromRGB(255, 255, 255)
+hint.TextScaled = true
+hint.TextSize = 14.000
+hint.TextWrapped = true
+hint.MouseButton1Down:Connect(function()
+  local sound = Instance.new("Sound",game.Workspace)
+  sound.Name = "H4xed By not4player214"
+  sound.SoundId = "rbxassetid://9109836322"
+  sound.Volume = 999999999999999999999
+  sound.PlaybackSpeed = 1
+  sound.Looped = true
+  sound:Play()
+end)
+
+jump.Name = "jump"
+jump.Parent = TextLabel_3
+jump.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+jump.BorderColor3 = Color3.fromRGB(255, 255, 255)
+jump.Position = UDim2.new(0.394117713, 0, -43, 0)
+jump.Size = UDim2.new(0, 99, 0, 39)
+jump.Font = Enum.Font.SourceSans
+jump.Text = "Sound 5"
+jump.TextColor3 = Color3.fromRGB(255, 255, 255)
+jump.TextScaled = true
+jump.TextSize = 14.000
+jump.TextWrapped = true
+jump.MouseButton1Down:Connect(function()
+  local sound = Instance.new("Sound",game.Workspace)
+  sound.Name = "H4xed By not4player214"
+  sound.SoundId = "rbxassetid://6984999899"
+  sound.Volume = 999999999999999999999
+  sound.PlaybackSpeed = 0.9
+  sound:Play()
+end)
+
+message.Name = "message"
+message.Parent = TextLabel_3
+message.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+message.BorderColor3 = Color3.fromRGB(255, 255, 255)
+message.Position = UDim2.new(-0.241176471, 0, -39.5714302, 0)
+message.Size = UDim2.new(0, 99, 0, 39)
+message.Font = Enum.Font.SourceSans
+message.Text = "Clear Sounds"
+message.TextColor3 = Color3.fromRGB(255, 255, 255)
+message.TextScaled = true
+message.TextSize = 14.000
+message.TextWrapped = true
+message.MouseButton1Down:Connect(function()
+  for i,v in pairs(game.Workspace:GetDescendants()) do
+    if v:IsA("Sound") then do
+      v:Destroy()
+    end
+    end
+    end
+end)
+
+
+
+parts.Name = "parts"
+parts.Parent = TextLabel_3
+parts.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+parts.BorderColor3 = Color3.fromRGB(255, 255, 255)
+parts.Position = UDim2.new(-0.864705801, 0, -43, 0)
+parts.Size = UDim2.new(0, 99, 0, 39)
+parts.Font = Enum.Font.SourceSans
+parts.Text = "Particles"
+parts.TextColor3 = Color3.fromRGB(255, 255, 255)
+parts.TextScaled = true
+parts.TextSize = 14.000
+parts.TextWrapped = true
+
+theme.Name = "theme"
+theme.Parent = TextLabel_3
+theme.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+theme.BorderColor3 = Color3.fromRGB(255, 255, 255)
+theme.Position = UDim2.new(-0.947058797, 0, -51.6428566, 0)
+theme.Size = UDim2.new(0, 59, 0, 24)
+theme.Font = Enum.Font.SourceSans
+theme.Text = "theme"
+theme.TextColor3 = Color3.fromRGB(255, 255, 255)
+theme.TextScaled = true
+theme.TextSize = 14.000
+theme.TextWrapped = true
+
+shut.Name = "shut"
+shut.Parent = TextLabel_3
+shut.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+shut.BorderColor3 = Color3.fromRGB(255, 255, 255)
+shut.Position = UDim2.new(-0.241176471, 0, -36.0714302, 0)
+shut.Size = UDim2.new(0, 99, 0, 39)
+shut.Font = Enum.Font.SourceSans
+shut.Text = "Shutdown"
+shut.TextColor3 = Color3.fromRGB(255, 255, 255)
+shut.TextScaled = true
+shut.TextSize = 14.000
+shut.TextWrapped = true
+
+sky.Name = "sky"
+sky.Parent = TextLabel_3
+sky.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+sky.BorderColor3 = Color3.fromRGB(255, 255, 255)
+sky.Position = UDim2.new(-0.241176382, 0, -46.5, 0)
+sky.Size = UDim2.new(0, 99, 0, 39)
+sky.Font = Enum.Font.SourceSans
+sky.Text = "SkyBox"
+sky.TextColor3 = Color3.fromRGB(255, 255, 255)
+sky.TextScaled = true
+sky.TextSize = 14.000
+sky.TextWrapped = true
+
+eses.Name = "eses"
+eses.Parent = TextLabel_3
+eses.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+eses.BorderColor3 = Color3.fromRGB(255,  255, 255)
+eses.Position = UDim2.new(-0.870588183, 0, -39.5714302, 0)
+eses.Size = UDim2.new(0, 99, 0, 39)
+eses.Font = Enum.Font.SourceSans
+eses.Text = "IS1S JumpScare"
+eses.TextColor3 = Color3.fromRGB(255, 255, 255)
+eses.TextScaled = true
+eses.TextSize = 14.000
+eses.TextWrapped = true
+
+unanchor.Name = "unanchor"
+unanchor.Parent = TextLabel_3
+unanchor.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+unanchor.BorderColor3 = Color3.fromRGB(255, 255, 255)
+unanchor.Position = UDim2.new(-0.241176292, 0, -32.3571434, 0)
+unanchor.Size = UDim2.new(0, 99, 0, 39)
+unanchor.Font = Enum.Font.SourceSans
+unanchor.Text = "UnAnchor"
+unanchor.TextColor3 = Color3.fromRGB(255, 255, 255)
+unanchor.TextScaled = true
+unanchor.TextSize = 14.000
+unanchor.TextWrapped = true
+
+-- Scripts:
+
+local dragging = false
+local dragInput, mousePos, framePos
+
+local function update(input)
+    local delta = input.Position - mousePos
+    Frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+end
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        mousePos = input.Position
+        framePos = Frame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        update(input)
+    end
+end)
+end) 
+
+Tab:CreateButton("F3X Panel BETA",function()
+-- join https://discord.gg/bESPJj7h7U
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SkireScripts/F3X-Panel/main/Main.lua"))()
+end) 
+
+Tab:CreateButton("Outline ESP",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/1dontgiveaf/NSExpression/main/Outline%20ESP", true))()
+end) 
+
+Tab:CreateButton("Azsurelight Aim Assist",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Eradate/AzureUnivAimBot/main/AzureAimAssist.txt"))()
+end) 
+
+Tab:CreateButton("Sword Fling Tool",function()
+local plr = game.Players.LocalPlayer
+local tool = Instance.new("Tool", plr.Backpack)
+tool.GripPos = Vector3.new(0, 0, -1.5)
+tool.GripForward = Vector3.new(0, -1, 0)  -- Adjusted to face upward
+tool.GripRight = Vector3.new(1, 0, 0)
+tool.GripUp = Vector3.new(0, 0, 1)
+tool.Name = "ClassicSword"
+tool.TextureId = "rbxasset://Textures/Sword128.png"
+tool.RequiresHandle = true
+tool.CanBeDropped = true
+
+local k = Instance.new("Part", tool)
+k.Name = "Handle"
+k.Size = Vector3.new(1, 0.8, 4)
+k.Anchored = false
+k.CanCollide = false
+
+
+local mesh = Instance.new("SpecialMesh", k)
+mesh.MeshId = "rbxasset://fonts/sword.mesh" -- Replace with your mesh ID
+mesh.TextureId = "rbxasset://textures/SwordTexture.png" 
+mesh.Scale = Vector3.new(1, 1, 1) 
+mesh.Offset = Vector3.new(0, 0, 0)
+mesh.VertexColor = Vector3.new(1, 1, 1)
+
+local Unsheath = Instance.new("Sound", k)
+Unsheath.SoundId = "http://www.roblox.com/asset/?id=12222225"
+Unsheath.Volume = "1"
+Unsheath.TimePosition = 0
+
+local SwordSlash = Instance.new("Sound", k)
+SwordSlash.SoundId = "http://www.roblox.com/asset/?id=12222216"
+SwordSlash.Volume = "1"
+SwordSlash.TimePosition = 0
+
+
+local l = Instance.new("Animation", tool)
+l.AnimationId = "rbxassetid://94161088"
+local m = plr.Character.Humanoid:LoadAnimation(l)
+
+local db = true
+local da = false
+
+tool.Equipped:Connect(function()
+Unsheath:Play()
+wait(1)
+    tool.Activated:Connect(function()
+        if db == true then
+            db = false
+			SwordSlash:Play()
+            m:Play()
+            wait()
+            da = true
+            db = true
+            wait(2)
+            da = false
+			m:Stop()
+        end
+    end)
+end)
+
+k.Touched:Connect(function(n)
+    if da == true then
+        local o = n.Parent:FindFirstChild("Humanoid")
+        if o ~= nil then
+            local p = game.Players:FindFirstChild(n.Parent.Name)
+            for j = 1, 10 do
+                if p.Name ~= "FunnyVideo15" then
+                    if game:GetService("ReplicatedStorage"):FindFirstChild("juisdfj0i32i0eidsuf0iok") then
+                        hiddenfling = true
+                    else
+                        hiddenfling = true
+                        local detection = Instance.new("Decal")
+                        detection.Name = "juisdfj0i32i0eidsuf0iok"
+                        detection.Parent = game:GetService("ReplicatedStorage")
+                        
+                        local function fling()
+                            local hrp, c, vel, movel = nil, nil, nil, 0.1
+                            while true do
+                                game:GetService("RunService").Heartbeat:Wait()
+                                if hiddenfling then
+                                    local lp = game.Players.LocalPlayer
+                                    while hiddenfling and not (c and c.Parent and hrp and hrp.Parent) do
+                                        game:GetService("RunService").Heartbeat:Wait()
+                                        c = lp.Character
+                                        hrp = c:FindFirstChild("HumanoidRootPart") or c:FindFirstChild("Torso") or c:FindFirstChild("UpperTorso")
+                                    end
+                                    if hiddenfling then
+                                        vel = hrp.Velocity
+                                        hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        if c and c.Parent and hrp and hrp.Parent then
+                                            hrp.Velocity = vel
+                                        end
+                                        game:GetService("RunService").Stepped:Wait()
+                                        if c and c.Parent and hrp and hrp.Parent then
+                                            hrp.Velocity = vel + Vector3.new(0, movel, 0)
+                                            movel = movel * -1
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        
+                        fling()
+                    end
+                end 
+            end
+        end 
+    end
+	
+	wait(2)
+	
+	hiddenfling = false
+end)
+end) 
+
+Tab:CreateButton("Tr00bkidd gui fe bypass",function()
+loadstring(game:HttpGet("https://pastefy.app/Wa6A6LHa/raw"))()
+end) 
+
+Tab:CreateButton("FE Bomb Planting",function()
+local lp = game:GetService("Players").LocalPlayer
+
+local function gplr(String)
+	local Found = {}
+	local strl = String:lower()
+	for i, v in pairs(game:GetService("Players"):GetPlayers()) do
+		if strl == "all" then
+			table.insert(Found, v)
+		elseif strl == "others" and v.Name ~= lp.Name then
+			table.insert(Found, v)
+		elseif strl == "me" and v.Name == lp.Name then
+			table.insert(Found, v)
+		elseif v.Name:lower():sub(1, #String) == String:lower() then
+			table.insert(Found, v)
+		end
+	end
+	return Found
+end
+
+local function notif(str, dur)
+	game:GetService("StarterGui"):SetCore("SendNotification", {
+		Title = "bomb gui",
+		Text = str,
+		Icon = "rbxassetid://2005276185",
+		Duration = dur or 3
+	})
+end
+
+-- GUI creation
+local h = Instance.new("ScreenGui")
+local Main = Instance.new("ImageLabel")
+local Top = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local TextBox = Instance.new("TextBox")
+local TextButton = Instance.new("TextButton")
+
+h.Name = "h"
+h.Parent = game:GetService("CoreGui")
+h.ResetOnSpawn = false
+
+Main.Name = "Main"
+Main.Parent = h
+Main.Active = true
+Main.Draggable = true
+Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Main.BorderSizePixel = 0
+Main.Position = UDim2.new(0.174545452, 0, 0.459574461, 0)
+Main.Size = UDim2.new(0, 454, 0, 218)
+Main.Image = ""
+
+Top.Name = "Top"
+Top.Parent = Main
+Top.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+Top.BorderSizePixel = 0
+Top.Size = UDim2.new(0, 454, 0, 44)
+
+Title.Name = "Title"
+Title.Parent = Top
+Title.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+Title.BorderSizePixel = 0
+Title.Position = UDim2.new(0, 0, 0.295454562, 0)
+Title.Size = UDim2.new(0, 454, 0, 30)
+Title.Font = Enum.Font.SourceSans
+Title.Text = "FE Bomb Gui (edited Yeet Gui)"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.TextSize = 14.000
+Title.TextWrapped = true
+
+TextBox.Parent = Main
+TextBox.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.0704845786, 0, 0.270642221, 0)
+TextBox.Size = UDim2.new(0, 388, 0, 62)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.PlaceholderText = "Who do I plant bomb on (can be shortened)"
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.TextScaled = true
+TextBox.TextSize = 14.000
+TextBox.TextWrapped = true
+
+TextButton.Parent = Main
+TextButton.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.10352423, 0, 0.596330225, 0)
+TextButton.Size = UDim2.new(0, 359, 0, 50)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Plant"
+TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.TextScaled = true
+TextButton.TextSize = 14.000
+TextButton.TextWrapped = true
+
+local function triggerNuke(targetPlayer)
+	if targetPlayer then
+		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("!!!A NUKE HAS BEEN PLACED ON "..targetPlayer.DisplayName.." KILLING THEM WILL GEG EVERYONE DEAD!!!", "ALL")
+		
+		repeat
+			task.wait()
+		until targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") and targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health < 1
+		
+		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(targetPlayer.DisplayName.." IS DEAD NUKE LAUNCHING!!!", "ALL")
+		wait(1.5)
+		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("LAUNCHING IN 3", "ALL")
+		wait(1.5)
+		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("LAUNCHING IN 2", "ALL")
+		wait(1.5)
+		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("LAUNCHING IN 1", "ALL")
+		wait(3)
+		
+		loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
+	else
+		warn("Player not found, did you use their username?")
+	end
+end
+
+TextButton.MouseButton1Click:Connect(function()
+	local Targets = gplr(TextBox.Text)
+	if #Targets > 0 then
+		local Target = Targets[1]
+		triggerNuke(Target)
+	else
+		notif("Player not found", 3)
+	end
+end)
+end) 
+
+Tab:CreateButton("FUKU V2",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/fukuv1111/Fuku-v2/main/Fuku%20v2"))()
+end) 
+
+Tab:CreateButton("Undetectable gui v7",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pedroluckygod/Yes/main/UNDETECTABLE%20GUI%20V7"))()
+end) 
+
 Tab:CreateButton("Menace Hub",function()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/ChainGotStucked/a55af82d82574/main/Menace%20Hub'))()
 end) 
