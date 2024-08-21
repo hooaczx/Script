@@ -7,6 +7,2357 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Universal car speed Mobile",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Alexisisback/Universall/main/Universal%20Car%20speed.lua"))()
+end) 
+
+Tab:CreateButton("Banlame Panel",function()
+loadstring(game:HttpGet("https://pastebin.com/raw/Z5HJp1Dr"))();
+end) 
+
+Tab:CreateButton("SUPERHUB",function()
+loadstring(game:HttpGet(('https://pastefy.app/RuhpjRQB/raw'),true))()
+end) 
+
+Tab:CreateButton("ESP CLICK TO TP",function()
+local ESPEnabled = true
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+function createESP(playerTarget)
+    local highlight = Instance.new("Highlight")
+    highlight.Parent = playerTarget.Character
+    highlight.FillColor = Color3.fromRGB(0, 255, 255)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ESPLabel"
+    billboard.Adornee = playerTarget.Character:FindFirstChild("Head")
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Parent = billboard
+    nameLabel.Size = UDim2.new(1, 0, 1, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = playerTarget.Name
+    nameLabel.TextColor3 = Color3.new(1, 1, 1)
+    nameLabel.TextSize = 14
+    nameLabel.Font = Enum.Font.SourceSans
+
+    billboard.Parent = playerTarget.Character:FindFirstChild("Head")
+end
+
+function removeESP(playerTarget)
+    if playerTarget.Character:FindFirstChild("Highlight") then
+        playerTarget.Character.Highlight:Destroy()
+    end
+    if playerTarget.Character:FindFirstChild("Head") and playerTarget.Character.Head:FindFirstChild("ESPLabel") then
+        playerTarget.Character.Head.ESPLabel:Destroy()
+    end
+end
+
+function updateESP()
+    while ESPEnabled do
+        for _, playerTarget in pairs(game.Players:GetPlayers()) do
+            if playerTarget ~= player and playerTarget.Character and playerTarget.Character:FindFirstChild("Head") then
+                if not playerTarget.Character:FindFirstChild("Highlight") then
+                    createESP(playerTarget)
+                end
+            end
+        end
+
+        for _, playerTarget in pairs(game.Players:GetPlayers()) do
+            if not playerTarget.Character or not playerTarget.Character:FindFirstChild("Head") then
+                removeESP(playerTarget)
+            end
+        end
+
+        wait(5)
+    end
+end
+
+function teleportToPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 5, 0)
+        player.Character:SetPrimaryPartCFrame(CFrame.new(targetPosition))
+    end
+end
+
+mouse.Button1Down:Connect(function()
+    local targetPlayer = nil
+    local closestDistance = math.huge
+
+    for _, playerTarget in pairs(game.Players:GetPlayers()) do
+        if playerTarget ~= player and playerTarget.Character and playerTarget.Character:FindFirstChild("HumanoidRootPart") then
+            local screenPos, onScreen = workspace.CurrentCamera:WorldToScreenPoint(playerTarget.Character.HumanoidRootPart.Position)
+            local mousePos = Vector2.new(mouse.X, mouse.Y)
+            local distance = (mousePos - Vector2.new(screenPos.X, screenPos.Y)).magnitude
+
+            if distance < 50 and distance < closestDistance then
+                closestDistance = distance
+                targetPlayer = playerTarget
+            end
+        end
+    end
+
+    if targetPlayer then
+        teleportToPlayer(targetPlayer)
+    end
+end)
+
+function showNotification()
+    local starterGui = game:GetService("StarterGui")
+    starterGui:SetCore("SendNotification", {
+        Title = "Notification";
+        Text = "Made by thebestpersol, enjoy.";
+        Duration = 5;
+    })
+end
+
+showNotification()
+spawn(updateESP)
+end) 
+
+Tab:CreateButton("Orion Hub (By GamerPro_718",function()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Universal hub", HidePremium = false,IntroText = "universal hub", SaveConfig = true, ConfigFolder = "Universal hub"})
+
+---Tab---
+
+local  Tab1 = Window:MakeTab({
+	Name = "info",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local  Tab2 = Window:MakeTab({
+	Name = "Scrips",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+---localsection---
+
+local Section = Tab2:AddSection({
+	Name = "All script here"
+})
+
+---AddButton---
+
+Tab2:AddButton({
+	Name = "Evade๐",
+	Callback = function()
+      	loadstring(game:HttpGet('https://raw.githubusercontent.com/Unknownproooolucky/Unknown-Hub-X-Universal-Games/main/Games/Evade'))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Script the chosen one (laziest)",
+	Callback = function()
+      	loadstring(game:HttpGet("https://rawscripts.net/raw/The-Chosen-One-laziest-V2-7696"))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Script Redz (meme sea)",
+	Callback = function()
+      	loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/MemeSea/main/Source.lua"))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Chat bypass (orion hub)",
+	Callback = function()
+      	loadstring(game:HttpGet('https://raw.githubusercontent.com/Anonymous12131/MenaceV2.1.-Best-bypasser/main/obf_i7iAAH834YFQno0FLyuLPcNR5ouJrmvEFdtmXtF1C6u935ghB9DAFK5L3zgsPs6X.lua.txt'))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Blade ball (triple)",
+	Callback = function()
+      	loadstring(Game:HttpGet("https://raw.githubusercontent.com/SumitScripts/PlantomBallScript/main/NewPhantballScript/AutoParryUpdated"))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Prison life tiger admin v3",
+	Callback = function()
+      	loadstring(game:HttpGet('https://raw.githubusercontent.com/H17S32/Tiger_Admin/main/Tiger%20Admin%203.0'))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Keyboard",
+	Callback = function()
+      	loadstring(game:HttpGet("https://raw.githubusercontent.com/GGH52lan/GGH52lan/main/keyboard.txt"))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "index hub (FE)",
+	Callback = function()
+      	loadstring(game:HttpGet("https://raw.githubusercontent.com/IndexZHub/Loader/main/Loader"))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "kawaii bypass chat",
+	Callback = function()
+      	loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-UNIVERSAL-CHAT-BYPASS-KAWAII-BYPASS-99-PERCENT-CONSISTENCY-16909"))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Unanchore hub",
+	Callback = function()
+      	loadstring(game:HttpGet("https://pastebin.com/raw/gfMCZxQL"))();
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "Fling gui credit X",
+	Callback = function()
+      	loadstring(game:HttpGet("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%20GUI"))()
+  	end    
+})
+
+
+
+---labelText---
+
+Tab1:AddLabel("Creator scripts : GamerPro_718")
+Tab1:AddLabel("you welcome ๐—ฟ")
+Tab1:AddLabel("Orion hub")
+Tab1:AddLabel("Orion library - ui")
+Tab1:AddLabel("Update : v15")
+
+OrionLib:Init()
+end) 
+
+Tab:CreateButton("Dex Alpha",function()
+loadstring(game:HttpGet("https://gist.githubusercontent.com/DinosaurXxX/b757fe011e7e600c0873f967fe427dc2/raw/ee5324771f017073fc30e640323ac2a9b3bfc550/dark%2520dex%2520v4"))();
+end) 
+
+Tab:CreateButton("c00lgui Mobile FE v1.0",function()
+local gui = Instance.new("ScreenGui")
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0.3, 0, 0.7, 0)
+Main.Position = UDim2.new(0.03, 0, 0.28, 0)
+Main.BackgroundColor3 = Color3.new(0, 0, 0)
+Main.BorderColor3 = Color3.new(1, 0, 0)
+Main.BorderSizePixel = 6
+Main.Active = true
+Main.BackgroundTransparency = 0 
+Main.Draggable = true
+Main.Parent = gui
+
+
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(0.99, 0, 0.13, 0)
+label.Position = UDim2.new(0.01, 0, 0.01, 0)
+label.BackgroundColor3 = Color3.new(0, 0, 0)
+label.BorderColor3 = Color3.new(1, 0, 0)
+label.BorderSizePixel = 6
+label.Text = "c00lgui Mobile FE v1.0"
+label.BackgroundTransparency = 0 
+label.TextColor3 = Color3.new(255, 255, 255)
+label.Font = Enum.Font.Code
+label.Parent = Main
+label.TextScaled = true
+label.TextWrapped = true
+
+
+local iy = Instance.new("TextButton")
+iy.Size = UDim2.new(0.46, 0, 0.1, 0)
+iy.Position = UDim2.new(0.01, 0, 0.17, 0)
+iy.BackgroundColor3 = Color3.new(0, 0, 0)
+iy.BorderColor3 = Color3.new(1, 0, 0)
+iy.BorderSizePixel = 6
+iy.Text = "Infinite Yield FE"
+iy.BackgroundTransparency = 0 
+iy.TextColor3 = Color3.new(255, 255, 255)
+iy.Font = Enum.Font.Code
+iy.Parent = Main
+iy.TextScaled = true
+iy.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+local back = Instance.new("TextButton")
+back.Size = UDim2.new(0.5, 0, 0.1, 0)
+back.Position = UDim2.new(0.5, 0, 0.17, 0)
+back.BackgroundColor3 = Color3.new(0, 0, 0)
+back.BorderColor3 = Color3.new(1, 0, 0)
+back.BorderSizePixel = 6
+back.Text = "Lalol Hub Backdoor"
+back.BackgroundTransparency = 0 
+back.TextColor3 = Color3.new(255, 255, 255)
+back.Font = Enum.Font.Code
+back.Parent = Main
+back.TextScaled = true
+back.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Its-LALOL/LALOL-Hub/main/Backdoor-Scanner/script'))()
+end)
+
+local na = Instance.new("TextButton")
+na.Size = UDim2.new(0.5, 0, 0.1, 0)
+na.Position = UDim2.new(0.5, 0, 0.3, 0)
+na.BackgroundColor3 = Color3.new(0, 0, 0)
+na.BorderColor3 = Color3.new(1, 0, 0)
+na.BorderSizePixel = 6
+na.Text = "Nameless Admin FE"
+na.BackgroundTransparency = 0 
+na.TextColor3 = Color3.new(255, 255, 255)
+na.Font = Enum.Font.Code
+na.Parent = Main
+na.TextScaled = true
+na.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
+end)
+
+
+local fsh = Instance.new("TextButton")
+fsh.Size = UDim2.new(0.5, 0, 0.1, 0)
+fsh.Position = UDim2.new(0.5, 0, 0.44, 0)
+fsh.BackgroundColor3 = Color3.new(0, 0, 0)
+fsh.BorderColor3 = Color3.new(1, 0, 0)
+fsh.BorderSizePixel = 6
+fsh.Text = "FE Script Hub"
+fsh.BackgroundTransparency = 0 
+fsh.TextColor3 = Color3.new(255, 255, 255)
+fsh.Font = Enum.Font.Code
+fsh.Parent = Main
+fsh.TextScaled = true
+fsh.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Asset1-17344"))()
+end)
+
+local bc = Instance.new("TextButton")
+bc.Size = UDim2.new(0.46, 0, 0.1, 0)
+bc.Position = UDim2.new(0.01, 0, 0.3, 0)
+bc.BackgroundColor3 = Color3.new(0, 0, 0)
+bc.BorderColor3 = Color3.new(1, 0, 0)
+bc.BorderSizePixel = 6
+bc.Text = "Lag Chat"
+bc.BackgroundTransparency = 0 
+bc.TextColor3 = Color3.new(255, 255, 255)
+bc.Font = Enum.Font.Code
+bc.Parent = Main
+bc.TextScaled = true
+bc.MouseButton1Down:Connect(function()
+  for i = 1, 4 do
+local args = {
+    [1] = "\194\160\194\160",
+    [2] = "All"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer(unpack(args))
+end
+end)
+
+local FA = Instance.new("TextButton")
+FA.Size = UDim2.new(0.46, 0, 0.1, 0)
+FA.Position = UDim2.new(0.01, 0, 0.44, 0)
+FA.BackgroundColor3 = Color3.new(0, 0, 0)
+FA.BorderColor3 = Color3.new(1, 0, 0)
+FA.BorderSizePixel = 6
+FA.Text = "Fedora Admin"
+FA.BackgroundTransparency = 0 
+FA.TextColor3 = Color3.new(255, 255, 255)
+FA.Font = Enum.Font.Code
+FA.Parent = Main
+FA.TextScaled = true
+FA.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()
+end)
+local TK = Instance.new("TextButton")
+TK.Size = UDim2.new(0.46, 0, 0.08, 0)
+TK.Position = UDim2.new(0.01, 0, 0.57, 0)
+TK.BackgroundColor3 = Color3.new(0, 0, 0)
+TK.BorderColor3 = Color3.new(1, 0, 0)
+TK.BorderSizePixel = 6
+TK.Text = "Telekinesis"
+TK.BackgroundTransparency = 0 
+TK.TextColor3 = Color3.new(255, 255, 255)
+TK.Font = Enum.Font.Code
+TK.Parent = Main
+TK.TextScaled = true
+TK.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/randomstring0/Qwerty/main/qwerty1.lua"))()
+end)
+local RC = Instance.new("TextButton")
+RC.Size = UDim2.new(0.5, 0, 0.07, 0)
+RC.Position = UDim2.new(0.5, 0, 0.58, 0)
+RC.BackgroundColor3 = Color3.new(0, 0, 0)
+RC.BorderColor3 = Color3.new(1, 0, 0)
+RC.BorderSizePixel = 6
+RC.Text = "Rochips Panel"
+RC.BackgroundTransparency = 0 
+RC.TextColor3 = Color3.new(255, 255, 255)
+RC.Font = Enum.Font.Code
+RC.Parent = Main
+RC.TextScaled = true
+RC.MouseButton1Down:Connect(function()
+  if "Rochips Loader" then
+	local Rochips_panel,v,u,i=loadstring,"/snippets","gwwv","/raw/main.lua" ;
+	Rochips_panel(game:HttpGet("https://glot.io"..v.."/" ..u.."877ga3"..i))();
+	return "it will load in around 3 - 131 seconds"
+end
+end)
+local vf = Instance.new("TextButton")
+vf.Size = UDim2.new(0.5, 0, 0.07, 0)
+vf.Position = UDim2.new(0.5, 0, 0.69, 0)
+vf.BackgroundColor3 = Color3.new(0, 0, 0)
+vf.BorderColor3 = Color3.new(1, 0, 0)
+vf.BorderSizePixel = 6
+vf.Text = "Vfly Gui"
+vf.BackgroundTransparency = 0 
+vf.TextColor3 = Color3.new(255, 255, 255)
+vf.Font = Enum.Font.Code
+vf.Parent = Main
+vf.TextScaled = true
+vf.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://pastebin.com/raw/Vxh6JtdG"))()
+end)
+local pl = Instance.new("TextButton")
+pl.Size = UDim2.new(0.46, 0, 0.07, 0)
+pl.Position = UDim2.new(0.01, 0, 0.69, 0)
+pl.BackgroundColor3 = Color3.new(0, 0, 0)
+pl.BorderColor3 = Color3.new(1, 0, 0)
+pl.BorderSizePixel = 6
+pl.Text = "Prison Life Admin"
+pl.BackgroundTransparency = 0 
+pl.TextColor3 = Color3.new(255, 255, 255)
+pl.Font = Enum.Font.Code
+pl.Parent = Main
+pl.TextScaled = true
+pl.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/elliexmln/PrizzLife/main/pladmin.lua"))()
+end)
+
+
+local ngui = Instance.new("ScreenGui")
+ngui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local x = Instance.new("TextButton")
+x.Size = UDim2.new(0.15, 0, 0.15, 0)
+x.Position = UDim2.new(0.9, 0, 0.01, 0)
+x.BackgroundColor3 = Color3.new(0, 0, 0)
+x.BorderColor3 = Color3.new(1, 0, 0)
+x.BorderSizePixel = 6
+x.Text = "X"
+x.BackgroundTransparency = 0 
+x.TextColor3 = Color3.new(255, 255, 255)
+x.Font = Enum.Font.Code
+x.Parent = ngui
+x.TextScaled = true
+x.Draggable = true
+x.MouseButton1Down:Connect(function()
+  gui.Enabled = not gui.Enabled
+end)
+end) 
+
+Tab:CreateButton("Spin Speed Controller",function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 260, 0, 160)
+mainFrame.Position = UDim2.new(0.5, -130, 0.4, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+mainFrame.BorderSizePixel = 0
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.Parent = screenGui
+
+local mainUICorner = Instance.new("UICorner")
+mainUICorner.CornerRadius = UDim.new(0, 10)
+mainUICorner.Parent = mainFrame
+
+local mainUIStroke = Instance.new("UIStroke")
+mainUIStroke.Color = Color3.fromRGB(70, 70, 70)
+mainUIStroke.Thickness = 1.5
+mainUIStroke.Parent = mainFrame
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+topBar.BorderSizePixel = 0
+topBar.Parent = mainFrame
+
+local topBarUICorner = Instance.new("UICorner")
+topBarUICorner.CornerRadius = UDim.new(0, 10)
+topBarUICorner.Parent = topBar
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 1, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Spin Speed Controller"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 18
+titleLabel.Parent = topBar
+
+local dragging, dragInput, dragStart, startPos
+
+local function updateInput(input)
+	local delta = input.Position - dragStart
+	mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+topBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = mainFrame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+topBar.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		updateInput(input)
+	end
+end)
+
+local speedInput = Instance.new("TextBox")
+speedInput.Size = UDim2.new(0, 220, 0, 40)
+speedInput.Position = UDim2.new(0.5, -110, 0.4, 0)
+speedInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+speedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedInput.PlaceholderText = "Enter Spin Speed"
+speedInput.Font = Enum.Font.Gotham
+speedInput.TextSize = 18
+speedInput.Parent = mainFrame
+
+local speedInputUICorner = Instance.new("UICorner")
+speedInputUICorner.CornerRadius = UDim.new(0, 8)
+speedInputUICorner.Parent = speedInput
+
+local submitButton = Instance.new("TextButton")
+submitButton.Size = UDim2.new(0, 220, 0, 40)
+submitButton.Position = UDim2.new(0.5, -110, 0.7, 0)
+submitButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+submitButton.Text = "Submit"
+submitButton.Font = Enum.Font.GothamBold
+submitButton.TextSize = 18
+submitButton.Parent = mainFrame
+
+local submitButtonUICorner = Instance.new("UICorner")
+submitButtonUICorner.CornerRadius = UDim.new(0, 8)
+submitButtonUICorner.Parent = submitButton
+
+local spinning = false
+local spinSpeed = 0
+
+submitButton.MouseButton1Click:Connect(function()
+	spinSpeed = tonumber(speedInput.Text) or 0
+	if spinSpeed > 0 then
+		spinning = true
+	end
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+	if spinning and character and character:FindFirstChild("HumanoidRootPart") then
+		character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+	end
+end)
+end) 
+
+Tab:CreateButton("FNAF Inspired Camera",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/htauk/my-scripts/main/camsbyhtauker.lua"))()
+end) 
+
+Tab:CreateButton("TapBoundcc camlock",function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/tapboundcc/tapbound/main/camlock/update/by/yin/bestcamlock/free'))()
+end) 
+
+Tab:CreateButton("SafeCall Open Source",function()
+local SafeCall = {}
+
+SafeCall.Defaults = {
+    RetryCount = 2,
+    RetryDelay = 1,
+    YieldInterval = 0.03
+}
+
+SafeCall.Errors = {
+    InvalidURL = "Invalid URL provided",
+    Aborted = "Execution aborted",
+    Suspicious = "Suspicious content detected",
+    FetchFailed = "Failed to fetch script",
+    ExecutionFailed = "Script execution failed"
+}
+
+SafeCall.AntiVirus = {
+    DetectionLog = {},
+    QuarantineFolder = "AntiVirusQuarantine",
+
+    LogDetection = function(self, url, reason)
+        table.insert(self.DetectionLog, {
+            Timestamp = os.time(),
+            URL = url,
+            Reason = reason
+        })
+        warn("โ ๏ธ Suspicious script detected and blocked from: " .. url)
+        warn("Reason: " .. reason)
+    end,
+
+    QuarantineScript = function(self, url, content)
+        if not isfolder(self.QuarantineFolder) then
+            makefolder(self.QuarantineFolder)
+        end
+        local fileName = self.QuarantineFolder .. "/" .. game:GetService("HttpService"):GenerateGUID(false) .. ".lua"
+        writefile(fileName, content)
+        print("๐”’ Suspicious script quarantined: " .. fileName)
+    end,
+
+    ScanWorkspace = function(self)
+        print("๐” Scanning workspace for suspicious scripts...")
+        local suspiciousCount = 0
+        local function scanInstance(instance)
+            if instance:IsA("LuaSourceContainer") then
+                local source = instance.Source
+                local isSuspicious, reason = SafeCall.IsSuspicious(source)
+                if isSuspicious then
+                    suspiciousCount = suspiciousCount + 1
+                    warn("โ ๏ธ Suspicious script found in workspace: " .. instance:GetFullName())
+                    warn("Reason: " .. reason)
+                    -- Optionally disable or remove the script
+                    -- instance.Disabled = true
+                    -- or instance:Destroy()
+                end
+            end
+            for _, child in ipairs(instance:GetChildren()) do
+                scanInstance(child)
+            end
+        end
+        scanInstance(game)
+        print("โ… Workspace scan completed. Found " .. suspiciousCount .. " suspicious scripts.")
+    end,
+
+    ScanAll = function(self)
+        print("๐” Scanning all instances, services, functions, variables, and numbers for suspicious content...")
+        local suspiciousCount = 0
+
+        local function scanTable(tbl)
+            for key, value in pairs(tbl) do
+                if type(value) == "string" then
+                    local isSuspicious, reason = SafeCall.IsSuspicious(value)
+                    if isSuspicious then
+                        suspiciousCount = suspiciousCount + 1
+                        warn("โ ๏ธ Suspicious content found in table key: " .. tostring(key))
+                        warn("Reason: " .. reason)
+                    end
+                elseif type(value) == "table" then
+                    scanTable(value)
+                end
+            end
+        end
+
+        local function scanInstance(instance)
+            if instance:IsA("LuaSourceContainer") then
+                local source = instance.Source
+                local isSuspicious, reason = SafeCall.IsSuspicious(source)
+                if isSuspicious then
+                    suspiciousCount = suspiciousCount + 1
+                    warn("โ ๏ธ Suspicious script found in instance: " .. instance:GetFullName())
+                    warn("Reason: " .. reason)
+                end
+            end
+            for _, child in ipairs(instance:GetChildren()) do
+                scanInstance(child)
+            end
+        end
+
+        local function scanService(service)
+            for _, instance in ipairs(service:GetChildren()) do
+                scanInstance(instance)
+            end
+        end
+
+        for _, service in ipairs(game:GetChildren()) do
+            scanService(service)
+        end
+
+        -- Scan global environment
+        scanTable(_G)
+
+        -- Scan workspace
+        scanInstance(game)
+
+        print("โ… Comprehensive scan completed. Found " .. suspiciousCount .. " suspicious items.")
+    end
+}
+
+SafeCall.GUI = {
+    ScreenGui = nil,
+    NotificationTemplate = nil,
+
+    Setup = function(self)
+        self.ScreenGui = Instance.new("ScreenGui")
+        self.ScreenGui.Name = "SafeCallNotifications"
+        self.ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+        self.NotificationTemplate = Instance.new("TextLabel")
+        self.NotificationTemplate.Size = UDim2.new(0, 300, 0, 50)
+        self.NotificationTemplate.Position = UDim2.new(1, -320, 1, -70)
+        self.NotificationTemplate.AnchorPoint = Vector2.new(0, 1)
+        self.NotificationTemplate.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        self.NotificationTemplate.TextColor3 = Color3.fromRGB(255, 255, 255)
+        self.NotificationTemplate.TextSize = 14
+        self.NotificationTemplate.Font = Enum.Font.SourceSansBold
+        self.NotificationTemplate.TextWrapped = true
+        self.NotificationTemplate.TextXAlignment = Enum.TextXAlignment.Left
+        self.NotificationTemplate.TextYAlignment = Enum.TextYAlignment.Top
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = self.NotificationTemplate
+
+        local padding = Instance.new("UIPadding")
+        padding.PaddingLeft = UDim.new(0, 10)
+        padding.PaddingRight = UDim.new(0, 10)
+        padding.PaddingTop = UDim.new(0, 5)
+        padding.PaddingBottom = UDim.new(0, 5)
+        padding.Parent = self.NotificationTemplate
+    end,
+
+    Notify = function(self, title, message, color)
+        local notification = self.NotificationTemplate:Clone()
+        notification.Text = title .. "\n" .. message
+        notification.BackgroundColor3 = color or Color3.fromRGB(40, 40, 40)
+        notification.Parent = self.ScreenGui
+
+        -- Animation
+        notification:TweenPosition(
+            UDim2.new(1, -320, 1, -70 - (#self.ScreenGui:GetChildren() - 1) * 60),
+            Enum.EasingDirection.Out,
+            Enum.EasingStyle.Quart,
+            0.5,
+            true
+        )
+
+        -- Auto-remove after 5 seconds
+        spawn(function()
+            wait(5)
+            notification:TweenPosition(
+                UDim2.new(1, 20, notification.Position.Y.Scale, notification.Position.Y.Offset),
+                Enum.EasingDirection.Out,
+                Enum.EasingStyle.Quart,
+                0.5,
+                true,
+                function()
+                    notification:Destroy()
+                end
+            )
+        end)
+    end
+}
+
+function SafeCall.IsSuspicious(scriptContent)
+    local suspiciousPatterns = {
+        "MarketplaceService",
+        "robux",
+        "DevProduct",
+        "ProductPurchase",
+        "PromptPurchase",
+        "GetRobuxBalance",
+        "PerformPurchase",
+        "RequestPurchase",
+        "httpservice",
+        "syn",
+        "http",
+        "request",
+        "getgenv",
+        "setclipboard",
+        "loadstring",
+        "getfenv",
+        "setfenv"
+    }
+
+    local lowercaseContent = scriptContent:lower()
+    for _, pattern in ipairs(suspiciousPatterns) do
+        if lowercaseContent:find(pattern:lower()) then
+            return true, "Suspicious pattern found: " .. pattern
+        end
+    end
+
+    if scriptContent:find("string%.char%(") or scriptContent:find("string%.byte%(") then
+        return true, "Potential obfuscation detected"
+    end
+
+    -- Check for base64 encoded content
+    if scriptContent:match("^[A-Za-z0-9+/]+={0,2}$") then
+        return true, "Potential base64 encoded content detected"
+    end
+
+    return false
+end
+
+function SafeCall.Execute(url, options)
+    assert(type(url) == "string" and url:match("^https?://"), SafeCall.Errors.InvalidURL)
+    options = type(options) == "table" and options or {}
+
+    local retryCount = options.RetryCount or SafeCall.Defaults.RetryCount
+    local retryDelay = options.RetryDelay or SafeCall.Defaults.RetryDelay
+
+    local function fetchAndCheckScript()
+        local success, content = pcall(game.HttpGet, game, url)
+        if not success then
+            SafeCall.GUI:Notify("Fetch Failed", SafeCall.Errors.FetchFailed .. ": " .. tostring(content), Color3.fromRGB(255, 100, 100))
+            return false, SafeCall.Errors.FetchFailed .. ": " .. tostring(content)
+        end
+
+        local isSuspicious, reason = SafeCall.IsSuspicious(content)
+        if isSuspicious then
+            SafeCall.AntiVirus:LogDetection(url, reason)
+            SafeCall.AntiVirus:QuarantineScript(url, content)
+            SafeCall.AntiVirus:ScanWorkspace()
+            SafeCall.GUI:Notify("Suspicious Content", SafeCall.Errors.Suspicious .. ": " .. reason, Color3.fromRGB(255, 165, 0))
+            return false, SafeCall.Errors.Suspicious .. ": " .. reason
+        end
+
+        return true, content
+    end
+
+    local function runScript(content)
+        local success, result = pcall(loadstring(content))
+        if not success then
+            SafeCall.GUI:Notify("Execution Failed", SafeCall.Errors.ExecutionFailed .. ": " .. tostring(result), Color3.fromRGB(255, 100, 100))
+            return false, SafeCall.Errors.ExecutionFailed .. ": " .. tostring(result)
+        end
+        return true, result
+    end
+
+    local function retry(attemptsLeft)
+        local fetchSuccess, fetchResult = fetchAndCheckScript()
+        if not fetchSuccess then
+            if attemptsLeft > 0 then
+                if options.OnRetry then 
+                    options.OnRetry(retryCount - attemptsLeft + 1, fetchResult)
+                end
+                SafeCall.GUI:Notify("Retrying", "Attempt " .. (retryCount - attemptsLeft + 1) .. " of " .. retryCount, Color3.fromRGB(255, 255, 100))
+                wait(retryDelay)
+                return retry(attemptsLeft - 1)
+            else
+                if options.OnError then options.OnError(fetchResult) end
+                return false, fetchResult
+            end
+        end
+
+        local runSuccess, runResult = runScript(fetchResult)
+        if runSuccess then
+            if options.OnSuccess then options.OnSuccess(runResult) end
+            SafeCall.GUI:Notify("Success", "Script executed successfully", Color3.fromRGB(100, 255, 100))
+            return true, runResult
+        elseif attemptsLeft > 0 then
+            if options.OnRetry then 
+                options.OnRetry(retryCount - attemptsLeft + 1, runResult)
+            end
+            SafeCall.GUI:Notify("Retrying", "Attempt " .. (retryCount - attemptsLeft + 1) .. " of " .. retryCount, Color3.fromRGB(255, 255, 100))
+            wait(retryDelay)
+            return retry(attemptsLeft - 1)
+        else
+            if options.OnError then options.OnError(runResult) end
+            return false, runResult
+        end
+    end
+
+    if options.ShouldAbort and options.ShouldAbort() then
+        SafeCall.GUI:Notify("Aborted", SafeCall.Errors.Aborted, Color3.fromRGB(255, 165, 0))
+        return false, SafeCall.Errors.Aborted
+    end
+
+    return retry(retryCount)
+end
+
+-- Initialize the GUI when the module loads
+SafeCall.GUI:Setup()
+
+-- Example usage
+local url = "https://example.com/script.lua"
+local options = {
+    RetryCount = 0,
+    RetryDelay = 5,
+    OnSuccess = function(result) print("Success:", result) end,
+    OnError = function(error) warn("Error:", error) end,
+    OnRetry = function(attempt, error) warn("Retry attempt:", attempt, "Error:", error) end,
+    ShouldAbort = function() return false end -- Example abort condition
+}
+
+local success, result = SafeCall.Execute(url, options)
+print(success and ("Final result: " .. tostring(result)) or ("Final failure: " .. tostring(result)))
+
+-- To scan all instances, services, functions, variables, and numbers
+SafeCall.AntiVirus:ScanAll()
+end) 
+
+Tab:CreateButton("Crosshair M",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/kn0a/Crosshair-M/main/Source.lua", true))()
+end) 
+
+Tab:CreateButton("Silex RAINBOW ESP",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/kn0a/Silex-Hub/main/rainbow.esp", true))()
+end) 
+
+Tab:CreateButton("Asset1",function()
+
+
+local ngui = Instance.new("ScreenGui")
+ngui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+
+local HubFrame = Instance.new("Frame")
+HubFrame.Size = UDim2.new(0.20, 0, 0.5, 0)
+HubFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+HubFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+HubFrame.BorderColor3 = Color3.fromRGB(20, 20, 20)
+HubFrame.BorderSizePixel = 1
+HubFrame.Active = true
+HubFrame.BackgroundTransparency = 0 
+HubFrame.Draggable = true
+HubFrame.Parent = ngui
+
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 5)
+UICorner.Parent = HubFrame
+
+
+local qs = Instance.new("TextLabel")
+qs.Size = UDim2.new(0.33, 0, 0.12, 0)
+qs.Position = UDim2.new(0.3, 0, 0.1, 0)
+qs.BackgroundColor3 = Color3.new(0, 0, 0)
+qs.BorderColor3 = Color3.new(0, 0, 0)
+qs.BorderSizePixel = 1
+qs.Text = "what one?"
+qs.BackgroundTransparency = 1
+qs.TextColor3 = Color3.fromRGB(255, 255, 255)
+qs.Font = Enum.Font.Code
+qs.Parent = HubFrame
+qs.TextScaled = true
+
+local n0taFE = Instance.new("TextButton")
+n0taFE.Size = UDim2.new(0.79, 0, 0.3, 0)
+n0taFE.Position = UDim2.new(0.1, 0, 0.33, 0)
+n0taFE.BackgroundColor3 = Color3.new(0, 0, 0)
+n0taFE.BorderColor3 = Color3.new(0, 0, 0)
+n0taFE.BorderSizePixel = 1
+n0taFE.Text = "n0ta FE"
+n0taFE.BackgroundTransparency = 0 
+n0taFE.TextColor3 = Color3.new(255, 255, 255)
+n0taFE.Font = Enum.Font.Code
+n0taFE.Parent = HubFrame
+n0taFE.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-n0ta-fe-v2-17324"))()
+end)
+
+local c1 = Instance.new("UICorner")
+c1.CornerRadius = UDim.new(0, 5)
+c1.Parent = n0taFE
+
+
+local ExeCHub = Instance.new("TextButton")
+ExeCHub.Size = UDim2.new(0.79, 0, 0.3, 0)
+ExeCHub.Position = UDim2.new(0.1, 0, 0.65, 0)
+ExeCHub.BackgroundColor3 = Color3.new(0, 0, 0)
+ExeCHub.BorderColor3 = Color3.new(0, 0, 0)
+ExeCHub.BorderSizePixel = 1
+ExeCHub.Text = "ExeCUrious Hub"
+ExeCHub.BackgroundTransparency = 0 
+ExeCHub.TextColor3 = Color3.new(255, 255, 255)
+ExeCHub.Font = Enum.Font.Code
+ExeCHub.Parent = HubFrame
+ExeCHub.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pedroluckygod/Yes/main/ExeCurious%20%5BScript%20Hub%5D"))()
+end)
+
+local c2 = Instance.new("UICorner")
+c2.CornerRadius = UDim.new(0, 5)
+c2.Parent = ExeCHub
+
+end) 
+
+Tab:CreateButton("n0ta execurious v2.2",function()
+
+local gui = Instance.new("ScreenGui")
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+ local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0.5, 0, 0.5, 0)
+Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.BorderColor3 = Color3.new(0, 0, 0)
+Frame.BorderSizePixel = 1
+Frame.Active = true
+Frame.BackgroundTransparency = 0 
+Frame.Draggable = true
+Frame.Parent = gui
+
+
+
+
+local Input = Instance.new("TextBox")
+Input.Size = UDim2.new(0.9, 0.9, 0.7, 0.0)
+Input.Position = UDim2.new(0.05, 0, 0.2, 0)
+Input.BackgroundColor3 = Color3.new(0, 0, 0)
+Input.BorderColor3 = Color3.new(0, 0, 0)
+Input.BorderSizePixel = 1
+Input.Text = "Text"
+Input.TextColor3 = Color3.new(255, 255, 255)
+Input.BackgroundTransparency = 0
+Input.Font = Enum.Font.Code
+Input.TextSize = 15
+Input.Parent = Frame
+
+local hellyea = Instance.new("UICorner")
+hellyea.CornerRadius = UDim.new(0, 5)
+hellyea.Parent = Frame
+
+
+
+local run = Instance.new("TextButton")
+run.Size = UDim2.new(0.27, 0, 0.09, 0)
+run.Position = UDim2.new(0.05, 0, 0.01, 0)
+run.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+run.BorderColor3 = Color3.fromRGB(255, 255, 255)
+run.BorderSizePixel = 1
+run.Text = "run"
+run.BackgroundTransparency = 0 
+run.TextColor3 = Color3.new(255, 255, 255)
+run.Font = Enum.Font.Code
+run.Parent = Frame
+run.MouseButton1Down:Connect(function()
+loadstring(Input.Text)()
+end)
+local runcorner = Instance.new("UICorner")
+runcorner.CornerRadius = UDim.new(0, 5)
+runcorner.Parent = run
+
+local clr = Instance.new("TextButton")
+clr.Size = UDim2.new(0.27, 0, 0.09, 0)
+clr.Position = UDim2.new(0.68, 0, 0.01, 0)
+clr.BackgroundColor3 = Color3.new(0, 0, 0)
+clr.BorderColor3 = Color3.new(0, 0, 0)
+clr.BorderSizePixel = 1
+clr.Text = "clear"
+clr.BackgroundTransparency = 0 
+clr.TextColor3 = Color3.new(255, 255, 255)
+clr.Font = Enum.Font.Code
+clr.Parent = Frame
+clr.MouseButton1Down:Connect(function()
+Input.Text = " "
+end)
+
+local runc = Instance.new("UICorner")
+runc.CornerRadius = UDim.new(0, 5)
+runc.Parent = clr
+
+
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 5)
+InputCorner.Parent = Input
+
+local HubbT = Instance.new("TextButton")
+HubbT.Size = UDim2.new(0.27, 0, 0.09, 0)
+HubbT.Position = UDim2.new(0.36, 0, 0.01, 0)
+HubbT.BackgroundColor3 = Color3.new(0, 0, 0)
+HubbT.BorderColor3 = Color3.new(0, 0, 0)
+HubbT.BorderSizePixel = 1
+HubbT.Text = "Hub"
+HubbT.BackgroundTransparency = 0 
+HubbT.TextColor3 = Color3.new(255, 255, 255)
+HubbT.Font = Enum.Font.Code
+HubbT.Parent = Frame
+HubbT.MouseButton1Down:Connect(function()
+ --[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+
+local ngui = Instance.new("ScreenGui")
+ngui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+
+local HubFrame = Instance.new("Frame")
+HubFrame.Size = UDim2.new(0.20, 0, 0.5, 0)
+HubFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+HubFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+HubFrame.BorderColor3 = Color3.fromRGB(20, 20, 20)
+HubFrame.BorderSizePixel = 1
+HubFrame.Active = true
+HubFrame.BackgroundTransparency = 0 
+HubFrame.Draggable = true
+HubFrame.Parent = ngui
+
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 5)
+UICorner.Parent = HubFrame
+
+
+local qs = Instance.new("TextLabel")
+qs.Size = UDim2.new(0.33, 0, 0.12, 0)
+qs.Position = UDim2.new(0.3, 0, 0.1, 0)
+qs.BackgroundColor3 = Color3.new(0, 0, 0)
+qs.BorderColor3 = Color3.new(0, 0, 0)
+qs.BorderSizePixel = 1
+qs.Text = "what one?"
+qs.BackgroundTransparency = 1
+qs.TextColor3 = Color3.fromRGB(255, 255, 255)
+qs.Font = Enum.Font.Code
+qs.Parent = HubFrame
+qs.TextScaled = true
+
+local n0taFE = Instance.new("TextButton")
+n0taFE.Size = UDim2.new(0.79, 0, 0.3, 0)
+n0taFE.Position = UDim2.new(0.1, 0, 0.33, 0)
+n0taFE.BackgroundColor3 = Color3.new(0, 0, 0)
+n0taFE.BorderColor3 = Color3.new(0, 0, 0)
+n0taFE.BorderSizePixel = 1
+n0taFE.Text = "n0ta FE"
+n0taFE.BackgroundTransparency = 0 
+n0taFE.TextColor3 = Color3.new(255, 255, 255)
+n0taFE.Font = Enum.Font.Code
+n0taFE.Parent = HubFrame
+n0taFE.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-n0ta-fe-v2-17324"))()
+end)
+
+local c1 = Instance.new("UICorner")
+c1.CornerRadius = UDim.new(0, 5)
+c1.Parent = n0taFE
+
+
+local ExeCHub = Instance.new("TextButton")
+ExeCHub.Size = UDim2.new(0.79, 0, 0.3, 0)
+ExeCHub.Position = UDim2.new(0.1, 0, 0.65, 0)
+ExeCHub.BackgroundColor3 = Color3.new(0, 0, 0)
+ExeCHub.BorderColor3 = Color3.new(0, 0, 0)
+ExeCHub.BorderSizePixel = 1
+ExeCHub.Text = "ExeCUrious Hub"
+ExeCHub.BackgroundTransparency = 0 
+ExeCHub.TextColor3 = Color3.new(255, 255, 255)
+ExeCHub.Font = Enum.Font.Code
+ExeCHub.Parent = HubFrame
+ExeCHub.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pedroluckygod/Yes/main/ExeCurious%20%5BScript%20Hub%5D"))()
+end)
+
+local c2 = Instance.new("UICorner")
+c2.CornerRadius = UDim.new(0, 5)
+c2.Parent = ExeCHub
+
+
+end)
+
+local HubC = Instance.new("UICorner")
+HubC.CornerRadius = UDim.new(0, 5)
+HubC.Parent = HubbT
+
+
+
+
+
+
+
+
+
+local an = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+local oc = Instance.new("TextButton")
+oc.Size = UDim2.new(0.3, 0, 0.2, 0)
+oc.Position = UDim2.new(0.5, 0, 0.5, 0)
+oc.BackgroundColor3 = Color3.new(0, 0, 0)
+oc.BorderColor3 = Color3.new(0, 0, 0)
+oc.BorderSizePixel = 1
+oc.Text = "ExECurious v2"
+oc.BackgroundTransparency = 0 
+oc.TextColor3 = Color3.new(255, 255, 255)
+oc.Font = Enum.Font.Code
+oc.Parent = an
+oc.Draggable = true
+oc.TextWrapped = true
+oc.MouseButton1Down:Connect(function()
+  gui.Enabled = not gui.Enabled
+end)
+
+local occorner = Instance.new("UICorner")
+occorner.CornerRadius = UDim.new(0, 5)
+occorner.Parent = oc
+
+
+
+
+
+
+end) 
+
+Tab:CreateButton("H3CK3GUI D3 3CHIPA CS 1 6",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HECKE0/CS-1.6/main/2024"))()
+end) 
+
+Tab:CreateButton("Optimized DEX",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HummingBird8/HummingRn/main/OptimizedDexForSolara.lua"))()
+end) 
+
+Tab:CreateButton("Teleport to NPC",function()
+
+local Instances = {
+	TeleportGui = Instance.new("ScreenGui"),
+	Element = Instance.new("ImageLabel"),
+	Title = Instance.new("TextLabel"),
+	ButtonContainer = Instance.new("Frame"),
+	Layout = Instance.new("UIListLayout"),
+	CancelButton = Instance.new("ImageButton"),
+	ButtonContent = Instance.new("Frame"),
+	ButtonMiddleContent = Instance.new("Frame"),
+	UIListLayout = Instance.new("UIListLayout"),
+	Text = Instance.new("TextLabel"),
+	ConfirmButton = Instance.new("ImageButton"),
+	ButtonContent_2 = Instance.new("Frame"),
+	ButtonMiddleContent_2 = Instance.new("Frame"),
+	UIListLayout_2 = Instance.new("UIListLayout"),
+	Text_2 = Instance.new("TextLabel"),
+	BodyTextContainer = Instance.new("Frame"),
+	Element_2 = Instance.new("Frame"),
+	Corner = Instance.new("UICorner"),
+	Container_3 = Instance.new("Frame"),
+	TextContainer_2 = Instance.new("Frame"),
+	UIPadding = Instance.new("UIPadding"),
+	TextBoxContainer = Instance.new("Frame"),
+	TextBox_2 = Instance.new("TextBox"),
+	Border = Instance.new("UIStroke"),
+	Padding_2 = Instance.new("UIPadding"),
+	Layout_4 = Instance.new("UIListLayout"),
+	UICorner = Instance.new("UICorner"),
+	Frame = Instance.new("Frame"),
+	UICorner_2 = Instance.new("UICorner"),
+	UIStroke = Instance.new("UIStroke"),
+};
+
+Instances.TeleportGui.Name = "TeleportGui";
+Instances.TeleportGui.Parent = game:GetService("CoreGui");
+
+Instances.Element.Name = "Element";
+Instances.Element.AnchorPoint = Vector2.new(0.5, 0.5);
+Instances.Element.ZIndex = 900;
+Instances.Element.Size = UDim2.new(0, 335, 0, 183);
+Instances.Element.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.Element.Position = UDim2.new(0.499349505, 0, 0.553721488, 0);
+Instances.Element.BackgroundColor3 = Color3.fromRGB(57, 59, 61);
+Instances.Element.ImageColor3 = Color3.fromRGB(57, 59, 61);
+Instances.Element.ScaleType = Enum.ScaleType.Slice;
+Instances.Element.ImageTransparency = 1;
+Instances.Element.ImageRectSize = Vector2.new(26, 26);
+Instances.Element.ImageRectOffset = Vector2.new(438, 364);
+Instances.Element.Image = "rbxassetid://14755017625";
+Instances.Element.SliceCenter = Rect.new(Vector2.new(8, 8), Vector2.new(9, 9));
+Instances.Element.Parent = Instances.TeleportGui;
+
+Instances.Title.Name = "Title";
+Instances.Title.ZIndex = 901;
+Instances.Title.Size = UDim2.new(1, 0, 0, 48);
+Instances.Title.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.Title.LayoutOrder = 1;
+Instances.Title.BackgroundTransparency = 1;
+Instances.Title.TextColor3 = Color3.fromRGB(255, 255, 255);
+Instances.Title.Text = "Npc Teleport Script";
+Instances.Title.TextSize = 24;
+Instances.Title.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+Instances.Title.Parent = Instances.Element;
+
+Instances.ButtonContainer.Name = "ButtonContainer";
+Instances.ButtonContainer.ZIndex = 901;
+Instances.ButtonContainer.Size = UDim2.new(1, 0, 0, 36);
+Instances.ButtonContainer.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.ButtonContainer.LayoutOrder = 5;
+Instances.ButtonContainer.BackgroundTransparency = 1;
+Instances.ButtonContainer.Parent = Instances.Element;
+
+Instances.Layout.Name = "Layout";
+Instances.Layout.Padding = UDim.new(0, 10);
+Instances.Layout.Parent = Instances.ButtonContainer;
+
+Instances.CancelButton.Name = "CancelButton";
+Instances.CancelButton.ZIndex = 901;
+Instances.CancelButton.Size = UDim2.new(0.483050853, 0, 1, 0);
+Instances.CancelButton.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.CancelButton.LayoutOrder = 1;
+Instances.CancelButton.BackgroundTransparency = 1;
+Instances.CancelButton.AutoButtonColor = false;
+Instances.CancelButton.ImageTransparency = 0.30000001192092896;
+Instances.CancelButton.ImageRectOffset = Vector2.new(466, 364);
+Instances.CancelButton.ImageRectSize = Vector2.new(26, 26);
+Instances.CancelButton.ScaleType = Enum.ScaleType.Slice;
+Instances.CancelButton.Image = "rbxassetid://14755017625";
+Instances.CancelButton.SliceCenter = Rect.new(Vector2.new(8, 8), Vector2.new(9, 9));
+Instances.CancelButton.Parent = Instances.ButtonContainer;
+
+Instances.ButtonContent.Name = "ButtonContent";
+Instances.ButtonContent.ZIndex = 901;
+Instances.ButtonContent.Size = UDim2.new(1, 0, 1, 0);
+Instances.ButtonContent.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.ButtonContent.BackgroundTransparency = 1;
+Instances.ButtonContent.Parent = Instances.CancelButton;
+
+Instances.ButtonMiddleContent.Name = "ButtonMiddleContent";
+Instances.ButtonMiddleContent.ZIndex = 901;
+Instances.ButtonMiddleContent.Size = UDim2.new(1, 0, 1, 0);
+Instances.ButtonMiddleContent.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.ButtonMiddleContent.BackgroundTransparency = 1;
+Instances.ButtonMiddleContent.Parent = Instances.ButtonContent;
+
+Instances.UIListLayout.Name = "UIListLayout";
+Instances.UIListLayout.Padding = UDim.new(0, 5);
+Instances.UIListLayout.Parent = Instances.ButtonMiddleContent;
+
+Instances.Text.Name = "Text";
+Instances.Text.ZIndex = 901;
+Instances.Text.Size = UDim2.new(0.414035082, 0, 0.555555582, 0);
+Instances.Text.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.Text.LayoutOrder = 2;
+Instances.Text.BackgroundTransparency = 1;
+Instances.Text.TextColor3 = Color3.fromRGB(255, 255, 255);
+Instances.Text.Text = "Teleport";
+Instances.Text.TextWrapped = true;
+Instances.Text.TextSize = 19;
+Instances.Text.TextTransparency = 0.30000001192092896;
+Instances.Text.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+Instances.Text.TextScaled = true;
+Instances.Text.Parent = Instances.ButtonMiddleContent;
+
+Instances.ConfirmButton.Name = "ConfirmButton";
+Instances.ConfirmButton.ZIndex = 901;
+Instances.ConfirmButton.Size = UDim2.new(0.5, -5, 1, 0);
+Instances.ConfirmButton.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.ConfirmButton.LayoutOrder = 2;
+Instances.ConfirmButton.BackgroundTransparency = 1;
+Instances.ConfirmButton.AutoButtonColor = false;
+Instances.ConfirmButton.ImageRectOffset = Vector2.new(438, 364);
+Instances.ConfirmButton.ImageRectSize = Vector2.new(26, 26);
+Instances.ConfirmButton.ScaleType = Enum.ScaleType.Slice;
+Instances.ConfirmButton.Image = "rbxassetid://14755017625";
+Instances.ConfirmButton.SliceCenter = Rect.new(Vector2.new(8, 8), Vector2.new(9, 9));
+Instances.ConfirmButton.Parent = Instances.ButtonContainer;
+
+Instances.ButtonContent_2.Name = "ButtonContent";
+Instances.ButtonContent_2.ZIndex = 901;
+Instances.ButtonContent_2.Size = UDim2.new(1, 0, 1, 0);
+Instances.ButtonContent_2.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.ButtonContent_2.BackgroundTransparency = 1;
+Instances.ButtonContent_2.Parent = Instances.ConfirmButton;
+
+Instances.ButtonMiddleContent_2.Name = "ButtonMiddleContent";
+Instances.ButtonMiddleContent_2.ZIndex = 901;
+Instances.ButtonMiddleContent_2.Size = UDim2.new(1, 0, 1, 0);
+Instances.ButtonMiddleContent_2.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.ButtonMiddleContent_2.BackgroundTransparency = 1;
+Instances.ButtonMiddleContent_2.Parent = Instances.ButtonContent_2;
+
+Instances.UIListLayout_2.Name = "UIListLayout";
+Instances.UIListLayout_2.Padding = UDim.new(0, 5);
+Instances.UIListLayout_2.Parent = Instances.ButtonMiddleContent_2;
+
+Instances.Text_2.Name = "Text";
+Instances.Text_2.ZIndex = 901;
+Instances.Text_2.Size = UDim2.new(0.547368407, 0, 0.555555582, 0);
+Instances.Text_2.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.Text_2.LayoutOrder = 2;
+Instances.Text_2.BackgroundTransparency = 1;
+Instances.Text_2.TextColor3 = Color3.fromRGB(57, 59, 61);
+Instances.Text_2.Text = "Close";
+Instances.Text_2.TextWrapped = true;
+Instances.Text_2.TextSize = 19;
+Instances.Text_2.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+Instances.Text_2.Parent = Instances.ButtonMiddleContent_2;
+
+Instances.BodyTextContainer.Name = "BodyTextContainer";
+Instances.BodyTextContainer.ZIndex = 901;
+Instances.BodyTextContainer.Size = UDim2.new(1, 0, 0, 78);
+Instances.BodyTextContainer.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.BodyTextContainer.LayoutOrder = 4;
+Instances.BodyTextContainer.BackgroundTransparency = 1;
+Instances.BodyTextContainer.Parent = Instances.Element;
+
+Instances.Element_2.Name = "Element";
+Instances.Element_2.AnchorPoint = Vector2.new(0.5, 0.5);
+Instances.Element_2.AutomaticSize = Enum.AutomaticSize.Y;
+Instances.Element_2.Size = UDim2.new(1, 0, 1, 0);
+Instances.Element_2.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.Element_2.BackgroundTransparency = 0.20000000298023224;
+Instances.Element_2.Position = UDim2.new(0.5, 0, 0.410256416, 0);
+Instances.Element_2.BackgroundColor3 = Color3.fromRGB(25, 27, 29);
+Instances.Element_2.Parent = Instances.BodyTextContainer;
+
+Instances.Corner.Name = "Corner";
+Instances.Corner.CornerRadius = UDim.new(0, 3);
+Instances.Corner.Parent = Instances.Element_2;
+
+Instances.Container_3.Name = "Container";
+Instances.Container_3.AutomaticSize = Enum.AutomaticSize.Y;
+Instances.Container_3.Size = UDim2.new(1, 0, 0.832823813, 0);
+Instances.Container_3.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.Container_3.BackgroundTransparency = 1;
+Instances.Container_3.Parent = Instances.Element_2;
+
+Instances.TextContainer_2.Name = "TextContainer";
+Instances.TextContainer_2.AutomaticSize = Enum.AutomaticSize.Y;
+Instances.TextContainer_2.Size = UDim2.new(1, 0, 1, 0);
+Instances.TextContainer_2.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.TextContainer_2.BackgroundTransparency = 1;
+Instances.TextContainer_2.Parent = Instances.Container_3;
+
+Instances.UIPadding.Name = "UIPadding";
+Instances.UIPadding.PaddingBottom = UDim.new(0, 10);
+Instances.UIPadding.PaddingTop = UDim.new(0, 10);
+Instances.UIPadding.PaddingLeft = UDim.new(0, 10);
+Instances.UIPadding.PaddingRight = UDim.new(0, 10);
+Instances.UIPadding.Parent = Instances.TextContainer_2;
+
+Instances.TextBoxContainer.Name = "TextBoxContainer";
+Instances.TextBoxContainer.AnchorPoint = Vector2.new(1, 0);
+Instances.TextBoxContainer.AutomaticSize = Enum.AutomaticSize.Y;
+Instances.TextBoxContainer.Size = UDim2.new(1, 0, 0, 0);
+Instances.TextBoxContainer.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.TextBoxContainer.ClipsDescendants = true;
+Instances.TextBoxContainer.BackgroundTransparency = 1;
+Instances.TextBoxContainer.Position = UDim2.new(1, 0, 0, 0);
+Instances.TextBoxContainer.Parent = Instances.TextContainer_2;
+
+Instances.TextBox_2.Name = "TextBox";
+Instances.TextBox_2.AutomaticSize = Enum.AutomaticSize.XY;
+Instances.TextBox_2.Size = UDim2.new(1, 0, 4.64001846, 0);
+Instances.TextBox_2.BorderColor3 = Color3.fromRGB(27, 42, 53);
+Instances.TextBox_2.BackgroundTransparency = 1;
+Instances.TextBox_2.CursorPosition = -1;
+Instances.TextBox_2.TextStrokeTransparency = 0.5;
+Instances.TextBox_2.PlaceholderColor3 = Color3.fromRGB(178, 178, 178);
+Instances.TextBox_2.PlaceholderText = "Npc name here";
+Instances.TextBox_2.TextSize = 14;
+Instances.TextBox_2.TextColor3 = Color3.fromRGB(255, 255, 255);
+Instances.TextBox_2.TextYAlignment = Enum.TextYAlignment.Top;
+Instances.TextBox_2.Text = "";
+Instances.TextBox_2.TextWrapped = true;
+Instances.TextBox_2.TextTransparency = 0.5;
+Instances.TextBox_2.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal);
+Instances.TextBox_2.TextXAlignment = Enum.TextXAlignment.Left;
+Instances.TextBox_2.ClearTextOnFocus = false;
+Instances.TextBox_2.Parent = Instances.TextBoxContainer;
+
+Instances.Border.Name = "Border";
+Instances.Border.ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
+Instances.Border.Color = Color3.fromRGB(255, 255, 255);
+Instances.Border.Transparency = 0.800000011920929;
+Instances.Border.Parent = Instances.Element_2;
+
+Instances.Padding_2.Name = "Padding";
+Instances.Padding_2.PaddingBottom = UDim.new(0, 20);
+Instances.Padding_2.PaddingLeft = UDim.new(0, 20);
+Instances.Padding_2.PaddingRight = UDim.new(0, 20);
+Instances.Padding_2.Parent = Instances.Element;
+
+Instances.Layout_4.Name = "Layout";
+Instances.Layout_4.Parent = Instances.Element;
+
+Instances.UICorner.Name = "UICorner";
+Instances.UICorner.CornerRadius = UDim.new(0, 12);
+Instances.UICorner.Parent = Instances.Element;
+
+Instances.Frame.Name = "Frame";
+Instances.Frame.Size = UDim2.new(0.0170587339, 0, 0.0335570462, 0);
+Instances.Frame.Visible = false;
+Instances.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0);
+Instances.Frame.Position = UDim2.new(0.373109639, 0, 0.324832201, 0);
+Instances.Frame.BorderSizePixel = 0;
+Instances.Frame.BackgroundColor3 = Color3.fromRGB(255, 64, 67);
+Instances.Frame.Parent = Instances.TeleportGui;
+
+Instances.UICorner_2.Name = "UICorner";
+Instances.UICorner_2.CornerRadius = UDim.new(50, 0);
+Instances.UICorner_2.Parent = Instances.Frame;
+
+Instances.UIStroke.Name = "UIStroke";
+Instances.UIStroke.Transparency = 0.5;
+Instances.UIStroke.Parent = Instances.Frame;
+
+-- Function "Drag"
+task.spawn(function()
+	local script = Instance.new("LocalScript", Instances.Element);
+	local UserInputService = game:GetService("UserInputService")
+	
+	local gui = script.Parent
+	
+	local dragging
+	local dragInput
+	local dragStart
+	local startPos
+	
+	local function update(input)
+		local delta = input.Position - dragStart
+		gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+	
+	gui.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = gui.Position
+			
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	gui.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+end);
+
+-- Function "LocalScript"
+task.spawn(function()
+	local script = Instance.new("LocalScript", Instances.TeleportGui);
+	local Gui = script.Parent
+	local UIS = game:GetService("UserInputService")
+	local guiMode = true
+	local fastTpMode = false
+	local fastWhileMode = false
+	local PlayerTextBox = script.Parent.Element.BodyTextContainer.Element.Container.TextContainer.TextBoxContainer.TextBox
+	local ExitGuiButton = script.Parent.Element.ButtonContainer.ConfirmButton
+	local FastTeleportButton = script.Parent.Element.ButtonContainer.CancelButton
+	local circle = script.Parent.Frame
+	UIS.InputBegan:Connect(function(UserInput)
+		if UserInput.UserInputType == Enum.UserInputType.Keyboard and UserInput.KeyCode == Enum.KeyCode.Insert then
+			guiMode = not guiMode
+			Gui.Enabled = guiMode
+		end
+	end)
+	ExitGuiButton.MouseButton1Click:Connect(function()
+		Gui:Destroy()
+	end)
+	FastTeleportButton.MouseButton1Click:Connect(function()
+		if fastTpMode then
+			circle.BackgroundColor3 = Color3.fromRGB(255, 64, 67)
+			fastTpMode = false
+			fastWhileMode = false
+		else
+			circle.BackgroundColor3 = Color3.fromRGB(67, 255, 67)
+			fastTpMode = true
+			fastWhileMode = true
+			while fastWhileMode do
+				wait()
+				local plText = PlayerTextBox.Text
+				local pl1 = game.Players.LocalPlayer.Character
+				local pl2
+				local FF = false
+				local FN -- fuck nigga
+				for _, v in ipairs(game.Workspace:GetChildren()) do
+					if v:IsA("Folder") then
+						pl2 = v:FindFirstChild(plText)
+						if pl2 then
+							FN = v.Name
+							FF = true
+							break
+						end
+					end
+				end
+				if not FF then
+					pl2 = game.Workspace:FindFirstChild(plText)
+					pl1.HumanoidRootPart.CFrame = pl2.HumanoidRootPart.CFrame
+					pl2.HumanoidRootPart.CanCollide = false
+					pl2.HumanoidRootPart.Size = Vector3.new(9, 9, 9)
+					pl2.HumanoidRootPart.Transparency = 0.7
+				end
+	
+				if FF then
+					pl2 = game.Workspace[FN]:FindFirstChild(plText)
+					pl1.HumanoidRootPart.CFrame = pl2.HumanoidRootPart.CFrame
+					pl2.HumanoidRootPart.CanCollide = false
+					pl2.HumanoidRootPart.Size = Vector3.new(9, 9, 9)
+					pl2.HumanoidRootPart.Transparency = 0.7
+				end
+			end
+		end
+	end)
+	
+end);
+end) 
+
+Tab:CreateButton("Genesis Loader",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Robloxexploiter691/Genesisloader/main/Script.lua"))()
+end) 
+
+Tab:CreateButton("Froggy",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FroggySoftworks/Froggy/main/Universal"))()
+end) 
+
+Tab:CreateButton("Vernox",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vernox-Loader/Universal-Loader/main/Loader"))()
+end) 
+
+Tab:CreateButton("cmdmain",function()
+
+end) 
+
+Tab:CreateButton("Esp Rainbow (Key E",function()
+local lpr = game.Players.LocalPlayer
+local camera = game:GetService("Workspace").CurrentCamera
+local worldToViewportPoint = camera.WorldToViewportPoint
+local userInputService = game:GetService("UserInputService")
+
+local teamCheckActive = false
+local toggleKey = Enum.KeyCode.E -- Touche pour basculer le contrôle d'équipe
+
+local function rainbowColor(frequency)
+    local r = math.floor(math.sin(frequency + 0) * 127 + 128)
+    local g = math.floor(math.sin(frequency + 2) * 127 + 128)
+    local b = math.floor(math.sin(frequency + 4) * 127 + 128)
+    return Color3.fromRGB(r, g, b)
+end
+
+local playerTracers = {}
+local playerInfoTexts = {}
+local playerHitboxes = {}
+
+local function createBillboardGui(player)
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Size = UDim2.new(0, 200, 0, 75)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    billboardGui.AlwaysOnTop = true
+
+    local nameLabel = Instance.new("TextLabel", billboardGui)
+    nameLabel.Size = UDim2.new(1, 0, 0.33, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.TextColor3 = rainbowColor(0)
+    nameLabel.TextStrokeTransparency = 0
+    nameLabel.TextSize = 14
+    nameLabel.Text = player.Name
+
+    local distanceLabel = Instance.new("TextLabel", billboardGui)
+    distanceLabel.Position = UDim2.new(0, 0, 0.33, 0)
+    distanceLabel.Size = UDim2.new(1, 0, 0.33, 0)
+    distanceLabel.BackgroundTransparency = 1
+    distanceLabel.TextColor3 = rainbowColor(0)
+    distanceLabel.TextStrokeTransparency = 0
+    distanceLabel.TextSize = 14
+
+    local healthLabel = Instance.new("TextLabel", billboardGui)
+    healthLabel.Position = UDim2.new(0, 0, 0.66, 0)
+    healthLabel.Size = UDim2.new(1, 0, 0.33, 0)
+    healthLabel.BackgroundTransparency = 1
+    healthLabel.TextColor3 = rainbowColor(0)
+    healthLabel.TextStrokeTransparency = 0
+    healthLabel.TextSize = 14
+
+    return billboardGui, nameLabel, distanceLabel, healthLabel
+end
+
+local function updatePlayerInfo(player, distanceLabel, healthLabel, time)
+    local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+    if rootPart then
+        local distance = (rootPart.Position - lpr.Character.HumanoidRootPart.Position).magnitude
+        distanceLabel.Text = string.format("Distance : %.2f", distance)
+        distanceLabel.TextColor3 = rainbowColor(time + player.UserId)
+    end
+
+    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        local health = humanoid.Health
+        healthLabel.Text = string.format("Santé : %.0f", health)
+        healthLabel.TextColor3 = rainbowColor(time + player.UserId)
+    end
+end
+
+local function createHitbox()
+    local hitbox = Drawing.new("Square")
+    hitbox.Thickness = 2
+    hitbox.Transparency = 1
+    return hitbox
+end
+
+local function update()
+    local time = tick()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= lpr and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+            local head = player.Character:FindFirstChild("Head")
+            local screenPos, onScreen = worldToViewportPoint(camera, rootPart.Position)
+            local headPos, headOnScreen = worldToViewportPoint(camera, head.Position)
+
+            if teamCheckActive and player.Team == lpr.Team then
+                if playerTracers[player] then playerTracers[player].Visible = false end
+                if playerInfoTexts[player] then playerInfoTexts[player].gui.Enabled = false end
+                if playerHitboxes[player] then playerHitboxes[player].Visible = false end
+            else
+                if not playerTracers[player] then
+                    playerTracers[player] = Drawing.new("Line")
+                end
+                if not playerInfoTexts[player] then
+                    local billboardGui, nameLabel, distanceLabel, healthLabel = createBillboardGui(player)
+                    billboardGui.Parent = player.Character:WaitForChild("HumanoidRootPart")
+                    playerInfoTexts[player] = { gui = billboardGui, name = nameLabel, distance = distanceLabel, health = healthLabel }
+                end
+                if not playerHitboxes[player] then
+                    playerHitboxes[player] = createHitbox()
+                end
+
+                local tracer = playerTracers[player]
+                local billboardGui = playerInfoTexts[player].gui
+                local distanceLabel = playerInfoTexts[player].distance
+                local healthLabel = playerInfoTexts[player].health
+                local hitbox = playerHitboxes[player]
+
+                if onScreen then
+                    tracer.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y)
+                    tracer.To = Vector2.new(screenPos.X, screenPos.Y)
+                    tracer.Color = rainbowColor(time + player.UserId)
+                    tracer.Thickness = 2
+                    tracer.Transparency = 1
+                    tracer.Visible = true
+
+                    if headOnScreen then
+                        updatePlayerInfo(player, distanceLabel, healthLabel, time)
+                        billboardGui.Enabled = true
+                        billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+                        local nameLabel = playerInfoTexts[player].name
+                        nameLabel.TextColor3 = rainbowColor(time + player.UserId)
+
+                        local hitboxSize = (headPos - screenPos).magnitude * 2
+                        hitbox.Size = Vector2.new(hitboxSize, hitboxSize * 2.5)
+                        hitbox.Position = Vector2.new(screenPos.X - hitboxSize / 2, screenPos.Y - hitboxSize * 1.25)
+                        hitbox.Color = rainbowColor(time + player.UserId)
+                        hitbox.Visible = true
+                    else
+                        billboardGui.Enabled = false
+                        hitbox.Visible = false
+                    end
+                else
+                    tracer.Visible = false
+                    billboardGui.Enabled = false
+                    hitbox.Visible = false
+                end
+            end
+        else
+            if playerTracers[player] then playerTracers[player].Visible = false end
+            if playerInfoTexts[player] then playerInfoTexts[player].gui.Enabled = false end
+            if playerHitboxes[player] then playerHitboxes[player].Visible = false end
+        end
+    end
+end
+
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(function(character)
+        wait(1) -- Attendre que le personnage se charge
+        if playerTracers[player] then playerTracers[player]:Remove() playerTracers[player] = nil end
+        if playerInfoTexts[player] then playerInfoTexts[player].gui:Destroy() playerInfoTexts[player] = nil end
+        if playerHitboxes[player] then playerHitboxes[player]:Remove() playerHitboxes[player] = nil end
+        update()
+    end)
+end
+
+game.Players.PlayerAdded:Connect(onPlayerAdded)
+
+game:GetService("RunService").RenderStepped:Connect(update)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    if playerTracers[player] then playerTracers[player]:Remove() playerTracers[player] = nil end
+    if playerInfoTexts[player] then playerInfoTexts[player].gui:Destroy() playerInfoTexts[player] = nil end
+    if playerHitboxes[player] then playerHitboxes[player]:Remove() playerHitboxes[player] = nil end
+end)
+
+for _, player in pairs(game.Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == toggleKey then
+        teamCheckActive = not teamCheckActive
+    end
+end)
+
+game:GetService("StarterGui"):SetCore("SendNotification",{
+  Title = "ESP Script", 
+  Text = "Script Executed", 
+  Icon = "rbxassetid://18940322843",
+  Duration = 15
+})
+
+-- Code pour le Bruit de ouverture du Gui...
+
+task.spawn(function()
+  local beep = Instance.new("Sound");
+  beep.Volume = 1; -- de 0 à 1, vous pouvez en faire plus mais ce sera bruyant
+  beep.SoundId = "rbxassetid://6042053626";
+  beep.Parent = game:GetService("CoreGui");
+  beep:Play();
+  beep.Ended:Wait();
+  beep:Destroy();
+end)
+
+
+wait(2)
+
+game:GetService("StarterGui"):SetCore("SendNotification",{
+  Title = "Version V6", 
+  Text = "ESP V6 Loaded", 
+  Icon = "rbxassetid://18940557702",
+  Duration = 15
+})
+
+-- Code pour le Bruit de ouverture du Gui...
+
+task.spawn(function()
+  local beep = Instance.new("Sound");
+  beep.Volume = 1; -- de 0 à 1, vous pouvez en faire plus mais ce sera bruyant
+  beep.SoundId = "rbxassetid://6042053626";
+  beep.Parent = game:GetService("CoreGui");
+  beep:Play();
+  beep.Ended:Wait();
+  beep:Destroy();
+end)
+
+
+-- Notification pour contacter en cas de problème avec le script.
+loadstring(game:HttpGet("https://pastebin.com/raw/3fnaqNVR"))()
+end) 
+
+Tab:CreateButton("Fe GRUPO",function()
+local ScreenGui = Instance.new("ScreenGui")
+local main = Instance.new("Frame")
+local label = Instance.new("TextLabel")
+local Hitbox = Instance.new("TextButton")
+local SkyButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui
+
+main.Name = "main"
+main.Parent = ScreenGui
+main.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+main.Position = UDim2.new(0.40427351, 0, 0.34591195, 0)
+main.Size = UDim2.new(0, 115, 0, 100) -- Increased height to accommodate the new button
+main.Active = true
+main.Draggable = true
+
+label.Name = "label"
+label.Parent = main
+label.BackgroundColor3 = Color3.fromRGB(139,0,0)
+label.Size = UDim2.new(0, 114, 0, 20)
+label.Font = Enum.Font.SourceSans
+label.Text = "Fe GRUPO"
+label.TextColor3 = Color3.fromRGB(0, 0, 0)
+label.TextScaled = true
+label.TextSize = 4.000
+label.TextWrapped = true
+
+Hitbox.Name = "Hit box"
+Hitbox.Parent = main
+Hitbox.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+Hitbox.Position = UDim2.new(0.114285722, 0, 0.372448981, 0)
+Hitbox.Size = UDim2.new(0, 90, 0, 40)
+Hitbox.Font = Enum.Font.SourceSans
+Hitbox.Text = "RC7"
+Hitbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+Hitbox.TextSize = 15.000
+Hitbox.MouseButton1Down:Connect(function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/5bNDes7i"))()
+end)
+
+SkyButton.Name = "Pantalla en el cielo"
+SkyButton.Parent = main
+SkyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Green color
+SkyButton.Position = UDim2.new(0.114285722, 0, 0.572448981, 0)
+SkyButton.Size = UDim2.new(0, 90, 0, 30)
+SkyButton.Font = Enum.Font.SourceSans
+SkyButton.Text = "Pantalla en el cielo"
+SkyButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+SkyButton.TextSize = 14.000
+SkyButton.MouseButton1Down:Connect(function()
+    -- Tu cรณdigo para cambiar el cielo aquรญ
+    local sound = Instance.new("Sound", workspace)
+    sound.Name = "Noooooooooooooooot noooooooooooooooooooooooot"
+    sound.SoundId = "rbxassetid://6129291390"
+    sound:Play()
+    sound.Looped = true
+    repeat
+        wait(0.01)
+    until sound.IsLoaded == true
+    wait(13)
+
+    local de = Instance.new("DistortionSoundEffect", sound)
+    de.Level = 0.8
+
+    local lighting = game:GetService("Lighting")
+    local sky = Instance.new("Sky", lighting)
+    sky.SkyboxBk = "rbxassetid://17294509169"
+    sky.SkyboxFt = "rbxassetid://17294509169"
+    sky.SkyboxLf = "rbxassetid://17294509169"
+    sky.SkyboxRt = "rbxassetid://17294509169"
+    sky.SkyboxUp = "rbxassetid://17294509169"
+end)
+end) 
+
+Tab:CreateButton("blue esp",function()
+local Workspace, RunService, Players, CoreGui, Lighting = cloneref(game:GetService("Workspace")), cloneref(game:GetService("RunService")), cloneref(game:GetService("Players")), game:GetService("CoreGui"), cloneref(game:GetService("Lighting"))
+
+local ESP = {
+    Enabled = true,
+    TeamCheck = true,
+    MaxDistance = 200,
+    FontSize = 11,
+    FadeOut = {
+        OnDistance = true,
+        OnDeath = false,
+        OnLeave = false,
+    },
+    Options = { 
+        Teamcheck = false, TeamcheckRGB = Color3.fromRGB(0, 255, 0),
+        Friendcheck = true, FriendcheckRGB = Color3.fromRGB(0, 255, 0),
+        Highlight = false, HighlightRGB = Color3.fromRGB(255, 0, 0),
+    },
+    Drawing = {
+        Chams = {
+            Enabled  = true,
+            Thermal = true,
+            FillRGB = Color3.fromRGB(119, 120, 255),
+            Fill_Transparency = 100,
+            OutlineRGB = Color3.fromRGB(119, 120, 255),
+            Outline_Transparency = 100,
+            VisibleCheck = true,
+        },
+        Names = {
+            Enabled = true,
+            RGB = Color3.fromRGB(255, 255, 255),
+        },
+        Flags = {
+            Enabled = true,
+        },
+        Distances = {
+            Enabled = true, 
+            Position = "Text",
+            RGB = Color3.fromRGB(255, 255, 255),
+        },
+        Weapons = {
+            Enabled = true, WeaponTextRGB = Color3.fromRGB(119, 120, 255),
+            Outlined = false,
+            Gradient = false,
+            GradientRGB1 = Color3.fromRGB(255, 255, 255), GradientRGB2 = Color3.fromRGB(119, 120, 255),
+        },
+        Healthbar = {
+            Enabled = true,  
+            HealthText = true, Lerp = false, HealthTextRGB = Color3.fromRGB(119, 120, 255),
+            Width = 2.5,
+            Gradient = true, GradientRGB1 = Color3.fromRGB(200, 0, 0), GradientRGB2 = Color3.fromRGB(60, 60, 125), GradientRGB3 = Color3.fromRGB(119, 120, 255), 
+        },
+        Boxes = {
+            Animate = true,
+            RotationSpeed = 300,
+            Gradient = false, GradientRGB1 = Color3.fromRGB(119, 120, 255), GradientRGB2 = Color3.fromRGB(0, 0, 0), 
+            GradientFill = true, GradientFillRGB1 = Color3.fromRGB(119, 120, 255), GradientFillRGB2 = Color3.fromRGB(0, 0, 0), 
+            Filled = {
+                Enabled = true,
+                Transparency = 0.75,
+                RGB = Color3.fromRGB(0, 0, 0),
+            },
+            Full = {
+                Enabled = true,
+                RGB = Color3.fromRGB(255, 255, 255),
+            },
+            Corner = {
+                Enabled = true,
+                RGB = Color3.fromRGB(255, 255, 255),
+            },
+        };
+    };
+    Connections = {
+        RunService = RunService;
+    };
+    Fonts = {};
+}
+
+-- Def & Vars
+local Euphoria = ESP.Connections;
+local lplayer = Players.LocalPlayer;
+local camera = game.Workspace.CurrentCamera;
+local Cam = Workspace.CurrentCamera;
+local RotationAngle, Tick = -45, tick();
+
+-- Weapon Images
+local Weapon_Icons = {
+    ["Wooden Bow"] = "http://www.roblox.com/asset/?id=17677465400",
+    ["Crossbow"] = "http://www.roblox.com/asset/?id=17677473017",
+    ["Salvaged SMG"] = "http://www.roblox.com/asset/?id=17677463033",
+    ["Salvaged AK47"] = "http://www.roblox.com/asset/?id=17677455113",
+    ["Salvaged AK74u"] = "http://www.roblox.com/asset/?id=17677442346",
+    ["Salvaged M14"] = "http://www.roblox.com/asset/?id=17677444642",
+    ["Salvaged Python"] = "http://www.roblox.com/asset/?id=17677451737",
+    ["Military PKM"] = "http://www.roblox.com/asset/?id=17677449448",
+    ["Military M4A1"] = "http://www.roblox.com/asset/?id=17677479536",
+    ["Bruno's M4A1"] = "http://www.roblox.com/asset/?id=17677471185",
+    ["Military Barrett"] = "http://www.roblox.com/asset/?id=17677482998",
+    ["Salvaged Skorpion"] = "http://www.roblox.com/asset/?id=17677459658",
+    ["Salvaged Pump Action"] = "http://www.roblox.com/asset/?id=17677457186",
+    ["Military AA12"] = "http://www.roblox.com/asset/?id=17677475227",
+    ["Salvaged Break Action"] = "http://www.roblox.com/asset/?id=17677468751",
+    ["Salvaged Pipe Rifle"] = "http://www.roblox.com/asset/?id=17677468751",
+    ["Salvaged P250"] = "http://www.roblox.com/asset/?id=17677447257",
+    ["Nail Gun"] = "http://www.roblox.com/asset/?id=17677484756"
+};
+
+-- Functions
+local Functions = {}
+do
+    function Functions:Create(Class, Properties)
+        local _Instance = typeof(Class) == 'string' and Instance.new(Class) or Class
+        for Property, Value in pairs(Properties) do
+            _Instance[Property] = Value
+        end
+        return _Instance;
+    end
+    --
+    function Functions:FadeOutOnDist(element, distance)
+        local transparency = math.max(0.1, 1 - (distance / ESP.MaxDistance))
+        if element:IsA("TextLabel") then
+            element.TextTransparency = 1 - transparency
+        elseif element:IsA("ImageLabel") then
+            element.ImageTransparency = 1 - transparency
+        elseif element:IsA("UIStroke") then
+            element.Transparency = 1 - transparency
+        elseif element:IsA("Frame") and (element == Healthbar or element == BehindHealthbar) then
+            element.BackgroundTransparency = 1 - transparency
+        elseif element:IsA("Frame") then
+            element.BackgroundTransparency = 1 - transparency
+        elseif element:IsA("Highlight") then
+            element.FillTransparency = 1 - transparency
+            element.OutlineTransparency = 1 - transparency
+        end;
+    end;  
+end;
+
+do -- Initalize
+    local ScreenGui = Functions:Create("ScreenGui", {
+        Parent = CoreGui,
+        Name = "ESPHolder",
+    });
+
+    local DupeCheck = function(plr)
+        if ScreenGui:FindFirstChild(plr.Name) then
+            ScreenGui[plr.Name]:Destroy()
+        end
+    end
+
+    local ESP = function(plr)
+        coroutine.wrap(DupeCheck)(plr) -- Dupecheck
+        local Name = Functions:Create("TextLabel", {Parent = ScreenGui, Position = UDim2.new(0.5, 0, 0, -11), Size = UDim2.new(0, 100, 0, 20), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0), RichText = true})
+        local Distance = Functions:Create("TextLabel", {Parent = ScreenGui, Position = UDim2.new(0.5, 0, 0, 11), Size = UDim2.new(0, 100, 0, 20), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0), RichText = true})
+        local Weapon = Functions:Create("TextLabel", {Parent = ScreenGui, Position = UDim2.new(0.5, 0, 0, 31), Size = UDim2.new(0, 100, 0, 20), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0), RichText = true})
+        local Box = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 0.75, BorderSizePixel = 0})
+        local Gradient1 = Functions:Create("UIGradient", {Parent = Box, Enabled = ESP.Drawing.Boxes.GradientFill, Color = ColorSequence.new{ColorSequenceKeypoint.new(0, ESP.Drawing.Boxes.GradientFillRGB1), ColorSequenceKeypoint.new(1, ESP.Drawing.Boxes.GradientFillRGB2)}})
+        local Outline = Functions:Create("UIStroke", {Parent = Box, Enabled = ESP.Drawing.Boxes.Gradient, Transparency = 0, Color = Color3.fromRGB(255, 255, 255), LineJoinMode = Enum.LineJoinMode.Miter})
+        local Gradient2 = Functions:Create("UIGradient", {Parent = Outline, Enabled = ESP.Drawing.Boxes.Gradient, Color = ColorSequence.new{ColorSequenceKeypoint.new(0, ESP.Drawing.Boxes.GradientRGB1), ColorSequenceKeypoint.new(1, ESP.Drawing.Boxes.GradientRGB2)}})
+        local Healthbar = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = Color3.fromRGB(255, 255, 255), BackgroundTransparency = 0})
+        local BehindHealthbar = Functions:Create("Frame", {Parent = ScreenGui, ZIndex = -1, BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 0})
+        local HealthbarGradient = Functions:Create("UIGradient", {Parent = Healthbar, Enabled = ESP.Drawing.Healthbar.Gradient, Rotation = -90, Color = ColorSequence.new{ColorSequenceKeypoint.new(0, ESP.Drawing.Healthbar.GradientRGB1), ColorSequenceKeypoint.new(0.5, ESP.Drawing.Healthbar.GradientRGB2), ColorSequenceKeypoint.new(1, ESP.Drawing.Healthbar.GradientRGB3)}})
+        local HealthText = Functions:Create("TextLabel", {Parent = ScreenGui, Position = UDim2.new(0.5, 0, 0, 31), Size = UDim2.new(0, 100, 0, 20), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0)})
+        local Chams = Functions:Create("Highlight", {Parent = ScreenGui, FillTransparency = 1, OutlineTransparency = 0, OutlineColor = Color3.fromRGB(119, 120, 255), DepthMode = "AlwaysOnTop"})
+        local WeaponIcon = Functions:Create("ImageLabel", {Parent = ScreenGui, BackgroundTransparency = 1, BorderColor3 = Color3.fromRGB(0, 0, 0), BorderSizePixel = 0, Size = UDim2.new(0, 40, 0, 40)})
+        local Gradient3 = Functions:Create("UIGradient", {Parent = WeaponIcon, Rotation = -90, Enabled = ESP.Drawing.Weapons.Gradient, Color = ColorSequence.new{ColorSequenceKeypoint.new(0, ESP.Drawing.Weapons.GradientRGB1), ColorSequenceKeypoint.new(1, ESP.Drawing.Weapons.GradientRGB2)}})
+        local LeftTop = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local LeftSide = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local RightTop = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local RightSide = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local BottomSide = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local BottomDown = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local BottomRightSide = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local BottomRightDown = Functions:Create("Frame", {Parent = ScreenGui, BackgroundColor3 = ESP.Drawing.Boxes.Corner.RGB, Position = UDim2.new(0, 0, 0, 0)})
+        local Flag1 = Functions:Create("TextLabel", {Parent = ScreenGui, Position = UDim2.new(1, 0, 0, 0), Size = UDim2.new(0, 100, 0, 20), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0)})
+        local Flag2 = Functions:Create("TextLabel", {Parent = ScreenGui, Position = UDim2.new(1, 0, 0, 0), Size = UDim2.new(0, 100, 0, 20), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0)})
+        --local DroppedItems = Functions:Create("TextLabel", {Parent = ScreenGui, AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.fromRGB(255, 255, 255), Font = Enum.Font.Code, TextSize = ESP.FontSize, TextStrokeTransparency = 0, TextStrokeColor3 = Color3.fromRGB(0, 0, 0)})
+        --
+        local Updater = function()
+            local Connection;
+            local function HideESP()
+                Box.Visible = false;
+                Name.Visible = false;
+                Distance.Visible = false;
+                Weapon.Visible = false;
+                Healthbar.Visible = false;
+                BehindHealthbar.Visible = false;
+                HealthText.Visible = false;
+                WeaponIcon.Visible = false;
+                LeftTop.Visible = false;
+                LeftSide.Visible = false;
+                BottomSide.Visible = false;
+                BottomDown.Visible = false;
+                RightTop.Visible = false;
+                RightSide.Visible = false;
+                BottomRightSide.Visible = false;
+                BottomRightDown.Visible = false;
+                Flag1.Visible = false;
+                Chams.Enabled = false;
+                Flag2.Visible = false;
+                if not plr then
+                    ScreenGui:Destroy();
+                    Connection:Disconnect();
+                end
+            end
+            --
+            Connection = Euphoria.RunService.RenderStepped:Connect(function()
+                if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                    local HRP = plr.Character.HumanoidRootPart
+                    local Humanoid = plr.Character:WaitForChild("Humanoid");
+                    local Pos, OnScreen = Cam:WorldToScreenPoint(HRP.Position)
+                    local Dist = (Cam.CFrame.Position - HRP.Position).Magnitude / 3.5714285714
+                    
+                    if OnScreen and Dist <= ESP.MaxDistance then
+                        local Size = HRP.Size.Y
+                        local scaleFactor = (Size * Cam.ViewportSize.Y) / (Pos.Z * 2)
+                        local w, h = 3 * scaleFactor, 4.5 * scaleFactor
+
+                        -- Fade-out effect --
+                        if ESP.FadeOut.OnDistance then
+                            Functions:FadeOutOnDist(Box, Dist)
+                            Functions:FadeOutOnDist(Outline, Dist)
+                            Functions:FadeOutOnDist(Name, Dist)
+                            Functions:FadeOutOnDist(Distance, Dist)
+                            Functions:FadeOutOnDist(Weapon, Dist)
+                            Functions:FadeOutOnDist(Healthbar, Dist)
+                            Functions:FadeOutOnDist(BehindHealthbar, Dist)
+                            Functions:FadeOutOnDist(HealthText, Dist)
+                            Functions:FadeOutOnDist(WeaponIcon, Dist)
+                            Functions:FadeOutOnDist(LeftTop, Dist)
+                            Functions:FadeOutOnDist(LeftSide, Dist)
+                            Functions:FadeOutOnDist(BottomSide, Dist)
+                            Functions:FadeOutOnDist(BottomDown, Dist)
+                            Functions:FadeOutOnDist(RightTop, Dist)
+                            Functions:FadeOutOnDist(RightSide, Dist)
+                            Functions:FadeOutOnDist(BottomRightSide, Dist)
+                            Functions:FadeOutOnDist(BottomRightDown, Dist)
+                            Functions:FadeOutOnDist(Chams, Dist)
+                            Functions:FadeOutOnDist(Flag1, Dist)
+                            Functions:FadeOutOnDist(Flag2, Dist)
+                        end
+
+                        -- Teamcheck
+                        if ESP.TeamCheck and plr ~= lplayer and ((lplayer.Team ~= plr.Team and plr.Team) or (not lplayer.Team and not plr.Team)) and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChild("Humanoid") then
+
+                            do -- Chams
+                                Chams.Adornee = plr.Character
+                                Chams.Enabled = ESP.Drawing.Chams.Enabled
+                                Chams.FillColor = ESP.Drawing.Chams.FillRGB
+                                Chams.OutlineColor = ESP.Drawing.Chams.OutlineRGB
+                                do -- Breathe
+                                    if ESP.Drawing.Chams.Thermal then
+                                        local breathe_effect = math.atan(math.sin(tick() * 2)) * 2 / math.pi
+                                        Chams.FillTransparency = ESP.Drawing.Chams.Fill_Transparency * breathe_effect * 0.01
+                                        Chams.OutlineTransparency = ESP.Drawing.Chams.Outline_Transparency * breathe_effect * 0.01
+                                    end
+                                end
+                                if ESP.Drawing.Chams.VisibleCheck then
+                                    Chams.DepthMode = "Occluded"
+                                else
+                                    Chams.DepthMode = "AlwaysOnTop"
+                                end
+                            end;
+
+                            do -- Corner Boxes
+                                LeftTop.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                LeftTop.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y - h / 2)
+                                LeftTop.Size = UDim2.new(0, w / 5, 0, 1)
+                                
+                                LeftSide.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                LeftSide.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y - h / 2)
+                                LeftSide.Size = UDim2.new(0, 1, 0, h / 5)
+                                
+                                BottomSide.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                BottomSide.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y + h / 2)
+                                BottomSide.Size = UDim2.new(0, 1, 0, h / 5)
+                                BottomSide.AnchorPoint = Vector2.new(0, 5)
+                                
+                                BottomDown.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                BottomDown.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y + h / 2)
+                                BottomDown.Size = UDim2.new(0, w / 5, 0, 1)
+                                BottomDown.AnchorPoint = Vector2.new(0, 1)
+                                
+                                RightTop.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                RightTop.Position = UDim2.new(0, Pos.X + w / 2, 0, Pos.Y - h / 2)
+                                RightTop.Size = UDim2.new(0, w / 5, 0, 1)
+                                RightTop.AnchorPoint = Vector2.new(1, 0)
+                                
+                                RightSide.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                RightSide.Position = UDim2.new(0, Pos.X + w / 2 - 1, 0, Pos.Y - h / 2)
+                                RightSide.Size = UDim2.new(0, 1, 0, h / 5)
+                                RightSide.AnchorPoint = Vector2.new(0, 0)
+                                
+                                BottomRightSide.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                BottomRightSide.Position = UDim2.new(0, Pos.X + w / 2, 0, Pos.Y + h / 2)
+                                BottomRightSide.Size = UDim2.new(0, 1, 0, h / 5)
+                                BottomRightSide.AnchorPoint = Vector2.new(1, 1)
+                                
+                                BottomRightDown.Visible = ESP.Drawing.Boxes.Corner.Enabled
+                                BottomRightDown.Position = UDim2.new(0, Pos.X + w / 2, 0, Pos.Y + h / 2)
+                                BottomRightDown.Size = UDim2.new(0, w / 5, 0, 1)
+                                BottomRightDown.AnchorPoint = Vector2.new(1, 1)                                                            
+                            end
+
+                            do -- Boxes
+                                Box.Position = UDim2.new(0, Pos.X - w / 2, 0, Pos.Y - h / 2)
+                                Box.Size = UDim2.new(0, w, 0, h)
+                                Box.Visible = ESP.Drawing.Boxes.Full.Enabled;
+
+                                -- Gradient
+                                if ESP.Drawing.Boxes.Filled.Enabled then
+                                    Box.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                    if ESP.Drawing.Boxes.GradientFill then
+                                        Box.BackgroundTransparency = ESP.Drawing.Boxes.Filled.Transparency;
+                                    else
+                                        Box.BackgroundTransparency = 1
+                                    end
+                                    Box.BorderSizePixel = 1
+                                else
+                                    Box.BackgroundTransparency = 1
+                                end
+                                -- Animation
+                                RotationAngle = RotationAngle + (tick() - Tick) * ESP.Drawing.Boxes.RotationSpeed * math.cos(math.pi / 4 * tick() - math.pi / 2)
+                                if ESP.Drawing.Boxes.Animate then
+                                    Gradient1.Rotation = RotationAngle
+                                    Gradient2.Rotation = RotationAngle
+                                else
+                                    Gradient1.Rotation = -45
+                                    Gradient2.Rotation = -45
+                                end
+                                Tick = tick()
+                            end
+
+                            -- Healthbar
+                            do  
+                                local health = Humanoid.Health / Humanoid.MaxHealth;
+                                Healthbar.Visible = ESP.Drawing.Healthbar.Enabled;
+                                Healthbar.Position = UDim2.new(0, Pos.X - w / 2 - 6, 0, Pos.Y - h / 2 + h * (1 - health))  
+                                Healthbar.Size = UDim2.new(0, ESP.Drawing.Healthbar.Width, 0, h * health)  
+                                --
+                                BehindHealthbar.Visible = ESP.Drawing.Healthbar.Enabled;
+                                BehindHealthbar.Position = UDim2.new(0, Pos.X - w / 2 - 6, 0, Pos.Y - h / 2)  
+                                BehindHealthbar.Size = UDim2.new(0, ESP.Drawing.Healthbar.Width, 0, h)
+                                -- Health Text
+                                do
+                                    if ESP.Drawing.Healthbar.HealthText then
+                                        local healthPercentage = math.floor(Humanoid.Health / Humanoid.MaxHealth * 100)
+                                        HealthText.Position = UDim2.new(0, Pos.X - w / 2 - 6, 0, Pos.Y - h / 2 + h * (1 - healthPercentage / 100) + 3)
+                                        HealthText.Text = tostring(healthPercentage)
+                                        HealthText.Visible = Humanoid.Health < Humanoid.MaxHealth
+                                        if ESP.Drawing.Healthbar.Lerp then
+                                            local color = health >= 0.75 and Color3.fromRGB(0, 255, 0) or health >= 0.5 and Color3.fromRGB(255, 255, 0) or health >= 0.25 and Color3.fromRGB(255, 170, 0) or Color3.fromRGB(255, 0, 0)
+                                            HealthText.TextColor3 = color
+                                        else
+                                            HealthText.TextColor3 = ESP.Drawing.Healthbar.HealthTextRGB
+                                        end
+                                    end                        
+                                end
+                            end
+
+                            do -- Names
+                                Name.Visible = ESP.Drawing.Names.Enabled
+                                if ESP.Options.Friendcheck and lplayer:IsFriendsWith(plr.UserId) then
+                                    Name.Text = string.format('(<font color="rgb(%d, %d, %d)">F</font>) %s', ESP.Options.FriendcheckRGB.R * 255, ESP.Options.FriendcheckRGB.G * 255, ESP.Options.FriendcheckRGB.B * 255, plr.Name)
+                                else
+                                    Name.Text = string.format('(<font color="rgb(%d, %d, %d)">E</font>) %s', 255, 0, 0, plr.Name)
+                                end
+                                Name.Position = UDim2.new(0, Pos.X, 0, Pos.Y - h / 2 - 9)
+                            end
+                            
+                            do -- Distance
+                                if ESP.Drawing.Distances.Enabled then
+                                    if ESP.Drawing.Distances.Position == "Bottom" then
+                                        Weapon.Position = UDim2.new(0, Pos.X, 0, Pos.Y + h / 2 + 18)
+                                        WeaponIcon.Position = UDim2.new(0, Pos.X - 21, 0, Pos.Y + h / 2 + 15);
+                                        Distance.Position = UDim2.new(0, Pos.X, 0, Pos.Y + h / 2 + 7)
+                                        Distance.Text = string.format("%d meters", math.floor(Dist))
+                                        Distance.Visible = true
+                                    elseif ESP.Drawing.Distances.Position == "Text" then
+                                        Weapon.Position = UDim2.new(0, Pos.X, 0, Pos.Y + h / 2 + 8)
+                                        WeaponIcon.Position = UDim2.new(0, Pos.X - 21, 0, Pos.Y + h / 2 + 5);
+                                        Distance.Visible = false
+                                        if ESP.Options.Friendcheck and lplayer:IsFriendsWith(plr.UserId) then
+                                            Name.Text = string.format('(<font color="rgb(%d, %d, %d)">F</font>) %s [%d]', ESP.Options.FriendcheckRGB.R * 255, ESP.Options.FriendcheckRGB.G * 255, ESP.Options.FriendcheckRGB.B * 255, plr.Name, math.floor(Dist))
+                                        else
+                                            Name.Text = string.format('(<font color="rgb(%d, %d, %d)">E</font>) %s [%d]', 255, 0, 0, plr.Name, math.floor(Dist))
+                                        end
+                                        Name.Visible = ESP.Drawing.Names.Enabled
+                                    end
+                                end
+                            end
+
+                            do -- Weapons
+                                Weapon.Text = "none"
+                                Weapon.Visible = ESP.Drawing.Weapons.Enabled
+                            end                            
+                        else
+                            HideESP();
+                        end
+                    else
+                        HideESP();
+                    end
+                else
+                    HideESP();
+                end
+            end)
+        end
+        coroutine.wrap(Updater)();
+    end
+    do -- Update ESP
+        for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+            if v.Name ~= lplayer.Name then
+                coroutine.wrap(ESP)(v)
+            end      
+        end
+        --
+        game:GetService("Players").PlayerAdded:Connect(function(v)
+            coroutine.wrap(ESP)(v)
+        end);
+    end;
+end;
+end) 
+
+Tab:CreateButton("Elementary Hub",function()
+loadstring(game:HttpGet("https://gdi000x.github.io/script.lua"))()
+end) 
+
+Tab:CreateButton("Celery Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/CeleryHub-official/CeleryHub/main/Celery%20Hub%20Load"))()
+end) 
+
+Tab:CreateButton("JETBLOCK Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/TomasKo777/Jethub/main/JETBLOCK-HUB"))()
+end) 
+
 Tab:CreateButton("banana hub",function()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/Banana2416fjoe/bananahub/main/bananak.lua'))()
 end) 
