@@ -7,6 +7,1797 @@ local Win = Lib:CreateWindow("lnfinitive Ui Separate")
 
 local Tab,name = Win:CreateTab("Script "..tostring(i),function() warn(i) end)
 
+Tab:CreateButton("Remote gui v2",function()
+loadstring(game:HttpGet("https://gist.githubusercontent.com/ServerSad/da772bdfe41ead8715d2123c7807ce9e/raw/aa4475e581652757f5cde0cf877c32b1645fdbda/remote%2520gui%2520v2%2520(usefull)"))()
+end) 
+
+Tab:CreateButton("RR KILLER V2",function()
+-- Local Script (Place this in StarterGui)
+
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- Create the GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Parent = screenGui
+mainFrame.Size = UDim2.new(0, 400, 0, 200)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+mainFrame.Draggable = true -- Allows the menu to be moved
+mainFrame.Active = true -- Makes the menu interactive
+mainFrame.Selectable = true -- Makes the menu selectable
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Parent = mainFrame
+titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.Text = "RR KILLER V2"
+titleLabel.TextScaled = true
+titleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Label for speed
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Parent = mainFrame
+speedLabel.Size = UDim2.new(0.5, 0, 0.2, 0)
+speedLabel.Position = UDim2.new(0, 0, 0.3, 0)
+speedLabel.Text = "Choose your speed"
+speedLabel.TextScaled = true
+speedLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Input box for speed
+local speedInput = Instance.new("TextBox")
+speedInput.Parent = mainFrame
+speedInput.Size = UDim2.new(0.5, 0, 0.2, 0)
+speedInput.Position = UDim2.new(0.5, 0, 0.3, 0)
+speedInput.PlaceholderText = "0 - โ"
+speedInput.TextScaled = true
+speedInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+speedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Label for jump height
+local jumpLabel = Instance.new("TextLabel")
+jumpLabel.Parent = mainFrame
+jumpLabel.Size = UDim2.new(0.5, 0, 0.2, 0)
+jumpLabel.Position = UDim2.new(0, 0, 0.6, 0)
+jumpLabel.Text = "Choose your jump height"
+jumpLabel.TextScaled = true
+jumpLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+jumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Input box for jump height
+local jumpInput = Instance.new("TextBox")
+jumpInput.Parent = mainFrame
+jumpInput.Size = UDim2.new(0.5, 0, 0.2, 0)
+jumpInput.Position = UDim2.new(0.5, 0, 0.6, 0)
+jumpInput.PlaceholderText = "0 - โ"
+jumpInput.TextScaled = true
+jumpInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+jumpInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Label for contact message
+local contactLabel = Instance.new("TextLabel")
+contactLabel.Parent = mainFrame
+contactLabel.Size = UDim2.new(1, 0, 0.2, 0)
+contactLabel.Position = UDim2.new(0, 0, 0.9, 0)
+contactLabel.Text = "Thank you for contacting this email address for new features: rr.killer.script@gmail.com"
+contactLabel.TextScaled = true
+contactLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+contactLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Function to update speed and jump height
+local function updatePlayerSettings()
+    local speed = tonumber(speedInput.Text)
+    local jumpPower = tonumber(jumpInput.Text)
+    
+    -- Set player speed
+    if speed and speed >= 0 then
+        player.Character.Humanoid.WalkSpeed = speed
+    end
+    
+    -- Set player jump height (fixed issue by using JumpPower and setting JumpHeight to 0)
+    if jumpPower and jumpPower >= 0 then
+        player.Character.Humanoid.JumpPower = jumpPower
+        player.Character.Humanoid.UseJumpPower = true -- Ensure JumpPower is used
+    end
+end
+
+-- Connect the function to text changes
+speedInput.FocusLost:Connect(updatePlayerSettings)
+jumpInput.FocusLost:Connect(updatePlayerSettings)
+end) 
+
+Tab:CreateButton("RR KILLER SPEED",function()
+-- RRKILLER SPEED Script
+
+local players = game:GetService("Players")
+local player = players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- Default speed variable
+local defaultSpeed = 16 -- Default walking speed
+local speed = defaultSpeed -- Current speed
+
+-- Function to create the UI
+local function createUI()
+    local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+    local Frame = Instance.new("Frame", ScreenGui)
+    Frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+    Frame.Size = UDim2.new(0, 200, 0, 150)
+    Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red background color
+    Frame.BackgroundTransparency = 0.2
+    Frame.Active = true
+    Frame.Draggable = true -- Make the frame draggable
+
+    local TitleLabel = Instance.new("TextLabel", Frame)
+    TitleLabel.Size = UDim2.new(1, 0, 0.33, 0)
+    TitleLabel.Text = "RRKILLER SPEED"
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Font = Enum.Font.SourceSansBold
+    TitleLabel.TextScaled = true
+
+    local TextLabel = Instance.new("TextLabel", Frame)
+    TextLabel.Position = UDim2.new(0, 0, 0.33, 0)
+    TextLabel.Size = UDim2.new(1, 0, 0.33, 0)
+    TextLabel.Text = "Choose your speed"
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Font = Enum.Font.SourceSans
+    TextLabel.TextScaled = true
+
+    local TextBox = Instance.new("TextBox", Frame)
+    TextBox.Position = UDim2.new(0, 10, 0.66, 0)
+    TextBox.Size = UDim2.new(1, -20, 0.34, 0)
+    TextBox.Text = tostring(defaultSpeed)
+    TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox.BackgroundTransparency = 0.3
+    TextBox.Font = Enum.Font.SourceSans
+    TextBox.TextScaled = true
+
+    -- Function to adjust the speed
+    TextBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local newSpeed = tonumber(TextBox.Text)
+            if newSpeed and newSpeed >= 0 and newSpeed <= 1000 then
+                speed = newSpeed
+                humanoid.WalkSpeed = speed
+            else
+                TextBox.Text = tostring(defaultSpeed) -- Reset to default speed in case of error
+            end
+        end
+    end)
+
+    -- Reset speed when the character respawns
+    player.CharacterAdded:Connect(function(newCharacter)
+        character = newCharacter
+        humanoid = character:WaitForChild("Humanoid")
+        speed = defaultSpeed
+        humanoid.WalkSpeed = speed
+        TextBox.Text = tostring(defaultSpeed)
+    end)
+end
+
+-- Create the UI
+createUI()
+
+-- Apply the initial speed when the script starts
+humanoid.WalkSpeed = speed
+
+print("RRKILLER SPEED Script activated.")
+end) 
+
+Tab:CreateButton("Flames Hub",function()
+getgenv().ToggleUI = "J";
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Lvl9999/FlamesW/new/Launcher"))();
+end) 
+
+Tab:CreateButton("Velocity Script Searcher",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/corrupted2222/corrupted-projects/main/velocity/loader/script-searcher/main.lua"))()
+end) 
+
+Tab:CreateButton("NuvexaWin",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/nuvexa-yay/Scripts/main/GU%C4%B0/Gui"))()
+end) 
+
+Tab:CreateButton("UX bypass",function()
+loadstring(game:HttpGet("https://pastefy.app/Nxm9TReQ/raw"))()
+end) 
+
+Tab:CreateButton("RENC Compatibility Script",function()
+getgenv().getplayers = function()
+    local players = {}
+    for _, x in pairs(game:GetService("Players"):GetPlayers()) do
+        players[x.Name] = x
+    end
+    players["LocalPlayer"] = game:GetService("Players").LocalPlayer
+    return players
+end
+
+getgenv().getplayer = function(name: string): Player
+    return not name and getplayers()["LocalPlayer"] or getplayers()[name]
+end
+
+getgenv().runanimation = function(animationId: any, player: Player) -- @.wyv_
+    local plr: Player = player or getplayer()
+    local humanoid: Humanoid = plr.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        local animation = Instance.new("Animation")
+        animation.AnimationId = "rbxassetid://" .. tostring(animationId)
+        humanoid:LoadAnimation(animation):Play()
+    end
+end
+
+getgenv().customprint = function(text: string, properties: table, imageId: rbxasset) --[[ NOT RECOMMENDED ATM
+    print(text)
+    task.wait(.025)
+    local msg = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI:WaitForChild("MainView").ClientLog[tostring(#game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.ClientLog:GetChildren())-1].msg
+    for i, x in pairs(properties) do
+        msg[i] = x
+    end
+    if imageId then msg.Parent.image.Image = imageId end
+    ]]
+end
+
+getgenv().getlocalplayer = function(): Player
+    return getplayer()
+end
+
+getgenv().join = function(placeID: number, jobID: string)
+    game:GetService("TeleportService"):TeleportToPlaceInstance(placeID, jobID, getplayer())
+end
+
+getgenv().firesignal = function(instance: Instance, signalName: string, args: any)
+    if instance and signalName then
+        local signal = instance[signalName]
+        if signal and signal:IsA("RBXScriptSignal") then
+            for _, connection in ipairs(getconnections(signal)) do
+                if args then
+                    connection:Fire(args)
+                else
+                    connection:Fire()
+                end
+            end
+        end
+    end
+end
+
+getgenv().firetouchinterest = function(part: Instance, touched: boolean)
+    firesignal(part, touched and "Touched" or touched == false and "TouchEnded" or "Touched")
+end
+
+getgenv().fireproximityprompt = function(prompt: Instance, triggered: boolean, hold: boolean)
+    firesignal(prompt, hold and (triggered and "PromptButtonHoldBegan" or "PromptButtonHoldEnded") or (triggered and "Triggered" or triggered == false and "TriggerEnded" or "Triggered"))
+end
+
+getgenv().firetouchtransmitter = firetouchinterest
+getgenv().playanimation = runanimation
+getgenv().joingame, getgenv().joinserver = join, join
+end) 
+
+Tab:CreateButton("RENC Environment Tester",function()
+loadstring(game:HttpGet("https://github.com/external-naming-convention/RobloxNamingStandard/raw/main/RENCCheckEnv.lua"))()
+end) 
+
+Tab:CreateButton("UNC RENC Functions For Nova",function()
+--[[
+
+ โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘       โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘       โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘ โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘       
+โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      
+โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘             
+ โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘             
+       โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘             
+       โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘      
+โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘        โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–“โ–’โ–‘โ–‘โ–’โ–“โ–โ–โ–โ–โ–โ–โ–“โ–’โ–‘       
+                                                                                                                      
+   Made for Nova API by insaladarel on discord 
+   discord.gg/saladexploits or discord.gg/eB6tyr9R
+]]
+
+
+local suc, rec = pcall(function()
+	getgenv().getscripts = function() 
+		local scripts = {}
+		for _, scriptt in game:GetDescendants() do
+			if scriptt:isA("LocalScript") or scriptt:isA("ModuleScript") then
+				table.insert(scripts, scriptt)
+			end
+		end
+		return scripts
+	end 
+end) 
+if not suc then warn("[ SALAD ]: getscripts failed: "..tostring(rec)) end 
+
+local suc, rec = pcall(function()
+    getgenv().getloadedmodules = function()
+        local modulescripts = {}
+        for _, obj in pairs(game:GetDescendants()) do
+            if typeof(obj) == "Instance" and obj:IsA("ModuleScript") then table.insert(modulescripts, obj) end
+        end
+        return modulescripts
+    end 
+end) 
+if not suc then warn("[ SALAD ]: getloadedmodules failed: "..tostring(rec)) end 
+
+local suc, rec = pcall(function()
+    getgenv().getrunningscripts = function()
+        local runningScripts = {}
+    
+        for _, obj in pairs(game:GetDescendants()) do
+            if typeof(obj) == "Instance" and obj:IsA("ModuleScript") then
+                table.insert(runningScripts, obj)
+            elseif typeof(obj) == "Instance" and obj:IsA("LocalScript") then
+                if obj.Enabled == true then
+                    table.insert(runningScripts, obj)
+                end
+            end
+        end
+    
+        return runningScripts
+    end
+end)
+if not suc then warn("[ SALAD ]: getrunningscripts failed: "..tostring(rec)) end 
+
+local suc, rec = pcall(function()
+    getgenv().hookfunction = function(original, hook) 
+        if type(original) ~= "function" then
+            error("The first arg must be a function (original func).")
+        end
+        if type(hook) ~= "function" then
+            error("The second arg must be a function (hook).")
+        end
+        local hooked = function(...)
+            return hook(original, ...)
+        end
+        local info = debug.getinfo(original)
+        if info and info.name then
+            getgenv()[info.name] = hooked
+        else
+            error("Failed to get function name")
+        end
+    
+        return original
+    end
+end) 
+if not suc then warn("[ SALAD ]: hookfunction failed: "..tostring(rec)) end
+
+local suc, rec = pcall(function()
+    getgenv().loadfile = function(file)
+        return loadstring(readfile(file))  -- oh come on, not even that nova? 
+    end 
+end)
+if not suc then warn("[ SALAD ]: loadfile failed: "..tostring(rec)) end 
+
+local hiddenpropr = {}
+local suc, rec = pcall(function()
+    getgenv().gethiddenproperty = function(instance, property) 
+        local instancepropr = hiddenpropr[instance]
+        if instancepropr and instancepropr[property] then
+            return instancepropr[property], true
+        end
+        return nil, false
+    end
+end)
+if not suc then warn("[ SALAD ]: gethiddenproperty failed: "..tostring(rec)) end 
+
+local suc, rec = pcall(function()
+    getgenv().sethiddenproperty = function(instance, property, value)
+        local instancepropr = hiddenpropr[instance]
+        if not instancepropr then
+            instancepropr = {}
+            hiddenpropr[instance] = instancepropr
+        end
+        instancepropr[property] = value
+        return true
+    end
+end) 
+if not suc then warn("[ SALAD ]: sethiddenproperty failed: "..tostring(rec)) end 
+
+local suc, rec = pcall(function()
+    getgenv().WebSocket = {} -- yes this isnt exactly how it works, what do you expect me to make in lua? 
+    getgenv().WebSocket.connect = function(url)
+        local onmsgws = Instance.new("BindableEvent")
+        local onclosews = Instance.new("BindableEvent")
+        local connected = true
+        local websocket = {}
+        function websocket:Send(message)
+            if connected then
+                onmsgws:Fire(message)
+            else
+                error("WebSocket is closed")
+            end
+        end
+        function websocket:Close()
+            if connected then
+                connected = false
+                onclosews:Fire()
+            else
+                error("WebSocket is already closed")
+            end
+        end
+        websocket.OnMessage = onmsgws.Event
+        websocket.OnClose = onclosews.Event
+    
+        return websocket
+    end
+end) 
+if not suc then warn("[ SALAD ]: websocket failed: "..tostring(rec)) end 
+
+local suc, rec = pcall(function()
+    getgenv().firesignal = function(instance: Instance, signalname: string, args: any)
+        if instance and signalname then
+            local signal = instance[signalname]
+            if signal then
+                for _, connection in ipairs(getconnections(signal)) do
+                    if args then
+                        connection:Fire(args)
+                    else
+                        connection:Fire()
+                    end
+                end
+            end
+        end
+    end
+end)
+if not suc then warn("[ SALAD ]: firesignal failed: "..tostring(rec)) end 
+local suc, rec = pcall(function()
+    getgenv().firetouchinterest = function(part: Instance, touched: boolean)
+        firesignal(part, touched and "Touched" or touched == false and "TouchEnded" or "Touched")
+    end
+end)
+if not suc then warn("[ SALAD ]: firetouchinterest failed: "..tostring(rec)) end 
+local suc, rec = pcall(function()
+    getgenv().fireproximityprompt = function(prompt: Instance, triggered: boolean, hold: boolean)
+        firesignal(prompt, hold and (triggered and "PromptButtonHoldBegan" or "PromptButtonHoldEnded") or (triggered and "Triggered" or triggered == false and "TriggerEnded" or "Triggered"))
+    end
+end)
+if not suc then warn("[ SALAD ]: fireproximityprompt failed: "..tostring(rec)) end 
+local suc, rec = pcall(function()
+    getgenv().setreadonly = function(t, readonly)
+        if not getmetatable(t) then
+            local proxy = {}
+            local mt = {
+                __index = t, 
+                __newindex = function(_, key, value)
+                    if readonly then
+                        error("Attempt to modify a readonly table", 2)
+                    else
+                        rawset(t, key, value) 
+                    end
+                end,
+                __pairs = function() return pairs(t) end, 
+                __ipairs = function() return ipairs(t) end,
+                __len = function() return #t end
+            }
+            setmetatable(proxy, mt)
+            return proxy 
+        else
+            local mt = getmetatable(t)
+            mt.__newindex = function(_, key, value)
+                if readonly then
+                    error("Attempt to modify a readonly table", 2)
+                else
+                    rawset(t, key, value)
+                end
+            end
+        end
+    end
+end)
+if not suc then warn("[ SALAD ]: setreadonly failed: " .. tostring(rec)) end
+
+local suc, rec = pcall(function()
+    getgenv().saveinstance = function() -- https://scriptblox.com/script/Universal-Script-Universal-Syn-Saveinstance-14624
+        local Params = {
+            RepoURL = "https://raw.githubusercontent.com/luau/SynSaveInstance/main/", 
+            SSI = "saveinstance",
+        }
+        local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+        local SaveOptions = {
+            ReadMe = true,
+            IsolatePlayers = true,
+            FilePath = string.format("%d", tick())
+        }
+        synsaveinstance(SaveOptions)
+    end
+end) 
+if not suc then warn("[ SALAD ]: saveinstance failed: " .. tostring(rec)) end
+
+-- Credits @w-a-e .
+local decompsrc = game:HttpGet("https://raw.githubusercontent.com/w-a-e/Advanced-Decompiler-V3/main/init.lua", true)
+local function loaddecomp(decomptimeout)
+    local CONSTANTS = [[
+    local ENABLED_REMARKS = {
+    NATIVE_REMARK = true,
+    INLINE_REMARK = true
+    }
+    local DECOMPILER_TIMEOUT = ]] .. decomptimeout .. [[
+    
+    local READER_FLOAT_PRECISION = 99 
+    local SHOW_INSTRUCTION_LINES = false
+    local SHOW_REFERENCES = true
+    local SHOW_OPERATION_NAMES = false
+    local SHOW_MISC_OPERATIONS = true
+    local LIST_USED_GLOBALS = true
+    local RETURN_ELAPSED_TIME = false
+]]
+    loadstring(string.gsub(decompsrc, ";;CONSTANTS HERE;;", CONSTANTS), "Advanced-Decompiler-V3")()
+end
+loaddecomp(10)
+
+getgenv().getnamecallmethod = nil -- fake func
+getgenv().getcustomasset = nil -- fake func 
+
+-- moREnc because yes: https://scriptblox.com/script/Universal-Script-moREnc-16894 im the dev so no credits lmao, also like it fr
+
+-- the test functions are ass lol, too lazy to fix :pray:
+-- this was made for Wave btw but it can be used on other exploits too
+
+local addedfuncs = 0
+local totalfuncs = 0
+
+function check(funcName: string, func, testfunc)
+    local success, err = pcall(function()
+        getgenv()[funcName] = func
+    end)
+end
+
+check("getdevice", function()
+    return tostring(game:GetService("UserInputService"):GetPlatform()):split(".")[3]
+end, function()
+    assert(getgenv().getdevice() == tostring(game:GetService("UserInputService"):GetPlatform()):split(".")[3], "getdevice function test failed")
+end)
+
+check("getping", function(suffix: boolean)
+    local rawping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
+    local pingstr = rawping:sub(1, #rawping - 7)
+    local pingnum = tonumber(pingstr)
+    local ping = tostring(math.round(pingnum))
+    return not suffix and ping or ping .. " ms"
+end, function()
+    local ping = getgenv().getping()
+    assert(tonumber(ping) ~= nil, "getping function test failed")
+end)
+
+check("getscriptclosure", function(module)
+    local env = getrenv()
+    local constants = env.require(module)
+    return function()
+        local copy = {}
+        for k, v in pairs(constants) do
+            copy[k] = v
+        end
+        return copy
+    end
+end)
+
+check("getfps", function(): number
+    local RunService = game:GetService("RunService")
+    local FPS: number
+    local TimeFunction = RunService:IsRunning() and time or os.clock
+
+    local LastIteration: number, Start: number
+    local FrameUpdateTable = {}
+
+    local function HeartbeatUpdate()
+        LastIteration = TimeFunction()
+        for Index = #FrameUpdateTable, 1, -1 do
+            FrameUpdateTable[Index + 1] = FrameUpdateTable[Index] >= LastIteration - 1 and FrameUpdateTable[Index] or nil
+        end
+
+        FrameUpdateTable[1] = LastIteration
+        FPS = TimeFunction() - Start >= 1 and #FrameUpdateTable or #FrameUpdateTable / (TimeFunction() - Start)
+    end
+
+    Start = TimeFunction()
+    RunService.Heartbeat:Connect(HeartbeatUpdate)
+    task.wait(1.1)
+    return FPS
+end, function()
+    local fps = getgenv().getfps()
+    assert(fps ~= nil and fps >= 0, "getfps function test failed")
+end)
+
+check("getaffiliateid", function()
+    return "moREnc"
+end, function()
+    assert(getgenv().getaffiliateid() == "moREnc", "getaffiliateid function test failed")
+end)
+
+check("getplayer", function(name: string)
+    return not name and getgenv().getplayers()["LocalPlayer"] or getgenv().getplayers()[name]
+end)
+
+check("getplayers", function()
+    local players = {}
+    for _, x in pairs(game:GetService("Players"):GetPlayers()) do
+        players[x.Name] = x
+    end
+    players["LocalPlayer"] = game:GetService("Players").LocalPlayer
+    return players
+end, function()
+    assert(getgenv().getplayers()["LocalPlayer"] == game:GetService("Players").LocalPlayer, "getplayers function test failed")
+end)
+
+check("getlocalplayer", function(): Player
+    return getgenv().getplayer()
+end, function()
+    assert(getgenv().getlocalplayer() == game:GetService("Players").LocalPlayer, "getlocalplayer function test failed")
+end)
+
+check("customprint", function(text: string, properties: table, imageId: rbxasset)
+    print(text)
+    task.wait(0.025)
+    local clientLog = game:GetService("CoreGui").DevConsoleMaster.DevConsoleWindow.DevConsoleUI.MainView.ClientLog
+    local childrenCount = #clientLog:GetChildren()
+    local msgIndex = childrenCount > 0 and childrenCount - 1 or 0
+    local msg = clientLog:FindFirstChild(tostring(msgIndex))
+
+    if msg then
+        for i, x in pairs(properties) do
+            msg[i] = x
+        end
+        if imageId then
+            msg.Parent.image.Image = imageId
+        end
+    end
+end)
+
+check("join", function(placeID: number, jobID: string)
+    game:GetService("TeleportService"):TeleportToPlaceInstance(placeID, jobID, getplayer())
+end)
+
+check("firesignal", function(instance: Instance, signalName: string, args: any)
+    if instance and signalName then
+        local signal = instance[signalName]
+        if signal then
+            for _, connection in ipairs(getconnections(signal)) do
+                if args then
+                    connection:Fire(args)
+                else
+                    connection:Fire()
+                end
+            end
+        end
+    end
+end, function()
+    local button = Instance.new("TextButton")
+    local new = true
+    button.MouseButton1Click:Connect(function() new = false end) 
+    firesignal(button.MouseButton1Click)
+    assert(new, "Uses old standard")
+    firesignal(button, "MouseButton1Click")
+end)
+
+check("firetouchinterest", function(part: Instance, touched: boolean)
+    firesignal(part, touched and "Touched" or touched == false and "TouchEnded" or "Touched")
+end)
+
+check("fireproximityprompt", function(prompt: Instance, triggered: boolean, hold: boolean)
+    firesignal(prompt, hold and (triggered and "PromptButtonHoldBegan" or "PromptButtonHoldEnded") or (triggered and "Triggered" or triggered == false and "TriggerEnded" or "Triggered"))
+end)
+
+check("runanimation", function(animationId: any, player: Player)
+    local plr: Player = player or getgenv().getplayer()
+    local humanoid: Humanoid = plr.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        local animation = Instance.new("Animation")
+        animation.AnimationId = "rbxassetid://" .. tostring(animationId)
+        humanoid:LoadAnimation(animation):Play()
+    end
+end)
+
+check("round", function()
+    getgenv().round = math.round
+end)
+
+check("joingame", function()
+    getgenv().joingame = join
+end)
+
+check("joinserver", function()
+    getgenv().joinserver = join
+end)
+
+check("firetouchtransmitter", function()
+    getgenv().firetouchtransmitter = firetouchinterest
+end)
+
+check("getplatform", function()
+    getgenv().getplatform = getdevice
+end)
+
+check("getos", function()
+    getgenv().getos = getdevice
+end)
+
+check("playanimation", function()
+    getgenv().playanimation = runanimation
+end)
+
+check("setrbxclipboard", function()
+    getgenv().setrbxclipboard = setclipboard
+end)
+
+print(("Salad UNC for Nova loaded | Roblox version: "..version()))
+warn("[ IMPORTANT ]: Nova is an incognito paste, i do not reccomend using it as its very unstable and shit, instead go use something like celery or solara.")
+end) 
+
+Tab:CreateButton("TOGGLEWARE",function()
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/hi822010/toggleWare/main/toggleWare'),true))()
+end) 
+
+Tab:CreateButton("Nexus Hub",function()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/zyrask/Nexus-Base/main/final%20product", true))()
+end) 
+
+Tab:CreateButton("Arabic hub",function()
+
+local player = game.Players.LocalPlayer
+
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+
+local Window = OrionLib:MakeWindow({Name = "ุนุฑุจู ููุจ", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+
+local Tab = Window:MakeTab({
+
+	Name = "๐“ุฎุงูุฉ ุณูุฑุจุชุงุช๐“",
+
+	Icon = "rbxassetid://4483345998",
+
+	PremiumOnly = false
+
+})
+
+
+local Section = Tab:AddSection({
+
+	Name = ""
+
+})
+
+
+OrionLib:MakeNotification({
+
+	Name = "ู…ุฑุญุจุง!",
+
+	Content = "ุงุฐุง ูู… ุชุนุฑู ูุบุฉ ุฅูุฌููุฒูุฉ ุณูุฑุจุชุงุช ูููุชูุง ุจุงููุบุฉ ุงูุฅูุฌููุฒูุฉ",
+
+	Image = "rbxassetid://4483345998",
+
+	Time = 5
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุดุงุฏุฑ",
+
+	Callback = function()
+
+		local find1 = game.Lighting:FindFirstChildWhichIsA("BloomEffect")
+
+		if find1 then
+
+			find1:Destroy()
+
+		end
+
+
+		local find2 = game.Lighting:FindFirstChildWhichIsA("SunRaysEffect")
+
+		if find2 then
+
+			find2:Destroy()
+
+		end
+
+
+		local find3 = game.Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect")
+
+		if find3 then
+
+			find3:Destroy()
+
+		end
+
+
+		local find4 = game.Lighting:FindFirstChildWhichIsA("BlurEffect")
+
+		if find4 then
+
+			find4:Destroy()
+
+		end
+
+
+		local find5 = game.Lighting:FindFirstChildWhichIsA("Sky")
+
+		if find5 then
+
+			find5:Destroy()
+
+		end
+
+
+		local blem = Instance.new("BloomEffect", game.Lighting)
+
+		local sanrey = Instance.new("SunRaysEffect", game.Lighting)
+
+		local color = Instance.new("ColorCorrectionEffect", game.Lighting)
+
+		local blor = Instance.new("BlurEffect", game.Lighting)
+
+		Instance.new("Sky", game.Lighting)
+
+
+		game.Lighting.ExposureCompensation = 0.34
+
+		game.Lighting.ShadowSoftness = 1
+
+		game.Lighting.EnvironmentDiffuseScale = 0.343
+
+		game.Lighting.EnvironmentSpecularScale = 1
+
+		game.Lighting.Brightness = 2
+
+		game.Lighting.ColorShift_Top = Color3.fromRGB(118, 117, 108)
+
+		game.Lighting.OutdoorAmbient = Color3.fromRGB(141, 141, 141)
+
+		game.Lighting.GeographicLatitude = 100
+
+		game.Lighting.Ambient = Color3.fromRGB(112, 112, 112)
+
+
+		blem.Intensity = 0.5
+
+		blem.Size = 22
+
+		blem.Threshold = 1.5
+
+		sanrey.Intensity = 0.117
+
+		sanrey.Spread = 1
+
+		blor.Size = 2
+
+		color.Contrast = 0.3
+
+		color.Saturation = 0.2
+
+		color.TintColor = Color3.fromRGB(255, 252, 224)
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "R6",
+
+	Callback = function()
+
+		local ScreenGui = Instance.new("ScreenGui")
+
+		local R6 = Instance.new("TextButton")
+
+		local TextButton = Instance.new("TextButton")
+
+
+		ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+		ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+
+		R6.Name = "R6"
+
+		R6.Parent = ScreenGui
+
+		R6.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+		R6.Position = UDim2.new(0, 0, 0.328, 0)
+
+		R6.Size = UDim2.new(0, 29, 0, 29)
+
+		R6.Font = Enum.Font.SourceSans
+
+		R6.Text = "R6"
+
+		R6.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+		R6.TextSize = 14
+
+		R6.MouseButton1Down:connect(function()
+
+			loadstring(game:HttpGet(('https://pastebin.com/raw/jHGVauVX'),true))()
+
+		end)
+
+
+		TextButton.Parent = ScreenGui
+
+		TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+		TextButton.Position = UDim2.new(0, 0, 0.414, 0)
+
+		TextButton.Size = UDim2.new(0, 72, 0, 27)
+
+		TextButton.Font = Enum.Font.SourceSans
+
+		TextButton.Text = "Respawn"
+
+		TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+		TextButton.TextSize = 14
+
+		TextButton.MouseButton1Down:connect(function()
+
+			loadstring(game:HttpGet(('https://pastebin.com/raw/ukFZuXbb'),true))()
+
+		end)
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุณูุงูุจ ุงูุณ",
+
+	Callback = function()
+
+		loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Synapse-X-Rework-6071"))()
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุดุงุฏุฑ 2",
+
+	Callback = function()
+
+		
+
+		loadstring(game:HttpGet(('https://pastebin.com/raw/P1NgA165'),true))()
+
+	end
+
+})
+
+Tab:AddButton({
+
+	Name = "ุงุฏู…ู ู…ุฒูู",
+
+	Callback = function()
+
+		
+
+		loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Reviz-3841"))()
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุฒูุงุฏุฉ ุณุฑุนุฉ",
+
+	Callback = function()
+
+		
+
+		player.Character.Humanoid.WalkSpeed = 100
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุณุฑุนุฉ ุนุงุฏูุฉ",
+
+	Callback = function()
+
+		
+
+		player.Character.Humanoid.WalkSpeed = 16
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุฒูุงุฏุฉ ููุฒุฉ",
+
+	Callback = function()
+
+		
+
+		player.Character.Humanoid.JumpPower = 150
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ููุฒุฉ ุนุงุฏูุฉ",
+
+	Callback = function()
+
+		
+
+		player.Character.Humanoid.JumpPower = 50
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ููููู ุฌู…ูุน",
+
+	Callback = function()
+
+		
+
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-fling-all-10553"))()
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุณูุฑุจุช ู…ุงุจ ุจููุช",
+
+	Callback = function()
+
+		
+
+		loadstring(game:HttpGet("https://rawscripts.net/raw/Brookhaven-andx1F3E1RP-SanderX-Hub-15876"))()
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุณูุฑุจุช ุงู… ุงู… ุชู",
+
+	Callback = function()
+
+		
+
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-YARHM-12403"))()
+
+	end
+
+})
+
+
+Tab:AddButton({
+
+	Name = "ุฌู ููุจ 14",
+
+	Callback = function()
+
+		
+
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Ghub-v14-10507"))()
+
+	end
+
+})
+
+Tab:AddButton({
+	Name = "ูุง ุชุถุบุท",
+	Callback = function()
+		
+		local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local bodyVelocity = Instance.new("BodyVelocity")
+bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+bodyVelocity.Parent = humanoidRootPart
+
+local speed = 30
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Space then
+        bodyVelocity.Velocity = Vector3.new(0, speed, 0)
+    end
+end)
+
+	end
+})
+
+Tab:AddButton({
+	Name = "ุงุถุบุท ุนูู ูุฐุง ุฒุฑ ูุงูุชุจ ุจุงูุฌุงุช console/",
+	Callback = function()
+		
+		print("ุฒุฑุจุฉ ุนูู ุดุงููุฉ ู…ุญู…ุฏ ูุง ุฑูู")
+	end
+})
+
+Tab:AddButton({
+	Name = "ุณูุฑุจุช ุทูุงุฑุงู",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-fly-Script-9712"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ููู…ุฉ",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-Punch-Tool-7383"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ุณูุฑุจุช ู…ูุงูุจ",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-trolling-gui-11739"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ุชุบูุฑ ุญุฑูุช ุงูู…ูุดู",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-FE-Animation-Changer-9222"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ู…ููุจ ุจุงูุฌุงุช",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-FE-Chat-Hax-V3.5-3512"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ุณูุฑุจุช ู…ุงุจ ุฑุงูุฏูู",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Ragdoll-Engine-BEST-SCRIPT-WORKING-SystemBroken-7544"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ุชูู…ุณ = ุงูู ๏ทฒ",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Touch-fling-10457"))()
+	end
+})
+
+Tab:AddButton({
+	Name = "ุณูุฑุจุช ุงูู… ุจูุช ูุง ุดูุช ููู ูุง ุงุฎุฑู",
+	Callback = function()
+		
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Simple-Hub-10911"))()
+	end
+})
+
+local Tab = Window:MakeTab({
+
+	Name = "๐“ุตุงูุน ุณูุฑุจุช๐“",
+
+	Icon = "rbxassetid://4483345998",
+
+	PremiumOnly = false
+
+})
+
+
+local Section = Tab:AddSection({
+
+	Name = ""
+
+})
+
+Tab:AddButton({
+	Name = "ุตุงูุน ุณูุฑุจุช ูู Aramwowo [Aramwowo ูุฐุง ุญุณุงุจ ูู ุฑูุจูููุณ ูู…ููู ุนุซูุฑ ุนููุฉ]",
+	Callback = function()	
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ุตุงูุน ุณูุฑุจุช ู…ู ๐ฎ๐ถุงูุนุฑุงู๐ฎ๐ถ",
+	Callback = function()	
+  	end    
+})
+
+Tab:AddButton({
+	Name = "ุชู… ุญู ุจุนุถ ู…ุดุงูู ู…ู ูุจู copilot ุงู ุฐูุงุก ุงูุงุตุทูุงุนู",
+	Callback = function()	
+  	end    
+})
+
+
+local Tab = Window:MakeTab({
+
+	Name = "โจุชุญุฏูุซุงุชโจ",
+
+	Icon = "rbxassetid://4483345998",
+
+	PremiumOnly = false
+
+})
+
+
+local Section = Tab:AddSection({
+
+	Name = "๐ ุฑุฌุงุก ูุง ุชุนุฏู ูู ุณูุฑุจุช"
+
+})
+
+Tab:AddButton({
+	Name = "ุชู… ุงุถุงูุฉ ู…ูุฒุชูู (๐”ุงูุงุฎุจุงุฑ) ูุง (โจุชุญุฏูุซุงุชโจ)",
+	Callback = function()	
+  	end    
+})
+
+
+local Tab = Window:MakeTab({
+
+	Name = "ุงูุงุฎุจุงุฑ๐”",
+
+	Icon = "rbxassetid://4483345998",
+
+	PremiumOnly = false
+
+})
+
+
+local Section = Tab:AddSection({
+
+	Name = "[ุงุฎุจุงุฑ ุตุงูุน ุณูุฑุจุช]"
+
+})
+
+Tab:AddButton({
+	Name = "ูุง ุชูุฌุฏ",
+	Callback = function()	
+  	end    
+})
+end) 
+
+Tab:CreateButton("Simple Executor",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/nickils/Simple-Executor/main/Script.lua"))()
+end) 
+
+Tab:CreateButton("Mario EXE lua executor",function()
+local fuckbyfron = Instance.new("ScreenGui")
+local window = Instance.new("Frame")
+local main = Instance.new("Frame")
+local input = Instance.new("TextBox")
+local exe = Instance.new("TextButton")
+local inj = Instance.new("TextButton")
+local open = Instance.new("TextButton")
+local clea = Instance.new("TextButton")
+local output = Instance.new("TextBox")
+local title = Instance.new("TextLabel")
+local logo = Instance.new("ImageLabel")
+local close = Instance.new("TextButton")
+local minimize = Instance.new("TextButton")
+local mini = Instance.new("ImageButton")
+
+--Properties:
+
+fuckbyfron.Name = "fuckbyfron"
+fuckbyfron.Parent = game.CoreGui
+fuckbyfron.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+window.Name = "window"
+window.Parent = fuckbyfron
+window.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+window.BorderColor3 = Color3.fromRGB(0, 0, 0)
+window.Position = UDim2.new(0.0651315823, 0, 0.17032434, 0)
+window.Size = UDim2.new(0, 306, 0, 364)
+
+main.Name = "main"
+main.Parent = window
+main.BackgroundColor3 = Color3.fromRGB(236, 0, 0)
+main.BorderColor3 = Color3.fromRGB(0, 0, 0)
+main.BorderSizePixel = 0
+main.Position = UDim2.new(0, 0, 0.0769230798, 0)
+main.Size = UDim2.new(0, 306, 0, 336)
+
+input.Name = "input"
+input.Parent = main
+input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+input.BorderColor3 = Color3.fromRGB(185, 185, 185)
+input.Position = UDim2.new(0.0205278583, 0, 0.0714285746, 0)
+input.Size = UDim2.new(0, 293, 0, 186)
+input.Font = Enum.Font.Arial
+input.MultiLine = true
+input.Text = ""
+input.TextColor3 = Color3.fromRGB(0, 0, 0)
+input.TextSize = 13.000
+input.TextWrapped = true
+input.TextXAlignment = Enum.TextXAlignment.Left
+input.TextYAlignment = Enum.TextYAlignment.Top
+
+exe.Name = "exe"
+exe.Parent = main
+exe.BackgroundColor3 = Color3.fromRGB(244, 244, 244)
+exe.BorderColor3 = Color3.fromRGB(198, 198, 198)
+exe.Position = UDim2.new(0.0196078438, 0, 0.645833313, 0)
+exe.Size = UDim2.new(0, 64, 0, 23)
+exe.Font = Enum.Font.SourceSans
+exe.Text = "Execute"
+exe.TextColor3 = Color3.fromRGB(0, 0, 0)
+exe.TextSize = 14.000
+exe.MouseButton1Down:connect(function()
+loadstring(input.Text)()
+    output.Text = "Script executed successfully!"
+    wait(3)
+    output.Text " "
+end)
+
+inj.Name = "inj"
+inj.Parent = main
+inj.BackgroundColor3 = Color3.fromRGB(244, 244, 244)
+inj.BorderColor3 = Color3.fromRGB(198, 198, 198)
+inj.Position = UDim2.new(0.76797384, 0, 0.645833313, 0)
+inj.Size = UDim2.new(0, 64, 0, 23)
+inj.Font = Enum.Font.SourceSans
+inj.Text = "Inject"
+inj.TextColor3 = Color3.fromRGB(0, 0, 0)
+inj.TextSize = 14.000
+inj.MouseButton1Down:connect(function()
+    wait(1)
+    output.Text = "Mario.exe Injected!"
+    wait(3)
+    output.Text = " "
+end)
+
+open.Name = "open"
+open.Parent = main
+open.BackgroundColor3 = Color3.fromRGB(244, 244, 244)
+open.BorderColor3 = Color3.fromRGB(198, 198, 198)
+open.Position = UDim2.new(0.264705896, 0, 0.645833313, 0)
+open.Size = UDim2.new(0, 64, 0, 23)
+open.Font = Enum.Font.SourceSans
+open.Text = "Open"
+open.TextColor3 = Color3.fromRGB(0, 0, 0)
+open.TextSize = 14.000
+open.MouseButton1Down:connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/ScriptHub"))()
+end)
+
+clea.Name = "clea"
+clea.Parent = main
+clea.BackgroundColor3 = Color3.fromRGB(244, 244, 244)
+clea.BorderColor3 = Color3.fromRGB(198, 198, 198)
+clea.Position = UDim2.new(0.522875845, 0, 0.645833313, 0)
+clea.Size = UDim2.new(0, 64, 0, 23)
+clea.Font = Enum.Font.SourceSans
+clea.Text = "Clear"
+clea.TextColor3 = Color3.fromRGB(0, 0, 0)
+clea.TextSize = 14.000
+clea.MouseButton1Down:connect(function()
+    input.Text = " "
+end)
+
+output.Name = "output"
+output.Parent = main
+output.BackgroundColor3 = Color3.fromRGB(236, 236, 236)
+output.BorderColor3 = Color3.fromRGB(185, 185, 185)
+output.Position = UDim2.new(0.0205278583, 0, 0.747023821, 0)
+output.Size = UDim2.new(0, 293, 0, 70)
+output.Font = Enum.Font.Arial
+output.Text = ""
+output.TextColor3 = Color3.fromRGB(0, 0, 0)
+output.TextSize = 13.000
+output.TextXAlignment = Enum.TextXAlignment.Left
+output.TextYAlignment = Enum.TextYAlignment.Top
+
+title.Name = "title"
+title.Parent = window
+title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1.000
+title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+title.BorderSizePixel = 0
+title.Position = UDim2.new(0.0909090936, 0, 0, 0)
+title.Size = UDim2.new(0, 110, 0, 28)
+title.Font = Enum.Font.SourceSans
+title.Text = "Mario.exe"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 14.000
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+logo.Name = "logo"
+logo.Parent = title
+logo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+logo.BackgroundTransparency = 1.000
+logo.BorderColor3 = Color3.fromRGB(0, 0, 0)
+logo.BorderSizePixel = 0
+logo.Position = UDim2.new(-0.218181819, 0, 0.142857149, 0)
+logo.Size = UDim2.new(0, 24, 0, 20)
+logo.Image = "http://www.roblox.com/asset/?id=15524143565"
+
+close.Name = "close"
+close.Parent = window
+close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+close.BackgroundTransparency = 1.000
+close.BorderColor3 = Color3.fromRGB(0, 0, 0)
+close.BorderSizePixel = 0
+close.Position = UDim2.new(0.869281054, 0, 0, 0)
+close.Size = UDim2.new(0, 40, 0, 28)
+close.Font = Enum.Font.Arial
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(255, 0, 0)
+close.TextSize = 14.000
+close.MouseButton1Down:connect(function()
+    window.Visible = false
+end)
+
+minimize.Name = "minimize"
+minimize.Parent = window
+minimize.BackgroundColor3 = Color3.fromRGB(255, 050, 0)
+minimize.BackgroundTransparency = 1.000
+minimize.BorderColor3 = Color3.fromRGB(0, 0, 0)
+minimize.BorderSizePixel = 0
+minimize.Position = UDim2.new(0.637254894, 0, -0.000915757904, 0)
+minimize.Size = UDim2.new(0, 40, 0, 28)
+minimize.Font = Enum.Font.Arial
+minimize.Text = "-"
+minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimize.TextSize = 14.000
+minimize.MouseButton1Down:connect(function()
+    window.Visible = false
+    mini.Visible = true
+end)
+
+
+mini.Name = "mini"
+mini.Parent = fuckbyfron
+mini.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+mini.BorderColor3 = Color3.fromRGB(0, 0, 0)
+mini.BorderSizePixel = 0
+mini.Position = UDim2.new(0, 0, 0.90840143, 0)
+mini.Size = UDim2.new(0, 54, 0, 52)
+mini.Style = Enum.ButtonStyle.RobloxButton
+mini.Image = "http://www.roblox.com/asset/?id=1212687121"
+mini.Visible = false
+mini.MouseButton1Down:connect(function()
+    mini.Visible = false
+    window.Visible = true
+end)
+
+-- Scripts:
+
+local function SZFCN_fake_script() -- window.Dragify 
+    local script = Instance.new('LocalScript', window)
+
+    local UserInputService = game:GetService("UserInputService")
+    
+    local gui = script.Parent
+    
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+    
+    local function update(input)
+        local delta = input.Position - dragStart
+        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+    
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = gui.Position
+    
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
+end
+coroutine.wrap(SZFCN_fake_script)()
+end) 
+
+Tab:CreateButton("Hydro Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FRX397/Hydrohub/main/Hydro_hub", true))()
+end) 
+
+Tab:CreateButton("sortex lua",function()
+loadstring(game:HttpGet("https://paste.gg/p/Jims/833855baa2244b119cb213a1023faaf4/files/9a7efdd68d124659954c319718da1739/raw",true))()
+end) 
+
+Tab:CreateButton("FoggyGuard",function()
+ loadstring(game:HttpGet("https://raw.githubusercontent.com/FOGOTY/guard/main/script"))()
+end) 
+
+Tab:CreateButton("Gorkon HUB V4",function()
+loadstring(game:HttpGet('https://gist.githubusercontent.com/FakeGuyX/62da2399b9f54b0d09a0228d01490958/raw/57b7129459b9cdf3b00bc522af8facd1bc4bb0a1/gistfile1.txt'))()
+end) 
+
+Tab:CreateButton("Nano bypasser",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Yeeeter30/NanoAuto/main/NanoBypass.lua",true))()
+end) 
+
+Tab:CreateButton("Zekrom Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ZekromHub/Script/main/Main"))()
+end) 
+
+Tab:CreateButton("c00lgui mobile FE v2",function()
+-- put your 
+local gui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+
+local revf = Instance.new("Frame")
+revf.Size = UDim2.new(0.3, 0, 0.6, 0)
+revf.Position = UDim2.new(0.03, 0, 0.3, 0)
+revf.BackgroundColor3 = Color3.new(0, 0, 0)
+revf.BorderColor3 = Color3.new(1, 0, 0)
+revf.BorderSizePixel = 5
+revf.Active = true
+revf.BackgroundTransparency = 0 
+revf.Draggable = false
+revf.Parent = gui
+
+
+local l = Instance.new("TextLabel")
+l.Size = UDim2.new(1.0, 0, 0.09, 0)
+l.Position = UDim2.new(0.00, 0, -0.1, 0)
+l.BackgroundColor3 = Color3.new(0, 0, 0)
+l.BorderColor3 = Color3.new(1, 0, 0)
+l.BorderSizePixel = 5
+l.Text = "c00lgui Mobile FE v2"
+l.BackgroundTransparency = 0 
+l.TextColor3 = Color3.new(255, 255, 255)
+l.Font = Enum.Font.Cartoon
+l.Parent = revf
+l.TextScaled = true
+l.TextWrapped = true
+
+
+local fe1 = Instance.new("TextButton")
+fe1.Size = UDim2.new(0.3, 0, 0.1, 0)
+fe1.Position = UDim2.new(0.01, 0, 0.02, 0)
+fe1.BackgroundColor3 = Color3.new(0, 0, 0)
+fe1.BorderColor3 = Color3.new(1, 0, 0)
+fe1.BorderSizePixel = 6
+fe1.Text = "FE Punch Fling"
+fe1.BackgroundTransparency = 0 
+fe1.TextColor3 = Color3.new(255, 255, 255)
+fe1.Font = Enum.Font.Cartoon
+fe1.Parent = revf
+fe1.TextScaled = true
+fe1.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet(('http://pastefy.app/GvnHVjT5/raw'),true))()
+end)
+
+local fe2 = Instance.new("TextButton")
+fe2.Size = UDim2.new(0.3, 0, 0.1, 0)
+fe2.Position = UDim2.new(0.35, 0, 0.025, 0)
+fe2.BackgroundColor3 = Color3.new(0, 0, 0)
+fe2.BorderColor3 = Color3.new(1, 0, 0)
+fe2.BorderSizePixel = 5
+fe2.Text = "QuirkyCMD [FE Admin]"
+fe2.BackgroundTransparency = 0 
+fe2.TextColor3 = Color3.new(255, 255, 255)
+fe2.Font = Enum.Font.Cartoon
+fe2.Parent = revf
+fe2.TextScaled = true
+fe2.MouseButton1Down:Connect(function()
+  -- QuirkyCMD made by quirky anime boy (smokedoutlocedout on discord)
+-- Discord server with games list, plugins, etc:  https://discord.gg/aG6KdRje3x
+-- Testing game: https://www.roblox.com/games/7593160773
+loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()
+end)
+
+local fe3 = Instance.new("TextButton")
+fe3.Size = UDim2.new(0.31, 0, 0.1, 0)
+fe3.Position = UDim2.new(0.68, 0, 0.025, 0)
+fe3.BackgroundColor3 = Color3.new(0, 0, 0)
+fe3.BorderColor3 = Color3.new(1, 0, 0)
+fe3.BorderSizePixel = 5
+fe3.Text = "c00lgui f3x"
+fe3.BackgroundTransparency = 0 
+fe3.TextColor3 = Color3.new(255, 255, 255)
+fe3.Font = Enum.Font.Cartoon
+fe3.Parent = revf
+fe3.TextScaled = true
+fe3.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/wik7123/hi/main/copyezskid%20ok"))()
+end)
+
+local fe4 = Instance.new("TextButton")
+fe4.Size = UDim2.new(0.31, 0, 0.1, 0)
+fe4.Position = UDim2.new(0.01, 0, 0.15, 0)
+fe4.BackgroundColor3 = Color3.new(0, 0, 0)
+fe4.BorderColor3 = Color3.new(1, 0, 0)
+fe4.BorderSizePixel = 5
+fe4.Text = "IY + NA"
+fe4.BackgroundTransparency = 0 
+fe4.TextColor3 = Color3.new(255, 255, 255)
+fe4.Font = Enum.Font.Cartoon
+fe4.Parent = revf
+fe4.TextScaled = true
+fe4.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+local fe5 = Instance.new("TextButton")
+fe5.Size = UDim2.new(0.3, 0, 0.1, 0)
+fe5.Position = UDim2.new(0.35, 0, 0.15, 0)
+fe5.BackgroundColor3 = Color3.new(0, 0, 0)
+fe5.BorderColor3 = Color3.new(1, 0, 0)
+fe5.BorderSizePixel = 5
+fe5.Text = "Lag Chat"
+fe5.BackgroundTransparency = 0 
+fe5.TextColor3 = Color3.new(255, 255, 255)
+fe5.Font = Enum.Font.Cartoon
+fe5.Parent = revf
+fe5.TextScaled = true
+fe5.MouseButton1Down:Connect(function()
+  for i = 1, 4 do
+local args = {
+    [1] = "\194\160\194\160",
+    [2] = "All"
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest"):FireServer(unpack(args))
+end
+end)
+
+local fe6 = Instance.new("TextButton")
+fe6.Size = UDim2.new(0.31, 0, 0.1, 0)
+fe6.Position = UDim2.new(0.68, 0, 0.15, 0)
+fe6.BackgroundColor3 = Color3.new(0, 0, 0)
+fe6.BorderColor3 = Color3.new(1, 0, 0)
+fe6.BorderSizePixel = 5
+fe6.Text = "Fedora Admin"
+fe6.BackgroundTransparency = 0 
+fe6.TextColor3 = Color3.new(255, 255, 255)
+fe6.Font = Enum.Font.Cartoon
+fe6.Parent = revf
+fe6.TextScaled = true
+fe6.MouseButton1Down:Connect(function()
+  loadstring(game:HttpGet('https://raw.githubusercontent.com/alexx1212/fedoratoomutch/main/toomucth'))()
+end)
+  
+local fe7 = Instance.new("TextButton")
+fe7.Size = UDim2.new(0.3, 0, 0.1, 0)
+fe7.Position = UDim2.new(0.01, 0, 0.29, 0)
+fe7.BackgroundColor3 = Color3.new(0, 0, 0)
+fe7.BorderColor3 = Color3.new(1, 0, 0)
+fe7.BorderSizePixel = 5
+fe7.Text = "Sing Hino Do Vasco"
+fe7.BackgroundTransparency = 0 
+fe7.TextColor3 = Color3.new(255, 255, 255)
+fe7.Font = Enum.Font.Code
+fe7.Parent = revf
+fe7.TextScaled = true
+fe7.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://https://rawscripts.net/raw/Universal-Script-Hino-do-vasco-17504"))()
+end)
+
+local fe8 = Instance.new("TextButton")
+fe8.Size = UDim2.new(0.31, 0, 0.1, 0)
+fe8.Position = UDim2.new(0.34, 0, 0.29, 0)
+fe8.BackgroundColor3 = Color3.new(0, 0, 0)
+fe8.BorderColor3 = Color3.new(1, 0, 0)
+fe8.BorderSizePixel = 5
+fe8.Text = "Fire Remotes"
+fe8.BackgroundTransparency = 0 
+fe8.TextColor3 = Color3.new(255, 255, 255)
+fe8.Font = Enum.Font.Cartoon
+fe8.Parent = revf
+fe8.TextScaled = true
+fe8.MouseButton1Down:Connect(function()
+for _, rs in pairs(game.ReplicatedStorage:GetChildren()) do
+  if rs:IsA("RemoteEvent") then
+    rs:FireServer()
+  end
+end
+end)
+
+local fe9 = Instance.new("TextButton")
+fe9.Size = UDim2.new(0.31, 0, 0.1, 0)
+fe9.Position = UDim2.new(0.68, 0, 0.29, 0)
+fe9.BackgroundColor3 = Color3.new(0, 0, 0)
+fe9.BorderColor3 = Color3.new(1, 0, 0)
+fe9.BorderSizePixel = 5
+fe9.Text = "Click TP"
+fe9.BackgroundTransparency = 0 
+fe9.TextColor3 = Color3.new(255, 255, 255)
+fe9.Font = Enum.Font.Code
+fe9.Parent = revf
+fe9.TextScaled = true
+fe9.MouseButton1Down:Connect(function()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Tp-tool-script-5767"))()
+end)
+
+
+local ngui = Instance.new("ScreenGui",game.Players.LocalPlayer.PlayerGui)
+
+
+
+local x = Instance.new("TextButton")
+x.Size = UDim2.new(0.3, 0, 0.06, 0)
+x.Position = UDim2.new(0.033, 0, 0.92, 0)
+x.BackgroundColor3 = Color3.new(0, 0, 0)
+x.BorderColor3 = Color3.new(1, 0, 0)
+x.BorderSizePixel = 5
+x.Text = "Open / Close"
+x.BackgroundTransparency = 0 
+x.TextColor3 = Color3.new(255, 255, 255)
+x.Parent = ngui
+x.TextWrapped = true
+x.TextScaled = true
+x.MouseButton1Down:Connect(function()
+  gui.Enabled = not gui.Enabled
+end)
+
+
+
+
+
+end) 
+
+Tab:CreateButton("Plasma Hub",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/GamingBears/Scripts/main/PlasmaLoader"))()
+end) 
+
+Tab:CreateButton("ECCS Searcher V24",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ECCSco/ECCS-V3/main/ECCS%20Searcher%20V2.4"))("Copyright ERROR_CODE ECCS Co")
+end) 
+
+Tab:CreateButton("Essential wtf",function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DoesntMqtter/Script/main/essential.wtf"))() 
+end) 
+
 Tab:CreateButton("Universal car speed Mobile",function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Alexisisback/Universall/main/Universal%20Car%20speed.lua"))()
 end) 
