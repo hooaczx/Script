@@ -1701,14 +1701,12 @@ function AddMusicPlayer(parent, Configs)
             if isPlaying and sound.IsLoaded then
                 local currentTime = sound.TimePosition
                 local totalTime = sound.TimeLength
+                Circle.Rotation = Circle.Rotation + 1
                 if totalTime > 0 then
-                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
+                       TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
                         math.floor(currentTime / 60), math.floor(currentTime % 60),
                         math.floor(totalTime / 60), math.floor(totalTime % 60))
-                    ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
-                    it Circle then
-                    Circle.Rotation = Circle.Rotation + 1
-                    end
+                        ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
                 else
                     TimeLabel.Text = "00:00 / 00:00"
                     ProgressBar.Size = UDim2.new(0, 0, 1, 0)
