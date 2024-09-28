@@ -1559,21 +1559,11 @@ function MakeWindow(Configs)
     Section.Text = NewName
   end
   
-  local songs = {
+local RunService = game:GetService("RunService")
+local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
-    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
-    {id = "rbxassetid://9046863253", name = "Poolside"},
-    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
-    {id = "rbxassetid://1839666799", name = "Calmness"},
-    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
-    {id = "rbxassetid://1838202933", name = "Take a Bow"},
-    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
-    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
-    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
-    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
-    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
-    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
+
 }
 
 local currentSongIndex = 1
@@ -1581,24 +1571,36 @@ local sound = Instance.new("Sound")
 sound.Parent = CoreGui
 local isPlaying = false
 
--- ฟังก์ชันเล่นเพลงตาม index และอัปเดตชื่อเพลงใน TitleLabel
-function PlaySongByIndex(index, TitleLabel)
+function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
         sound:Play()
         isPlaying = true
-        TitleLabel.Text = "Now Playing: " .. song.name -- อัปเดตชื่อเพลง
+        TitleLabel.Text = "Now Playing: " .. song.name
+        UpdateSongProgress(TimeLabel, ProgressBar)
         game.StarterGui:SetCore("SendNotification", {
-            Title = "Playing",
-            Text = "Playing song: " .. song.name,
+            Title = "Song",
+            Text = "Play: " .. song.name,
             Icon = "rbxassetid://16855304544",
-            Duration = 2,
+            Duration = 1,
         })
     end
 end
 
--- ฟังก์ชันสร้าง Music Player UI
+function UpdateSongProgress(TimeLabel, ProgressBar)
+    RunService.RenderStepped:Connect(function()
+        if isPlaying and sound.IsLoaded then
+            local currentTime = sound.TimePosition
+            local totalTime = sound.TimeLength
+            TimeLabel.Text = string.format("%02d:%02d / %02d:%02d", 
+                math.floor(currentTime / 60), math.floor(currentTime % 60),
+                math.floor(totalTime / 60), math.floor(totalTime % 60))
+            ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+        end
+    end)
+end
+
 function AddMusicPlayer(parent, Configs)
     local PlayerName = Configs.Name or ""
     local PlayButtonText = Configs.PlayButtonText or "Play Selected Song"
@@ -1612,12 +1614,11 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Frame)
     Stroke(Frame)
-
-    -- สร้าง TitleLabel ที่จะอัปเดตชื่อเพลง
+    
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 16,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Now Playing: " .. songs[currentSongIndex].name, -- เริ่มต้นด้วยเพลงแรกในตาราง
+        Text = songs[currentSongIndex].name,
         Size = UDim2.new(1, 0, 0, 20),
         Position = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
@@ -1625,8 +1626,7 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
-
-    -- ปุ่มเพลงถัดไป
+    
     local NextButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1639,11 +1639,10 @@ function AddMusicPlayer(parent, Configs)
     TextSetColor(NextButton)
 
     NextButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex % #songs) + 1 -- ไปยังเพลงถัดไป
-        PlaySongByIndex(currentSongIndex, TitleLabel) -- อัปเดตชื่อเพลงใน TitleLabel
+        currentSongIndex = (currentSongIndex % #songs) + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
     end)
-
-    -- ปุ่มเพลงก่อนหน้า
+    
     local PreviousButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1656,11 +1655,10 @@ function AddMusicPlayer(parent, Configs)
     TextSetColor(PreviousButton)
 
     PreviousButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1 -- ไปยังเพลงก่อนหน้า
-        PlaySongByIndex(currentSongIndex, TitleLabel) -- อัปเดตชื่อเพลงใน TitleLabel
+        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
     end)
-
-    -- ปุ่มเปิด/ปิดเพลง (Toggle)
+    
     local ToggleButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1679,9 +1677,34 @@ function AddMusicPlayer(parent, Configs)
             Callback("Stopped music")
             TitleLabel.Text = "Stopped"
         else
-            PlaySongByIndex(currentSongIndex, TitleLabel) -- เล่นเพลงปัจจุบันและอัปเดตชื่อเพลง
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar) -- เล่นเพลงปัจจุบันและอัปเดตชื่อเพลง
         end
     end)
+
+    local ProgressBarFrame = Create("Frame", Frame, {
+        Size = UDim2.new(1, 0, 0, 10),
+        Position = UDim2.new(0, 0, 0, 120),
+        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
+        BorderSizePixel = 0
+    })
+
+    local ProgressBar = Create("Frame", ProgressBarFrame, {
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Button
+    })
+    Corner(ProgressBar)
+    
+    local TimeLabel = Create("TextLabel", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "00:00 / 00:00",
+        Size = UDim2.new(1, 0, 0, 20),
+        Position = UDim2.new(0, 0, 0, 110),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(TimeLabel)
 end
 
   
