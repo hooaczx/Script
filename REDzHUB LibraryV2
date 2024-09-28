@@ -1570,16 +1570,16 @@ local sound = Instance.new("Sound")
 sound.Parent = CoreGui
 local isPlaying = false
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar)
+function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
         sound:Play()
-        sound.TimePosition = 0
+        sound.TimePosition = sound.TimePosition
         isPlaying = true
         TitleLabel.Text = "Now Playing: " .. song.name
         sound.Loaded:Wait()
-        UpdateSongProgress(TimeLabel, ProgressBar)
+        UpdateSongProgress(TimeLabel, ProgressBar, Circle)
     end
 end
 
@@ -1606,13 +1606,34 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
+    local Circle = Create("ImageLabel", Frame, {
+        Size = UDim2.new(0, 60, 0, 60),
+        Position = UDim2.new(0.5, -30, 0, 40), 
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://12345678",
+        ScaleType = Enum.ScaleType.Fit
+    })
+    Corner(Circle)
+
+    -- เวลาเพลงในวงกลม
+    local TimeLabel = Create("TextLabel", Circle, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "00:00 / 00:00",
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        TextYAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(TimeLabel)
 
     local NextButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "Next",
         Size = UDim2.new(0.5, -5, 0, 30),
-        Position = UDim2.new(0.5, 5, 0, 40),
+        Position = UDim2.new(0.5, 5, 0, 120),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
@@ -1620,7 +1641,7 @@ function AddMusicPlayer(parent, Configs)
 
     NextButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar, Circle)
     end)
 
     local PreviousButton = Create("TextButton", Frame, {
@@ -1628,7 +1649,7 @@ function AddMusicPlayer(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "Previous",
         Size = UDim2.new(0.5, -5, 0, 30),
-        Position = UDim2.new(0, 0, 0, 40),
+        Position = UDim2.new(0, 0, 0, 120),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
@@ -1636,7 +1657,7 @@ function AddMusicPlayer(parent, Configs)
 
     PreviousButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar, Circle)
     end)
 
     local ToggleButton = Create("TextButton", Frame, {
@@ -1644,27 +1665,28 @@ function AddMusicPlayer(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "Play",
         Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 80),
+        Position = UDim2.new(0, 0, 0, 160),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
     TextSetColor(ToggleButton)
 
     ToggleButton.MouseButton1Click:Connect(function()
-    if isPlaying then
-        sound:Pause()
-        isPlaying = false
-        Callback("Paused music")
-        TitleLabel.Text = "Paused"
-    else
-        sound:Play()
-        isPlaying = true
-        UpdateSongProgress(TimeLabel, ProgressBar)
-       end
+        if isPlaying then
+            sound:Pause()
+            isPlaying = false
+            Callback("Paused music")
+            TitleLabel.Text = "Paused"
+        else
+            sound:Play()
+            isPlaying = true
+            UpdateSongProgress(TimeLabel, ProgressBar, Circle)
+        end
     end)
+    
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
-        Position = UDim2.new(0, 0, 0, 120),
+        Position = UDim2.new(0, 0, 0, 190),
         BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
         BorderSizePixel = 0
     })
@@ -1674,19 +1696,7 @@ function AddMusicPlayer(parent, Configs)
         BackgroundColor3 = Configs_HUB.Cor_Button
     })
     Corner(ProgressBar)
-
-    local TimeLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "00:00 / 00:00",
-        Size = UDim2.new(1, 0, 0, 20),
-        Position = UDim2.new(0, 0, 0, 110),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(TimeLabel)
-    function UpdateSongProgress(TimeLabel, ProgressBar)
+    function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
         local connection
         connection = RunService.RenderStepped:Connect(function()
             if isPlaying and sound.IsLoaded then
@@ -1697,6 +1707,7 @@ function AddMusicPlayer(parent, Configs)
                         math.floor(currentTime / 60), math.floor(currentTime % 60),
                         math.floor(totalTime / 60), math.floor(totalTime % 60))
                     ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+                    Circle.Rotation = Circle.Rotation + 1
                 else
                     TimeLabel.Text = "00:00 / 00:00"
                     ProgressBar.Size = UDim2.new(0, 0, 1, 0)
@@ -1708,9 +1719,8 @@ function AddMusicPlayer(parent, Configs)
             end
         end)
     end
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar, Circle)
 end
-
   
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
