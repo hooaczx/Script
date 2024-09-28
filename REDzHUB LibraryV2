@@ -1705,7 +1705,7 @@ local isPlaying = false
 local lastPosition = 0
 local isRotating = false
 local rotationTween
-local playNextSong = true -- ตัวแปรเพื่อกำหนดว่าจะเล่นเพลงถัดไปหรือย้อนกลับ
+local playNextSong = true
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Circle)
     local song = songs[index]
@@ -1734,7 +1734,7 @@ function rotateTimeLabel(Circle)
         if isRotating then
             isRotating = false
             if rotationTween then
-                rotationTween:Stop()  -- ใช้ Stop แทน Pause
+                rotationTween:Stop()
                 Circle.Rotation = 0
             end
         end
@@ -1753,6 +1753,66 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Frame)
     Stroke(Frame)
+
+    local TextButton = Create("TextButton", parent, {
+      Size = UDim2.new(1, 0, 0, 25),
+      BackgroundColor3 = Configs_HUB.Cor_Options,
+      Name = "Frame",
+      Text = "",
+      AutoButtonColor = false
+    })Corner(TextButton)Stroke(TextButton)
+    
+    local TextLabel = Create("TextLabel", TextButton, {
+      TextSize = 12,
+      TextColor3 = Configs_HUB.Cor_Text,
+      Text = PlayerName,
+      Size = UDim2.new(1, 0, 1, 0),
+      Position = UDim2.new(0, 35, 0, 0),
+      BackgroundTransparency = 1,
+      TextXAlignment = "Left",
+      Font = Configs_HUB.Text_Font
+    })
+    
+    local Frame1 = Create("Frame", TextButton, {
+      Size = UDim2.new(0, 25, 0, 15),
+      Position = UDim2.new(0, 5, 0, 5),
+      BackgroundTransparency = 1,
+    })Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
+    local Stroke = Stroke(Frame1, {Thickness = 2})
+    
+    local Frame2 = Create("Frame", Frame1, {
+      Size = UDim2.new(0, 13, 0, 13),
+      Position = UDim2.new(0, 2, 0.5, 0),
+      AnchorPoint = Vector2.new(0, 0.5),
+      BackgroundColor3 = Configs_HUB.Cor_Stroke
+    })Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+    
+    local OnOff = false
+    if Default then
+      OnOff = true
+      CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
+      CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+      CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+      CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+    end
+    Callback(OnOff)
+    TextButton.MouseButton1Click:Connect(function()
+      if Frame2.Position.X.Offset < 5 then
+        OnOff = true
+        CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+        CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+        CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+        Callback(true)
+      else
+        OnOff = false
+        CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+        Callback(false)
+      end
+    end)
 
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 16,
@@ -1845,7 +1905,6 @@ function AddMusicPlayer(parent, Configs)
         end
     end)
 
-    -- ปุ่มสลับระหว่างเล่นเพลงถัดไปและย้อนกลับ
     local ToggleNextPreviousButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1882,7 +1941,7 @@ function AddMusicPlayer(parent, Configs)
     local SpeedTextBox = Create("TextBox", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "1.0",
+        Text = "Enter Song Speed",
         Size = UDim2.new(0.3, 0, 0, 30),
         Position = UDim2.new(0, 0, 0, 290),
         BackgroundColor3 = Configs_HUB.Cor_Button,
