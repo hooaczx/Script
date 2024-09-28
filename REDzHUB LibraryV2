@@ -102,7 +102,7 @@ local ListLayout = Create("UIListLayout", Menu_Notifi, {
 
 function MakeNotifi(Configs)
   local Title = Configs.Title or "REDz HUB"
-  local text = Configs.Text or "Notificação"
+  local text = Configs.Text or "Notificaรงรฃo"
   local timewait = Configs.Time or 5
   
   local Frame1 = Create("Frame", Menu_Notifi, {
@@ -128,6 +128,200 @@ function MakeNotifi(Configs)
     Position = UDim2.new(0, 20, 0, 5),
     TextXAlignment = "Left",
     TextColor3 = Configs_HUB.Cor_Text
+    
+local existingGui = playerGui:FindFirstChild("MuusicGui")
+if existingGui then
+    local existingSound = existingGui:FindFirstChild("MuusicSound")
+    if existingSound then
+        existingSound:Stop()
+    end
+    existingGui:Destroy()
+end
+
+local music = Instance.new("ScreenGui")
+music.Name = "MuusicGui"
+music.ZIndexBehavior = Enum.ZIndexBehavior.Global
+music.DisplayOrder = 100000
+music.IgnoreGuiInset = true
+music.Parent = TextLabel
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.21, 0, 0.11, 0)
+frame.Position = UDim2.new(0.3, -0.15 * 240, 0.5, -0.075 * 240)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BackgroundTransparency = 0.5
+frame.Parent = screenGui
+
+local playButton = Instance.new("ImageButton")
+playButton.Size = UDim2.new(0, 17, 0, 17)
+playButton.Position = UDim2.new(0, 8, 0.5, 4)
+playButton.BackgroundTransparency = 0.6
+playButton.Image = "rbxassetid://120936263094449"
+playButton.Parent = frame
+
+local nextButton = Instance.new("ImageButton")
+nextButton.Size = UDim2.new(0, 17, 0, 17)
+nextButton.Position = UDim2.new(0, 28, 0.5, 4)
+nextButton.BackgroundTransparency = 0.6
+nextButton.Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150"
+nextButton.Parent = frame
+
+local prevButton = Instance.new("ImageButton")
+prevButton.Size = UDim2.new(0, 17, 0, 17)
+prevButton.Position = UDim2.new(0, 49, 0.5, 4)
+prevButton.BackgroundTransparency = 0.6
+prevButton.Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150"
+prevButton.Parent = frame
+
+local songNameLabel = Instance.new("TextLabel")
+songNameLabel.Size = UDim2.new(1, 0, 0.27, 0)
+songNameLabel.Position = UDim2.new(0, 0, 0, -0.01)
+songNameLabel.Text = "Song Name"
+songNameLabel.ZIndex = 1000
+songNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+songNameLabel.BackgroundTransparency = 1
+songNameLabel.TextScaled = true
+songNameLabel.Parent = frame
+
+local timeLabel = Instance.new("TextLabel")
+timeLabel.Size = UDim2.new(0.3, 0, 0.2, 0)
+timeLabel.Position = UDim2.new(0.69, 0, 0, 35)
+timeLabel.Text = "0:00/0:00"
+timeLabel.ZIndex = 1000
+timeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+timeLabel.BackgroundTransparency = 1
+timeLabel.TextScaled = true
+timeLabel.Parent = frame
+
+local progressBar = Instance.new("Frame")
+progressBar.Size = UDim2.new(1, 0, 0.14, 0)
+progressBar.Position = UDim2.new(0, 0, 0, 18)
+progressBar.ZIndex = 1000
+progressBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+progressBar.BackgroundTransparency = 1
+progressBar.BorderSizePixel = 0
+progressBar.Parent = frame
+
+local progressFill = Instance.new("Frame")
+progressFill.Size = UDim2.new(0, 0, 1, 0)
+progressFill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+progressFill.BorderSizePixel = 0
+progressFill.Parent = progressBar
+
+local sound = Instance.new("Sound")
+sound.Name = "MuusicSound"
+sound.Parent = screenGui
+
+local songs = {
+    {id = "rbxassetid://5409360995", name = "Dion Timmr"},
+    {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
+    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
+    {id = "rbxassetid://9046863253", name = "Poolside"},
+    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
+    {id = "rbxassetid://1839666799", name = "Calmness"},
+    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
+    {id = "rbxassetid://1838202933", name = "Take a Bow"},
+    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
+    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
+    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
+    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
+    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
+    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
+}
+local currentSongIndex = 1
+local lastPosition = 0
+local isPaused = false
+
+local TweenService = game:GetService("TweenService")
+
+local function changeSong(newIndex)
+    if newIndex > 0 and newIndex <= #songs then
+        local fadeOutTween = TweenService:Create(songNameLabel, TweenInfo.new(0.5), {TextTransparency = 1})
+
+        fadeOutTween:Play()
+        fadeOutTween.Completed:Connect(function()
+            songNameLabel.Text = songs[newIndex].name -- Update song name before fading in
+            local slideInTween = TweenService:Create(songNameLabel, TweenInfo.new(0.5), {TextTransparency = 0})
+            slideInTween:Play()
+        end)
+    end
+end
+
+local function playSong()
+    sound.SoundId = songs[currentSongIndex].id
+    sound.TimePosition = lastPosition
+    sound:Play()
+    playButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+    songNameLabel.Text = songs[currentSongIndex].name
+end
+
+local function pauseSong()
+    lastPosition = sound.TimePosition
+    sound:Pause()
+    playButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
+end
+
+playButton.MouseButton1Click:Connect(function()
+    if sound.IsPlaying then
+        pauseSong()
+        isPaused = true
+    else
+        playSong()
+        isPaused = false
+    end
+end)
+
+local function playNextSong()
+    currentSongIndex = (currentSongIndex % #songs) + 1 -- Loop to the first song after the last one
+    lastPosition = 0
+    playSong()
+end
+
+nextButton.MouseButton1Click:Connect(function()
+    currentSongIndex = (currentSongIndex % #songs) + 1
+    changeSong(currentSongIndex) -- Update the song name on the change
+    lastPosition = 0
+    playSong()
+end)
+
+prevButton.MouseButton1Click:Connect(function()
+    currentSongIndex = (currentSongIndex - 2) % #songs + 1 -- Loop back to the last song if on the first one
+    changeSong(currentSongIndex)
+    playSong()
+end)
+
+sound.Ended:Connect(function()
+    playNextSong()
+    changeSong(currentSongIndex)
+end)
+
+local UICornerPlay = Instance.new("UICorner")
+UICornerPlay.CornerRadius = UDim.new(1, 0)
+local strokeAllOff = Instance.new("UIStroke")
+strokeAllOff.Thickness = 3
+strokeAllOff.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UICornerPlay:Clone().Parent = frame
+strokeAllOff:Clone().Parent = frame
+UICornerPlay:Clone().Parent = playButton
+strokeAllOff:Clone().Parent = playButton
+UICornerPlay:Clone().Parent = nextButton
+strokeAllOff:Clone().Parent = nextButton
+UICornerPlay:Clone().Parent = prevButton
+strokeAllOff:Clone().Parent = prevButton
+UICornerPlay:Clone().Parent = songNameLabel
+UICornerPlay:Clone().Parent = timeLabel
+UICornerPlay:Clone().Parent = progressBar
+strokeAllOff:Clone().Parent = progressBar
+UICornerPlay:Clone().Parent = progressFill
+game:GetService("RunService").RenderStepped:Connect(function()
+    if sound.IsPlaying then
+        local progress = sound.TimePosition / sound.TimeLength
+        progressFill.Size = UDim2.new(progress, 0, 1, 0)
+        local currentTime = math.floor(sound.TimePosition)
+        local totalTime = math.floor(sound.TimeLength)
+        timeLabel.Text = string.format("%d:%02d/%d:%02d", currentTime // 60, currentTime % 60, totalTime // 60, totalTime % 60)
+    end
+end)
   })
   
   local TextButton = Create("TextButton", Frame2, {
@@ -379,7 +573,7 @@ function MakeWindow(Configs)
   end)
   
   local Close_Button = Create("TextButton", ButtonsFrame, {
-    Text = "×",
+    Text = "ร—",
     TextYAlignment = "Bottom",
     TextColor3 = Configs_HUB.Cor_Text,
     Size = UDim2.new(0.5, 0, 1, 0),
