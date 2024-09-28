@@ -1833,7 +1833,7 @@ function AddMusicPlayer(parent, Configs)
 
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
-        Position = UDim2.new(0, 0, 0, 120),
+        Position = UDim2.new(0, 0, 0, 80),
         BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
         BorderSizePixel = 0
     })
@@ -1856,7 +1856,9 @@ function AddMusicPlayer(parent, Configs)
                     local targetSize = UDim2.new(currentTime / totalTime, 0, 1, 0)
                     local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
                     local sizeTween = TweenService:Create(ProgressBar, tweenInfo, {Size = targetSize})
-                    sizeTween:Play()
+                    if ProgressBar then
+                        sizeTween:Play()
+                    end
                 else
                     TimeLabel.Text = "00:00 / 00:00"
                     ProgressBar.Size = UDim2.new(0, 0, 1, 0)
