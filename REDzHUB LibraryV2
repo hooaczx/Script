@@ -1693,17 +1693,39 @@ local currentSongIndex = 1
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
 local isPlaying = false
+local isRotating = false
+local rotationTween
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
         sound:Play()
-        sound.TimePosition = sound.TimePosition -- Preserve current position
         isPlaying = true
         TitleLabel.Text = "Now Playing: " .. song.name
         sound.Loaded:Wait()
         UpdateSongProgress(TimeLabel, ProgressBar, Circle)
+        rotateTimeLabel(Circle)
+    end
+end
+
+function rotateTimeLabel(Circle)
+    if sound.IsPlaying then
+        if not isRotating then
+            isRotating = true
+            local rotationTweenInfo = TweenInfo.new(20, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, false)
+            local rotationGoal = {Rotation = Circle.Rotation + 360}
+            rotationTween = TweenService:Create(Circle, rotationTweenInfo, rotationGoal)
+            rotationTween:Play()
+        end
+    else
+        if isRotating then
+            isRotating = false
+            if rotationTween then
+                rotationTween:Pause()
+                Circle.Rotation = 0
+            end
+        end
     end
 end
 
@@ -1730,6 +1752,7 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
+
     local Circle = Create("ImageLabel", Frame, {
         Size = UDim2.new(0, 60, 0, 60),
         Position = UDim2.new(0.5, -30, 0, 40),
@@ -1738,6 +1761,7 @@ function AddMusicPlayer(parent, Configs)
         ScaleType = Enum.ScaleType.Fit
     })
     Corner(Circle)
+
     local TimeLabel = Create("TextLabel", Circle, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1799,15 +1823,17 @@ function AddMusicPlayer(parent, Configs)
             isPlaying = false
             Callback("Paused music")
             TitleLabel.Text = "Paused"
+            rotateTimeLabel(Circle) -- Stop rotating when paused
         else
             sound:Play()
             isPlaying = true
-            UpdateSongProgress(TimeLabel, ProgressBar, Circle) -- เริ่มอัปเดต ProgressBar และหมุนวงกลมใหม่
+            UpdateSongProgress(TimeLabel, ProgressBar, Circle) -- Start updating ProgressBar and rotate the circle
         end
     end)
+
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
-        Position = UDim2.new(0, 0, 0, 120),
+        Position = UDim2.new(0, 0, 0, 190),
         BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
         BorderSizePixel = 0
     })
@@ -1816,34 +1842,31 @@ function AddMusicPlayer(parent, Configs)
         Size = UDim2.new(0, 0, 1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Button
     })
-    Corner(ProgressBar)    
+    Corner(ProgressBar)
+
     function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        if isPlaying and sound.IsLoaded then
-            local currentTime = sound.TimePosition
-            local totalTime = sound.TimeLength
-            if totalTime > 0 then
-                TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
-                    math.floor(currentTime / 60), math.floor(currentTime % 60),
-                    math.floor(totalTime / 60), math.floor(totalTime % 60))
+        local connection
+        connection = RunService.RenderStepped:Connect(function()
+            if isPlaying and sound.IsLoaded then
+                local currentTime = sound.TimePosition
+                local totalTime = sound.TimeLength
+                if totalTime > 0 then
+                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
+                        math.floor(currentTime / 60), math.floor(currentTime % 60),
+                        math.floor(totalTime / 60), math.floor(totalTime % 60))
+                    ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+                else
+                    TimeLabel.Text = "00:00 / 00:00"
+                    ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+                end
+                if sound.TimePosition >= sound.TimeLength then
+                    connection:Disconnect()
+                    isPlaying = false
                     rotateTimeLabel(Circle)
-                ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
-            else
-                TimeLabel.Text = "00:00 / 00:00"
-                ProgressBar.Size = UDim2.new(0, 0, 1, 0)
-            end
-            if sound.TimePosition >= sound.TimeLength then
-                connection:Disconnect()
-                isPlaying = false
-                isRotating = false
-                if rotationTween then
-                    rotationTween:Pause()
                 end
             end
-        end
-    end)
-end
+        end)
+    end
 end
 
   function AddDiscord(parent, Configs)
