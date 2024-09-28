@@ -1576,9 +1576,25 @@ function MakeWindow(Configs)
     {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
 }
 
-local selectedSongId = nil
+local currentSongIndex = 1
+local sound = Instance.new("Sound")
+sound.Parent = workspace
 
-function CreateSongButton(parent, song)
+function PlaySongByIndex(index)
+    local song = songs[index]
+    if song then
+        sound.SoundId = song.id
+        sound:Play()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Playing",
+            Text = "Playing song: " .. song.name,
+            Icon = "rbxassetid://16855304544",
+            Duration = 2,
+        })
+    end
+end
+
+function CreateSongButton(parent, song, index)
     local Button = Create("TextButton", parent, {
         Text = song.name,
         Size = UDim2.new(1, 0, 0, 25),
@@ -1589,14 +1605,10 @@ function CreateSongButton(parent, song)
         AutoButtonColor = true,
     })
 
+    -- เมื่อกดเลือกเพลง เล่นเพลงตาม index ที่กด
     Button.MouseButton1Click:Connect(function()
-        selectedSongId = song.id
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Song Selected",
-            Text = "Selected song: " .. song.name,
-            Icon = "rbxassetid://16855304544",
-            Duration = 2,
-        })
+        currentSongIndex = index
+        PlaySongByIndex(currentSongIndex)
     end)
 
     return Button
@@ -1604,13 +1616,12 @@ end
 
 function AddMusicPlayer(parent, Configs)
     local PlayerName = Configs.Name or ""
-    local DefaultSoundId = Configs.DefaultSoundId or ""
     local PlayButtonText = Configs.PlayButtonText or "Play Selected Song"
     local StopButtonText = Configs.StopButtonText or "Stop"
     local Callback = Configs.Callback or function() end
 
     local Frame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 300),
+        Size = UDim2.new(1, 0, 0, 350),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "MusicPlayerFrame"
     })
@@ -1629,62 +1640,89 @@ function AddMusicPlayer(parent, Configs)
     })
     TextSetColor(TitleLabel)
 
+    -- สร้างปุ่ม Toggle เพื่อแสดง/ซ่อน ScrollingFrame
+    local ToggleButton = Create("TextButton", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "Toggle Song List",
+        Size = UDim2.new(1, 0, 0, 25),
+        Position = UDim2.new(0, 0, 0, 30),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font,
+    })
+    TextSetColor(ToggleButton)
+
+    -- สร้าง ScrollingFrame ที่จะเก็บรายการเพลง
     local ScrollingFrame = Create("ScrollingFrame", Frame, {
-        Size = UDim2.new(1, 0, 0, 240),
-        Position = UDim2.new(0, 0, 0, 25),
+        Size = UDim2.new(1, 0, 0, 200),
+        Position = UDim2.new(0, 0, 0, 60),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         ScrollBarThickness = 10,
     })
 
     local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
 
-    for _, song in ipairs(songs) do
-        CreateSongButton(ScrollingFrame, song)
+    for index, song in ipairs(songs) do
+        CreateSongButton(ScrollingFrame, song, index)
     end
 
-    -- Adding the title above the ScrollingFrame
-    local SongListLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "นี่คือเพลงที่มีอยู่",
-        Size = UDim2.new(1, 0, 0, 25),
-        Position = UDim2.new(0, 0, 0, 20),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(SongListLabel)
+    -- เพิ่มฟังก์ชันให้ปุ่ม Toggle แสดง/ซ่อน ScrollingFrame
+    ToggleButton.MouseButton1Click:Connect(function()
+        ScrollingFrame.Visible = not ScrollingFrame.Visible
+    end)
 
-    -- Play Button
-    local PlayButton = Create("TextButton", Frame, {
+    -- ปุ่มเพลงถัดไป
+    local NextButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = PlayButtonText,
-        Size = UDim2.new(1, 0, 0, 30),
+        Text = "Next",
+        Size = UDim2.new(0.5, -5, 0, 30),
+        Position = UDim2.new(0.5, 5, 0, 270),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font,
+    })
+    TextSetColor(NextButton)
+
+    NextButton.MouseButton1Click:Connect(function()
+        currentSongIndex = (currentSongIndex % #songs) + 1
+        PlaySongByIndex(currentSongIndex)
+    end)
+
+    -- ปุ่มเพลงก่อนหน้า
+    local PreviousButton = Create("TextButton", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "Previous",
+        Size = UDim2.new(0.5, -5, 0, 30),
         Position = UDim2.new(0, 0, 0, 270),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
-    TextSetColor(PlayButton)
+    TextSetColor(PreviousButton)
 
-    local sound = Instance.new("Sound")
-    sound.Parent = workspace
+    PreviousButton.MouseButton1Click:Connect(function()
+        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+        PlaySongByIndex(currentSongIndex)
+    end)
 
-    PlayButton.MouseButton1Click:Connect(function()
-        if selectedSongId then
-            sound.SoundId = selectedSongId
-            sound:Play()
-            Callback("Playing music: " .. selectedSongId)
-        else
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Error",
-                Text = "No song selected!",
-                Icon = "rbxassetid://16855304544",
-                Duration = 2,
-            })
-        end
+    -- ปุ่มหยุดเพลง
+    local StopButton = Create("TextButton", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = StopButtonText,
+        Size = UDim2.new(1, 0, 0, 30),
+        Position = UDim2.new(0, 0, 0, 310),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font,
+    })
+    TextSetColor(StopButton)
+
+    StopButton.MouseButton1Click:Connect(function()
+        sound:Stop()
+        Callback("Stopped music")
     end)
 end
+
 
   
   function AddDiscord(parent, Configs)
