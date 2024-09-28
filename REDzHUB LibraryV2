@@ -75,11 +75,7 @@ local ScreenGui = Create("ScreenGui", CoreGui, {
 
 ScreenFind = CoreGui:FindFirstChild(ScreenGui.Name)
 if ScreenFind and ScreenFind ~= ScreenGui then
-    local soundInScreen = ScreenFind:FindFirstChildOfClass("Sound")
-    if soundInScreen then
-        soundInScreen:Destroy()
-    end
-    ScreenFind:Destroy()
+  ScreenFind:Destroy()
 end
 
 function DestroyScript()
@@ -1564,6 +1560,8 @@ function MakeWindow(Configs)
   end
   
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
@@ -1571,7 +1569,7 @@ local songs = {
 
 local currentSongIndex = 1
 local sound = Instance.new("Sound")
-sound.Parent = CoreGui
+sound.Parent = ScreenGui
 local isPlaying = false
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
@@ -1579,8 +1577,9 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
     if song then
         sound.SoundId = song.id
         sound:Play()
+        sound.TimePosition = sound.TimePosition -- รักษาตำแหน่งการเล่นปัจจุบัน
         isPlaying = true
-        TitleLabel.Text = song.name
+        TitleLabel.Text = "Now Playing: " .. song.name
         sound.Loaded:Wait()
         UpdateSongProgress(TimeLabel, ProgressBar, Circle)
     end
@@ -1609,15 +1608,14 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
-    local Circle = Create("Frame", Frame, {
-    Size = UDim2.new(0, 100, 0, 100),
-    Position = UDim2.new(0.5, -50, 0, 20),
-    BackgroundColor3 = Color3.new(1, 1, 1),
-    BorderSizePixel = 0,
-    ClipsDescendants = true,
+    local Circle = Create("ImageLabel", Frame, {
+        Size = UDim2.new(0, 60, 0, 60),
+        Position = UDim2.new(0.5, -30, 0, 40),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://12345678",
+        ScaleType = Enum.ScaleType.Fit
     })
     Corner(Circle)
-
     local TimeLabel = Create("TextLabel", Circle, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1674,54 +1672,57 @@ function AddMusicPlayer(parent, Configs)
     TextSetColor(ToggleButton)
 
     ToggleButton.MouseButton1Click:Connect(function()
-    if isPlaying then
-        sound:Pause() -- ใช้ Pause แทน Stop เพื่อให้เซฟตำแหน่งการเล่นปัจจุบัน
-        isPlaying = false
-        Callback("Paused music")
-        TitleLabel.Text = "Paused"
-    else
-        sound:Play()
-        isPlaying = true
-        UpdateSongProgress(TimeLabel, ProgressBar, Circle) -- เริ่มอัปเดต ProgressBar และหมุนวงกลมใหม่
-    end
-end)
+        if isPlaying then
+            sound:Pause()
+            isPlaying = false
+            Callback("Paused music")
+            TitleLabel.Text = "Paused"
+        else
+            sound:Play()
+            isPlaying = true
+            UpdateSongProgress(TimeLabel, ProgressBar, Circle) -- เริ่มอัปเดต ProgressBar และหมุนวงกลมใหม่
+        end
+    end)
     local ProgressBarFrame = Create("Frame", Frame, {
-    Size = UDim2.new(1, 0, 0, 10),
-    Position = UDim2.new(0, 0, 0, 130),
-    BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
-    BorderSizePixel = 0
+        Size = UDim2.new(1, 0, 0, 10),
+        Position = UDim2.new(0, 0, 0, 190),
+        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
+        BorderSizePixel = 0
     })
+
     local ProgressBar = Create("Frame", ProgressBarFrame, {
-    Size = UDim2.new(0, 0, 1, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Button
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Button
     })
     Corner(ProgressBar)
     function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        if isPlaying and sound.IsLoaded then
-            local currentTime = sound.TimePosition
-            local totalTime = sound.TimeLength
-            if totalTime > 0 then
-                TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
-                    math.floor(currentTime / 60), math.floor(currentTime % 60),
-                    math.floor(totalTime / 60), math.floor(totalTime % 60))
-                ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
-                if Circle then
+        local connection
+        connection = RunService.RenderStepped:Connect(function()
+            if isPlaying and sound.IsLoaded then
+                local currentTime = sound.TimePosition
+                local totalTime = sound.TimeLength
+                if totalTime > 0 then
+                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
+                        math.floor(currentTime / 60), math.floor(currentTime % 60),
+                        math.floor(totalTime / 60), math.floor(totalTime % 60))
+                    ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+                    it Circle then
                     Circle.Rotation = Circle.Rotation + 1
+                    end
+                else
+                    TimeLabel.Text = "00:00 / 00:00"
+                    ProgressBar.Size = UDim2.new(0, 0, 1, 0)
                 end
-            else
-                TimeLabel.Text = "00:00 / 00:00"
-                ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+                if sound.TimePosition >= sound.TimeLength then
+                    connection:Disconnect()
+                    isPlaying = false
+                end
             end
-            if sound.TimePosition >= sound.TimeLength then
-                connection:Disconnect()
-                isPlaying = false
-            end
-        end
-    end)
-  end
+        end)
+    endฃ
 end
+
+
   
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
