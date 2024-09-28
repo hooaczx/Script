@@ -1563,7 +1563,6 @@ local RunService = game:GetService("RunService")
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
-
 }
 
 local currentSongIndex = 1
@@ -1584,33 +1583,8 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar)
     end
 end
 
-function UpdateSongProgress(TimeLabel, ProgressBar)
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        if isPlaying and sound.IsLoaded then
-            local currentTime = sound.TimePosition
-            local totalTime = sound.TimeLength
-            if totalTime > 0 then
-                TimeLabel.Text = string.format("%02d:%02d / %02d:%02d", 
-                    math.floor(currentTime / 60), math.floor(currentTime % 60),
-                    math.floor(totalTime / 60), math.floor(totalTime % 60))
-                ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
-            else
-                TimeLabel.Text = "00:00 / 00:00"
-                ProgressBar.Size = UDim2.new(0, 0, 1, 0)
-            end
-            if sound.TimePosition >= sound.TimeLength then
-                connection:Disconnect()
-                isPlaying = false
-            end
-        end
-    end)
-end
-
 function AddMusicPlayer(parent, Configs)
     local PlayerName = Configs.Name or ""
-    local PlayButtonText = Configs.PlayButtonText or ""
-    local ToggleButtonText = Configs.ToggleButtonText or "Play/Stop"
     local Callback = Configs.Callback or function() end
 
     local Frame = Create("Frame", parent, {
@@ -1620,7 +1594,7 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Frame)
     Stroke(Frame)
-    
+
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 16,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1632,7 +1606,7 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
-    
+
     local NextButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1648,7 +1622,7 @@ function AddMusicPlayer(parent, Configs)
         currentSongIndex = (currentSongIndex % #songs) + 1
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
     end)
-    
+
     local PreviousButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1664,7 +1638,7 @@ function AddMusicPlayer(parent, Configs)
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
     end)
-    
+
     local ToggleButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1683,23 +1657,22 @@ function AddMusicPlayer(parent, Configs)
             Callback("Stopped music")
             TitleLabel.Text = "Stopped"
         else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar) -- เล่นเพลงปัจจุบันและอัปเดตชื่อเพลง
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
         end
     end)
-
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
         Position = UDim2.new(0, 0, 0, 120),
-        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2), -- สีพื้นหลังแถบเพลง
+        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
         BorderSizePixel = 0
     })
 
     local ProgressBar = Create("Frame", ProgressBarFrame, {
-        Size = UDim2.new(0, 0, 1, 0), -- ขนาดเริ่มต้นของแถบเพลง
-        BackgroundColor3 = Configs_HUB.Cor_Button -- สีของแถบเพลง
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Button
     })
     Corner(ProgressBar)
-    
+
     local TimeLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1711,6 +1684,29 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TimeLabel)
+    function UpdateSongProgress(TimeLabel, ProgressBar)
+        local connection
+        connection = RunService.RenderStepped:Connect(function()
+            if isPlaying and sound.IsLoaded then
+                local currentTime = sound.TimePosition
+                local totalTime = sound.TimeLength
+                if totalTime > 0 then
+                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
+                        math.floor(currentTime / 60), math.floor(currentTime % 60),
+                        math.floor(totalTime / 60), math.floor(totalTime % 60))
+                    ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+                else
+                    TimeLabel.Text = "00:00 / 00:00"
+                    ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+                end
+                if sound.TimePosition >= sound.TimeLength then
+                    connection:Disconnect()
+                    isPlaying = false
+                end
+            end
+        end)
+    end
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
 end
 
   
