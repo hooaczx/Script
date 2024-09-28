@@ -1576,12 +1576,14 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar)
     if song then
         sound.SoundId = song.id
         sound:Play()
+        sound.TimePosition = 0
         isPlaying = true
         TitleLabel.Text = "Now Playing: " .. song.name
+        sound.Loaded:Wait()
         UpdateSongProgress(TimeLabel, ProgressBar)
         game.StarterGui:SetCore("SendNotification", {
             Title = "Song",
-            Text = "Play: " .. song.name,
+            Text = "Playing song: " .. song.name,
             Icon = "rbxassetid://16855304544",
             Duration = 1,
         })
@@ -1589,14 +1591,24 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar)
 end
 
 function UpdateSongProgress(TimeLabel, ProgressBar)
-    RunService.RenderStepped:Connect(function()
+    local connection
+    connection = RunService.RenderStepped:Connect(function()
         if isPlaying and sound.IsLoaded then
             local currentTime = sound.TimePosition
             local totalTime = sound.TimeLength
-            TimeLabel.Text = string.format("%02d:%02d / %02d:%02d", 
-                math.floor(currentTime / 60), math.floor(currentTime % 60),
-                math.floor(totalTime / 60), math.floor(totalTime % 60))
-            ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+            if totalTime > 0 then
+                TimeLabel.Text = string.format("%02d:%02d / %02d:%02d", 
+                    math.floor(currentTime / 60), math.floor(currentTime % 60),
+                    math.floor(totalTime / 60), math.floor(totalTime % 60))
+                ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+            else
+                TimeLabel.Text = "00:00 / 00:00"
+                ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+            end
+            if sound.TimePosition >= sound.TimeLength then
+                connection:Disconnect()
+                isPlaying = false
+            end
         end
     end)
 end
@@ -1684,13 +1696,13 @@ function AddMusicPlayer(parent, Configs)
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
         Position = UDim2.new(0, 0, 0, 120),
-        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
+        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2), -- สีพื้นหลังแถบเพลง
         BorderSizePixel = 0
     })
 
     local ProgressBar = Create("Frame", ProgressBarFrame, {
-        Size = UDim2.new(0, 0, 1, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Button
+        Size = UDim2.new(0, 0, 1, 0), -- ขนาดเริ่มต้นของแถบเพลง
+        BackgroundColor3 = Configs_HUB.Cor_Button -- สีของแถบเพลง
     })
     Corner(ProgressBar)
     
