@@ -1560,6 +1560,7 @@ function MakeWindow(Configs)
   end
   
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
@@ -1703,7 +1704,6 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
         TitleLabel.Text = "Now Playing: " .. song.name
         sound.Loaded:Wait()
         UpdateSongProgress(TimeLabel, ProgressBar, Circle)
-        rotateTimeLabel(Circle)
     end
 end
 
@@ -1807,7 +1807,7 @@ function AddMusicPlayer(parent, Configs)
     end)
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
-        Position = UDim2.new(0, 0, 0, 190),
+        Position = UDim2.new(0, 0, 0, 120),
         BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
         BorderSizePixel = 0
     })
@@ -1816,7 +1816,7 @@ function AddMusicPlayer(parent, Configs)
         Size = UDim2.new(0, 0, 1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Button
     })
-    Corner(ProgressBar)
+    Corner(ProgressBar)    
     function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
     local connection
     connection = RunService.RenderStepped:Connect(function()
@@ -1827,6 +1827,7 @@ function AddMusicPlayer(parent, Configs)
                 TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
                     math.floor(currentTime / 60), math.floor(currentTime % 60),
                     math.floor(totalTime / 60), math.floor(totalTime % 60))
+                    rotateTimeLabel(Circle)
                 ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
             else
                 TimeLabel.Text = "00:00 / 00:00"
