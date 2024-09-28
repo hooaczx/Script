@@ -1696,7 +1696,7 @@ local isPlaying = false
 local isRotating = false
 local rotationTween
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
+function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressFill, Circle)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
@@ -1704,7 +1704,7 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
         isPlaying = true
         TitleLabel.Text = "Now Playing: " .. song.name
         sound.Loaded:Wait()
-        UpdateSongProgress(TimeLabel, ProgressBar, Circle)
+        UpdateSongProgress(TimeLabel, ProgressFill, Circle)
         rotateTimeLabel(Circle)
     end
 end
