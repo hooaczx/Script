@@ -1856,13 +1856,8 @@ function AddMusicPlayer(parent, Configs)
                         math.floor(totalTime / 60), math.floor(totalTime % 60))
                     local targetSize = UDim2.new(currentTime / totalTime, 0, 1, 0)
                     local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-                    local sizeTween = TweenService:Create(ProgressBar, tweenInfo, {Size = targetSize})
-                    if ProgressBar then
+                    TweenService:Create(ProgressBar, tweenInfo, {Size = targetSize})
                         sizeTween:Play()
-                    end
-                else
-                    TimeLabel.Text = "00:00 / 00:00"
-                    ProgressBar.Size = UDim2.new(0, 0, 1, 0)
                 end
                 if sound.TimePosition >= sound.TimeLength then
                     connection:Disconnect()
