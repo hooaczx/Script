@@ -1823,17 +1823,17 @@ function AddMusicPlayer(parent, Configs)
             isPlaying = false
             Callback("Paused music")
             TitleLabel.Text = "Paused"
-            rotateTimeLabel(Circle) -- Stop rotating when paused
+            rotateTimeLabel(Circle)
         else
             sound:Play()
             isPlaying = true
-            UpdateSongProgress(TimeLabel, ProgressBar, Circle) -- Start updating ProgressBar and rotate the circle
+            UpdateSongProgress(TimeLabel, ProgressBar, Circle)
         end
     end)
 
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
-        Position = UDim2.new(0, 0, 0, 190),
+        Position = UDim2.new(0, 0, 0, 120),
         BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
         BorderSizePixel = 0
     })
@@ -1843,7 +1843,6 @@ function AddMusicPlayer(parent, Configs)
         BackgroundColor3 = Configs_HUB.Cor_Button
     })
     Corner(ProgressBar)
-
     function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
         local connection
         connection = RunService.RenderStepped:Connect(function()
@@ -1854,7 +1853,10 @@ function AddMusicPlayer(parent, Configs)
                     TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
                         math.floor(currentTime / 60), math.floor(currentTime % 60),
                         math.floor(totalTime / 60), math.floor(totalTime % 60))
-                    ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
+                    local targetSize = UDim2.new(currentTime / totalTime, 0, 1, 0)
+                    local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+                    local sizeTween = TweenService:Create(ProgressBar, tweenInfo, {Size = targetSize})
+                    sizeTween:Play()
                 else
                     TimeLabel.Text = "00:00 / 00:00"
                     ProgressBar.Size = UDim2.new(0, 0, 1, 0)
