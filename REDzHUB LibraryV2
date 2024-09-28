@@ -1559,6 +1559,94 @@ function MakeWindow(Configs)
     Section.Text = NewName
   end
   
+  function AddMusicPlayer(parent, Configs)
+    local PlayerName = Configs.Name or "Music Player"
+    local DefaultSoundId = Configs.DefaultSoundId or ""
+    local PlayButtonText = Configs.PlayButtonText or "Play"
+    local StopButtonText = Configs.StopButtonText or "Stop"
+    local Callback = Configs.Callback or function() end
+
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(1, 0, 0, 100),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "MusicPlayerFrame"
+    })
+    Corner(Frame)
+    Stroke(Frame)
+
+    local TitleLabel = Create("TextLabel", Frame, {
+        TextSize = 16,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = PlayerName,
+        Size = UDim2.new(1, 0, 0, 20),
+        Position = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(TitleLabel)
+
+    local TextBox = Create("TextBox", Frame, {
+        Size = UDim2.new(0.8, 0, 0, 25),
+        Position = UDim2.new(0.1, 0, 0.2, 0),
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = DefaultSoundId,
+        PlaceholderText = "Enter Sound ID",
+        ClearTextOnFocus = true,
+        TextScaled = true,
+        Font = Configs_HUB.Text_Font,
+        BackgroundTransparency = 0.5
+    })
+
+    local PlayButton = Create("TextButton", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = PlayButtonText,
+        Size = UDim2.new(0.4, -5, 0, 25),
+        Position = UDim2.new(0, 5, 0, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(PlayButton)
+
+    local StopButton = Create("TextButton", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = StopButtonText,
+        Size = UDim2.new(0.4, -5, 0, 25),
+        Position = UDim2.new(0.6, 5, 0, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(StopButton)
+
+    local sound = Instance.new("Sound")
+    sound.Parent = workspace
+
+    PlayButton.MouseButton1Click:Connect(function()
+        local soundId = TextBox.Text
+        if soundId and soundId ~= "" then
+            sound.SoundId = "rbxassetid://" .. soundId
+            sound:Play()
+            Callback("Playing music: " .. soundId)
+        else
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Error";
+    Text = "Invalid Sound ID";
+    Icon = "rbxassetid://16855304544";
+    Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150";
+    Duration = 5;
+})
+        end
+    end)
+
+    StopButton.MouseButton1Click:Connect(function()
+        sound:Stop()
+        Callback("Stopped music")
+    end)
+end
+
+  
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
     local DiscordIcon = Configs[2] or Configs.DiscordIcon or "rbxassetid://"
