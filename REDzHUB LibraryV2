@@ -1561,6 +1561,15 @@ function MakeWindow(Configs)
   
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+function SendNotification(title, text)
+    Players.LocalPlayer:WaitForChild("PlayerGui"):SetCore("SendNotification", {
+        Title = title;
+        Text = text;
+        Duration = 2;
+    })
+end
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
@@ -1706,15 +1715,6 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Circle)
         sound.Loaded:Wait()
         UpdateSongProgress(TimeLabel, Circle)
         rotateTimeLabel(Circle)
-        UpdateSpeed()
-    end
-end
-
-function UpdateSpeed()
-    if currentSpeedMode == "Pitch" then
-        sound.Pitch = speedValue
-    elseif currentSpeedMode == "PlaybackSpeed" then
-        sound.PlaybackSpeed = speedValue
     end
 end
 
@@ -1842,35 +1842,42 @@ function AddMusicPlayer(parent, Configs)
     local SpeedToggleButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Toggle Speed Mode",
+        Text = "Toggle Speed (Pitch/PlaybackSpeed)",
         Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 200),
+        Position = UDim2.new(0, 0, 0, 190),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
     TextSetColor(SpeedToggleButton)
 
     SpeedToggleButton.MouseButton1Click:Connect(function()
-        if currentSpeedMode == "Pitch" then
-            currentSpeedMode = "PlaybackSpeed"
-        else
-            currentSpeedMode = "Pitch"
-        end
-        UpdateSpeed()
+        usePlaybackSpeed = not usePlaybackSpeed
+        local speedMode = usePlaybackSpeed and "PlaybackSpeed" or "Pitch"
+        SendNotification("Speed Mode Changed", "Using " .. speedMode)
     end)
-
-    local SpeedSlider = Create("Slider", Frame, {
-        Size = UDim2.new(1, -10, 0, 30),
-        Position = UDim2.new(0, 5, 0, 240),
-        MinValue = 0.5, -- Minimum speed
-        MaxValue = 2, -- Maximum speed
-        Value = speedValue,
+    
+    local SpeedTextBox = Create("TextBox", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "1.0",
+        Size = UDim2.new(0.3, 0, 0, 30),
+        Position = UDim2.new(0, 0, 0, 230),
         BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font,
     })
+    TextSetColor(SpeedTextBox)
 
-    SpeedSlider.Changed:Connect(function(value)
-        speedValue = value
-        UpdateSpeed()
+    SpeedTextBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local speedValue = tonumber(SpeedTextBox.Text)
+            if speedValue then
+                if usePlaybackSpeed then
+                    sound.PlaybackSpeed = speedValue
+                else
+                    sound.Pitch = speedValue
+                end
+            end
+        end
     end)
 
     function UpdateSongProgress(TimeLabel, Circle)
