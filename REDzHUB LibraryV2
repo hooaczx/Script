@@ -1651,14 +1651,16 @@ function AddMusicPlayer(parent, Configs)
     TextSetColor(ToggleButton)
 
     ToggleButton.MouseButton1Click:Connect(function()
-        if isPlaying then
-            sound:Stop()
-            isPlaying = false
-            Callback("Stopped music")
-            TitleLabel.Text = "Stopped"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar)
-        end
+    if isPlaying then
+        sound:Pause()
+        isPlaying = false
+        Callback("Paused music")
+        TitleLabel.Text = "Paused"
+    else
+        sound:Play()
+        isPlaying = true
+        UpdateSongProgress(TimeLabel, ProgressBar)
+       end
     end)
     local ProgressBarFrame = Create("Frame", Frame, {
         Size = UDim2.new(1, 0, 0, 10),
