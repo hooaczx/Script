@@ -1709,7 +1709,9 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Circle)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        sound:Play()
+        if not isPlaying then
+            sound:Play()
+        end
         isPlaying = true
         TitleLabel.Text = song.name
         sound.Loaded:Wait()
@@ -1833,6 +1835,8 @@ function AddMusicPlayer(parent, Configs)
             TitleLabel.Text = "Paused"
             rotateTimeLabel(Circle)
         else
+            local song = songs[index]
+            TitleLabel.Text = song.name
             sound:Play()
             isPlaying = true
             UpdateSongProgress(TimeLabel, Circle)
@@ -1881,25 +1885,24 @@ function AddMusicPlayer(parent, Configs)
     end)
 
     function UpdateSongProgress(TimeLabel, Circle)
-        local TweenService = game:GetService("TweenService")
-        local connection
-        connection = RunService.RenderStepped:Connect(function()
-            if isPlaying and sound.IsLoaded then
-                local currentTime = sound.TimePosition
-                local totalTime = sound.TimeLength
-                if totalTime > 0 then
-                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
-                        math.floor(currentTime / 60), math.floor(currentTime % 60),
-                        math.floor(totalTime / 60), math.floor(totalTime % 60))
-                end
-                if sound.TimePosition >= sound.TimeLength then
-                    connection:Disconnect()
-                    isPlaying = false
-                    rotateTimeLabel(Circle)
-                end
+    local connection
+    connection = RunService.RenderStepped:Connect(function()
+        if isPlaying and sound.IsLoaded then
+            local currentTime = sound.TimePosition
+            local totalTime = sound.TimeLength
+            if totalTime > 0 then
+                TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
+                    math.floor(currentTime / 60), math.floor(currentTime % 60),
+                    math.floor(totalTime / 60), math.floor(totalTime % 60))
             end
-        end)
-    end
+            if currentTime >= totalTime then
+                connection:Disconnect()
+                isPlaying = false
+                rotateTimeLabel(Circle)
+            end
+        end
+    end)
+end
 end
 
   function AddDiscord(parent, Configs)
