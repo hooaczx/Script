@@ -1560,9 +1560,25 @@ function MakeWindow(Configs)
   end
   
   
-  function AddMusicPlayer(parent, Configs)
-    local PlayerName = Configs.Name or "Music Player"
-    local DefaultSoundId = Configs.DefaultSoundId or ""
+  local songs = {
+    {id = "rbxassetid://5409360995", name = "Dion Timmr"},
+    {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
+    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
+    {id = "rbxassetid://9046863253", name = "Poolside"},
+    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
+    {id = "rbxassetid://1839666799", name = "Calmness"},
+    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
+    {id = "rbxassetid://1838202933", name = "Take a Bow"},
+    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
+    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
+    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
+    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
+    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
+    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
+}
+
+function AddMusicPlayer(parent, Configs)
+    local PlayerName = Configs.Name or ""
     local PlayButtonText = Configs.PlayButtonText or "Play"
     local StopButtonText = Configs.StopButtonText or "Stop"
     local Callback = Configs.Callback or function() end
@@ -1587,17 +1603,46 @@ function MakeWindow(Configs)
     })
     TextSetColor(TitleLabel)
 
-    local TextBox = Create("TextBox", Frame, {
-        Size = UDim2.new(0.8, 0, 0, 25),
-        Position = UDim2.new(0.1, 0, 0.2, 0),
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = DefaultSoundId,
-        PlaceholderText = "Enter Sound ID",
-        ClearTextOnFocus = true,
-        TextScaled = true,
-        Font = Configs_HUB.Text_Font,
-        BackgroundTransparency = 0.5
-    })
+    local songDropdown = Instance.new("TextButton")
+    songDropdown.Size = UDim2.new(0.8, 0, 0, 25)
+    songDropdown.Position = UDim2.new(0.1, 0, 0.2, 0)
+    songDropdown.Text = "Select a Song"
+    songDropdown.TextColor3 = Configs_HUB.Cor_Text
+    songDropdown.BackgroundColor3 = Configs_HUB.Cor_Button
+    songDropdown.Parent = Frame
+
+    local sound = Instance.new("Sound")
+    sound.Parent = workspace
+
+    local function playSong(songId)
+        if songId then
+            sound.SoundId = songId
+            sound:Play()
+            Callback("Playing music: " .. songId)
+        else
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Error";
+                Text = "Invalid Sound ID";
+                Icon = "rbxassetid://16855304544";
+                Duration = 5;
+            })
+        end
+    end
+
+    songDropdown.MouseButton1Click:Connect(function()
+        local songNames = ""
+        for i, song in ipairs(songs) do
+            songNames = songNames .. song.name .. "\n"
+        end
+
+        local selectedSong = game:GetService("GuiService"):PromptForString("Select a song", songNames)
+        for _, song in ipairs(songs) do
+            if song.name == selectedSong then
+                playSong(song.id)
+                return
+            end
+        end
+    end)
 
     local PlayButton = Create("TextButton", Frame, {
         TextSize = 14,
@@ -1621,23 +1666,16 @@ function MakeWindow(Configs)
     })
     TextSetColor(StopButton)
 
-    local sound = Instance.new("Sound")
-    sound.Parent = workspace
-
     PlayButton.MouseButton1Click:Connect(function()
-        local soundId = TextBox.Text
-        if soundId and soundId ~= "" then
-            sound.SoundId = "rbxassetid://" .. soundId
-            sound:Play()
-            Callback("Playing music: " .. soundId)
+        local selectedSongId = songDropdown.Text
+        if selectedSongId and selectedSongId ~= "" then
+            playSong(selectedSongId)
         else
-game.StarterGui:SetCore("SendNotification", {
-    Title = "Error";
-    Text = "Invalid Sound ID";
-    Icon = "rbxassetid://16855304544";
-    Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150";
-    Duration = 5;
-})
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Error";
+                Text = "Please select a song first.";
+                Duration = 5;
+            })
         end
     end)
 
@@ -1646,6 +1684,7 @@ game.StarterGui:SetCore("SendNotification", {
         Callback("Stopped music")
     end)
 end
+
 
   
   function AddDiscord(parent, Configs)
