@@ -1702,16 +1702,17 @@ local currentSongIndex = 1
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
 local isPlaying = false
+local lastPosition = 0
 local isRotating = false
 local rotationTween
+local playNextSong = true -- ตัวแปรเพื่อกำหนดว่าจะเล่นเพลงถัดไปหรือย้อนกลับ
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Circle)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        if not isPlaying then
-            sound:Play()
-        end
+        sound:Play()
+        sound.TimePosition = lastPosition
         isPlaying = true
         TitleLabel.Text = song.name
         sound.Loaded:Wait()
@@ -1733,7 +1734,7 @@ function rotateTimeLabel(Circle)
         if isRotating then
             isRotating = false
             if rotationTween then
-                rotationTween:Pause()
+                rotationTween:Stop()  -- ใช้ Stop แทน Pause
                 Circle.Rotation = 0
             end
         end
@@ -1797,7 +1798,7 @@ function AddMusicPlayer(parent, Configs)
 
     NextButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar, Circle)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Circle)
     end)
 
     local PreviousButton = Create("TextButton", Frame, {
@@ -1813,7 +1814,7 @@ function AddMusicPlayer(parent, Configs)
 
     PreviousButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar, Circle)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Circle)
     end)
 
     local ToggleButton = Create("TextButton", Frame, {
@@ -1835,12 +1836,29 @@ function AddMusicPlayer(parent, Configs)
             TitleLabel.Text = "Paused"
             rotateTimeLabel(Circle)
         else
-            local song = songs[index]
-            TitleLabel.Text = song.name
+            lastPosition = sound.TimePosition  -- เก็บตำแหน่งปัจจุบันก่อนเล่นเพลงใหม่
             sound:Play()
             isPlaying = true
             UpdateSongProgress(TimeLabel, Circle)
+            rotateTimeLabel(Circle)  -- เริ่มการหมุน
         end
+    end)
+
+    -- ปุ่มสลับระหว่างเล่นเพลงถัดไปและย้อนกลับ
+    local ToggleNextPreviousButton = Create("TextButton", Frame, {
+        TextSize = 14,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "Play Next Song",
+        Size = UDim2.new(1, 0, 0, 30),
+        Position = UDim2.new(0, 0, 0, 220),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Font = Configs_HUB.Text_Font,
+    })
+    TextSetColor(ToggleNextPreviousButton)
+
+    ToggleNextPreviousButton.MouseButton1Click:Connect(function()
+        playNextSong = not playNextSong  -- สลับสถานะ
+        ToggleNextPreviousButton.Text = playNextSong and "Play Next Song" or "Play Previous Song"
     end)
 
     local SpeedToggleButton = Create("TextButton", Frame, {
@@ -1848,7 +1866,7 @@ function AddMusicPlayer(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "Toggle Speed (Pitch/PlaybackSpeed)",
         Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 190),
+        Position = UDim2.new(0, 0, 0, 250),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
@@ -1859,13 +1877,13 @@ function AddMusicPlayer(parent, Configs)
         local speedMode = usePlaybackSpeed and "PlaybackSpeed" or "Pitch"
         SendNotification("Speed Mode Changed", "Using " .. speedMode)
     end)
-    
+
     local SpeedTextBox = Create("TextBox", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "1.0",
         Size = UDim2.new(0.3, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 230),
+        Position = UDim2.new(0, 0, 0, 290),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
@@ -1885,25 +1903,34 @@ function AddMusicPlayer(parent, Configs)
     end)
 
     function UpdateSongProgress(TimeLabel, Circle)
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        if isPlaying and sound.IsLoaded then
-            local currentTime = sound.TimePosition
-            local totalTime = sound.TimeLength
-            if totalTime > 0 then
-                TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
-                    math.floor(currentTime / 60), math.floor(currentTime % 60),
-                    math.floor(totalTime / 60), math.floor(totalTime % 60))
+        local connection
+        connection = RunService.RenderStepped:Connect(function()
+            if isPlaying and sound.IsLoaded then
+                local currentTime = sound.TimePosition
+                local totalTime = sound.TimeLength
+                if totalTime > 0 then
+                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
+                        math.floor(currentTime / 60), math.floor(currentTime % 60),
+                        math.floor(totalTime / 60), math.floor(totalTime % 60))
+                end
+                if sound.TimePosition >= sound.TimeLength then
+                    connection:Disconnect()
+                    isPlaying = false
+                    rotateTimeLabel(Circle)
+
+                    -- เล่นเพลงถัดไปหรือย้อนกลับ
+                    if playNextSong then
+                        currentSongIndex = (currentSongIndex % #songs) + 1
+                    else
+                        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+                    end
+                    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Circle)
+                end
             end
-            if currentTime >= totalTime then
-                connection:Disconnect()
-                isPlaying = false
-                rotateTimeLabel(Circle)
-            end
-        end
-    end)
+        end)
+    end
 end
-end
+
 
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
