@@ -75,7 +75,11 @@ local ScreenGui = Create("ScreenGui", CoreGui, {
 
 ScreenFind = CoreGui:FindFirstChild(ScreenGui.Name)
 if ScreenFind and ScreenFind ~= ScreenGui then
-  ScreenFind:Destroy()
+    local soundInScreen = ScreenFind:FindFirstChildOfClass("Sound")
+    if soundInScreen then
+        soundInScreen:Destroy()
+    end
+    ScreenFind:Destroy()
 end
 
 function DestroyScript()
@@ -1575,11 +1579,10 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressBar, Circle)
     if song then
         sound.SoundId = song.id
         sound:Play()
-        sound.TimePosition = sound.TimePosition
         isPlaying = true
         TitleLabel.Text = song.name
         sound.Loaded:Wait()
-        UpdateSongProgress(Circle)
+        UpdateSongProgress(TimeLabel, ProgressBar, Circle)
     end
 end
 
@@ -1671,17 +1674,17 @@ function AddMusicPlayer(parent, Configs)
     TextSetColor(ToggleButton)
 
     ToggleButton.MouseButton1Click:Connect(function()
-        if isPlaying then
-            sound:Pause()
-            isPlaying = false
-            Callback("Paused music")
-            TitleLabel.Text = "Paused"
-        else
-            sound:Play()
-            isPlaying = true
-            UpdateSongProgress(TimeLabel, ProgressBar, Circle)
-        end
-    end)
+    if isPlaying then
+        sound:Pause() -- ใช้ Pause แทน Stop เพื่อให้เซฟตำแหน่งการเล่นปัจจุบัน
+        isPlaying = false
+        Callback("Paused music")
+        TitleLabel.Text = "Paused"
+    else
+        sound:Play()
+        isPlaying = true
+        UpdateSongProgress(TimeLabel, ProgressBar, Circle) -- เริ่มอัปเดต ProgressBar และหมุนวงกลมใหม่
+    end
+end)
     local ProgressBarFrame = Create("Frame", Frame, {
     Size = UDim2.new(1, 0, 0, 10),
     Position = UDim2.new(0, 0, 0, 130),
@@ -1693,33 +1696,31 @@ function AddMusicPlayer(parent, Configs)
     BackgroundColor3 = Configs_HUB.Cor_Button
     })
     Corner(ProgressBar)
-    function UpdateSongProgress(Circle)
+    function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
     local connection
     connection = RunService.RenderStepped:Connect(function()
         if isPlaying and sound.IsLoaded then
             local currentTime = sound.TimePosition
             local totalTime = sound.TimeLength
             if totalTime > 0 then
-                local TimeLabel = Circle:FindFirstChild("TimeLabel")
                 TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
                     math.floor(currentTime / 60), math.floor(currentTime % 60),
                     math.floor(totalTime / 60), math.floor(totalTime % 60))
-
                 ProgressBar.Size = UDim2.new(currentTime / totalTime, 0, 1, 0)
-                Circle.Rotation = Circle.Rotation + 1
+                if Circle then
+                    Circle.Rotation = Circle.Rotation + 1
+                end
             else
                 TimeLabel.Text = "00:00 / 00:00"
                 ProgressBar.Size = UDim2.new(0, 0, 1, 0)
             end
-
             if sound.TimePosition >= sound.TimeLength then
                 connection:Disconnect()
                 isPlaying = false
             end
         end
     end)
- end
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressBar, Circle)
+  end
 end
   
   function AddDiscord(parent, Configs)
