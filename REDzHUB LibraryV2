@@ -1762,6 +1762,17 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Circle)
 
+    local ProgressBar = Create("Frame", Frame, {
+        Size = UDim2.new(1, 0, 0, 10),
+        Position = UDim2.new(0, 0, 0, 30),
+        BackgroundColor3 = Color3.fromRGB(200, 200, 200),
+    })
+
+    local ProgressFill = Create("Frame", ProgressBar, {
+        Size = UDim2.new(0, 0, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(100, 255, 100),
+    })
+
     local TimeLabel = Create("TextLabel", Circle, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1827,23 +1838,10 @@ function AddMusicPlayer(parent, Configs)
         else
             sound:Play()
             isPlaying = true
-            UpdateSongProgress(TimeLabel, ProgressBar, Circle)
+            UpdateSongProgress(TimeLabel, ProgressFill, Circle)
         end
     end)
-
-    local ProgressBarFrame = Create("Frame", Frame, {
-        Size = UDim2.new(1, 0, 0, 10),
-        Position = UDim2.new(0, 0, 0, 80),
-        BackgroundColor3 = Color3.new(0.2, 0.2, 0.2),
-        BorderSizePixel = 0
-    })
-
-    local ProgressBar = Create("Frame", ProgressBarFrame, {
-        Size = UDim2.new(0, 0, 1, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Button
-    })
-    Corner(ProgressBar)
-    function UpdateSongProgress(TimeLabel, ProgressBar, Circle)
+    function UpdateSongProgress(TimeLabel, ProgressFill, Circle)
         local TweenService = game:GetService("TweenService")
         local connection
         connection = RunService.RenderStepped:Connect(function()
@@ -1856,8 +1854,8 @@ function AddMusicPlayer(parent, Configs)
                         math.floor(totalTime / 60), math.floor(totalTime % 60))
                     local targetSize = UDim2.new(currentTime / totalTime, 0, 1, 0)
                     local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-                    TweenService:Create(ProgressBar, tweenInfo, {Size = targetSize})
-                        sizeTween:Play()
+                    TweenService:Create(ProgressFill, tweenInfo, {Size = targetSize})
+                    sizeTween:Play()
                 end
                 if sound.TimePosition >= sound.TimeLength then
                     connection:Disconnect()
