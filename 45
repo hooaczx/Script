@@ -1703,18 +1703,14 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        if isStopped then
-            sound.TimePosition = 0
-        else
-            sound.TimePosition = lastPosition
-        end
+        sound.TimePosition
         sound:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
+
         sound.Ended:Connect(function()
             NextSong(TitleLabel, TimeLabel, Frame_4)
         end)
-        isStopped = false
     end
 end
 
@@ -1769,13 +1765,10 @@ function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
         sound:Pause()
         TitleLabel.Text = "Stopped"
         ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
-        isStopped = true
     else
-        sound.TimePosition = lastPosition
         sound:Play()
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
         ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        isStopped = false
     end
 end
 
