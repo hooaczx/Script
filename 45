@@ -1698,15 +1698,19 @@ sound.Parent = ScreenGui
 local lastPosition = 0
 local progressUpdateConnection
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
+function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4, isResuming)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        sound.TimePosition = lastPosition
+        if not isResuming then
+            sound.TimePosition = 0 
+            lastPosition = 0
+        else
+            sound.TimePosition = lastPosition
+        end
         sound:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
-
         sound.Ended:Connect(function()
             NextSong(TitleLabel, TimeLabel, Frame_4)
         end)
