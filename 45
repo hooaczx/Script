@@ -1702,15 +1702,13 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        sound.TimePosition = lastPosition
+        if lastPosition == 0 then
+            sound.TimePosition = 0
+        else
+            sound.TimePosition = lastPosition
+        end
         sound:Play()
         TitleLabel.Text = song.name
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Playing",
-            Text = "Playing song: " .. song.name,
-            icon = "rbxthumb://type=Asset&id=18488884411&w=150&h=150",
-            Duration = 2,
-        })
         StartProgressUpdate(Frame_4, TimeLabel)
     end
 end
