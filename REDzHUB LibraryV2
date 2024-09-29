@@ -1692,43 +1692,32 @@ local songs = {
 local currentSongIndex = 1
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
-local RunService = game:GetService("RunService")
 local isPlaying = false
-local currentSongIndex = 1
 local totalTime = 0
 local progressUpdateConnection
 
-function PlaySongByIndex(index, TitleLabel, CurrentTimeLabel, TotalTimeLabel, ProgressCircle)
+function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressCircle)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
         sound:Play()
         isPlaying = true
-        TitleLabel.Text = "Now Playing: " .. song.name
+        TitleLabel.Text = song.name
         totalTime = sound.TimeLength
         game.StarterGui:SetCore("SendNotification", {
             Title = "Playing",
             Text = "Playing song: " .. song.name,
-            Icon = "rbxassetid://16855304544",
             Duration = 2,
         })
-        StartProgressUpdate(ProgressCircle, CurrentTimeLabel, TotalTimeLabel)
+        StartProgressUpdate(ProgressCircle, TimeLabel)
     end
 end
 
 local function FormatTime(seconds)
-    local hours = math.floor(seconds / 3600)
-    local minutes = math.floor((seconds % 3600) / 60)
+    local minutes = math.floor(seconds / 60)
     local remainingSeconds = math.floor(seconds % 60)
-    if hours > 0 then
-        return string.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
-    elseif minutes >= 10 then
-        return string.format("%02d:%02d", minutes, remainingSeconds)
-    else
-        return string.format("%d:%02d", minutes, remainingSeconds)
-    end
+    return string.format("%d:%02d", minutes, remainingSeconds)
 end
-
 
 function StartProgressUpdate(ProgressCircle, TimeLabel)
     if progressUpdateConnection then
@@ -1758,11 +1747,11 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Frame)
     Stroke(Frame)
-    
+
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 16,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Now Playing: " .. songs[currentSongIndex].name,
+        Text = songs[currentSongIndex].name,
         Size = UDim2.new(1, 0, 0, 20),
         Position = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
@@ -1770,33 +1759,22 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
-    
+
     local ProgressCircle = Create("ImageLabel", Frame, {
         Size = UDim2.new(0, 50, 0, 50),
-        Position = UDim2.new(0.5, -25, 0, 50),
+        Position = UDim2.new(0.1, -25, 0.5, -25),
         BackgroundTransparency = 1,
         Image = "rbxassetid://16855304544"
     })
-    
-    local CurrentTimeLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "0:00",
-        Size = UDim2.new(0, 50, 0, 20),
-        Position = UDim2.new(0, 10, 0, 110),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Left",
-        Font = Configs_HUB.Text_Font
-    })
 
-    local TotalTimeLabel = Create("TextLabel", Frame, {
+    local TimeLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "0:00",
-        Size = UDim2.new(0, 50, 0, 20),
-        Position = UDim2.new(1, -60, 0, 110),
+        Text = "0:00 / 0:00",
+        Size = UDim2.new(1, 0, 0, 20),
+        Position = UDim2.new(0, 0, 0, 110),
         BackgroundTransparency = 1,
-        TextXAlignment = "Right",
+        TextXAlignment = "Center",
         Font = Configs_HUB.Text_Font
     })
 
@@ -1805,7 +1783,7 @@ function AddMusicPlayer(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "⏭",
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.7, 0, 0.5, 0),
+        Position = UDim2.new(0.7, 0, 0.5, -15),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
@@ -1813,15 +1791,15 @@ function AddMusicPlayer(parent, Configs)
 
     NextButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, CurrentTimeLabel, TotalTimeLabel, ProgressCircle)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressCircle)
     end)
-    
+
     local PreviousButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "⏮",
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.25, 0, 0.5, 0),
+        Position = UDim2.new(0.25, 0, 0.5, -15),  -- Positioned on the left
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
@@ -1829,12 +1807,12 @@ function AddMusicPlayer(parent, Configs)
 
     PreviousButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, CurrentTimeLabel, TotalTimeLabel, ProgressCircle)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressCircle)
     end)
-   
+
     local ToggleButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.5, -15, 0.5, 0),
+        Position = UDim2.new(0.5, -15, 0.5, -15),
         BackgroundTransparency = 1,
         Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150",
     })
@@ -1844,10 +1822,10 @@ function AddMusicPlayer(parent, Configs)
             sound:Stop()
             isPlaying = false
             TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, CurrentTimeLabel, TotalTimeLabel, ProgressCircle)
             ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
+        else
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressCircle)
+            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
         end
     end)
 end
