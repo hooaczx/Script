@@ -1697,42 +1697,6 @@ local rotationSpeed = 90
 local progressCircle = nil
 local songDuration = 0
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel)
-    local song = songs[index]
-    if song then
-        sound.SoundId = song.id
-        sound:Play()
-        isPlaying = true
-        songDuration = sound.TimeLength -- ความยาวของเพลง
-        TitleLabel.Text = "Now Playing: " .. song.name
-        UpdateProgressCircle()
-        local totalTime = FormatTime(songDuration)
-        TimeLabel.Text = "0:00 / " .. totalTime
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Playing",
-            Text = "Playing song: " .. song.name,
-            Icon = "rbxassetid://16855304544",
-            Duration = 2,
-        })
-    end
-end
-
-function FormatTime(seconds)
-    local minutes = math.floor(seconds / 60)
-    local secs = math.floor(seconds % 60)
-    return string.format("%d:%02d", minutes, secs)
-end
-
-function UpdateProgressCircle()
-    if isPlaying and sound.TimePosition then
-        local currentTime = sound.TimePosition
-        local percentComplete = currentTime / songDuration
-        local angle = percentComplete * 360
-        progressCircle.Rotation = angle
-        local currentTimeFormatted = FormatTime(currentTime)
-        TimeLabel.Text = currentTimeFormatted .. " / " .. FormatTime(songDuration)
-    end
-end
 
 function AddMusicPlayer(parent, Configs)
     local PlayerName = Configs.Name or ""
@@ -1836,6 +1800,42 @@ function AddMusicPlayer(parent, Configs)
         TextXAlignment = "Center",
         Font = Configs_HUB.Text_Font
     })
+    function PlaySongByIndex(index, TitleLabel, TimeLabel)
+    local song = songs[index]
+    if song then
+        sound.SoundId = song.id
+        sound:Play()
+        isPlaying = true
+        songDuration = sound.TimeLength -- ความยาวของเพลง
+        TitleLabel.Text = "Now Playing: " .. song.name
+        UpdateProgressCircle()
+        local totalTime = FormatTime(songDuration)
+        TimeLabel.Text = "0:00 / " .. totalTime
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Playing",
+            Text = "Playing song: " .. song.name,
+            Icon = "rbxassetid://16855304544",
+            Duration = 2,
+        })
+    end
+end
+
+function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
+    local secs = math.floor(seconds % 60)
+    return string.format("%d:%02d", minutes, secs)
+end
+
+function UpdateProgressCircle()
+    if isPlaying and sound.TimePosition then
+        local currentTime = sound.TimePosition
+        local percentComplete = currentTime / songDuration
+        local angle = percentComplete * 360
+        progressCircle.Rotation = angle
+        local currentTimeFormatted = FormatTime(currentTime)
+        TimeLabel.Text = currentTimeFormatted .. " / " .. FormatTime(songDuration)
+    end
+end
 end
 
 
