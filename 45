@@ -1695,14 +1695,27 @@ local songs = {
 local currentSongIndex = 1
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
-local lastPosition = 0
+local isPaused = false
+local savedTimePosition = 0
 local progressUpdateConnection
+
+local function resetSong()
+    sound:Stop()
+    savedTimePosition = 0
+    isPaused = false
+end
+
+local function pauseSong()
+    savedTimePosition = sound.TimePosition
+    sound:Pause()
+    isPaused = true
+end
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        sound.TimePosition = 0
+        sound.TimePosition = savedTimePosition
         sound:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
@@ -1823,7 +1836,7 @@ end)
     TextSetColor(NextButton)Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
 
     NextButton.MouseButton1Click:Connect(function()
-        lastPosition = 0
+        resetSong()
         currentSongIndex = (currentSongIndex % #songs) + 1
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     end)
@@ -1834,12 +1847,11 @@ end)
         BackgroundTransparency = 1,
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
-        Name = "PlayButton"
     })
-    TextSetColor(PreviousButton)Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
+    Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
 
     PreviousButton.MouseButton1Click:Connect(function()
-        lastPosition = 0
+        resetSong()
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     end)
@@ -1854,12 +1866,10 @@ end)
 
     ToggleButton.MouseButton1Click:Connect(function()
         if sound.IsPlaying then
-            lastPosition = sound.TimePosition
-            sound:Pause()
+            pauseSong()
             TitleLabel.Text = "Stopped"
             ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
         else
-            sound.TimePosition = lastPosition
             PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
             ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
         end
