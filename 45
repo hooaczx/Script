@@ -1698,7 +1698,15 @@ local lastPosition = 0
 local progressUpdateConnection
 local isStopped = false
 
+local function StopProgressUpdate()
+    if progressUpdateConnection then
+        progressUpdateConnection:Disconnect()
+        progressUpdateConnection = nil
+    end
+end
+
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
+    StopProgressUpdate() -- Stop previous updates before starting a new song
     local song = songs[index]
     if song then
         sound.SoundId = song.id
@@ -1727,9 +1735,7 @@ local function FormatTime(seconds)
 end
 
 function StartProgressUpdate(Frame_4, TimeLabel)
-    if progressUpdateConnection then
-        progressUpdateConnection:Disconnect()
-    end
+    StopProgressUpdate()
 
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if sound.IsPlaying then
@@ -1738,10 +1744,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
             local totalTime = sound.TimeLength
             TimeLabel.Text = string.format("%s / %s", FormatTime(currentTime), FormatTime(totalTime))
         else
-            if progressUpdateConnection then
-                progressUpdateConnection:Disconnect()
-                progressUpdateConnection = nil
-            end
+            StopProgressUpdate()
         end
     end)
 end
@@ -1760,21 +1763,18 @@ end
 
 function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
     if sound.IsPlaying then
-        if not isStopped then
-            lastPosition = sound.TimePosition
-            sound:Pause()
-            TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
-            isStopped = true
-        end
+        lastPosition = sound.TimePosition
+        sound:Pause()
+        TitleLabel.Text = "Stopped"
+        ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
+        StopProgressUpdate()
+        isStopped = true
     else
-        if isStopped then
-            sound.TimePosition = lastPosition
-            sound:Play()
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-            isStopped = false
-        end
+        sound.TimePosition = lastPosition
+        sound:Play()
+        StartProgressUpdate(Frame_4, TimeLabel)
+        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+        isStopped = false
     end
 end
 
