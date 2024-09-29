@@ -1563,7 +1563,6 @@ function MakeWindow(Configs)
   end
   
 local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
@@ -1697,23 +1696,27 @@ local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
 local lastPosition = 0
 local progressUpdateConnection
-local isStopped = false
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
-    local song = songs[index]
-    if song then
-        sound.SoundId = song.id
-        sound.TimePosition = 0
-        sound:Play()
-        TitleLabel.Text = song.name
-        StartProgressUpdate(Frame_4, TimeLabel)
-
-        sound.Ended:Connect(function()
-            NextSong(TitleLabel, TimeLabel, Frame_4)
-        end)
-    end
+-- ฟังก์ชันหยุดเพลง
+function StopSong()
+    sound:Stop()
+    sound.TimePosition = 0
 end
 
+-- ฟังก์ชันเล่นเพลงตาม ID
+function PlaySongById(songId)
+    sound.SoundId = songId
+    sound.TimePosition = 0
+    sound:Play()
+end
+
+-- ฟังก์ชันรีเซ็ตการเล่นเพลง
+function ResetSound()
+    StopSong()
+    sound.TimePosition = 0
+end
+
+-- ฟังก์ชันฟอร์แมทเวลา
 local function FormatTime(seconds)
     local hours = math.floor(seconds / 3600)
     local minutes = math.floor((seconds % 3600) / 60)
@@ -1727,6 +1730,12 @@ local function FormatTime(seconds)
     end
 end
 
+-- ฟังก์ชันตั้งชื่อเพลง
+function SetSongTitle(song, TitleLabel)
+    TitleLabel.Text = song.name
+end
+
+-- ฟังก์ชันเริ่มอัพเดท progress ของเพลง
 function StartProgressUpdate(Frame_4, TimeLabel)
     if progressUpdateConnection then
         progressUpdateConnection:Disconnect()
@@ -1747,18 +1756,39 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     end)
 end
 
+-- ฟังก์ชันตรวจสอบว่าเพลงจบหรือยัง
+function CheckIfSongEnded(TitleLabel, TimeLabel, Frame_4)
+    sound.Ended:Connect(function()
+        NextSong(TitleLabel, TimeLabel, Frame_4)
+    end)
+end
+
+-- ฟังก์ชันเล่นเพลงตามดัชนี
+function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
+    local song = songs[index]
+    if song then
+        PlaySongById(song.id)
+        SetSongTitle(song, TitleLabel)
+        StartProgressUpdate(Frame_4, TimeLabel)
+        CheckIfSongEnded(TitleLabel, TimeLabel, Frame_4)
+    end
+end
+
+-- ฟังก์ชันเล่นเพลงถัดไป
 function NextSong(TitleLabel, TimeLabel, Frame_4)
     sound.TimePosition = 0
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
 end
 
+-- ฟังก์ชันเล่นเพลงก่อนหน้า
 function PreviousSong(TitleLabel, TimeLabel, Frame_4)
     sound.TimePosition = 0
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
 end
 
+-- ฟังก์ชันเปลี่ยนระหว่างการเล่นกับหยุด
 function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
     if sound.IsPlaying then
         lastPosition = sound.TimePosition
@@ -1768,11 +1798,28 @@ function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
     else
         sound.TimePosition = lastPosition
         sound:Play()
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        SetSongTitle(songs[currentSongIndex], TitleLabel)
+        CheckIfSongEnded(TitleLabel, TimeLabel, Frame_4)
         ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
     end
 end
 
+-- ฟังก์ชันสร้าง UI ส่วน TitleLabel
+function CreateTitleLabel(Frame, song)
+    return Create("TextLabel", Frame, {
+        TextSize = 14,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = song.name,
+        Size = UDim2.new(0.45, 0, 0, 40),
+        Position = UDim2.new(0.56, -25, 0.36, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+end
+
+-- ฟังก์ชันเพิ่ม Music Player เข้าไปใน UI
 function AddMusicPlayer(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(1, 0, 0, 150),
@@ -1793,35 +1840,26 @@ function AddMusicPlayer(parent, Configs)
     Corner(ToggleFrameButton)
     Stroke(ToggleFrameButton)
     
-ToggleFrameButton.MouseButton1Click:Connect(function()
-    if Frame.Parent == parent then
-        Frame.Parent = ScreenGui
-        Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
-        Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
-        Frame.Draggable = true
-        Frame.Active = true
-        ToggleFrameButton.Text = "in Gui"
-    else
-        Frame.Parent = parent
-        Frame.Size = UDim2.new(1, 0, 0, 150)
-        Frame.Position = UDim2.new(0, 0, 0, 0)
-        Frame.Draggable = false
-        Frame.Active = false
-        ToggleFrameButton.Text = "Outside Gui"
-    end
-end)
-    local TitleLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = songs[currentSongIndex].name,
-        Size = UDim2.new(0.45, 0, 0, 40),
-        Position = UDim2.new(0.56, -25, 0.36, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(TitleLabel)
+    ToggleFrameButton.MouseButton1Click:Connect(function()
+        if Frame.Parent == parent then
+            Frame.Parent = ScreenGui
+            Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
+            Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
+            Frame.Draggable = true
+            Frame.Active = true
+            ToggleFrameButton.Text = "in Gui"
+        else
+            Frame.Parent = parent
+            Frame.Size = UDim2.new(1, 0, 0, 150)
+            Frame.Position = UDim2.new(0, 0, 0, 0)
+            Frame.Draggable = false
+            Frame.Active = false
+            ToggleFrameButton.Text = "Outside Gui"
+        end
+    end)
+
+    -- สร้าง TitleLabel
+    local TitleLabel = CreateTitleLabel(Frame, songs[currentSongIndex])
 
     local Frame_4 = Create("Frame", Frame, {
         Size = UDim2.new(0, 100, 0, 100),
@@ -1852,6 +1890,7 @@ end)
         Font = Configs_HUB.Text_Font
     })
 
+    -- ปุ่ม Next, Previous และ Play/Pause
     local NextButton = Create("TextButton", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1861,7 +1900,8 @@ end)
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
-    TextSetColor(NextButton)Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
+    Corner(NextButton)
+    Stroke(NextButton)
 
     NextButton.MouseButton1Click:Connect(function()
         NextSong(TitleLabel, TimeLabel, Frame_4)
@@ -1872,27 +1912,32 @@ end)
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "⏮",
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.46, 28, 0.25, 60),
+        Position = UDim2.new(0.45, 28, 0.25, 60),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
-    TextSetColor(PreviousButton)Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
+    Corner(PreviousButton)
+    Stroke(PreviousButton)
 
     PreviousButton.MouseButton1Click:Connect(function()
         PreviousSong(TitleLabel, TimeLabel, Frame_4)
     end)
 
     local ToggleButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.25, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150",
-    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
+        Size = UDim2.new(0, 50, 0, 50),
+        Position = UDim2.new(0.56, -25, 0.5, -25),
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+    })
 
     ToggleButton.MouseButton1Click:Connect(function()
         TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
     end)
+    
+    -- เริ่มเล่นเพลง
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
 end
+
 
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
