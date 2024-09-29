@@ -1696,7 +1696,6 @@ sound.Parent = ScreenGui
 
 local currentSongIndex = 1
 local isPaused = false
-local lastPosition = 0
 
 function FormatTime(seconds)
     local hours = math.floor(seconds / 3600)
@@ -1711,25 +1710,34 @@ function FormatTime(seconds)
     end
 end
 
+local function resetSong()
+    sound:Stop()
+    sound.TimePosition = 0
+    isPaused = false
+end
+
 local function playSong()
     sound.SoundId = songs[currentSongIndex].id
-    sound.TimePosition = lastPosition
     sound:Play()
     playButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
     songNameLabel.Text = songs[currentSongIndex].name
 end
 
 local function pauseSong()
-    lastPosition = sound.TimePosition
     sound:Pause()
     playButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
+    isPaused = true
 end
 
 local function playNextSong()
     currentSongIndex = (currentSongIndex % #songs) + 1
-    lastPosition = 0
-    sound.TimePosition = 0
-    isPaused = false
+    resetSong()
+    playSong()
+end
+
+local function playPreviousSong()
+    currentSongIndex = (currentSongIndex - 2) % #songs + 1
+    resetSong()
     playSong()
 end
 
@@ -1843,38 +1851,36 @@ function AddMusicPlayer(parent, Configs)
         Position = UDim2.new(0.57, 28, 0.25, 60),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150",
+        Name = "PlayButton"
     })
     Corner(playButton, {CornerRadius = UDim.new(1, 0)})
-
+    
     playButton.MouseButton1Click:Connect(function()
-        if sound.IsPlaying then
-            pauseSong()
-            isPaused = true
-        else
-            playSong()
-            isPaused = false
-        end
-    end)
-
-    nextButton.MouseButton1Click:Connect(function()
-        playNextSong()
-    end)
-
-    prevButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex - 2) % #songs + 1
-        lastPosition = 0
-        sound.TimePosition = 0
+    if sound.IsPlaying then
+        pauseSong()
+    else
+        sound:Play()
+        playButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
         isPaused = false
-        playSong()
-    end)
+    end
+end)
 
-    game:GetService("RunService").RenderStepped:Connect(function()
-        if sound.IsPlaying then
-            ProgressCircle.Rotation = (ProgressCircle.Rotation + 1) % 360
-            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
-        end
-    end)
+nextButton.MouseButton1Click:Connect(function()
+    playNextSong()
+end)
+
+prevButton.MouseButton1Click:Connect(function()
+    playPreviousSong()
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if sound.IsPlaying then
+        ProgressCircle.Rotation = (ProgressCircle.Rotation + 1) % 360
+        TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+    end
+end)
 end
+
 
 
   function AddDiscord(parent, Configs)
