@@ -1706,7 +1706,8 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
         sound:Play()
         isPlaying = true
         TitleLabel.Text = song.name
-        totalTime = sound.TimeLength
+
+       sound.TimeLength = lastPosition
         game.StarterGui:SetCore("SendNotification", {
             Title = "Playing",
             Text = "Playing song: " .. song.name,
@@ -1843,11 +1844,12 @@ Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
 
     ToggleButton.MouseButton1Click:Connect(function()
         if isPlaying then
-            sound:Stop()
-            isPlaying = false
+            sound:Pause()
+
             TitleLabel.Text = "Stopped"
             ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
         else
+            lastPosition = sound.TimeLength
             PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
             ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
         end
