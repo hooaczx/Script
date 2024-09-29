@@ -1755,7 +1755,29 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Frame)
     Stroke(Frame)
+    
+    local ToggleFrameButton = Create("TextButton", parent, {
+        Size = UDim2.new(0, 50, 0, 30),
+        Position = UDim2.new(0, 0, 0, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 0, 0),
+        Text = "Toggle",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 14,
+        Font = Enum.Font.SourceSans,
+    })
 
+    ToggleFrameButton.MouseButton1Click:Connect(function()
+        if Frame.Parent == parent then
+            Frame.Draggable = true
+            Frame.Parent = ScreenGui
+            ToggleFrameButton.Text = "Unlink"
+        else
+            Frame.Draggable = false
+            Frame.Parent = parent
+            ToggleFrameButton.Text = "Toggle"
+        end
+    end)
+    
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextWrapped = true,
