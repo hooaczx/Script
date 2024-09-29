@@ -1702,7 +1702,11 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        sound.TimePosition = 0
+        if lastPosition == 0 then
+            sound.TimePosition = 0
+        else
+            sound.TimePosition = lastPosition
+        end
         sound:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
