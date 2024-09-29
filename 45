@@ -1695,28 +1695,20 @@ local currentSongIndex = 1
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
 local lastPosition = 0
+local isPaused = false
 local progressUpdateConnection
-local isStopped = false
-
-local function StopProgressUpdate()
-    if progressUpdateConnection then
-        progressUpdateConnection:Disconnect()
-        progressUpdateConnection = nil
-    end
-end
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
-    StopProgressUpdate() -- Stop previous updates before starting a new song
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        sound.TimePosition = 0
+        sound.TimePosition = lastPosition
         sound:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
 
         sound.Ended:Connect(function()
-            NextSong(TitleLabel, TimeLabel, Frame_4)
+            playNextSong(TitleLabel, TimeLabel, Frame_4)
         end)
     end
 end
@@ -1735,7 +1727,9 @@ local function FormatTime(seconds)
 end
 
 function StartProgressUpdate(Frame_4, TimeLabel)
-    StopProgressUpdate()
+    if progressUpdateConnection then
+        progressUpdateConnection:Disconnect()
+    end
 
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if sound.IsPlaying then
@@ -1744,9 +1738,24 @@ function StartProgressUpdate(Frame_4, TimeLabel)
             local totalTime = sound.TimeLength
             TimeLabel.Text = string.format("%s / %s", FormatTime(currentTime), FormatTime(totalTime))
         else
-            StopProgressUpdate()
+            if progressUpdateConnection then
+                progressUpdateConnection:Disconnect()
+                progressUpdateConnection = nil
+            end
         end
     end)
+end
+
+function playNextSong(TitleLabel, TimeLabel, Frame_4)
+    currentSongIndex = (currentSongIndex % #songs) + 1
+    lastPosition = 0  -- Reset position to start
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+end
+
+function playPreviousSong(TitleLabel, TimeLabel, Frame_4)
+    currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+    lastPosition = 0  -- Reset position to start
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
 end
 
 function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
@@ -1755,26 +1764,14 @@ function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
         sound:Pause()
         TitleLabel.Text = "Stopped"
         ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
+        isPaused = true
     else
         sound.TimePosition = lastPosition
         sound:Play()
-        TitleLabel.Text = songs[currentSongIndex].name
         ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+        TitleLabel.Text = songs[currentSongIndex].name
+        isPaused = false
     end
-end
-
-function NextSong(TitleLabel, TimeLabel, Frame_4)
-    sound.TimePosition = 0
-    currentSongIndex = (currentSongIndex % #songs) + 1
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    lastPosition = 0
-end
-
-function PreviousSong(TitleLabel, TimeLabel, Frame_4)
-    sound.TimePosition = 0
-    currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    lastPosition = 0
 end
 
 function AddMusicPlayer(parent, Configs)
