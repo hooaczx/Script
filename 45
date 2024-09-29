@@ -1693,7 +1693,9 @@ local songs = {
 
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
-
+local currentSongIndex = 1
+local isPaused = false
+local savedTimePosition = 0
 function AddMusicPlayer(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(1, 0, 0, 150),
@@ -1800,10 +1802,6 @@ function AddMusicPlayer(parent, Configs)
         Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150",
         Name = "PlayButton"
     })Corner(playButton, {CornerRadius = UDim.new(1, 0)})
-
-    local currentSongIndex = 1
-    local isPaused = false
-    local savedTimePosition = 0
 
     function FormatTime(seconds)
         local minutes = math.floor(seconds / 60)
