@@ -1561,15 +1561,6 @@ function MakeWindow(Configs)
   
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-
-function SendNotification(title, text)
-    Players.LocalPlayer:WaitForChild("PlayerGui"):SetCore("SendNotification", {
-        Title = title;
-        Text = text;
-        Duration = 2;
-    })
-end
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
@@ -1702,42 +1693,44 @@ local currentSongIndex = 1
 local sound = Instance.new("Sound")
 sound.Parent = ScreenGui
 local isPlaying = false
-local lastPosition = 0
-local isRotating = false
-local rotationTween
-local playNextSong = true
+local rotationSpeed = 90
+local progressCircle = nil
+local songDuration = 0
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel, Circle)
+function PlaySongByIndex(index, TitleLabel, TimeLabel)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
         sound:Play()
-        sound.TimePosition = lastPosition
         isPlaying = true
-        TitleLabel.Text = song.name
-        sound.Loaded:Wait()
-        UpdateSongProgress(TimeLabel, Circle)
-        rotateTimeLabel(Circle)
+        songDuration = sound.TimeLength -- ความยาวของเพลง
+        TitleLabel.Text = "Now Playing: " .. song.name
+        UpdateProgressCircle()
+        local totalTime = FormatTime(songDuration)
+        TimeLabel.Text = "0:00 / " .. totalTime
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Playing",
+            Text = "Playing song: " .. song.name,
+            Icon = "rbxassetid://16855304544",
+            Duration = 2,
+        })
     end
 end
 
-function rotateTimeLabel(Circle)
-    if sound.IsPlaying then
-        if not isRotating then
-            isRotating = true
-            local rotationTweenInfo = TweenInfo.new(20, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, false)
-            local rotationGoal = {Rotation = Circle.Rotation + 360}
-            rotationTween = TweenService:Create(Circle, rotationTweenInfo, rotationGoal)
-            rotationTween:Play()
-        end
-    else
-        if isRotating then
-            isRotating = false
-            if rotationTween then
-                rotationTween:Stop()
-                Circle.Rotation = 0
-            end
-        end
+function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
+    local secs = math.floor(seconds % 60)
+    return string.format("%d:%02d", minutes, secs)
+end
+
+function UpdateProgressCircle()
+    if isPlaying and sound.TimePosition then
+        local currentTime = sound.TimePosition
+        local percentComplete = currentTime / songDuration
+        local angle = percentComplete * 360
+        progressCircle.Rotation = angle
+        local currentTimeFormatted = FormatTime(currentTime)
+        TimeLabel.Text = currentTimeFormatted .. " / " .. FormatTime(songDuration)
     end
 end
 
@@ -1745,79 +1738,18 @@ function AddMusicPlayer(parent, Configs)
     local PlayerName = Configs.Name or ""
     local Callback = Configs.Callback or function() end
 
-    local Frame = Create("Frame", ScreenGui, {
-        Size = UDim2.new(0.4, 0, 0, 300),
-        Position = UDim2.new(0.2, 0, 0, 0),
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(1, 0, 0, 150),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "MusicPlayerFrame"
     })
     Corner(Frame)
     Stroke(Frame)
 
-    local TextButton = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      Text = "",
-      AutoButtonColor = false
-    })Corner(TextButton)Stroke(TextButton)
-    
-    local TextLabel = Create("TextLabel", TextButton, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = PlayerName,
-      Size = UDim2.new(1, 0, 1, 0),
-      Position = UDim2.new(0, 35, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
-    })
-    
-    local Frame1 = Create("Frame", TextButton, {
-      Size = UDim2.new(0, 25, 0, 15),
-      Position = UDim2.new(0, 5, 0, 5),
-      BackgroundTransparency = 1,
-    })Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
-    local Stroke = Stroke(Frame1, {Thickness = 2})
-    
-    local Frame2 = Create("Frame", Frame1, {
-      Size = UDim2.new(0, 13, 0, 13),
-      Position = UDim2.new(0, 2, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
-    
-    local OnOff = false
-    if Default then
-      OnOff = true
-      CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
-      CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-    end
-    Callback(OnOff)
-    TextButton.MouseButton1Click:Connect(function()
-      if Frame2.Position.X.Offset < 5 then
-        OnOff = true
-        CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
-        CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-        CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        Callback(true)
-      else
-        OnOff = false
-        CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
-        CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-        Callback(false)
-      end
-    end)
-
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 16,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = songs[currentSongIndex].name,
+        Text = "Now Playing: " .. songs[currentSongIndex].name,
         Size = UDim2.new(1, 0, 0, 20),
         Position = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
@@ -1825,170 +1757,85 @@ function AddMusicPlayer(parent, Configs)
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(TitleLabel)
-
-    local Circle = Create("ImageLabel", Frame, {
-        Size = UDim2.new(0, 60, 0, 60),
-        Position = UDim2.new(0.5, -30, 0, 40),
-        BackgroundTransparency = 1,
-        Image = "rbxassetid://12345678",
-        ScaleType = Enum.ScaleType.Fit
+    
+    local CircleFrame = Create("Frame", Frame, {
+        Size = UDim2.new(0, 100, 0, 100),
+        Position = UDim2.new(0.5, -50, 0.3, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1
     })
-    Corner(Circle)
-    local TimeLabel = Create("TextLabel", Circle, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "00:00 / 00:00",
+    local Circle = Create("ImageLabel", CircleFrame, {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        TextYAlignment = "Center",
-        Font = Configs_HUB.Text_Font
+        Image = "rbxassetid://16855304544",
     })
-    TextSetColor(TimeLabel)
 
-    local NextButton = Create("TextButton", Frame, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Next",
-        Size = UDim2.new(0.5, -5, 0, 30),
-        Position = UDim2.new(0.5, 5, 0, 120),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Font = Configs_HUB.Text_Font,
+    progressCircle = Create("UIStroke", Circle, {
+        Thickness = 5,
+        Color = Configs_HUB.Cor_Text,
+        Transparency = 0.5,
     })
-    TextSetColor(NextButton)
-
-    NextButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Circle)
-    end)
-
-    local PreviousButton = Create("TextButton", Frame, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Previous",
-        Size = UDim2.new(0.5, -5, 0, 30),
-        Position = UDim2.new(0, 0, 0, 120),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Font = Configs_HUB.Text_Font,
+    
+    local ToggleButton = Create("ImageButton", CircleFrame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.5, -15, 0.5, -15),
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150",
     })
-    TextSetColor(PreviousButton)
-
-    PreviousButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Circle)
-    end)
-
-    local ToggleButton = Create("TextButton", Frame, {
-        TextSize = 14,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Play",
-        Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 160),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Font = Configs_HUB.Text_Font,
-    })
-    TextSetColor(ToggleButton)
 
     ToggleButton.MouseButton1Click:Connect(function()
         if isPlaying then
-            sound:Pause()
+            sound:Stop()
             isPlaying = false
-            Callback("Paused music")
-            TitleLabel.Text = "Paused"
-            rotateTimeLabel(Circle)
+            Callback("Stopped music")
+            TitleLabel.Text = "Stopped"
+            ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
         else
-            lastPosition = sound.TimePosition  -- เก็บตำแหน่งปัจจุบันก่อนเล่นเพลงใหม่
-            sound:Play()
-            isPlaying = true
-            UpdateSongProgress(TimeLabel, Circle)
-            rotateTimeLabel(Circle)  -- เริ่มการหมุน
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel)
+            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
         end
     end)
 
-    local ToggleNextPreviousButton = Create("TextButton", Frame, {
-        TextSize = 14,
+    local NextButton = Create("TextButton", Frame, {
+        TextSize = 28,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Play Next Song",
-        Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 220),
+        Text = "⏭",
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.6, 5, 0.4, 0),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
-    TextSetColor(ToggleNextPreviousButton)
 
-    ToggleNextPreviousButton.MouseButton1Click:Connect(function()
-        playNextSong = not playNextSong  -- สลับสถานะ
-        ToggleNextPreviousButton.Text = playNextSong and "Play Next Song" or "Play Previous Song"
+    NextButton.MouseButton1Click:Connect(function()
+        currentSongIndex = (currentSongIndex % #songs) + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel)
     end)
 
-    local SpeedToggleButton = Create("TextButton", Frame, {
-        TextSize = 14,
+    local PreviousButton = Create("TextButton", Frame, {
+        TextSize = 28,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Toggle Speed (Pitch/PlaybackSpeed)",
-        Size = UDim2.new(1, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 250),
+        Text = "⏮",
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.4, -35, 0.4, 0),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
-    TextSetColor(SpeedToggleButton)
 
-    SpeedToggleButton.MouseButton1Click:Connect(function()
-        usePlaybackSpeed = not usePlaybackSpeed
-        local speedMode = usePlaybackSpeed and "PlaybackSpeed" or "Pitch"
-        SendNotification("Speed Mode Changed", "Using " .. speedMode)
+    PreviousButton.MouseButton1Click:Connect(function()
+        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel)
     end)
-
-    local SpeedTextBox = Create("TextBox", Frame, {
+    
+    local TimeLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Enter Song Speed",
-        Size = UDim2.new(0.3, 0, 0, 30),
-        Position = UDim2.new(0, 0, 0, 290),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Font = Configs_HUB.Text_Font,
+        Text = "0:00 / 0:00",
+        Size = UDim2.new(1, 0, 0, 20),
+        Position = UDim2.new(0, 0, 0.8, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
     })
-    TextSetColor(SpeedTextBox)
-
-    SpeedTextBox.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            local speedValue = tonumber(SpeedTextBox.Text)
-            if speedValue then
-                if usePlaybackSpeed then
-                    sound.PlaybackSpeed = speedValue
-                else
-                    sound.Pitch = speedValue
-                end
-            end
-        end
-    end)
-
-    function UpdateSongProgress(TimeLabel, Circle)
-        local connection
-        connection = RunService.RenderStepped:Connect(function()
-            if isPlaying and sound.IsLoaded then
-                local currentTime = sound.TimePosition
-                local totalTime = sound.TimeLength
-                if totalTime > 0 then
-                    TimeLabel.Text = string.format("%02d:%02d / %02d:%02d",
-                        math.floor(currentTime / 60), math.floor(currentTime % 60),
-                        math.floor(totalTime / 60), math.floor(totalTime % 60))
-                end
-                if sound.TimePosition >= sound.TimeLength then
-                    connection:Disconnect()
-                    isPlaying = false
-                    rotateTimeLabel(Circle)
-
-                    -- เล่นเพลงถัดไปหรือย้อนกลับ
-                    if playNextSong then
-                        currentSongIndex = (currentSongIndex % #songs) + 1
-                    else
-                        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-                    end
-                    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Circle)
-                end
-            end
-        end)
-    end
 end
 
 
