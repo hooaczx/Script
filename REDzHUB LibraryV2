@@ -1766,13 +1766,21 @@ function AddMusicPlayer(parent, Configs)
         Font = Enum.Font.SourceSans,
     })
     
-    local resizing = false
+    local resizeHandle = Create("Frame", Frame, {
+        Size = UDim2.new(0, 10, 1, 0),
+        Position = UDim2.new(1, 0, 0, 0),
+        BackgroundColor3 = Color3.fromRGB(200, 200, 200),
+        AnchorPoint = Vector2.new(0, 0),
+    })
     
-    ToggleFrameButton.MouseButton1Down:Connect(function()
+    local resizing = false
+    local initialSize
+    
+    resizeHandle.MouseButton1Down:Connect(function()
         if Frame.Parent == ScreenGui then
             resizing = true
+            initialSize = Frame.Size
             local mouse = game.Players.LocalPlayer:GetMouse()
-            local initialSize = Frame.Size
             local initialMousePos = mouse.X
 
             local resizeConnection
@@ -1792,7 +1800,7 @@ function AddMusicPlayer(parent, Configs)
     ToggleFrameButton.MouseButton1Click:Connect(function()
      if Frame.Parent == parent then
         Frame.Parent = ScreenGui
-        Frame.Position = UDim2.new(0.5, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
+        Frame.Position = UDim2.new(0.4, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
         Frame.Size = UDim2.new(0.6, 0, 0.4, 0)
         Frame.Draggable = true
         Frame.Active = true
