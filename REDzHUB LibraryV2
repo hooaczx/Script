@@ -1716,16 +1716,22 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressCircle)
     end
 end
 
+local function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
+    local remainingSeconds = math.floor(seconds % 60)
+    return string.format("%d:%02d", minutes, remainingSeconds)
+end
 function StartProgressUpdate(ProgressCircle, TimeLabel)
     if progressUpdateConnection then
         progressUpdateConnection:Disconnect()
     end
+
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if isPlaying and sound.IsPlaying then
             ProgressCircle.Rotation = (ProgressCircle.Rotation + 1) % 360
             local currentTime = sound.TimePosition
             local progress = currentTime / totalTime
-            TimeLabel.Text = string.format("%.2f / %.2f", currentTime, totalTime)
+            TimeLabel.Text = string.format("%s / %s", FormatTime(currentTime), FormatTime(totalTime))
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
@@ -1760,7 +1766,7 @@ function AddMusicPlayer(parent, Configs)
         Size = UDim2.new(0, 50, 0, 50),
         Position = UDim2.new(0.5, -25, 0, 50),
         BackgroundTransparency = 1,
-        Image = "rbxassetid://"
+        Image = "rbxassetid://16855304544"
     })
     
     local TimeLabel = Create("TextLabel", Frame, {
@@ -1795,7 +1801,7 @@ function AddMusicPlayer(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         Text = "⏮",
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.3, 0, 0.5, 0),
+        Position = UDim2.new(0.25, 0, 0.5, 0),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Font = Configs_HUB.Text_Font,
     })
