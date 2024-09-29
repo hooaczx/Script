@@ -1784,7 +1784,7 @@ Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
     Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
 
     local ProgressCircle = Create("ImageLabel", Frame_4, {
-        Size = UDim2.new(0, 1, 0, 1),
+        Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         ImageTransparency = 0.6,
         Image = "rbxassetid://16855304544"
@@ -1815,7 +1815,7 @@ Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
 
     NextButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressCircle)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     end)
 
     local PreviousButton = Create("TextButton", Frame, {
@@ -1831,7 +1831,7 @@ Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
 
     PreviousButton.MouseButton1Click:Connect(function()
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressCircle)
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     end)
 
     local ToggleButton = Create("ImageButton", Frame, {
@@ -1848,7 +1848,7 @@ Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
             TitleLabel.Text = "Stopped"
             ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
         else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, ProgressCircle)
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
             ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
         end
     end)
