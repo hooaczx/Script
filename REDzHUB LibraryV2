@@ -1765,8 +1765,10 @@ function AddMusicPlayer(parent, Configs)
         TextSize = 14,
         Font = Enum.Font.SourceSans,
     })
-    
-    ToggleFrameButton.MouseButton1Click:Connect(function()
+ 
+ local UserInputService = game:GetService("UserInputService")
+ 
+ToggleFrameButton.MouseButton1Click:Connect(function()
     if Frame.Parent == parent then
         Frame.Parent = ScreenGui
         Frame.Position = UDim2.new(0.5, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
@@ -1775,7 +1777,7 @@ function AddMusicPlayer(parent, Configs)
         Frame.Active = true
         ToggleFrameButton.Text = "Unlink"
         local borders = {}
-        local function createBorder(name, position, size, cursor)
+        local function createBorder(name, position, size, resizeDirection)
             local border = Instance.new("Frame")
             border.Name = name
             border.Size = size
@@ -1785,20 +1787,28 @@ function AddMusicPlayer(parent, Configs)
             border.BackgroundTransparency = 0.5
             border.Parent = Frame
             border.MouseEnter:Connect(function()
-                game:GetService("UserInputService").MouseIconEnabled = true
-                border.MouseIcon = cursor
+                if resizeDirection == "Horizontal" then
+                    UserInputService.MouseIconEnabled = true
+                    UserInputService.MouseIcon = "rbxasset://textures/Cursors/ArrowFarRight.png"
+                elseif resizeDirection == "Vertical" then
+                    UserInputService.MouseIconEnabled = true
+                    UserInputService.MouseIcon = "rbxasset://textures/Cursors/ArrowUpDown.png"
+                elseif resizeDirection == "Corner" then
+                    UserInputService.MouseIconEnabled = true
+                    UserInputService.MouseIcon = "rbxasset://textures/Cursors/ArrowBottomRight.png"
+                end
             end)
 
             border.MouseLeave:Connect(function()
-                game:GetService("UserInputService").MouseIconEnabled = false
+                UserInputService.MouseIconEnabled = false
             end)
 
             return border
         end
-        table.insert(borders, createBorder("Top", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 5), "rbxasset://textures/ArrowCursor.png"))
-        table.insert(borders, createBorder("Bottom", UDim2.new(0, 0, 1, -5), UDim2.new(1, 0, 0, 5), "rbxasset://textures/ArrowCursor.png"))
-        table.insert(borders, createBorder("Left", UDim2.new(0, 0, 0, 0), UDim2.new(0, 5, 1, 0), "rbxasset://textures/ArrowCursor.png"))
-        table.insert(borders, createBorder("Right", UDim2.new(1, -5, 0, 0), UDim2.new(0, 5, 1, 0), "rbxasset://textures/ArrowCursor.png"))
+        table.insert(borders, createBorder("Top", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 5), "Vertical"))
+        table.insert(borders, createBorder("Bottom", UDim2.new(0, 0, 1, -5), UDim2.new(1, 0, 0, 5), "Vertical"))
+        table.insert(borders, createBorder("Left", UDim2.new(0, 0, 0, 0), UDim2.new(0, 5, 1, 0), "Horizontal"))
+        table.insert(borders, createBorder("Right", UDim2.new(1, -5, 0, 0), UDim2.new(0, 5, 1, 0), "Horizontal"))
         local resizing = false
         local startSize, startMousePos
         for _, border in pairs(borders) do
@@ -1814,7 +1824,7 @@ function AddMusicPlayer(parent, Configs)
                     resizing = false
                 end
             end)
-        end        
+        end
         RunService.RenderStepped:Connect(function()
             if resizing then
                 local delta = Vector2.new(mouse.X, mouse.Y) - startMousePos
@@ -1828,15 +1838,15 @@ function AddMusicPlayer(parent, Configs)
         Frame.Position = UDim2.new(0, 0, 0, 0)
         Frame.Draggable = false
         Frame.Active = false
-        ToggleFrameButton.Text = "Toggle"
+        ToggleFrameButton.Text = "in Gui"
         if Frame.borders then
             for _, border in pairs(Frame.borders) do
                 border:Destroy()
             end
             Frame.borders = nil
-           end
-       end
-   end)
+        end
+    end
+end)
 
 
     local TitleLabel = Create("TextLabel", Frame, {
