@@ -1760,86 +1760,66 @@ function AddMusicPlayer(parent, Configs)
         Size = UDim2.new(0, 50, 0, 30),
         Position = UDim2.new(0, 0, 0, 0),
         BackgroundColor3 = Color3.fromRGB(255, 0, 0),
-        Text = "Outside Gui",
+        Text = "Toggle",
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 14,
         Font = Enum.Font.SourceSans,
     })
-    
+
     ToggleFrameButton.MouseButton1Click:Connect(function()
-    if Frame.Parent == parent then
+     if Frame.Parent == parent then
         Frame.Parent = ScreenGui
-        Frame.Position = UDim2.new(0.5, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
+        Frame.Position = UDim2.new(0.4, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
         Frame.Size = UDim2.new(0.6, 0, 0.4, 0)
         Frame.Draggable = true
         Frame.Active = true
         ToggleFrameButton.Text = "Outside Gui"
-        local borders = {}
-        local function createBorder(name, position, size, cursor)
-            local border = Instance.new("Frame")
-            border.Name = name
-            border.Size = size
-            border.Position = position
-            border.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            border.BorderSizePixel = 0
-            border.BackgroundTransparency = 0.5
-            border.Parent = Frame
-            border.MouseEnter:Connect(function()
-            UserInputService.MouseIconEnabled = true
-            UserInputService.MouseIconOverride = cursor             
-            end)
-
-             border.MouseLeave:Connect(function()
-             serInputService.MouseIconEnabled = false
-             UserInputService.MouseIconOverride = ""
-             end)
-
-            return border
-        end
-        table.insert(borders, createBorder("Top", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 5), "rbxasset://textures/ArrowCursor.png"))
-        table.insert(borders, createBorder("Bottom", UDim2.new(0, 0, 1, -5), UDim2.new(1, 0, 0, 5), "rbxasset://textures/ArrowCursor.png"))
-        table.insert(borders, createBorder("Left", UDim2.new(0, 0, 0, 0), UDim2.new(0, 5, 1, 0), "rbxasset://textures/ArrowCursor.png"))
-        table.insert(borders, createBorder("Right", UDim2.new(1, -5, 0, 0), UDim2.new(0, 5, 1, 0), "rbxasset://textures/ArrowCursor.png"))
-        local resizing = false
-        local startSize, startMousePos
-        for _, border in pairs(borders) do
-            border.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    resizing = true
-                    startSize = Frame.Size
-                    startMousePos = Vector2.new(input.Position.X, input.Position.Y)
-                end
-            end)
-            border.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    resizing = false
-                end
-            end)
-        end        
-        RunService.RenderStepped:Connect(function()
-            if resizing then
-                local delta = Vector2.new(mouse.X, mouse.Y) - startMousePos
-                Frame.Size = UDim2.new(startSize.X.Scale, startSize.X.Offset + delta.X, startSize.Y.Scale, startSize.Y.Offset + delta.Y)
-            end
-        end)
-        Frame.borders = borders
-    else
+        else
         Frame.Parent = parent
         Frame.Size = UDim2.new(1, 0, 0, 150)
         Frame.Position = UDim2.new(0, 0, 0, 0)
         Frame.Draggable = false
         Frame.Active = false
         ToggleFrameButton.Text = "in Gui"
-        if Frame.borders then
-            for _, border in pairs(Frame.borders) do
-                border:Destroy()
-            end
-            Frame.borders = nil
-           end
-       end
-   end)
+         end
+    end)
+    
+    local ResizeButton = Create("TextButton", Frame, {
+        Size = UDim2.new(0, 20, 0, 20),
+        Position = UDim2.new(1, -20, 1, -20),
+        BackgroundColor3 = Color3.fromRGB(0, 255, 0),
+        Text = "",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 14,
+        Font = Enum.Font.SourceSans,
+    })
+    
+    local dragging = false
+    local startSize = Frame.Size
+    local startMouse = Vector2.new()
 
+    ResizeButton.MouseButton1Down:Connect(function(mouse)
+        if Frame.Parent == ScreenGui then
+            dragging = true
+            startMouse = mouse.Position
+            startSize = Frame.Size
 
+            local connection
+            connection = RunService.RenderStepped:Connect(function()
+                if dragging then
+                    local delta = mouse.Position - startMouse
+                    Frame.Size = UDim2.new(startSize.X.Scale, startSize.X.Offset + delta.X, startSize.Y.Scale, startSize.Y.Offset + delta.Y)
+                else
+                    connection:Disconnect()
+                end
+            end)
+        end
+    end)
+
+    ResizeButton.MouseButton1Up:Connect(function()
+        dragging = false
+    end)
+    
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextWrapped = true,
