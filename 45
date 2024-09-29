@@ -1561,9 +1561,118 @@ function MakeWindow(Configs)
   function SetSection(Section, NewName)
     Section.Text = NewName
   end
-  
-local RunService = game:GetService("RunService")
 
+function AddMusicPlayer(parent, Configs)
+local sound = Instance.new("Sound")
+sound.Parent = ScreenGui
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(1, 0, 0, 150),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "MusicPlayerFrame"
+    })
+    Corner(Frame)
+    Stroke(Frame)
+
+    local ToggleFrameButton = Create("TextButton", parent, {
+        Size = UDim2.new(0, 50, 0, 30),
+        Position = UDim2.new(0, 0, 0, 0),
+        Text = "Outside Gui",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 14,
+        Font = Enum.Font.SourceSans,
+    })
+    Corner(ToggleFrameButton)
+    Stroke(ToggleFrameButton)
+
+    ToggleFrameButton.MouseButton1Click:Connect(function()
+        if Frame.Parent == parent then
+            Frame.Parent = ScreenGui
+            Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
+            Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
+            Frame.Draggable = true
+            Frame.Active = true
+            ToggleFrameButton.Text = "in Gui"
+        else
+            Frame.Parent = parent
+            Frame.Size = UDim2.new(1, 0, 0, 150)
+            Frame.Position = UDim2.new(0, 0, 0, 0)
+            Frame.Draggable = false
+            Frame.Active = false
+            ToggleFrameButton.Text = "Outside Gui"
+        end
+    end)
+
+    local songNameLabel = Create("TextLabel", Frame, {
+        TextSize = 14,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = songs[currentSongIndex].name,
+        Size = UDim2.new(0.45, 0, 0, 40),
+        Position = UDim2.new(0.56, -25, 0.36, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+
+    local Frame_4 = Create("Frame", Frame, {
+        Size = UDim2.new(0, 100, 0, 100),
+        Position = UDim2.new(0.13, -25, 0.32, -25),
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+    })
+    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
+    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
+
+    local ProgressCircle = Create("ImageLabel", Frame_4, {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        ImageTransparency = 0.6,
+        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
+    })
+    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
+
+    local TimeLabel = Create("TextLabel", Frame, {
+        TextSize = 12,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "0:00 / 0:00",
+        Size = UDim2.new(0.3, 0, 0, 20),
+        Position = UDim2.new(0.63, -25, 0.56, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+
+    local nextButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.69, 28, 0.25, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
+        Name = "PlayButton"
+    })
+    Corner(nextButton, {CornerRadius = UDim.new(1, 0)})
+
+    local prevButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.46, 28, 0.25, 60),
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
+        Name = "PlayButton"
+    })
+    Corner(prevButton, {CornerRadius = UDim.new(1, 0)})
+
+     local playButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.57, 28, 0.25, 60),
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Image = "rbxthumb://type=Asset&id=84618486571996&w=150&h=150",
+        Name = "PlayButton"
+    })
+    Corner(playButton, {CornerRadius = UDim.new(1, 0)})
+    
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
@@ -1691,8 +1800,6 @@ local songs = {
     {id = "https://www.roblox.com/asset/?id=7028919492", name = "SMLE - Found A Reason"},
 }
 
-local sound = Instance.new("Sound")
-sound.Parent = ScreenGui
 local currentSongIndex = 1
 local isPaused = false
 local savedTimePosition = 0
@@ -1738,115 +1845,6 @@ sound.Ended:Connect(function()
     playNextSong()
 end)
 
-function AddMusicPlayer(parent, Configs)
-    local Frame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 150),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Name = "MusicPlayerFrame"
-    })
-    Corner(Frame)
-    Stroke(Frame)
-
-    local ToggleFrameButton = Create("TextButton", parent, {
-        Size = UDim2.new(0, 50, 0, 30),
-        Position = UDim2.new(0, 0, 0, 0),
-        Text = "Outside Gui",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 14,
-        Font = Enum.Font.SourceSans,
-    })
-    Corner(ToggleFrameButton)
-    Stroke(ToggleFrameButton)
-
-    ToggleFrameButton.MouseButton1Click:Connect(function()
-        if Frame.Parent == parent then
-            Frame.Parent = ScreenGui
-            Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
-            Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
-            Frame.Draggable = true
-            Frame.Active = true
-            ToggleFrameButton.Text = "in Gui"
-        else
-            Frame.Parent = parent
-            Frame.Size = UDim2.new(1, 0, 0, 150)
-            Frame.Position = UDim2.new(0, 0, 0, 0)
-            Frame.Draggable = false
-            Frame.Active = false
-            ToggleFrameButton.Text = "Outside Gui"
-        end
-    end)
-
-    local songNameLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = songs[currentSongIndex].name,
-        Size = UDim2.new(0.45, 0, 0, 40),
-        Position = UDim2.new(0.56, -25, 0.36, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-
-    local Frame_4 = Create("Frame", Frame, {
-        Size = UDim2.new(0, 100, 0, 100),
-        Position = UDim2.new(0.13, -25, 0.32, -25),
-        BackgroundTransparency = 1,
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-    })
-    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
-    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
-
-    local ProgressCircle = Create("ImageLabel", Frame_4, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        ImageTransparency = 0.6,
-        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
-    })
-    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
-
-    local TimeLabel = Create("TextLabel", Frame, {
-        TextSize = 12,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "0:00 / 0:00",
-        Size = UDim2.new(0.3, 0, 0, 20),
-        Position = UDim2.new(0.63, -25, 0.56, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-
-    local nextButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.69, 28, 0.25, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
-        Name = "PlayButton"
-    })
-    Corner(nextButton, {CornerRadius = UDim.new(1, 0)})
-
-    local prevButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.46, 28, 0.25, 60),
-        BackgroundTransparency = 1,
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
-        Name = "PlayButton"
-    })
-    Corner(prevButton, {CornerRadius = UDim.new(1, 0)})
-
-    local playButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.25, 60),
-        BackgroundTransparency = 1,
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Image = "rbxthumb://type=Asset&id=84618486571996&w=150&h=150",
-        Name = "PlayButton"
-    })
-    Corner(playButton, {CornerRadius = UDim.new(1, 0)})
-    
     playButton.MouseButton1Click:Connect(function()
     if sound.IsPlaying then
     playButton.Image = "rbxthumb://type=Asset&id=84618486571996&w=150&h=150"
