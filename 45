@@ -1763,6 +1763,10 @@ function AddMusicPlayer(parent, Configs)
     Corner(ToggleFrameButton)
     Stroke(ToggleFrameButton)
 
+    local songNameLabel
+    local playButton
+    local ProgressCircle
+
     ToggleFrameButton.MouseButton1Click:Connect(function()
         if Frame.Parent == parent then
             Frame.Parent = ScreenGui
@@ -1781,7 +1785,7 @@ function AddMusicPlayer(parent, Configs)
         end
     end)
 
-    local songNameLabel = Create("TextLabel", Frame, {
+    songNameLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextWrapped = true,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -1802,7 +1806,7 @@ function AddMusicPlayer(parent, Configs)
     Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
     Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
 
-    local ProgressCircle = Create("ImageLabel", Frame_4, {
+    ProgressCircle = Create("ImageLabel", Frame_4, {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         ImageTransparency = 0.6,
@@ -1844,7 +1848,7 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(prevButton, {CornerRadius = UDim.new(1, 0)})
 
-    local playButton = Create("ImageButton", Frame, {
+    playButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0, 30, 0, 30),
         Position = UDim2.new(0.57, 28, 0.25, 60),
         BackgroundColor3 = Configs_HUB.Cor_Button,
@@ -1854,28 +1858,29 @@ function AddMusicPlayer(parent, Configs)
     Corner(playButton, {CornerRadius = UDim.new(1, 0)})
     
     playButton.MouseButton1Click:Connect(function()
-    if sound.IsPlaying then
-        pauseSong()
-    else
-        playSong()
-    end
-end)
+        if sound.IsPlaying then
+            pauseSong()
+        else
+            playSong()
+        end
+    end)
 
-nextButton.MouseButton1Click:Connect(function()
-    playNextSong()
-end)
+    nextButton.MouseButton1Click:Connect(function()
+        playNextSong()
+    end)
 
-prevButton.MouseButton1Click:Connect(function()
-    playPreviousSong()
-end)
+    prevButton.MouseButton1Click:Connect(function()
+        playPreviousSong()
+    end)
 
-game:GetService("RunService").RenderStepped:Connect(function()
-    if sound.IsPlaying then
-        ProgressCircle.Rotation = (ProgressCircle.Rotation + 1) % 360
-        TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
-    end
-end)
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if sound.IsPlaying then
+            ProgressCircle.Rotation = (ProgressCircle.Rotation + 1) % 360
+            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+        end
+    end)
 end
+
 
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
