@@ -1708,10 +1708,10 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     end
 end
 
-local function FormatTime(seconds)
-    local hours = math.floor(seconds / 3600)
-    local minutes = math.floor((seconds % 3600) / 60)
+function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
     local remainingSeconds = math.floor(seconds % 60)
+    return string.format("%02d:%02d", minutes, remainingSeconds)
 end
 
 function StartProgressUpdate(Frame_4, TimeLabel)
@@ -1722,9 +1722,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if sound.IsPlaying then
             Frame_4.Rotation = (Frame_4.Rotation + 1) % 360
-            local currentTime = sound.TimePosition
-            local totalTime = sound.TimeLength
-            TimeLabel.Text = string.format("%s / %s", FormatTime(currentTime), FormatTime(totalTime))
+            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
