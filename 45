@@ -1702,14 +1702,14 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
-        if lastPosition == 0 then
-            sound.TimePosition = 0
-        else
-            sound.TimePosition = lastPosition
-        end
+        sound.TimePosition = lastPosition
         sound:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
+
+        sound.Ended:Connect(function()
+            NextSong(TitleLabel, TimeLabel, Frame_4)
+        end)
     end
 end
 
@@ -1744,6 +1744,32 @@ function StartProgressUpdate(Frame_4, TimeLabel)
             end
         end
     end)
+end
+
+function NextSong(TitleLabel, TimeLabel, Frame_4)
+    lastPosition = 0 
+    currentSongIndex = (currentSongIndex % #songs) + 1
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+end
+
+function PreviousSong(TitleLabel, TimeLabel, Frame_4)
+    lastPosition = 0
+    currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+end
+
+function TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
+    if sound.IsPlaying then
+        lastPosition = sound.TimePosition
+        sound:Pause()
+        TitleLabel.Text = "Stopped"
+        ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
+    else
+        sound.TimePosition = lastPosition
+        sound:Play()
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+    end
 end
 
 function AddMusicPlayer(parent, Configs)
@@ -1837,8 +1863,7 @@ end)
     TextSetColor(NextButton)Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
 
     NextButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        NextSong(TitleLabel, TimeLabel, Frame_4)
     end)
 
     local PreviousButton = Create("TextButton", Frame, {
@@ -1853,8 +1878,7 @@ end)
     TextSetColor(PreviousButton)Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
 
     PreviousButton.MouseButton1Click:Connect(function()
-        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        PreviousSong(TitleLabel, TimeLabel, Frame_4)
     end)
 
     local ToggleButton = Create("ImageButton", Frame, {
@@ -1865,15 +1889,7 @@ end)
     })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
 
     ToggleButton.MouseButton1Click:Connect(function()
-        if sound.IsPlaying then
-            lastPosition = sound.TimePosition
-            sound:Pause()
-            TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=120936263094449&w=150&h=150"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        end
+        TogglePlayPause(TitleLabel, ToggleButton, TimeLabel, Frame_4)
     end)
 end
 
