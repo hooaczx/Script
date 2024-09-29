@@ -1765,6 +1765,29 @@ function AddMusicPlayer(parent, Configs)
         TextSize = 14,
         Font = Enum.Font.SourceSans,
     })
+    
+    local resizing = false
+    
+    ToggleFrameButton.MouseButton1Down:Connect(function()
+        if Frame.Parent == ScreenGui then
+            resizing = true
+            local mouse = game.Players.LocalPlayer:GetMouse()
+            local initialSize = Frame.Size
+            local initialMousePos = mouse.X
+
+            local resizeConnection
+            resizeConnection = RunService.Heartbeat:Connect(function()
+                if resizing then
+                    local delta = mouse.X - initialMousePos
+                    Frame.Size = UDim2.new(initialSize.X.Scale, initialSize.X.Offset + delta, initialSize.Y.Scale, initialSize.Y.Offset)
+                end
+            end)
+
+            mouse.Button1Up:Wait()
+            resizing = false
+            resizeConnection:Disconnect()
+        end
+    end)
 
     ToggleFrameButton.MouseButton1Click:Connect(function()
      if Frame.Parent == parent then
@@ -1784,7 +1807,6 @@ function AddMusicPlayer(parent, Configs)
          end
     end)
 
-    
     local TitleLabel = Create("TextLabel", Frame, {
         TextSize = 14,
         TextWrapped = true,
