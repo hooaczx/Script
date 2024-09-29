@@ -1759,70 +1759,22 @@ function AddMusicPlayer(parent, Configs)
     local ToggleFrameButton = Create("TextButton", parent, {
         Size = UDim2.new(0, 50, 0, 30),
         Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = Color3.fromRGB(255, 0, 0),
         Text = "Toggle",
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 14,
         Font = Enum.Font.SourceSans,
     })
+    Corner(ToggleFrameButton)
+    Stroke(ToggleFrameButton)
     
-local UserInputService = game:GetService("UserInputService")
-
-local function createResizeButton(position, parent, resizeDirection)
-    local button = Instance.new("ImageButton")
-    button.Size = UDim2.new(0, 20, 0, 20)
-    button.Position = position
-    button.BackgroundTransparency = 1
-    button.Image = "rbxassetid://1234567890"
-    button.Parent = parent
-    local resizing = false
-    local startSize, startMousePos    
-    button.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            resizing = true
-            startSize = parent.Size
-            startMousePos = Vector2.new(input.Position.X, input.Position.Y)
-        end
-    end)
-
-    button.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            resizing = false
-        end
-    end)
-    RunService.RenderStepped:Connect(function()
-        if resizing then
-            local delta = UserInputService:GetMouse().Position - Vector2.new(startMousePos.X, startMousePos.Y)
-            if resizeDirection == "BottomRight" then
-                parent.Size = UDim2.new(startSize.X.Scale, startSize.X.Offset + delta.X, startSize.Y.Scale, startSize.Y.Offset + delta.Y)
-            elseif resizeDirection == "TopLeft" then
-                parent.Position = UDim2.new(parent.Position.X.Scale, parent.Position.X.Offset + delta.X, parent.Position.Y.Scale, parent.Position.Y.Offset + delta.Y)
-                parent.Size = UDim2.new(startSize.X.Scale, startSize.X.Offset - delta.X, startSize.Y.Scale, startSize.Y.Offset - delta.Y)
-            elseif resizeDirection == "TopRight" then
-                parent.Position = UDim2.new(parent.Position.X.Scale, parent.Position.X.Offset, parent.Position.Y.Scale, parent.Position.Y.Offset + delta.Y)
-                parent.Size = UDim2.new(startSize.X.Scale, startSize.X.Offset + delta.X, startSize.Y.Scale, startSize.Y.Offset - delta.Y)
-            elseif resizeDirection == "BottomLeft" then
-                parent.Position = UDim2.new(parent.Position.X.Scale, parent.Position.X.Offset + delta.X, parent.Position.Y.Scale, parent.Position.Y.Offset)
-                parent.Size = UDim2.new(startSize.X.Scale, startSize.X.Offset - delta.X, startSize.Y.Scale, startSize.Y.Offset + delta.Y)
-            end
-        end
-    end)
-    return button
-end
-
 ToggleFrameButton.MouseButton1Click:Connect(function()
     if Frame.Parent == parent then
         Frame.Parent = ScreenGui
-        Frame.Position = UDim2.new(0.5, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
+        Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
         Frame.Size = UDim2.new(0.6, 0, 0.4, 0)
         Frame.Draggable = true
         Frame.Active = true
         ToggleFrameButton.Text = "Outside Gui"
-        local topLeftButton = createResizeButton(UDim2.new(0, -10, 0, -10), Frame, "TopLeft")
-        local topRightButton = createResizeButton(UDim2.new(1, -10, 0, -10), Frame, "TopRight")
-        local bottomLeftButton = createResizeButton(UDim2.new(0, -10, 1, -10), Frame, "BottomLeft")
-        local bottomRightButton = createResizeButton(UDim2.new(1, -10, 1, -10), Frame, "BottomRight")
-        Frame.resizeButtons = {topLeftButton, topRightButton, bottomLeftButton, bottomRightButton}
     else
         Frame.Parent = parent
         Frame.Size = UDim2.new(1, 0, 0, 150)
@@ -1830,12 +1782,6 @@ ToggleFrameButton.MouseButton1Click:Connect(function()
         Frame.Draggable = false
         Frame.Active = false
         ToggleFrameButton.Text = "in Gui"
-        if Frame.resizeButtons then
-            for _, button in pairs(Frame.resizeButtons) do
-                button:Destroy()
-            end
-            Frame.resizeButtons = nil
-        end
     end
 end)
     local TitleLabel = Create("TextLabel", Frame, {
