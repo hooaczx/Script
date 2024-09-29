@@ -1805,7 +1805,6 @@ sound.Parent = ScreenGui
 local currentSongIndex = 1
 local isPaused = false
 local savedTimePosition = 0
-local songNameLabel
 
 function FormatTime(seconds)
     local minutes = math.floor(seconds / 60)
@@ -1823,6 +1822,7 @@ local function playSong()
     sound.SoundId = songs[currentSongIndex].id
     sound.TimePosition = savedTimePosition
     sound:Play()
+    songNameLabel.Text = songs[currentSongIndex].name
 end
 
 local function pauseSong()
@@ -1982,7 +1982,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 end
-
 
 
   function AddDiscord(parent, Configs)
