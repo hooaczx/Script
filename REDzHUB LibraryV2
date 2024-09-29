@@ -1699,7 +1699,7 @@ local isPlaying = false
 local totalTime = 0
 local progressUpdateConnection
 
-function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressCircle)
+function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         sound.SoundId = song.id
@@ -1712,7 +1712,7 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, ProgressCircle)
             Text = "Playing song: " .. song.name,
             Duration = 2,
         })
-        StartProgressUpdate(ProgressCircle, TimeLabel)
+        StartProgressUpdate(Frame_4, TimeLabel)
     end
 end
 
@@ -1737,7 +1737,7 @@ function StartProgressUpdate(ProgressCircle, TimeLabel)
 
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if isPlaying and sound.IsPlaying then
-            ProgressCircle.Rotation = (ProgressCircle.Rotation + 1) % 360
+            Frame_4.Rotation = (ProgressCircle.Rotation + 1) % 360
             local currentTime = sound.TimePosition
             local totalTime = sound.TimeLength
             local progress = currentTime / totalTime
@@ -1775,7 +1775,8 @@ function AddMusicPlayer(parent, Configs)
     TextSetColor(TitleLabel)
 
    local Frame_4 = Create("Frame", Frame, {
-        Size = UDim2.new(100, 0, 0, 100),
+        Size = UDim2.new(0, 100, 0, 100),
+        Position = UDim2.new(0.13, -25, 0.32, -25),
         BackgroundTransparency = 1,
         BackgroundColor3 = Configs_HUB.Cor_Options,
    })
@@ -1784,7 +1785,6 @@ Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
 
     local ProgressCircle = Create("ImageLabel", Frame_4, {
         Size = UDim2.new(0, 1, 0, 1),
-        Position = UDim2.new(0.13, -25, 0.32, -25),
         BackgroundTransparency = 1,
         ImageTransparency = 0.6,
         Image = "rbxassetid://16855304544"
