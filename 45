@@ -71,6 +71,15 @@ local function CreateTween1(instance, property, goal, duration, easingDirection)
     return tween
 end
 
+local function TweenSizeIncrementally(object, fromSize, toSize, steps, duration)
+    local stepSize = (toSize.Y.Scale - fromSize.Y.Scale) / steps
+    for i = 1, steps do
+        local newScale = fromSize.Y.Scale + stepSize * i
+        object.Size = UDim2.new(fromSize.X.Scale, fromSize.X.Offset, newScale, fromSize.Y.Offset)
+        wait(duration / steps)
+    end
+end
+
 local function TextSetColor(instance)
   instance.MouseEnter:Connect(function()
     CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
@@ -582,17 +591,17 @@ function MakeWindow(Configs)
         minimize1 = not minimize1
 
         if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.01, 0), 1, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 1, true)
-            wait()
-            frame.Visible = false
-            Button1.Text = "^"
-        else
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
-            frame.Visible = true
-            Button1.Text = "v"
-        end
+        TweenSizeIncrementally(frame, UDim2.new(0.5, 0, 0.12, 0), UDim2.new(0.5, 0, 0.03, 0), 10, 0.3) -- Tweening size incrementally
+        CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
+        wait(0.3)
+        frame.Visible = false
+        Button1.Text = "^"
+    else
+        frame.Visible = true
+        TweenSizeIncrementally(frame, UDim2.new(0.5, 0, 0.03, 0), UDim2.new(0.5, 0, 0.12, 0), 10, 0.3) -- Tweening size incrementally
+        CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true)
+        Button1.Text = "v"
+    end
     end)
 
     RunService.Heartbeat:Connect(function()
