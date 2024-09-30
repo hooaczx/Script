@@ -556,7 +556,76 @@ function MakeWindow(Configs)
       end
     end)
   end
-  
+
+function CreateTabBar(Configs)
+    local buttonSize = Configs.ButtonSize or UDim2.new(0, 50, 0, 50)
+    local buttonColor = Configs.ButtonColor or Color3.new(1, 1, 1)
+    local frameSize = Configs.FrameSize or UDim2.new(0, 300, 0, 60)
+
+    local TabBar = Instance.new("Frame")
+    TabBar.Size = frameSize
+    TabBar.Position = Configs.Position or UDim2.new(0.5, -150, 0.9, 0) -- Centered at bottom
+    TabBar.BackgroundColor3 = Color3.new(0, 0, 0)
+    TabBar.Parent = ScreenGui
+
+    -- Add a UIListLayout to make the buttons align horizontally
+    local ListLayout = Instance.new("UIListLayout")
+    ListLayout.FillDirection = Enum.FillDirection.Horizontal
+    ListLayout.Padding = UDim.new(0, 5) -- Space between buttons
+    ListLayout.Parent = TabBar
+
+    -- Create a toggle button for minimizing with text symbols
+    local MinimizeButton = Instance.new("TextButton")
+    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeButton.BackgroundColor3 = Color3.new(1, 0, 0)
+    MinimizeButton.Text = "v" -- Initial state is open
+    MinimizeButton.Font = Enum.Font.SourceSansBold
+    MinimizeButton.TextSize = 20
+    MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
+    MinimizeButton.Parent = TabBar
+
+    local minimize = false -- Track the minimize state
+
+    -- Function to toggle the GUI state
+    MinimizeButton.MouseButton1Click:Connect(function()
+        minimize = not minimize
+        if minimize then
+            MinimizeButton.Text = "^" -- Change to closed state
+            CreateTween(TabBar, "Size", UDim2.new(0, frameSize.X.Offset, 0, 30), 0.3, true) -- Reduce height
+        else
+            MinimizeButton.Text = "v" -- Change to open state
+            CreateTween(TabBar, "Size", frameSize, 0.3, true) -- Restore original height
+        end
+    end)
+
+    -- Function to add a button with functionality to the tab bar
+    local function AddButton(icon, onClickFunction)
+        local Button = Instance.new("ImageButton")
+        Button.Size = buttonSize
+        Button.BackgroundColor3 = buttonColor
+        Button.Image = icon -- Set the icon for the button
+        Button.Parent = TabBar
+        
+        -- Connect the button's click event to the function
+        Button.MouseButton1Click:Connect(onClickFunction)
+    end
+    
+    -- Example: Adding buttons with specific functionality
+    AddButton("rbxassetid://ICON_ASSET_ID_1", function()
+        print("Button 1 clicked!") -- Action for button 1
+    end)
+    
+    AddButton("rbxassetid://ICON_ASSET_ID_2", function()
+        print("Button 2 clicked!") -- Action for button 2
+    end)
+    
+    AddButton("rbxassetid://ICON_ASSET_ID_3", function()
+        print("Button 3 clicked!") -- Action for button 3
+    end)
+    return TabBar
+end
+
+
   local ScrollBar = Create("ScrollingFrame", Menu, {
     Size = UDim2.new(0, 140, 1, -tonumber(TopBar.Size.Y.Offset + 2)),
     Position = UDim2.new(0, 0, 1, 0),
