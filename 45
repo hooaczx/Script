@@ -521,7 +521,6 @@ function MakeWindow(Configs)
     BackgroundTransparency = 1,
     Size = UDim2.new(1, 0, 1, 0)
   })
-  
   function MinimizeButton(Configs)
     local image = Configs.Image or ""
     local size = Configs.Size or {30, 30}
@@ -530,99 +529,82 @@ function MakeWindow(Configs)
     local stroke = Configs.Stroke or false
     local strokecolor = Configs.StrokeColor or Configs_HUB.Cor_Stroke
     
-    local Button = Create("ImageButton", ScreenGui, {
-      Size = UDim2.new(0, size[1], 0, size[2]),
-      Position = UDim2.new(0.15, 0, 0.15, 0),
-      BackgroundColor3 = color,
-      Image = image,
-      Active = true,
-      Draggable = true
-    })if corner then Corner(Button) end if stroke then Stroke(Button, {Color = strokecolor}) end
-    
+    local TabBar = Create("Frame", ScreenGui, {
+        Size = UDim2.new(1, 0, 0, 50),
+        Position = UDim2.new(0, 0, 1, -50),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        AnchorPoint = Vector2.new(0, 1),
+    })
+
+    local ButtonList = {}
+
+    local MinimizeButton = Create("ImageButton", TabBar, {
+        Size = UDim2.new(0, size[1], 0, size[2]),
+        Position = UDim2.new(0, 0, 0, 0),
+        BackgroundColor3 = color,
+        Image = image,
+        Active = true,
+        Draggable = true
+    })
+
+    if corner then Corner(MinimizeButton) end 
+    if stroke then Stroke(MinimizeButton, {Color = strokecolor}) end
+
     local minimize = false
-    Button.MouseButton1Click:Connect(function()
-      if minimize then
-        minimize = false
-        Menu.Visible = true
-        if not IsMinimized then
-          CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 270), 0.3, false)
-        else
-          CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 25), 0.3, false)
-        end
-      else
-        minimize = true
-        CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
-        Menu.Visible = false
-      end
-    end)
-  end
-
-function CreateTabBar(Configs)
-    local buttonSize = Configs.ButtonSize or UDim2.new(0, 50, 0, 50)
-    local buttonColor = Configs.ButtonColor or Color3.new(1, 1, 1)
-    local frameSize = Configs.FrameSize or UDim2.new(0, 300, 0, 60)
-
-    local TabBar = Instance.new("Frame")
-    TabBar.Size = frameSize
-    TabBar.Position = Configs.Position or UDim2.new(0.5, -150, 0.9, 0) -- Centered at bottom
-    TabBar.BackgroundColor3 = Color3.new(0, 0, 0)
-    TabBar.Parent = ScreenGui
-
-    -- Add a UIListLayout to make the buttons align horizontally
-    local ListLayout = Instance.new("UIListLayout")
-    ListLayout.FillDirection = Enum.FillDirection.Horizontal
-    ListLayout.Padding = UDim.new(0, 5) -- Space between buttons
-    ListLayout.Parent = TabBar
-
-    -- Create a toggle button for minimizing with text symbols
-    local MinimizeButton = Instance.new("TextButton")
-    MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
-    MinimizeButton.BackgroundColor3 = Color3.new(1, 0, 0)
-    MinimizeButton.Text = "v" -- Initial state is open
-    MinimizeButton.Font = Enum.Font.SourceSansBold
-    MinimizeButton.TextSize = 20
-    MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
-    MinimizeButton.Parent = TabBar
-
-    local minimize = false -- Track the minimize state
-
-    -- Function to toggle the GUI state
     MinimizeButton.MouseButton1Click:Connect(function()
-        minimize = not minimize
         if minimize then
-            MinimizeButton.Text = "^" -- Change to closed state
-            CreateTween(TabBar, "Size", UDim2.new(0, frameSize.X.Offset, 0, 30), 0.3, true) -- Reduce height
+            minimize = false
+            Menu.Visible = true
+            if not IsMinimized then
+                CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 270), 0.3, false)
+            else
+                CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 25), 0.3, false)
+            end
         else
-            MinimizeButton.Text = "v" -- Change to open state
-            CreateTween(TabBar, "Size", frameSize, 0.3, true) -- Restore original height
+            minimize = true
+            CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
+            Menu.Visible = false
         end
     end)
 
-    -- Function to add a button with functionality to the tab bar
-    local function AddButton(icon, onClickFunction)
-        local Button = Instance.new("ImageButton")
-        Button.Size = buttonSize
-        Button.BackgroundColor3 = buttonColor
-        Button.Image = icon -- Set the icon for the button
-        Button.Parent = TabBar
+    function AddTabButton(buttonName, onClickFunction, imageID)
+        local tabButton = Create("Frame", TabBar, {
+            Size = UDim2.new(0, 100, 1, 0),
+            BackgroundColor3 = Color3.fromRGB(200, 200, 200),
+            LayoutOrder = #ButtonList + 1,
+            BorderSizePixel = 0
+        })
         
-        -- Connect the button's click event to the function
-        Button.MouseButton1Click:Connect(onClickFunction)
+        local buttonImage = Create("ImageLabel", tabButton, {
+            Size = UDim2.new(0, 20, 0, 20),
+            Position = UDim2.new(0.5, -25, 0.5, -10),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0, 0),
+            Image = imageID or "",
+            ScaleType = Enum.ScaleType.Fit, -- Scale the image to fit
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BorderSizePixel = 0
+        })
+
+        local buttonLabel = Create("TextLabel", tabButton, {
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0, 0),
+            Text = buttonName,
+            TextColor3 = Color3.fromRGB(0, 0, 0),
+            TextScaled = true,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BorderSizePixel = 0
+        })
+
+        tabButton.MouseButton1Click:Connect(onClickFunction)
+
+        table.insert(ButtonList, tabButton)
     end
     
-    -- Example: Adding buttons with specific functionality
-    AddButton("rbxassetid://ICON_ASSET_ID_1", function()
-        print("Button 1 clicked!") -- Action for button 1
-    end)
-    
-    AddButton("rbxassetid://ICON_ASSET_ID_2", function()
-        print("Button 2 clicked!") -- Action for button 2
-    end)
-    
-    AddButton("rbxassetid://ICON_ASSET_ID_3", function()
-        print("Button 3 clicked!") -- Action for button 3
-    end)
-    return TabBar
+     AddTabButton("Home", function()
+       
+         end, "rbxassetid://12345678")
+end
 end
 
 
