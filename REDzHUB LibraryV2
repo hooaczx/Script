@@ -540,30 +540,6 @@ function MakeWindow(Configs)
 
     if stroke then Stroke(frame) end
     
-    local currentTime = os.date("*t")
-    local hour = currentTime.hour
-    local amPm = "AM"
-
-    if hour >= 12 then
-        amPm = "PM"
-        if hour > 12 then
-            hour = hour - 12
-        end
-    elseif hour == 0 then
-        hour = 12
-  end
-  
-    local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
-    
-    local TimeLabel = Instance.new("TextLabel", frame)
-    TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
-    TimeLabel.TextSize = 20
-    TimeLabel.TextWrapped = true
-    TimeLabel.Position = UDim2.new(-0.05, 0, 0, 15)
-    TimeLabel.Text = formattedTime.."\n"..os.date("%b:%d:%Y")
-    TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TimeLabel.BackgroundTransparency = 1
-    
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0, 30, 0, 30)
     Button1.Position = UDim2.new(0.4713, 0, 0.803, 0)
@@ -572,25 +548,57 @@ function MakeWindow(Configs)
     Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button1.BackgroundTransparency = 1
 
+    local TimeLabel = Instance.new("TextLabel", frame)
+    TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
+    TimeLabel.TextSize = 20
+    TimeLabel.TextWrapped = true
+    TimeLabel.TextScaled = true
+    TimeLabel.Position = UDim2.new(-0.05, 0, 0, 15)
+    TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TimeLabel.BackgroundTransparency = 1
+
+    local function updateTime()
+        local currentTime = os.date("*t")
+        local hour = currentTime.hour
+        local amPm = "AM"
+
+        if hour >= 12 then
+            amPm = "PM"
+            if hour > 12 then
+                hour = hour - 12
+            end
+        elseif hour == 0 then
+            hour = 12
+        end
+
+        local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
+        TimeLabel.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+    end
+
+    updateTime()
+
     local minimize1 = true
     Button1.MouseButton1Click:Connect(function()
         minimize1 = not minimize1
 
-   if minimize1 then
-     CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.3, true)
-     CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
-     frame.Visible = false
-     Button1.Text = "^"
-   else
-     CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
-     CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
-     frame.Visible = true
-     Button1.Text = "v"
-     end
-     RunService.Heartbeat:Connect(function()
-     TimeLabel.Text = formattedTime.."\n"..os.date("%b:%d:%Y")
-     end) 
- end)
+        if minimize1 then
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.3, true)
+            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
+            frame.Visible = false
+            Button1.Text = "^"
+        else
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
+            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
+            frame.Visible = true
+            Button1.Text = "v"
+        end
+    end)
+
+    RunService.Heartbeat:Connect(function()
+        updateTime()
+    end)
+end
+
 
     local Button = Instance.new("ImageButton", frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
