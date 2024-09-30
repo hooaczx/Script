@@ -524,19 +524,56 @@ function MakeWindow(Configs)
   
   function MinimizeButton(Configs)
     local image = Configs.Image or ""
-    local size = Configs.Size or {30, 30}
     local color = Configs.Color or Configs_HUB.Cor_Hub
     local corner = Configs.Corner or true
     local stroke = Configs.Stroke or false
     local strokecolor = Configs.StrokeColor or Configs_HUB.Cor_Stroke
     
-    local Button = Create("ImageButton", ScreenGui, {
-      Size = UDim2.new(0, size[1], 0, size[2]),
-      Position = UDim2.new(0.15, 0, 0.15, 0),
+    
+    local frame = Instance.new("Frame", ScreenGui, {
+    Size = UDim2.new(0.047, 0, 0.3, 0)
+    Position = UDim2.new(0.002, 0, 0, 160)
+    })
+    Corner(frame)
+    Stroke(frame)
+    
+    local scrollingFrame = Instance.new("ScrollingFrame", frame, {
+    Size = UDim2.new(1, 0, 1, 0)
+    CanvasSize = UDim2.new(0, 0, 5, 0)
+    BackgroundTransparency = 1
+    })
+    
+    local Button1 = Instance.new("TextButton", frame, {
+    Size = UDim2.new(0.26, 0, 0.4, 0)
+    Position = UDim2.new(1.1, 0, 0, 41)
+    TextScaled = true
+    Parent = frame
+    Text = ">"
+    BackgroundTransparency = 1
+    })
+    
+    local minimize1 = false
+    Button1.MouseButton1Click:Connect(function()
+        minimize1 = not minimize1
+
+        if minimize1 then
+            CreateTween(frame, "Size", UDim2.new(0, 0, 0.3, 0), 0.3, true)
+            CreateTween(Button1, "Position", UDim2.new(0, 0, 0, 41), 0.3, true)
+            Button1.Text = "<"
+            frame.Visible = false
+        else
+            frame.Visible = true
+            CreateTween(frame, "Size", UDim2.new(0.047, 0, 0.3, 0), 0.3, true)
+            CreateTween(Button1, "Position", UDim2.new(1.1, 0, 0, 41), 0.3, true)
+            Button1.Text = ">"
+        end
+    end)
+    
+    local Button = Create("ImageButton", scrollingFrame, {
+      Size = UDim2.new(0, 30, 0, 30),
+      Position = UDim2.new(0, 0, 0, 0),
       BackgroundColor3 = color,
       Image = image,
-      Active = true,
-      Draggable = true
     })if corner then Corner(Button) end if stroke then Stroke(Button, {Color = strokecolor}) end
     
     local minimize = false
