@@ -537,23 +537,17 @@ function MakeWindow(Configs)
     local strokecolor = Configs.StrokeColor or Configs_HUB.Cor_Stroke
 
     local frame = Instance.new("Frame", ScreenGui)
-    frame.Size = UDim2.new(0.036, 0, 0.3, 0)
-    frame.Position = UDim2.new(0.002, 0, 0, 160)
+    frame.Size = UDim2.new(0.5, 0, 0.12, 0)
+    frame.Position = UDim2.new(0.23, 0, 0.878, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
 
     if stroke then Stroke(frame) end
 
-    local scrollingFrame = Instance.new("ScrollingFrame", frame)
-    scrollingFrame.Size = UDim2.new(1, 0, 1, 0)
-    scrollingFrame.CanvasSize = UDim2.new(0, 0, 5, 0)
-    scrollingFrame.BackgroundTransparency = 1
-    scrollingFrame.ScrollBarThickness = 0
-
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0, 30, 0, 30)
-    Button1.Position = UDim2.new(0.031, 0, 0.53, 0)
+    Button1.Position = UDim2.new(0.4713, 0, 0.803, 0)
     Button1.TextScaled = true
-    Button1.Text = ">"
+    Button1.Text = "v"
     Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button1.BackgroundTransparency = 1
 
@@ -562,21 +556,23 @@ function MakeWindow(Configs)
         minimize1 = not minimize1
 
    if minimize1 then
-     CreateTween1(frame, "Size", UDim2.new(0, 0, 0.3, 0), 0.3, true)
-     CreateTween1(Button1, "Position", UDim2.new(-0.001, 0, 0.53, 0), 0.3, true)
+     CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.3, true)
+     CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
      frame.Visible = false
-     Button1.Text = "<"
+     Button1.Text = "^"
    else
-     CreateTween1(frame, "Size", UDim2.new(0.036, 0, 0.3, 0), 0.3, true)
-     CreateTween1(Button1, "Position", UDim2.new(0.031, 0, 0.53, 0), 0.3, true) 
+     CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
+     CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
      frame.Visible = true
-     Button1.Text = ">"
+     Button1.Text = "v"
      end
  end)
 
-    local Button = Instance.new("ImageButton", scrollingFrame)
+    local Button = Instance.new("ImageButton", Frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
+    Button.UDim2.Position = new(0.22, 0, 0, 13)
     Button.BackgroundColor3 = color
+    Button.BackgroundTransparency = 1
     Button.Image = image
     
     if corner then Corner(Button) end 
@@ -595,7 +591,6 @@ function MakeWindow(Configs)
         end
     end)
 end
-
   
   local ScrollBar = Create("ScrollingFrame", Menu, {
     Size = UDim2.new(0, 140, 1, -tonumber(TopBar.Size.Y.Offset + 2)),
