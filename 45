@@ -63,6 +63,13 @@ local function CreateTween(instance, prop, value, time, tweenWait)
   end
 end
 
+local function CreateTween1(instance, property, goal, duration, easingDirection)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(instance, tweenInfo, {[property] = goal})
+    tween:Play()
+    return tween
+end
+
 local function TextSetColor(instance)
   instance.MouseEnter:Connect(function()
     CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
@@ -554,12 +561,12 @@ function MakeWindow(Configs)
         minimize1 = not minimize1
 
    if minimize1 then
-     CreateTween(frame, "Size", UDim2.new(0, 0, 0.03, 0), 0.2, true)
-     CreateTween(Button1, "Position", UDim2.new(-0.001, 0, 0.53, 0), 0.03, true)
+     CreateTween1(frame, "Size", UDim2.new(0, 0, 0.03, 0), 0.2, true)
+     CreateTween1(Button1, "Position", UDim2.new(-0.001, 0, 0.53, 0), 0.03, true)
      Button1.Text = "<"
    else
-     CreateTween(frame, "Size", UDim2.new(0.036, 0, 0.3, 0), 0.2, true)
-     CreateTween(Button1, "Position", UDim2.new(0.031, 0, 0.53, 0), 0.03, true) 
+     CreateTween1(frame, "Size", UDim2.new(0.036, 0, 0.3, 0), 0.2, true)
+     CreateTween1(Button1, "Position", UDim2.new(0.031, 0, 0.53, 0), 0.03, true) 
      Button1.Text = ">"
      end
  end)
