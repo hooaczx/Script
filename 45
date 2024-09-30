@@ -1754,25 +1754,6 @@ function AddMusicPlayer(parent, Configs)
     })
     Corner(Frame)
     Stroke(Frame)
-
-local initialPosition = Frame.Position
-
-    local function CheckFramePosition()
-        local framePosX = Frame.Position.X.Offset
-        local framePosY = Frame.Position.Y.Offset
-        local frameWidth = Frame.Size.X.Offset
-        local frameHeight = Frame.Size.Y.Offset
-        
-        if framePosX < 0 or framePosX + frameWidth > screenWidth or 
-           framePosY < 0 or framePosY + frameHeight > screenHeight then
-            -- ถ้าเฟรมชนขอบหน้าจอ ให้รีเซ็ตกลับไปตำแหน่งเริ่มต้น
-            Frame.Position = initialPosition
-        end
-    end
-
-    RunService.Heartbeat:Connect(function()
-        CheckFramePosition()
-    end)
     
     local ToggleFrameButton = Create("TextButton", parent, {
         Size = UDim2.new(0, 50, 0, 30),
