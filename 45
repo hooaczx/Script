@@ -528,30 +528,26 @@ function MakeWindow(Configs)
     local corner = Configs.Corner or true
     local stroke = Configs.Stroke or false
     local strokecolor = Configs.StrokeColor or Configs_HUB.Cor_Stroke
+
+    local frame = Instance.new("Frame", ScreenGui)
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.Position = UDim2.new(0, 0, 0, 0)
     
-    
-    local frame = Instance.new("Frame", ScreenGui, {
-    Size = UDim2.new(1, 0, 1, 0),
-    Position = UDim2.new(0, 0, 0, 0),
-    })
-    Corner(frame)
-    Stroke(frame)
-    
-    local scrollingFrame = Instance.new("ScrollingFrame", frame, {
-    Size = UDim2.new(1, 0, 1, 0),
-    CanvasSize = UDim2.new(0, 0, 5, 0),
-    BackgroundTransparency = 1,
-    })
-    
-    local Button1 = Instance.new("TextButton", frame, {
-    Size = UDim2.new(0.26, 0, 0.4, 0),
-    Position = UDim2.new(1.1, 0, 0, 41),
-    TextScaled = true,
-    Parent = frame,
-    Text = ">",
-    BackgroundTransparency = 1,
-    })
-    
+    if corner then Corner(frame) end
+    if stroke then Stroke(frame) end
+
+    local scrollingFrame = Instance.new("ScrollingFrame", frame)
+    scrollingFrame.Size = UDim2.new(1, 0, 1, 0)
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 5, 0)
+    scrollingFrame.BackgroundTransparency = 1
+
+    local Button1 = Instance.new("TextButton", frame)
+    Button1.Size = UDim2.new(0.26, 0, 0.4, 0)
+    Button1.Position = UDim2.new(1.1, 0, 0, 41)
+    Button1.TextScaled = true
+    Button1.Text = ">"
+    Button1.BackgroundTransparency = 1
+
     local minimize1 = true
     Button1.MouseButton1Click:Connect(function()
         minimize1 = not minimize1
@@ -566,30 +562,29 @@ function MakeWindow(Configs)
             Button1.Text = ">"
         end
     end)
+
+    local Button = Instance.new("ImageButton", scrollingFrame)
+    Button.Size = UDim2.new(0, 30, 0, 30)
+    Button.BackgroundColor3 = color
+    Button.Image = image
     
-    local Button = Create("ImageButton", scrollingFrame, {
-      Size = UDim2.new(0, 30, 0, 30),
-      BackgroundColor3 = color,
-      Image = image,
-    })if corner then Corner(Button) end if stroke then Stroke(Button, {Color = strokecolor}) end
+    if corner then Corner(Button) end 
+    if stroke then Stroke(Button, {Color = strokecolor}) end
     
     local minimize = false
     Button.MouseButton1Click:Connect(function()
-      if minimize then
-        minimize = false
-        Menu.Visible = true
-        if not IsMinimized then
-          CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 270), 0.3, false)
+        if minimize then
+            minimize = false
+            Menu.Visible = true
+            CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 270), 0.3, false)
         else
-          CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 25), 0.3, false)
+            minimize = true
+            CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
+            Menu.Visible = false
         end
-      else
-        minimize = true
-        CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
-        Menu.Visible = false
-      end
     end)
-  end
+end
+
   
   local ScrollBar = Create("ScrollingFrame", Menu, {
     Size = UDim2.new(0, 140, 1, -tonumber(TopBar.Size.Y.Offset + 2)),
