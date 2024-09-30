@@ -71,15 +71,6 @@ local function CreateTween1(instance, property, goal, duration, easingDirection)
     return tween
 end
 
-local function TweenSizeIncrementally(object, fromSize, toSize, steps, duration)
-    local stepSize = (toSize.Y.Scale - fromSize.Y.Scale) / steps
-    for i = 1, steps do
-        local newScale = fromSize.Y.Scale + stepSize * i
-        object.Size = UDim2.new(fromSize.X.Scale, fromSize.X.Offset, newScale, fromSize.Y.Offset)
-        wait(duration / steps)
-    end
-end
-
 local function TextSetColor(instance)
   instance.MouseEnter:Connect(function()
     CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
@@ -543,10 +534,10 @@ function MakeWindow(Configs)
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
-    frame.Size = UDim2.new(0.5, 0, 0.12, 0)
+    frame.Size = UDim2.new(0, 0, 0, 0)
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
-
+    
     if stroke then Stroke(frame) end
     
     local Button1 = Instance.new("TextButton", ScreenGui)
@@ -556,7 +547,8 @@ function MakeWindow(Configs)
     Button1.Text = "v"
     Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button1.BackgroundTransparency = 1
-
+    Button1.Visible = false
+    
     local TimeLabel = Instance.new("TextLabel", frame)
     TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
     TimeLabel.TextSize = 20
@@ -565,7 +557,8 @@ function MakeWindow(Configs)
     TimeLabel.Position = UDim2.new(-0.05, 0, 0, 15)
     TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TimeLabel.BackgroundTransparency = 1
-
+    TimeLabel.Visible = false
+    
     local function updateTime()
         local currentTime = os.date("*t")
         local hour = currentTime.hour
@@ -591,17 +584,67 @@ function MakeWindow(Configs)
         minimize1 = not minimize1
 
         if minimize1 then
-        TweenSizeIncrementally(frame, UDim2.new(0.5, 0, 0.12, 0), UDim2.new(0.5, 0, 0.03, 0), 10, 0.3) -- Tweening size incrementally
-        CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
-        wait(0.3)
-        frame.Visible = false
-        Button1.Text = "^"
-    else
-        frame.Visible = true
-        TweenSizeIncrementally(frame, UDim2.new(0.5, 0, 0.03, 0), UDim2.new(0.5, 0, 0.12, 0), 10, 0.3) -- Tweening size incrementally
-        CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true)
-        Button1.Text = "v"
-    end
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.11, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.10, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.009, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.008, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.007, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.006, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.005, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.004, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.003, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.002, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.1, true)
+            wait()
+            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 1, true)
+            wait()
+            frame.Visible = false
+            Button1.Text = "^"
+        else
+            frame.Visible = true
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.002, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.003, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.004, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.005, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.006, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.007, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.008, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.009, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.10, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.11, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.012, 0), 0.1, true)
+            wait()
+            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
+            Button1.Text = "v"
+        end
     end)
 
     RunService.Heartbeat:Connect(function()
@@ -614,6 +657,7 @@ function MakeWindow(Configs)
     Button.Position = UDim2.new(0.22, 0, 0, 13)
     Button.BackgroundTransparency = 1
     Button.Image = image
+    Button.Visible = false
     
     if corner then Corner(Button) end 
     if stroke then Stroke(Button, {Color = strokecolor}) end
@@ -630,6 +674,48 @@ function MakeWindow(Configs)
             Menu.Visible = false
         end
     end)
+            CreateTween1(frame, "Size", UDim2.new(0, 0, 0, 0), 0.1, true)
+            wait()
+            frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+            CreateTween1(frame, "Size", UDim2.new(0.1, 0, 0.001, 0), 0.1, true)
+            wait()
+            frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+            TimeLabel.Visible = true
+            CreateTween1(frame, "Size", UDim2.new(0.2, 0, 0.001, 0), 0.1, true)
+            wait()
+            frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+            Button.Visible = true
+            CreateTween1(frame, "Size", UDim2.new(0.3, 0, 0.001, 0), 0.1, true)
+            wait()
+            frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+            Button1.Visible = true
+            CreateTween1(frame, "Size", UDim2.new(0.4, 0, 0.001, 0), 0.1, true)
+            wait()
+            frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.1, true)
+            wait()
+            frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.002, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.003, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.004, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.005, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.006, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.007, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.008, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.009, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.10, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.11, 0), 0.1, true)
+            wait()
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.012, 0), 0.1, true)
 end
   
   local ScrollBar = Create("ScrollingFrame", Menu, {
