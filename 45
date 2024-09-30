@@ -11,6 +11,7 @@ local Configs_HUB = {
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local function Create(instance, parent, props)
   local new = Instance.new(instance, parent)
@@ -531,10 +532,6 @@ function MakeWindow(Configs)
   
   function MinimizeButton(Configs)
     local image = Configs.Image or ""
-    local color = Configs.Color or Configs_HUB.Cor_Hub
-    local corner = Configs.Corner or true
-    local stroke = Configs.Stroke or false
-    local strokecolor = Configs.StrokeColor or Configs_HUB.Cor_Stroke
 
     local frame = Instance.new("Frame", ScreenGui)
     frame.Size = UDim2.new(0.5, 0, 0.12, 0)
@@ -542,7 +539,31 @@ function MakeWindow(Configs)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
 
     if stroke then Stroke(frame) end
+    
+    local currentTime = os.date("*t")
+    local hour = currentTime.hour
+    local amPm = "AM"
 
+    if hour >= 12 then
+        amPm = "PM"
+        if hour > 12 then
+            hour = hour - 12
+        end
+    elseif hour == 0 then
+        hour = 12
+  end
+  
+    local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
+    
+    local TimeLabel = Instance.new("TextLabel", frame)
+    TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
+    TimeLabel.TextSize = 20
+    TimeLabel.TextWrapped = true
+    TimeLabel.Position = UDim2.new(-0.05, 0, 0, 15)
+    TimeLabel.Text = formattedTime.."\n"..os.date("%b:%d:%Y")
+    TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TimeLabel.BackgroundTransparency = 1
+    
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0, 30, 0, 30)
     Button1.Position = UDim2.new(0.4713, 0, 0.803, 0)
@@ -566,6 +587,9 @@ function MakeWindow(Configs)
      frame.Visible = true
      Button1.Text = "v"
      end
+     RunService.Heartbeat:Connect(function()
+     TimeLabel.Text = formattedTime.."\n"..os.date("%b:%d:%Y")
+     end) 
  end)
 
     local Button = Instance.new("ImageButton", frame)
@@ -1595,9 +1619,6 @@ end
   function SetSection(Section, NewName)
     Section.Text = NewName
   end
-  
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
