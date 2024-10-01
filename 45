@@ -701,7 +701,6 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if sound.IsPlaying then
             Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
-            timeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
@@ -872,6 +871,9 @@ end
 
         local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
         TimeLabel.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+       if sound.IsPlaying then
+       timeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+       end
     end
 
     updateTime()
