@@ -741,6 +741,8 @@ end
         Size = UDim2.new(0.4, 0, 0.3, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Position = UDim2.new(0.3, 0, 0, 0),
+        Draggable = true
+        Active = true
         Name = "MusicPlayerFrame"
     })
     Corner(Frame)
@@ -761,7 +763,7 @@ end
 
     local Frame_4 = Create("Frame", Frame, {
         Size = UDim2.new(0, 100, 0, 100),
-        Position = UDim2.new(0.13, -25, 0.32, -25),
+        Position = UDim2.new(0.13, -25, 0.31, -25),
         BackgroundTransparency = 0.5,
         BackgroundColor3 = Configs_HUB.Cor_Options,
     })
@@ -790,7 +792,7 @@ end
 
     local NextButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.69, 28, 0.25, 60),
+        Position = UDim2.new(0.69, 28, 0.21, 60),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         BackgroundTransparency = 1,
         Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
@@ -806,7 +808,7 @@ end
 
     local PreviousButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.46, 28, 0.25, 60),
+        Position = UDim2.new(0.46, 28, 0.21, 60),
         BackgroundTransparency = 1,
         BackgroundColor3 = Configs_HUB.Cor_Button,
         Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
@@ -821,7 +823,7 @@ end
 
     local ToggleButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.25, 60),
+        Position = UDim2.new(0.57, 28, 0.21, 60),
         BackgroundColor3 = Configs_HUB.Cor_Button,
         BackgroundTransparency = 1,
         Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
@@ -850,6 +852,7 @@ end
 
         if minimize2 then
             Frame.Visible = false
+            Frame.Position = UDim2.new(0.3, 0, 0, 0)
         else
             Frame.Visible = true
         end
@@ -872,7 +875,7 @@ end
         local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
         TimeLabel.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
        if sound.IsPlaying then
-       timeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+        timeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
        end
     end
 
@@ -919,6 +922,7 @@ end
             minimize = true
             CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
             Menu.Visible = false
+            Menu.Position = UDim2.new(0.5, -500/2, 0.5, -270/2)
         end
     end)
 end
