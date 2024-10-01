@@ -701,7 +701,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if sound.IsPlaying then
             Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
-            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+            timeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
@@ -741,7 +741,7 @@ end
      local Frame = Create("Frame", ScreenGui, {
         Size = UDim2.new(1, 0, 0, 150),
         BackgroundColor3 = Configs_HUB.Cor_Options,
-        Position = UDim2.new(0.4713, 0, 0, 0),
+        Position = UDim2.new(0.3, 0, 0, 0),
         Name = "MusicPlayerFrame"
     })
     Corner(Frame)
@@ -777,7 +777,7 @@ end
     })
     Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
 
-    local TimeLabel = Create("TextLabel", Frame, {
+    local timeLabel = Create("TextLabel", Frame, {
         TextSize = 12,
         TextWrapped = true,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -844,6 +844,17 @@ end
     MusicToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
     MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
+     
+     local minimize2 = true
+     MusicToggleButton.MouseButton1Click:Connect(function()
+        minimize2 = not minimize2
+
+        if minimize2 then
+            Frame.Visible = false
+        else
+            Frame.Visible = true
+        end
+    end)
      
     local function updateTime()
         local currentTime = os.date("*t")
