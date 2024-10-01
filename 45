@@ -530,48 +530,186 @@ function MakeWindow(Configs)
     Size = UDim2.new(1, 0, 1, 0)
   })
   
-  local daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
+local songs = {
+    {id = "rbxassetid://5409360995", name = "Dion Timmr"},
+    {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
+    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
+    {id = "rbxassetid://9046863253", name = "Poolside"},
+    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
+    {id = "rbxassetid://1839666799", name = "Calmness"},
+    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
+    {id = "rbxassetid://1838202933", name = "Take a Bow"},
+    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
+    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
+    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
+    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
+    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
+    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
+    {id = "rbxassetid://1844296842", name = "Playtime (c)"},
+    {id = "rbxassetid://9046863579", name = "City Lights"},
+    {id = "rbxassetid://9042578129", name = "Fun In Paradise"},
+    {id = "rbxassetid://1842949058", name = "Go Time (Underscore Version)"},
+    {id = "rbxassetid://9047976765", name = "Fun Day (No Beat)"},
+    {id = "rbxassetid://9042436491", name = "Parasol"},
+    {id = "rbxassetid://1842181702", name = "Calm Waters"},
+    {id = "rbxassetid://1844272224", name = "Rising Calm"},
+    {id = "rbxassetid://1846122515", name = "Inner Calm 1"},
+    {id = "rbxassetid://1840599788", name = "The Calm Blue (b)"},
+    {id = "rbxassetid://1844272167", name = "Beating Calm"},
+    {id = "rbxassetid://9040456083", name = "Peaceful Calm A"},
+    {id = "rbxassetid://1848354536", name = "Relaxed Scene"},
+    {id = "rbxassetid://1839841807", name = "Relax (c)"},
+    {id = "rbxassetid://1840161104", name = "The Art Of Relaxation"},
+    {id = "rbxassetid://1840428407", name = "Relax In Style (A)"},
+    {id = "rbxassetid://9048039534", name = "Lo-Fi Dreams"},
+    {id = "rbxassetid://9048039288", name = "Just Relax"},
+    {id = "rbxassetid://7028518546", name = "Protostar - New Horizons"},
+    {id = "rbxassetid://7023887630", name = "Hyper Potions & Nokae - Expedition"},
+    {id = "rbxassetid://7028977687", name = "Stonebank - What Are You Waiting For"},
+    {id = "rbxassetid://5410083549", name = "Rogue - Let's Talk"},
+    {id = "rbxassetid://7028997537", name = "Subtact feat. Noctilucent - What It's Like"},
+    {id = "rbxassetid://7024154355", name = "Laszlo - Feels Like Love"},
+    {id = "rbxassetid://5410085763", name = "Tokyo Machine - PLAY"},
+    {id = "rbxassetid://7024332460", name = "Pegboard Nerds - Shaku"},
+    {id = "rbxassetid://7024132063", name = "Koven - Your Pain"},
+    {id = "rbxassetid://7023650590", name = "Case & Point - Descender"},
+    {id = "rbxassetid://7029011778", name = "Tails & Beach Season - No Sleep"},
+    {id = "rbxassetid://7023445033", name = "Aiobahn & Vin - About"},
+    {id = "rbxassetid://1837879082", name = "Paradise Falls"},
+    {id = "rbxassetid://1845554017", name = "Uptown"},
+    {id = "rbxassetid://9047050075", name = "Lo Fi Dreanms Hip Hop"},
+    {id = "rbxassetid://1842802203", name = "Pound For Pound"},
+    {id = "rbxassetid://7024233823", name = "Nitro Fun feat. Danyka Nadeau - Safe & Sound"},
+    {id = "rbxassetid://7029051434", name = "Vindata - Good 4 Me"},
+    {id = "rbxassetid://7024220835", name = "Nitro Fun - Easter Egg"},
+    {id = "rbxassetid://7023771708", name = "Glacier - Still"},
+    {id = "rbxassetid://1837324500", name = "Sunrise Workout"},
+    {id = "rbxassetid://7023635858", name = "Bensley - Vex"},
+    {id = "rbxassetid://9046862941", name = "Sunset Chill (Bed Version)"},
+    {id = "rbxassetid://1843397729", name = "Wonderful Day"},
+    {id = "rbxassetid://1838028467", name = "VIP Me (a)"},
+    {id = "rbxassetid://9046864489", name = "Violet Clouds"},
+    {id = "rbxassetid://9047105533", name = "No Smoking"},
+    {id = "rbxassetid://1842660676", name = "Just Scream"},
+    {id = "https://www.roblox.com/asset/?id=1840003540", name = "Tell It to Yourself (a)"},
+    {id = "https://www.roblox.com/asset/?id=142376088", name = "Parry Gripp - Raining Tacos"},
+    {id = "https://www.roblox.com/asset/?id=1837247191", name = "Pedal to the Metal"},
+    {id = "https://www.roblox.com/asset/?id=1846738464", name = "Corner Store (A)"},
+    {id = "https://www.roblox.com/asset/?id=1846458016", name = "No More"},
+    {id = "https://www.roblox.com/asset/?id=1838569831", name = "Never Gonna Give You Up"},
+    {id = "https://www.roblox.com/asset/?id=1844750628", name = "Oversized"},
+    {id = "https://www.roblox.com/asset/?id=1843433894", name = "Underground"},
+    {id = "https://www.roblox.com/asset/?id=1846720993", name = "Cool Garage (A)"},
+    {id = "https://www.roblox.com/asset/?id=1840003588", name = "Radio (A)"},
+    {id = "rbxassetid://9042437001", name = "Reflection"},
+    {id = "https://www.roblox.com/asset/?id=1842558494", name = "Skull Crusher"},
+    {id = "https://www.roblox.com/asset/?id=7024101188", name = "Fransis & josh Rubin - Same Mistake"},
+    {id = "rbxassetid://9045634474", name = "Questioning The Past"},
+    {id = "rbxassetid://9038549424", name = "Mellow Mind (Bed Version)"},
+    {id = "rbxassetid://1839129044", name = "Sweet Cat"},
+    {id = "rbxassetid://1840195350", name = "William Tell Overture (A)"},
+    {id = "rbxassetid://1836009626", name = "Halloween Horrors Waltz"},
+    {id = "rbxassetid://1838592691", name = "Halloween Night"},
+    {id = "rbxassetid://1838591268", name = "Halloween March"},
+    {id = "rbxassetid://1836009584", name = "Bouncing Halloween"},
+    {id = "rbxassetid://1836009678", name = "Fast Paced Halloween"},
+    {id = "rbxassetid://1837467198", name = "Night of the Ghouls"},
+    {id = "rbxassetid://1837467212", name = "Spooks"},
+    {id = "rbxassetid://1841602884", name = "Forever Halloween c"},
+    {id = "rbxassetid://14145627857", name = "Phonk Vol. 1 - Catch My Drift"},
+    {id = "rbxassetid://16831108393", name = "Blessed Mane - Death Is No More"},
+    {id = "rbxassetid://16190760005", name = "Din1c X dxstrxcted! X QWERRXR - Cowbell God"},
+    {id = "rbxassetid://16662833837", name = "nMisaki, zangel - stupidd (phonk remix)"},
+    {id = "rbxassetid://16662829817", name = "uzipack - Might End up as an Angel #666"},
+    {id = "rbxassetid://1840684529", name = "Cool Vibes"},
+    {id = "rbxassetid://1838457617", name = "Clair De Lune"},
+    {id = "rbxassetid://9043887091", name = "Lo-fi Chill A"},
+    {id = "rbxassetid://9048375035", name = "All Dropping 8 Bit Beats"},
+    {id = "rbxassetid://14145620056", name = "Phonk Vol. 2 - The Final Phonk"},
+    {id = "rbxassetid://9048376021", name = "All 8 Bit Now"},
+    {id = "rbxassetid://17422074849", name = "Alanwaad - BRX PHONK"},
+    {id = "rbxassetid://9044539308", name = "Fashion Lobby"},
+    {id = "rbxassetid://15689451063", name = "Din1c - METAMORPHSIS"},
+    {id = "rbxassetid://15689448519", name = "Din1c - can you"},
+    {id = "rbxassetid://1836807218", name = "A Heart Worth Saving"},
+    {id = "rbxassetid://1840030788", name = "We Could Be Kings (a)"},
+    {id = "rbxassetid://5410084188", name = "WRLD - Hang Up (feat. Savoi)"},
+    {id = "rbxassetid://9245552700", name = "Parry Gripp - TacoBot 3000"},
+    {id = "rbxassetid://1843324953", name = "Night Out"},
+    {id = "rbxassetid://1837984979", name = "Wherever You Are (a)"},
+    {id = "rbxassetid://15689439571", name = "kirkiimad - ily (tiktok version)"},
+    {id = "rbxassetid://16662834857", name = "nMisaki - let me rethink everything i've done"},
+    {id = "rbxassetid://15689441541", name = "jugsta - ball"},
+    {id = "rbxassetid://14366981664", name = "SAKU - GTA (Nightcore)"},
+    {id = "rbxassetid://5410082346", name = "Hoaprox & Rogue - New World"},
+    {id = "https://www.roblox.com/asset/?id=7029005367", name = "Summer Was Fun - Hold On (feat. Q'AILA)"},
+    {id = "https://www.roblox.com/asset/?id=9048510043", name = "Neon Sky"},
+    {id = "https://www.roblox.com/asset/?id=9046864900", name = "From LA With Love"},
+    {id = "https://www.roblox.com/asset/?id=1837450285", name = "[ Content Deleted ]"},
+    {id = "https://www.roblox.com/asset/?id=5410084870", name = "Dion Timmer feat. Micah Martin - Internet Boy"},
+    {id = "https://www.roblox.com/asset/?id=9039770890", name = "Another Snowy Day"},
+    {id = "https://www.roblox.com/asset/?id=9046546370", name = "Give You All My Love - Underscore"},
+    {id = "https://www.roblox.com/asset/?id=7028932563", name = "Soupandreas & inverness - Hours"},
+    {id = "https://www.roblox.com/asset/?id=16662830706", name = "jugsta - raining tacos (jugcore cover)"},
+    {id = "https://www.roblox.com/asset/?id=7028570258", name = "Rome in Silver & Beach Season - Skin"},
+    {id = "https://www.roblox.com/asset/?id=5410083447", name = "Duumu & Pauline Herr - You Say"},
+    {id = "https://www.roblox.com/asset/?id=9039769451", name = "Sometimes You Win"},
+    {id = "https://www.roblox.com/asset/?id=7028919492", name = "SMLE - Found A Reason"},
+}
 
-function CreateTabBar()
+local currentSongIndex = 1
+local sound = Instance.new("Sound")
+sound.Parent = ScreenGui
+local isPaused = false
+local savedTimePosition = 0
+local progressUpdateConnection
 
-    local frame = Instance.new("Frame", ScreenGui)
-    frame.Size = UDim2.new(0.7, 0, 0.1, 0)
-    frame.Position = UDim2.new(0.15, 0, 0.8, 0)
-    frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    
-    local layout = Instance.new("UIListLayout", frame)
-    layout.FillDirection = Enum.FillDirection.Horizontal
-    layout.Padding = UDim.new(0, 5)
-    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    
-    local arrow = Instance.new("TextLabel", frame)
-    arrow.Size = UDim2.new(0, 30, 0, 30)
-    arrow.Position = UDim2.new(0, 0, -0.7, 0)
-    arrow.BackgroundTransparency = 1
-    arrow.Text = "v"
-    arrow.TextScaled = true
-    arrow.TextColor3 = Color3.fromRGB(255, 255, 255)
-    arrow.Visible = false
-    
-    for index, day in pairs(daysOfWeek) do
-        local label = Instance.new("TextLabel", frame)
-        label.Size = UDim2.new(0.1, 0, 1, 0)
-        label.Text = day
-        label.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-        label.TextColor3 = Color3.fromRGB(255, 255, 255)
-        label.TextScaled = true
-        label.BackgroundTransparency = 0.5
+local function resetSong()
+    sound:Stop()
+    savedTimePosition = 0
+    isPaused = false
+end
 
-        local currentDay = os.date("%A")
-        if day == currentDay then
-            arrow.Position = UDim2.new(label.Position.X.Scale, 0, -0.7, 0)
-            arrow.Visible = true
-        end
+local function pauseSong()
+    savedTimePosition = sound.TimePosition
+    sound:Pause()
+    isPaused = true
+end
+
+function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
+    local song = songs[index]
+    if song then
+        sound.SoundId = song.id
+        sound.TimePosition = savedTimePosition
+        sound:Play()
+        TitleLabel.Text = song.name
+        StartProgressUpdate(Frame_4, TimeLabel)
     end
 end
 
-CreateTabBar()
+function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
+    local remainingSeconds = math.floor(seconds % 60)
+    return string.format("%02d:%02d", minutes, remainingSeconds)
+end
 
+function StartProgressUpdate(Frame_4, TimeLabel)
+    if progressUpdateConnection then
+        progressUpdateConnection:Disconnect()
+    end
+
+    progressUpdateConnection = RunService.Heartbeat:Connect(function()
+        if sound.IsPlaying then
+            Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
+            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+        else
+            if progressUpdateConnection then
+                progressUpdateConnection:Disconnect()
+                progressUpdateConnection = nil
+            end
+        end
+    end)
+end
   
   function MinimizeButton(Configs)
     local image = Configs.Image or ""
@@ -599,7 +737,114 @@ CreateTabBar()
     TimeLabel.Position = UDim2.new(-0.05, 0, 0, 15)
     TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TimeLabel.BackgroundTransparency = 1
+     
+     local Frame = Create("Frame", ScreenGui, {
+        Size = UDim2.new(1, 0, 0, 150),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Position = UDim2.new(0.4713, 0, 0, 0),
+        Name = "MusicPlayerFrame"
+    })
+    Corner(Frame)
+    Stroke(Frame)
+    
+    local TitleLabel = Create("TextLabel", Frame, {
+        TextSize = 14,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = songs[currentSongIndex].name,
+        Size = UDim2.new(0.45, 0, 0, 40),
+        Position = UDim2.new(0.56, -25, 0.36, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(TitleLabel)
 
+    local Frame_4 = Create("Frame", Frame, {
+        Size = UDim2.new(0, 100, 0, 100),
+        Position = UDim2.new(0.13, -25, 0.32, -25),
+        BackgroundTransparency = 0.5,
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+    })
+    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
+    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
+
+    local ProgressCircle = Create("ImageLabel", Frame_4, {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        ImageTransparency = 0.6,
+        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
+    })
+    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
+
+    local TimeLabel = Create("TextLabel", Frame, {
+        TextSize = 12,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "0:00 / 0:00",
+        Size = UDim2.new(0.3, 0, 0, 20),
+        Position = UDim2.new(0.63, -25, 0.56, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+
+    local NextButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.69, 28, 0.25, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
+        Name = "PlayButton"
+    })
+    Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
+
+    NextButton.MouseButton1Click:Connect(function()
+        resetSong()
+        currentSongIndex = (currentSongIndex % #songs) + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    end)
+
+    local PreviousButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.46, 28, 0.25, 60),
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
+    })
+    Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
+
+    PreviousButton.MouseButton1Click:Connect(function()
+        resetSong()
+        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    end)
+
+    local ToggleButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.57, 28, 0.25, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
+    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
+
+    ToggleButton.MouseButton1Click:Connect(function()
+        if sound.IsPlaying then
+            pauseSong()
+            TitleLabel.Text = "Stopped"
+            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+        else
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+        end
+    end)
+     
+    local MusicToggleButton = Instance.new("ImageButton", frame)
+    MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
+    MusicToggleButton.BackgroundTransparency = 1
+    MusicToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
+     
     local function updateTime()
         local currentTime = os.date("*t")
         local hour = currentTime.hour
@@ -625,64 +870,13 @@ CreateTabBar()
         minimize1 = not minimize1
 
         if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.11, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.10, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.009, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.008, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.007, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.006, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.005, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.004, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.003, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.002, 0), 0.1, true)
-            wait()
             CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.1, true)
-            wait()
             CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 1, true)
-            wait()
             frame.Visible = false
             Button1.Text = "^"
         else
             frame.Visible = true
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.002, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.003, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.004, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.005, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.006, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.007, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.008, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.009, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.10, 0), 0.1, true)
-            wait()
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.11, 0), 0.1, true)
-            wait()
             CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.012, 0), 0.1, true)
-            wait()
             CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
             Button1.Text = "v"
         end
@@ -1720,319 +1914,6 @@ end
   function SetSection(Section, NewName)
     Section.Text = NewName
   end
-
-local songs = {
-    {id = "rbxassetid://5409360995", name = "Dion Timmr"},
-    {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
-    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
-    {id = "rbxassetid://9046863253", name = "Poolside"},
-    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
-    {id = "rbxassetid://1839666799", name = "Calmness"},
-    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
-    {id = "rbxassetid://1838202933", name = "Take a Bow"},
-    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
-    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
-    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
-    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
-    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
-    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
-    {id = "rbxassetid://1844296842", name = "Playtime (c)"},
-    {id = "rbxassetid://9046863579", name = "City Lights"},
-    {id = "rbxassetid://9042578129", name = "Fun In Paradise"},
-    {id = "rbxassetid://1842949058", name = "Go Time (Underscore Version)"},
-    {id = "rbxassetid://9047976765", name = "Fun Day (No Beat)"},
-    {id = "rbxassetid://9042436491", name = "Parasol"},
-    {id = "rbxassetid://1842181702", name = "Calm Waters"},
-    {id = "rbxassetid://1844272224", name = "Rising Calm"},
-    {id = "rbxassetid://1846122515", name = "Inner Calm 1"},
-    {id = "rbxassetid://1840599788", name = "The Calm Blue (b)"},
-    {id = "rbxassetid://1844272167", name = "Beating Calm"},
-    {id = "rbxassetid://9040456083", name = "Peaceful Calm A"},
-    {id = "rbxassetid://1848354536", name = "Relaxed Scene"},
-    {id = "rbxassetid://1839841807", name = "Relax (c)"},
-    {id = "rbxassetid://1840161104", name = "The Art Of Relaxation"},
-    {id = "rbxassetid://1840428407", name = "Relax In Style (A)"},
-    {id = "rbxassetid://9048039534", name = "Lo-Fi Dreams"},
-    {id = "rbxassetid://9048039288", name = "Just Relax"},
-    {id = "rbxassetid://7028518546", name = "Protostar - New Horizons"},
-    {id = "rbxassetid://7023887630", name = "Hyper Potions & Nokae - Expedition"},
-    {id = "rbxassetid://7028977687", name = "Stonebank - What Are You Waiting For"},
-    {id = "rbxassetid://5410083549", name = "Rogue - Let's Talk"},
-    {id = "rbxassetid://7028997537", name = "Subtact feat. Noctilucent - What It's Like"},
-    {id = "rbxassetid://7024154355", name = "Laszlo - Feels Like Love"},
-    {id = "rbxassetid://5410085763", name = "Tokyo Machine - PLAY"},
-    {id = "rbxassetid://7024332460", name = "Pegboard Nerds - Shaku"},
-    {id = "rbxassetid://7024132063", name = "Koven - Your Pain"},
-    {id = "rbxassetid://7023650590", name = "Case & Point - Descender"},
-    {id = "rbxassetid://7029011778", name = "Tails & Beach Season - No Sleep"},
-    {id = "rbxassetid://7023445033", name = "Aiobahn & Vin - About"},
-    {id = "rbxassetid://1837879082", name = "Paradise Falls"},
-    {id = "rbxassetid://1845554017", name = "Uptown"},
-    {id = "rbxassetid://9047050075", name = "Lo Fi Dreanms Hip Hop"},
-    {id = "rbxassetid://1842802203", name = "Pound For Pound"},
-    {id = "rbxassetid://7024233823", name = "Nitro Fun feat. Danyka Nadeau - Safe & Sound"},
-    {id = "rbxassetid://7029051434", name = "Vindata - Good 4 Me"},
-    {id = "rbxassetid://7024220835", name = "Nitro Fun - Easter Egg"},
-    {id = "rbxassetid://7023771708", name = "Glacier - Still"},
-    {id = "rbxassetid://1837324500", name = "Sunrise Workout"},
-    {id = "rbxassetid://7023635858", name = "Bensley - Vex"},
-    {id = "rbxassetid://9046862941", name = "Sunset Chill (Bed Version)"},
-    {id = "rbxassetid://1843397729", name = "Wonderful Day"},
-    {id = "rbxassetid://1838028467", name = "VIP Me (a)"},
-    {id = "rbxassetid://9046864489", name = "Violet Clouds"},
-    {id = "rbxassetid://9047105533", name = "No Smoking"},
-    {id = "rbxassetid://1842660676", name = "Just Scream"},
-    {id = "https://www.roblox.com/asset/?id=1840003540", name = "Tell It to Yourself (a)"},
-    {id = "https://www.roblox.com/asset/?id=142376088", name = "Parry Gripp - Raining Tacos"},
-    {id = "https://www.roblox.com/asset/?id=1837247191", name = "Pedal to the Metal"},
-    {id = "https://www.roblox.com/asset/?id=1846738464", name = "Corner Store (A)"},
-    {id = "https://www.roblox.com/asset/?id=1846458016", name = "No More"},
-    {id = "https://www.roblox.com/asset/?id=1838569831", name = "Never Gonna Give You Up"},
-    {id = "https://www.roblox.com/asset/?id=1844750628", name = "Oversized"},
-    {id = "https://www.roblox.com/asset/?id=1843433894", name = "Underground"},
-    {id = "https://www.roblox.com/asset/?id=1846720993", name = "Cool Garage (A)"},
-    {id = "https://www.roblox.com/asset/?id=1840003588", name = "Radio (A)"},
-    {id = "rbxassetid://9042437001", name = "Reflection"},
-    {id = "https://www.roblox.com/asset/?id=1842558494", name = "Skull Crusher"},
-    {id = "https://www.roblox.com/asset/?id=7024101188", name = "Fransis & josh Rubin - Same Mistake"},
-    {id = "rbxassetid://9045634474", name = "Questioning The Past"},
-    {id = "rbxassetid://9038549424", name = "Mellow Mind (Bed Version)"},
-    {id = "rbxassetid://1839129044", name = "Sweet Cat"},
-    {id = "rbxassetid://1840195350", name = "William Tell Overture (A)"},
-    {id = "rbxassetid://1836009626", name = "Halloween Horrors Waltz"},
-    {id = "rbxassetid://1838592691", name = "Halloween Night"},
-    {id = "rbxassetid://1838591268", name = "Halloween March"},
-    {id = "rbxassetid://1836009584", name = "Bouncing Halloween"},
-    {id = "rbxassetid://1836009678", name = "Fast Paced Halloween"},
-    {id = "rbxassetid://1837467198", name = "Night of the Ghouls"},
-    {id = "rbxassetid://1837467212", name = "Spooks"},
-    {id = "rbxassetid://1841602884", name = "Forever Halloween c"},
-    {id = "rbxassetid://14145627857", name = "Phonk Vol. 1 - Catch My Drift"},
-    {id = "rbxassetid://16831108393", name = "Blessed Mane - Death Is No More"},
-    {id = "rbxassetid://16190760005", name = "Din1c X dxstrxcted! X QWERRXR - Cowbell God"},
-    {id = "rbxassetid://16662833837", name = "nMisaki, zangel - stupidd (phonk remix)"},
-    {id = "rbxassetid://16662829817", name = "uzipack - Might End up as an Angel #666"},
-    {id = "rbxassetid://1840684529", name = "Cool Vibes"},
-    {id = "rbxassetid://1838457617", name = "Clair De Lune"},
-    {id = "rbxassetid://9043887091", name = "Lo-fi Chill A"},
-    {id = "rbxassetid://9048375035", name = "All Dropping 8 Bit Beats"},
-    {id = "rbxassetid://14145620056", name = "Phonk Vol. 2 - The Final Phonk"},
-    {id = "rbxassetid://9048376021", name = "All 8 Bit Now"},
-    {id = "rbxassetid://17422074849", name = "Alanwaad - BRX PHONK"},
-    {id = "rbxassetid://9044539308", name = "Fashion Lobby"},
-    {id = "rbxassetid://15689451063", name = "Din1c - METAMORPHSIS"},
-    {id = "rbxassetid://15689448519", name = "Din1c - can you"},
-    {id = "rbxassetid://1836807218", name = "A Heart Worth Saving"},
-    {id = "rbxassetid://1840030788", name = "We Could Be Kings (a)"},
-    {id = "rbxassetid://5410084188", name = "WRLD - Hang Up (feat. Savoi)"},
-    {id = "rbxassetid://9245552700", name = "Parry Gripp - TacoBot 3000"},
-    {id = "rbxassetid://1843324953", name = "Night Out"},
-    {id = "rbxassetid://1837984979", name = "Wherever You Are (a)"},
-    {id = "rbxassetid://15689439571", name = "kirkiimad - ily (tiktok version)"},
-    {id = "rbxassetid://16662834857", name = "nMisaki - let me rethink everything i've done"},
-    {id = "rbxassetid://15689441541", name = "jugsta - ball"},
-    {id = "rbxassetid://14366981664", name = "SAKU - GTA (Nightcore)"},
-    {id = "rbxassetid://5410082346", name = "Hoaprox & Rogue - New World"},
-    {id = "https://www.roblox.com/asset/?id=7029005367", name = "Summer Was Fun - Hold On (feat. Q'AILA)"},
-    {id = "https://www.roblox.com/asset/?id=9048510043", name = "Neon Sky"},
-    {id = "https://www.roblox.com/asset/?id=9046864900", name = "From LA With Love"},
-    {id = "https://www.roblox.com/asset/?id=1837450285", name = "[ Content Deleted ]"},
-    {id = "https://www.roblox.com/asset/?id=5410084870", name = "Dion Timmer feat. Micah Martin - Internet Boy"},
-    {id = "https://www.roblox.com/asset/?id=9039770890", name = "Another Snowy Day"},
-    {id = "https://www.roblox.com/asset/?id=9046546370", name = "Give You All My Love - Underscore"},
-    {id = "https://www.roblox.com/asset/?id=7028932563", name = "Soupandreas & inverness - Hours"},
-    {id = "https://www.roblox.com/asset/?id=16662830706", name = "jugsta - raining tacos (jugcore cover)"},
-    {id = "https://www.roblox.com/asset/?id=7028570258", name = "Rome in Silver & Beach Season - Skin"},
-    {id = "https://www.roblox.com/asset/?id=5410083447", name = "Duumu & Pauline Herr - You Say"},
-    {id = "https://www.roblox.com/asset/?id=9039769451", name = "Sometimes You Win"},
-    {id = "https://www.roblox.com/asset/?id=7028919492", name = "SMLE - Found A Reason"},
-}
-
-local currentSongIndex = 1
-local sound = Instance.new("Sound")
-sound.Parent = ScreenGui
-local isPaused = false
-local savedTimePosition = 0
-local progressUpdateConnection
-
-local function resetSong()
-    sound:Stop()
-    savedTimePosition = 0
-    isPaused = false
-end
-
-local function pauseSong()
-    savedTimePosition = sound.TimePosition
-    sound:Pause()
-    isPaused = true
-end
-
-function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
-    local song = songs[index]
-    if song then
-        sound.SoundId = song.id
-        sound.TimePosition = savedTimePosition
-        sound:Play()
-        TitleLabel.Text = song.name
-        StartProgressUpdate(Frame_4, TimeLabel)
-    end
-end
-
-function FormatTime(seconds)
-    local minutes = math.floor(seconds / 60)
-    local remainingSeconds = math.floor(seconds % 60)
-    return string.format("%02d:%02d", minutes, remainingSeconds)
-end
-
-function StartProgressUpdate(Frame_4, TimeLabel)
-    if progressUpdateConnection then
-        progressUpdateConnection:Disconnect()
-    end
-
-    progressUpdateConnection = RunService.Heartbeat:Connect(function()
-        if sound.IsPlaying then
-            Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
-            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
-        else
-            if progressUpdateConnection then
-                progressUpdateConnection:Disconnect()
-                progressUpdateConnection = nil
-            end
-        end
-    end)
-end
-
-function AddMusicPlayer(parent, Configs)
-    local Frame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 150),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Name = "MusicPlayerFrame"
-    })
-    Corner(Frame)
-    Stroke(Frame)
-    
-    local ToggleFrameButton = Create("TextButton", parent, {
-        Size = UDim2.new(0, 55, 0, 30),
-        Position = UDim2.new(0, 0, 0, 0),
-        Text = "Outside Gui",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 14,
-        Font = Enum.Font.SourceSans,
-    })
-    Corner(ToggleFrameButton)
-    Stroke(ToggleFrameButton)
-    
-ToggleFrameButton.MouseButton1Click:Connect(function()
-    if Frame.Parent == parent then
-        Frame.Parent = ScreenGui
-        Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
-        Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
-        Frame.BackgroundTransparency = 0.4
-        Frame.Draggable = true
-        Frame.Active = true
-        ToggleFrameButton.Text = "in Gui"
-    else
-        Frame.Parent = parent
-        Frame.BackgroundTransparency = 0
-        Frame.Size = UDim2.new(1, 0, 0, 150)
-        Frame.Position = UDim2.new(0, 0, 0, 0)
-        Frame.Draggable = false
-        Frame.Active = false
-        ToggleFrameButton.Text = "Outside Gui"
-    end
-end)
-    local TitleLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = songs[currentSongIndex].name,
-        Size = UDim2.new(0.45, 0, 0, 40),
-        Position = UDim2.new(0.56, -25, 0.36, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(TitleLabel)
-
-    local Frame_4 = Create("Frame", Frame, {
-        Size = UDim2.new(0, 100, 0, 100),
-        Position = UDim2.new(0.13, -25, 0.32, -25),
-        BackgroundTransparency = 0.5,
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-    })
-    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
-    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
-
-    local ProgressCircle = Create("ImageLabel", Frame_4, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        ImageTransparency = 0.6,
-        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
-    })
-    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
-
-    local TimeLabel = Create("TextLabel", Frame, {
-        TextSize = 12,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "0:00 / 0:00",
-        Size = UDim2.new(0.3, 0, 0, 20),
-        Position = UDim2.new(0.63, -25, 0.56, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-
-    local NextButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.69, 28, 0.25, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
-        Name = "PlayButton"
-    })
-    Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
-
-    NextButton.MouseButton1Click:Connect(function()
-        resetSong()
-        currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    end)
-
-    local PreviousButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.46, 28, 0.25, 60),
-        BackgroundTransparency = 1,
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
-    })
-    Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
-
-    PreviousButton.MouseButton1Click:Connect(function()
-        resetSong()
-        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    end)
-
-    local ToggleButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.25, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
-    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
-
-    ToggleButton.MouseButton1Click:Connect(function()
-        if sound.IsPlaying then
-            pauseSong()
-            TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        end
-    end)
-end
 
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
