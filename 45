@@ -57,9 +57,19 @@ end
 local function CreateGradient(parent, props)
     local new = Instance.new("UIGradient")
     new.Parent = parent
-    new.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(0, 0, 0))
+    local colors = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(0, 0, 0)} -- สีเริ่มต้นเป็นสีขาวและดำ
+
     if props and props.Color then
-        new.Color = props.Color
+        local colorList = props.Color
+        local colorCount = math.min(#colorList, 5)
+        local colorKeypoints = {}
+        for i = 1, colorCount do
+            local position = (i - 1) / (colorCount - 1)
+            table.insert(colorKeypoints, ColorSequenceKeypoint.new(position, colorList[i]))
+        end
+        new.Color = ColorSequence.new(colorKeypoints)
+    else
+        new.Color = ColorSequence.new(colors[1], colors[2])
     end
     if props and props.Rotation then
         new.Rotation = props.Rotation
@@ -70,14 +80,25 @@ local function CreateGradient(parent, props)
     if props and props.Offset then
         new.Offset = props.Offset
     end
+    if props and props.Intensity then
+        local color1 = new.Color.Keypoints[1].Value
+        local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
+        local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
+        local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
+        new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
+    end
+    
     local function tweenGradient()
+        local speed = props.Speed or 2
         local goal = {Rotation = new.Rotation + 360}
-        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
+        local tweenInfo = TweenInfo.new(speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
         local tween = TweenService:Create(new, tweenInfo, goal)
         tween:Play()
     end
+
     tweenGradient()
-    return new
+
+    return new 
 end
 
 local function CreateTween(instance, prop, value, time, tweenWait)
@@ -744,11 +765,19 @@ end
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
 
-    CreateGradient(frame, {
-    Color = ColorSequence.new(Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 0, 255)),
+    CreateGradient(Frame, {
+    Color = {
+        Color3.fromRGB(255, 0, 0),
+        Color3.fromRGB(0, 255, 0),
+        Color3.fromRGB(0, 0, 255),
+        Color3.fromRGB(255, 255, 0),
+        Color3.fromRGB(255, 0, 255),
+    },
     Rotation = 0,
     Transparency = NumberSequence.new(0),
-    Offset = Vector2.new(0, 0)
+    Offset = Vector2.new(0, 0),
+    Intensity = 0.4,
+    Speed = 2
     })
     if stroke then Stroke(frame) end
     
