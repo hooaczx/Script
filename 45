@@ -54,6 +54,32 @@ local function Stroke(parent, props)
   return new
 end
 
+local function CreateGradient(parent, props)
+    local new = Instance.new("UIGradient")
+    new.Parent = parent
+    new.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(0, 0, 0))
+    if props and props.Color then
+        new.Color = props.Color
+    end
+    if props and props.Rotation then
+        new.Rotation = props.Rotation
+    end
+    if props and props.Transparency then
+        new.Transparency = props.Transparency
+    end
+    if props and props.Offset then
+        new.Offset = props.Offset
+    end
+    return new
+end
+
+local function TweenGradientColor(gradient, targetColor, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
+    local goal = {Color = targetColor}
+    local tween = TweenService:Create(gradient, tweenInfo, goal)
+    tween:Play()
+end
+
 local function CreateTween(instance, prop, value, time, tweenWait)
   local tween = TweenService:Create(instance,
   TweenInfo.new(time, Enum.EasingStyle.Linear),
@@ -717,6 +743,10 @@ end
     frame.Size = UDim2.new(0.5, 0, 0.12, 0)
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
+
+    local gradient = CreateGradient(frame, {Rotation = 90})
+    local targetColor = ColorSequence.new(Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 0, 255))
+    TweenGradientColor(gradient, targetColor, 2)
 
     if stroke then Stroke(frame) end
     
