@@ -75,18 +75,14 @@ local function CreateGradient(parent, props)
         new.Rotation = props.Rotation
     end
     if props and props.Intensity then
-    local color1 = new.Color.Keypoints[1].Value
-    local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
+        local color1 = new.Color.Keypoints[1].Value
+        local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
 
-    local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), math.clamp(props.Intensity, 0, 1))
-    local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), math.clamp(props.Intensity, 0, 1))
+        local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
+        local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
 
-    if props.Intensity > 1 then
-        intensifiedColor1 = intensifiedColor1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity - 1)
-        intensifiedColor2 = intensifiedColor2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity - 1)
+        new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
     end
-    new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
-end
     if props and props.Offset then
         new.Offset = props.Offset
     end
@@ -786,7 +782,7 @@ end
     Rotation = 0,
     Transparency = NumberSequence.new(0),
     Offset = Vector2.new(0, 0),
-    Intensity = 2,
+    Intensity = 0,
     Speed = 2
     })
     if stroke then Stroke(frame) end
