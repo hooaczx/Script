@@ -757,6 +757,23 @@ function StartProgressUpdate(Frame_4, TimeLabel)
 end
   
   function MinimizeButton(Configs)
+    local player = game.Players.LocalPlayer
+    local players = game:GetService("Players")
+    local localPlayer = players.LocalPlayer
+    local LocalPlayer = players.LocalPlayer
+    local accountAgeInDays = LocalPlayer.AccountAge
+    local playerCount = #players:GetPlayers()
+    local maxPlayers = players.MaxPlayers
+    local ageInDays = player.AccountAge
+    local PlaceId = game.PlaceId
+    local friendsCooldown = 0
+    local friendsInTotal = 0
+    local MarketplaceService = game:GetService("MarketplaceService")
+    local AssetService = game:GetService("AssetService")
+    local TeleportService = game:GetService("TeleportService")
+    local pages = AssetService:GetGamePlacesAsync()
+    local gamePlaces = pages:GetCurrentPage()
+    local count = 1
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -775,7 +792,7 @@ end
     Speed = 3
     })
     if stroke then Stroke(frame) end
-    
+
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0, 30, 0, 30)
     Button1.Position = UDim2.new(0.4713, 0, 0.803, 0)
@@ -899,7 +916,7 @@ end
      
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
-    MusicToggleButton.Position = UDim2.new(0.22 + 0.2, 0, 0, 13)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
     MusicToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
     MusicToggleButton.ZIndex = 10
     MusicToggleButton.BackgroundTransparency = 0.8
@@ -933,19 +950,199 @@ end
         end
     end)
 
-local player = game.Players.LocalPlayer
-local players = game:GetService("Players")
-local localPlayer = players.LocalPlayer
-local LocalPlayer = players.LocalPlayer
-local accountAgeInDays = LocalPlayer.AccountAge
-local playerCount = #players:GetPlayers()
-local maxPlayers = players.MaxPlayers
-local ageInDays = player.AccountAge
-local PlaceId = game.PlaceId
-local friendsCooldown = 0
-local friendsInTotal = 0
+local framek = Instance.new("Frame", ScreenGui) 
+framek.Size = UDim2.new(0.5, 0, 0.7, 0)
+framek.Position = UDim2.new(0.25, 0, 0.15, 0)
+framek.BackgroundColor3 = Configs_HUB.Cor_Hub
 
-local MarketplaceService = game:GetService("MarketplaceService")
+local mainText = Instance.new("TextLabel", framek)
+mainText.Size = UDim2.new(1, 0, 0.15, 0)
+mainText.BackgroundTransparency = 1
+mainText.Text = "Check Split game"
+mainText.TextScaled = true
+mainText.Visible = false
+
+local frameGame = Instance.new("ScrollingFrame", framek)
+frameGame.Size = UDim2.new(1, 0, 0.85, 0)
+frameGame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frameGame.BackgroundTransparency = 1
+frameGame.CanvasSize = UDim2.new(0, 0, 5, 0)
+frameGame.ScrollBarThickness = 0
+
+local uiListLayout = Instance.new("UIListLayout", frameGame)
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local mainGameLabel = Instance.new("TextLabel", frameGame)
+mainGameLabel.Size = UDim2.new(1, 0, 0, 40)
+mainGameLabel.Text = "MainGame"
+mainGameLabel.BackgroundTransparency = 1
+mainGameLabel.TextXAlignment = Enum.TextXAlignment.Left
+mainGameLabel.TextScaled = true
+mainGameLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+local function updateGames()
+for _, child in ipairs(frameGame:GetChildren()) do
+            if not child:IsA("UIListLayout") then
+                child:Destroy()
+       end
+end
+
+local pages = AssetService:GetGamePlacesAsync()
+local gamePlaces = pages:GetCurrentPage()
+local count = 1
+
+local place = gamePlaces[1]
+
+local mainGameFrame = Instance.new("Frame", frameGame)
+mainGameFrame.Size = UDim2.new(1, 0, 0, 140)
+mainGameFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+
+local success, productInfo = pcall(function()
+    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+end)
+
+if success and productInfo then
+    local mainGameImage = Instance.new("ImageLabel", mainGameFrame) 
+    mainGameImage.Size = UDim2.new(0.32, 0, 0, 115)
+    mainGameImage.BackgroundTransparency = 1
+    mainGameImage.Position = UDim2.new(0, 0, 0, 0)
+    mainGameImage.Image = "rbxthumb://type=Asset&id=".. place.PlaceId .."&w=420&h=420"
+end
+
+local mainText = Instance.new("TextLabel", mainGameFrame)
+mainText.Size = UDim2.new(0.05, 0, 0, 20)
+mainText.BackgroundTransparency = 1
+mainText.Position = UDim2.new(0.324, 0, 0, 0)
+mainText.Text = count..""
+mainText.TextScaled = true
+
+local mainGameText = Instance.new("TextLabel", mainGameFrame)
+mainGameText.Size = UDim2.new(0.672, 0, 0, 30)
+mainGameText.Position = UDim2.new(0.322, 0, 0.16, 0)
+mainGameText.BackgroundTransparency = 1
+mainGameText.Text = "Name:" .. place.Name
+mainGameText.TextScaled = true
+mainGameText.TextXAlignment = Enum.TextXAlignment.Left
+
+local mainidGame = Instance.new("TextLabel", mainGameFrame)
+mainidGame.Size = UDim2.new(0.672, 0, 0, 30)
+mainidGame.Position = UDim2.new(0.322, 0, 0.4, 0)
+mainidGame.BackgroundTransparency = 1
+mainidGame.Text = "Id:"..place.PlaceId
+mainidGame.TextScaled = true
+mainidGame.TextXAlignment = Enum.TextXAlignment.Left
+
+local teleportButton = Instance.new("TextButton", mainGameFrame)
+teleportButton.Size = UDim2.new(1, 0, 0.17, 0)
+teleportButton.Position = UDim2.new(0, 0, 0.83, 0)
+teleportButton.BackgroundTransparency = 0
+teleportButton.Text = "Teleport"
+teleportButton.TextScaled = true
+teleportButton.MouseButton1Click:Connect(function()
+    TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+end)
+
+count = count + 1
+
+local splitGamesLabel = Instance.new("TextLabel", frameGame)
+splitGamesLabel.Size = UDim2.new(1, 0, 0, 40)
+splitGamesLabel.BackgroundTransparency = 1
+splitGamesLabel.Text = "Splitgame"
+splitGamesLabel.TextScaled = true
+splitGamesLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+for i = 2, #gamePlaces do
+    local place = gamePlaces[i]
+
+    local gameFrame = Instance.new("Frame", frameGame)
+    gameFrame.Size = UDim2.new(1, 0, 0, 140)
+    gameFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+
+    local success, productInfo = pcall(function()
+        return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+    end)
+
+    if success and productInfo then
+        local gameImage = Instance.new("ImageLabel", gameFrame)
+        gameImage.Size = UDim2.new(0.32, 0, 0, 115)
+        gameImage.Position = UDim2.new(0, 0, 0, 0)
+        gameImage.BackgroundTransparency = 1
+        gameImage.Image = "rbxthumb://type=Asset&id=".. place.PlaceId .."&w=420&h=420"
+    end
+    
+    local gameText = Instance.new("TextLabel", gameFrame)
+    gameText.Size = UDim2.new(0.05, 0, 0, 20)
+    gameText.Position = UDim2.new(0.324, 0, 0, 0)
+    gameText.BackgroundTransparency = 1
+    gameText.Text = count..""
+    gameText.TextScaled = true
+    
+    local gameLabelText = Instance.new("TextLabel", gameFrame)
+    gameLabelText.Size = UDim2.new(0.672, 0, 0, 30)
+    gameLabelText.Position = UDim2.new(0.322, 0, 0.16, 0)
+    gameLabelText.BackgroundTransparency = 1
+    gameLabelText.Text = "Name:" .. place.Name
+    gameLabelText.TextScaled = true
+    gameLabelText.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local gameidLabel = Instance.new("TextLabel", gameFrame)
+    gameidLabel.Size = UDim2.new(0.672, 0, 0, 30)
+    gameidLabel.Position = UDim2.new(0.322, 0, 0.4, 0)
+    gameidLabel.BackgroundTransparency = 1
+    gameidLabel.Text = "Id:" ..place.PlaceId
+    gameidLabel.TextScaled = true
+    gameidLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local teleportButton = Instance.new("TextButton", gameFrame)
+    teleportButton.Size = UDim2.new(1, 0, 0.17, 0)
+    teleportButton.Position = UDim2.new(0, 0, 0.83, 0)
+    teleportButton.BackgroundTransparency = 0
+    teleportButton.Text = "Teleport"
+    teleportButton.TextScaled = true
+    teleportButton.MouseButton1Click:Connect(function()
+        TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+    end)
+
+    count = count + 1
+     end
+end
+
+updateGames()
+
+    local SplitgameToggleButton = Instance.new("ImageButton", frame)
+    SplitgameToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    SplitgameToggleButton.Position = UDim2.new(0.22 + 0.2, 0, 0, 13)
+    SplitgameToggleButton.BackgroundColor3 = Color3.fromRGB(204, 255, 204)
+    SplitgameToggleButton.ZIndex = 10
+    SplitgameToggleButton.BackgroundTransparency = 0.8
+    SplitgameToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
+    Corner(SplitgameToggleButton, {CornerRadius = UDim.new(0.1, 0)})
+
+     local grent = Instance.new("UIGradient", SplitgameToggleButton)
+     grent.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(204, 255, 204)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(170, 85, 0))
+     }
+
+    grent.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 0),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grent.Rotation = -60
+
+     local minimiz7 = true
+     SplitgameToggleButton.MouseButton1Click:Connect(function()
+        minimiz7 = not minimiz7
+
+        if minimiz7 then
+            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
+            framek.Visible = true
+        else
+            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
+            framek.Visible = false
+        end
+    end)
 
 local success, result = pcall(function()
     return MarketplaceService:GetProductInfo(PlaceId)
@@ -1508,6 +1705,7 @@ updatePlayerInformation()
    RunService.Heartbeat:Connect(function()
    local currentTime = tick()
     if currentTime - lastUpdate >= 1 then
+        updateGames()
         updatePlayerInformation()
         updatePlaytime()
         checkFriends()
