@@ -74,8 +74,17 @@ local function CreateGradient(parent, props)
     if props and props.Rotation then
         new.Rotation = props.Rotation
     end
-    if props and props.Transparency then
-        new.Transparency = props.Transparency
+    if props and props.Intensity then
+        local intensity = props.Intensity
+        local colorKeypoints = new.Color.Keypoints
+
+        for i, keypoint in ipairs(colorKeypoints) do
+            local color = keypoint.Value
+            local intensifiedColor = color:Lerp(Color3.fromRGB(0, 0, 0), intensity) -- ผสมกับสีดำ
+            keypoint.Value = intensifiedColor
+        end
+
+        new.Color = ColorSequence.new(colorKeypoints)
     end
     if props and props.Offset then
         new.Offset = props.Offset
@@ -776,7 +785,7 @@ end
     Rotation = 0,
     Transparency = NumberSequence.new(0),
     Offset = Vector2.new(0, 0),
-    Intensity = 0.4,
+    Intensity = 3,
     Speed = 2
     })
     if stroke then Stroke(frame) end
