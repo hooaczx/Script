@@ -1135,11 +1135,11 @@ gtxgh2.Position = UDim2.new(0, 0, 0.001, 0)
 gtxgh2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 gtxgh2.BackgroundTransparency = 1
 
-local frame566 = Instance.new("Frame", gameinfoframe)
-frame566.Size = UDim2.new(1, 0, 0.11, 0)
-frame566.Position = UDim2.new(0, 0, 0.001, 0)
-frame566.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-frame566.BackgroundTransparency = 1
+local framee356 = Instance.new("Frame", gameinfoframe)
+framee356.Size = UDim2.new(1, 0, 0.11, 0)
+framee356.Position = UDim2.new(0, 0, 0.001, 0)
+framee356.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+framee356.BackgroundTransparency = 1
 
 local frame23 = Instance.new("Frame", frame100)
 frame23.Size = UDim2.new(1, 0, 0.11, 0)
@@ -1405,12 +1405,18 @@ updatePlayerInformation()
         end
     end)
    
+   local lastUpdate = tick()
+   
    RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
+    if currentTime - lastUpdate >= 1 then
         updatePlayerInformation()
         updatePlaytime()
         checkFriends()
         startUpdating()
         updateTime()
+        lastUpdate = currentTime
+        end
     end)
 
     local Button = Instance.new("ImageButton", frame)
