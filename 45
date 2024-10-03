@@ -70,14 +70,14 @@ local function CreateGradient(parent, props)
     if props and props.Offset then
         new.Offset = props.Offset
     end
+    local function tweenGradient()
+        local goal = {Rotation = new.Rotation + 360}
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
+        local tween = TweenService:Create(new, tweenInfo, goal)
+        tween:Play()
+    end
+    tweenGradient()
     return new
-end
-
-local function TweenGradientColor(gradient, targetColor, duration)
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
-    local goal = {Color = targetColor}
-    local tween = TweenService:Create(gradient, tweenInfo, goal)
-    tween:Play()
 end
 
 local function CreateTween(instance, prop, value, time, tweenWait)
@@ -744,10 +744,12 @@ end
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
 
-    local gradient = CreateGradient(frame, {Rotation = 90})
-    local targetColor = ColorSequence.new(Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 0, 255))
-    TweenGradientColor(gradient, targetColor, 2)
-
+    CreateGradient(frame, {
+    Color = ColorSequence.new(Color3.fromRGB(255, 0, 0), Color3.fromRGB(0, 0, 255)),
+    Rotation = 0,
+    Transparency = NumberSequence.new(0),
+    Offset = Vector2.new(0, 0)
+    })
     if stroke then Stroke(frame) end
     
     local Button1 = Instance.new("TextButton", ScreenGui)
