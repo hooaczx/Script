@@ -709,8 +709,28 @@ function StartProgressUpdate(Frame_4, TimeLabel)
         end
     end)
 end
-  
-  function MinimizeButton(Configs)
+   local player = game.Players.LocalPlayer
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local LocalPlayer = players.LocalPlayer
+local accountAgeInDays = LocalPlayer.AccountAge
+local playerCount = #players:GetPlayers()
+local maxPlayers = players.MaxPlayers
+local ageInDays = player.AccountAge
+local PlaceId = game.PlaceId
+local friendsCooldown = 0
+local friendsInTotal = 0
+
+local MarketplaceService = game:GetService("MarketplaceService")
+
+local success, result = pcall(function()
+    return MarketplaceService:GetProductInfo(PlaceId)
+end)
+
+local Asset = MarketplaceService:GetProductInfo(PlaceId)
+local gameName = success and result.Name or Asset.Name or "Unknown"
+
+   function MinimizeButton(Configs)
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -727,7 +747,24 @@ end
     Button1.Text = "v"
     Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button1.BackgroundTransparency = 1
+    
+    local minimize1 = true
+    Button1.MouseButton1Click:Connect(function()
+        minimize1 = not minimize1
 
+        if minimize1 then
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.3, true)
+            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
+            frame.Visible = false
+            Button1.Text = "^"
+        else
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
+            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
+            frame.Visible = true
+            Button1.Text = "v"
+        end
+    end)
+    
     local TimeLabel = Instance.new("TextLabel", frame)
     TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
     TimeLabel.TextSize = 20
@@ -861,26 +898,6 @@ end
         end
     end)
 
-local player = game.Players.LocalPlayer
-local players = game:GetService("Players")
-local localPlayer = players.LocalPlayer
-local LocalPlayer = players.LocalPlayer
-local accountAgeInDays = LocalPlayer.AccountAge
-local playerCount = #players:GetPlayers()
-local maxPlayers = players.MaxPlayers
-local ageInDays = player.AccountAge
-local PlaceId = game.PlaceId
-local friendsCooldown = 0
-local friendsInTotal = 0
-
-local MarketplaceService = game:GetService("MarketplaceService")
-
-local success, result = pcall(function()
-    return MarketplaceService:GetProductInfo(PlaceId)
-end)
-
-local Asset = MarketplaceService:GetProductInfo(PlaceId)
-local gameName = success and result.Name or Asset.Name or "Unknown"
 
 local frameinfo = Instance.new("Frame", ScreenGui)
 frameinfo.Size = UDim2.new(0.25, 0, 0.16, 0)
@@ -1296,6 +1313,7 @@ local function updatePlayerInformation()
         gameInfoLabels[i].Text = labelText
     end
 end
+
 updatePlayerInformation()
 
     local function updateTime()
@@ -1321,22 +1339,6 @@ updatePlayerInformation()
 
     updateTime()
 
-    local minimize1 = true
-    Button1.MouseButton1Click:Connect(function()
-        minimize1 = not minimize1
-
-        if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
-            frame.Visible = false
-            Button1.Text = "^"
-        else
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
-            frame.Visible = true
-            Button1.Text = "v"
-        end
-    end)
 
     local infoToggleButton = Instance.new("ImageButton", frame)
     infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
