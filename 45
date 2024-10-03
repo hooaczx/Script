@@ -57,11 +57,14 @@ end
 local function CreateGradient(parent, props)
     local new = Instance.new("UIGradient")
     new.Parent = parent
-    local colors = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(0, 0, 0)} -- สีเริ่มต้นเป็นสีขาวและดำ
-
+    local defaultColors = {
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(127, 127, 127),
+        Color3.fromRGB(0, 0, 0)
+    }
     if props and props.Color then
         local colorList = props.Color
-        local colorCount = math.min(#colorList, 5)
+        local colorCount = math.min(#colorList, 3)
         local colorKeypoints = {}
         for i = 1, colorCount do
             local position = (i - 1) / (colorCount - 1)
@@ -69,7 +72,7 @@ local function CreateGradient(parent, props)
         end
         new.Color = ColorSequence.new(colorKeypoints)
     else
-        new.Color = ColorSequence.new(colors[1], colors[2])
+        new.Color = ColorSequence.new(defaultColors[1], defaultColors[2], defaultColors[3])
     end
     if props and props.Rotation then
         new.Rotation = props.Rotation
@@ -86,25 +89,14 @@ local function CreateGradient(parent, props)
     if props and props.Offset then
         new.Offset = props.Offset
     end
-    if props and props.Intensity then
-        local color1 = new.Color.Keypoints[1].Value
-        local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
-        local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
-        local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
-        new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
-    end
-    
-    local function tweenGradient()
+    if props and props.Tween then
         local speed = props.Speed or 2
         local goal = {Rotation = new.Rotation + 360}
         local tweenInfo = TweenInfo.new(speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
         local tween = TweenService:Create(new, tweenInfo, goal)
         tween:Play()
     end
-
-    tweenGradient()
-
-    return new 
+    return new
 end
 
 local function CreateTween(instance, prop, value, time, tweenWait)
@@ -911,9 +903,16 @@ end
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
     MusicToggleButton.Position = UDim2.new(0.22 + 0.2, 0, 0, 13)
-    MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
-     
+     local normalGradient = CreateGradient(Button, {
+    Color = {
+        Color3.fromRGB(16, 42, 220),
+        Color3.fromRGB(237, 234, 234),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = -45
+    })
+
      local minimize2 = true
      MusicToggleButton.MouseButton1Click:Connect(function()
         minimize2 = not minimize2
@@ -1419,9 +1418,16 @@ updatePlayerInformation()
     local infoToggleButton = Instance.new("ImageButton", frame)
     infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
     infoToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
-    infoToggleButton.BackgroundTransparency = 1
     infoToggleButton.Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150"
-     
+    local normalGradient = CreateGradient(Button, {
+    Color = {
+        Color3.fromRGB(4, 175, 236),
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(0, 255, 255)
+    },
+    Rotation = 50
+    })
+
      local minimize3 = true
      infoToggleButton.MouseButton1Click:Connect(function()
         minimize3 = not minimize3
@@ -1500,9 +1506,16 @@ updatePlayerInformation()
     local Button = Instance.new("ImageButton", frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
     Button.Position = UDim2.new(0.22, 0, 0, 13)
-    Button.BackgroundTransparency = 1
     Button.Image = image
-    
+
+    local normalGradient = CreateGradient(Button, {
+    Color = {
+        Color3.fromRGB(242, 243, 243),
+        Color3.fromRGB(107, 50, 124),
+        Color3.fromRGB(216, 221, 86)
+    },
+    Rotation = 45
+    })
     if corner then Corner(Button) end 
     if stroke then Stroke(Button, {Color = strokecolor}) end
     
