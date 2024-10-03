@@ -75,17 +75,18 @@ local function CreateGradient(parent, props)
         new.Rotation = props.Rotation
     end
     if props and props.Intensity then
-        local intensity = props.Intensity
-        local colorKeypoints = new.Color.Keypoints
+    local color1 = new.Color.Keypoints[1].Value
+    local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
 
-        for i, keypoint in ipairs(colorKeypoints) do
-            local color = keypoint.Value
-            local intensifiedColor = color:Lerp(Color3.fromRGB(0, 0, 0), intensity) -- ผสมกับสีดำ
-            keypoint.Value = intensifiedColor
-        end
+    local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), math.clamp(props.Intensity, 0, 1))
+    local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), math.clamp(props.Intensity, 0, 1))
 
-        new.Color = ColorSequence.new(colorKeypoints)
+    if props.Intensity > 1 then
+        intensifiedColor1 = intensifiedColor1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity - 1)
+        intensifiedColor2 = intensifiedColor2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity - 1)
     end
+    new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
+end
     if props and props.Offset then
         new.Offset = props.Offset
     end
