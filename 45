@@ -843,7 +843,7 @@ end
      
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
-    MusicToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.2, 0, 0, 13)
     MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
      
@@ -860,7 +860,444 @@ end
             Frame.Position = UDim2.new(0.3, 0, 0, 0)
         end
     end)
-     
+
+local player = game.Players.LocalPlayer
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local LocalPlayer = players.LocalPlayer
+local accountAgeInDays = LocalPlayer.AccountAge
+local playerCount = #players:GetPlayers()
+local maxPlayers = players.MaxPlayers
+local ageInDays = player.AccountAge
+local PlaceId = game.PlaceId
+local friendsCooldown = 0
+local friendsInTotal = 0
+
+local MarketplaceService = game:GetService("MarketplaceService")
+
+local success, result = pcall(function()
+    return MarketplaceService:GetProductInfo(PlaceId)
+end)
+
+local Asset = MarketplaceService:GetProductInfo(PlaceId)
+local gameName = success and result.Name or Asset.Name or "Unknown"
+
+local frameinfo = Instance.new("Frame", ScreenGui)
+frameinfo.Size = UDim2.new(0.25, 0, 0.16, 0)
+frameinfo.Position = UDim2.new(0.04, 0, 0.21, 0)
+frameinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frameinfo.BackgroundTransparency = 0.5
+frameinfo.Visible = false
+
+local iconplayers = Instance.new("ImageLabel", ScreenGui)
+iconplayers.Size = UDim2.new(0, 50, 0, 50)
+iconplayers.Position = UDim2.new(0.05, 0, 0.06, 0)
+iconplayers.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+iconplayers.BackgroundTransparency = 0.4
+iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+iconplayers.Visible = false
+
+local Wellcome = Instance.new("TextLabel", ScreenGui)
+Wellcome.Size = UDim2.new(0, 150, 0, 30)
+Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
+Wellcome.Position = UDim2.new(0.11, 0, 0.085, 0)
+Wellcome.TextColor3 = Color3.fromRGB(255, 255, 255)
+Wellcome.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Wellcome.BackgroundTransparency = 1
+Wellcome. TextScaled = true
+Wellcome.TextXAlignment = Enum.TextXAlignment.Left
+Wellcome.Visible = false
+
+local gameinfoframe= Instance.new("Frame", ScreenGui)
+gameinfoframe.Size = UDim2.new(0.27, 0, 0.3, 0)
+gameinfoframe.Position = UDim2.new(0.032, 0, 0.51, 0)
+gameinfoframe.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+gameinfoframe.BackgroundTransparency = 0.5
+gameinfoframe.Visible = false
+
+local iconGame = Instance.new("ImageLabel", ScreenGui)
+iconGame.Size = UDim2.new(0, 55, 0, 50)
+iconGame.Position = UDim2.new(0.04, 0, 0.38, 0)
+iconGame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+iconGame.BackgroundTransparency = 1
+iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+iconGame.Visible = false
+
+local GameName = Instance.new("TextLabel", ScreenGui)
+GameName.Size = UDim2.new(0, 190, 0, 30)
+GameName.Text = "Game Name: " .. gameName
+GameName.Position = UDim2.new(0.11, 0, 0.405, 0)
+GameName.TextColor3 = Color3.fromRGB(255, 255, 255)
+GameName.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+GameName.BackgroundTransparency = 1
+GameName.TextScaled = true
+GameName.TextXAlignment = Enum.TextXAlignment.Left
+GameName.Visible = false
+
+local frame100 = Instance.new("Frame", ScreenGui)
+frame100.Size = UDim2.new(0.41, 0, 0.48, 0)
+frame100.Position = UDim2.new(0.4178, 0, 0.14, 0)
+frame100.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame100.BackgroundTransparency = 0.5
+frame100.Visible = false
+
+local FriendList = Instance.new("TextLabel", frame100)
+FriendList.Size = UDim2.new(1, 0, 0.13, 0)
+FriendList.Position = UDim2.new(0, 0, 0.001, 0)
+FriendList.Text = "Friend List"
+FriendList.TextColor3 = Color3.fromRGB(255, 255, 255)
+FriendList.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+FriendList.BackgroundTransparency = 1
+
+local friendsFrame = Instance.new("ScrollingFrame", frame100)
+friendsFrame.Size = UDim2.new(1, 0, 0.87, 0)
+friendsFrame.Position = UDim2.new(0, 0, 0.13, 0)
+friendsFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+friendsFrame.ScrollBarThickness = 3
+friendsFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+friendsFrame.BackgroundTransparency = 1
+
+local iconfriend = Instance.new("ImageLabel", ScreenGui)
+iconfriend.Size = UDim2.new(0, 50, 0, 50)
+iconfriend.Position = UDim2.new(0.43, 0, 0.006, 0)
+iconfriend.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+iconfriend.BackgroundTransparency = 0.4
+iconfriend.Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420"
+iconfriend.Visible = false
+
+local friendnumber = Instance.new("TextLabel", ScreenGui)
+friendnumber.Size = UDim2.new(0, 150, 0, 30)
+friendnumber.Text = "Friend: "..friendsInTotal.."/200"
+friendnumber.Position = UDim2.new(0.49, 0, 0.03, 0)
+friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
+friendnumber.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+friendnumber.BackgroundTransparency = 1
+friendnumber. TextScaled = true
+friendnumber.TextXAlignment = Enum.TextXAlignment.Left
+friendnumber.Visible = false
+
+local function checkFriends()
+    if friendsCooldown <= 0 then
+        friendsCooldown = 25
+
+        local playersFriends = {}
+        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+
+        if success then
+            repeat
+                local info = page:GetCurrentPage()
+                for _, friendInfo in pairs(info) do
+                    table.insert(playersFriends, friendInfo)
+                end
+                if not page.IsFinished then 
+                    page:AdvanceToNextPageAsync()
+                end
+            until page.IsFinished
+        end
+
+        local friendsInTotal = #playersFriends
+
+        local function updateFriendsGUI(friends)
+            for _, child in pairs(friendsFrame:GetChildren()) do
+                if child:IsA("Frame") then
+                    child:Destroy()
+                end
+            end
+
+            local positionY = 0
+            for _, friend in pairs(friends) do
+                local friendFrame = Instance.new("Frame")
+                friendFrame.Size = UDim2.new(1, 0, 0, 50)
+                friendFrame.BackgroundTransparency = 1
+                friendFrame.Position = UDim2.new(0, 0, 0, positionY)
+                friendFrame.Parent = friendsFrame
+
+                local avatarImage = Instance.new("ImageLabel")
+                avatarImage.Size = UDim2.new(0, 50, 0, 50)
+                avatarImage.Position = UDim2.new(0, 0, 0, 0)
+                avatarImage.BackgroundTransparency = 0.4
+                avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
+                avatarImage.Parent = friendFrame
+
+                local friendName = Instance.new("TextLabel")
+                friendName.Size = UDim2.new(0, 200, 1, 0)
+                friendName.Position = UDim2.new(0, 60, 0, 0)
+                friendName.BackgroundTransparency = 1
+                friendName.Text = friend.Username
+                friendName.TextColor3 = Color3.fromRGB(255, 255, 255)
+                friendName.TextWrapped = true
+                friendName.TextXAlignment = Enum.TextXAlignment.Left
+                friendName.Parent = friendFrame
+
+                local statusLabel = Instance.new("TextLabel")
+                statusLabel.Size = UDim2.new(0, 100, 1, 0)
+                statusLabel.BackgroundTransparency = 1
+                statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                statusLabel.TextWrapped = true
+                statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+                statusLabel.Position = UDim2.new(0, 260, 0, 0)
+
+                if friend.IsOnline then
+                    if players:FindFirstChild(friend.Username) then
+                        statusLabel.Text = "in Game"
+                    else
+                        statusLabel.Text = "Online"
+                    end
+                else
+                    statusLabel.Text = "offline"
+                end
+
+                statusLabel.Parent = friendFrame
+
+                positionY = positionY + 55
+            end
+
+            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(positionY, 3000))
+        end
+
+        updateFriendsGUI(playersFriends)
+        friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
+        return friendsInTotal
+    else
+        friendsCooldown = friendsCooldown - 1
+    end
+end
+
+checkFriends()
+
+local TimePlay = Instance.new("TextLabel", ScreenGui)
+TimePlay.Size = UDim2.new(0, 180, 0, 30)
+TimePlay.Text = "TimePlay"
+TimePlay.Position = UDim2.new(0.41, 0, 0.623, 0)
+TimePlay.TextColor3 = Color3.fromRGB(255, 255, 255)
+TimePlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TimePlay.BackgroundTransparency = 0.5
+TimePlay.TextScaled = true
+TimePlay.TextXAlignment = Enum.TextXAlignment.Left
+TimePlay.Visible = false
+
+local AccountAge = Instance.new("TextLabel", ScreenGui)
+AccountAge.Size = UDim2.new(0, 180, 0, 30)
+AccountAge.Text = "AccountAge"
+AccountAge.Position = UDim2.new(0.62, 0, 0.623, 0)
+AccountAge.TextColor3 = Color3.fromRGB(255, 255, 255)
+AccountAge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+AccountAge.BackgroundTransparency = 0.5
+AccountAge. TextScaled = true
+AccountAge.TextXAlignment = Enum.TextXAlignment.Left
+AccountAge.Visible = false
+
+local Join = Instance.new("TextButton", ScreenGui)
+Join.Size = UDim2.new(0, 100, 0, 30)
+Join.Text = "Join Game Script".."\nYou can press Copy"
+Join.Position = UDim2.new(0.41, 0, 0.696, 0)
+Join.TextColor3 = Color3.fromRGB(255, 255, 255)
+Join.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Join.BackgroundTransparency = 0.5
+Join.TextScaled = true
+Join.TextXAlignment = Enum.TextXAlignment.Left
+Join.Visible = false
+
+local Position = Instance.new("TextButton", ScreenGui)
+Position.Size = UDim2.new(0, 100, 0, 30)
+Position.Text = "Position".."\nYou can press Copy"
+Position.Position = UDim2.new(0.528, 0, 0.696, 0)
+Position.TextColor3 = Color3.fromRGB(255, 255, 255)
+Position.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Position.BackgroundTransparency = 0.5
+Position. TextScaled = true
+Position.TextXAlignment = Enum.TextXAlignment.Left
+Position.Visible = false
+
+Position.MouseButton1Click:Connect(function()
+local player = game.Players.LocalPlayer
+local position = player.Character.HumanoidRootPart.Position
+
+local positionString = string.format("Vector3.new(%f, %f, %f)", position.X, position.Y, position.Z)
+local teleportCode = [[
+--1hooaczx1: You can take it, paste it into your Executor and press execute. And it will teleport you to where you originally pressed Copy
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(]] .. positionString .. [[)
+]]
+setclipboard(teleportCode)
+end) 
+Join.MouseButton1Click:Connect(function()
+local teleportCode = [[
+-- 1hooaczx1: This script will take you to the game"]]..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name..[["
+--If it doesn't work then the script isn't working
+game:GetService("TeleportService"):Teleport(]] .. game.PlaceId .. [[, player)
+]]
+setclipboard(teleportCode)
+end) 
+
+local frame = Instance.new("Frame", frameinfo)
+frame.Size = UDim2.new(1, 0, 0.17, 0)
+frame.Position = UDim2.new(0, 0, 0.001, 0)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BackgroundTransparency = 1
+
+local frame = Instance.new("Frame", gameinfoframe)
+frame.Size = UDim2.new(1, 0, 0.11, 0)
+frame.Position = UDim2.new(0, 0, 0.001, 0)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BackgroundTransparency = 1
+
+local frame23 = Instance.new("Frame", frame100)
+frame23.Size = UDim2.new(1, 0, 0.11, 0)
+frame23.Position = UDim2.new(0, 0, 0.001, 0)
+frame23.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame23.BackgroundTransparency = 1
+
+local frame9 = Instance.new("TextLabel", frameinfo)
+frame9.Size = UDim2.new(1, 0, 0.83, 0)
+frame9.Text = ""
+frame9.Position = UDim2.new(0, 0, 0.15, 0)
+frame9.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame9.BackgroundTransparency = 1
+
+local frame79 = Instance.new("TextLabel", gameinfoframe)
+frame79.Size = UDim2.new(1, 0, 0.89, 0)
+frame79.Text = ""
+frame79.Position = UDim2.new(0, 0, 0.15, 0)
+frame79.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame79.BackgroundTransparency = 1
+
+local listLayout = Instance.new("UIListLayout", frame79)
+listLayout.FillDirection = Enum.FillDirection.Vertical
+listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+listLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+listLayout.Padding = UDim.new(0, 5)
+
+local listLayout = Instance.new("UIListLayout", frame9)
+listLayout.FillDirection = Enum.FillDirection.Vertical
+listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+listLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+listLayout.Padding = UDim.new(0, 6)
+
+local players = game:GetService("Players")
+local LocalPlayer = players.LocalPlayer
+local accountAgeInDays = LocalPlayer.AccountAge
+local additionalPlayTimeInSeconds = 0
+
+local function calculateTotalPlayTime()
+    local totalSeconds = accountAgeInDays * 86400
+
+    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
+
+    local years = math.floor(totalSeconds / 31536000)
+    totalSeconds = totalSeconds % 31536000
+    local months = math.floor(totalSeconds / 2592000)
+    totalSeconds = totalSeconds % 2592000
+    local days = math.floor(totalSeconds / 86400)
+
+    return string.format("%d years, %d months, %d days", years, months, days)
+end
+
+local function accountAgeMessage(accountAgeInDays)
+    if accountAgeInDays == 0 then
+        return "You just created an account"
+    else
+        return string.format("Your account has been active for %d days", accountAgeInDays)
+    end
+end
+
+local function updatePlayTimeDisplay()
+    local totalPlayTime = calculateTotalPlayTime()
+    local ageMessage = accountAgeMessage(accountAgeInDays)
+    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
+end
+
+local function startUpdating()
+        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+        updatePlayTimeDisplay()
+end
+
+startUpdating()
+
+local function formatElapsedTime(elapsedTime)
+    local secondsInMinute = 60
+    local secondsInHour = 3600
+    local secondsInDay = 86400
+    local secondsInMonth = 2592000
+    local secondsInYear = 31536000
+
+    if elapsedTime < secondsInMinute then
+        return string.format("%02d", elapsedTime)
+    elseif elapsedTime < secondsInHour then
+        return string.format("%d:%02d", math.floor(elapsedTime / secondsInMinute), elapsedTime % secondsInMinute)
+    elseif elapsedTime < secondsInDay then
+        return string.format("%d:%02d:%02d", math.floor(elapsedTime / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    elseif elapsedTime < secondsInMonth then
+        return string.format("%d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    elseif elapsedTime < secondsInYear then
+        return string.format("%d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    else
+        return string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInYear), math.floor((elapsedTime % secondsInYear) / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    end
+end
+
+local player = game.Players.LocalPlayer
+local playtime = 0
+
+local function updatePlaytime()
+    playtime = playtime + 1
+    local formattedTime = formatElapsedTime(playtime)
+    TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
+end
+
+local function getAccountCreationDate(ageInDays)
+    local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
+    return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
+end
+
+updatePlaytime()
+
+local playerInfoLabels = {}
+local gameInfoLabels = {}
+
+local function updatePlayerInformation()
+    local Playerinformation = {
+        "Display Name: " .. player.DisplayName,
+        "UserId: " .. player.UserId,
+        "Account Created: " .. getAccountCreationDate(ageInDays),
+    }
+    local Gameinformation = {
+        "Update: " .. result.Updated,
+        "Creation Date: " .. result.Created,
+        "Gameid: " .. game.GameId,
+        "GamePlaceId: " .. game.PlaceId,
+        "GameJobId: " .. game.JobId,
+        "Server Size And Players: " .. playerCount .. " / " .. maxPlayers,
+    }
+    for i, labelText in ipairs(Playerinformation) do
+        if not playerInfoLabels[i] then
+            local Playersinfo = Instance.new("TextLabel", frame9)
+            Playersinfo.Size = UDim2.new(1, 0, 0, 10)
+            Playersinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            Playersinfo.BackgroundTransparency = 1
+            Playersinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Playersinfo.TextScaled = true
+            Playersinfo.TextXAlignment = Enum.TextXAlignment.Left
+            playerInfoLabels[i] = Playersinfo
+        end
+        playerInfoLabels[i].Text = labelText
+    end
+
+    for i, labelText in ipairs(Gameinformation) do
+        if not gameInfoLabels[i] then
+            local Gameinfo = Instance.new("TextLabel", frame79)
+            Gameinfo.Size = UDim2.new(1, 0, 0, 10)
+            Gameinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            Gameinfo.BackgroundTransparency = 1
+            Gameinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Gameinfo.TextScaled = true
+            Gameinfo.TextXAlignment = Enum.TextXAlignment.Left
+            gameInfoLabels[i] = Gameinfo
+        end
+        gameInfoLabels[i].Text = labelText
+    end
+end
+updatePlayerInformation()
+
     local function updateTime()
         local currentTime = os.date("*t")
         local hour = currentTime.hour
@@ -901,10 +1338,80 @@ end
         end
     end)
 
-    RunService.Heartbeat:Connect(function()
+    local infoToggleButton = Instance.new("ImageButton", frame)
+    infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    infoToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
+    infoToggleButton.BackgroundTransparency = 1
+    infoToggleButton.Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150"
+     
+     local minimize3 = true
+     infoToggleButton.MouseButton1Click:Connect(function()
+        minimize3 = not minimize3
+
+        if minimize3 then
+            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0.16, 0), 0.3, true)
+            CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 50), 0.3, true)
+            CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 30), 0.3, true)
+            CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0.3, 0), 0.3, true)
+            CreateTween1(iconGame, "Size", UDim2.new(0, 55, 0, 50), 0.3, true)
+            CreateTween1(GameName, "Size", UDim2.new(0, 190, 0, 30), 0.3, true)
+            CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0.48, 0), 0.3, true)
+            CreateTween1(iconfriend, "Size", UDim2.new(0, 50, 0, 50), 0.3, true)
+            CreateTween1(friendnumber, "Size", UDim2.new(0, 150, 0, 30), 0.3, true)
+            CreateTween1(TimePlay, "Size", UDim2.new(0, 180, 0, 30), 0.3, true)
+            CreateTween1(AccountAge, "Size", UDim2.new(0, 180, 0, 30), 0.3, true)
+            CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
+            CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
+            frameinfo.Visible = true
+            iconplayers.Visible = true
+            Wellcome.Visible = true
+            gameinfoframe.Visible = true
+            iconGame.Visible = true
+            GameName.Visible = true
+            frame100.Visible = true
+            iconfriend.Visible = true
+            friendnumber.Visible = true
+            TimePlay.Visible = true
+            AccountAge.Visible = true
+            Join.Visible = true
+            Position.Visible = true
+        else
+            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
+            CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
+            CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
+            CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0, 0), 0.3, true)
+            CreateTween1(iconGame, "Size", UDim2.new(0, 55, 0, 0), 0.3, true)
+            CreateTween1(GameName, "Size", UDim2.new(0, 190, 0, 0), 0.3, true)
+            CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0, 0), 0.3, true)
+            CreateTween1(iconfriend, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
+            CreateTween1(friendnumber, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
+            CreateTween1(TimePlay, "Size", UDim2.new(0, 180, 0, 0), 0.3, true)
+            CreateTween1(AccountAge, "Size", UDim2.new(0, 180, 0, 0), 0.3, true)
+            CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 0), 0.3, true)
+            CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 0), 0.3, true)
+            frameinfo.Visible = false
+            iconplayers.Visible = false
+            Wellcome.Visible = false
+            gameinfoframe.Visible = false
+            iconGame.Visible = false
+            GameName.Visible = false
+            frame100.Visible = false
+            iconfriend.Visible = false
+            friendnumber.Visible = false
+            TimePlay.Visible = false
+            AccountAge.Visible = false
+            Join.Visible = false
+            Position.Visible = false
+        end
+    end)
+   
+   RunService.Heartbeat:Connect(function()
+        updatePlayerInformation()
+        updatePlaytime()
+        checkFriends()
+        startUpdating()
         updateTime()
     end)
-
 
     local Button = Instance.new("ImageButton", frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
