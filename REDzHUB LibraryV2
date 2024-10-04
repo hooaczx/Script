@@ -54,6 +54,52 @@ local function Stroke(parent, props)
   return new
 end
 
+local function CreateGradient(parent, props)
+    local new = Instance.new("UIGradient")
+    new.Parent = parent
+
+    local defaultColors = {
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(127, 127, 127),
+        Color3.fromRGB(0, 0, 0)
+    }
+    if props and props.Color then
+        local colorList = props.Color
+        local colorCount = math.min(#colorList, 3)
+        local colorKeypoints = {}
+        for i = 1, colorCount do
+            local position = (i - 1) / (colorCount - 1)
+            table.insert(colorKeypoints, ColorSequenceKeypoint.new(position, colorList[i]))
+        end
+        new.Color = ColorSequence.new(colorKeypoints)
+    else
+        new.Color = ColorSequence.new(defaultColors[1], defaultColors[2], defaultColors[3])
+    end
+    if props and props.Rotation then
+        new.Rotation = props.Rotation
+    end
+    if props and props.Intensity then
+        local color1 = new.Color.Keypoints[1].Value
+        local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
+
+        local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
+        local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
+
+        new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
+    end
+    if props and props.Offset then
+        new.Offset = props.Offset
+    end
+    if props and props.Tween then
+        local speed = props.Speed or 2
+        local goal = {Rotation = new.Rotation + 360}
+        local tweenInfo = TweenInfo.new(speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
+        local tween = TweenService:Create(new, tweenInfo, goal)
+        tween:Play()
+    end
+    return new
+end
+
 local function CreateTween(instance, prop, value, time, tweenWait)
   local tween = TweenService:Create(instance,
   TweenInfo.new(time, Enum.EasingStyle.Linear),
@@ -530,7 +576,204 @@ function MakeWindow(Configs)
     Size = UDim2.new(1, 0, 1, 0)
   })
   
+local songs = {
+    {id = "rbxassetid://5409360995", name = "Dion Timmr"},
+    {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
+    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
+    {id = "rbxassetid://9046863253", name = "Poolside"},
+    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
+    {id = "rbxassetid://1839666799", name = "Calmness"},
+    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
+    {id = "rbxassetid://1838202933", name = "Take a Bow"},
+    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
+    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
+    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
+    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
+    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
+    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
+    {id = "rbxassetid://1844296842", name = "Playtime (c)"},
+    {id = "rbxassetid://9046863579", name = "City Lights"},
+    {id = "rbxassetid://9042578129", name = "Fun In Paradise"},
+    {id = "rbxassetid://1842949058", name = "Go Time (Underscore Version)"},
+    {id = "rbxassetid://9047976765", name = "Fun Day (No Beat)"},
+    {id = "rbxassetid://9042436491", name = "Parasol"},
+    {id = "rbxassetid://1842181702", name = "Calm Waters"},
+    {id = "rbxassetid://1844272224", name = "Rising Calm"},
+    {id = "rbxassetid://1846122515", name = "Inner Calm 1"},
+    {id = "rbxassetid://1840599788", name = "The Calm Blue (b)"},
+    {id = "rbxassetid://1844272167", name = "Beating Calm"},
+    {id = "rbxassetid://9040456083", name = "Peaceful Calm A"},
+    {id = "rbxassetid://1848354536", name = "Relaxed Scene"},
+    {id = "rbxassetid://1839841807", name = "Relax (c)"},
+    {id = "rbxassetid://1840161104", name = "The Art Of Relaxation"},
+    {id = "rbxassetid://1840428407", name = "Relax In Style (A)"},
+    {id = "rbxassetid://9048039534", name = "Lo-Fi Dreams"},
+    {id = "rbxassetid://9048039288", name = "Just Relax"},
+    {id = "rbxassetid://7028518546", name = "Protostar - New Horizons"},
+    {id = "rbxassetid://7023887630", name = "Hyper Potions & Nokae - Expedition"},
+    {id = "rbxassetid://7028977687", name = "Stonebank - What Are You Waiting For"},
+    {id = "rbxassetid://5410083549", name = "Rogue - Let's Talk"},
+    {id = "rbxassetid://7028997537", name = "Subtact feat. Noctilucent - What It's Like"},
+    {id = "rbxassetid://7024154355", name = "Laszlo - Feels Like Love"},
+    {id = "rbxassetid://5410085763", name = "Tokyo Machine - PLAY"},
+    {id = "rbxassetid://7024332460", name = "Pegboard Nerds - Shaku"},
+    {id = "rbxassetid://7024132063", name = "Koven - Your Pain"},
+    {id = "rbxassetid://7023650590", name = "Case & Point - Descender"},
+    {id = "rbxassetid://7029011778", name = "Tails & Beach Season - No Sleep"},
+    {id = "rbxassetid://7023445033", name = "Aiobahn & Vin - About"},
+    {id = "rbxassetid://1837879082", name = "Paradise Falls"},
+    {id = "rbxassetid://1845554017", name = "Uptown"},
+    {id = "rbxassetid://9047050075", name = "Lo Fi Dreanms Hip Hop"},
+    {id = "rbxassetid://1842802203", name = "Pound For Pound"},
+    {id = "rbxassetid://7024233823", name = "Nitro Fun feat. Danyka Nadeau - Safe & Sound"},
+    {id = "rbxassetid://7029051434", name = "Vindata - Good 4 Me"},
+    {id = "rbxassetid://7024220835", name = "Nitro Fun - Easter Egg"},
+    {id = "rbxassetid://7023771708", name = "Glacier - Still"},
+    {id = "rbxassetid://1837324500", name = "Sunrise Workout"},
+    {id = "rbxassetid://7023635858", name = "Bensley - Vex"},
+    {id = "rbxassetid://9046862941", name = "Sunset Chill (Bed Version)"},
+    {id = "rbxassetid://1843397729", name = "Wonderful Day"},
+    {id = "rbxassetid://1838028467", name = "VIP Me (a)"},
+    {id = "rbxassetid://9046864489", name = "Violet Clouds"},
+    {id = "rbxassetid://9047105533", name = "No Smoking"},
+    {id = "rbxassetid://1842660676", name = "Just Scream"},
+    {id = "https://www.roblox.com/asset/?id=1840003540", name = "Tell It to Yourself (a)"},
+    {id = "https://www.roblox.com/asset/?id=142376088", name = "Parry Gripp - Raining Tacos"},
+    {id = "https://www.roblox.com/asset/?id=1837247191", name = "Pedal to the Metal"},
+    {id = "https://www.roblox.com/asset/?id=1846738464", name = "Corner Store (A)"},
+    {id = "https://www.roblox.com/asset/?id=1846458016", name = "No More"},
+    {id = "https://www.roblox.com/asset/?id=1838569831", name = "Never Gonna Give You Up"},
+    {id = "https://www.roblox.com/asset/?id=1844750628", name = "Oversized"},
+    {id = "https://www.roblox.com/asset/?id=1843433894", name = "Underground"},
+    {id = "https://www.roblox.com/asset/?id=1846720993", name = "Cool Garage (A)"},
+    {id = "https://www.roblox.com/asset/?id=1840003588", name = "Radio (A)"},
+    {id = "rbxassetid://9042437001", name = "Reflection"},
+    {id = "https://www.roblox.com/asset/?id=1842558494", name = "Skull Crusher"},
+    {id = "https://www.roblox.com/asset/?id=7024101188", name = "Fransis & josh Rubin - Same Mistake"},
+    {id = "rbxassetid://9045634474", name = "Questioning The Past"},
+    {id = "rbxassetid://9038549424", name = "Mellow Mind (Bed Version)"},
+    {id = "rbxassetid://1839129044", name = "Sweet Cat"},
+    {id = "rbxassetid://1840195350", name = "William Tell Overture (A)"},
+    {id = "rbxassetid://1836009626", name = "Halloween Horrors Waltz"},
+    {id = "rbxassetid://1838592691", name = "Halloween Night"},
+    {id = "rbxassetid://1838591268", name = "Halloween March"},
+    {id = "rbxassetid://1836009584", name = "Bouncing Halloween"},
+    {id = "rbxassetid://1836009678", name = "Fast Paced Halloween"},
+    {id = "rbxassetid://1837467198", name = "Night of the Ghouls"},
+    {id = "rbxassetid://1837467212", name = "Spooks"},
+    {id = "rbxassetid://1841602884", name = "Forever Halloween c"},
+    {id = "rbxassetid://14145627857", name = "Phonk Vol. 1 - Catch My Drift"},
+    {id = "rbxassetid://16831108393", name = "Blessed Mane - Death Is No More"},
+    {id = "rbxassetid://16190760005", name = "Din1c X dxstrxcted! X QWERRXR - Cowbell God"},
+    {id = "rbxassetid://16662833837", name = "nMisaki, zangel - stupidd (phonk remix)"},
+    {id = "rbxassetid://16662829817", name = "uzipack - Might End up as an Angel #666"},
+    {id = "rbxassetid://1840684529", name = "Cool Vibes"},
+    {id = "rbxassetid://1838457617", name = "Clair De Lune"},
+    {id = "rbxassetid://9043887091", name = "Lo-fi Chill A"},
+    {id = "rbxassetid://9048375035", name = "All Dropping 8 Bit Beats"},
+    {id = "rbxassetid://14145620056", name = "Phonk Vol. 2 - The Final Phonk"},
+    {id = "rbxassetid://9048376021", name = "All 8 Bit Now"},
+    {id = "rbxassetid://17422074849", name = "Alanwaad - BRX PHONK"},
+    {id = "rbxassetid://9044539308", name = "Fashion Lobby"},
+    {id = "rbxassetid://15689451063", name = "Din1c - METAMORPHSIS"},
+    {id = "rbxassetid://15689448519", name = "Din1c - can you"},
+    {id = "rbxassetid://1836807218", name = "A Heart Worth Saving"},
+    {id = "rbxassetid://1840030788", name = "We Could Be Kings (a)"},
+    {id = "rbxassetid://5410084188", name = "WRLD - Hang Up (feat. Savoi)"},
+    {id = "rbxassetid://9245552700", name = "Parry Gripp - TacoBot 3000"},
+    {id = "rbxassetid://1843324953", name = "Night Out"},
+    {id = "rbxassetid://1837984979", name = "Wherever You Are (a)"},
+    {id = "rbxassetid://15689439571", name = "kirkiimad - ily (tiktok version)"},
+    {id = "rbxassetid://16662834857", name = "nMisaki - let me rethink everything i've done"},
+    {id = "rbxassetid://15689441541", name = "jugsta - ball"},
+    {id = "rbxassetid://14366981664", name = "SAKU - GTA (Nightcore)"},
+    {id = "rbxassetid://5410082346", name = "Hoaprox & Rogue - New World"},
+    {id = "https://www.roblox.com/asset/?id=7029005367", name = "Summer Was Fun - Hold On (feat. Q'AILA)"},
+    {id = "https://www.roblox.com/asset/?id=9048510043", name = "Neon Sky"},
+    {id = "https://www.roblox.com/asset/?id=9046864900", name = "From LA With Love"},
+    {id = "https://www.roblox.com/asset/?id=1837450285", name = "[ Content Deleted ]"},
+    {id = "https://www.roblox.com/asset/?id=5410084870", name = "Dion Timmer feat. Micah Martin - Internet Boy"},
+    {id = "https://www.roblox.com/asset/?id=9039770890", name = "Another Snowy Day"},
+    {id = "https://www.roblox.com/asset/?id=9046546370", name = "Give You All My Love - Underscore"},
+    {id = "https://www.roblox.com/asset/?id=7028932563", name = "Soupandreas & inverness - Hours"},
+    {id = "https://www.roblox.com/asset/?id=16662830706", name = "jugsta - raining tacos (jugcore cover)"},
+    {id = "https://www.roblox.com/asset/?id=7028570258", name = "Rome in Silver & Beach Season - Skin"},
+    {id = "https://www.roblox.com/asset/?id=5410083447", name = "Duumu & Pauline Herr - You Say"},
+    {id = "https://www.roblox.com/asset/?id=9039769451", name = "Sometimes You Win"},
+    {id = "https://www.roblox.com/asset/?id=7028919492", name = "SMLE - Found A Reason"},
+}
+
+local currentSongIndex = 1
+local sound = Instance.new("Sound")
+sound.Parent = ScreenGui
+local isPaused = false
+local savedTimePosition = 0
+local progressUpdateConnection
+
+local function resetSong()
+    sound:Stop()
+    savedTimePosition = 0
+    isPaused = false
+end
+
+local function pauseSong()
+    savedTimePosition = sound.TimePosition
+    sound:Pause()
+    isPaused = true
+end
+
+function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
+    local song = songs[index]
+    if song then
+        sound.SoundId = song.id
+        sound.TimePosition = savedTimePosition
+        sound:Play()
+        TitleLabel.Text = song.name
+        StartProgressUpdate(Frame_4, TimeLabel)
+    end
+end
+
+function FormatTime(seconds)
+    local minutes = math.floor(seconds / 60)
+    local remainingSeconds = math.floor(seconds % 60)
+    return string.format("%02d:%02d", minutes, remainingSeconds)
+end
+
+function StartProgressUpdate(Frame_4, TimeLabel)
+    if progressUpdateConnection then
+        progressUpdateConnection:Disconnect()
+    end
+
+    progressUpdateConnection = RunService.Heartbeat:Connect(function()
+        if sound.IsPlaying then
+            Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
+        else
+            if progressUpdateConnection then
+                progressUpdateConnection:Disconnect()
+                progressUpdateConnection = nil
+            end
+        end
+    end)
+end
+  
   function MinimizeButton(Configs)
+    local player = game.Players.LocalPlayer
+    local players = game:GetService("Players")
+    local localPlayer = players.LocalPlayer
+    local LocalPlayer = players.LocalPlayer
+    local accountAgeInDays = LocalPlayer.AccountAge
+    local playerCount = #players:GetPlayers()
+    local maxPlayers = players.MaxPlayers
+    local ageInDays = player.AccountAge
+    local PlaceId = game.PlaceId
+    local friendsCooldown = 0
+    local friendsInTotal = 0
+    local MarketplaceService = game:GetService("MarketplaceService")
+    local AssetService = game:GetService("AssetService")
+    local TeleportService = game:GetService("TeleportService")
+    local pages = AssetService:GetGamePlacesAsync()
+    local gamePlaces = pages:GetCurrentPage()
+    local count = 1
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -538,8 +781,18 @@ function MakeWindow(Configs)
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
 
+    local tweenGradient = CreateGradient(frame, {
+    Color = {
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = 45,
+    Tween = true,
+    Speed = 3
+    })
     if stroke then Stroke(frame) end
-    
+
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0, 30, 0, 30)
     Button1.Position = UDim2.new(0.4713, 0, 0.803, 0)
@@ -556,6 +809,846 @@ function MakeWindow(Configs)
     TimeLabel.Position = UDim2.new(-0.05, 0, 0, 15)
     TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TimeLabel.BackgroundTransparency = 1
+     
+     local Frame = Create("Frame", ScreenGui, {
+        Size = UDim2.new(0.4, 0, 0.3, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Position = UDim2.new(0.3, 0, 0, 0),
+        Draggable = true, 
+        Active = true, 
+        Visible = false,
+        Name = "MusicPlayerFrame"
+    })
+    local tweenGradient = CreateGradient(Frame, {
+    Color = {
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = 45,
+    Tween = true,
+    Speed = 3
+    })
+    Corner(Frame)
+    Stroke(Frame)
+    
+    local TitleLabel = Create("TextLabel", Frame, {
+        TextSize = 14,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = songs[currentSongIndex].name,
+        Size = UDim2.new(0.45, 0, 0, 40),
+        Position = UDim2.new(0.56, -25, 0.36, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(TitleLabel)
+
+    local Frame_4 = Create("Frame", Frame, {
+        Size = UDim2.new(0, 100, 0, 100),
+        Position = UDim2.new(0.13, -25, 0.31, -25),
+        BackgroundTransparency = 0.5,
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+    })
+    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
+    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
+
+    local ProgressCircle = Create("ImageLabel", Frame_4, {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        ImageTransparency = 0.6,
+        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
+    })
+    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
+
+    local timeLabel = Create("TextLabel", Frame, {
+        TextSize = 12,
+        TextWrapped = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "0:00 / 0:00",
+        Size = UDim2.new(0.3, 0, 0, 20),
+        Position = UDim2.new(0.63, -25, 0.6, -25),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Center",
+        Font = Configs_HUB.Text_Font
+    })
+
+    local NextButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.69, 28, 0.21, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
+        Name = "PlayButton"
+    })
+    Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
+
+    NextButton.MouseButton1Click:Connect(function()
+        resetSong()
+        currentSongIndex = (currentSongIndex % #songs) + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    end)
+
+    local PreviousButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.46, 28, 0.21, 60),
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
+    })
+    Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
+
+    PreviousButton.MouseButton1Click:Connect(function()
+        resetSong()
+        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    end)
+
+    local ToggleButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.57, 28, 0.21, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
+    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
+
+    ToggleButton.MouseButton1Click:Connect(function()
+        if sound.IsPlaying then
+            pauseSong()
+            TitleLabel.Text = "Stopped"
+            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+        else
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+        end
+    end)
+     
+    local MusicToggleButton = Instance.new("ImageButton", frame)
+    MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
+    MusicToggleButton.BackgroundTransparency = 1
+    MusicToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+    MusicToggleButton.ZIndex = 10
+    MusicToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
+
+     local minimize2 = true
+     MusicToggleButton.MouseButton1Click:Connect(function()
+        minimize2 = not minimize2
+
+        if minimize2 then
+            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0.3, 0), 0.3, true)
+            Frame.Visible = true
+        else
+            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            Frame.Visible = false
+            Frame.Position = UDim2.new(0.3, 0, 0, 0)
+        end
+    end)
+
+local framek = Instance.new("Frame", ScreenGui) 
+framek.Size = UDim2.new(0.5, 0, 0.7, 0)
+framek.Position = UDim2.new(0.25, 0, 0.15, 0)
+framek.BackgroundColor3 = Configs_HUB.Cor_Hub
+framek.Visible = false
+
+local tweenGradient = CreateGradient(framek, {
+    Color = {
+        Color3.fromRGB(255, 0, 0),
+        Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = 45,
+    Tween = true,
+    Speed = 3
+    })
+
+local mainText = Instance.new("TextLabel", framek)
+mainText.Size = UDim2.new(1, 0, 0.15, 0)
+mainText.BackgroundTransparency = 0.7
+mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainText.Text = "Check Split game"
+mainText.TextScaled = true
+
+local grnub7t = Instance.new("UIGradient", mainText)
+     grnub7t.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
+     }
+
+    grnub7t.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 1),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnub7t.Rotation = 90
+
+local frameGame = Instance.new("ScrollingFrame", framek)
+frameGame.Size = UDim2.new(1, 0, 0.85, 0)
+frameGame.Position = UDim2.new(0, 0, 0.15, 0)
+frameGame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frameGame.BackgroundTransparency = 1
+frameGame.CanvasSize = UDim2.new(0, 0, 5, 0)
+frameGame.ScrollBarThickness = 0
+
+local uiListLayout = Instance.new("UIListLayout", frameGame)
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local mainGameLabel = Instance.new("TextLabel", frameGame)
+mainGameLabel.Size = UDim2.new(1, 0, 0, 40)
+mainGameLabel.Text = "MainGame"
+mainGameLabel.BackgroundTransparency = 0.7
+mainGameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainGameLabel.TextXAlignment = Enum.TextXAlignment.Left
+mainGameLabel.TextScaled = true
+mainGameLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+local place = gamePlaces[1]
+
+local mainGameFrame = Instance.new("Frame", frameGame)
+mainGameFrame.Size = UDim2.new(1, 0, 0, 140)
+mainGameFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+
+local grnub55t = Instance.new("UIGradient", mainGameFrame)
+     grnub55t.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+     }
+
+    grnub55t.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 1),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnub55t.Rotation = 90
+
+local success, productInfo = pcall(function()
+    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+end)
+
+if success and productInfo then
+    local mainGameImage = Instance.new("ImageLabel", mainGameFrame) 
+    mainGameImage.Size = UDim2.new(0.32, 0, 0, 115)
+    mainGameImage.BackgroundTransparency = 1
+    mainGameImage.Position = UDim2.new(0, 0, 0, 0)
+    mainGameImage.Image = "rbxthumb://type=Asset&id=".. place.PlaceId .."&w=420&h=420"
+end
+
+local mainText = Instance.new("TextLabel", mainGameFrame)
+mainText.Size = UDim2.new(0.05, 0, 0, 20)
+mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainText.BackgroundTransparency = 1
+mainText.Position = UDim2.new(0.324, 0, 0, 0)
+mainText.Text = count..""
+mainText.TextScaled = true
+
+local mainGameText = Instance.new("TextLabel", mainGameFrame)
+mainGameText.Size = UDim2.new(0.672, 0, 0, 30)
+mainGameText.Position = UDim2.new(0.322, 0, 0.16, 0)
+mainGameText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainGameText.BackgroundTransparency = 1
+mainGameText.Text = "Name:" .. place.Name
+mainGameText.TextScaled = true
+mainGameText.TextXAlignment = Enum.TextXAlignment.Left
+
+local mainidGame = Instance.new("TextLabel", mainGameFrame)
+mainidGame.Size = UDim2.new(0.672, 0, 0, 30)
+mainidGame.Position = UDim2.new(0.322, 0, 0.4, 0)
+mainidGame.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainidGame.BackgroundTransparency = 1
+mainidGame.Text = "Id:"..place.PlaceId
+mainidGame.TextScaled = true
+mainidGame.TextXAlignment = Enum.TextXAlignment.Left
+
+local TeleportButton = Instance.new("TextButton", mainGameFrame)
+TeleportButton.Size = UDim2.new(1, 0, 0.17, 0)
+TeleportButton.Position = UDim2.new(0, 0, 0.83, 0)
+TeleportButton.BackgroundColor3 = Configs_HUB.Cor_Hub
+TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleportButton.BackgroundTransparency = 0
+TeleportButton.Text = "Play"
+TeleportButton.TextScaled = true
+TeleportButton.MouseButton1Click:Connect(function()
+    TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+end)
+
+local grant = Instance.new("UIGradient", TeleportButton)
+     grant.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+     }
+
+    grant.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 0),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grant.Rotation = 90
+
+count = count + 1
+
+local splitGamesLabel = Instance.new("TextLabel", frameGame)
+splitGamesLabel.Size = UDim2.new(1, 0, 0, 40)
+splitGamesLabel.BackgroundTransparency = 0
+splitGamesLabel.Text = "Splitgame"
+splitGamesLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+splitGamesLabel.TextScaled = true
+splitGamesLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+local grnubfft = Instance.new("UIGradient", splitGamesLabel)
+     grnubfft.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+     }
+
+    grnubfft.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 1),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnubfft.Rotation = 90
+
+for i = 2, #gamePlaces do
+    local place = gamePlaces[i]
+
+    local gameFrame = Instance.new("Frame", frameGame)
+    gameFrame.Size = UDim2.new(1, 0, 0, 140)
+    gameFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    
+    local grnujbt = Instance.new("UIGradient", gameFrame)
+     grnujbt.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+     }
+
+    grnujbt.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 0),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnujbt.Rotation = 40
+
+
+    local success, productInfo = pcall(function()
+        return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+    end)
+
+    if success and productInfo then
+        local gameImage = Instance.new("ImageLabel", gameFrame)
+        gameImage.Size = UDim2.new(0.32, 0, 0, 115)
+        gameImage.Position = UDim2.new(0, 0, 0, 0)
+        gameImage.BackgroundTransparency = 1
+        gameImage.Image = "rbxthumb://type=Asset&id=".. place.PlaceId .."&w=420&h=420"
+    end
+    
+    local gameText = Instance.new("TextLabel", gameFrame)
+    gameText.Size = UDim2.new(0.05, 0, 0, 20)
+    gameText.Position = UDim2.new(0.324, 0, 0, 0)
+    gameText.BackgroundTransparency = 1
+    gameText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameText.Text = count..""
+    gameText.TextScaled = true
+    
+    local gameLabelText = Instance.new("TextLabel", gameFrame)
+    gameLabelText.Size = UDim2.new(0.672, 0, 0, 30)
+    gameLabelText.Position = UDim2.new(0.322, 0, 0.16, 0)
+    gameLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameLabelText.BackgroundTransparency = 1
+    gameLabelText.Text = "Name:" .. place.Name
+    gameLabelText.TextScaled = true
+    gameLabelText.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local gameidLabel = Instance.new("TextLabel", gameFrame)
+    gameidLabel.Size = UDim2.new(0.672, 0, 0, 30)
+    gameidLabel.Position = UDim2.new(0.322, 0, 0.4, 0)
+    gameidLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameidLabel.BackgroundTransparency = 1
+    gameidLabel.Text = "Id:" ..place.PlaceId
+    gameidLabel.TextScaled = true
+    gameidLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    local teleportButton = Instance.new("TextButton", gameFrame)
+    teleportButton.Size = UDim2.new(1, 0, 0.17, 0)
+    teleportButton.Position = UDim2.new(0, 0, 0.83, 0)
+    teleportButton.BackgroundTransparency = 0
+    teleportButton.BackgroundColor3 = Configs_HUB.Cor_Hub
+    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.Text = "Play"
+    teleportButton.TextScaled = true
+    teleportButton.MouseButton1Click:Connect(function()
+        TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+    end)
+
+    local grnt = Instance.new("UIGradient", teleportButton)
+     grnt.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+     }
+
+    grnt.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 0),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnt.Rotation = -60
+
+    count = count + 1
+    end
+
+    local SplitgameToggleButton = Instance.new("ImageButton", frame)
+    SplitgameToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    SplitgameToggleButton.Position = UDim2.new(0.22 + 0.2, 0, 0, 13)
+    SplitgameToggleButton.BackgroundColor3 = Color3.fromRGB(204, 255, 204)
+    SplitgameToggleButton.ZIndex = 10
+    SplitgameToggleButton.BackgroundTransparency = 1
+    SplitgameToggleButton.Image = "rbxthumb://type=Asset&id=82825316875765&w=150&h=150"
+
+     local minimiz7 = true
+     SplitgameToggleButton.MouseButton1Click:Connect(function()
+        minimiz7 = not minimiz7
+
+        if minimiz7 then
+            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
+            framek.Visible = true
+        else
+            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
+            framek.Visible = false
+        end
+    end)
+
+local success, result = pcall(function()
+    return MarketplaceService:GetProductInfo(PlaceId)
+end)
+
+local Asset = MarketplaceService:GetProductInfo(PlaceId)
+local gameName = success and result.Name or Asset.Name or "Unknown"
+
+local frameinfo = Instance.new("Frame", ScreenGui)
+frameinfo.Size = UDim2.new(0.25, 0, 0.16, 0)
+frameinfo.Position = UDim2.new(0.04, 0, 0.21, 0)
+frameinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frameinfo.BackgroundTransparency = 0.5
+frameinfo.Visible = false
+Corner(frameinfo, {CornerRadius = UDim.new(0.15, 0)})
+
+local iconplayers = Instance.new("ImageLabel", ScreenGui)
+iconplayers.Size = UDim2.new(0, 50, 0, 50)
+iconplayers.Position = UDim2.new(0.05, 0, 0.06, 0)
+iconplayers.BackgroundColor3 = Configs_HUB.Cor_Hub
+iconplayers.BackgroundTransparency = 0.5
+iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+iconplayers.Visible = false
+Corner(iconplayers, {CornerRadius = UDim.new(1, 0)})
+
+local Wellcome = Instance.new("TextLabel", ScreenGui)
+Wellcome.Size = UDim2.new(0, 150, 0, 30)
+Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
+Wellcome.Position = UDim2.new(0.11, 0, 0.085, 0)
+Wellcome.TextColor3 = Color3.fromRGB(255, 255, 255)
+Wellcome.BackgroundColor3 = Configs_HUB.Cor_Hub
+Wellcome.BackgroundTransparency = 1
+Wellcome. TextScaled = true
+Wellcome.TextXAlignment = Enum.TextXAlignment.Left
+Wellcome.Visible = false
+
+local gameinfoframe= Instance.new("Frame", ScreenGui)
+gameinfoframe.Size = UDim2.new(0.27, 0, 0.3, 0)
+gameinfoframe.Position = UDim2.new(0.032, 0, 0.51, 0)
+gameinfoframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+gameinfoframe.BackgroundTransparency = 0.5
+gameinfoframe.Visible = false
+Corner(gameinfoframe, {CornerRadius = UDim.new(0.15, 0)})
+
+local iconGame = Instance.new("ImageLabel", ScreenGui)
+iconGame.Size = UDim2.new(0, 55, 0, 50)
+iconGame.Position = UDim2.new(0.04, 0, 0.38, 0)
+iconGame.BackgroundColor3 = Configs_HUB.Cor_Hub
+iconGame.BackgroundTransparency = 1
+iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+iconGame.Visible = false
+
+local GameName = Instance.new("TextLabel", ScreenGui)
+GameName.Size = UDim2.new(0, 190, 0, 30)
+GameName.Text = "Game Name: " .. gameName
+GameName.Position = UDim2.new(0.11, 0, 0.405, 0)
+GameName.TextColor3 = Color3.fromRGB(255, 255, 255)
+GameName.BackgroundColor3 = Configs_HUB.Cor_Hub
+GameName.BackgroundTransparency = 1
+GameName.TextScaled = true
+GameName.TextXAlignment = Enum.TextXAlignment.Left
+GameName.Visible = false
+
+local frame100 = Instance.new("Frame", ScreenGui)
+frame100.Size = UDim2.new(0.41, 0, 0.48, 0)
+frame100.Position = UDim2.new(0.4178, 0, 0.14, 0)
+frame100.BackgroundColor3 = Configs_HUB.Cor_Hub
+frame100.BackgroundTransparency = 1
+frame100.Visible = false
+
+local FriendList = Instance.new("TextLabel", frame100)
+FriendList.Size = UDim2.new(1, 0, 0.13, 0)
+FriendList.Position = UDim2.new(0, 0, 0.001, 0)
+FriendList.Text = "Friend List"
+FriendList.TextColor3 = Color3.fromRGB(255, 255, 255)
+FriendList.BackgroundColor3 = Configs_HUB.Cor_Hub
+FriendList.BackgroundTransparency = 0.5
+Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
+
+local friendsFrame = Instance.new("ScrollingFrame", frame100)
+friendsFrame.Size = UDim2.new(1, 0, 0.87, 0)
+friendsFrame.Position = UDim2.new(0, 0, 0.13, 0)
+friendsFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+friendsFrame.ScrollBarThickness = 3
+friendsFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+friendsFrame.BackgroundTransparency = 0.5
+
+local iconfriend = Instance.new("ImageLabel", ScreenGui)
+iconfriend.Size = UDim2.new(0, 50, 0, 50)
+iconfriend.Position = UDim2.new(0.43, 0, 0.006, 0)
+iconfriend.BackgroundColor3 = Configs_HUB.Cor_Hub
+iconfriend.BackgroundTransparency = 0.4
+iconfriend.Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420"
+iconfriend.Visible = false
+Corner(iconfriend, {CornerRadius = UDim.new(1, 0)})
+
+local friendnumber = Instance.new("TextLabel", ScreenGui)
+friendnumber.Size = UDim2.new(0, 150, 0, 30)
+friendnumber.Text = "Friend: "..friendsInTotal.."/200"
+friendnumber.Position = UDim2.new(0.49, 0, 0.03, 0)
+friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
+friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
+friendnumber.BackgroundTransparency = 1
+friendnumber. TextScaled = true
+friendnumber.TextXAlignment = Enum.TextXAlignment.Left
+friendnumber.Visible = false
+
+local function checkFriends()
+    if friendsCooldown <= 0 then
+        friendsCooldown = 25
+
+        local playersFriends = {}
+        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+
+        if success then
+            repeat
+                local info = page:GetCurrentPage()
+                for _, friendInfo in pairs(info) do
+                    table.insert(playersFriends, friendInfo)
+                end
+                if not page.IsFinished then 
+                    page:AdvanceToNextPageAsync()
+                end
+            until page.IsFinished
+        end
+
+        local friendsInTotal = #playersFriends
+
+        local function updateFriendsGUI(friends)
+            for _, child in pairs(friendsFrame:GetChildren()) do
+                if child:IsA("Frame") then
+                    child:Destroy()
+                end
+            end
+
+            local positionY = 0
+            for _, friend in pairs(friends) do
+                local friendFrame = Instance.new("Frame")
+                friendFrame.Size = UDim2.new(1, 0, 0, 50)
+                friendFrame.BackgroundTransparency = 1
+                friendFrame.Position = UDim2.new(0, 0, 0, positionY)
+                friendFrame.Parent = friendsFrame
+
+                local avatarImage = Instance.new("ImageLabel")
+                avatarImage.Size = UDim2.new(0, 50, 0, 50)
+                avatarImage.Position = UDim2.new(0, 0, 0, 0)
+                avatarImage.BackgroundColor3 =Configs_HUB.Cor_Hub
+                avatarImage.BackgroundTransparency = 0.4
+                avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
+                avatarImage.Parent = friendFrame
+                Corner(avatarImage, {CornerRadius = UDim.new(1, 0)})
+
+                local friendName = Instance.new("TextLabel")
+                friendName.Size = UDim2.new(0, 200, 1, 0)
+                friendName.Position = UDim2.new(0, 60, 0, 0)
+                friendName.BackgroundTransparency = 1
+                friendName.Text = friend.Username
+                friendName.TextColor3 = Color3.fromRGB(255, 255, 255)
+                friendName.TextWrapped = true
+                friendName.TextXAlignment = Enum.TextXAlignment.Left
+                friendName.Parent = friendFrame
+
+                local statusLabel = Instance.new("TextLabel")
+                statusLabel.Size = UDim2.new(0, 100, 1, 0)
+                statusLabel.BackgroundTransparency = 1
+                statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                statusLabel.TextWrapped = true
+                statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+                statusLabel.Position = UDim2.new(0, 260, 0, 0)
+
+                if friend.IsOnline then
+                    if players:FindFirstChild(friend.Username) then
+                        statusLabel.Text = "in Game"
+                    else
+                        statusLabel.Text = "Online"
+                    end
+                else
+                    statusLabel.Text = "offline"
+                end
+
+                statusLabel.Parent = friendFrame
+
+                positionY = positionY + 55
+            end
+
+            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(positionY, 3000))
+        end
+
+        updateFriendsGUI(playersFriends)
+        friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
+        return friendsInTotal
+    else
+        friendsCooldown = friendsCooldown - 1
+    end
+end
+
+checkFriends()
+
+local TimePlay = Instance.new("TextLabel", ScreenGui)
+TimePlay.Size = UDim2.new(0, 180, 0, 30)
+TimePlay.Text = "TimePlay"
+TimePlay.Position = UDim2.new(0.41, 0, 0.623, 0)
+TimePlay.TextColor3 = Color3.fromRGB(255, 255, 255)
+TimePlay.BackgroundColor3 = Configs_HUB.Cor_Hub
+TimePlay.BackgroundTransparency = 0.5
+TimePlay.TextScaled = true
+TimePlay.TextXAlignment = Enum.TextXAlignment.Left
+TimePlay.Visible = false
+Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
+
+local AccountAge = Instance.new("TextLabel", ScreenGui)
+AccountAge.Size = UDim2.new(0, 180, 0, 30)
+AccountAge.Text = "AccountAge"
+AccountAge.Position = UDim2.new(0.62, 0, 0.623, 0)
+AccountAge.TextColor3 = Color3.fromRGB(255, 255, 255)
+AccountAge.BackgroundColor3 = Configs_HUB.Cor_Hub
+AccountAge.BackgroundTransparency = 0.5
+AccountAge. TextScaled = true
+AccountAge.TextXAlignment = Enum.TextXAlignment.Left
+AccountAge.Visible = false
+Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
+
+local Join = Instance.new("TextButton", ScreenGui)
+Join.Size = UDim2.new(0, 100, 0, 30)
+Join.Text = "Join Game Script".."\nYou can press Copy"
+Join.Position = UDim2.new(0.41, 0, 0.699, 0)
+Join.TextColor3 = Color3.fromRGB(255, 255, 255)
+Join.BackgroundColor3 = Configs_HUB.Cor_Hub
+Join.BackgroundTransparency = 0.5
+Join.TextScaled = true
+Join.TextXAlignment = Enum.TextXAlignment.Left
+Join.Visible = false
+Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
+
+local Position = Instance.new("TextButton", ScreenGui)
+Position.Size = UDim2.new(0, 100, 0, 30)
+Position.Text = "Position".."\nYou can press Copy"
+Position.Position = UDim2.new(0.528, 0, 0.699, 0)
+Position.TextColor3 = Color3.fromRGB(255, 255, 255)
+Position.BackgroundColor3 = Configs_HUB.Cor_Hub
+Position.BackgroundTransparency = 0.5
+Position. TextScaled = true
+Position.TextXAlignment = Enum.TextXAlignment.Left
+Position.Visible = false
+Corner(Position, {CornerRadius = UDim.new(0.15, 0)})
+
+Position.MouseButton1Click:Connect(function()
+local player = game.Players.LocalPlayer
+local position = player.Character.HumanoidRootPart.Position
+
+local positionString = string.format("Vector3.new(%f, %f, %f)", position.X, position.Y, position.Z)
+local teleportCode = [[
+--1hooaczx1: You can take it, paste it into your Executor and press execute. And it will teleport you to where you originally pressed Copy
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(]] .. positionString .. [[)
+]]
+setclipboard(teleportCode)
+end) 
+Join.MouseButton1Click:Connect(function()
+local teleportCode = [[
+-- 1hooaczx1: This script will take you to the game"]]..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name..[["
+--If it doesn't work then the script isn't working
+game:GetService("TeleportService"):Teleport(]] .. game.PlaceId .. [[, player)
+]]
+setclipboard(teleportCode)
+end) 
+
+local gtxgh2 = Instance.new("Frame", frameinfo)
+gtxgh2.Size = UDim2.new(1, 0, 0.17, 0)
+gtxgh2.Position = UDim2.new(0, 0, 0.001, 0)
+gtxgh2.BackgroundColor3 = Configs_HUB.Cor_Hub
+gtxgh2.BackgroundTransparency = 1
+
+local framee356 = Instance.new("Frame", gameinfoframe)
+framee356.Size = UDim2.new(1, 0, 0.11, 0)
+framee356.Position = UDim2.new(0, 0, 0.001, 0)
+framee356.BackgroundColor3 = Configs_HUB.Cor_Hub
+framee356.BackgroundTransparency = 1
+
+local frame23 = Instance.new("Frame", frame100)
+frame23.Size = UDim2.new(1, 0, 0.11, 0)
+frame23.Position = UDim2.new(0, 0, 0.001, 0)
+frame23.BackgroundColor3 = Configs_HUB.Cor_Hub
+frame23.BackgroundTransparency = 1
+
+local frame9 = Instance.new("TextLabel", frameinfo)
+frame9.Size = UDim2.new(1, 0, 0.83, 0)
+frame9.Text = ""
+frame9.Position = UDim2.new(0, 0, 0.15, 0)
+frame9.BackgroundColor3 = Configs_HUB.Cor_Hub
+frame9.BackgroundTransparency = 1
+
+local frame79 = Instance.new("TextLabel", gameinfoframe)
+frame79.Size = UDim2.new(1, 0, 0.89, 0)
+frame79.Text = ""
+frame79.Position = UDim2.new(0, 0, 0.15, 0)
+frame79.BackgroundColor3 = Configs_HUB.Cor_Hub
+frame79.BackgroundTransparency = 1
+
+local listLayout = Instance.new("UIListLayout", frame79)
+listLayout.FillDirection = Enum.FillDirection.Vertical
+listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+listLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+listLayout.Padding = UDim.new(0, 5)
+
+local listLayout = Instance.new("UIListLayout", frame9)
+listLayout.FillDirection = Enum.FillDirection.Vertical
+listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+listLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+listLayout.Padding = UDim.new(0, 6)
+
+local players = game:GetService("Players")
+local LocalPlayer = players.LocalPlayer
+local accountAgeInDays = LocalPlayer.AccountAge
+local additionalPlayTimeInSeconds = 0
+
+local function calculateTotalPlayTime()
+    local totalSeconds = accountAgeInDays * 86400
+
+    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
+
+    local years = math.floor(totalSeconds / 31536000)
+    totalSeconds = totalSeconds % 31536000
+    local months = math.floor(totalSeconds / 2592000)
+    totalSeconds = totalSeconds % 2592000
+    local days = math.floor(totalSeconds / 86400)
+
+    return string.format("%d years, %d months, %d days", years, months, days)
+end
+
+local function accountAgeMessage(accountAgeInDays)
+    if accountAgeInDays == 0 then
+        return "You just created an account"
+    else
+        return string.format("Your account has been active for %d days", accountAgeInDays)
+    end
+end
+
+local function updatePlayTimeDisplay()
+    local totalPlayTime = calculateTotalPlayTime()
+    local ageMessage = accountAgeMessage(accountAgeInDays)
+    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
+end
+
+local function startUpdating()
+        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+        updatePlayTimeDisplay()
+end
+
+startUpdating()
+
+local function formatElapsedTime(elapsedTime)
+    local secondsInMinute = 60
+    local secondsInHour = 3600
+    local secondsInDay = 86400
+    local secondsInMonth = 2592000
+    local secondsInYear = 31536000
+
+    if elapsedTime < secondsInMinute then
+        return string.format("%02d", elapsedTime)
+    elseif elapsedTime < secondsInHour then
+        return string.format("%d:%02d", math.floor(elapsedTime / secondsInMinute), elapsedTime % secondsInMinute)
+    elseif elapsedTime < secondsInDay then
+        return string.format("%d:%02d:%02d", math.floor(elapsedTime / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    elseif elapsedTime < secondsInMonth then
+        return string.format("%d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    elseif elapsedTime < secondsInYear then
+        return string.format("%d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    else
+        return string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInYear), math.floor((elapsedTime % secondsInYear) / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    end
+end
+
+local player = game.Players.LocalPlayer
+local playtime = 0
+
+local function updatePlaytime()
+    playtime = playtime + 1
+    local formattedTime = formatElapsedTime(playtime)
+    TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
+end
+
+local function getAccountCreationDate(ageInDays)
+    local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
+    return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
+end
+
+updatePlaytime()
+
+local playerInfoLabels = {}
+local gameInfoLabels = {}
+
+local function updatePlayerInformation()
+    local Playerinformation = {
+        "Display Name: " .. player.DisplayName,
+        "UserId: " .. player.UserId,
+        "Account Created: " .. getAccountCreationDate(ageInDays),
+    }
+    local Gameinformation = {
+        "Update: " .. result.Updated,
+        "Creation Date: " .. result.Created,
+        "Gameid: " .. game.GameId,
+        "GamePlaceId: " .. game.PlaceId,
+        "GameJobId: " .. game.JobId,
+        "Server Size And Players: " .. playerCount .. " / " .. maxPlayers,
+    }
+    for i, labelText in ipairs(Playerinformation) do
+        if not playerInfoLabels[i] then
+            local Playersinfo = Instance.new("TextLabel", frame9)
+            Playersinfo.Size = UDim2.new(1, 0, 0, 10)
+            Playersinfo.BackgroundColor3 = Configs_HUB.Cor_Hub
+            Playersinfo.BackgroundTransparency = 1
+            Playersinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Playersinfo.TextScaled = true
+            Playersinfo.TextXAlignment = Enum.TextXAlignment.Left
+            playerInfoLabels[i] = Playersinfo
+        end
+        playerInfoLabels[i].Text = labelText
+    end
+
+    for i, labelText in ipairs(Gameinformation) do
+        if not gameInfoLabels[i] then
+            local Gameinfo = Instance.new("TextLabel", frame79)
+            Gameinfo.Size = UDim2.new(1, 0, 0, 10)
+            Gameinfo.BackgroundColor3 = Configs_HUB.Cor_Hub
+            Gameinfo.BackgroundTransparency = 1
+            Gameinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Gameinfo.TextScaled = true
+            Gameinfo.TextXAlignment = Enum.TextXAlignment.Left
+            gameInfoLabels[i] = Gameinfo
+        end
+        gameInfoLabels[i].Text = labelText
+    end
+end
+updatePlayerInformation()
 
     local function updateTime()
         local currentTime = os.date("*t")
@@ -573,6 +1666,9 @@ function MakeWindow(Configs)
 
         local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
         TimeLabel.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+       if sound.IsPlaying then
+        timeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
+       end
     end
 
     updateTime()
@@ -594,17 +1690,97 @@ function MakeWindow(Configs)
         end
     end)
 
-    RunService.Heartbeat:Connect(function()
-        updateTime()
-    end)
+    local infoToggleButton = Instance.new("ImageButton", frame)
+    infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    infoToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
+    infoToggleButton.BackgroundColor3 = Color3.fromRGB(4, 175, 236)
+    infoToggleButton.ZIndex = 10
+    infoToggleButton.BackgroundTransparency = 1
+    infoToggleButton.Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150"
 
+     local minimize3 = true
+     infoToggleButton.MouseButton1Click:Connect(function()
+        minimize3 = not minimize3
+
+        if minimize3 then
+            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0.16, 0), 0.3, true)
+            CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 50), 0.3, true)
+            CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 30), 0.3, true)
+            CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0.3, 0), 0.3, true)
+            CreateTween1(iconGame, "Size", UDim2.new(0, 55, 0, 50), 0.3, true)
+            CreateTween1(GameName, "Size", UDim2.new(0, 190, 0, 30), 0.3, true)
+            CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0.48, 0), 0.3, true)
+            CreateTween1(iconfriend, "Size", UDim2.new(0, 50, 0, 50), 0.3, true)
+            CreateTween1(friendnumber, "Size", UDim2.new(0, 150, 0, 30), 0.3, true)
+            CreateTween1(TimePlay, "Size", UDim2.new(0, 180, 0, 30), 0.3, true)
+            CreateTween1(AccountAge, "Size", UDim2.new(0, 180, 0, 30), 0.3, true)
+            CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
+            CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
+            frameinfo.Visible = true
+            iconplayers.Visible = true
+            Wellcome.Visible = true
+            gameinfoframe.Visible = true
+            iconGame.Visible = true
+            GameName.Visible = true
+            frame100.Visible = true
+            iconfriend.Visible = true
+            friendnumber.Visible = true
+            TimePlay.Visible = true
+            AccountAge.Visible = true
+            Join.Visible = true
+            Position.Visible = true
+        else
+            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
+            CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
+            CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
+            CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0, 0), 0.3, true)
+            CreateTween1(iconGame, "Size", UDim2.new(0, 55, 0, 0), 0.3, true)
+            CreateTween1(GameName, "Size", UDim2.new(0, 190, 0, 0), 0.3, true)
+            CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0, 0), 0.3, true)
+            CreateTween1(iconfriend, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
+            CreateTween1(friendnumber, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
+            CreateTween1(TimePlay, "Size", UDim2.new(0, 180, 0, 0), 0.3, true)
+            CreateTween1(AccountAge, "Size", UDim2.new(0, 180, 0, 0), 0.3, true)
+            CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 0), 0.3, true)
+            CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 0), 0.3, true)
+            frameinfo.Visible = false
+            iconplayers.Visible = false
+            Wellcome.Visible = false
+            gameinfoframe.Visible = false
+            iconGame.Visible = false
+            GameName.Visible = false
+            frame100.Visible = false
+            iconfriend.Visible = false
+            friendnumber.Visible = false
+            TimePlay.Visible = false
+            AccountAge.Visible = false
+            Join.Visible = false
+            Position.Visible = false
+        end
+    end)
+   
+   local lastUpdate = tick()
+   
+   RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
+    if currentTime - lastUpdate >= 1 then
+        updatePlayerInformation()
+        updatePlaytime()
+        checkFriends()
+        startUpdating()
+        updateTime()
+        lastUpdate = currentTime
+        end
+    end)
 
     local Button = Instance.new("ImageButton", frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
-    Button.Position = UDim2.new(0.22, 0, 0, 13)
+    Button.ZIndex = 10
+    Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     Button.BackgroundTransparency = 1
+    Button.Position = UDim2.new(0.22, 0, 0, 13)
     Button.Image = image
-    
+
     if corner then Corner(Button) end 
     if stroke then Stroke(Button, {Color = strokecolor}) end
     
@@ -618,6 +1794,7 @@ function MakeWindow(Configs)
             minimize = true
             CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
             Menu.Visible = false
+            Menu.Position = UDim2.new(0.5, -500/2, 0.5, -270/2)
         end
     end)
 end
@@ -1626,319 +2803,6 @@ end
   function SetSection(Section, NewName)
     Section.Text = NewName
   end
-
-local songs = {
-    {id = "rbxassetid://5409360995", name = "Dion Timmr"},
-    {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
-    {id = "rbxassetid://9046865270", name = "Glowing Light (Bed Version)"},
-    {id = "rbxassetid://9046863253", name = "Poolside"},
-    {id = "rbxassetid://1839388970", name = "Chilled Mood"},
-    {id = "rbxassetid://1839666799", name = "Calmness"},
-    {id = "rbxassetid://1844097881", name = "Outdoor Life 60"},
-    {id = "rbxassetid://1838202933", name = "Take a Bow"},
-    {id = "rbxassetid://1836667073", name = "Story Teller 60"},
-    {id = "rbxassetid://9038311584", name = "Under the Moon and Stars (b)"},
-    {id = "rbxassetid://1843628547", name = "Rural Outdoors (Rhythmic)"},
-    {id = "rbxassetid://1837087638", name = "Ambient Melt"},
-    {id = "rbxassetid://9047104336", name = "Sunday In Bed"},
-    {id = "rbxassetid://9045766377", name = "Gymnopedie No. 1"},
-    {id = "rbxassetid://1844296842", name = "Playtime (c)"},
-    {id = "rbxassetid://9046863579", name = "City Lights"},
-    {id = "rbxassetid://9042578129", name = "Fun In Paradise"},
-    {id = "rbxassetid://1842949058", name = "Go Time (Underscore Version)"},
-    {id = "rbxassetid://9047976765", name = "Fun Day (No Beat)"},
-    {id = "rbxassetid://9042436491", name = "Parasol"},
-    {id = "rbxassetid://1842181702", name = "Calm Waters"},
-    {id = "rbxassetid://1844272224", name = "Rising Calm"},
-    {id = "rbxassetid://1846122515", name = "Inner Calm 1"},
-    {id = "rbxassetid://1840599788", name = "The Calm Blue (b)"},
-    {id = "rbxassetid://1844272167", name = "Beating Calm"},
-    {id = "rbxassetid://9040456083", name = "Peaceful Calm A"},
-    {id = "rbxassetid://1848354536", name = "Relaxed Scene"},
-    {id = "rbxassetid://1839841807", name = "Relax (c)"},
-    {id = "rbxassetid://1840161104", name = "The Art Of Relaxation"},
-    {id = "rbxassetid://1840428407", name = "Relax In Style (A)"},
-    {id = "rbxassetid://9048039534", name = "Lo-Fi Dreams"},
-    {id = "rbxassetid://9048039288", name = "Just Relax"},
-    {id = "rbxassetid://7028518546", name = "Protostar - New Horizons"},
-    {id = "rbxassetid://7023887630", name = "Hyper Potions & Nokae - Expedition"},
-    {id = "rbxassetid://7028977687", name = "Stonebank - What Are You Waiting For"},
-    {id = "rbxassetid://5410083549", name = "Rogue - Let's Talk"},
-    {id = "rbxassetid://7028997537", name = "Subtact feat. Noctilucent - What It's Like"},
-    {id = "rbxassetid://7024154355", name = "Laszlo - Feels Like Love"},
-    {id = "rbxassetid://5410085763", name = "Tokyo Machine - PLAY"},
-    {id = "rbxassetid://7024332460", name = "Pegboard Nerds - Shaku"},
-    {id = "rbxassetid://7024132063", name = "Koven - Your Pain"},
-    {id = "rbxassetid://7023650590", name = "Case & Point - Descender"},
-    {id = "rbxassetid://7029011778", name = "Tails & Beach Season - No Sleep"},
-    {id = "rbxassetid://7023445033", name = "Aiobahn & Vin - About"},
-    {id = "rbxassetid://1837879082", name = "Paradise Falls"},
-    {id = "rbxassetid://1845554017", name = "Uptown"},
-    {id = "rbxassetid://9047050075", name = "Lo Fi Dreanms Hip Hop"},
-    {id = "rbxassetid://1842802203", name = "Pound For Pound"},
-    {id = "rbxassetid://7024233823", name = "Nitro Fun feat. Danyka Nadeau - Safe & Sound"},
-    {id = "rbxassetid://7029051434", name = "Vindata - Good 4 Me"},
-    {id = "rbxassetid://7024220835", name = "Nitro Fun - Easter Egg"},
-    {id = "rbxassetid://7023771708", name = "Glacier - Still"},
-    {id = "rbxassetid://1837324500", name = "Sunrise Workout"},
-    {id = "rbxassetid://7023635858", name = "Bensley - Vex"},
-    {id = "rbxassetid://9046862941", name = "Sunset Chill (Bed Version)"},
-    {id = "rbxassetid://1843397729", name = "Wonderful Day"},
-    {id = "rbxassetid://1838028467", name = "VIP Me (a)"},
-    {id = "rbxassetid://9046864489", name = "Violet Clouds"},
-    {id = "rbxassetid://9047105533", name = "No Smoking"},
-    {id = "rbxassetid://1842660676", name = "Just Scream"},
-    {id = "https://www.roblox.com/asset/?id=1840003540", name = "Tell It to Yourself (a)"},
-    {id = "https://www.roblox.com/asset/?id=142376088", name = "Parry Gripp - Raining Tacos"},
-    {id = "https://www.roblox.com/asset/?id=1837247191", name = "Pedal to the Metal"},
-    {id = "https://www.roblox.com/asset/?id=1846738464", name = "Corner Store (A)"},
-    {id = "https://www.roblox.com/asset/?id=1846458016", name = "No More"},
-    {id = "https://www.roblox.com/asset/?id=1838569831", name = "Never Gonna Give You Up"},
-    {id = "https://www.roblox.com/asset/?id=1844750628", name = "Oversized"},
-    {id = "https://www.roblox.com/asset/?id=1843433894", name = "Underground"},
-    {id = "https://www.roblox.com/asset/?id=1846720993", name = "Cool Garage (A)"},
-    {id = "https://www.roblox.com/asset/?id=1840003588", name = "Radio (A)"},
-    {id = "rbxassetid://9042437001", name = "Reflection"},
-    {id = "https://www.roblox.com/asset/?id=1842558494", name = "Skull Crusher"},
-    {id = "https://www.roblox.com/asset/?id=7024101188", name = "Fransis & josh Rubin - Same Mistake"},
-    {id = "rbxassetid://9045634474", name = "Questioning The Past"},
-    {id = "rbxassetid://9038549424", name = "Mellow Mind (Bed Version)"},
-    {id = "rbxassetid://1839129044", name = "Sweet Cat"},
-    {id = "rbxassetid://1840195350", name = "William Tell Overture (A)"},
-    {id = "rbxassetid://1836009626", name = "Halloween Horrors Waltz"},
-    {id = "rbxassetid://1838592691", name = "Halloween Night"},
-    {id = "rbxassetid://1838591268", name = "Halloween March"},
-    {id = "rbxassetid://1836009584", name = "Bouncing Halloween"},
-    {id = "rbxassetid://1836009678", name = "Fast Paced Halloween"},
-    {id = "rbxassetid://1837467198", name = "Night of the Ghouls"},
-    {id = "rbxassetid://1837467212", name = "Spooks"},
-    {id = "rbxassetid://1841602884", name = "Forever Halloween c"},
-    {id = "rbxassetid://14145627857", name = "Phonk Vol. 1 - Catch My Drift"},
-    {id = "rbxassetid://16831108393", name = "Blessed Mane - Death Is No More"},
-    {id = "rbxassetid://16190760005", name = "Din1c X dxstrxcted! X QWERRXR - Cowbell God"},
-    {id = "rbxassetid://16662833837", name = "nMisaki, zangel - stupidd (phonk remix)"},
-    {id = "rbxassetid://16662829817", name = "uzipack - Might End up as an Angel #666"},
-    {id = "rbxassetid://1840684529", name = "Cool Vibes"},
-    {id = "rbxassetid://1838457617", name = "Clair De Lune"},
-    {id = "rbxassetid://9043887091", name = "Lo-fi Chill A"},
-    {id = "rbxassetid://9048375035", name = "All Dropping 8 Bit Beats"},
-    {id = "rbxassetid://14145620056", name = "Phonk Vol. 2 - The Final Phonk"},
-    {id = "rbxassetid://9048376021", name = "All 8 Bit Now"},
-    {id = "rbxassetid://17422074849", name = "Alanwaad - BRX PHONK"},
-    {id = "rbxassetid://9044539308", name = "Fashion Lobby"},
-    {id = "rbxassetid://15689451063", name = "Din1c - METAMORPHSIS"},
-    {id = "rbxassetid://15689448519", name = "Din1c - can you"},
-    {id = "rbxassetid://1836807218", name = "A Heart Worth Saving"},
-    {id = "rbxassetid://1840030788", name = "We Could Be Kings (a)"},
-    {id = "rbxassetid://5410084188", name = "WRLD - Hang Up (feat. Savoi)"},
-    {id = "rbxassetid://9245552700", name = "Parry Gripp - TacoBot 3000"},
-    {id = "rbxassetid://1843324953", name = "Night Out"},
-    {id = "rbxassetid://1837984979", name = "Wherever You Are (a)"},
-    {id = "rbxassetid://15689439571", name = "kirkiimad - ily (tiktok version)"},
-    {id = "rbxassetid://16662834857", name = "nMisaki - let me rethink everything i've done"},
-    {id = "rbxassetid://15689441541", name = "jugsta - ball"},
-    {id = "rbxassetid://14366981664", name = "SAKU - GTA (Nightcore)"},
-    {id = "rbxassetid://5410082346", name = "Hoaprox & Rogue - New World"},
-    {id = "https://www.roblox.com/asset/?id=7029005367", name = "Summer Was Fun - Hold On (feat. Q'AILA)"},
-    {id = "https://www.roblox.com/asset/?id=9048510043", name = "Neon Sky"},
-    {id = "https://www.roblox.com/asset/?id=9046864900", name = "From LA With Love"},
-    {id = "https://www.roblox.com/asset/?id=1837450285", name = "[ Content Deleted ]"},
-    {id = "https://www.roblox.com/asset/?id=5410084870", name = "Dion Timmer feat. Micah Martin - Internet Boy"},
-    {id = "https://www.roblox.com/asset/?id=9039770890", name = "Another Snowy Day"},
-    {id = "https://www.roblox.com/asset/?id=9046546370", name = "Give You All My Love - Underscore"},
-    {id = "https://www.roblox.com/asset/?id=7028932563", name = "Soupandreas & inverness - Hours"},
-    {id = "https://www.roblox.com/asset/?id=16662830706", name = "jugsta - raining tacos (jugcore cover)"},
-    {id = "https://www.roblox.com/asset/?id=7028570258", name = "Rome in Silver & Beach Season - Skin"},
-    {id = "https://www.roblox.com/asset/?id=5410083447", name = "Duumu & Pauline Herr - You Say"},
-    {id = "https://www.roblox.com/asset/?id=9039769451", name = "Sometimes You Win"},
-    {id = "https://www.roblox.com/asset/?id=7028919492", name = "SMLE - Found A Reason"},
-}
-
-local currentSongIndex = 1
-local sound = Instance.new("Sound")
-sound.Parent = ScreenGui
-local isPaused = false
-local savedTimePosition = 0
-local progressUpdateConnection
-
-local function resetSong()
-    sound:Stop()
-    savedTimePosition = 0
-    isPaused = false
-end
-
-local function pauseSong()
-    savedTimePosition = sound.TimePosition
-    sound:Pause()
-    isPaused = true
-end
-
-function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
-    local song = songs[index]
-    if song then
-        sound.SoundId = song.id
-        sound.TimePosition = savedTimePosition
-        sound:Play()
-        TitleLabel.Text = song.name
-        StartProgressUpdate(Frame_4, TimeLabel)
-    end
-end
-
-function FormatTime(seconds)
-    local minutes = math.floor(seconds / 60)
-    local remainingSeconds = math.floor(seconds % 60)
-    return string.format("%02d:%02d", minutes, remainingSeconds)
-end
-
-function StartProgressUpdate(Frame_4, TimeLabel)
-    if progressUpdateConnection then
-        progressUpdateConnection:Disconnect()
-    end
-
-    progressUpdateConnection = RunService.Heartbeat:Connect(function()
-        if sound.IsPlaying then
-            Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
-            TimeLabel.Text = string.format("%s / %s", FormatTime(sound.TimePosition), FormatTime(sound.TimeLength))
-        else
-            if progressUpdateConnection then
-                progressUpdateConnection:Disconnect()
-                progressUpdateConnection = nil
-            end
-        end
-    end)
-end
-
-function AddMusicPlayer(parent, Configs)
-    local Frame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 150),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Name = "MusicPlayerFrame"
-    })
-    Corner(Frame)
-    Stroke(Frame)
-    
-    local ToggleFrameButton = Create("TextButton", parent, {
-        Size = UDim2.new(0, 55, 0, 30),
-        Position = UDim2.new(0, 0, 0, 0),
-        Text = "Outside Gui",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 14,
-        Font = Enum.Font.SourceSans,
-    })
-    Corner(ToggleFrameButton)
-    Stroke(ToggleFrameButton)
-    
-ToggleFrameButton.MouseButton1Click:Connect(function()
-    if Frame.Parent == parent then
-        Frame.Parent = ScreenGui
-        Frame.Position = UDim2.new(0.35, -Frame.Size.X.Offset / 2, 0.5, -Frame.Size.Y.Offset / 2)
-        Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
-        Frame.BackgroundTransparency = 0.4
-        Frame.Draggable = true
-        Frame.Active = true
-        ToggleFrameButton.Text = "in Gui"
-    else
-        Frame.Parent = parent
-        Frame.BackgroundTransparency = 0
-        Frame.Size = UDim2.new(1, 0, 0, 150)
-        Frame.Position = UDim2.new(0, 0, 0, 0)
-        Frame.Draggable = false
-        Frame.Active = false
-        ToggleFrameButton.Text = "Outside Gui"
-    end
-end)
-    local TitleLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = songs[currentSongIndex].name,
-        Size = UDim2.new(0.45, 0, 0, 40),
-        Position = UDim2.new(0.56, -25, 0.36, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(TitleLabel)
-
-    local Frame_4 = Create("Frame", Frame, {
-        Size = UDim2.new(0, 100, 0, 100),
-        Position = UDim2.new(0.13, -25, 0.32, -25),
-        BackgroundTransparency = 0.5,
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-    })
-    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
-    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
-
-    local ProgressCircle = Create("ImageLabel", Frame_4, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        ImageTransparency = 0.6,
-        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
-    })
-    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
-
-    local TimeLabel = Create("TextLabel", Frame, {
-        TextSize = 12,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "0:00 / 0:00",
-        Size = UDim2.new(0.3, 0, 0, 20),
-        Position = UDim2.new(0.63, -25, 0.56, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-
-    local NextButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.69, 28, 0.25, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
-        Name = "PlayButton"
-    })
-    Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
-
-    NextButton.MouseButton1Click:Connect(function()
-        resetSong()
-        currentSongIndex = (currentSongIndex % #songs) + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    end)
-
-    local PreviousButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.46, 28, 0.25, 60),
-        BackgroundTransparency = 1,
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
-    })
-    Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
-
-    PreviousButton.MouseButton1Click:Connect(function()
-        resetSong()
-        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    end)
-
-    local ToggleButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.25, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
-    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
-
-    ToggleButton.MouseButton1Click:Connect(function()
-        if sound.IsPlaying then
-            pauseSong()
-            TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        end
-    end)
-end
 
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
