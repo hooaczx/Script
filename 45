@@ -956,9 +956,20 @@ framek.Position = UDim2.new(0.25, 0, 0.15, 0)
 framek.BackgroundColor3 = Configs_HUB.Cor_Hub
 framek.Visible = false
 
+local tweenGradient = CreateGradient(frame, {
+    Color = {
+        Color3.fromRGB(255, 0, 0),
+        Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = 45,
+    Tween = true,
+    Speed = 3
+    })
 local mainText = Instance.new("TextLabel", framek)
 mainText.Size = UDim2.new(1, 0, 0.15, 0)
 mainText.BackgroundTransparency = 1
+mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainText.Text = "Check Split game"
 mainText.TextScaled = true
 
@@ -987,6 +998,19 @@ local place = gamePlaces[1]
 local mainGameFrame = Instance.new("Frame", frameGame)
 mainGameFrame.Size = UDim2.new(1, 0, 0, 140)
 mainGameFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+
+local grnubt = Instance.new("UIGradient", mainGameFrame)
+     grnubt.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+     }
+
+    grnubt.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 0),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnubt.Rotation = 40
 
 local success, productInfo = pcall(function()
     return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
@@ -1067,6 +1091,20 @@ for i = 2, #gamePlaces do
     local gameFrame = Instance.new("Frame", frameGame)
     gameFrame.Size = UDim2.new(1, 0, 0, 140)
     gameFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    
+    local grnujbt = Instance.new("UIGradient", gameFrame)
+     grnujbt.Color = ColorSequence.new{
+       ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+       ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+       ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+     }
+
+    grnujbt.Transparency = NumberSequence.new{
+       NumberSequenceKeypoint.new(0, 0),
+       NumberSequenceKeypoint.new(1, 0)
+     }
+    grnujbt.Rotation = 40
+
 
     local success, productInfo = pcall(function()
         return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
