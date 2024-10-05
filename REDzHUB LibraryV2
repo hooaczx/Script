@@ -1837,10 +1837,11 @@ Server.Parent = frame79
     end)
    
    local lastUpdate = tick()
-   
    RunService.Heartbeat:Connect(function()
    local currentTime = tick()
     if currentTime - lastUpdate >= 1 then
+   local playerCount = #players:GetPlayers()
+   local maxPlayers = players.MaxPlayers
         DisplayName.Text = "Display Name: " .. player.DisplayName
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
@@ -1855,6 +1856,12 @@ Server.Parent = frame79
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+          lastUpdate = currentTime
+        end
+     end) 
+   RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
+    if currentTime - lastUpdate >= 1 then
         updatePlaytime()
         checkFriends()
         startUpdating()
