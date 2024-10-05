@@ -776,7 +776,7 @@ end
     local count = 1
     local image = Configs.Image or ""
 
-   local function checkFriends()
+   local function NumberFriend()
     if friendsCooldown == 0 then
         friendsCooldown = 25
 
@@ -801,7 +801,7 @@ end
     end
 end
 
-local totalFriends = checkFriends()
+local totalFriends = NumberFriend()
 
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -1648,45 +1648,47 @@ local gameInfoLabels = {}
         "GameJobId: " .. game.JobId,
         "Server Size And Players: " .. playerCount .. " / " .. maxPlayers,
     }
-    for i, labelText in ipairs(Playerinformation) do
-        if not playerInfoLabels[i] then
-            local Playersinfo = Instance.new("TextLabel", frame9)
-            Playersinfo.Size = UDim2.new(1, 0, 0, 10)
-            Playersinfo.BackgroundColor3 = Configs_HUB.Cor_Hub
-            Playersinfo.BackgroundTransparency = 1
-            Playersinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Playersinfo.TextScaled = true
-            Playersinfo.TextXAlignment = Enum.TextXAlignment.Left
-            playerInfoLabels[i] = Playersinfo
+   local function updatePlayerInfo()
+    for _, child in ipairs(Playersinfo:GetChildren()) do
+        if child:IsA("TextLabel") then
+            child:Destroy()
         end
-        playerInfoLabels[i].Text = labelText
     end
 
-    for i, labelText in ipairs(Gameinformation) do
-        if not gameInfoLabels[i] then
-            local Gameinfo = Instance.new("TextLabel", frame79)
-            Gameinfo.Size = UDim2.new(1, 0, 0, 10)
-            Gameinfo.BackgroundColor3 = Configs_HUB.Cor_Hub
-            Gameinfo.BackgroundTransparency = 1
-            Gameinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Gameinfo.TextScaled = true
-            Gameinfo.TextXAlignment = Enum.TextXAlignment.Left
-            gameInfoLabels[i] = Gameinfo
-        end
-        gameInfoLabels[i].Text = labelText
+    for _, labelText in ipairs(Playerinformation) do
+        local Playersinfo = Instance.new("TextLabel")
+        Playersinfo.Size = UDim2.new(1, 0, 0, 10)
+        Playersinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        Playersinfo.BackgroundTransparency = 1
+        Playersinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Playersinfo.Text = labelText
+        Playersinfo.TextScaled = true
+        Playersinfo.TextXAlignment = Enum.TextXAlignment.Left
+        Playersinfo.Parent = Playersinfo
     end
+end
 
+    local function updateGameInfo()
+    for _, child in ipairs(Gameinfo:GetChildren()) do
+        if child:IsA("TextLabel") then
+            child:Destroy()
+        end
+    end
+    for _, labelText in ipairs(Gameinformation) do
+        local Gameinfo = Instance.new("TextLabel")
+        Gameinfo.Size = UDim2.new(1, 0, 0, 10)
+        Gameinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        Gameinfo.BackgroundTransparency = 1
+        Gameinfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Gameinfo.Text = labelText
+        Gameinfo.TextScaled = true
+        Gameinfo.TextXAlignment = Enum.TextXAlignment.Left
+        Gameinfo.Parent = Gameinfo
+    end
+end
 local function updatePlayerInformation()
-for i, labelText in ipairs(Playerinformation) do
-        if playerInfoLabels[i] then
-            playerInfoLabels[i].Text = labelText
-        end
-    end
-    for i, labelText in ipairs(Gameinformation) do
-        if gameInfoLabels[i] then
-            gameInfoLabels[i].Text = labelText
-        end
-    end
+updatePlayerInfo()
+updateGameInfo()
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
 GameName.Text = "Game Name: " .. gameName
 friendnumber.Text = "Friend: "..totalFriends.."/200"
