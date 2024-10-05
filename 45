@@ -776,6 +776,34 @@ end
     local count = 1
     local image = Configs.Image or ""
 
+   local function checkFriends()
+    if friendsCooldown == 0 then
+        friendsCooldown = 25
+
+        local playersFriends = {}
+        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+
+        if success then
+            repeat
+                local info = page:GetCurrentPage()
+                for _, friendInfo in pairs(info) do
+                    table.insert(playersFriends, friendInfo)
+                end
+                if not page.IsFinished then 
+                    page:AdvanceToNextPageAsync()
+                end
+            until page.IsFinished
+        end
+
+        return #playersFriends
+    else
+        friendsCooldown = friendsCooldown - 1
+    end
+end
+
+local totalFriends = checkFriends()
+
+
     local frame = Instance.new("Frame", ScreenGui)
     frame.Size = UDim2.new(0.5, 0, 0.12, 0)
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
@@ -1314,7 +1342,7 @@ Corner(iconfriend, {CornerRadius = UDim.new(1, 0)})
 
 local friendnumber = Instance.new("TextLabel", ScreenGui)
 friendnumber.Size = UDim2.new(0, 150, 0, 30)
-friendnumber.Text = "Friend: "..friendsInTotal.."/200"
+friendnumber.Text = "Friend: "..totalFriends.."/200"
 friendnumber.Position = UDim2.new(0.49, 0, 0.03, 0)
 friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
 friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1661,7 +1689,7 @@ for i, labelText in ipairs(Playerinformation) do
     end
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
 GameName.Text = "Game Name: " .. gameName
-friendnumber.Text = "Friend: "..friendsInTotal.."/200"
+friendnumber.Text = "Friend: "..totalFriends.."/200"
 iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
 iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
 end
