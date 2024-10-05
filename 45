@@ -756,6 +756,9 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     end)
 end
 
+    
+
+  function MinimizeButton(Configs)
     local player = game.Players.LocalPlayer
     local players = game:GetService("Players")
     local localPlayer = players.LocalPlayer
@@ -775,35 +778,6 @@ end
     local count = 1
     local image = Configs.Image or ""
 
-   local function NumberFriend()
-    if friendsCooldown == 0 then
-        friendsCooldown = 25
-
-        local playersFriends = {}
-        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
-
-        if success then
-            repeat
-                local info = page:GetCurrentPage()
-                for _, friendInfo in pairs(info) do
-                    table.insert(playersFriends, friendInfo)
-                end
-                if not page.IsFinished then 
-                    page:AdvanceToNextPageAsync()
-                end
-            until page.IsFinished
-        end
-
-        return #playersFriends
-    else
-        friendsCooldown = friendsCooldown - 1
-    end
-end
-
-local totalFriends = NumberFriend()
-
-
-  function MinimizeButton(Configs)
     local frame = Instance.new("Frame", ScreenGui)
     frame.Size = UDim2.new(0.5, 0, 0.12, 0)
     frame.Position = UDim2.new(0.23, 0, 0.878, 0)
@@ -1340,9 +1314,30 @@ iconfriend.Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420"
 iconfriend.Visible = false
 Corner(iconfriend, {CornerRadius = UDim.new(1, 0)})
 
+local playersFriends = {}
+local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+
+if success then
+    repeat
+        local info = page:GetCurrentPage()
+        for _, friendInfo in pairs(info) do
+            table.insert(playersFriends, friendInfo)
+        end
+        if not page.IsFinished then 
+            page:AdvanceToNextPageAsync()
+        end
+    until page.IsFinished
+end
+
+local friendsInTotal = #playersFriends
+
+local friendsData = {
+    total = friendsInTotal
+}
+
 local friendnumber = Instance.new("TextLabel", ScreenGui)
 friendnumber.Size = UDim2.new(0, 150, 0, 30)
-friendnumber.Text = "Friend: "..totalFriends.."/200"
+friendnumber.Text = "Friend: "..friendsData.total.."/200"
 friendnumber.Position = UDim2.new(0.49, 0, 0.03, 0)
 friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
 friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1632,7 +1627,7 @@ end
 
 updatePlaytime()
 
-    local DisplayName = Instance.new("TextLabel")
+local DisplayName = Instance.new("TextLabel")
 DisplayName.Size = UDim2.new(1, 0, 0, 20)
 DisplayName.Text = "Display Name: " .. player.DisplayName
 DisplayName.Position = UDim2.new(0, 0, 0, 0)
@@ -1641,29 +1636,29 @@ DisplayName.TextColor3 = Color3.fromRGB(255, 255, 255)
 DisplayName.TextXAlignment = Enum.TextXAlignment.Left
 DisplayName.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 DisplayName.BackgroundTransparency = 1
-DisplayName.Parent = Playersinfo
+DisplayName.Parent = frame9
 
 local UserIdg = Instance.new("TextLabel")
 UserIdg.Size = UDim2.new(1, 0, 0, 20)
 UserIdg.Text = "UserId: " .. player.UserId
-UserIdg.Position = UDim2.new(0, 0, 0.25, 0)
+UserIdg.Position = UDim2.new(0, 0, 0.15, 0)
 UserIdg.TextScaled = true
 UserIdg.TextColor3 = Color3.fromRGB(255, 255, 255)
 UserIdg.TextXAlignment = Enum.TextXAlignment.Left
 UserIdg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 UserIdg.BackgroundTransparency = 1
-UserIdg.Parent = Playersinfo
+UserIdg.Parent = frame9
 
 local AccountCreated = Instance.new("TextLabel")
 AccountCreated.Size = UDim2.new(1, 0, 0, 20)
 AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
-AccountCreated.Position = UDim2.new(0, 0, 0.5, 0)
+AccountCreated.Position = UDim2.new(0, 0, 0.3, 0)
 AccountCreated.TextScaled = true
 AccountCreated.TextColor3 = Color3.fromRGB(255, 255, 255)
 AccountCreated.TextXAlignment = Enum.TextXAlignment.Left
 AccountCreated.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 AccountCreated.BackgroundTransparency = 1
-AccountCreated.Parent = Playersinfo
+AccountCreated.Parent = frame9
 
 local Update = Instance.new("TextLabel")
 Update.Size = UDim2.new(1, 0, 0, 10)
@@ -1674,7 +1669,7 @@ Update.TextColor3 = Color3.fromRGB(255, 255, 255)
 Update.TextXAlignment = Enum.TextXAlignment.Left
 Update.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Update.BackgroundTransparency = 1
-Update.Parent = Gameinfo
+Update.Parent = frame79
 
 local CreationDate = Instance.new("TextLabel")
 CreationDate.Size = UDim2.new(1, 0, 0, 10)
@@ -1685,7 +1680,7 @@ CreationDate.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreationDate.TextXAlignment = Enum.TextXAlignment.Left
 CreationDate.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 CreationDate.BackgroundTransparency = 1
-CreationDate.Parent = Gameinfo
+CreationDate.Parent = frame79
 
 local Gameid = Instance.new("TextLabel")
 Gameid.Size = UDim2.new(1, 0, 0, 10)
@@ -1696,7 +1691,7 @@ Gameid.TextColor3 = Color3.fromRGB(255, 255, 255)
 Gameid.TextXAlignment = Enum.TextXAlignment.Left
 Gameid.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Gameid.BackgroundTransparency = 1
-Gameid.Parent = Gameinfo
+Gameid.Parent = frame79
 
 local GamePlaceId = Instance.new("TextLabel")
 GamePlaceId.Size = UDim2.new(1, 0, 0, 10)
@@ -1707,7 +1702,7 @@ GamePlaceId.TextColor3 = Color3.fromRGB(255, 255, 255)
 GamePlaceId.TextXAlignment = Enum.TextXAlignment.Left
 GamePlaceId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 GamePlaceId.BackgroundTransparency = 1
-GamePlaceId.Parent = Gameinfo
+GamePlaceId.Parent = frame79
 
 local GameJobId = Instance.new("TextLabel")
 GameJobId.Size = UDim2.new(1, 0, 0, 10)
@@ -1718,7 +1713,7 @@ GameJobId.TextColor3 = Color3.fromRGB(255, 255, 255)
 GameJobId.TextXAlignment = Enum.TextXAlignment.Left
 GameJobId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 GameJobId.BackgroundTransparency = 1
-GameJobId.Parent = Gameinfo
+GameJobId.Parent = frame79
 
 local Server = Instance.new("TextLabel")
 Server.Size = UDim2.new(1, 0, 0, 10)
@@ -1729,7 +1724,7 @@ Server.TextColor3 = Color3.fromRGB(255, 255, 255)
 Server.TextXAlignment = Enum.TextXAlignment.Left
 Server.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Server.BackgroundTransparency = 1
-Server.Parent = Gameinfo
+Server.Parent = frame79
 
 local function updatePlayerInformation()
 DisplayName.Text = "Display Name: " .. player.DisplayName
@@ -1743,7 +1738,7 @@ GameJobId.Text = "GameJobId: " .. game.JobId
 Server.Text = "Server Size And Players: ".. playerCount .. " / " .. maxPlayers
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
 GameName.Text = "Game Name: " .. gameName
-friendnumber.Text = "Friend: "..totalFriends.."/200"
+friendnumber.Text = "Friend: "..friendsData.total.."/200"
 iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
 iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
 end
