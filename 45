@@ -1650,12 +1650,15 @@ local gameInfoLabels = {}
 
 local function updatePlayerInformation()
 for i, labelText in ipairs(Playerinformation) do
-    playerInfoLabels[i].Text = Playerinformation[i]
-end
-
-for i, labelText in ipairs(Gameinformation) do
-    gameInfoLabels[i].Text = Gameinformation[i]
-end
+        if playerInfoLabels[i] then
+            playerInfoLabels[i].Text = labelText
+        end
+    end
+    for i, labelText in ipairs(Gameinformation) do
+        if gameInfoLabels[i] then
+            gameInfoLabels[i].Text = labelText
+        end
+    end
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
 GameName.Text = "Game Name: " .. gameName
 friendnumber.Text = "Friend: "..friendsInTotal.."/200"
