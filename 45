@@ -764,7 +764,6 @@ end
     local localPlayer = players.LocalPlayer
     local LocalPlayer = players.LocalPlayer
     local accountAgeInDays = LocalPlayer.AccountAge
-    local playerCount = #players:GetPlayers()
     local maxPlayers = players.MaxPlayers
     local ageInDays = player.AccountAge
     local PlaceId = game.PlaceId
@@ -1717,7 +1716,7 @@ GameJobId.Parent = frame79
 
 local Server = Instance.new("TextLabel")
 Server.Size = UDim2.new(1, 0, 0, 10)
-Server.Text = "Server Size And Players: ".. playerCount .. " / " .. maxPlayers
+Server.Text = "Server Size: ".. maxPlayers
 Server.Position = UDim2.new(0, 0, 0.5, 0)
 Server.TextScaled = true
 Server.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1850,7 +1849,7 @@ Server.Parent = frame79
         Gameid.Text = "Gameid: " .. game.GameId
         GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
         GameJobId.Text = "GameJobId: " .. game.JobId
-        Server.Text = "Server Size And Players: ".. playerCount .. " / " .. maxPlayers
+        Server.Text = "Server Size: "..maxPlayers
         Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
         GameName.Text = "Game Name: " .. gameName
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
@@ -1894,6 +1893,335 @@ Server.Parent = frame79
             Menu.Position = UDim2.new(0.5, -500/2, 0.5, -270/2)
         end
     end)
+
+local function createToggleButton(parent, position, callback, initialState)
+    local TextButton = Instance.new("TextButton", parent)
+    TextButton.Size = UDim2.new(0.17, 0, 0, 25)
+    TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
+    TextButton.Position = position
+    TextButton.Name = "ToggleButton"
+    TextButton.Text = ""
+    TextButton.AutoButtonColor = false
+
+    local Frame2 = Instance.new("Frame", TextButton)
+    Frame2.Size = UDim2.new(0.25, 0, 0.82, 0)
+    Frame2.Position = UDim2.new(initialState and 0.8 or 0, 2, 0.5, 0)
+    Frame2.AnchorPoint = Vector2.new(0, 0.5)
+    Frame2.BackgroundColor3 = initialState and Color3.fromRGB(30, 140, 200) or Configs_HUB.Cor_Stroke
+    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+    
+
+    local OnOff = initialState  -- Set initial state
+
+    TextButton.MouseButton1Click:Connect(function()
+        OnOff = not OnOff
+
+        if OnOff then
+            CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            callback(true)
+        else
+            CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
+            callback(false)
+        end
+    end)
+
+    return TextButton
+end
+
+local frameSetting = Instance.new("Frame", ScreenGui)
+frameSetting.Size = UDim2.new(0.4, 0, 0.8, 0)
+frameSetting.Position = UDim2.new(0.52, -200, 0.4, -150)
+frameSetting.BackgroundColor3 = Configs_HUB.Cor_Hub
+frameSetting.Visible = false
+
+local Text7 = Instance.new("TextLabel", frameSetting)
+Text7.Size = UDim2.new(1, 0, 0.15, 0)
+Text7.TextScaled = true
+Text7.Text = "Setting Menu"
+
+local scrollingSettingFrame = Instance.new("ScrollingFrame", frameSetting)
+scrollingFrame.Size = UDim2.new(1, 0, 0.85, 0)
+scrollingFrame.CanvasSize = UDim2.new(0, 0, 0.15, 0)
+scrollingSettingFrame.BackgroundTransparency = 1
+scrollingFrame.ScrollBarThickness = 0
+
+local TinnLayout = Instance.new("UIListLayout", scrollingFrame)
+TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
+TinnLayout.Padding = UDim.new(0, 5)
+
+local antiCheatEnabled = true
+local kickBlockEnabled = true
+
+local function toggleFeatures(state)
+    antiCheatEnabled = state
+    kickBlockEnabled = state
+end
+
+local frameAnticheat = Instance.new("Frame", scrollingFrame)
+frameAnticheat.Size = UDim2.new(1, 0, 0, 100)
+frameAnticheat.BackgroundTransparency = 0
+
+local Text1 = Instance.new("TextLabel", frameAnticheat)
+Text1.Size = UDim2.new(1, 0, 0, 30)
+Text1.TextScaled = true
+Text1.TextXAlignment = Enum.TextXAlignment.Left
+Text1.BackgroundTransparency = 1
+Text1.Text = "AntiAdonis+Antikick"
+
+local Text2 = Instance.new("TextLabel", frameAnticheat)
+Text2.Size = UDim2.new(1, 0, 0, 50)
+Text2.TextScaled = true
+Text2.TextXAlignment = Enum.TextXAlignment.Left
+Text2.BackgroundTransparency = 1
+Text2.Position = UDim2.new(0, 0, 0.32, 0)
+Text2.Text = [[1. Anti Adonis: This script blocks being kicked out of the game by Adonis
+2. Antikick: It will protect you from "game.Players.LocalPlayer:Kick()" only]]
+
+local toggleAnitButton = createToggleButton(frameAnticheat, UDim2.new(0.82, 0, 0.75, 0), function(state)
+    toggleFeatures(state)
+end, antiCheatEnabled)
+
+local frameAnticopy = Instance.new("Frame", scrollingFrame)
+frameAnticopy.Size = UDim2.new(1, 0, 0, 100)
+frameAnticopy.BackgroundTransparency = 0
+
+local Text3 = Instance.new("TextLabel", frameAnticopy)
+Text3.Size = UDim2.new(1, 0, 0, 30)
+Text3.TextScaled = true
+Text3.TextXAlignment = Enum.TextXAlignment.Left
+Text3.BackgroundTransparency = 1
+Text3.Text = "Anti Copy"
+
+local Text4 = Instance.new("TextLabel", frameAnticopy)
+Text4.Size = UDim2.new(1, 0, 0, 50)
+Text4.TextScaled = true
+Text4.TextXAlignment = Enum.TextXAlignment.Left
+Text4.BackgroundTransparency = 1
+Text4.Position = UDim2.new(0, 0, 0.31, 0)
+Text4.Text = [[This script will prevent you from copying using toclipboard and setclipboard and originalSetClipboard to copy.
+It will notify you on the screen. If you feel annoyed, you can turn it off]]
+
+local notifications = {}
+
+local function notify(message)
+    local NotificationLabel = Instance.new("TextLabel", ScreenGui) 
+    NotificationLabel.Size = UDim2.new(0, 400, 0, 70)
+    NotificationLabel.BackgroundTransparency = 1
+    NotificationLabel.Text = message
+    NotificationLabel.TextScaled = true
+    NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotificationLabel.Position = UDim2.new(0.5, -200, 0.45, 50)
+    
+    local NotificationLabelText = Instance.new("TextLabel", NotificationLabel)
+    NotificationLabelText.Size = UDim2.new(1, 0, 0.4, 0)
+    NotificationLabelText.BackgroundTransparency = 1
+    NotificationLabelText.Text = "Attempted to copy"
+    NotificationLabelText.TextScaled = true
+    NotificationLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotificationLabelText.Position = UDim2.new(0, 0, -0.4, 0)
+    
+    local OkButton = Instance.new("TextButton", NotificationLabel) 
+    OkButton.Size = UDim2.new(1, 0, 0.4, 0)
+    OkButton.Position = UDim2.new(0, 0, 1, 0)
+    OkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    OkButton.TextScaled = true
+    OkButton.Text = "OK"
+    OkButton.BackgroundTransparency = 1
+
+    table.insert(notifications, NotificationLabel)
+
+    if #notifications > 1 then
+        local oldNotification = table.remove(notifications, 1)
+        oldNotification:Destroy()
+    end
+    
+    local tween = TweenService:Create(NotificationLabel, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -200, 0.45, 50 - (#notifications * 60))})
+    tween:Play()
+    
+    OkButton.MouseButton1Click:Connect(function()
+        local tweenOut = TweenService:Create(NotificationLabel, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -200, 0.45, 100), TextTransparency = 1})
+        tweenOut:Play()
+
+        tweenOut.Completed:Connect(function()
+            NotificationLabel:Destroy()
+        end)
+    end)
+end
+
+local copyEnabled = false
+
+local originalToClipboard = getgenv().toclipboard
+local originalSetClipboard = getgenv().setclipboard
+local originalOriginalSetClipboard = getgenv().originalSetClipboard
+
+getgenv().toggleClipboard = function(copyEnabled)
+    if copyEnabled then
+    getgenv().toclipboard = function(data)
+            notify("" .. tostring(data))
+        end
+        getgenv().setclipboard = function(data)
+            notify("" .. tostring(data))
+        end
+        getgenv().originalSetClipboard = function(data)
+            notify("" .. tostring(data))
+        end
+    else
+        getgenv().toclipboard = originalToClipboard
+        getgenv().setclipboard = originalSetClipboard
+        getgenv().originalSetClipboard = originalOriginalSetClipboard
+    end
+end
+
+local TogglecopyButton = createToggleButton(frameAnticopy, UDim2.new(0.83, 0, 0.75, 0), function(state)
+    toggleClipboard(state)
+end, copyEnabled)
+
+local friendnotifications = {}
+local notifyFriendsEnabled = true
+
+local friendnotificationframe = Instance.new("Frame", scrollingFrame)
+friendnotificationframe.Size = UDim2.new(1, 0, 0, 100)
+friendnotificationframe.BackgroundTransparency = 0
+
+local Text5 = Instance.new("TextLabel", friendnotificationframe)
+Text5.Size = UDim2.new(1, 0, 0, 30)
+Text5.TextScaled = true
+Text5.TextXAlignment = Enum.TextXAlignment.Left
+Text5.BackgroundTransparency = 1
+Text5.Text = "Notification Friends"
+
+local Text6 = Instance.new("TextLabel", friendnotificationframe)
+Text6.Size = UDim2.new(1, 0, 0, 50)
+Text6.TextScaled = true
+Text6.TextXAlignment = Enum.TextXAlignment.Left
+Text6.BackgroundTransparency = 1
+Text6.Position = UDim2.new(0, 0, 0.31, 0)
+Text6.Text = [[This script will notify you when your friends join and exit the game and if you feel annoyed you can, turn it off]]
+
+local friendNotificationButton = createToggleButton(friendnotificationframe, UDim2.new(0.83, 0, 0.75, 0), function()
+    notifyFriendsEnabled = not notifyFriendsEnabled
+end, notifyFriendsEnabled)
+
+local function notifyPlayer(player, action)
+    if not notifyFriendsEnabled then return end
+
+    local NotificationFrame = Instance.new("Frame", ScreenGui)
+    NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
+    NotificationFrame.BackgroundTransparency = 1
+    NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
+
+    local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
+    ProfileImage.Size = UDim2.new(0, 45, 1, 0)
+    ProfileImage.BackgroundTransparency = 1
+    ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
+
+    local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
+    NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
+    NotificationLabel.BackgroundTransparency = 1
+    NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
+    NotificationLabel.Text = player.Name .. " " .. action
+    NotificationLabel.TextScaled = true
+    NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
+    NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    local ProgressBar = Instance.new("Frame")
+    ProgressBar.Parent = NotificationFrame
+    ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
+    ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+
+    table.insert(friendnotifications, NotificationFrame)
+
+    if #friendnotifications > 5 then
+        local oldNotification = table.remove(friendnotifications, 1)
+        oldNotification:Destroy()
+    end
+
+    for i, notifyFrame in ipairs(friendnotifications) do
+        local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+        tween:Play()
+    end
+
+    local timeLeft = 10
+    local startTime = tick()
+
+    local updateConnection
+    updateConnection = RunService.Heartbeat:Connect(function()
+        local elapsedTime = tick() - startTime
+        local remainingTime = timeLeft - elapsedTime
+
+        if remainingTime <= 0 then
+            remainingTime = 0
+            updateConnection:Disconnect()
+        end
+
+        ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
+
+        if remainingTime <= 0 then
+            local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
+            tweenOut:Play()
+
+            tweenOut.Completed:Connect(function()
+                NotificationFrame:Destroy()
+                table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
+
+                for i, notifyFrame in ipairs(friendnotifications) do
+                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+                    tween:Play()
+                end
+            end)
+        end
+    end)
+end
+
+Players.PlayerAdded:Connect(function(player)
+    local isFriend = false
+    local success, friendsPage = pcall(Players.GetFriendsAsync, Players, localPlayer.UserId)
+
+    if success then
+        repeat
+            local friendsList = friendsPage:GetCurrentPage()
+            for _, friendInfo in pairs(friendsList) do
+                if friendInfo.Username == player.Name then
+                    isFriend = true
+                    break
+                end
+            end
+            if not friendsPage.IsFinished then
+                friendsPage:AdvanceToNextPageAsync()
+            end
+        until friendsPage.IsFinished or isFriend
+    end
+
+    if isFriend then
+        notifyPlayer(player, "Friend has joined the game")
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    local isFriend = false
+    local success, friendsPage = pcall(Players.GetFriendsAsync, Players, localPlayer.UserId)
+
+    if success then
+        repeat
+            local friendsList = friendsPage:GetCurrentPage()
+            for _, friendInfo in pairs(friendsList) do
+                if friendInfo.Username == player.Name then
+                    isFriend = true
+                    break
+                end
+            end
+            if not friendsPage.IsFinished then
+                friendsPage:AdvanceToNextPageAsync()
+            end
+        until friendsPage.IsFinished or isFriend
+    end
+
+    if isFriend then
+        notifyPlayer(player, "Friend has left the game")
+    end
+end)
 end
   
   local ScrollBar = Create("ScrollingFrame", Menu, {
