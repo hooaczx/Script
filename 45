@@ -1958,6 +1958,133 @@ TinnLayout.Padding = UDim.new(0, 5)
 local antiCheatEnabled = true
 local kickBlockEnabled = true
 
+local getinfo = getinfo or debug.getinfo
+local hookfunction = hookfunction
+local d = false
+local h = {}
+local x, y
+local antiCheatEnabled = true
+local kickBlockEnabled = true
+
+setthreadidentity(2)
+
+local function setupAntiCheat()
+    for _, v in getgc(true) do
+        if typeof(v) == "table" then
+            local detectedFunc = rawget(v, "Detected")
+            local killFunc = rawget(v, "Kill")
+
+            if typeof(detectedFunc) == "function" and not x then
+                x = detectedFunc
+                local originalFunction
+                originalFunction = hookfunction(x, function(c, f, n)
+                    if c ~= "_" and antiCheatEnabled then
+                        warn(`Adonis AntiCheat flagged\nMethod: {c}\nInfo: {f}`)
+                    end
+                    return true
+                end)
+                table.insert(h, x)
+            end
+
+            if rawget(v, "Variables") and rawget(v, "Process") and typeof(killFunc) == "function" and not y then
+                y = killFunc
+                local originalKillFunction
+                originalKillFunction = hookfunction(y, function(f)
+                    if d and antiCheatEnabled then
+                        warn(`Adonis AntiCheat tried to kill (fallback): {f}`)
+                    end
+                end)
+                table.insert(h, y)
+            end
+
+            if rawget(v, "FunctionToBlock") then
+                local blockedFunction = rawget(v, "FunctionToBlock")
+                local originalBlockedFunction
+                originalBlockedFunction = hookfunction(blockedFunction, function(...)
+                    if antiCheatEnabled then
+                        warn("Blocked usage of forbidden function: " .. tostring(blockedFunction))
+                        return nil
+                    end
+                    return originalBlockedFunction(...)
+                end)
+                table.insert(h, blockedFunction)
+            end
+        end
+    end
+end
+
+local originalDebugInfo
+originalDebugInfo = hookfunction(getrenv().debug.info, newcclosure(function(...)
+    local a, f = ...
+    if x and a == x and antiCheatEnabled then
+        warn(`zins | adonis bypassed`)
+        return coroutine.yield(coroutine.running())
+    end
+    return originalDebugInfo(...)
+end))
+
+setthreadidentity(7)
+
+local function blockKickMethod()
+    local mt = getrawmetatable(Players)
+    local oldNameCall = mt.__namecall
+    setreadonly(mt, false)
+
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        
+        if method == "Kick" and self == Players.LocalPlayer and kickBlockEnabled then
+            warn("Attempt to kick player blocked.")
+            return
+        end
+        
+        if method == "Remove" and self:IsA("Player") and kickBlockEnabled then
+            warn("Attempt to remove player blocked.")
+            return
+        end
+
+        if method == "Destroy" and self == Players.LocalPlayer and kickBlockEnabled then
+            warn("Attempt to destroy player blocked.")
+            return
+        end
+
+        return oldNameCall(self, ...)
+    end)
+end
+
+blockKickMethod()
+
+local function logKickAttempts()
+    Players.PlayerRemoving:Connect(function(player)
+        if player == Players.LocalPlayer and kickBlockEnabled then
+            warn("Attempt to remove player blocked.")
+            wait(9e9)
+        end
+    end)
+end
+
+logKickAttempts()
+
+local function preventPlayerAttributeManipulation()
+    local player = Players.LocalPlayer
+    local originalAttributes = {
+        Name = player.Name,
+        UserId = player.UserId,
+        DisplayName = player.DisplayName,
+    }
+
+    RunService.Heartbeat:Connect(function()
+        for attribute, originalValue in pairs(originalAttributes) do
+            if player[attribute] ~= originalValue then
+                warn(`Attempted change of {attribute} detected!`)
+                player[attribute] = originalValue
+            end
+        end
+    end)
+end
+
+preventPlayerAttributeManipulation()
+
 local function toggleFeatures(state)
     antiCheatEnabled = state
     kickBlockEnabled = state
