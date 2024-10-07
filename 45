@@ -1955,9 +1955,6 @@ local TinnLayout = Instance.new("UIListLayout", scrollingSettingFrame)
 TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TinnLayout.Padding = UDim.new(0, 5)
 
-local antiCheatEnabled = true
-local kickBlockEnabled = true
-
 local getinfo = getinfo or debug.getinfo
 local hookfunction = hookfunction
 local d = false
@@ -2085,9 +2082,9 @@ end
 
 preventPlayerAttributeManipulation()
 
-local function toggleFeatures(state)
-    antiCheatEnabled = state
-    kickBlockEnabled = state
+local function toggleFeatures()
+    antiCheatEnabled = not antiCheatEnabled
+    kickBlockEnabled = not kickBlockEnabled
 end
 
 local frameAnticheat = Instance.new("Frame", scrollingSettingFrame)
@@ -2110,8 +2107,8 @@ Text2.Position = UDim2.new(0, 0, 0.32, 0)
 Text2.Text = [[1. Anti Adonis: This script blocks being kicked out of the game by Adonis
 2. Antikick: It will protect you from "game.Players.LocalPlayer:Kick()" only]]
 
-local toggleAnitButton = createToggleButton(frameAnticheat, UDim2.new(0.82, 0, 0.75, 0), function(state)
-    toggleFeatures(state)
+local toggleAnitButton = createToggleButton(frameAnticheat, UDim2.new(0.82, 0, 0.75, 0), function()
+    toggleFeatures()
 end, antiCheatEnabled)
 
 local frameAnticopy = Instance.new("Frame", scrollingSettingFrame)
