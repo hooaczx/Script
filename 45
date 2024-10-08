@@ -1942,6 +1942,7 @@ frameSetting.Visible = false
 
 local Text7 = Instance.new("TextLabel", frameSetting)
 Text7.Size = UDim2.new(1, 0, 0.15, 0)
+Text7.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text7.TextScaled = true
 Text7.Text = "Setting Menu"
 
@@ -1965,6 +1966,7 @@ Text3.Size = UDim2.new(1, 0, 0, 30)
 Text3.TextScaled = true
 Text3.TextXAlignment = Enum.TextXAlignment.Left
 Text3.BackgroundTransparency = 1
+Text3.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text3.Text = "Anti Copy"
 
 local Text4 = Instance.new("TextLabel", frameAnticopy)
@@ -1973,6 +1975,7 @@ Text4.TextScaled = true
 Text4.TextXAlignment = Enum.TextXAlignment.Left
 Text4.BackgroundTransparency = 1
 Text4.Position = UDim2.new(0, 0, 0.31, 0)
+Text4.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text4.Text = [[This script will prevent you from copying using toclipboard and setclipboard and originalSetClipboard to copy.
 It will notify you on the screen. If you feel annoyed, you can turn it off]]
 
@@ -2064,6 +2067,7 @@ Text5.Size = UDim2.new(1, 0, 0, 30)
 Text5.TextScaled = true
 Text5.TextXAlignment = Enum.TextXAlignment.Left
 Text5.BackgroundTransparency = 1
+Text5.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text5.Text = "Notification Friends"
 
 local Text6 = Instance.new("TextLabel", friendnotificationframe)
@@ -2072,6 +2076,7 @@ Text6.TextScaled = true
 Text6.TextXAlignment = Enum.TextXAlignment.Left
 Text6.BackgroundTransparency = 1
 Text6.Position = UDim2.new(0, 0, 0.31, 0)
+Text6.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text6.Text = [[This script will notify you when your friends join and exit the game and if you feel annoyed you can, turn it off]]
 
 local friendNotificationButton = createToggleButton(friendnotificationframe, UDim2.new(0.82, 0, 0.75, 0), function()
@@ -2103,6 +2108,7 @@ local function notifyPlayer(player, action)
     local ProgressBar = Instance.new("Frame")
     ProgressBar.Parent = NotificationFrame
     ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
+    ProgressBar.Position = UDim2.new(0, 0, 1, 0)
     ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
 
     table.insert(friendnotifications, NotificationFrame)
@@ -2281,22 +2287,6 @@ local function toggleLighting(isLightingEnabled)
     end
 end
 
-RunService.Heartbeat:Connect(function()
-    if not CoreGui:FindFirstChild(ScreenGui.Name) then
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
-                v:Destroy()
-            end
-        end
-        rainSound:Destroy()
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.Brightness = 2
-        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
-        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-        Lighting.GlobalShadows = false
-    end
-end)
-
 local framerain = Instance.new("Frame", scrollingSettingFrame)
 framerain.Size = UDim2.new(1, 0, 0, 100)
 framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -2307,6 +2297,7 @@ Text10.Size = UDim2.new(1, 0, 0, 30)
 Text10.TextScaled = true
 Text10.TextXAlignment = Enum.TextXAlignment.Left
 Text10.BackgroundTransparency = 1
+Text10.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text10.Text = "Rain🌧"
 
 local Text11 = Instance.new("TextLabel", framerain)
@@ -2315,6 +2306,7 @@ Text11.TextScaled = true
 Text11.TextXAlignment = Enum.TextXAlignment.Left
 Text11.BackgroundTransparency = 1
 Text11.Position = UDim2.new(0, 0, 0.32, 0)
+Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
 
 createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
@@ -2342,6 +2334,22 @@ createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false
             frameSetting.Visible = false
         end
     end)
+
+RunService.Heartbeat:Connect(function()
+    if not CoreGui:FindFirstChild(ScreenGui.Name) then
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+                v:Destroy()
+            end
+        end
+        rainSound:Destroy()
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.Brightness = 2
+        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
+        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
+        Lighting.GlobalShadows = false
+    end
+end)
 end
   
   local ScrollBar = Create("ScrollingFrame", Menu, {
