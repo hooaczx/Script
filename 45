@@ -2281,6 +2281,21 @@ local function toggleLighting(isLightingEnabled)
     end
 end
 
+RunService.Heartbeat:Connect(function()
+    if not CoreGui:FindFirstChild(ScreenGui.Name) then
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+                v:Destroy()
+            end
+        end
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.Brightness = 2
+        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
+        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
+        Lighting.GlobalShadows = false
+    end
+end)
+
 local framerain = Instance.new("Frame", scrollingSettingFrame)
 framerain.Size = UDim2.new(1, 0, 0, 100)
 framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
