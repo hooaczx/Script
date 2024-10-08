@@ -899,6 +899,25 @@ end
         Font = Configs_HUB.Text_Font
     })
 
+    local ToggleButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(0.57, 28, 0.21, 60),
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
+    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
+
+    ToggleButton.MouseButton1Click:Connect(function()
+        if sound.IsPlaying then
+            pauseSong()
+            TitleLabel.Text = "Stopped"
+            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+        else
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+        end
+    end)
+
     local NextButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0, 30, 0, 30),
         Position = UDim2.new(0.69, 28, 0.21, 60),
@@ -932,25 +951,6 @@ end
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     end)
 
-    local ToggleButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.21, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
-    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
-
-    ToggleButton.MouseButton1Click:Connect(function()
-        if sound.IsPlaying then
-            pauseSong()
-            TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        end
-    end)
-     
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
     MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
