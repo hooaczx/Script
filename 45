@@ -2197,6 +2197,113 @@ game.Players.PlayerRemoving:Connect(function(player)
     end
 end)
 
+local Lighting = game:GetService("Lighting")
+local isLightingEnabled = false
+local rainSound = Instance.new("Sound", ScreenGui)
+
+local function toggleLighting()
+    isLightingEnabled = not isLightingEnabled
+
+    if isLightingEnabled then
+        game.Lighting.ClockTime = 12
+
+        for _, v in pairs(Lighting:GetChildren()) do
+            v:Destroy()
+        end
+
+        local Bloom = Instance.new("BloomEffect")
+        Bloom.Parent = Lighting
+        Bloom.Intensity = 0.1
+        Bloom.Size = 20
+        Bloom.Threshold = 0.5
+
+        local Blur = Instance.new("BlurEffect")
+        Blur.Parent = Lighting
+        Blur.Size = 5
+
+        local ColorCor = Instance.new("ColorCorrectionEffect")
+        ColorCor.Parent = Lighting
+        ColorCor.Brightness = -0.2
+        ColorCor.Contrast = 0.1
+        ColorCor.Saturation = 0.0
+        ColorCor.TintColor = Color3.fromRGB(150, 150, 150)
+
+        local SunRays = Instance.new("SunRaysEffect")
+        SunRays.Parent = Lighting
+        SunRays.Intensity = 0.0
+        SunRays.Spread = 0.6
+
+        local Sky = Instance.new("Sky")
+        Sky.Parent = Lighting
+        Sky.SkyboxBk = "rbxassetid://4498828382"
+        Sky.SkyboxDn = "rbxassetid://4498828812"
+        Sky.SkyboxFt = "rbxassetid://4498829917"
+        Sky.SkyboxLf = "rbxassetid://4498830911"
+        Sky.SkyboxRt = "rbxassetid://4498830417"
+        Sky.SkyboxUp = "rbxassetid://4498831746"
+        Sky.SunAngularSize = 30
+
+        local Atm = Instance.new("Atmosphere")
+        Atm.Parent = Lighting
+        Atm.Density = 0.6
+        Atm.Offset = 0.1
+        Atm.Color = Color3.fromRGB(150, 150, 150)
+        Atm.Decay = Color3.fromRGB(150, 150, 150)
+        Atm.Glare = 0.5
+        Atm.Haze = 1
+        
+        rainSound.Parent = Workspace
+        rainSound.SoundId = "rbxassetid://1516791621"
+        rainSound.Volume = 1
+        rainSound.Looped = true
+        rainSound:Play()
+        
+        Lighting.Ambient = Color3.fromRGB(200, 200, 200)
+        Lighting.Brightness = 2.5
+        Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
+        Lighting.ColorShift_Top = Color3.fromRGB(150, 150, 150)
+        Lighting.EnvironmentDiffuseScale = 0.1
+        Lighting.EnvironmentSpecularScale = 0.1
+        Lighting.GlobalShadows = true
+        Lighting.OutdoorAmbient = Color3.fromRGB(10, 10, 10)
+        Lighting.ShadowSoftness = 0.5
+        Lighting.GeographicLatitude = 45
+        Lighting.ExposureCompensation = 0.6
+    else
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+                v:Destroy()
+            end
+        end
+        rainSound:Stop()
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.Brightness = 2
+        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
+        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
+        Lighting.GlobalShadows = false
+    end
+end
+
+local framerain = Instance.new("Frame", scrollingSettingFrame)
+framerain.Size = UDim2.new(1, 0, 0, 100)
+framerain.BackgroundTransparency = 0
+
+local Text10 = Instance.new("TextLabel", framerain)
+Text10.Size = UDim2.new(1, 0, 0, 30)
+Text10.TextScaled = true
+Text10.TextXAlignment = Enum.TextXAlignment.Left
+Text10.BackgroundTransparency = 1
+Text10.Text = ""
+
+local Text11 = Instance.new("TextLabel", framerain)
+Text11.Size = UDim2.new(1, 0, 0, 50)
+Text11.TextScaled = true
+Text11.TextXAlignment = Enum.TextXAlignment.Left
+Text11.BackgroundTransparency = 1
+Text11.Position = UDim2.new(0, 0, 0.32, 0)
+Text11.Text = [[]]
+
+createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
