@@ -2200,10 +2200,11 @@ end)
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
 local rainSound = Instance.new("Sound", ScreenGui)
+rainSound.SoundId = "rbxassetid://1516791621"
+rainSound.Volume = 1
+rainSound.Looped = true
 
-local function toggleLighting()
-    isLightingEnabled = not isLightingEnabled
-
+local function toggleLighting(isLightingEnabled)
     if isLightingEnabled then
         game.Lighting.ClockTime = 12
 
@@ -2252,12 +2253,6 @@ local function toggleLighting()
         Atm.Glare = 0.5
         Atm.Haze = 1
         
-        rainSound.Parent = Workspace
-        rainSound.SoundId = "rbxassetid://1516791621"
-        rainSound.Volume = 1
-        rainSound.Looped = true
-        rainSound:Play()
-        
         Lighting.Ambient = Color3.fromRGB(200, 200, 200)
         Lighting.Brightness = 2.5
         Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
@@ -2275,7 +2270,7 @@ local function toggleLighting()
                 v:Destroy()
             end
         end
-        rainSound:Stop()
+        rainSound:Pause()
         Lighting.Ambient = Color3.fromRGB(255, 255, 255)
         Lighting.Brightness = 2
         Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
