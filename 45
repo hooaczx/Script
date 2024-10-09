@@ -1979,7 +1979,7 @@ Text4.TextXAlignment = Enum.TextXAlignment.Left
 Text4.BackgroundTransparency = 1
 Text4.Position = UDim2.new(0, 0, 0.31, 0)
 Text4.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text4.Text = [[This script will prevent you from copying using toclipboard and setclipboard and originalSetClipboard to copy.
+Text4.Text = [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
 It will notify you on the screen. If you feel annoyed, you can turn it off]]
 
 local notifications = {}
@@ -2313,6 +2313,40 @@ Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
 
 createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
+
+local function toggleGUIs(state)
+    for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+        if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
+            v.Enabled = state
+        end
+    end
+end
+
+local framehidename = Instance.new("Frame", scrollingSettingFrame)
+framerain.Size = UDim2.new(1, 0, 0, 100)
+framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
+framerain.BackgroundTransparency = 0
+
+local Text12 = Instance.new("TextLabel", framehidename)
+Text12.Size = UDim2.new(1, 0, 0, 30)
+Text12.TextScaled = true
+Text12.TextXAlignment = Enum.TextXAlignment.Left
+Text12.BackgroundTransparency = 1
+Text12.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text12.Text = "Hide Name"
+
+local Text13 = Instance.new("TextLabel", framehidename)
+Text13.Size = UDim2.new(1, 0, 0, 50)
+Text13.TextScaled = true
+Text13.TextXAlignment = Enum.TextXAlignment.Left
+Text13.BackgroundTransparency = 1
+Text13.Position = UDim2.new(0, 0, 0.32, 0)
+Text13.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
+
+local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
+    toggleGUIs(state)
+end, true)
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
