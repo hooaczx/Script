@@ -761,32 +761,60 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     end)
 end
 
-local function notify(message, subMessage, buttonText)
+local notificationgui = {}
+
+local function notify(params)
+    local Title = params.Title or "Default Title"
+    local Text = params.Text or "Default Message"
+    local buttondeleteText = params.buttonText or "OK"
+    local image = params.image or "18488884411"
+    local guiSize = params.guiSize or Vector2.new(400, 70)
+    local duration = params.duration
+
     local NotificationLabelText = Instance.new("TextLabel", ScreenGui) 
-    NotificationLabelText.Size = UDim2.new(0, 400, 0, 70)
+    NotificationLabelText.Size = UDim2.new(0, guiSize.X, 0, guiSize.Y)
     NotificationLabelText.BackgroundTransparency = 1
-    NotificationLabelText.Text = subMessage or "Default Message"
+    NotificationLabelText.Text = Text
     NotificationLabelText.TextScaled = true
     NotificationLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NotificationLabelText.Position = UDim2.new(0.5, -200, 0.45, 50)
+    NotificationLabelText.Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
+    
+    local NotificationImage = Instance.new("ImageLabel", NotificationLabelText)
+    NotificationImage.Size = UDim2.new(0, 70, 0, 70)
+    NotificationImage.Position = UDim2.new(-0.2, 0, 0, 0)
+    NotificationImage.BackgroundTransparency = 1
+    
+    if string.sub(imageID, 1, 3) == "Ch:" then
+        local userID = string.sub(imageID, 4)
+        NotificationImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userID .. "&w=420&h=420"
+    elseif string.sub(imageID, 1, 4) == "Vde:" then
+        local videoID = string.sub(imageID, 5)
+        NotificationImage:Destroy()
+        local NotificationVideo = Instance.new("VideoFrame", NotificationLabelText)
+        NotificationVideo.Size = UDim2.new(0, 70, 0, 70)
+        NotificationVideo.Position = UDim2.new(-0.03, 0, 0, 0)
+        NotificationVideo.Video = "rbxassetid://" .. videoID
+    else
+        NotificationImage.Image = "rbxassetid://" .. imageID
+    end
     
     local NotificationLabelTitle = Instance.new("TextLabel", NotificationLabelText)
     NotificationLabelTitle.Size = UDim2.new(1, 0, 0.4, 0)
     NotificationLabelTitle.BackgroundTransparency = 1
-    NotificationLabelTitle.Text = message or "Default Message"
+    NotificationLabelTitle.Text = Title
     NotificationLabelTitle.TextScaled = true
     NotificationLabelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
     NotificationLabelTitle.Position = UDim2.new(0, 0, -0.4, 0)
-    
+
     local OkButton = Instance.new("TextButton", NotificationLabelText) 
     OkButton.Size = UDim2.new(1, 0, 0.4, 0)
     OkButton.Position = UDim2.new(0, 0, 1, 0)
     OkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     OkButton.TextScaled = true
-    OkButton.Text = buttonText or "OK"
+    OkButton.Text = buttondeleteText
     OkButton.BackgroundTransparency = 1
 
-    table.insert(notificationgui, NotificationLabel)
+    table.insert(notificationgui, NotificationLabelText)
 
     if #notificationgui > 1 then
         local oldNotification = table.remove(notificationgui, 1)
@@ -796,8 +824,19 @@ local function notify(message, subMessage, buttonText)
     local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -200, 0.45, 50 - (#notificationgui * 60))})
     tween:Play()
     
+    if duration then
+        delay(duration, function()
+            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
+            tweenOut:Play()
+            
+            tweenOut.Completed:Connect(function()
+                NotificationLabelText:Destroy()
+            end)
+        end)
+    end
+
     OkButton.MouseButton1Click:Connect(function()
-        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -200, 0.45, 100), TextTransparency = 1})
+        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
         tweenOut:Play()
         
         tweenOut.Completed:Connect(function()
@@ -2184,13 +2223,31 @@ local originalOriginalSetClipboard = getgenv().originalSetClipboard
 getgenv().toggleClipboard = function(copyEnabled)
     if copyEnabled then
     getgenv().toclipboard = function(data)
-            notify("Attempted to copy", ""..tostring(data), "ok")
+            notify({
+                   Title = "Attempted to copy",
+                   Text = ""..tostring(data),
+                   buttonText = "ok",
+                   imageID = "18488884411",
+                   guiSize = Vector2.new(400, 70),
+            })
         end
         getgenv().setclipboard = function(data)
-            notify("Attempted to copy", ""..tostring(data), "ok")
+            notify({
+                   Title = "Attempted to copy",
+                   Text = ""..tostring(data),
+                   buttonText = "ok",
+                   imageID = "18488884411",
+                   guiSize = Vector2.new(400, 70),
+            })
         end
         getgenv().originalSetClipboard = function(data)
-            notify("Attempted to copy", ""..tostring(data), "ok")
+            notify({
+                   Title = "Attempted to copy",
+                   Text = ""..tostring(data),
+                   buttonText = "ok",
+                   imageID = "18488884411",
+                   guiSize = Vector2.new(400, 70),
+            })
         end
     else
         getgenv().toclipboard = originalToClipboard
