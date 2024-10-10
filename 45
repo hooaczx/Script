@@ -710,30 +710,30 @@ local songs = {
 }
 
 local currentSongIndex = 1
-local sound = Instance.new("Sound")
-sound.Parent = ScreenGui
+local soundmusic = Instance.new("Sound")
+soundmusic.Parent = ScreenGui
 local isPaused = false
 local savedTimePosition = 0
 local progressUpdateConnection
 
 local function resetSong()
-    sound:Stop()
+    soundmusic:Stop()
     savedTimePosition = 0
     isPaused = false
 end
 
 local function pauseSong()
-    savedTimePosition = sound.TimePosition
-    sound:Pause()
+    savedTimePosition = soundmusic.TimePosition
+    soundmusic:Pause()
     isPaused = true
 end
 
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
-        sound.SoundId = song.id
-        sound.TimePosition = savedTimePosition
-        sound:Play()
+        soundmusic.SoundId = song.id
+        soundmusic.TimePosition = savedTimePosition
+        soundmusic:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
     end
@@ -751,7 +751,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     end
 
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
-        if sound.IsPlaying then
+        if soundmusic.IsPlaying then
             Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
         else
             if progressUpdateConnection then
@@ -809,12 +809,12 @@ end
     Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button1.BackgroundTransparency = 1
 
- local minimize1 = true
+ local minimize1 = false
     Button1.MouseButton1Click:Connect(function()
         minimize1 = not minimize1
 
         if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.001, 0), 0.3, true)
+            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
             CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
             frame.Visible = false
             Button1.Text = "^"
@@ -826,6 +826,154 @@ end
         end
     end)
 
+ local FrameChat = Instance.new("Frame", ScreenGui)
+ FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
+ FrameChat.BackgroundTransparency = 0.6
+ FrameChat.BorderSizePixel = 0
+ FrameChat.Position = UDim2.new(0.3, 0, 0.1, 0)
+ FrameChat.Size = UDim2.new(0, 420, 0, 280)
+ FrameChat.Visible = false
+
+ local LogPanel = Instance.new("ScrollingFrame", FrameChat)
+ LogPanel.BackgroundColor3 = Configs_HUB.Cor_Hub
+ LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+ LogPanel.Position = UDim2.new(0, 0, 0, 25)
+ LogPanel.BackgroundTransparency = 1
+ LogPanel.Size = UDim2.new(1, 0, 0.75, 0)
+ LogPanel.ScrollBarThickness = 0
+ LogPanel.ScrollingEnabled = true
+
+ local UIListLayout = Instance.new("UIListLayout", LogPanel) 
+ UIListLayout.FillDirection = Enum.FillDirection.Vertical
+ UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+ local MessageBox = Instance.new("TextBox", FrameChat)
+ MessageBox.BackgroundColor3 = Configs_HUB.Cor_Hub
+ MessageBox.Position = UDim2.new(0, 0, 0.8, 0)
+ MessageBox.BackgroundTransparency = 0.5
+ MessageBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+ MessageBox.PlaceholderText = "Type your message here"
+
+ local SendButton = Instance.new("TextButton", FrameChat)
+ SendButton.BackgroundColor3 = Configs_HUB.Cor_Hub
+ SendButton.Position = UDim2.new(0.8, 0, 0.8, 0)
+ SendButton.Size = UDim2.new(0.2, 0, 0.2, 0)
+ SendButton.Font = Enum.Font.SourceSans
+ SendButton.BackgroundTransparency = 0.5
+ SendButton.Text = "Send"
+ SendButton.TextColor3 = Color3.new(1, 1, 1)
+ SendButton.TextSize = 14
+
+ local title = Instance.new("TextLabel", FrameChat)
+ title.BackgroundColor3 = Color3.new(1, 1, 1)
+ title.BackgroundTransparency = 0.6
+ title.BackgroundColor3 = Configs_HUB.Cor_Hub
+ title.Size = UDim2.new(0, 115, 0, 24)
+ title.Font = Enum.Font.SourceSans
+ title.Text = "Chat"
+ title.TextColor3 = Color3.new(1, 1, 1)
+ title.TextSize = 14
+
+   local function formatTime()
+      local currentTime = os.date("*t")
+      return string.format("%02d:%02d", currentTime.hour, currentTime.min)
+   end
+
+ local function output(msg, playerName, playerId)
+     local colour = Color3.fromRGB(255, 255, 255)
+
+     local messageFrame = Instance.new("Frame", LogPanel)
+     messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+     messageFrame.Size = UDim2.new(1, 0, 0, 40)
+     messageFrame.BorderSizePixel = 0
+     messageFrame.LayoutOrder = LogPanel:GetChildren() and #LogPanel:GetChildren() + 1 or 1
+    
+     local imageplayer = Instance.new("ImageLabel", messageFrame)
+     imageplayer.Size = UDim2.new(0.1, 0, 1, 0)
+     imageplayer.Position = UDim2.new(0, 0, 0, 0)
+     imageplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+     imageplayer.BackgroundTransparency = 0.6
+     imageplayer.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerId .. "&width=420&height=420&format=png"
+
+     local UICornerPlay = Instance.new("UICorner", imageplayer)
+     UICornerPlay.CornerRadius = UDim.new(1, 0)
+    
+     local timemessageLabel = Instance.new("TextLabel", messageFrame)
+     timemessageLabel.Text = formatTime()
+     timemessageLabel.Size = UDim2.new(0.2, 0, 1, 0)
+     timemessageLabel.Position = UDim2.new(0.1, 0, 0, 0)
+     timemessageLabel.Font = Enum.Font.SourceSansSemibold
+     timemessageLabel.TextColor3 = colour
+     timemessageLabel.BackgroundTransparency = 1
+     timemessageLabel.BorderSizePixel = 0
+    
+     local namemessageLabel = Instance.new("TextLabel", messageFrame)
+     namemessageLabel.Text = playerName
+     namemessageLabel.Size = UDim2.new(0.3, 0, 1, 0)
+     namemessageLabel.Position = UDim2.new(0.3, 0, 0, 0)
+     namemessageLabel.Font = Enum.Font.SourceSansSemibold
+     namemessageLabel.TextColor3 = colour
+     namemessageLabel.BackgroundTransparency = 1
+     namemessageLabel.BorderSizePixel = 0
+    
+     local messageLabel = Instance.new("TextLabel", messageFrame)
+     messageLabel.Text = msg
+     messageLabel.Size = UDim2.new(0.5, 0, 1, 0)
+     messageLabel.Position = UDim2.new(0.5, 0, 0, 0)
+     messageLabel.Font = Enum.Font.SourceSansSemibold
+     messageLabel.TextColor3 = colour
+     messageLabel.BackgroundTransparency = 1
+     messageLabel.BorderSizePixel = 0
+
+       LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
+   end
+
+  SendButton.MouseButton1Click:Connect(function()
+     local message = MessageBox.Text
+     if message ~= "" then
+         game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+         MessageBox.Text = ""
+         output(message, game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId)
+      end
+   end)
+
+   local function onChatMessageReceived(player, msg)
+      output(msg, player.Name, player.UserId)
+   end
+
+   local function setupPlayer(player)
+    player.Chatted:Connect(function(msg)
+         output(msg, player.Name, player.UserId)
+       end)
+    end
+
+    for _, player in pairs(game.Players:GetPlayers()) do
+    setupPlayer(player)
+    end
+
+    game.Players.PlayerAdded:Connect(setupPlayer)
+
+    local ChatToggleButton = Instance.new("ImageButton", frame)
+    ChatToggleButton.Size = UDim2.new(0, 30, 0, 30)
+    ChatToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
+    ChatToggleButton.BackgroundTransparency = 1
+    ChatToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+    ChatToggleButton.ZIndex = 10
+    ChatToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
+
+ local ChatToggle = true
+     ChatToggleButton.MouseButton1Click:Connect(function()
+        ChatToggle = not ChatToggle
+
+        if ChatToggle then
+            FrameChat.Visible = true
+            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 280), 0.3, true)
+        else
+            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 0), 0.3, true)
+            FrameChat.Visible = false
+        end
+    end)
 
     local TimeLabel = Instance.new("TextLabel", frame)
     TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
@@ -954,7 +1102,7 @@ end
 
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
-    MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.4, 0, 0, 13)
     MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
     MusicToggleButton.ZIndex = 10
@@ -1236,8 +1384,8 @@ for i = 2, #gamePlaces do
         minimiz7 = not minimiz7
 
         if minimiz7 then
-            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
             framek.Visible = true
+            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
         else
             CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
             framek.Visible = false
@@ -2388,6 +2536,7 @@ RunService.Heartbeat:Connect(function()
             end
         end
         rainSound:Destroy()
+        soundmusic:Destroy()
         Lighting.Ambient = Color3.fromRGB(255, 255, 255)
         Lighting.Brightness = 2
         Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
