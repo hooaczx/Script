@@ -830,7 +830,7 @@ end
  FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
  FrameChat.BackgroundTransparency = 0.7
  FrameChat.BorderSizePixel = 0
- FrameChat.Position = UDim2.new(0.3, 0, 0.06, 0)
+ FrameChat.Position = UDim2.new(0.26, 0, 0.07, 0)
  FrameChat.Size = UDim2.new(0, 420, 0, 280)
  FrameChat.Visible = false
 
@@ -853,6 +853,8 @@ end
  MessageBox.Position = UDim2.new(0, 0, 0.6, 0)
  MessageBox.BackgroundTransparency = 0.7
  MessageBox.Size = UDim2.new(0.8, 0, 0.1, 0)
+ MessageBox.TextColor3 = Color3.new(255, 255, 255)
+ MessageBox.Text = "Type your message here"
  MessageBox.PlaceholderText = "Type your message here"
 
  local SendButton = Instance.new("TextButton", FrameChat)
@@ -862,7 +864,7 @@ end
  SendButton.Font = Enum.Font.SourceSans
  SendButton.BackgroundTransparency = 0.7
  SendButton.Text = "Send"
- SendButton.TextColor3 = Color3.new(1, 1, 1)
+ SendButton.TextColor3 = Color3.new(255, 255, 255)
  SendButton.TextSize = 14
 
  local title = Instance.new("TextLabel", FrameChat)
@@ -872,8 +874,39 @@ end
  title.Size = UDim2.new(1, 0, 0, 24)
  title.Font = Enum.Font.SourceSans
  title.Text = "Chat"
- title.TextColor3 = Color3.new(1, 1, 1)
+ title.TextColor3 = Color3.new(255, 255, 255)
  title.TextSize = 14
+ 
+ local ChatToggleButton = Instance.new("ImageButton", frame)
+ ChatToggleButton.Size = UDim2.new(0, 30, 0, 30)
+ ChatToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
+ ChatToggleButton.BackgroundTransparency = 1
+ ChatToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+ ChatToggleButton.ZIndex = 10
+ ChatToggleButton.Image = "rbxthumb://type=Asset&id=97566386825378&w=150&h=150"
+
+ local ChatToggle = true
+local unreadCount = 0
+
+local unreadLabel = Instance.new("TextLabel", ChatToggleButton)
+unreadLabel.Size = UDim2.new(0, 10, 0, 10)
+unreadLabel.Position = UDim2.new(0.05, 0, -0.5, 0)
+unreadLabel.BackgroundTransparency = 1
+unreadLabel.TextColor3 = Color3.new(255, 255, 255)
+unreadLabel.TextScaled = true
+unreadLabel.Visible = false
+
+     ChatToggleButton.MouseButton1Click:Connect(function()
+        ChatToggle = not ChatToggle
+
+        if ChatToggle then
+            FrameChat.Visible = true
+            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 280), 0.3, true)
+        else
+            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 0), 0.3, true)
+            FrameChat.Visible = false
+        end
+    end)
 
    local function formatTime()
       local currentTime = os.date("*t")
@@ -900,32 +933,16 @@ end
      local UICornerPlay = Instance.new("UICorner", imageplayer)
      UICornerPlay.CornerRadius = UDim.new(1, 0)
     
-     local timemessageLabel = Instance.new("TextLabel", messageFrame)
-     timemessageLabel.Text = formatTime()
-     timemessageLabel.Size = UDim2.new(0.2, 0, 1, 0)
-     timemessageLabel.Position = UDim2.new(0.1, 0, 0, 0)
-     timemessageLabel.Font = Enum.Font.SourceSansSemibold
-     timemessageLabel.TextColor3 = colour
-     timemessageLabel.BackgroundTransparency = 1
-     timemessageLabel.BorderSizePixel = 0
-    
-     local namemessageLabel = Instance.new("TextLabel", messageFrame)
-     namemessageLabel.Text = playerName
-     namemessageLabel.Size = UDim2.new(0.3, 0, 1, 0)
-     namemessageLabel.Position = UDim2.new(0.3, 0, 0, 0)
-     namemessageLabel.Font = Enum.Font.SourceSansSemibold
-     namemessageLabel.TextColor3 = colour
-     namemessageLabel.BackgroundTransparency = 1
-     namemessageLabel.BorderSizePixel = 0
-    
      local messageLabel = Instance.new("TextLabel", messageFrame)
-     messageLabel.Text = msg
-     messageLabel.Size = UDim2.new(0.5, 0, 1, 0)
-     messageLabel.Position = UDim2.new(0.5, 0, 0, 0)
+     messageLabel.Text = ":".. formatTime() .. ":" .. playerName .. ": " .. msg
+     messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
+     messageLabel.Position = UDim2.new(0.1, 0, 0, 0)
      messageLabel.Font = Enum.Font.SourceSansSemibold
      messageLabel.TextColor3 = colour
      messageLabel.BackgroundTransparency = 1
      messageLabel.BorderSizePixel = 0
+     messageLabel.TextXAlignment = Enum.TextXAlignment.Left
+
 
        LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
    end
@@ -940,41 +957,25 @@ end
    end)
 
    local function onChatMessageReceived(player, msg)
-      output(msg, player.Name, player.UserId)
-   end
+    if not ChatToggle then
+        unreadCount = unreadCount + 1
+        unreadLabel.Text = tostring(unreadCount)
+        unreadLabel.Visible = true
+    end
+    output(msg, player.Name, player.UserId)
+end
 
-   local function setupPlayer(player)
+local function setupPlayer(player)
     player.Chatted:Connect(function(msg)
-         output(msg, player.Name, player.UserId)
-       end)
-    end
-
-    for _, player in pairs(game.Players:GetPlayers()) do
-    setupPlayer(player)
-    end
-
-    game.Players.PlayerAdded:Connect(setupPlayer)
-
-    local ChatToggleButton = Instance.new("ImageButton", frame)
-    ChatToggleButton.Size = UDim2.new(0, 30, 0, 30)
-    ChatToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
-    ChatToggleButton.BackgroundTransparency = 1
-    ChatToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-    ChatToggleButton.ZIndex = 10
-    ChatToggleButton.Image = "rbxthumb://type=Asset&id=97566386825378&w=150&h=150"
-
- local ChatToggle = true
-     ChatToggleButton.MouseButton1Click:Connect(function()
-        ChatToggle = not ChatToggle
-
-        if ChatToggle then
-            FrameChat.Visible = true
-            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 280), 0.3, true)
-        else
-            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 0), 0.3, true)
-            FrameChat.Visible = false
-        end
+        onChatMessageReceived(player, msg)
     end)
+end
+
+for _, player in ipairs(game.Players:GetPlayers()) do
+    setupPlayer(player)
+end
+
+game.Players.PlayerAdded:Connect(setupPlayer)
 
     local TimeLabel = Instance.new("TextLabel", frame)
     TimeLabel.Size = UDim2.new(0.3, 0, 0.5, 0)
