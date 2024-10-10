@@ -900,7 +900,9 @@ end
 
         if ChatToggle then
             FrameChat.Visible = true
-            CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 280), 0.3, true)
+            CreateTween(Frame, "Size", UDim2.new(0, 420, 0, 280), 0.3, true)
+            unreadCount = 0
+            unreadLabel.Visible = false
         else
             CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 0), 0.3, true)
             FrameChat.Visible = false
@@ -942,7 +944,6 @@ end
      messageLabel.BorderSizePixel = 0
      messageLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-
        LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
    end
 
@@ -955,13 +956,13 @@ end
       end
    end)
 
-   local function onChatMessageReceived(player, msg)
+local function onChatMessageReceived(player, msg)
+    output(msg, player.Name, player.UserId)
     if not ChatToggle then
         unreadCount = unreadCount + 1
         unreadLabel.Text = tostring(unreadCount)
         unreadLabel.Visible = true
     end
-    output(msg, player.Name, player.UserId)
 end
 
 local function setupPlayer(player)
