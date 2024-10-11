@@ -785,15 +785,26 @@ local function notify(params)
     NotificationImage.BackgroundTransparency = 1
     
     if string.sub(imageID, 1, 3) == "Ch:" then
-        local userID = string.sub(imageID, 4)
-        NotificationImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. userID .. "&w=420&h=420"
+        local userID = tonumber(string.sub(imageID, 4))
+        if userID then
+            local success, userThumb = pcall(function()
+                return Players:GetUserThumbnailAsync(userID, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+            end)
+            if success then
+                NotificationImage.Image = userThumb
+            else
+                NotificationImage.Image = "rbxassetid://18488884411" -- Fallback image
+            end
+        end
     elseif string.sub(imageID, 1, 4) == "Vde:" then
         local videoID = string.sub(imageID, 5)
-        NotificationImage:Destroy()
-        local NotificationVideo = Instance.new("VideoFrame", NotificationLabelText)
-        NotificationVideo.Size = UDim2.new(0, 70, 0, 70)
-        NotificationVideo.Position = UDim2.new(-0.03, 0, 0, 0)
-        NotificationVideo.Video = "rbxassetid://" .. videoID
+        local VideoFrame = Instance.new("VideoFrame", NotificationLabelText)
+        VideoFrame.Size = UDim2.new(0, 70, 0, 70)
+        VideoFrame.Position = UDim2.new(-0.2, 0, 0, 0)
+        VideoFrame.Video = "rbxassetid://" .. videoID
+        VideoFrame.Looped = true
+        VideoFrame:Play()
+        NotificationImage.Visible = false
     else
         NotificationImage.Image = "rbxassetid://" .. imageID
     end
