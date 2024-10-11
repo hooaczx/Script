@@ -770,6 +770,7 @@ local function notify(params)
     local image = params.image or "18488884411"
     local guiSize = params.guiSize or Vector2.new(400, 70)
     local duration = params.duration
+    local position = params.Position or UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
 
     local NotificationLabelText = Instance.new("TextLabel", ScreenGui) 
     NotificationLabelText.Size = UDim2.new(0, guiSize.X, 0, guiSize.Y)
@@ -777,12 +778,12 @@ local function notify(params)
     NotificationLabelText.Text = Text
     NotificationLabelText.TextScaled = true
     NotificationLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NotificationLabelText.Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
+    NotificationLabelText.Position = position
     
     local NotificationImage = Instance.new("ImageLabel", NotificationLabelText)
     NotificationImage.Size = UDim2.new(0, 70, 0, 70)
     NotificationImage.Position = UDim2.new(-0.2, 0, 0, 0)
-    NotificationImage.Image = "rbxassetid://" ..image
+    NotificationImage.Image = "rbxassetid://" .. image
     NotificationImage.BackgroundTransparency = 1
     
     local NotificationLabelTitle = Instance.new("TextLabel", NotificationLabelText)
@@ -808,7 +809,7 @@ local function notify(params)
         oldNotification:Destroy()
     end
     
-    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -200, 0.45, 50 - (#notificationgui * 60))})
+    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset - (#notificationgui * 60))})
     tween:Play()
     
     if duration then
