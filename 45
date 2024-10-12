@@ -1269,6 +1269,149 @@ PreviousButton.MouseButton1Click:Connect(function()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
+local framemusic = Instance.new("Frame", ScreenGui)
+framemusic.Size = UDim2.new(0.4, 0, 0.8, 0)
+framemusic.Position = UDim2.new(0.52, -200, 0.4, -150)
+framemusic.BackgroundColor3 = Configs_HUB.Cor_Hub
+framemusic.Visible = false
+
+local Text77 = Instance.new("TextLabel", frameSetting)
+Text77.Size = UDim2.new(1, 0, 0.15, 0)
+Text77.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text77.TextScaled = true
+Text77.Text = "Setting Music Menu"
+
+local scrollingsettingmusicFrame = Instance.new("ScrollingFrame", framemusic)
+scrollingsettingmusicFrame.Size = UDim2.new(1, 0, 0.85, 0)
+scrollingsettingmusicFrame.Position = UDim2.new(0, 0, 0.15, 0)
+scrollingsettingmusicFrame.BackgroundTransparency = 1
+scrollingsettingmusicFrame.ScrollBarThickness = 0
+
+local musicTinnLayout = Instance.new("UIListLayout", scrollingsettingmusicFrame)
+musicTinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
+musicTinnLayout.Padding = UDim.new(0, 5)
+
+local AutoPlayframe = Instance.new("Frame", scrollingsettingmusicFrame)
+AutoPlayframe.Size = UDim2.new(1, 0, 0, 100)
+AutoPlayframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+AutoPlayframe.BackgroundTransparency = 0
+
+local Text55 = Instance.new("TextLabel", AutoPlayframe)
+Text55.Size = UDim2.new(1, 0, 0, 30)
+Text55.TextScaled = true
+Text55.TextXAlignment = Enum.TextXAlignment.Left
+Text55.BackgroundTransparency = 1
+Text55.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text55.Text = "AutoPlay NextSong"
+
+local Text44 = Instance.new("TextLabel", AutoPlayframe)
+Text44.Size = UDim2.new(1, 0, 0, 50)
+Text44.TextScaled = true
+Text44.TextXAlignment = Enum.TextXAlignment.Left
+Text44.BackgroundTransparency = 1
+Text44.Position = UDim2.new(0, 0, 0.31, 0)
+Text44.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
+
+local autoPlayNext = false
+
+local friendNotificationButton = createToggleButton(friendnotificationframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
+    if autoPlayNext then
+        notify({
+                   Title = "AutoNextSong",
+                   Text = "true",
+                   imageID = "83193662937265",
+                   guiSize = Vector2.new(400, 70),
+                   duration = 1,
+            })
+    else
+        notify({
+                   Title = "AutoNextSong",
+                   Text = "false",
+                   imageID = "83193662937265",
+                   guiSize = Vector2.new(400, 70),
+                   duration = 1,
+            })
+    end
+end, autoPlayNext)
+
+local function playNextSong()
+    currentSongIndex = currentSongIndex % #songs + 1
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    updateSongButtons()
+end
+
+soundmusic.Ended:Connect(function()
+    if autoPlayNext then
+        playNextSong()
+    end
+end)
+
+local Frame2 = Instance.new("Frame", ScreenGui)
+Frame2.Size = UDim2.new(0.2, 0, 0.14, 0)
+Frame2.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame2.Position = UDim2.new(0.38, 0, 0.46, 0)
+Frame2.Visible = false
+
+local musicplayer = Instance.new("ImageButton", Frame2)
+musicplayer.Size = UDim2.new(0, 30, 0, 30)
+musicplayer.Position = UDim2.new(0.1, 0, 0.22, 0)
+musicplayer.BackgroundColor3 = Color3.new(255, 255, 255)
+musicplayer.Image = "rbxthumb://type=Asset&id=83193662937265&w=150&h=150"
+
+local togglemusicplayer = true
+     musicplayer.MouseButton1Click:Connect(function()
+        togglemusicplayer = not togglemusicplayer
+
+        if togglemusicplayer then
+            Frame.Visible = true
+            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0.3, 0), 0.3, true)
+        else
+            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            Frame.Visible = false
+            Frame.Position = UDim2.new(0.3, 0, 0, 0)
+        end
+    end)
+
+local Listofsongs = Instance.new("ImageButton", Frame2)
+Listofsongs.Size = UDim2.new(0, 30, 0, 30)
+Listofsongs.Position = UDim2.new(0.1 + 0.3, 0, 0.22, 0)
+Listofsongs.BackgroundColor3 = Color3.new(255, 255, 255)
+Listofsongs.Image = "rbxthumb://type=Asset&id=78453271880788&w=150&h=150"
+
+local toggleListofsongs = true
+     Listofsongs.MouseButton1Click:Connect(function()
+        toggleListofsongs = not toggleListofsongs
+
+        if toggleListofsongs then
+            Frame1.Visible = true
+            CreateTween(Frame1, "Size", UDim2.new(0.4, 0, 0.85, 0), 0.3, true)
+        else
+            CreateTween(Frame1, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            Frame1.Visible = false
+            Frame1.Position = UDim2.new(0.3, 0, 0, 0)
+        end
+    end)
+
+local settingmusic = Instance.new("ImageButton", Frame2)
+settingmusic.Size = UDim2.new(0, 30, 0, 30)
+settingmusic.Position = UDim2.new(0.1 + 0.6, 0, 0.22, 0)
+settingmusic.BackgroundColor3 = Color3.new(255, 255, 255)
+settingmusic.Image = "rbxthumb://type=Asset&id=79452146977559&w=150&h=150"
+
+local togglesettingmusic = false
+    settingmusic.MouseButton1Click:Connect(function()
+     togglesettingmusic = not togglesettingmusic
+
+        if togglesettingmusic then
+            framemusic.Visible = true
+            CreateTween(framemusic, "Size", UDim2.new(0.4, 0, 0.8, 0), 0.3, false)
+        else
+            CreateTween(framemusic, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            framemusic.Visible = false
+        end
+    end)
+
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
     MusicToggleButton.Position = UDim2.new(0.22 + 0.4, 0, 0, 13)
@@ -1277,17 +1420,16 @@ end)
     MusicToggleButton.ZIndex = 10
     MusicToggleButton.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
 
-     local minimize2 = true
+local togglemusic = true
      MusicToggleButton.MouseButton1Click:Connect(function()
-        minimize2 = not minimize2
+        togglemusic = not togglemusic
 
-        if minimize2 then
-            Frame.Visible = true
-            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0.3, 0), 0.3, true)
+        if togglemusic then
+            Frame2.Visible = true
+            CreateTween(Frame2, "Size", UDim2.new(0.2, 0, 0.14, 0), 0.3, true)
         else
-            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
-            Frame.Visible = false
-            Frame.Position = UDim2.new(0.3, 0, 0, 0)
+            CreateTween(Frame2, "Size", UDim2.new(0.2, 0, 0, 0), 0.3, true)
+            Frame2.Visible = false
         end
     end)
 
