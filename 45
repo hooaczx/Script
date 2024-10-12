@@ -1383,39 +1383,22 @@ Text44.Position = UDim2.new(0, 0, 0.31, 0)
 Text44.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
 
-local autoPlayNext = false
-
+local isAutoPlayEnabled = false
 local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
-    if autoPlayNext then
-        notify({
-                   Title = "AutoNextSong",
-                   Text = "true",
-                   imageID = "83193662937265",
-                   guiSize = Vector2.new(400, 70),
-                   duration = 1,
-            })
-    else
-        notify({
-                   Title = "AutoNextSong",
-                   Text = "false",
-                   imageID = "83193662937265",
-                   guiSize = Vector2.new(400, 70),
-                   duration = 1,
-            })
-    end
+    isAutoPlayEnabled = not isAutoPlayEnabled
 end, autoPlayNext)
 
-local function playNextSong()
-    currentSongIndex = currentSongIndex % #songs + 1
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
+local function onSongEnded()
+    if isAutoPlayEnabled then
+        currentSongIndex = currentSongIndex + 1
+        if currentSongIndex > #songs then
+            currentSongIndex = 1 -- Loop back to the first song
+        end
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    end
 end
 
-soundmusic.Ended:Connect(function()
-    if autoPlayNext then
-        playNextSong()
-    end
-end)
+soundmusic.Ended:Connect(onSongEnded)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0.2, 0, 0.14, 0)
