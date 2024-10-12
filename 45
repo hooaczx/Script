@@ -1268,6 +1268,42 @@ PreviousButton.MouseButton1Click:Connect(function()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
+local function createToggleButton(parent, position, callback, initialState)
+    local TextButton = Instance.new("TextButton", parent)
+    TextButton.Size = UDim2.new(0.17, 0, 0, 25)
+    TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
+    TextButton.Position = position
+    TextButton.Name = "ToggleButton"
+    TextButton.Text = ""
+    TextButton.AutoButtonColor = false
+
+    local Frame2 = Instance.new("Frame", TextButton)
+    Frame2.Size = UDim2.new(0.25, 0, 0.82, 0)
+    Frame2.Position = UDim2.new(initialState and 0.8 or 0, 2, 0.5, 0)
+    Frame2.AnchorPoint = Vector2.new(0, 0.5)
+    Frame2.BackgroundColor3 = initialState and Color3.fromRGB(30, 140, 200) or Configs_HUB.Cor_Stroke
+    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+    
+
+    local OnOff = initialState
+
+    TextButton.MouseButton1Click:Connect(function()
+        OnOff = not OnOff
+
+        if OnOff then
+            CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            callback(true)
+        else
+            CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
+            callback(false)
+        end
+    end)
+
+    return TextButton
+end
+
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.4, 0, 0.8, 0)
 framemusic.Position = UDim2.new(0.52, -200, 0.4, -150)
@@ -2356,42 +2392,6 @@ Server.Parent = frame79
             Menu.Position = UDim2.new(0.5, -500/2, 0.5, -270/2)
         end
     end)
-
-local function createToggleButton(parent, position, callback, initialState)
-    local TextButton = Instance.new("TextButton", parent)
-    TextButton.Size = UDim2.new(0.17, 0, 0, 25)
-    TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
-    TextButton.Position = position
-    TextButton.Name = "ToggleButton"
-    TextButton.Text = ""
-    TextButton.AutoButtonColor = false
-
-    local Frame2 = Instance.new("Frame", TextButton)
-    Frame2.Size = UDim2.new(0.25, 0, 0.82, 0)
-    Frame2.Position = UDim2.new(initialState and 0.8 or 0, 2, 0.5, 0)
-    Frame2.AnchorPoint = Vector2.new(0, 0.5)
-    Frame2.BackgroundColor3 = initialState and Color3.fromRGB(30, 140, 200) or Configs_HUB.Cor_Stroke
-    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
-    
-
-    local OnOff = initialState
-
-    TextButton.MouseButton1Click:Connect(function()
-        OnOff = not OnOff
-
-        if OnOff then
-            CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
-            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            callback(true)
-        else
-            CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
-            CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-            callback(false)
-        end
-    end)
-
-    return TextButton
-end
 
 local frameSetting = Instance.new("Frame", ScreenGui)
 frameSetting.Size = UDim2.new(0.4, 0, 0.8, 0)
