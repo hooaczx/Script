@@ -752,6 +752,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if soundmusic.IsPlaying then
             Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
+            TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
@@ -1055,121 +1056,217 @@ game.Players.PlayerAdded:Connect(setupPlayer)
     TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TimeLabel.BackgroundTransparency = 1
      
-     local Frame = Create("Frame", ScreenGui, {
-        Size = UDim2.new(0.4, 0, 0.3, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Position = UDim2.new(0.3, 0, 0, 0),
-        Draggable = true, 
-        Active = true, 
-        Visible = false,
-        Name = "MusicPlayerFrame"
-    })
-    local tweenGradient = CreateGradient(Frame, {
-    Color = {
-        Color3.fromRGB(255, 255, 255),
-        Color3.fromRGB(0, 0, 0),
-        Color3.fromRGB(255, 0, 0)
-    },
-    Rotation = 45,
-    Tween = true,
-    Speed = 3
-    })
-    Corner(Frame)
-    Stroke(Frame)
+     local Frame1 = Instance.new("Frame", ScreenGui)
+Frame1.Size = UDim2.new(0.4, 0, 0.85, 0)
+Frame1.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame1.Position = UDim2.new(0.3, 0, 0, 0)
+Frame1.BackgroundTransparency = 0
+Frame1.Active = true
+Frame1.Draggable = true
+Frame1.Visible = false
+
+local TitleLabel1 = Instance.new("TextLabel", Frame1)
+TitleLabel1.TextSize = 14
+TitleLabel1.TextWrapped = true
+TitleLabel1.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel1.Text = "Song List"
+TitleLabel1.Size = UDim2.new(1, 0, 0.05, 0)
+TitleLabel1.Position = UDim2.new(0, 0, 0, 0)
+TitleLabel1.BackgroundTransparency = 1
+TitleLabel1.TextXAlignment = Enum.TextXAlignment.Center
+TitleLabel1.Font = Enum.Font.SourceSans
+
+local search = Instance.new("TextBox", Frame1)
+search.TextSize = 14
+search.TextWrapped = true
+search.TextColor3 = Color3.new(1, 1, 1)
+search.Text = "Search Song here"
+search.PlaceholderText = "Search Song here..."
+search.Size = UDim2.new(0.8, 0, 0.15, 0)
+search.Position = UDim2.new(0, 0, 0.05, 0)
+search.BackgroundTransparency = 1
+search.TextXAlignment = Enum.TextXAlignment.Center
+search.Font = Enum.Font.SourceSans
+
+local searchButton = Instance.new("ImageButton", Frame1)
+searchButton.Size = UDim2.new(0, 30, 0, 30)
+searchButton.Position = UDim2.new(0.8, 0, 0.1, 0)
+searchButton.BackgroundTransparency = 1
+searchButton.Image = "rbxthumb://type=Asset&id=85019257025290&w=150&h=150"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0.4, 0, 0.3, 0)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.Position = UDim2.new(0.3, 0, 0, 0)
+Frame.Active = true
+Frame.Draggable = true
+Frame.Visible = false
+
+local TitleLabel = Instance.new("TextLabel", Frame)
+TitleLabel.TextSize = 14
+TitleLabel.TextWrapped = true
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.Text = songs[currentSongIndex].name
+TitleLabel.Size = UDim2.new(0.45, 0, 0, 40)
+TitleLabel.Position = UDim2.new(0.56, -25, 0.36, -25)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
+TitleLabel.Font = Enum.Font.SourceSans
+
+local Frame_4 = Instance.new("Frame", Frame)
+Frame_4.Size = UDim2.new(0, 100, 0, 100)
+Frame_4.Position = UDim2.new(0.13, -25, 0.31, -25)
+Frame_4.BackgroundTransparency = 0.5
+Frame_4.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
+
+local ProgressCircle = Instance.new("ImageLabel", Frame_4)
+ProgressCircle.Size = UDim2.new(1, 0, 1, 0)
+ProgressCircle.BackgroundTransparency = 1
+ProgressCircle.ImageTransparency = 0.6
+ProgressCircle.Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
+
+local TimeLabel = Instance.new("TextLabel", Frame)
+TimeLabel.TextSize = 12
+TimeLabel.TextWrapped = true
+TimeLabel.TextColor3 = Color3.new(1, 1, 1)
+TimeLabel.Text = "0:00 / 0:00"
+TimeLabel.Size = UDim2.new(0.3, 0, 0, 20)
+TimeLabel.Position = UDim2.new(0.63, -25, 0.6, -25)
+TimeLabel.BackgroundTransparency = 1
+TimeLabel.TextXAlignment = Enum.TextXAlignment.Center
+TimeLabel.Font = Enum.Font.SourceSans
+
+local ToggleButton = Instance.new("ImageButton", Frame)
+ToggleButton.Size = UDim2.new(0, 30, 0, 30)
+ToggleButton.Position = UDim2.new(0.57, 28, 0.21, 60)
+ToggleButton.BackgroundTransparency = 1
+ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+
+   ToggleButton.MouseButton1Click:Connect(function()
+    if soundmusic.IsPlaying then
+        pauseSong()
+        TitleLabel.Text = "Stopped"
+        ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+    else
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+      end
+   end)
+   
+local NextButton = Instance.new("ImageButton", Frame)
+NextButton.Size = UDim2.new(0, 30, 0, 30)
+NextButton.Position = UDim2.new(0.69, 28, 0.21, 60)
+NextButton.BackgroundTransparency = 1
+NextButton.Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150"local PreviousButton = Instance.new("ImageButton", Frame)
+
+local PreviousButton = Instance.new("ImageButton", Frame)
+PreviousButton.Size = UDim2.new(0, 30, 0, 30)
+PreviousButton.Position = UDim2.new(0.46, 28, 0.21, 60)
+PreviousButton.BackgroundTransparency = 1
+PreviousButton.Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150"
+
+local songList = Instance.new("ScrollingFrame", Frame1)
+songList.BackgroundColor3 = Color3.new(0, 0, 0)
+songList.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+songList.Size = UDim2.new(1, 0, 0.8, 0)
+songList.Position = UDim2.new(0, 0, 0.21, 0)
+songList.ScrollBarThickness = 0
+songList.BackgroundTransparency = 1
+songList.ScrollingEnabled = true
+
+local UIListLayout = Instance.new("UIListLayout", songList)
+UIListLayout.FillDirection = Enum.FillDirection.Vertical
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local function updateSongButtons()
+    local searchText = search.Text:lower()
+    local colour = Color3.fromRGB(255, 255, 255)
     
-    local TitleLabel = Create("TextLabel", Frame, {
-        TextSize = 14,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = songs[currentSongIndex].name,
-        Size = UDim2.new(0.45, 0, 0, 40),
-        Position = UDim2.new(0.56, -25, 0.36, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(TitleLabel)
-
-    local Frame_4 = Create("Frame", Frame, {
-        Size = UDim2.new(0, 100, 0, 100),
-        Position = UDim2.new(0.13, -25, 0.31, -25),
-        BackgroundTransparency = 0.5,
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-    })
-    Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
-    Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
-
-    local ProgressCircle = Create("ImageLabel", Frame_4, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        ImageTransparency = 0.6,
-        Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
-    })
-    Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
-
-    local timeLabel = Create("TextLabel", Frame, {
-        TextSize = 12,
-        TextWrapped = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "0:00 / 0:00",
-        Size = UDim2.new(0.3, 0, 0, 20),
-        Position = UDim2.new(0.63, -25, 0.6, -25),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Center",
-        Font = Configs_HUB.Text_Font
-    })
-
-    local ToggleButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.57, 28, 0.21, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
-    })Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
-
-    ToggleButton.MouseButton1Click:Connect(function()
-        if soundmusic.IsPlaying then
-            pauseSong()
-            TitleLabel.Text = "Stopped"
-            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-        else
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+    for _, child in ipairs(songList:GetChildren()) do
+        if child:IsA("Frame") and child.Name ~= "UIListLayout" then
+            child:Destroy()
         end
-    end)
+    end
+    
+    for i, song in ipairs(songs) do
+        if string.lower(song.name):find(searchText, 1, true) then
+            local musiclistFrame = Instance.new("Frame", songList)
+            musiclistFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+            musiclistFrame.Size = UDim2.new(1, 0, 0, 25)
+            musiclistFrame.BorderSizePixel = 0
+            musiclistFrame.BackgroundTransparency = 0
 
-    local NextButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.69, 28, 0.21, 60),
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        BackgroundTransparency = 1,
-        Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
-        Name = "PlayButton"
-    })
-    Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
+            local iconmusic = Instance.new("ImageLabel", musiclistFrame)
+            iconmusic.Size = UDim2.new(0.1, 0, 1, 0)
+            iconmusic.Position = UDim2.new(0, 0, 0, 0)
+            iconmusic.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            iconmusic.BackgroundTransparency = 1
+            iconmusic.Image = "rbxthumb://type=Asset&id=107723524907022&w=150&h=150"
 
-    NextButton.MouseButton1Click:Connect(function()
-        resetSong()
-        currentSongIndex = (currentSongIndex % #songs) + 1
-        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    end)
+            local nameLabel = Instance.new("TextLabel", musiclistFrame)
+            nameLabel.Text = ":" .. tostring(i) .. "." .. song.name
+            nameLabel.Size = UDim2.new(0.61, 0, 1, 0)
+            nameLabel.Position = UDim2.new(0.11, 0, 0, 0)
+            nameLabel.TextScaled = true
+            nameLabel.TextColor3 = colour
+            nameLabel.BackgroundTransparency = 1
+            nameLabel.BorderSizePixel = 0
+            nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+            
+            local songbutton = Instance.new("TextButton", musiclistFrame) 
+            songbutton.Size = UDim2.new(1, 0, 1, 0)
+            songbutton.Position = UDim2.new(0, 0, 0, 0)
+            songbutton.Text = ""
+            songbutton.BackgroundTransparency = 1
+            
+            songbutton.MouseButton1Click:Connect(function()
+                currentSongIndex = i
+                PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+                ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+                updateSongButtons()
+            end)
+            
+            if currentSongIndex == i then
+            local frameimage = Instance.new("Frame", musiclistFrame)
+            frameimage.Size = UDim2.new(0, 30, 1, 0)
+            frameimage.Position = UDim2.new(0.85, 0, 0, 0)
+            frameimage.BackgroundTransparency = 1
+            
+          for _, child in ipairs(frameimage:GetChildren()) do
+           if child:IsA("ImageLabel") then
+                 child:Destroy()
+                  end
+             end
+             
+            local image = Instance.new("ImageLabel", frameimage)
+            image.Size = UDim2.new(1, 0, 1, 0)
+            image.BackgroundTransparency = 1
+            image.Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
+          end
+       end
+    end
+end
 
-    local PreviousButton = Create("ImageButton", Frame, {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(0.46, 28, 0.21, 60),
-        BackgroundTransparency = 1,
-        BackgroundColor3 = Configs_HUB.Cor_Button,
-        Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
-    })
-    Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
+updateSongButtons()
 
-    PreviousButton.MouseButton1Click:Connect(function()
-        resetSong()
-        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    end)
+search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
+
+NextButton.MouseButton1Click:Connect(function()
+    resetSong()
+    currentSongIndex = (currentSongIndex % #songs) + 1
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    updateSongButtons()
+    ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+end)
+
+PreviousButton.MouseButton1Click:Connect(function()
+    resetSong()
+    currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    updateSongButtons()
+    ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+end)
 
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
