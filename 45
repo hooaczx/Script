@@ -765,9 +765,9 @@ end
 local notificationgui = {}
 
 local function notify(params)
-    local Title = params.Title
-    local Text = params.Text
-    local buttondeleteText = params.buttonText
+    local Title = params.Title or "Default Title"
+    local Text = params.Text or "Default Message"
+    local buttondeleteText = params.buttonText or "OK"
     local image = params.image or "18488884411"
     local guiSize = params.guiSize or Vector2.new(400, 70)
     local duration = params.duration
@@ -1174,10 +1174,13 @@ songList.ScrollBarThickness = 0
 songList.BackgroundTransparency = 1
 songList.ScrollingEnabled = true
 
-local UIListLayout = Instance.new("UIListLayout", songList)
-UIListLayout.FillDirection = Enum.FillDirection.Vertical
-UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+local songListTinniLayout = Instance.new("UIListLayout", songList) 
+songListTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local function updateFrameSize()
+    local contentHeight = songListLayout.AbsoluteContentSize.Y
+    songListFrame.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+end
 
 local function updateSongButtons()
     local searchText = search.Text:lower()
@@ -1244,6 +1247,7 @@ local function updateSongButtons()
             image.BackgroundTransparency = 1
             image.Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
           end
+         updateFrameSize()
        end
     end
 end
@@ -2451,7 +2455,7 @@ getgenv().toggleClipboard = function(copyEnabled)
                    Title = "Attempted to copy",
                    Text = ""..tostring(data),
                    buttonText = "ok",
-                   imageID = "18488884411",
+                   imageID = "",
                    guiSize = Vector2.new(400, 70),
             })
         end
@@ -2460,7 +2464,7 @@ getgenv().toggleClipboard = function(copyEnabled)
                    Title = "Attempted to copy",
                    Text = ""..tostring(data),
                    buttonText = "ok",
-                   imageID = "18488884411",
+                   imageID = "",
                    guiSize = Vector2.new(400, 70),
             })
         end
@@ -2469,7 +2473,7 @@ getgenv().toggleClipboard = function(copyEnabled)
                    Title = "Attempted to copy",
                    Text = ""..tostring(data),
                    buttonText = "ok",
-                   imageID = "18488884411",
+                   imageID = "",
                    guiSize = Vector2.new(400, 70),
             })
         end
