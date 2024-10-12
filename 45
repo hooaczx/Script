@@ -771,7 +771,6 @@ local function notify(params)
     local guiSize = params.guiSize or Vector2.new(400, 70)
     local duration = params.duration
     local position = params.Position or UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
-    local onOkClick = params.onOkClick -- New parameter for the action on OK click
 
     local NotificationLabelText = Instance.new("TextLabel", ScreenGui) 
     NotificationLabelText.Size = UDim2.new(0, guiSize.X, 0, guiSize.Y)
@@ -825,10 +824,6 @@ local function notify(params)
     end
 
     OkButton.MouseButton1Click:Connect(function()
-        if onOkClick then
-            onOkClick()
-        end
-
         local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
         tweenOut:Play()
         
