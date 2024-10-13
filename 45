@@ -1243,7 +1243,8 @@ end
 local function updateSongButtons()
     local searchText = search.Text:lower()
     local colour = Color3.fromRGB(255, 255, 255)
-    
+    local currentScrollPosition = songList.CanvasPosition
+
     for _, child in ipairs(songList:GetChildren()) do
         if child:IsA("Frame") and child.Name ~= "UIListLayout" then
             child:Destroy()
@@ -1305,6 +1306,7 @@ local function updateSongButtons()
             image.BackgroundTransparency = 1
             image.Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
           end
+          songList.CanvasPosition = currentScrollPosition
          updateFrameSize()
        end
     end
@@ -1318,7 +1320,6 @@ NextButton.MouseButton1Click:Connect(function()
     resetSong()
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
@@ -1326,7 +1327,6 @@ PreviousButton.MouseButton1Click:Connect(function()
     resetSong()
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
@@ -1423,7 +1423,6 @@ local function onSongEnded()
         end
         resetSong()
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        updateSongButtons()
     end
 end
 
@@ -2410,6 +2409,7 @@ Server.Parent = frame79
    RunService.Heartbeat:Connect(function()
    local currentTime = tick()
     if currentTime - lastUpdate >= 1 then
+        updateSongButtons()
         updatePlaytime()
         checkFriends()
         startUpdating()
