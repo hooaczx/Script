@@ -1320,6 +1320,7 @@ NextButton.MouseButton1Click:Connect(function()
     resetSong()
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
@@ -1327,6 +1328,7 @@ PreviousButton.MouseButton1Click:Connect(function()
     resetSong()
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
@@ -1423,6 +1425,7 @@ local function onSongEnded()
         end
         resetSong()
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        updateSongButtons()
     end
 end
 
@@ -2409,7 +2412,6 @@ Server.Parent = frame79
    RunService.Heartbeat:Connect(function()
    local currentTime = tick()
     if currentTime - lastUpdate >= 1 then
-        updateSongButtons()
         updatePlaytime()
         checkFriends()
         startUpdating()
