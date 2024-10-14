@@ -716,6 +716,18 @@ local savedTimePosition = 0
 local progressUpdateConnection
 local soundId1 = "rbxassetid://478544929"
 local soundId2 = "rbxassetid://4499400560"
+local clicktoggle = Instance.new("Sound", ScreenGui)
+clicktoggle.SoundId = "rbxassetid://6042053626"
+clicktoggle.Volume = 0.1
+local falsetoggle = Instance.new("Sound", ScreenGui)
+falsetoggle.SoundId = "rbxassetid://9083627113"
+falsetoggle.Volume = 0.1
+local click1 = Instance.new("Sound", ScreenGui)
+click1.SoundId = "rbxassetid://7475853483"
+click1.Volume = 0.1
+local click2 = Instance.new("Sound", ScreenGui)
+click2.SoundId = "rbxassetid://8432836186"
+click2.Volume = 0.1
 
 local function resetSong()
     soundmusic:Stop()
@@ -987,10 +999,12 @@ end
 
         if ChatToggle then
             FrameChat.Visible = true
+            click1:Play()
             CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 280), 0.3, true)
             unreadCount = 0
             unreadLabel.Visible = false
         else
+            click2:Play()
             CreateTween(FrameChat, "Size", UDim2.new(0, 420, 0, 0), 0.3, true)
             FrameChat.Visible = false
         end
@@ -1346,10 +1360,12 @@ local function createToggleButton(parent, position, callback, initialState)
             CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
             CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
             callback(true)
+            clicktoggle:Play()
         else
             CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
             CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
             callback(false)
+            falsetoggle:Play()
         end
     end)
 
@@ -1437,9 +1453,11 @@ local togglemusicplayer = true
         togglemusicplayer = not togglemusicplayer
 
         if togglemusicplayer then
+            click1:Play()
             Frame.Visible = true
             CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0.3, 0), 0.3, true)
         else
+            click2:Play()
             CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
             Frame.Visible = false
             Frame.Position = UDim2.new(0.3, 0, 0, 0)
@@ -1459,8 +1477,10 @@ local toggleListofsongs = true
 
         if toggleListofsongs then
             Frame1.Visible = true
+            click1:Play()
             CreateTween(Frame1, "Size", UDim2.new(0.4, 0, 0.85, 0), 0.3, true)
         else
+            click2:Play()
             CreateTween(Frame1, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
             Frame1.Visible = false
             Frame1.Position = UDim2.new(0.3, 0, 0, 0)
@@ -1479,9 +1499,11 @@ local togglesettingmusic = false
      togglesettingmusic = not togglesettingmusic
 
         if togglesettingmusic then
+            click1:Play()
             framemusic.Visible = true
             CreateTween(framemusic, "Size", UDim2.new(0.4, 0, 0.8, 0), 0.3, false)
         else
+            click2:Play()
             CreateTween(framemusic, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
             framemusic.Visible = false
         end
@@ -1501,8 +1523,10 @@ local togglemusic = true
 
         if togglemusic then
             Frame2.Visible = true
+            click1:Play()
             CreateTween(Frame2, "Size", UDim2.new(0.2, 0, 0.14, 0), 0.3, true)
         else
+            click2:Play()
             CreateTween(Frame2, "Size", UDim2.new(0.2, 0, 0, 0), 0.3, true)
             Frame2.Visible = false
         end
@@ -1771,8 +1795,10 @@ for i = 2, #gamePlaces do
 
         if minimiz7 then
             framek.Visible = true
+            click1:Play()
             CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
         else
+            click2:Play()
             CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
             framek.Visible = false
         end
@@ -2318,6 +2344,7 @@ Server.Parent = frame79
         minimize3 = not minimize3
 
         if minimize3 then
+            click1:Play()
             frameinfo.Visible = true
             iconplayers.Visible = true
             Wellcome.Visible = true
@@ -2345,6 +2372,7 @@ Server.Parent = frame79
             CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
             CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
         else
+            click2:Play()
             CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
             CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
             CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
@@ -2424,9 +2452,11 @@ Server.Parent = frame79
         if minimize then
             minimize = false
             Menu.Visible = true
+            click1:Play()
             CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 270), 0.3, false)
         else
             minimize = true
+            click2:Play()
             CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 0), 0.3, true)
             Menu.Visible = false
             Menu.Position = UDim2.new(0.5, -500/2, 0.5, -270/2)
@@ -2838,9 +2868,11 @@ end, togglehideName)
      minimize9 = not minimize9
 
         if minimize9 then
+            click1:Play()
             frameSetting.Visible = true
             CreateTween(frameSetting, "Size", UDim2.new(0.4, 0, 0.8, 0), 0.3, false)
         else
+            click2:Play()
             CreateTween(frameSetting, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
             frameSetting.Visible = false
         end
@@ -2861,6 +2893,10 @@ RunService.Heartbeat:Connect(function()
         Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
         Lighting.GlobalShadows = false
         end
+        click1:Destroy()
+        click2:Destroy()
+        falsetoggle:Destroy()
+        clicktoggle:Destroy()
         soundmusic:Destroy()
     end
 end)
