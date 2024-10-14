@@ -728,6 +728,13 @@ click1.Volume = 0.1
 local click2 = Instance.new("Sound", ScreenGui)
 click2.SoundId = "rbxassetid://8432836186"
 click2.Volume = 0.1
+local notifyfriend = Instance.new("Sound", ScreenGui)
+notifyfriend.SoundId = "rbxassetid://1862045322"
+notifyfriend.Volume = 0.2
+notifyfriend.PlaybackSpeed = 0.9
+local notifyfriendleave = Instance.new("Sound", ScreenGui)
+notifyfriendleave.SoundId = "rbxassetid://489103549"
+notifyfriendleave.Volume = 0.2
 
 local function resetSong()
     soundmusic:Stop()
@@ -2676,6 +2683,7 @@ game.Players.PlayerAdded:Connect(function(player)
 
     if isFriend then
         notifyPlayer(player, "Friend has joined the game")
+        notifyfriend:Play()
     end
 end)
 
@@ -2700,6 +2708,7 @@ game.Players.PlayerRemoving:Connect(function(player)
 
     if isFriend then
         notifyPlayer(player, "Friend has left the game")
+        notifyfriendleave:Play()
     end
 end)
 
@@ -2893,6 +2902,8 @@ RunService.Heartbeat:Connect(function()
         Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
         Lighting.GlobalShadows = false
         end
+        notifyfriend:Play()
+        notifyfriendleave:Play()
         click1:Destroy()
         click2:Destroy()
         falsetoggle:Destroy()
