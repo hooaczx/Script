@@ -714,6 +714,8 @@ soundmusic.Parent = ScreenGui
 local isPaused = false
 local savedTimePosition = 0
 local progressUpdateConnection
+local soundId1 = "rbxassetid://478544929"
+local soundId2 = "rbxassetid://4499400560"
 
 local function resetSong()
     soundmusic:Stop()
@@ -780,7 +782,13 @@ local function notify(params)
     NotificationLabelText.TextScaled = true
     NotificationLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
     NotificationLabelText.Position = position
-    
+
+    local sound2 = Instance.new("Sound", NotificationLabelText)
+    sound2.SoundId = soundId1
+    sound2.Volume = 0.4
+    sound2.PlaybackSpeed = 0.9
+    sound2:Play()
+
     local NotificationImage = Instance.new("ImageLabel", NotificationLabelText)
     NotificationImage.Size = UDim2.new(0, 70, 0, 70)
     NotificationImage.Position = UDim2.new(-0.2, 0, 0, 0)
@@ -802,6 +810,11 @@ local function notify(params)
     OkButton.TextScaled = true
     OkButton.Text = buttondeleteText
     OkButton.BackgroundTransparency = 1
+
+    local sound1 = Instance.new("Sound", OkButton)
+    sound1.SoundId = soundId2
+    sound1.Volume = 0.4
+    sound1.PlaybackSpeed = 0.9
 
     table.insert(notificationgui, NotificationLabelText)
 
@@ -825,10 +838,13 @@ local function notify(params)
     end
 
     OkButton.MouseButton1Click:Connect(function()
+        sound1:Play()
         local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
         tweenOut:Play()
         
         tweenOut.Completed:Connect(function()
+            sound2:Destroy()
+            sound1:Destroy()
             NotificationLabelText:Destroy()
         end)
     end)
