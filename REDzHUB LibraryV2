@@ -2932,6 +2932,29 @@ end, togglehideName)
         end
     end)
 
+RunService.Heartbeat:Connect(function()
+    if not CoreGui:FindFirstChild(ScreenGui.Name) then
+     for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+                v:Destroy()
+            end
+        end
+        rainSound:Destroy()
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+        Lighting.Brightness = 2
+        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
+        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
+        Lighting.GlobalShadows = false
+        notifyfriend:Play()
+        notifyfriendleave:Play()
+        click1:Destroy()
+        click2:Destroy()
+        falsetoggle:Destroy()
+        clicktoggle:Destroy()
+        soundmusic:Destroy()
+    end
+end)
+
 local States = {
     Off = "rbxasset://textures/ui/mouseLock_off@2x.png",
     On = "rbxasset://textures/ui/mouseLock_on@2x.png",
@@ -3009,29 +3032,6 @@ local ShiftLockAction = ContextActionService:BindAction("Shift Lock", ShiftLock,
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
 return {} and ShiftLockAction
-
-RunService.Heartbeat:Connect(function()
-    if not CoreGui:FindFirstChild(ScreenGui.Name) then
-     for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
-                v:Destroy()
-            end
-        end
-        rainSound:Destroy()
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.Brightness = 2
-        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
-        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-        Lighting.GlobalShadows = false
-        notifyfriend:Play()
-        notifyfriendleave:Play()
-        click1:Destroy()
-        click2:Destroy()
-        falsetoggle:Destroy()
-        clicktoggle:Destroy()
-        soundmusic:Destroy()
-    end
-end)
 end
   
   local ScrollBar = Create("ScrollingFrame", Menu, {
