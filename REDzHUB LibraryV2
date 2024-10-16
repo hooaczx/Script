@@ -132,7 +132,7 @@ end
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
   Name = "REDz HUB library",
-  DisplayOrder = 9999,
+  DisplayOrder = 9999999999999,
 })
 
 ScreenFind = CoreGui:FindFirstChild(ScreenGui.Name)
@@ -892,14 +892,6 @@ local function notify(params)
     end)
 end
 
-notify({
-   Title = "Announce",
-   Text = "If you're wondering why my gui is weird #for people who use mobile phones with big screens or computers with wide screens. You might notice that my gui is out of place or the size of it might be strange. Now I'm editing it",
-   buttonText = "ok",
-   imageID = "",
-   guiSize = Vector2.new(400, 70),
-   })
-
   function MinimizeButton(Configs)
     local player = game.Players.LocalPlayer
     local players = game:GetService("Players")
@@ -920,8 +912,9 @@ notify({
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
-    frame.Size = UDim2.new(0.5, 0, 0.12, 0)
-    frame.Position = UDim2.new(0.23, 0, 0.878, 0)
+    frame.Size = UDim2.new(0, 430, 0, 50)
+    frame.AnchorPoint = Vector2.new(0.5, 1)
+    frame.Position = UDim2.new(0.48, 0, 1, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
 
     local tweenGradient = CreateGradient(frame, {
@@ -937,29 +930,30 @@ notify({
 
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0, 30, 0, 30)
-    Button1.Position = UDim2.new(0.4713, 0, 0.803, 0)
+    Button1.AnchorPoint = Vector2.new(0.5, 1)
+    Button1.Position = UDim2.new(0.48, 0, 1, -50)
     Button1.TextScaled = true
     Button1.Text = "v"
     Button1.ZIndex = 10
     Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button1.BackgroundTransparency = 1
 
- local minimize1 = false
+    local minimize1 = false
     Button1.MouseButton1Click:Connect(function()
         minimize1 = not minimize1
 
-        if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.943, 0), 0.3, true)
+         if minimize1 then
+            CreateTween1(frame, "Size", UDim2.new(0, 430, 0, 0), 0.3, true)
+            CreateTween1(Button1, "Position", UDim2.new(0.48, 0, 1, 0), 0.3, true)
             frame.Visible = false
             Button1.Text = "^"
-        else
+         else
             frame.Visible = true
-            CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.4713, 0, 0.803, 0), 0.3, true) 
+            CreateTween1(frame, "Size", UDim2.new(0, 430, 0, 50), 0.3, true)
+            CreateTween1(Button1, "Position", UDim2.new(0.48, 0, 1, -50), 0.3, true)
             Button1.Text = "v"
         end
-    end)
+     end)
 
  local FrameChat = Instance.new("Frame", ScreenGui)
  FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1175,7 +1169,7 @@ searchButton.BackgroundTransparency = 1
 searchButton.Image = "rbxthumb://type=Asset&id=85019257025290&w=150&h=150"
 
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0.4, 0, 0.3, 0)
+Frame.Size = UDim2.new(0, 347, 0, 115)
 Frame.BackgroundColor3 = Configs_HUB.Cor_Options
 Frame.Position = UDim2.new(0.3, 0, 0, 0)
 Frame.Active = true
@@ -1412,8 +1406,9 @@ local function createToggleButton(parent, position, callback, initialState)
 end
 
 local framemusic = Instance.new("Frame", ScreenGui)
-framemusic.Size = UDim2.new(0.4, 0, 0.8, 0)
-framemusic.Position = UDim2.new(0.52, -200, 0.4, -150)
+framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
+framemusic.Position = UDim2.new(0.5, 0, 0.4, 0)
+framemusic.AnchorPoint = Vector2.new(0.52, 0.4)
 framemusic.BackgroundColor3 = Configs_HUB.Cor_Hub
 framemusic.Visible = false
 
@@ -1475,9 +1470,10 @@ end
 soundmusic.Ended:Connect(onSongEnded)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
-Frame2.Size = UDim2.new(0.2, 0, 0.14, 0)
+Frame2.Size = UDim2.new(0, 174, 0, 50)
 Frame2.BackgroundColor3 = Color3.new(0, 0, 0)
-Frame2.Position = UDim2.new(0.38, 0, 0.46, 0)
+Frame2.Position = UDim2.new(0.456, 0, 0.46, 0)
+Frame2.AnchorPoint = Vector2.new(0.38, 0.46)
 Frame2.Visible = false
 
 local musicplayer = Instance.new("ImageButton", Frame2)
@@ -1494,10 +1490,10 @@ local togglemusicplayer = true
         if togglemusicplayer then
             click1:Play()
             Frame.Visible = true
-            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0.3, 0), 0.3, true)
+            CreateTween(Frame, "Size", UDim2.new(0, 347, 0, 115), 0.3, true)
         else
             click2:Play()
-            CreateTween(Frame, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            CreateTween(Frame, "Size", UDim2.new(0, 347, 0, 0), 0.3, true)
             Frame.Visible = false
             Frame.Position = UDim2.new(0.3, 0, 0, 0)
         end
@@ -1540,10 +1536,10 @@ local togglesettingmusic = false
         if togglesettingmusic then
             click1:Play()
             framemusic.Visible = true
-            CreateTween(framemusic, "Size", UDim2.new(0.4, 0, 0.8, 0), 0.3, false)
+            CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
         else
             click2:Play()
-            CreateTween(framemusic, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
             framemusic.Visible = false
         end
     end)
@@ -1563,10 +1559,10 @@ local togglemusic = true
         if togglemusic then
             Frame2.Visible = true
             click1:Play()
-            CreateTween(Frame2, "Size", UDim2.new(0.2, 0, 0.14, 0), 0.3, true)
+            CreateTween(Frame2, "Size", UDim2.new(0, 174, 0, 50), 0.3, true)
         else
             click2:Play()
-            CreateTween(Frame2, "Size", UDim2.new(0.2, 0, 0, 0), 0.3, true)
+            CreateTween(Frame2, "Size", UDim2.new(0, 174, 0, 0), 0.3, true)
             Frame2.Visible = false
         end
     end)
@@ -1851,16 +1847,18 @@ local Asset = MarketplaceService:GetProductInfo(PlaceId)
 local gameName = success and result.Name or Asset.Name or "Unknown"
 
 local frameinfo = Instance.new("Frame", ScreenGui)
-frameinfo.Size = UDim2.new(0.25, 0, 0.16, 0)
-frameinfo.Position = UDim2.new(0.04, 0, 0.21, 0)
+frameinfo.Size = UDim2.new(0.25, 0, 0.18, 0)
+frameinfo.Position = UDim2.new(0.04, 0, 0.24, 0)
+frameinfo.AnchorPoint = Vector2.new(0.04, 0.21)
 frameinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 frameinfo.BackgroundTransparency = 0.5
 frameinfo.Visible = false
 Corner(frameinfo, {CornerRadius = UDim.new(0.15, 0)})
 
 local iconplayers = Instance.new("ImageLabel", ScreenGui)
-iconplayers.Size = UDim2.new(0, 50, 0, 50)
+iconplayers.Size = UDim2.new(0.06, 0, 0.124, 0)
 iconplayers.Position = UDim2.new(0.05, 0, 0.06, 0)
+iconplayers.AnchorPoint = Vector2.new(0.05, 0.06)
 iconplayers.BackgroundColor3 = Configs_HUB.Cor_Hub
 iconplayers.BackgroundTransparency = 0.5
 iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
@@ -1868,9 +1866,10 @@ iconplayers.Visible = false
 Corner(iconplayers, {CornerRadius = UDim.new(1, 0)})
 
 local Wellcome = Instance.new("TextLabel", ScreenGui)
-Wellcome.Size = UDim2.new(0, 150, 0, 30)
+Wellcome.Size = UDim2.new(0.25, 0, 0.09, 0)
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
-Wellcome.Position = UDim2.new(0.11, 0, 0.085, 0)
+Wellcome.Position = UDim2.new(0.14, 0, 0.077, 0)
+Wellcome.AnchorPoint = Vector2.new(0.11, 0.085)
 Wellcome.TextColor3 = Color3.fromRGB(255, 255, 255)
 Wellcome.BackgroundColor3 = Configs_HUB.Cor_Hub
 Wellcome.BackgroundTransparency = 1
@@ -1880,24 +1879,27 @@ Wellcome.Visible = false
 
 local gameinfoframe= Instance.new("Frame", ScreenGui)
 gameinfoframe.Size = UDim2.new(0.27, 0, 0.3, 0)
-gameinfoframe.Position = UDim2.new(0.032, 0, 0.51, 0)
+gameinfoframe.Position = UDim2.new(0.032, 0, 0.74, 0)
+gameinfoframe.AnchorPoint = Vector2.new(0.032, 0.51)
 gameinfoframe.BackgroundColor3 = Configs_HUB.Cor_Hub
 gameinfoframe.BackgroundTransparency = 0.5
 gameinfoframe.Visible = false
 Corner(gameinfoframe, {CornerRadius = UDim.new(0.15, 0)})
 
 local iconGame = Instance.new("ImageLabel", ScreenGui)
-iconGame.Size = UDim2.new(0, 55, 0, 50)
-iconGame.Position = UDim2.new(0.04, 0, 0.38, 0)
+iconGame.Size = UDim2.new(0.06, 0, 0.124, 0)
+iconGame.Position = UDim2.new(0.04, 0, 0.47, 0)
+iconGame.AnchorPoint = Vector2.new(0.04, 0.38)
 iconGame.BackgroundColor3 = Configs_HUB.Cor_Hub
 iconGame.BackgroundTransparency = 1
 iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
 iconGame.Visible = false
 
 local GameName = Instance.new("TextLabel", ScreenGui)
-GameName.Size = UDim2.new(0, 190, 0, 30)
+GameName.Size = UDim2.new(0.28, 0, 0.09, 0)
 GameName.Text = "Game Name: " .. gameName
-GameName.Position = UDim2.new(0.11, 0, 0.405, 0)
+GameName.Position = UDim2.new(0.14, 0, 0.48, 0)
+GameName.AnchorPoint = Vector2.new(0.11, 0.405)
 GameName.TextColor3 = Color3.fromRGB(255, 255, 255)
 GameName.BackgroundColor3 = Configs_HUB.Cor_Hub
 GameName.BackgroundTransparency = 1
@@ -1907,7 +1909,8 @@ GameName.Visible = false
 
 local frame100 = Instance.new("Frame", ScreenGui)
 frame100.Size = UDim2.new(0.41, 0, 0.48, 0)
-frame100.Position = UDim2.new(0.4178, 0, 0.14, 0)
+frame100.Position = UDim2.new(0.6178, 0, 0.22, 0)
+frame100.AnchorPoint = Vector2.new(0.4178, 0.14)
 frame100.BackgroundColor3 = Configs_HUB.Cor_Hub
 frame100.BackgroundTransparency = 1
 frame100.Visible = false
@@ -1930,8 +1933,9 @@ friendsFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
 friendsFrame.BackgroundTransparency = 0.5
 
 local iconfriend = Instance.new("ImageLabel", ScreenGui)
-iconfriend.Size = UDim2.new(0, 50, 0, 50)
-iconfriend.Position = UDim2.new(0.43, 0, 0.006, 0)
+iconfriend.Size = UDim2.new(0.06, 0, 0.124, 0)
+iconfriend.Position = UDim2.new(0.48, 0, 0.006, 0)
+iconfriend.AnchorPoint = Vector2.new(0.43, 0.006)
 iconfriend.BackgroundColor3 = Configs_HUB.Cor_Hub
 iconfriend.BackgroundTransparency = 0.4
 iconfriend.Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420"
@@ -1960,9 +1964,10 @@ local friendsData = {
 }
 
 local friendnumber = Instance.new("TextLabel", ScreenGui)
-friendnumber.Size = UDim2.new(0, 150, 0, 30)
+friendnumber.Size = UDim2.new(0.28, 0, 0.09, 0)
 friendnumber.Text = "Friend: "..friendsData.total.."/200"
-friendnumber.Position = UDim2.new(0.49, 0, 0.03, 0)
+friendnumber.Position = UDim2.new(0.67, 0, 0.03, 0)
+friendnumber.AnchorPoint = Vector2.new(0.49, 0.029)
 friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
 friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
 friendnumber.BackgroundTransparency = 1
@@ -2062,9 +2067,10 @@ end
 checkFriends()
 
 local TimePlay = Instance.new("TextLabel", ScreenGui)
-TimePlay.Size = UDim2.new(0, 180, 0, 30)
+TimePlay.Size = UDim2.new(0.205, 0, 0.07, 0)
 TimePlay.Text = "TimePlay"
-TimePlay.Position = UDim2.new(0.41, 0, 0.623, 0)
+TimePlay.Position = UDim2.new(0.5294, 0, 0.681, 0)
+TimePlay.AnchorPoint = Vector2.new(0.41, 0.623)
 TimePlay.TextColor3 = Color3.fromRGB(255, 255, 255)
 TimePlay.BackgroundColor3 = Configs_HUB.Cor_Hub
 TimePlay.BackgroundTransparency = 0.5
@@ -2074,9 +2080,10 @@ TimePlay.Visible = false
 Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
 
 local AccountAge = Instance.new("TextLabel", ScreenGui)
-AccountAge.Size = UDim2.new(0, 180, 0, 30)
+AccountAge.Size = UDim2.new(0.205, 0, 0.07, 0)
 AccountAge.Text = "AccountAge"
-AccountAge.Position = UDim2.new(0.62, 0, 0.623, 0)
+AccountAge.Position = UDim2.new(0.7781, 0, 0.681, 0)
+AccountAge.AnchorPoint = Vector2.new(0.62, 0.623)
 AccountAge.TextColor3 = Color3.fromRGB(255, 255, 255)
 AccountAge.BackgroundColor3 = Configs_HUB.Cor_Hub
 AccountAge.BackgroundTransparency = 0.5
@@ -2086,9 +2093,10 @@ AccountAge.Visible = false
 Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
 
 local Join = Instance.new("TextButton", ScreenGui)
-Join.Size = UDim2.new(0, 100, 0, 30)
+Join.Size = UDim2.new(0.101, 0, 0.07, 0)
 Join.Text = "Join Game Script".."\nYou can press Copy"
-Join.Position = UDim2.new(0.41, 0, 0.699, 0)
+Join.Position = UDim2.new(0.4868, 0, 0.762, 0)
+Join.AnchorPoint = Vector2.new(0.41, 0.699)
 Join.TextColor3 = Color3.fromRGB(255, 255, 255)
 Join.BackgroundColor3 = Configs_HUB.Cor_Hub
 Join.BackgroundTransparency = 0.5
@@ -2098,9 +2106,10 @@ Join.Visible = false
 Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
 
 local Position = Instance.new("TextButton", ScreenGui)
-Position.Size = UDim2.new(0, 100, 0, 30)
+Position.Size = UDim2.new(0.101, 0, 0.07, 0)
 Position.Text = "Position".."\nYou can press Copy"
-Position.Position = UDim2.new(0.528, 0, 0.699, 0)
+Position.Position = UDim2.new(0.6026, 0, 0.762, 0)
+Position.AnchorPoint = Vector2.new(0.528, 0.699)
 Position.TextColor3 = Color3.fromRGB(255, 255, 255)
 Position.BackgroundColor3 = Configs_HUB.Cor_Hub
 Position.BackgroundTransparency = 0.5
@@ -2252,7 +2261,7 @@ end
 updatePlaytime()
 
 local DisplayName = Instance.new("TextLabel")
-DisplayName.Size = UDim2.new(1, 0, 0, 10)
+DisplayName.Size = UDim2.new(1, 0, 0.3, 0)
 DisplayName.Text = "Display Name: " .. player.DisplayName
 DisplayName.Position = UDim2.new(0, 0, 0, 0)
 DisplayName.TextScaled = true
@@ -2263,9 +2272,9 @@ DisplayName.BackgroundTransparency = 1
 DisplayName.Parent = frame9
 
 local UserIdg = Instance.new("TextLabel")
-UserIdg.Size = UDim2.new(1, 0, 0, 10)
+UserIdg.Size = UDim2.new(1, 0, 0.3, 0)
 UserIdg.Text = "UserId: " .. player.UserId
-UserIdg.Position = UDim2.new(0, 0, 0.1, 0)
+UserIdg.Position = UDim2.new(0, 0, 0.3, 0)
 UserIdg.TextScaled = true
 UserIdg.TextColor3 = Color3.fromRGB(255, 255, 255)
 UserIdg.TextXAlignment = Enum.TextXAlignment.Left
@@ -2274,9 +2283,9 @@ UserIdg.BackgroundTransparency = 1
 UserIdg.Parent = frame9
 
 local AccountCreated = Instance.new("TextLabel")
-AccountCreated.Size = UDim2.new(1, 0, 0, 10)
+AccountCreated.Size = UDim2.new(1, 0, 0.3, 0)
 AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
-AccountCreated.Position = UDim2.new(0, 0, 0.2, 0)
+AccountCreated.Position = UDim2.new(0, 0, 0.6, 0)
 AccountCreated.TextScaled = true
 AccountCreated.TextColor3 = Color3.fromRGB(255, 255, 255)
 AccountCreated.TextXAlignment = Enum.TextXAlignment.Left
@@ -2285,7 +2294,7 @@ AccountCreated.BackgroundTransparency = 1
 AccountCreated.Parent = frame9
 
 local Update = Instance.new("TextLabel")
-Update.Size = UDim2.new(1, 0, 0, 10)
+Update.Size = UDim2.new(1, 0, 0.1, 0)
 Update.Text = "Update: "..result.Updated
 Update.Position = UDim2.new(0, 0, 0, 0)
 Update.TextScaled = true
@@ -2296,7 +2305,7 @@ Update.BackgroundTransparency = 1
 Update.Parent = frame79
 
 local CreationDate = Instance.new("TextLabel")
-CreationDate.Size = UDim2.new(1, 0, 0, 10)
+CreationDate.Size = UDim2.new(1, 0, 0.1, 0)
 CreationDate.Text = "Creation Date: "..result.Created
 CreationDate.Position = UDim2.new(0, 0, 0.1, 0)
 CreationDate.TextScaled = true
@@ -2307,7 +2316,7 @@ CreationDate.BackgroundTransparency = 1
 CreationDate.Parent = frame79
 
 local Gameid = Instance.new("TextLabel")
-Gameid.Size = UDim2.new(1, 0, 0, 10)
+Gameid.Size = UDim2.new(1, 0, 0.1, 0)
 Gameid.Text = "Gameid: " .. game.GameId
 Gameid.Position = UDim2.new(0, 0, 0.2, 0)
 Gameid.TextScaled = true
@@ -2318,7 +2327,7 @@ Gameid.BackgroundTransparency = 1
 Gameid.Parent = frame79
 
 local GamePlaceId = Instance.new("TextLabel")
-GamePlaceId.Size = UDim2.new(1, 0, 0, 10)
+GamePlaceId.Size = UDim2.new(1, 0, 0.1, 0)
 GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
 GamePlaceId.Position = UDim2.new(0, 0, 0.3, 0)
 GamePlaceId.TextScaled = true
@@ -2329,7 +2338,7 @@ GamePlaceId.BackgroundTransparency = 1
 GamePlaceId.Parent = frame79
 
 local GameJobId = Instance.new("TextLabel")
-GameJobId.Size = UDim2.new(1, 0, 0, 10)
+GameJobId.Size = UDim2.new(1, 0, 0.1, 0)
 GameJobId.Text = "GameJobId: " .. game.JobId
 GameJobId.Position = UDim2.new(0, 0, 0.4, 0)
 GameJobId.TextScaled = true
@@ -2340,7 +2349,7 @@ GameJobId.BackgroundTransparency = 1
 GameJobId.Parent = frame79
 
 local Server = Instance.new("TextLabel")
-Server.Size = UDim2.new(1, 0, 0, 10)
+Server.Size = UDim2.new(1, 0, 0.1, 0)
 Server.Text = "Server Size: ".. maxPlayers
 Server.Position = UDim2.new(0, 0, 0.5, 0)
 Server.TextScaled = true
@@ -2397,34 +2406,34 @@ Server.Parent = frame79
             AccountAge.Visible = true
             Join.Visible = true
             Position.Visible = true
-            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0.16, 0), 0.3, true)
-            CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 50), 0.3, true)
-            CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 30), 0.3, true)
+            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0.18, 0), 0.3, true)
+            CreateTween1(iconplayers, "Size", UDim2.new(0.06, 0, 0.124, 0), 0.3, true)
+            CreateTween1(Wellcome, "Size", UDim2.new(0.25, 0, 0.09, 0), 0.3, true)
             CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0.3, 0), 0.3, true)
-            CreateTween1(iconGame, "Size", UDim2.new(0, 55, 0, 50), 0.3, true)
-            CreateTween1(GameName, "Size", UDim2.new(0, 190, 0, 30), 0.3, true)
+            CreateTween1(iconGame, "Size", UDim2.new(0.06, 0, 0.124, 0), 0.3, true)
+            CreateTween1(GameName, "Size", UDim2.new(0.28, 0, 0.09, 0), 0.3, true)
             CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0.48, 0), 0.3, true)
-            CreateTween1(iconfriend, "Size", UDim2.new(0, 50, 0, 50), 0.3, true)
-            CreateTween1(friendnumber, "Size", UDim2.new(0, 150, 0, 30), 0.3, true)
-            CreateTween1(TimePlay, "Size", UDim2.new(0, 180, 0, 30), 0.3, true)
-            CreateTween1(AccountAge, "Size", UDim2.new(0, 180, 0, 30), 0.3, true)
-            CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
-            CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 30), 0.3, true)
+            CreateTween1(iconfriend, "Size", UDim2.new(0.06, 0, 0.124, 0), 0.3, true)
+            CreateTween1(friendnumber, "Size", UDim2.new(0.28, 0, 0.09, 0), 0.3, true)
+            CreateTween1(TimePlay, "Size", UDim2.new(0.205, 0, 0.07, 0), 0.3, true)
+            CreateTween1(AccountAge, "Size", UDim2.new(0.205, 0, 0.07, 0), 0.3, true)
+            CreateTween1(Join, "Size", UDim2.new(0.101, 0, 0.07, 0), 0.3, true)
+            CreateTween1(Position, "Size", UDim2.new(0.101, 0, 0.07, 0), 0.3, true)
         else
             click2:Play()
             CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
-            CreateTween1(iconplayers, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
-            CreateTween1(Wellcome, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
+            CreateTween1(iconplayers, "Size", UDim2.new(0.06, 0, 0, 0), 0.3, true)
+            CreateTween1(Wellcome, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
             CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0, 0), 0.3, true)
-            CreateTween1(iconGame, "Size", UDim2.new(0, 55, 0, 0), 0.3, true)
-            CreateTween1(GameName, "Size", UDim2.new(0, 190, 0, 0), 0.3, true)
+            CreateTween1(iconGame, "Size", UDim2.new(0.06, 0, 0, 0), 0.3, true)
+            CreateTween1(GameName, "Size", UDim2.new(0.28, 0, 0, 0), 0.3, true)
             CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0, 0), 0.3, true)
-            CreateTween1(iconfriend, "Size", UDim2.new(0, 50, 0, 0), 0.3, true)
-            CreateTween1(friendnumber, "Size", UDim2.new(0, 150, 0, 0), 0.3, true)
-            CreateTween1(TimePlay, "Size", UDim2.new(0, 180, 0, 0), 0.3, true)
-            CreateTween1(AccountAge, "Size", UDim2.new(0, 180, 0, 0), 0.3, true)
-            CreateTween1(Join, "Size", UDim2.new(0, 100, 0, 0), 0.3, true)
-            CreateTween1(Position, "Size", UDim2.new(0, 100, 0, 0), 0.3, true)
+            CreateTween1(iconfriend, "Size", UDim2.new(0.06, 0, 0, 0), 0.3, true)
+            CreateTween1(friendnumber, "Size", UDim2.new(0.28, 0, 0, 0), 0.3, true)
+            CreateTween1(TimePlay, "Size", UDim2.new(0.205, 0, 0, 0), 0.3, true)
+            CreateTween1(AccountAge, "Size", UDim2.new(0.205, 0, 0, 0), 0.3, true)
+            CreateTween1(Join, "Size", UDim2.new(0.101, 0, 0, 0), 0.3, true)
+            CreateTween1(Position, "Size", UDim2.new(0.101, 0, 0, 0), 0.3, true)
             frameinfo.Visible = false
             iconplayers.Visible = false
             Wellcome.Visible = false
@@ -2503,8 +2512,9 @@ Server.Parent = frame79
     end)
 
 local frameSetting = Instance.new("Frame", ScreenGui)
-frameSetting.Size = UDim2.new(0.4, 0, 0.8, 0)
-frameSetting.Position = UDim2.new(0.52, -200, 0.4, -150)
+frameSetting.Size = UDim2.new(0.35, 0, 0.8, 0)
+frameSetting.Position = UDim2.new(0.5, 0, 0.4, 0)
+frameSetting.AnchorPoint = Vector2.new(0.52, 0.4)
 frameSetting.BackgroundColor3 = Configs_HUB.Cor_Hub
 frameSetting.Visible = false
 
@@ -2911,10 +2921,10 @@ end, togglehideName)
         if minimize9 then
             click1:Play()
             frameSetting.Visible = true
-            CreateTween(frameSetting, "Size", UDim2.new(0.4, 0, 0.8, 0), 0.3, false)
+            CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
         else
             click2:Play()
-            CreateTween(frameSetting, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
             frameSetting.Visible = false
         end
     end)
