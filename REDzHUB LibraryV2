@@ -892,6 +892,14 @@ local function notify(params)
     end)
 end
 
+notify({
+      Title = "Hi",
+      Text = "Hope you enjoy using it",
+      buttonText = "ok",
+      imageID = "",
+      guiSize = Vector2.new(400, 70),
+      })
+
   function MinimizeButton(Configs)
     local player = game.Players.LocalPlayer
     local players = game:GetService("Players")
@@ -2938,7 +2946,6 @@ local States = {
     Lock = "rbxasset://textures/MouseLockedCursor.png",
     Lock2 = "rbxasset://SystemCursors/Cross"
 }
-
 local MaxLength = 900000
 local EnabledOffset = CFrame.new(1.7, 0, 0)
 local DisabledOffset = CFrame.new(-1.7, 0, 0)
@@ -2969,20 +2976,22 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             Player.Character.Humanoid.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            Player.Character.HumanoidRootPart.CFrame = CFrame.new(
-                Player.Character.HumanoidRootPart.Position,
-                Vector3.new(
-                    workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
-                    Player.Character.HumanoidRootPart.Position.Y,
-                    workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
+            Player.Character.HumanoidRootPart.CFrame =
+                CFrame.new(
+                    Player.Character.HumanoidRootPart.Position,
+                    Vector3.new(
+                        workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
+                        Player.Character.HumanoidRootPart.Position.Y,
+                        workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
+                    )
                 )
-            )
             workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * EnabledOffset
-            workspace.CurrentCamera.Focus = CFrame.fromMatrix(
-                workspace.CurrentCamera.Focus.Position,
-                workspace.CurrentCamera.CFrame.RightVector,
-                workspace.CurrentCamera.CFrame.UpVector
-            ) * EnabledOffset
+            workspace.CurrentCamera.Focus =
+                CFrame.fromMatrix(
+                    workspace.CurrentCamera.Focus.Position,
+                    workspace.CurrentCamera.CFrame.RightVector,
+                    workspace.CurrentCamera.CFrame.UpVector
+                ) * EnabledOffset
         end)
     else
         Player.Character.Humanoid.AutoRotate = true
@@ -2996,29 +3005,18 @@ ShiftLockButton.MouseButton1Click:Connect(function()
     end
 end)
 
-local function ShiftLock(actionName, inputState, inputObject)
-    if inputState == Enum.UserInputState.Begin then
-        if not Active then
-            Active = RunService.RenderStepped:Connect(function()
-                Player.Character.Humanoid.AutoRotate = false
-                ShiftLockButton.Image = States.On
-                ShiftlockCursor.Visible = true
-                Player.Character.HumanoidRootPart.CFrame = CFrame.new(
-                    Player.Character.HumanoidRootPart.Position,
-                    Vector3.new(
-                        workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
-                        Player.Character.HumanoidRootPart.Position.Y,
-                        workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
-                    )
-                )
-                workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * EnabledOffset
-                workspace.CurrentCamera.Focus = CFrame.fromMatrix(
-                    workspace.CurrentCamera.Focus.Position,
-                    workspace.CurrentCamera.CFrame.RightVector,
-                    workspace.CurrentCamera.CFrame.UpVector
-                ) * EnabledOffset
-            end)
-        else
+local function ShiftLock(_, state)
+    if state == Enum.UserInputState.Begin then
+        ShiftLockButton:MouseButton1Click()
+    end
+end
+
+local ShiftLockAction = ContextActionService:BindAction("Shift Lock", ShiftLock, false, "On")
+ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
+
+RunService.Heartbeat:Connect(function()
+    if not CoreGui:FindFirstChild(ScreenGui.Name) then
+        if Active then
             Player.Character.Humanoid.AutoRotate = true
             ShiftLockButton.Image = States.Off
             workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
@@ -3028,16 +3026,8 @@ local function ShiftLock(actionName, inputState, inputObject)
                 Active = nil
             end)
         end
-    end
-end
-
-local ShiftLockAction = ContextActionService:BindAction("Shift Lock", ShiftLock, false, Enum.KeyCode.LeftShift)
-ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
-
-return {} and ShiftLockShiftLockAction
-RunService.Heartbeat:Connect(function()
-    if not CoreGui:FindFirstChild(ScreenGui.Name) then
-     for _, v in pairs(Lighting:GetChildren()) do
+        
+        for _, v in pairs(Lighting:GetChildren()) do
             if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
                 v:Destroy()
             end
@@ -3048,16 +3038,8 @@ RunService.Heartbeat:Connect(function()
         Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
         Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
         Lighting.GlobalShadows = false
-        Player.Character.Humanoid.AutoRotate = true
-            ShiftLockButton.Image = States.Off
-            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
-            ShiftlockCursor.Visible = false
-            pcall(function()
-                Active:Disconnect()
-                Active = nil
-            end)
-        notifyfriend:Play()
-        notifyfriendleave:Play()
+        notifyfriend:Destroy()
+        notifyfriendleave:Destroy()
         click1:Destroy()
         click2:Destroy()
         falsetoggle:Destroy()
