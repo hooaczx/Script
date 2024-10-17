@@ -8,6 +8,7 @@ getgenv().TPSpeed = 3
 getgenv().TPWalk = false
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
+local player = game:GetService("Players").LocalPlayer
 
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
@@ -78,14 +79,49 @@ local Toggle = AddToggle(Main5u6, {
   end
 })
 
+local function setupTPWalk()
+    local runService = game:GetService("RunService")
+    local connection
+    if connection then
+        connection:Disconnect()
+    end
+    local function onCharacterAdded(character)
+        local hum = character:WaitForChild("Humanoid")
+        connection = runService.Stepped:Connect(function()
+            if getgenv().TPWalk and hum and hum.Parent then
+                if hum.Health > 0 then
+                    if hum.MoveDirection.Magnitude > 0 then
+                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
+                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                        else
+                            character:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+                else
+                    connection:Disconnect()
+                end
+            else
+                connection:Disconnect()
+            end
+        end)
+    end
+
+    player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+end
+
 AddTextBox(Main5u6, {
-  Name = "Number Tpwalk",
-  Default = "Enter",
-  PlaceholderText = "Enter number",
-  ClearText = true,
-  Callback = function(value)
-    getgenv().TPSpeed = value
-  end
+    Name = "Number Tpwalk",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        if isNumber(value) then
+            getgenv().TPSpeed = tonumber(value)
+        end
+    end
 })
 
 local Toggle = AddToggle(Main5u6, {
@@ -93,40 +129,9 @@ local Toggle = AddToggle(Main5u6, {
     Default = false,
     Callback = function(s)
         getgenv().TPWalk = s
-        local runService = game:GetService("RunService")
-        local player = game:GetService("Players")
-        local lplr = player.LocalPlayer
-        local connection
-        if connection then
-            connection:Disconnect()
-        end
-        local function onCharacterAdded(character)
-            local hum = character:WaitForChild("Humanoid")
-            if getgenv().TPWalk then
-                connection = runService.Stepped:Connect(function()
-                    if getgenv().TPWalk and hum and hum.Parent then
-                        if hum.Health > 0 then
-                            if hum.MoveDirection.Magnitude > 0 then
-                                if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                                    character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                                else
-                                    character:TranslateBy(hum.MoveDirection)
-                                end
-                            end
-                        else
-                            connection:Disconnect()
-                        end
-                    else
-                        connection:Disconnect()
-                    end
-                end)
-            end
-        end
-        lplr.CharacterAdded:Connect(onCharacterAdded)
-        if lplr.Character then
-            onCharacterAdded(lplr.Character)
-        end
-        if not s then
+        if s then
+            setupTPWalk() 
+        else
             if connection then
                 connection:Disconnect()
             end
