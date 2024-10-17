@@ -6,9 +6,15 @@ local function isNumber(str)
 end
 getgenv().TPSpeed = 3
 getgenv().TPWalk = false
+getgenv().TeleportSpeed = 3
+getgenv().EnableTPWalk = false
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
 
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
@@ -135,6 +141,59 @@ local Toggle = AddToggle(Main5u6, {
             if connection then
                 connection:Disconnect()
             end
+        end
+    end
+})
+
+local function TweenMovement(character)
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    local connection
+    connection = RunService.Stepped:Connect(function()
+        if getgenv().EnableTPWalk and character and character.Parent then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                local moveDirection = humanoid.MoveDirection
+                if moveDirection.Magnitude > 0 then
+                    local targetPosition = humanoidRootPart.Position + (moveDirection * tonumber(getgenv().TeleportSpeed))
+                    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+                    local goal = {Position = targetPosition}
+
+                    local tween = TweenService:Create(humanoidRootPart, tweenInfo, goal)
+                    tween:Play()
+                end
+            end
+        else
+            connection:Disconnect()
+        end
+    end)
+end
+
+player.CharacterAdded:Connect(function(character)
+    TweenMovement(character)
+end)
+
+if player.Character then
+    TweenMovement(player.Character)
+end
+
+AddTextBox(Main5u6, {
+    Name = "Number Tween Speed",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        getgenv().TeleportSpeed = tonumber(value) or 3
+    end
+})
+
+local ToggleTPWalk = AddToggle(Main5u6, {
+    Name = "Tween Speed",
+    Default = false,
+    Callback = function(state)
+        getgenv().EnableTPWalk = state
+        if state and player.Character then
+            TweenMovement(player.Character)
         end
     end
 })
