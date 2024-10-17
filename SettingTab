@@ -85,13 +85,72 @@ local Toggle = AddToggle(Main5u6, {
   end
 })
 
+local function setupTPWalk()
+    local runService = game:GetService("RunService")
+    local connection
+    if connection then
+        connection:Disconnect()
+    end
+    local function onCharacterAdded(character)
+        local hum = character:WaitForChild("Humanoid")
+        connection = runService.Stepped:Connect(function()
+            if getgenv().TPWalk and hum and hum.Parent then
+                if hum.Health > 0 then
+                    if hum.MoveDirection.Magnitude > 0 then
+                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
+                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                        else
+                            character:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+                else
+                    connection:Disconnect()
+                end
+            else
+                connection:Disconnect()
+            end
+        end)
+    end
+
+    player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+end
+
+AddTextBox(Main5u6, {
+    Name = "Number Tpwalk",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        if isNumber(value) then
+            getgenv().TPSpeed = tonumber(value)
+        end
+    end
+})
+
+local Toggle = AddToggle(Main5u6, {
+    Name = "Tpwalk",
+    Default = false,
+    Callback = function(s)
+        getgenv().TPWalk = s
+        if s then
+            setupTPWalk() 
+        else
+            if connection then
+                connection:Disconnect()
+            end
+        end
+    end
+})
+
 local function setupTweenWalk()
     local connection
 
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
         local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
         if connection then
             connection:Disconnect()
         end
@@ -117,8 +176,8 @@ local function setupTweenWalk()
     end
 
     LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-    if LocalPlayer.Character then
-        onCharacterAdded(LocalPlayer.Character)
+    if game.Players.LocalPlayer.Character then
+        onCharacterAdded(game.Players.LocalPlayer.Character)
     end
 end
 
