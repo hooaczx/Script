@@ -11,7 +11,7 @@ getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.
 local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
-local LocalPlayer = game.Players.LocalPlayer
+local LocalPlayer = player
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -85,82 +85,25 @@ local Toggle = AddToggle(Main5u6, {
   end
 })
 
-local function setupTPWalk()
-    local runService = game:GetService("RunService")
-    local connection
-    if connection then
-        connection:Disconnect()
-    end
-    local function onCharacterAdded(character)
-        local hum = character:WaitForChild("Humanoid")
-        connection = runService.Stepped:Connect(function()
-            if getgenv().TPWalk and hum and hum.Parent then
-                if hum.Health > 0 then
-                    if hum.MoveDirection.Magnitude > 0 then
-                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                        else
-                            character:TranslateBy(hum.MoveDirection)
-                        end
-                    end
-                else
-                    connection:Disconnect()
-                end
-            else
-                connection:Disconnect()
-            end
-        end)
-    end
-
-    player.CharacterAdded:Connect(onCharacterAdded)
-    if player.Character then
-        onCharacterAdded(player.Character)
-    end
-end
-
-AddTextBox(Main5u6, {
-    Name = "Number Tpwalk",
-    Default = "Enter",
-    PlaceholderText = "Enter number",
-    ClearText = true,
-    Callback = function(value)
-        if isNumber(value) then
-            getgenv().TPSpeed = tonumber(value)
-        end
-    end
-})
-
-local Toggle = AddToggle(Main5u6, {
-    Name = "Tpwalk",
-    Default = false,
-    Callback = function(s)
-        getgenv().TPWalk = s
-        if s then
-            setupTPWalk() 
-        else
-            if connection then
-                connection:Disconnect()
-            end
-        end
-    end
-})
-
 local function setupTweenWalk()
     local connection
-    if connection then
-        connection:Disconnect()
-    end
 
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+        if connection then
+            connection:Disconnect()
+        end
+
         connection = RunService.Stepped:Connect(function()
             if getgenv().TweenWalk and hum and hum.Parent then
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
-                        local moveDirection = hum.MoveDirection.Unit
-                        local targetPosition = character.PrimaryPart.Position + (moveDirection * getgenv().TweenSpeed * 0.1)
+                        local targetPosition = humanoidRootPart.Position + (hum.MoveDirection * getgenv().TweenSpeed * 0.1)
                         local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-                        local tween = TweenService:Create(character.PrimaryPart, tweenInfo, {Position = targetPosition})
+                        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {Position = targetPosition})
+
                         tween:Play()
                         tween.Completed:Wait()
                     end
@@ -191,7 +134,7 @@ AddTextBox(Main5u6, {
         if numberValue and numberValue > 0 then
             getgenv().TweenSpeed = numberValue
         else
-            warn("Invalid number entered!")
+            warn("Invalid number entered! Please enter a positive number.")
         end
     end
 })
