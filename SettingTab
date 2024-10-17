@@ -147,6 +147,7 @@ local Toggle = AddToggle(Main5u6, {
 
 local function TweenMovement(character)
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local camera = workspace.CurrentCamera -- ควบคุมกล้อง
 
     local connection
     connection = RunService.Stepped:Connect(function()
@@ -158,9 +159,9 @@ local function TweenMovement(character)
                     local targetPosition = humanoidRootPart.Position + (moveDirection * tonumber(getgenv().TeleportSpeed))
                     local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
                     local goal = {Position = targetPosition}
-
                     local tween = TweenService:Create(humanoidRootPart, tweenInfo, goal)
                     tween:Play()
+                    camera.CFrame = CFrame.new(humanoidRootPart.Position + Vector3.new(0, 5, -10), humanoidRootPart.Position)
                 end
             end
         else
