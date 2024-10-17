@@ -12,12 +12,10 @@ local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local RunService = game:GetService("RunService")
 
-local tweenSpeedValue = 16
-local tweenRunning = false
-local currentTween
+getgenv().TweenSpeed = 16
+getgenv().TweenWalk = false
 
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
@@ -148,6 +146,42 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+local function setupTweenWalk()
+    local connection
+    if connection then
+        connection:Disconnect()
+    end
+
+    local function onCharacterAdded(character)
+        local hum = character:WaitForChild("Humanoid")
+        connection = RunService.Stepped:Connect(function()
+            if getgenv().TweenWalk and hum and hum.Parent then
+                if hum.Health > 0 then
+                    if hum.MoveDirection.Magnitude > 0 then
+                        local moveDirection = hum.MoveDirection.Unit
+                        local targetPosition = character.PrimaryPart.Position + (moveDirection * getgenv().TweenSpeed * 0.1)
+                        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+                        local tween = TweenService:Create(character.PrimaryPart, tweenInfo, {Position = targetPosition})
+                        tween:Play()
+                        tween.Completed:Wait()
+                    end
+                else
+                    connection:Disconnect()
+                end
+            else
+                connection:Disconnect()
+            end
+        end)
+    end
+
+    LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+    if LocalPlayer.Character then
+        onCharacterAdded(LocalPlayer.Character)
+    end
+end
+
+setupTweenWalk()
+
 AddTextBox(Main5u6, {
     Name = "Number Tween Speed",
     Default = "Enter",
@@ -156,7 +190,7 @@ AddTextBox(Main5u6, {
     Callback = function(value)
         local numberValue = tonumber(value)
         if numberValue then
-            tweenSpeedValue = numberValue
+            getgenv().TweenSpeed = numberValue
         else
             warn("Invalid number entered!")
         end
@@ -164,25 +198,9 @@ AddTextBox(Main5u6, {
 })
 
 local ToggleTPWalk = AddToggle(Main5u6, {
-    Name = "Tween Move",
+    Name = "Tween Speed",
     Default = false,
     Callback = function(state)
-        if state then
-            if not tweenRunning then
-                tweenRunning = true
-                local targetPosition = humanoidRootPart.Position + (humanoidRootPart.CFrame.LookVector * 10)
-                local tweenInfo = TweenInfo.new(tweenSpeedValue / 10, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-                currentTween = TweenService:Create(humanoidRootPart, tweenInfo, {Position = targetPosition})
-                currentTween:Play()
-                currentTween.Completed:Wait()
-            end
-        else
-            if tweenRunning then
-                tweenRunning = false
-                if currentTween then
-                    currentTween:Cancel()
-                end
-            end
-        end
+        getgenv().TweenWalk = state
     end
 })
