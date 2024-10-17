@@ -9,15 +9,6 @@ getgenv().TPWalk = false
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local LocalPlayer = player
-local userInputService = game:GetService("UserInputService")
-getgenv().TweenSpeed = 16
-getgenv().TweenWalk = false
-local dragging = false
-local clickTeleportActive = false
-local dragTeleportActive = false
 
 local Toggle = AddToggle(Main5u6, {
     Name = "Infinite Jump",
@@ -144,53 +135,6 @@ local Toggle = AddToggle(Main5u6, {
             if connection then
                 connection:Disconnect()
             end
-        end
-    end
-})
-
-local function teleportToMousePosition()
-    local pos = player:GetMouse().Hit + Vector3.new(0, 2.5, 0)
-    player.Character.HumanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z)
-end
-
-local ToggleClickTeleport = AddToggle(Main5u6, {
-    Name = "Click Teleport",
-    Default = false,
-    Callback = function(state)
-        clickTeleportActive = state
-    end
-})
-
-userInputService.InputBegan:Connect(function(input, gameProcessed)
-    if clickTeleportActive and not gameProcessed and input.UserInputType == Enum.UserInputType.MouseButton1 then
-        teleportToMousePosition()
-    end
-end)
-
-local ToggleDragTeleport = AddToggle(Main5u6, {
-    Name = "Drag Teleport",
-    Default = false,
-    Callback = function(state)
-        dragTeleportActive = state
-        if state then
-            userInputService.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    dragging = true
-                end
-            end)
-
-            userInputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    dragging = false
-                    teleportToMousePosition()
-                end
-            end)
-
-            RunService.Heartbeat:Connect(function()
-                if dragging and dragTeleportActive then
-                    player.Character:MoveTo(mouse.Hit.Position)
-                end
-            end)
         end
     end
 })
