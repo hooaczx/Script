@@ -10,9 +10,8 @@ getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
+local LocalPlayer = game.Players.LocalPlayer
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -189,7 +188,7 @@ AddTextBox(Main5u6, {
     ClearText = true,
     Callback = function(value)
         local numberValue = tonumber(value)
-        if numberValue then
+        if numberValue and numberValue > 0 then
             getgenv().TweenSpeed = numberValue
         else
             warn("Invalid number entered!")
