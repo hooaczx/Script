@@ -145,63 +145,51 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-local function setupTweenWalk()
-    local connection
-
-    local function onCharacterAdded(character)
-        local hum = character:WaitForChild("Humanoid")
-        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-        if connection then
-            connection:Disconnect()
-        end
-
-        connection = RunService.Stepped:Connect(function()
-            if getgenv().TweenWalk and hum and hum.Parent then
-                if hum.Health > 0 then
-                    if hum.MoveDirection.Magnitude > 0 then
-                        local targetPosition = humanoidRootPart.Position + (hum.MoveDirection * getgenv().TweenSpeed * 0.1)
-                        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-                        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {Position = targetPosition})
-
-                        tween:Play()
-                        tween.Completed:Wait()
-                    end
-                else
-                    connection:Disconnect()
+local Toggle = AddToggle(Main5u6, {
+    Name = "Click Teleport",
+    Default = false,
+    Callback = function(state)
+        getgenv().ClickTeleport = state
+        if state then
+            game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+                if not gameProcessed and input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    local mouse = player:GetMouse()
+                    player.Character:MoveTo(mouse.Hit.Position)
                 end
-            else
-                connection:Disconnect()
-            end
-        end)
-    end
-
-    LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-    if game.Players.LocalPlayer.Character then
-        onCharacterAdded(game.Players.LocalPlayer.Character)
-    end
-end
-
-setupTweenWalk()
-
-AddTextBox(Main5u6, {
-    Name = "Number Tween Speed",
-    Default = "Enter",
-    PlaceholderText = "Enter number",
-    ClearText = true,
-    Callback = function(value)
-        local numberValue = tonumber(value)
-        if numberValue and numberValue > 0 then
-            getgenv().TweenSpeed = numberValue
-        else
-            warn("Invalid number entered! Please enter a positive number.")
+            end)
         end
     end
 })
 
-local ToggleTPWalk = AddToggle(Main5u6, {
-    Name = "Tween Speed",
+local Toggle = AddToggle(Main5u6, {
+    Name = "Drag Teleport",
     Default = false,
     Callback = function(state)
-        getgenv().TweenWalk = state
+        getgenv().DragTeleport = state
+        local userInputService = game:GetService("UserInputService")
+
+        if state then
+            local dragging = false
+            local mouse = player:GetMouse()
+
+            userInputService.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = true
+                end
+            end)
+
+            userInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = false
+                    player.Character:MoveTo(mouse.Hit.Position)
+                end
+            end)
+
+            game:GetService("RunService").Heartbeat:Connect(function()
+                if dragging and getgenv().DragTeleport then
+                    player.Character:MoveTo(mouse.Hit.Position)
+                end
+            end)
+        end
     end
 })
