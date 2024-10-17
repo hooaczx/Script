@@ -2914,45 +2914,6 @@ local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0
     toggleGUIs(togglehideName)
 end, togglehideName)
 
-local noclipEnabled = false
-
-local function setNoclip(enabled)
-    if game.Players.LocalPlayer.Character then
-        for _, part in ipairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = not enabled
-            end
-        end
-    end
-end
-
-local framenoclip = Instance.new("Frame", scrollingSettingFrame)
-framenoclip.Size = UDim2.new(1, 0, 0, 100)
-framenoclip.BackgroundColor3 = Configs_HUB.Cor_Hub
-framenoclip.BackgroundTransparency = 0
-
-local framenoclipText = Instance.new("TextLabel", framenoclip)
-framenoclipText.Size = UDim2.new(1, 0, 0, 30)
-framenoclipText.TextScaled = true
-framenoclipText.TextXAlignment = Enum.TextXAlignment.Left
-framenoclipText.BackgroundTransparency = 1
-framenoclipText.TextColor3 = Color3.fromRGB(255, 255, 255)
-framenoclipText.Text = "Hide Name"
-
-local framenoclipText2 = Instance.new("TextLabel", framenoclip)
-framenoclipText2.Size = UDim2.new(1, 0, 0, 50)
-framenoclipText2.TextScaled = true
-framenoclipText2.TextXAlignment = Enum.TextXAlignment.Left
-framenoclipText2.BackgroundTransparency = 1
-framenoclipText2.Position = UDim2.new(0, 0, 0.32, 0)
-framenoclipText2.TextColor3 = Color3.fromRGB(255, 255, 255)
-framenoclipText2.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
-
-local togglenoclipButton = createToggleButton(framenoclip, UDim2.new(0.82, 0, 0.75, 0), function(noclipEnabled)
-    noclipEnabled = not noclipEnabled
-    setNoclip(noclipEnabled)
-end, noclipEnabled)
-
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
     SettingButton.ZIndex = 10
