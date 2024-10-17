@@ -1,8 +1,9 @@
 local Main5u6 = MakeTab({Name = "Setting"})
 local function isNumber(str)
-    return tonumber(str) ~= nil or str == 'inf'
+    if tonumber(str) ~= nil or str == 'inf' then
+        return true
+    end
 end
-
 getgenv().TPSpeed = 3
 getgenv().TPWalk = false
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
@@ -11,9 +12,11 @@ local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = player
-
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
+local dragging = false
+local clickTeleportActive = false
+local dragTeleportActive = false
 
 local Toggle = AddToggle(Main5u6, {
     Name = "Infinite Jump",
@@ -21,7 +24,7 @@ local Toggle = AddToggle(Main5u6, {
     Callback = function(s)
         getgenv().InfJ = s
         game:GetService("UserInputService").JumpRequest:connect(function()
-            if getgenv().InfJ then
+            if InfJ == true then
                 game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
             end
         end)
@@ -37,7 +40,7 @@ AddTextBox(Main5u6, {
         getgenv().Walkspeed = value
         pcall(function()
             game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
-        end) 
+        end)
     end
 })
 
@@ -47,9 +50,9 @@ local Toggle = AddToggle(Main5u6, {
     Callback = function(state)
         getgenv().loopW = state
         game:GetService("RunService").Heartbeat:Connect(function()
-            if getgenv().loopW then
+            if loopW == true then
                 pcall(function()
-                    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = getgenv().Walkspeed
+                    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = Walkspeed
                 end)
             end
         end)
@@ -72,12 +75,12 @@ AddTextBox(Main5u6, {
 local Toggle = AddToggle(Main5u6, {
     Name = "JumpPower",
     Default = false,
-    Callback = function(state)
-        getgenv().loopJ = state
+    Callback = function(stahte)
+        getgenv().loopJ = stahte
         game:GetService("RunService").Heartbeat:Connect(function()
-            if getgenv().loopJ then
+            if loopJ == true then
                 pcall(function()
-                    game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = getgenv().Jumppower
+                    game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = Jumppower
                 end)
             end
         end)
@@ -85,13 +88,14 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local function setupTPWalk()
+    local runService = game:GetService("RunService")
     local connection
     if connection then
         connection:Disconnect()
     end
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
-        connection = RunService.Stepped:Connect(function()
+        connection = runService.Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
@@ -131,9 +135,9 @@ AddTextBox(Main5u6, {
 local Toggle = AddToggle(Main5u6, {
     Name = "Tpwalk",
     Default = false,
-    Callback = function(state)
-        getgenv().TPWalk = state
-        if state then
+    Callback = function(s)
+        getgenv().TPWalk = s
+        if s then
             setupTPWalk() 
         else
             if connection then
@@ -143,10 +147,14 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-local clickTeleportActive = false
-local userInputService = game:GetService("UserInputService")
+local mouse = player:GetMouse()
 
-local Toggle = AddToggle(Main5u6, {
+local function teleportToMousePosition()
+    local pos = mouse.Hit + Vector3.new(0, 2.5, 0)
+    player.Character.HumanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y, pos.Z)
+end
+
+local ToggleClickTeleport = AddToggle(Main5u6, {
     Name = "Click Teleport",
     Default = false,
     Callback = function(state)
@@ -154,10 +162,13 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-local dragTeleportActive = false
-local dragging = false
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if clickTeleportActive and not gameProcessed and input.UserInputType == Enum.UserInputType.MouseButton1 then
+        teleportToMousePosition()
+    end
+end)
 
-local Toggle = AddToggle(Main5u6, {
+local ToggleDragTeleport = AddToggle(Main5u6, {
     Name = "Drag Teleport",
     Default = false,
     Callback = function(state)
@@ -172,7 +183,7 @@ local Toggle = AddToggle(Main5u6, {
             userInputService.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = false
-                    player.Character:MoveTo(mouse.Hit.Position)
+                    teleportToMousePosition()
                 end
             end)
 
@@ -184,10 +195,3 @@ local Toggle = AddToggle(Main5u6, {
         end
     end
 })
-
-userInputService.InputBegan:Connect(function(input, gameProcessed)
-    if clickTeleportActive and not gameProcessed and input.UserInputType == Enum.UserInputType.MouseButton1 then
-        local mouse = player:GetMouse()
-        player.Character:MoveTo(mouse.Hit.Position)
-    end
-end)
