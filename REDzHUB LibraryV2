@@ -2025,7 +2025,7 @@ local function checkFriends()
                 local avatarImage = Instance.new("ImageLabel")
                 avatarImage.Size = UDim2.new(0, 50, 0, 50)
                 avatarImage.Position = UDim2.new(0, 0, 0, 0)
-                avatarImage.BackgroundColor3 =Configs_HUB.Cor_Hub
+                avatarImage.BackgroundColor3 = Configs_HUB.Cor_Hub
                 avatarImage.BackgroundTransparency = 0.4
                 avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
                 avatarImage.Parent = friendFrame
@@ -2042,25 +2042,40 @@ local function checkFriends()
                 friendName.Parent = friendFrame
 
                 local statusLabel = Instance.new("TextLabel")
-                statusLabel.Size = UDim2.new(0, 100, 1, 0)
+                statusLabel.Size = UDim2.new(0, 200, 1, 0)
                 statusLabel.BackgroundTransparency = 1
                 statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
                 statusLabel.TextWrapped = true
                 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
 
+                local joinButton = Instance.new("TextButton")
+                joinButton.Size = UDim2.new(0, 100, 0, 40)
+                joinButton.Position = UDim2.new(0, 190, 0, 0)
+                joinButton.Text = "Join"
+                joinButton.Visible = false
+                joinButton.Parent = friendFrame
+
                 if friend.IsOnline then
                     if players:FindFirstChild(friend.Username) then
-                        statusLabel.Text = "in Game"
+                        statusLabel.Text = "In Game"
+                        joinButton.Visible = false
+                    elseif friend.LastLocation then
+                        statusLabel.Text = "Playing: " .. friend.LastLocation
+                        joinButton.Visible = true
+                        joinButton.MouseButton1Click:Connect(function()
+                            players.TeleportService:TeleportToPlaceInstance(friend.PlaceId, friend.GameInstanceId, localPlayer)
+                        end)
                     else
                         statusLabel.Text = "Online"
+                        joinButton.Visible = false
                     end
                 else
-                    statusLabel.Text = "offline"
+                    statusLabel.Text = "Offline"
+                    joinButton.Visible = false
                 end
 
                 statusLabel.Parent = friendFrame
-
                 positionY = positionY + 55
             end
 
@@ -2076,6 +2091,7 @@ local function checkFriends()
 end
 
 checkFriends()
+
 
 local TimePlay = Instance.new("TextLabel", ScreenGui)
 TimePlay.Size = UDim2.new(0.205, 0, 0.07, 0)
@@ -2913,7 +2929,6 @@ Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games 
 local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(togglehideName)
     toggleGUIs(togglehideName)
 end, togglehideName)
-end
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
@@ -2977,13 +2992,15 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             Player.Character.Humanoid.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            local cameraLookVector = workspace.CurrentCamera.CFrame.LookVector
             Player.Character.HumanoidRootPart.CFrame =
                 CFrame.new(
                     Player.Character.HumanoidRootPart.Position,
-                    Player.Character.HumanoidRootPart.Position + Vector3.new(cameraLookVector.X, 0, cameraLookVector.Z)
+                    Vector3.new(
+                        workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
+                        Player.Character.HumanoidRootPart.Position.Y,
+                        workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
+                    )
                 )
-
             workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * EnabledOffset
             workspace.CurrentCamera.Focus =
                 CFrame.fromMatrix(
@@ -3021,9 +3038,9 @@ RunService.Heartbeat:Connect(function()
             workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
             ShiftlockCursor.Visible = false
             pcall(function()
-               Active:Disconnect()
-               Active = nil
-           end)
+                Active:Disconnect()
+                Active = nil
+            end)
         end
         
         for _, v in pairs(Lighting:GetChildren()) do
