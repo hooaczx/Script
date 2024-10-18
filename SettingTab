@@ -87,55 +87,27 @@ local Toggle = AddToggle(Main5u6, {
 
 local function setupTPWalk()
     local runService = game:GetService("RunService")
-    local TweenService = game:GetService("TweenService")
-    local player = game.Players.LocalPlayer
     local connection
+    local lastMoveDirection = Vector3.new(0, 0, 0)
 
     if connection then
         connection:Disconnect()
     end
-
+    
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
-        local lastMoveDirection = Vector3.new(0, 0, 0)
-        local movingTween
-        local distanceToMove = 0
-
-        connection = runService.Stepped:Connect(function(deltaTime)
+        connection = runService.Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
                 if hum.Health > 0 then
-                    local moveDirection = hum.MoveDirection
-
-                    if moveDirection.Magnitude > 0 then
-                        lastMoveDirection = moveDirection
+                    if hum.MoveDirection.Magnitude > 0 then
+                        lastMoveDirection = hum.MoveDirection
                         if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            distanceToMove = distanceToMove + (tonumber(getgenv().TPSpeed) * deltaTime)
+                            character:TranslateBy(lastMoveDirection * tonumber(getgenv().TPSpeed))
                         else
-                            distanceToMove = distanceToMove + (moveDirection.Magnitude * deltaTime)
-                        end
-
-                        local newPos = character.Position + lastMoveDirection.Unit * distanceToMove
-
-                        local ray = Ray.new(character.Position, (newPos - character.Position).Unit * distanceToMove)
-                        local hitPart, hitPosition = workspace:FindPartOnRay(ray, character)
-
-                        if not hitPart then
-                            if movingTween then
-                                movingTween:Cancel()
-                            end
-                            movingTween = TweenService:Create(character, TweenInfo.new(0.5), {Position = newPos})
-                            movingTween:Play()
-                        else
-                            local adjustedDirection = (hitPosition - character.Position).Unit
-                            newPos = character.Position + adjustedDirection * (hitPosition - character.Position).Magnitude * 0.9
-                            if movingTween then
-                                movingTween:Cancel()
-                            end
-                            movingTween = TweenService:Create(character, TweenInfo.new(0.5), {Position = newPos})
-                            movingTween:Play()
+                            character:TranslateBy(lastMoveDirection)
                         end
                     else
-                        distanceToMove = 0
+                        character:TranslateBy(lastMoveDirection)
                     end
                 else
                     connection:Disconnect()
