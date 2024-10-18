@@ -13,6 +13,8 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = player
 local camera = workspace.CurrentCamera
+local camera = workspace.CurrentCamera
+local controlModule = require(player:WaitForChild('PlayerScripts'):WaitForChild('PlayerModule'):WaitForChild('ControlModule'))
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -147,35 +149,68 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-local noclipConnection
+local cameraNoclipConnection
+local cameraSpeed = 10
+local cameraRotationSpeed = 1
 
-local function toggleNoclip()
-    if getgenv().Noclip then
-        getgenv().Noclip = false
-        if noclipConnection then
-            noclipConnection:Disconnect()
+local function toggleCameraNoclip()
+    if getgenv().CameraNoclip then
+        getgenv().CameraNoclip = false
+        if cameraNoclipConnection then
+            cameraNoclipConnection:Disconnect()
         end
+        camera.CameraType = Enum.CameraType.Custom
     else
-        getgenv().Noclip = true
-        local character = player.Character or player.CharacterAdded:Wait()
-        local rootPart = character:WaitForChild("HumanoidRootPart")
+        getgenv().CameraNoclip = true
+        camera.CameraType = Enum.CameraType.Scriptable
 
-        noclipConnection = RunService.Stepped:Connect(function()
-            if getgenv().Noclip and character and character.Parent then
-                rootPart.CanCollide = false
-                rootPart.Position = rootPart.Position + (character.Humanoid.MoveDirection * (getgenv().TPSpeed or 1) * 0.1)
-            else
-                rootPart.CanCollide = true
+        cameraNoclipConnection = RunService.RenderStepped:Connect(function(deltaTime)
+            local moveDirection = controlModule:GetMoveVector()
+            if moveDirection.Magnitude > 0 then
+                camera.CFrame = camera.CFrame + moveDirection * cameraSpeed * deltaTime
             end
+
+            local userInputService = game:GetService("UserInputService")
+            local mouseDelta = userInputService:GetMouseDelta()
+            local yaw = -mouseDelta.X * cameraRotationSpeed * deltaTime
+            local pitch = -mouseDelta.Y * cameraRotationSpeed * deltaTime
+
+            local cameraRotation = CFrame.Angles(pitch, yaw, 0)
+            camera.CFrame = camera.CFrame * cameraRotation
         end)
     end
 end
 
-local NoclipToggle = AddToggle(Main5u6, {
-    Name = "Noclip",
+local CameraNoclipToggle = AddToggle(Main5u6, {
+    Name = "Camera Noclip",
     Default = false,
-    Callback = toggleNoclip
+    Callback = toggleCameraNoclip
 })
+
+AddTextBox(Main5u6, {
+    Name = "Camera Speed",
+    Default = tostring(cameraSpeed),
+    PlaceholderText = "Enter camera speed",
+    ClearText = true,
+    Callback = function(value)
+        if isNumber(value) then
+            cameraSpeed = tonumber(value)
+        end
+    end
+})
+
+AddTextBox(Main5u6, {
+    Name = "Camera Rotation Speed",
+    Default = tostring(cameraRotationSpeed),
+    PlaceholderText = "Enter rotation speed",
+    ClearText = true,
+    Callback = function(value)
+        if isNumber(value) then
+            cameraRotationSpeed = tonumber(value)
+        end
+    end
+})
+
 
 local Toggle = AddToggle(Main5u6, {
     Name = "Toggle Gui Roblox",
