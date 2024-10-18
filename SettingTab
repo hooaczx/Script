@@ -13,8 +13,9 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = player
 local camera = workspace.CurrentCamera
-local controlModule = require(player:WaitForChild('PlayerScripts'):WaitForChild('PlayerModule'):WaitForChild('ControlModule'))
-local UserInputService = game:GetService("UserInputService")
+local controlModule = require(player:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+local freecamEnabled = false
+local freecamSpeed = 1
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -149,70 +150,41 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-local cameraNoclipConnection
-local cameraSpeed = 10
-local cameraRotationSpeed = 1
-
-local function disableMobileJoystickCamera()
-    local playerModule = require(player:WaitForChild('PlayerScripts'):WaitForChild('PlayerModule'))
-    playerModule.controls:Disable()
-end
-
-local function toggleCameraNoclip()
-    if getgenv().CameraNoclip then
-        getgenv().CameraNoclip = false
-        if cameraNoclipConnection then
-            cameraNoclipConnection:Disconnect()
-        end
-        camera.CameraType = Enum.CameraType.Custom
-    else
-        getgenv().CameraNoclip = true
+local function toggleFreecam(state)
+    freecamEnabled = state
+    if state then
+        controlModule:Disable()
         camera.CameraType = Enum.CameraType.Scriptable
-        disableMobileJoystickCamera()
-
-        cameraNoclipConnection = RunService.RenderStepped:Connect(function(deltaTime)
-            local moveDirection = controlModule:GetMoveVector()
-            if moveDirection.Magnitude > 0 then
-                camera.CFrame = camera.CFrame + moveDirection * cameraSpeed * deltaTime
+        
+        game:GetService("RunService").Stepped:Connect(function()
+            if freecamEnabled then
+                local moveDirection = controlModule:GetMoveVector()
+                camera.CFrame = camera.CFrame + (moveDirection * freecamSpeed)
             end
-
-            local mouseDelta = UserInputService:GetMouseDelta()
-            local yaw = -mouseDelta.X * cameraRotationSpeed * deltaTime
-            local pitch = -mouseDelta.Y * cameraRotationSpeed * deltaTime
-
-            local cameraRotation = CFrame.Angles(pitch, yaw, 0)
-            camera.CFrame = camera.CFrame * cameraRotation
         end)
+    else
+        controlModule:Enable()
+        camera.CameraType = Enum.CameraType.Custom
     end
 end
 
-local CameraNoclipToggle = AddToggle(Main5u6, {
-    Name = "Camera Noclip",
-    Default = false,
-    Callback = toggleCameraNoclip
-})
-
 AddTextBox(Main5u6, {
-    Name = "Camera Speed",
-    Default = tostring(cameraSpeed),
-    PlaceholderText = "Enter camera speed",
+    Name = "Freecam Speed",
+    Default = "1",
+    PlaceholderText = "Enter speed",
     ClearText = true,
     Callback = function(value)
-        if isNumber(value) then
-            cameraSpeed = tonumber(value)
+        if tonumber(value) then
+            freecamSpeed = tonumber(value)
         end
     end
 })
 
-AddTextBox(Main5u6, {
-    Name = "Camera Rotation Speed",
-    Default = tostring(cameraRotationSpeed),
-    PlaceholderText = "Enter rotation speed",
-    ClearText = true,
-    Callback = function(value)
-        if isNumber(value) then
-            cameraRotationSpeed = tonumber(value)
-        end
+AddToggle(Main5u6, {
+    Name = "Freecam",
+    Default = false,
+    Callback = function(s)
+        toggleFreecam(s)
     end
 })
 
