@@ -16,6 +16,7 @@ local camera = workspace.CurrentCamera
 local controlModule = require(player:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
 local freecamEnabled = false
 local freecamSpeed = 1
+local connection
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -150,13 +151,14 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+
 local function toggleFreecam(state)
     freecamEnabled = state
     if state then
         controlModule:Disable()
         camera.CameraType = Enum.CameraType.Scriptable
-        
-        game:GetService("RunService").Stepped:Connect(function()
+        camera.CFrame = workspace.CurrentCamera.CFrame
+        connection = game:GetService("RunService").Stepped:Connect(function()
             if freecamEnabled then
                 local moveDirection = controlModule:GetMoveVector()
                 camera.CFrame = camera.CFrame + (moveDirection * freecamSpeed)
@@ -165,6 +167,9 @@ local function toggleFreecam(state)
     else
         controlModule:Enable()
         camera.CameraType = Enum.CameraType.Custom
+        if connection then
+            connection:Disconnect()
+        end
     end
 end
 
