@@ -13,8 +13,8 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = player
 local camera = workspace.CurrentCamera
-local camera = workspace.CurrentCamera
 local controlModule = require(player:WaitForChild('PlayerScripts'):WaitForChild('PlayerModule'):WaitForChild('ControlModule'))
+local UserInputService = game:GetService("UserInputService")
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -153,6 +153,11 @@ local cameraNoclipConnection
 local cameraSpeed = 10
 local cameraRotationSpeed = 1
 
+local function disableMobileJoystickCamera()
+    local playerModule = require(player:WaitForChild('PlayerScripts'):WaitForChild('PlayerModule'))
+    playerModule.controls:Disable()
+end
+
 local function toggleCameraNoclip()
     if getgenv().CameraNoclip then
         getgenv().CameraNoclip = false
@@ -163,6 +168,7 @@ local function toggleCameraNoclip()
     else
         getgenv().CameraNoclip = true
         camera.CameraType = Enum.CameraType.Scriptable
+        disableMobileJoystickCamera()
 
         cameraNoclipConnection = RunService.RenderStepped:Connect(function(deltaTime)
             local moveDirection = controlModule:GetMoveVector()
@@ -170,8 +176,7 @@ local function toggleCameraNoclip()
                 camera.CFrame = camera.CFrame + moveDirection * cameraSpeed * deltaTime
             end
 
-            local userInputService = game:GetService("UserInputService")
-            local mouseDelta = userInputService:GetMouseDelta()
+            local mouseDelta = UserInputService:GetMouseDelta()
             local yaw = -mouseDelta.X * cameraRotationSpeed * deltaTime
             local pitch = -mouseDelta.Y * cameraRotationSpeed * deltaTime
 
@@ -210,7 +215,6 @@ AddTextBox(Main5u6, {
         end
     end
 })
-
 
 local Toggle = AddToggle(Main5u6, {
     Name = "Toggle Gui Roblox",
