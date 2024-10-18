@@ -12,6 +12,7 @@ local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = player
+local camera = workspace.CurrentCamera
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -86,28 +87,23 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local function setupTPWalk()
-    local runService = game:GetService("RunService")
     local connection
-    local lastMoveDirection = Vector3.new(0, 0, 0)
-
     if connection then
         connection:Disconnect()
     end
     
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
-        connection = runService.Stepped:Connect(function()
+        connection = RunService.Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
-                        lastMoveDirection = hum.MoveDirection
-                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(lastMoveDirection * tonumber(getgenv().TPSpeed))
-                        else
-                            character:TranslateBy(lastMoveDirection)
-                        end
-                    else
-                        character:TranslateBy(lastMoveDirection)
+                        local speed = getgenv().TPSpeed or 1
+                        local targetPosition = character.Position + (hum.MoveDirection * speed)
+                        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+                        local tween = TweenService:Create(character, tweenInfo, {Position = targetPosition})
+                        tween:Play()
+                        tween.Completed:Wait()
                     end
                 else
                     connection:Disconnect()
@@ -149,6 +145,36 @@ local Toggle = AddToggle(Main5u6, {
             end
         end
     end
+})
+
+local noclipConnection
+
+local function toggleNoclip()
+    if getgenv().Noclip then
+        getgenv().Noclip = false
+        if noclipConnection then
+            noclipConnection:Disconnect()
+        end
+    else
+        getgenv().Noclip = true
+        local character = player.Character or player.CharacterAdded:Wait()
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        noclipConnection = RunService.Stepped:Connect(function()
+            if getgenv().Noclip and character and character.Parent then
+                rootPart.CanCollide = false
+                rootPart.Position = rootPart.Position + (character.Humanoid.MoveDirection * (getgenv().TPSpeed or 1) * 0.1)
+            else
+                rootPart.CanCollide = true
+            end
+        end)
+    end
+end
+
+local NoclipToggle = AddToggle(Main5u6, {
+    Name = "Noclip",
+    Default = false,
+    Callback = toggleNoclip
 })
 
 local Toggle = AddToggle(Main5u6, {
