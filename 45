@@ -2049,30 +2049,16 @@ local function checkFriends()
                 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
 
-                local joinButton = Instance.new("TextButton")
-                joinButton.Size = UDim2.new(0, 100, 0, 40)
-                joinButton.Position = UDim2.new(0, 190, 0, 0)
-                joinButton.Text = "Join"
-                joinButton.Visible = false
-                joinButton.Parent = friendFrame
-
                 if friend.IsOnline then
                     if players:FindFirstChild(friend.Username) then
                         statusLabel.Text = "In Game"
-                        joinButton.Visible = false
-                    elseif friend.LastLocation then
+                    elseif friend.PresenceType == Enum.PresenceType.InGame then
                         statusLabel.Text = "Playing: " .. friend.LastLocation
-                        joinButton.Visible = true
-                        joinButton.MouseButton1Click:Connect(function()
-                            players.TeleportService:TeleportToPlaceInstance(friend.PlaceId, friend.GameInstanceId, localPlayer)
-                        end)
                     else
                         statusLabel.Text = "Online"
-                        joinButton.Visible = false
                     end
                 else
-                    statusLabel.Text = "Offline"
-                    joinButton.Visible = false
+                    statusLabel.Text = "offline"
                 end
 
                 statusLabel.Parent = friendFrame
@@ -2091,7 +2077,6 @@ local function checkFriends()
 end
 
 checkFriends()
-
 
 local TimePlay = Instance.new("TextLabel", ScreenGui)
 TimePlay.Size = UDim2.new(0.205, 0, 0.07, 0)
