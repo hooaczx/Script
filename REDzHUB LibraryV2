@@ -2879,15 +2879,16 @@ local togglehideName = false
 local function toggleGUIs(togglehideName)
     for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
         if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-            if togglehideName then
-                v.Enabled = false
-            else
-                v.Enabled = true 
-            end
+            v.Enabled = not togglehideName -- ปรับการซ่อน/แสดงตามสถานะ
         end
     end
 end
 
+game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    if togglehideName then
+        toggleGUIs(togglehideName)
+    end
+end)
 
 local framehidename = Instance.new("Frame", scrollingSettingFrame)
 framehidename.Size = UDim2.new(1, 0, 0, 100)
@@ -2911,7 +2912,8 @@ Text13.Position = UDim2.new(0, 0, 0.32, 0)
 Text13.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
 
-local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(togglehideName)
+local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
+    togglehideName = state
     toggleGUIs(togglehideName)
 end, togglehideName)
 
