@@ -11,7 +11,14 @@ getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.
 local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local players = game:GetService('Players')
+local lplr = players.LocalPlayer
 local LocalPlayer = player
+local camera = workspace.CurrentCamera
+local controlModule = require(player:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+local freecamEnabled = false
+local freecamSpeed = 1
+local connection
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -86,22 +93,23 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local function setupTPWalk()
-    local runService = game:GetService("RunService")
     local connection
     if connection then
         connection:Disconnect()
     end
+    
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
-        connection = runService.Stepped:Connect(function()
+        connection = RunService.Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
-                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                        else
-                            character:TranslateBy(hum.MoveDirection)
-                        end
+                        local speed = getgenv().TPSpeed or 1
+                        local targetPosition = character.Position + (hum.MoveDirection * speed)
+                        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+                        local tween = TweenService:Create(character, tweenInfo, {Position = targetPosition})
+                        tween:Play()
+                        tween.Completed:Wait()
                     end
                 else
                     connection:Disconnect()
@@ -145,6 +153,48 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+
+local function toggleFreecam(state)
+    freecamEnabled = state
+    if state then
+        controlModule:Disable()
+        camera.CameraType = Enum.CameraType.Scriptable
+        camera.CFrame = workspace.CurrentCamera.CFrame
+        connection = game:GetService("RunService").Stepped:Connect(function()
+            if freecamEnabled then
+                local moveDirection = controlModule:GetMoveVector()
+                camera.CFrame = camera.CFrame + (moveDirection * freecamSpeed)
+            end
+        end)
+    else
+        controlModule:Enable()
+        camera.CameraType = Enum.CameraType.Custom
+        if connection then
+            connection:Disconnect()
+        end
+    end
+end
+
+AddTextBox(Main5u6, {
+    Name = "Freecam Speed",
+    Default = "1",
+    PlaceholderText = "Enter speed",
+    ClearText = true,
+    Callback = function(value)
+        if tonumber(value) then
+            freecamSpeed = tonumber(value)
+        end
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Freecam",
+    Default = false,
+    Callback = function(s)
+        toggleFreecam(s)
+    end
+})
+
 local Toggle = AddToggle(Main5u6, {
     Name = "Toggle Gui Roblox",
     Default = false,
@@ -167,4 +217,61 @@ if Allgui then
    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Captures, false)
    end
 end
+})
+
+local lastCF, stop, heartbeatConnection
+local Enabled = false
+
+local function start()
+    if heartbeatConnection then
+        heartbeatConnection:Disconnect()
+    end
+    heartbeatConnection = game:GetService('RunService').Heartbeat:Connect(function()
+        if stop or not Enabled then
+            return
+        end
+        if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
+            lastCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
+        end
+    end)
+
+    lplr.Character:WaitForChild('Humanoid').RootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
+        if Enabled then
+            stop = true
+            if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
+                lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
+            end
+            game:GetService('RunService').Heartbeat:Wait()
+            stop = false
+        end
+    end)
+end
+
+local function setupCharacter(character)
+    repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
+    repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid').RootPart
+    if Enabled then
+        start()
+    end
+end
+
+lplr.CharacterAdded:Connect(function(character)
+    setupCharacter(character)
+end)
+
+AddToggle(Main5u6, {
+    Name = "Toggle Character Lock",
+    Default = false,
+    Callback = function(state)
+        Enabled = state
+        if Enabled then
+            if lplr.Character then
+                setupCharacter(lplr.Character)
+            end
+        else
+            if heartbeatConnection then
+                heartbeatConnection:Disconnect()
+            end
+        end
+    end
 })
