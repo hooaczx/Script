@@ -174,7 +174,6 @@ end
 local lastCF, stop, heartbeatConnection
 local Enabled = false
 local teleported = false
-local notificationSent = false
 
 local function start()
     if heartbeatConnection then
@@ -195,21 +194,9 @@ local function start()
             if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
                 local currentCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
                 if currentCF ~= lastCF and not teleported then
-                    if not notificationSent then
-                    if Active then
-                    else
-                        game.StarterGui:SetCore("SendNotification", {
-                            Title = "Teleport Detected",
-                            Text = "Your character was teleported or moved.",
-                            Duration = 3
-                        })
-                        notificationSent = true
-                    end
+                    lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
                     teleported = true
-                else
-                    notificationSent = false
                 end
-                lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
             end
             game:GetService('RunService').Heartbeat:Wait()
             teleported = false
@@ -220,7 +207,6 @@ end
 
 local function setupCharacter(character)
     teleported = false
-    notificationSent = false
     repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
     repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid').RootPart
     if Enabled then
