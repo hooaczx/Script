@@ -1999,20 +1999,15 @@ local function checkFriends()
                 for _, friendInfo in pairs(info) do
                     table.insert(playersFriends, friendInfo)
                 end
-                if not page.IsFinished then 
-                    page:AdvanceToNextPageAsync()
-                end
+                local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
+                if not pageSuccess or page.IsFinished then break end
             until page.IsFinished
         end
 
         local friendsInTotal = #playersFriends
 
         local function updateFriendsGUI(friends)
-            for _, child in pairs(friendsFrame:GetChildren()) do
-                if child:IsA("Frame") then
-                    child:Destroy()
-                end
-            end
+            friendsFrame:ClearAllChildren()
 
             local positionY = 0
             for _, friend in pairs(friends) do
@@ -2056,7 +2051,7 @@ local function checkFriends()
                         statusLabel.Text = "Online"
                     end
                 else
-                    statusLabel.Text = "offline"
+                    statusLabel.Text = "Offline"
                 end
 
                 statusLabel.Parent = friendFrame
