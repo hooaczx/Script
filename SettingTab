@@ -191,6 +191,11 @@ local function start()
         if Enabled then
             stop = true
             if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Teleport Detected",
+                    Text = "Your character was activated, teleported or moved",
+                    Duration = 3
+                })
                 lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
             end
             game:GetService('RunService').Heartbeat:Wait()
