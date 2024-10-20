@@ -173,6 +173,7 @@ end
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
+local teleported = false
 
 local function start()
     if heartbeatConnection then
@@ -191,11 +192,15 @@ local function start()
         if Enabled then
             stop = true
             if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Teleport Detected",
-                    Text = "Your character was activated, teleported or moved",
-                    Duration = 3
-                })
+                local currentCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
+                if currentCF ~= lastCF and not teleported then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Teleport Detected",
+                        Text = "Your character was teleported or moved.",
+                        Duration = 3
+                    })
+                    teleported = true
+                end
                 lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
             end
             game:GetService('RunService').Heartbeat:Wait()
@@ -205,6 +210,7 @@ local function start()
 end
 
 local function setupCharacter(character)
+    teleported = false -- รีเซ็ตการตรวจจับเมื่อมีการสร้างตัวละครใหม่
     repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
     repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid').RootPart
     if Enabled then
