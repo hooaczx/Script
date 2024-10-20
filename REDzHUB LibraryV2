@@ -2052,8 +2052,6 @@ local function checkFriends()
                 if friend.IsOnline then
                     if players:FindFirstChild(friend.Username) then
                         statusLabel.Text = "In Game"
-                    elseif friend.LastLocation and friend.LastLocation ~= "" then
-                        statusLabel.Text = "Playing: " .. friend.LastLocation
                     else
                         statusLabel.Text = "Online"
                     end
@@ -2874,9 +2872,8 @@ Text11.Text = [[This will make the clouds in the sky look like It's raining and 
 
 createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
 
-local togglehideName = false -- ตัวแปรเก็บสถานะการซ่อน
+local togglehideName = false
 
--- ฟังก์ชันสำหรับซ่อน/แสดง GUI
 local function toggleGUIs(character, hide)
     for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
