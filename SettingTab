@@ -11,9 +11,9 @@ getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.
 local player = game:GetService("Players").LocalPlayer
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local LocalPlayer = player
 local players = game:GetService('Players')
 local lplr = players.LocalPlayer
-local LocalPlayer = player
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -88,23 +88,22 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local function setupTPWalk()
+    local runService = game:GetService("RunService")
     local connection
     if connection then
         connection:Disconnect()
     end
-    
     local function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
-        connection = RunService.Stepped:Connect(function()
+        connection = runService.Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
-                        local speed = getgenv().TPSpeed or 1
-                        local targetPosition = character.Position + (hum.MoveDirection * speed)
-                        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-                        local tween = TweenService:Create(character, tweenInfo, {Position = targetPosition})
-                        tween:Play()
-                        tween.Completed:Wait()
+                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
+                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                        else
+                            character:TranslateBy(hum.MoveDirection)
+                        end
                     end
                 else
                     connection:Disconnect()
@@ -213,7 +212,7 @@ lplr.CharacterAdded:Connect(function(character)
 end)
 
 AddToggle(Main5u6, {
-    Name = "Character Lock CFrame",
+    Name = "Toggle Character Lock",
     Default = false,
     Callback = function(state)
         Enabled = state
