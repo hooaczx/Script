@@ -2874,21 +2874,27 @@ Text11.Text = [[This will make the clouds in the sky look like It's raining and 
 
 createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
 
-local togglehideName = false
+local togglehideName = false -- ตัวแปรเก็บสถานะการซ่อน
 
-local function toggleGUIs(togglehideName)
-    for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+-- ฟังก์ชันสำหรับซ่อน/แสดง GUI
+local function toggleGUIs(character, hide)
+    for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-            v.Enabled = not togglehideName -- ปรับการซ่อน/แสดงตามสถานะ
+            v.Enabled = not hide
         end
     end
 end
 
-game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    if togglehideName then
-        toggleGUIs(togglehideName)
-    end
-end)
+local function onCharacterAdded(character)
+    toggleGUIs(character, togglehideName)
+    character.DescendantAdded:Connect(function(descendant)
+        if (descendant:IsA("BillboardGui") or descendant:IsA("SurfaceGui")) and togglehideName then
+            descendant.Enabled = false
+        end
+    end)
+end
+
+game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
 local framehidename = Instance.new("Frame", scrollingSettingFrame)
 framehidename.Size = UDim2.new(1, 0, 0, 100)
@@ -2914,7 +2920,7 @@ Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games 
 
 local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
     togglehideName = state
-    toggleGUIs(togglehideName)
+    toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
 end, togglehideName)
 
     local SettingButton = Instance.new("ImageButton", frame)
