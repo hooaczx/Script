@@ -250,6 +250,7 @@ AddToggle(Main5u6, {
         end
     end
 })
+
 local playery = game.Players.LocalPlayer
 local cam = workspace.CurrentCamera
 local tweenservice = game:GetService("TweenService")
@@ -285,6 +286,13 @@ local function applyHitEffect()
     tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 24}):Play()
     wait(0.5)
 
+    local originalCFrame = cam.CFrame
+    local shakeTween = tweenservice:Create(cam, TweenInfo.new(0.5), {CFrame = cam.CFrame * CFrame.new(0, 0, -2)})
+    shakeTween:Play()
+    shakeTween.Completed:Connect(function()
+        tweenservice:Create(cam, TweenInfo.new(0.5), {CFrame = originalCFrame}):Play()
+    end)
+
     local function fadecolor()
         tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
         wait(0.5)
@@ -292,45 +300,14 @@ local function applyHitEffect()
         wait(0.5)
     end
 
-    local shakeidk
-
-    local function shakecamera()
-        local rs = game:GetService("RunService")
-
-        shakeidk = rs.RenderStepped:Connect(function()
-            local ct = tick()
-            local bobblex = math.cos(ct * 10) * 0.5
-            local bobbley = math.abs(math.sin(ct * 10)) * 0.5
-            local bobble = Vector3.new(bobblex, bobbley, 0)
-            cam.CFrame = cam.CFrame * CFrame.new(bobble)
-        end)
-    end
-
-    shakecamera()
-
-    local cameraTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
-    local targetCFrame = cam.CFrame * CFrame.new(0, 0, -5)
-    local cameraTween = tweenservice:Create(cam, cameraTweenInfo, {CFrame = targetCFrame})
-    cameraTween:Play()
-    cameraTween.Completed:Wait()
-
     local elapsedtime = 0
     while elapsedtime < 1.5 do
         fadecolor()
         elapsedtime = elapsedtime + 1
     end
 
-    if shakeidk then
-        shakeidk:Disconnect()
-    end
-
     tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 0}):Play()
     wait(0.5)
-
-    local returnTween = tweenservice:Create(cam, cameraTweenInfo, {CFrame = cam.CFrame * CFrame.new(0, 0, 5)})
-    returnTween:Play()
-    
-    returnTween.Completed:Wait()
 
     playery.CameraMaxZoomDistance = orgmz
     playery.CameraMinZoomDistance = orgmnz
