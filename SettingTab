@@ -1,260 +1,6 @@
-local Main5u6 = MakeTab({Name = "Setting"})
-local function isNumber(str)
-  if tonumber(str) ~= nil or str == 'inf' then
-    return true
-  end
-end
-getgenv().TPSpeed = 3
-getgenv().TPWalk = false
-getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
-getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
-local player = game:GetService("Players").LocalPlayer
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local LocalPlayer = player
-local players = game:GetService('Players')
-local lplr = players.LocalPlayer
-local ps = game:GetService("Players")
-local lp = ps.LocalPlayer
 local playery = game.Players.LocalPlayer
-local cam = game.Workspace.CurrentCamera
+local cam = workspace.CurrentCamera
 local tweenservice = game:GetService("TweenService")
-local soundid = 1445412859
-
-getgenv().TweenSpeed = 16
-getgenv().TweenWalk = false
-
-local Toggle = AddToggle(Main5u6, {
-  Name = "Infinite Jump",
-  Default = false,
-  Callback = function(s)
-  getgenv().InfJ = s
-    game:GetService("UserInputService").JumpRequest:connect(function()
-        if InfJ == true then
-            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
-        end
-    end)
-  end
-})
-
-AddTextBox(Main5u6, {
-  Name = "Number WalkSpeed",
-  Default = "Enter",
-  PlaceholderText = "Enter number",
-  ClearText = true,
-  Callback = function(value)
-    getgenv().Walkspeed = value
-    pcall(function()
-        game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
-        end) 
-  end
-})
-
-local Toggle = AddToggle(Main5u6, {
-  Name = "WalkSpeed",
-  Default = false,
-  Callback = function(state)
-  getgenv().loopW = state
-    game:GetService("RunService").Heartbeat:Connect(function()
-        if loopW == true then
-            pcall(function()
-                game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = Walkspeed
-            end)
-        end
-    end)
-  end
-})
-
-AddTextBox(Main5u6, {
-  Name = "Number JumpPower",
-  Default = "Enter",
-  PlaceholderText = "Enter number",
-  ClearText = true,
-  Callback = function(value)
-    getgenv().Jumppower = value
-    pcall(function()
-        game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = value
-    end)
-  end
-})
-
-local Toggle = AddToggle(Main5u6, {
-  Name = "JumpPower",
-  Default = false,
-  Callback = function(stahte)
-  getgenv().loopJ = stahte
-    game:GetService("RunService").Heartbeat:Connect(function()
-        if loopJ == true then
-            pcall(function()
-                game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = Jumppower
-            end)
-        end
-    end)
-  end
-})
-
-local function setupTPWalk()
-    local runService = game:GetService("RunService")
-    local connection
-    if connection then
-        connection:Disconnect()
-    end
-    local function onCharacterAdded(character)
-        local hum = character:WaitForChild("Humanoid")
-        connection = runService.Stepped:Connect(function()
-            if getgenv().TPWalk and hum and hum.Parent then
-                if hum.Health > 0 then
-                    if hum.MoveDirection.Magnitude > 0 then
-                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                        else
-                            character:TranslateBy(hum.MoveDirection)
-                        end
-                    end
-                else
-                    connection:Disconnect()
-                end
-            else
-                connection:Disconnect()
-            end
-        end)
-    end
-
-    player.CharacterAdded:Connect(onCharacterAdded)
-    if player.Character then
-        onCharacterAdded(player.Character)
-    end
-end
-
-AddTextBox(Main5u6, {
-    Name = "Number Tpwalk",
-    Default = "Enter",
-    PlaceholderText = "Enter number",
-    ClearText = true,
-    Callback = function(value)
-        if isNumber(value) then
-            getgenv().TPSpeed = tonumber(value)
-        end
-    end
-})
-
-local Toggle = AddToggle(Main5u6, {
-    Name = "Tpwalk",
-    Default = false,
-    Callback = function(s)
-        getgenv().TPWalk = s
-        if s then
-            setupTPWalk() 
-        else
-            if connection then
-                connection:Disconnect()
-            end
-        end
-    end
-})
-
-local Toggle = AddToggle(Main5u6, {
-    Name = "Gui Roblox",
-    Default = false,
-    Callback = function(Allgui)
-if Allgui then
-   local StarterGui = game:GetService("StarterGui")
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, true)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, true)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Captures, true)
-    else
-    local StarterGui = game:GetService("StarterGui")
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
-   StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Captures, false)
-   end
-end
-})
-
-local lastCF, stop, heartbeatConnection
-local Enabled = false
-
-local function start()
-    if heartbeatConnection then
-        heartbeatConnection:Disconnect()
-    end
-    heartbeatConnection = game:GetService('RunService').Heartbeat:Connect(function()
-        if stop or not Enabled then
-            return
-        end
-        if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
-            lastCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
-        end
-    end)
-
-    lplr.Character:WaitForChild('Humanoid').RootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
-        if Enabled then
-            stop = true
-            if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
-                lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
-            end
-            game:GetService('RunService').Heartbeat:Wait()
-            stop = false
-        end
-    end)
-end
-
-local function setupCharacter(character)
-    repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
-    repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid').RootPart
-    if Enabled then
-        start()
-    end
-end
-
-lplr.CharacterAdded:Connect(function(character)
-    setupCharacter(character)
-end)
-
-AddToggle(Main5u6, {
-    Name = "Character Lock CFrame",
-    Default = false,
-    Callback = function(state)
-        Enabled = state
-        if Enabled then
-            if lplr.Character then
-                setupCharacter(lplr.Character)
-            end
-        else
-            if heartbeatConnection then
-                heartbeatConnection:Disconnect()
-            end
-        end
-    end
-})
-
-local function setCameraOcclusion()
-    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
-end
-
-setCameraOcclusion()
-
-lp.CharacterAdded:Connect(function()
-    setCameraOcclusion()
-end)
-
-AddToggle(Main5u6, {
-    Name = "Camera no Occlusion",
-    Default = false,
-    Callback = function(value)
-        if value then
-            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
-        else
-            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
-        end
-    end
-})
 
 local orgmz = playery.CameraMaxZoomDistance
 local orgmnz = playery.CameraMinZoomDistance
@@ -309,6 +55,11 @@ local function applyHitEffect()
     end
 
     shakecamera()
+    
+    local cameraTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    local targetCFrame = cam.CFrame * CFrame.new(0, 0, -5)
+    local cameraTween = tweenservice:Create(cam, cameraTweenInfo, {CFrame = targetCFrame})
+    cameraTween:Play()
 
     local elapsedtime = 0
     while elapsedtime < 1.5 do
@@ -322,6 +73,11 @@ local function applyHitEffect()
 
     tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 0}):Play()
     wait(0.5)
+
+    local returnTween = tweenservice:Create(cam, cameraTweenInfo, {CFrame = cam.CFrame * CFrame.new(0, 0, 5)})
+    returnTween:Play()
+    
+    wait(returnTween.Completed)
 
     playery.CameraMaxZoomDistance = orgmz
     playery.CameraMinZoomDistance = orgmnz
@@ -342,7 +98,7 @@ local function onCharacterAdded(character)
     connectHealthChanged(humanoid)
 end
 
-if player.Character then
+if playery.Character then
     onCharacterAdded(playery.Character)
 end
 
