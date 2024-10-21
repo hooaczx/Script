@@ -251,13 +251,27 @@ AddToggle(Main5u6, {
     end
 })
 
+
+local function sendNotification()
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Alert!",
+        Text = "your blood, reduction",
+        icon = "rbxassetid://78608769732362",
+        Duration = 2,
+    })
+end
+
 local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 local camera = workspace.CurrentCamera
 local tweenService = game:GetService("TweenService")
 local soundId = 1445412859
 local effectEnabled = false
 local originalMaxZoom = player.CameraMaxZoomDistance
 local originalMinZoom = player.CameraMinZoomDistance
+local zoomedMaxZoom = 5
+local zoomedMinZoom = 2
+local followPlayer = true
 
 local hitSound = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
 hitSound.SoundId = "rbxassetid://" .. soundId
@@ -278,25 +292,32 @@ overlayFrame.BackgroundTransparency = 1
 overlayFrame.Visible = true
 overlayFrame.Parent = player:WaitForChild("PlayerGui")
 
-local function sendNotification()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Alert!",
-        Text = "your blood, reduction",
-        icon = "rbxassetid://16855304544",
-        Duration = 2,
-    })
+local function followCharacter()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if followPlayer then
+            camera.CFrame = CFrame.new(camera.CFrame.Position, humanoidRootPart.Position)
+        end
+    end)
 end
 
 local function triggerHitEffect()
     if not effectEnabled then return end
 
+    followPlayer = true
+    followCharacter()
+
     hitSound:Play()
     wait(0.1)
+
+    local zoomInTweenMax = tweenService:Create(player, TweenInfo.new(0.5), {CameraMaxZoomDistance = zoomedMaxZoom})
+    local zoomInTweenMin = tweenService:Create(player, TweenInfo.new(0.5), {CameraMinZoomDistance = zoomedMinZoom})
+    zoomInTweenMax:Play()
+    zoomInTweenMin:Play()
 
     tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 24}):Play()
     wait(0.5)
 
-    local originalCFrame = camera.CFrame
     local shakeTween = tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = camera.CFrame * CFrame.new(0, 0, -2)})
     shakeTween:Play()
 
@@ -304,9 +325,16 @@ local function triggerHitEffect()
     twistTween:Play()
 
     twistTween.Completed:Connect(function()
-        tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = originalCFrame}):Play()
-        player.CameraMaxZoomDistance = originalMaxZoom
-        player.CameraMinZoomDistance = originalMinZoom
+        local zoomOutTweenMax = tweenService:Create(player, TweenInfo.new(0.5), {CameraMaxZoomDistance = originalMaxZoom})
+        local zoomOutTweenMin = tweenService:Create(player, TweenInfo.new(0.5), {CameraMinZoomDistance = originalMinZoom})
+
+        zoomOutTweenMax:Play()
+        zoomOutTweenMin:Play()
+
+        followPlayer = false
+
+        tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
+        wait(0.5)
     end)
 
     local function changeColor()
@@ -321,24 +349,18 @@ local function triggerHitEffect()
         changeColor()
         elapsedTime = elapsedTime + 1
     end
-
-    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
-    wait(0.5)
-
-    player.CameraMaxZoomDistance = originalMaxZoom
-    player.CameraMinZoomDistance = originalMinZoom
 end
 
 local function onHealthChanged(humanoid)
     humanoid.HealthChanged:Connect(function(newHealth)
         if effectEnabled and newHealth < humanoid.MaxHealth then
             triggerHitEffect()
-            sendNotification()
         end
     end)
 end
 
-local function onCharacterAdded(character)
+local function onCharacterAdded(newCharacter)
+    character = newCharacter
     local humanoid = character:WaitForChild("Humanoid")
     onHealthChanged(humanoid)
 end
