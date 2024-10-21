@@ -237,24 +237,31 @@ AddToggle(Main5u6, {
     end
 })
 
-local function setCameraOcclusion()
-    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
+local function allowCameraToPassThrough(object, canPassThrough)
+    if object:IsA("BasePart") then
+        object.CanCollide = not canPassThrough
+        object.LocalTransparencyModifier = 0
+    end
 end
 
-setCameraOcclusion()
+local function setCameraPassThrough(canPassThrough)
+    for _, object in pairs(workspace:GetDescendants()) do
+        allowCameraToPassThrough(object, canPassThrough)
+    end
+end
 
-lp.CharacterAdded:Connect(function()
-    setCameraOcclusion()
+workspace.DescendantAdded:Connect(function(object)
+    allowCameraToPassThrough(object, false)
 end)
 
 AddToggle(Main5u6, {
-    Name = "Camera no Occlusion",
+    Name = "Toggle Camera Pass-Through",
     Default = false,
     Callback = function(value)
         if value then
-            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+            setCameraPassThrough(true)
         else
-            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
+            setCameraPassThrough(false)
         end
     end
 })
