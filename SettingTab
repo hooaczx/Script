@@ -251,16 +251,6 @@ AddToggle(Main5u6, {
     end
 })
 
-
-local function sendNotification()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Alert!",
-        Text = "your blood, reduction",
-        icon = "rbxassetid://78608769732362",
-        Duration = 2,
-    })
-end
-
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local camera = workspace.CurrentCamera
@@ -303,6 +293,13 @@ end
 
 local function triggerHitEffect()
     if not effectEnabled then return end
+
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Alert!",
+        Text = "your blood, reduction",
+        icon = "rbxassetid://78608769732362",
+        Duration = 2,
+    })
 
     followPlayer = true
     followCharacter()
