@@ -296,15 +296,16 @@ local function applyHitEffect()
 
     local cameraShake
 
-    local function shakeCamera()
-        local runService = game:GetService("RunService")
+    local function shakeCamera(character)
+    local runService = game:GetService("RunService")
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-        cameraShake = runService.RenderStepped:Connect(function()
-            local currentTime = tick()
-            local bobbleX = math.cos(currentTime * 10) * 0.5
-            local bobbleY = math.abs(math.sin(currentTime * 10)) * 0.5
-            local bobble = Vector3.new(bobbleX, bobbleY, 0)
-            camera.CFrame = camera.CFrame * CFrame.new(bobble)
+    cameraShake = runService.RenderStepped:Connect(function()
+        local currentTime = tick()
+        local bobbleX = math.cos(currentTime * 10) * 0.5
+        local bobbleY = math.abs(math.sin(currentTime * 10)) * 0.5
+        local bobble = Vector3.new(bobbleX, bobbleY, 0)
+        camera.CFrame = humanoidRootPart.CFrame * CFrame.new(0, 5, -10) * CFrame.new(bobble)
         end)
     end
 
