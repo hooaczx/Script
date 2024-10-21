@@ -16,11 +16,6 @@ local players = game:GetService('Players')
 local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
-local playery = game.Players.LocalPlayer
-local cam = game.Workspace.CurrentCamera
-local tweenservice = game:GetService("TweenService")
-local soundid = 1445412859
-
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
 
@@ -255,6 +250,9 @@ AddToggle(Main5u6, {
         end
     end
 })
+local playery = game.Players.LocalPlayer
+local cam = workspace.CurrentCamera
+local tweenservice = game:GetService("TweenService")
 
 local orgmz = playery.CameraMaxZoomDistance
 local orgmnz = playery.CameraMinZoomDistance
@@ -301,19 +299,20 @@ local function applyHitEffect()
 
         shakeidk = rs.RenderStepped:Connect(function()
             local ct = tick()
-            local bobblex = math.cos(ct * 10) * 1
-            local bobbley = math.abs(math.sin(ct * 10)) * 1
+            local bobblex = math.cos(ct * 10) * 0.5
+            local bobbley = math.abs(math.sin(ct * 10)) * 0.5
             local bobble = Vector3.new(bobblex, bobbley, 0)
             cam.CFrame = cam.CFrame * CFrame.new(bobble)
         end)
     end
 
     shakecamera()
-    
+
     local cameraTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
     local targetCFrame = cam.CFrame * CFrame.new(0, 0, -5)
     local cameraTween = tweenservice:Create(cam, cameraTweenInfo, {CFrame = targetCFrame})
     cameraTween:Play()
+    cameraTween.Completed:Wait()
 
     local elapsedtime = 0
     while elapsedtime < 1.5 do
@@ -331,7 +330,7 @@ local function applyHitEffect()
     local returnTween = tweenservice:Create(cam, cameraTweenInfo, {CFrame = cam.CFrame * CFrame.new(0, 0, 5)})
     returnTween:Play()
     
-    wait(returnTween.Completed)
+    returnTween.Completed:Wait()
 
     playery.CameraMaxZoomDistance = orgmz
     playery.CameraMinZoomDistance = orgmnz
