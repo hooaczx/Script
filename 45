@@ -1999,20 +1999,15 @@ local function checkFriends()
                 for _, friendInfo in pairs(info) do
                     table.insert(playersFriends, friendInfo)
                 end
-                if not page.IsFinished then 
-                    page:AdvanceToNextPageAsync()
-                end
+                local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
+                if not pageSuccess or page.IsFinished then break end
             until page.IsFinished
         end
 
         local friendsInTotal = #playersFriends
 
         local function updateFriendsGUI(friends)
-            for _, child in pairs(friendsFrame:GetChildren()) do
-                if child:IsA("Frame") then
-                    child:Destroy()
-                end
-            end
+            friendsFrame:ClearAllChildren()
 
             local positionY = 0
             for _, friend in pairs(friends) do
@@ -2052,13 +2047,11 @@ local function checkFriends()
                 if friend.IsOnline then
                     if players:FindFirstChild(friend.Username) then
                         statusLabel.Text = "In Game"
-                    elseif friend.PresenceType == Enum.PresenceType.InGame then
-                        statusLabel.Text = "Playing: " .. friend.LastLocation
                     else
                         statusLabel.Text = "Online"
                     end
                 else
-                    statusLabel.Text = "offline"
+                    statusLabel.Text = "Offline"
                 end
 
                 statusLabel.Parent = friendFrame
@@ -2876,18 +2869,24 @@ createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false
 
 local togglehideName = false
 
-local function toggleGUIs(togglehideName)
-    for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+local function toggleGUIs(character, hide)
+    for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-            if togglehideName then
-                v.Enabled = false
-            else
-                v.Enabled = true 
-            end
+            v.Enabled = not hide
         end
     end
 end
 
+local function onCharacterAdded(character)
+    toggleGUIs(character, togglehideName)
+    character.DescendantAdded:Connect(function(descendant)
+        if (descendant:IsA("BillboardGui") or descendant:IsA("SurfaceGui")) and togglehideName then
+            descendant.Enabled = false
+        end
+    end)
+end
+
+game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
 local framehidename = Instance.new("Frame", scrollingSettingFrame)
 framehidename.Size = UDim2.new(1, 0, 0, 100)
@@ -2911,8 +2910,9 @@ Text13.Position = UDim2.new(0, 0, 0.32, 0)
 Text13.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
 
-local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(togglehideName)
-    toggleGUIs(togglehideName)
+local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
+    togglehideName = state
+    toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
 end, togglehideName)
 
     local SettingButton = Instance.new("ImageButton", frame)
