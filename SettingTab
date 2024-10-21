@@ -16,6 +16,10 @@ local players = game:GetService('Players')
 local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
+local playery = game.Players.LocalPlayer
+local cam = game.Workspace.CurrentCamera
+local tweenservice = game:GetService("TweenService")
+local soundid = 1445412859
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -175,7 +179,6 @@ end
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
-local teleported = false
 
 local function start()
     if heartbeatConnection then
@@ -194,21 +197,15 @@ local function start()
         if Enabled then
             stop = true
             if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
-                local currentCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
-                if currentCF ~= lastCF and not teleported then
-                    lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
-                    teleported = true
-                end
+                lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
             end
             game:GetService('RunService').Heartbeat:Wait()
-            teleported = false
             stop = false
         end
     end)
 end
 
 local function setupCharacter(character)
-    teleported = false
     repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
     repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid').RootPart
     if Enabled then
@@ -221,7 +218,7 @@ lplr.CharacterAdded:Connect(function(character)
 end)
 
 AddToggle(Main5u6, {
-    Name = "Character CFrame Lock",
+    Name = "Character Lock CFrame",
     Default = false,
     Callback = function(state)
         Enabled = state
@@ -256,5 +253,105 @@ AddToggle(Main5u6, {
         else
             lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
         end
+    end
+})
+
+local orgmz = playery.CameraMaxZoomDistance
+local orgmnz = playery.CameraMinZoomDistance
+
+local rizzsound = Instance.new("Sound", playery:WaitForChild("PlayerScripts"))
+rizzsound.SoundId = "rbxassetid://" .. soundid
+rizzsound.Volume = 1
+
+local skibidiblur = Instance.new("BlurEffect", cam)
+skibidiblur.Size = 0
+
+local sigmaeffect = Instance.new("ColorCorrectionEffect", cam)
+sigmaeffect.TintColor = Color3.new(1, 1, 1)
+sigmaeffect.Saturation = 0
+
+local overlay = Instance.new("Frame")
+overlay.Size = UDim2.new(1, 0, 1, 0)
+overlay.Position = UDim2.new(0, 0, 0, 0)
+overlay.BackgroundColor3 = Color3.new(0, 0, 0)
+overlay.BackgroundTransparency = 1
+overlay.Visible = true
+overlay.Parent = playery:WaitForChild("PlayerGui")
+
+local function applyHitEffect()
+    if not effectEnabled then return end
+
+    rizzsound:Play()
+    wait(0.1)
+
+    tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 24}):Play()
+    wait(0.5)
+
+    local function fadecolor()
+        tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
+        wait(0.5)
+        tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
+        wait(0.5)
+    end
+
+    local shakeidk
+
+    local function shakecamera()
+        local rs = game:GetService("RunService")
+
+        shakeidk = rs.RenderStepped:Connect(function()
+            local ct = tick()
+            local bobblex = math.cos(ct * 10) * 1
+            local bobbley = math.abs(math.sin(ct * 10)) * 1
+            local bobble = Vector3.new(bobblex, bobbley, 0)
+            cam.CFrame = cam.CFrame * CFrame.new(bobble)
+        end)
+    end
+
+    shakecamera()
+
+    local elapsedtime = 0
+    while elapsedtime < 2.3 do
+        fadecolor()
+        elapsedtime = elapsedtime + 1
+    end
+
+    if shakeidk then
+        shakeidk:Disconnect()
+    end
+
+    tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 0}):Play()
+    wait(0.5)
+
+    playery.CameraMaxZoomDistance = orgmz
+    playery.CameraMinZoomDistance = orgmnz
+end
+
+local effectEnabled = false
+
+local function connectHealthChanged(humanoid)
+    humanoid.HealthChanged:Connect(function(newHealth)
+        if effectEnabled and newHealth < humanoid.MaxHealth then
+            applyHitEffect()
+        end
+    end)
+end
+
+local function onCharacterAdded(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    connectHealthChanged(humanoid)
+end
+
+if player.Character then
+    onCharacterAdded(playery.Character)
+end
+
+playery.CharacterAdded:Connect(onCharacterAdded)
+
+AddToggle(Main5u6, {
+    Name = "Enable Hit Effect",
+    Default = false,
+    Callback = function(value) 
+        effectEnabled = value
     end
 })
