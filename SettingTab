@@ -278,23 +278,6 @@ overlay.BackgroundTransparency = 1
 overlay.Visible = true
 overlay.Parent = playery:WaitForChild("PlayerGui")
 
-local topBorder = Instance.new("Frame", overlay)
-topBorder.Size = UDim2.new(1, 0, 0.05, 0)
-topBorder.Position = UDim2.new(0, 0, 0, 0)
-topBorder.BackgroundColor3 = Color3.new(0, 0, 0)
-topBorder.BackgroundTransparency = 1
-
-local bottomBorder = topBorder:Clone()
-bottomBorder.Position = UDim2.new(0, 0, 0.95, 0)
-
-local leftBorder = topBorder:Clone()
-leftBorder.Size = UDim2.new(0.05, 0, 1, 0)
-leftBorder.Position = UDim2.new(0, 0, 0, 0)
-
-local rightBorder = topBorder:Clone()
-rightBorder.Size = UDim2.new(0.05, 0, 1, 0)
-rightBorder.Position = UDim2.new(0.95, 0, 0, 0)
-
 local function applyHitEffect()
     if not effectEnabled then return end
 
@@ -315,6 +298,7 @@ local function applyHitEffect()
 
     local function shakecamera()
         local rs = game:GetService("RunService")
+
         shakeidk = rs.RenderStepped:Connect(function()
             local ct = tick()
             local bobblex = math.cos(ct * 10) * 1
@@ -349,10 +333,6 @@ local function connectHealthChanged(humanoid)
     humanoid.HealthChanged:Connect(function(newHealth)
         if effectEnabled and newHealth < humanoid.MaxHealth then
             applyHitEffect()
-            tweenservice:Create(topBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
-            tweenservice:Create(bottomBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
-            tweenservice:Create(leftBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
-            tweenservice:Create(rightBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
         end
     end)
 end
@@ -362,14 +342,14 @@ local function onCharacterAdded(character)
     connectHealthChanged(humanoid)
 end
 
-if playery.Character then
+if player.Character then
     onCharacterAdded(playery.Character)
 end
 
 playery.CharacterAdded:Connect(onCharacterAdded)
 
 AddToggle(Main5u6, {
-    Name = "Enable Hit Effect",
+    Name = "Hit Effect",
     Default = false,
     Callback = function(value) 
         effectEnabled = value
