@@ -342,3 +342,26 @@ local effectEnabled = false
 local function connectHealthChanged(humanoid)
     humanoid.HealthChanged:Connect(function(newHealth)
         if effectEnabled and newHealth < humanoid.MaxHealth then
+            applyHitEffect()
+        end
+    end)
+end
+
+local function onCharacterAdded(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    connectHealthChanged(humanoid)
+end
+
+if playery.Character then
+    onCharacterAdded(playery.Character)
+end
+
+playery.CharacterAdded:Connect(onCharacterAdded)
+
+AddToggle(Main5u6, {
+    Name = "Hit Effect",
+    Default = false,
+    Callback = function(value) 
+        effectEnabled = value
+    end
+})
