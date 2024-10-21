@@ -240,7 +240,7 @@ AddToggle(Main5u6, {
 local function allowCameraToPassThrough(object, canPassThrough)
     if object:IsA("BasePart") then
         object.CanCollide = not canPassThrough
-        object.LocalTransparencyModifier = 0
+        object.LocalTransparencyModifier = canPassThrough and 0.5 or 0  -- เปลี่ยนความโปร่งใสให้เหมาะสม
     end
 end
 
@@ -263,5 +263,6 @@ AddToggle(Main5u6, {
         else
             setCameraPassThrough(false)
         end
+        setCameraPassThrough(value)
     end
 })
