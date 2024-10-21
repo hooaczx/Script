@@ -14,6 +14,8 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = player
 local players = game:GetService('Players')
 local lplr = players.LocalPlayer
+local ps = game:GetService("Players")
+local lp = ps.LocalPlayer
 
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
@@ -148,7 +150,7 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local Toggle = AddToggle(Main5u6, {
-    Name = "Toggle Gui Roblox",
+    Name = "Gui Roblox",
     Default = false,
     Callback = function(Allgui)
 if Allgui then
@@ -219,7 +221,7 @@ lplr.CharacterAdded:Connect(function(character)
 end)
 
 AddToggle(Main5u6, {
-    Name = "Toggle Character Lock",
+    Name = "Character CFrame Lock",
     Default = false,
     Callback = function(state)
         Enabled = state
@@ -231,6 +233,28 @@ AddToggle(Main5u6, {
             if heartbeatConnection then
                 heartbeatConnection:Disconnect()
             end
+        end
+    end
+})
+
+local function setCameraOcclusion()
+    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
+end
+
+setCameraOcclusion()
+
+lp.CharacterAdded:Connect(function()
+    setCameraOcclusion()
+end)
+
+AddToggle(Main5u6, {
+    Name = "Camera no Occlusion",
+    Default = false,
+    Callback = function(value)
+        if value then
+            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+        else
+            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
         end
     end
 })
