@@ -259,7 +259,7 @@ AddToggle(Main5u6, {
 local orgmz = playery.CameraMaxZoomDistance
 local orgmnz = playery.CameraMinZoomDistance
 
-local rizzsound = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
+local rizzsound = Instance.new("Sound", playery:WaitForChild("PlayerScripts"))
 rizzsound.SoundId = "rbxassetid://" .. soundid
 rizzsound.Volume = 1
 
@@ -270,36 +270,32 @@ local sigmaeffect = Instance.new("ColorCorrectionEffect", cam)
 sigmaeffect.TintColor = Color3.new(1, 1, 1)
 sigmaeffect.Saturation = 0
 
-local function createBorder()
-    local borderThickness = 0
-    local overlayTop = Instance.new("Frame")
-    overlayTop.Size = UDim2.new(1, 0, 0, borderThickness)
-    overlayTop.Position = UDim2.new(0, 0, 0, 0)
-    overlayTop.BackgroundColor3 = Color3.new(1, 0, 0)
-    overlayTop.BackgroundTransparency = 0.5
-    overlayTop.Visible = false
-    overlayTop.Parent = player:WaitForChild("PlayerGui")
+local overlay = Instance.new("Frame")
+overlay.Size = UDim2.new(1, 0, 1, 0)
+overlay.Position = UDim2.new(0, 0, 0, 0)
+overlay.BackgroundColor3 = Color3.new(0, 0, 0)
+overlay.BackgroundTransparency = 1
+overlay.Visible = true
+overlay.Parent = playery:WaitForChild("PlayerGui")
 
-    local overlayBottom = overlayTop:Clone()
-    overlayBottom.Position = UDim2.new(0, 0, 1, -borderThickness)
-    overlayBottom.Parent = player:WaitForChild("PlayerGui")
+local topBorder = Instance.new("Frame", overlay)
+topBorder.Size = UDim2.new(1, 0, 0.05, 0)
+topBorder.Position = UDim2.new(0, 0, 0, 0)
+topBorder.BackgroundColor3 = Color3.new(0, 0, 0)
+topBorder.BackgroundTransparency = 1
 
-    local overlayLeft = overlayTop:Clone()
-    overlayLeft.Size = UDim2.new(0, borderThickness, 1, 0)
-    overlayLeft.Position = UDim2.new(0, 0, 0, 0)
-    overlayLeft.Parent = player:WaitForChild("PlayerGui")
+local bottomBorder = topBorder:Clone()
+bottomBorder.Position = UDim2.new(0, 0, 0.95, 0)
 
-    local overlayRight = overlayTop:Clone()
-    overlayRight.Position = UDim2.new(1, -borderThickness, 0, 0)
-    overlayRight.Size = UDim2.new(0, borderThickness, 1, 0)
-    overlayRight.Parent = player:WaitForChild("PlayerGui")
+local leftBorder = topBorder:Clone()
+leftBorder.Size = UDim2.new(0.05, 0, 1, 0)
+leftBorder.Position = UDim2.new(0, 0, 0, 0)
 
-    return overlayTop, overlayBottom, overlayLeft, overlayRight
-end
+local rightBorder = topBorder:Clone()
+rightBorder.Size = UDim2.new(0.05, 0, 1, 0)
+rightBorder.Position = UDim2.new(0.95, 0, 0, 0)
 
-local overlayTop, overlayBottom, overlayLeft, overlayRight = createBorder()
-
-local function applyHitEffect(damage)
+local function applyHitEffect()
     if not effectEnabled then return end
 
     rizzsound:Play()
@@ -307,18 +303,6 @@ local function applyHitEffect(damage)
 
     tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 24}):Play()
     wait(0.5)
-
-    overlayTop.Visible = true
-    overlayBottom.Visible = true
-    overlayLeft.Visible = true
-    overlayRight.Visible = true
-
-    local maxThickness = math.clamp(damage * 5, 10, 100)
-    local currentThickness = 0
-    overlayTop.Size = UDim2.new(1, 0, 0, currentThickness)
-    overlayBottom.Size = UDim2.new(1, 0, 0, currentThickness)
-    overlayLeft.Size = UDim2.new(0, currentThickness, 1, 0)
-    overlayRight.Size = UDim2.new(0, currentThickness, 1, 0)
 
     local function fadecolor()
         tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
@@ -331,7 +315,6 @@ local function applyHitEffect(damage)
 
     local function shakecamera()
         local rs = game:GetService("RunService")
-
         shakeidk = rs.RenderStepped:Connect(function()
             local ct = tick()
             local bobblex = math.cos(ct * 10) * 1
@@ -343,17 +326,10 @@ local function applyHitEffect(damage)
 
     shakecamera()
 
-    while currentThickness < maxThickness do
-        currentThickness = currentThickness + 1
-        overlayTop.Size = UDim2.new(1, 0, 0, currentThickness)
-        overlayBottom.Size = UDim2.new(1, 0, 0, currentThickness)
-        overlayLeft.Size = UDim2.new(0, currentThickness, 1, 0)
-        overlayRight.Size = UDim2.new(0, currentThickness, 1, 0)
-
-        overlayBottom.Position = UDim2.new(0, 0, 1, -currentThickness)
-        overlayRight.Position = UDim2.new(1, -currentThickness, 0, 0)
-
-        wait(0.1)
+    local elapsedtime = 0
+    while elapsedtime < 1.5 do
+        fadecolor()
+        elapsedtime = elapsedtime + 1
     end
 
     if shakeidk then
@@ -363,19 +339,20 @@ local function applyHitEffect(damage)
     tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 0}):Play()
     wait(0.5)
 
-    overlayTop.Visible = false
-    overlayBottom.Visible = false
-    overlayLeft.Visible = false
-    overlayRight.Visible = false
+    playery.CameraMaxZoomDistance = orgmz
+    playery.CameraMinZoomDistance = orgmnz
 end
 
 local effectEnabled = false
 
 local function connectHealthChanged(humanoid)
     humanoid.HealthChanged:Connect(function(newHealth)
-        local damage = humanoid.MaxHealth - newHealth
-        if effectEnabled and damage > 0 then
-            applyHitEffect(damage)
+        if effectEnabled and newHealth < humanoid.MaxHealth then
+            applyHitEffect()
+            tweenservice:Create(topBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+            tweenservice:Create(bottomBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+            tweenservice:Create(leftBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+            tweenservice:Create(rightBorder, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
         end
     end)
 end
@@ -385,11 +362,11 @@ local function onCharacterAdded(character)
     connectHealthChanged(humanoid)
 end
 
-if player.Character then
-    onCharacterAdded(player.Character)
+if playery.Character then
+    onCharacterAdded(playery.Character)
 end
 
-player.CharacterAdded:Connect(onCharacterAdded)
+playery.CharacterAdded:Connect(onCharacterAdded)
 
 AddToggle(Main5u6, {
     Name = "Enable Hit Effect",
