@@ -251,87 +251,93 @@ AddToggle(Main5u6, {
     end
 })
 
-local playery = game.Players.LocalPlayer
-local cam = workspace.CurrentCamera
-local tweenservice = game:GetService("TweenService")
-local soundid = 1445412859
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local tweenService = game:GetService("TweenService")
+local soundId = 1445412859
 local effectEnabled = false
-local orgmz = playery.CameraMaxZoomDistance
-local orgmnz = playery.CameraMinZoomDistance
+local originalMaxZoom = player.CameraMaxZoomDistance
+local originalMinZoom = player.CameraMinZoomDistance
 
-local rizzsound = Instance.new("Sound", playery:WaitForChild("PlayerScripts"))
-rizzsound.SoundId = "rbxassetid://" .. soundid
-rizzsound.Volume = 1
+local hitSound = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
+hitSound.SoundId = "rbxassetid://" .. soundId
+hitSound.Volume = 1
 
-local skibidiblur = Instance.new("BlurEffect", cam)
-skibidiblur.Size = 0
+local blurEffect = Instance.new("BlurEffect", camera)
+blurEffect.Size = 0
 
-local sigmaeffect = Instance.new("ColorCorrectionEffect", cam)
-sigmaeffect.TintColor = Color3.new(1, 1, 1)
-sigmaeffect.Saturation = 0
+local colorCorrectionEffect = Instance.new("ColorCorrectionEffect", camera)
+colorCorrectionEffect.TintColor = Color3.new(1, 1, 1)
+colorCorrectionEffect.Saturation = 0
 
-local overlay = Instance.new("Frame")
-overlay.Size = UDim2.new(1, 0, 1, 0)
-overlay.Position = UDim2.new(0, 0, 0, 0)
-overlay.BackgroundColor3 = Color3.new(0, 0, 0)
-overlay.BackgroundTransparency = 1
-overlay.Visible = true
-overlay.Parent = playery:WaitForChild("PlayerGui")
+local overlayFrame = Instance.new("Frame")
+overlayFrame.Size = UDim2.new(1, 0, 1, 0)
+overlayFrame.Position = UDim2.new(0, 0, 0, 0)
+overlayFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+overlayFrame.BackgroundTransparency = 1
+overlayFrame.Visible = true
+overlayFrame.Parent = player:WaitForChild("PlayerGui")
 
-local function applyHitEffect()
+local function triggerHitEffect()
     if not effectEnabled then return end
 
-    rizzsound:Play()
+    hitSound:Play()
     wait(0.1)
 
-    tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 24}):Play()
+    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 24}):Play()
     wait(0.5)
 
-    local originalCFrame = cam.CFrame
-    local shakeTween = tweenservice:Create(cam, TweenInfo.new(0.5), {CFrame = cam.CFrame * CFrame.new(0, 0, -2)})
+    local originalCFrame = camera.CFrame
+    local shakeTween = tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = camera.CFrame * CFrame.new(0, 0, -2)})
     shakeTween:Play()
-    shakeTween.Completed:Connect(function()
-        tweenservice:Create(cam, TweenInfo.new(0.5), {CFrame = originalCFrame}):Play()
+
+    local twistTween = tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = camera.CFrame * CFrame.Angles(0, math.rad(45), 0)})
+    twistTween:Play()
+
+    twistTween.Completed:Connect(function()
+        tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = originalCFrame}):Play()
+        player.CameraMaxZoomDistance = originalMaxZoom
+        player.CameraMinZoomDistance = originalMinZoom
     end)
 
-    local function fadecolor()
-        tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
+    local function changeColor()
+        tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
         wait(0.5)
-        tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
+        tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
         wait(0.5)
     end
 
-    local elapsedtime = 0
-    while elapsedtime < 1.5 do
-        fadecolor()
-        elapsedtime = elapsedtime + 1
+    local elapsedTime = 0
+    while elapsedTime < 1.5 do
+        changeColor()
+        elapsedTime = elapsedTime + 1
     end
 
-    tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 0}):Play()
+    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
     wait(0.5)
 
-    playery.CameraMaxZoomDistance = orgmz
-    playery.CameraMinZoomDistance = orgmnz
+    player.CameraMaxZoomDistance = originalMaxZoom
+    player.CameraMinZoomDistance = originalMinZoom
 end
 
-local function connectHealthChanged(humanoid)
+local function onHealthChanged(humanoid)
     humanoid.HealthChanged:Connect(function(newHealth)
         if effectEnabled and newHealth < humanoid.MaxHealth then
-            applyHitEffect()
+            triggerHitEffect()
         end
     end)
 end
 
 local function onCharacterAdded(character)
     local humanoid = character:WaitForChild("Humanoid")
-    connectHealthChanged(humanoid)
+    onHealthChanged(humanoid)
 end
 
-if playery.Character then
-    onCharacterAdded(playery.Character)
+if player.Character then
+    onCharacterAdded(player.Character)
 end
 
-playery.CharacterAdded:Connect(onCharacterAdded)
+player.CharacterAdded:Connect(onCharacterAdded)
 
 AddToggle(Main5u6, {
     Name = "Hit Effect",
