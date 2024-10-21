@@ -256,87 +256,62 @@ local cam = workspace.CurrentCamera
 local tweenservice = game:GetService("TweenService")
 local soundid = 1445412859
 local effectEnabled = false
-local originalMaxZoom = playery.CameraMaxZoomDistance
-local originalMinZoom = playery.CameraMinZoomDistance
+local orgmz = playery.CameraMaxZoomDistance
+local orgmnz = playery.CameraMinZoomDistance
 
-local hitSound = Instance.new("Sound", playery:WaitForChild("PlayerScripts"))
-hitSound.SoundId = "rbxassetid://" .. soundid
-hitSound.Volume = 1
+local rizzsound = Instance.new("Sound", playery:WaitForChild("PlayerScripts"))
+rizzsound.SoundId = "rbxassetid://" .. soundid
+rizzsound.Volume = 1
 
-local blurEffect = Instance.new("BlurEffect", camera)
-blurEffect.Size = 0
+local skibidiblur = Instance.new("BlurEffect", cam)
+skibidiblur.Size = 0
 
-local colorCorrectionEffect = Instance.new("ColorCorrectionEffect", camera)
-colorCorrectionEffect.TintColor = Color3.new(1, 1, 1)
-colorCorrectionEffect.Saturation = 0
+local sigmaeffect = Instance.new("ColorCorrectionEffect", cam)
+sigmaeffect.TintColor = Color3.new(1, 1, 1)
+sigmaeffect.Saturation = 0
 
-local overlayFrame = Instance.new("Frame")
-overlayFrame.Size = UDim2.new(1, 0, 1, 0)
-overlayFrame.Position = UDim2.new(0, 0, 0, 0)
-overlayFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-overlayFrame.BackgroundTransparency = 1
-overlayFrame.Visible = true
-overlayFrame.Parent = playery:WaitForChild("PlayerGui")
+local overlay = Instance.new("Frame")
+overlay.Size = UDim2.new(1, 0, 1, 0)
+overlay.Position = UDim2.new(0, 0, 0, 0)
+overlay.BackgroundColor3 = Color3.new(0, 0, 0)
+overlay.BackgroundTransparency = 1
+overlay.Visible = true
+overlay.Parent = playery:WaitForChild("PlayerGui")
 
 local function applyHitEffect()
     if not effectEnabled then return end
 
-    hitSound:Play()
+    rizzsound:Play()
     wait(0.1)
 
-    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 24}):Play()
+    tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 24}):Play()
     wait(0.5)
 
-    local function fadeColor()
-        tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
+    local originalCFrame = cam.CFrame
+    local shakeTween = tweenservice:Create(cam, TweenInfo.new(0.5), {CFrame = cam.CFrame * CFrame.new(0, 0, -2)})
+    shakeTween:Play()
+    shakeTween.Completed:Connect(function()
+        tweenservice:Create(cam, TweenInfo.new(0.5), {CFrame = originalCFrame}):Play()
+    end)
+
+    local function fadecolor()
+        tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
         wait(0.5)
-        tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
+        tweenservice:Create(sigmaeffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
         wait(0.5)
     end
 
-    local cameraShake
-
-    local function shakeCamera(character)
-    local runService = game:GetService("RunService")
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    cameraShake = runService.RenderStepped:Connect(function()
-        local currentTime = tick()
-        local bobbleX = math.cos(currentTime * 10) * 0.5
-        local bobbleY = math.abs(math.sin(currentTime * 10)) * 0.5
-        local bobble = Vector3.new(bobbleX, bobbleY, 0)
-        camera.CFrame = humanoidRootPart.CFrame * CFrame.new(0, 5, -10) * CFrame.new(bobble)
-        end)
+    local elapsedtime = 0
+    while elapsedtime < 1.5 do
+        fadecolor()
+        elapsedtime = elapsedtime + 1
     end
 
-    shakeCamera()
-
-    local cameraTweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
-    local targetCFrame = camera.CFrame * CFrame.new(0, 0, -5)
-    local cameraTween = tweenService:Create(camera, cameraTweenInfo, {CFrame = targetCFrame})
-    cameraTween:Play()
-    cameraTween.Completed:Wait()
-
-    local elapsedTime = 0
-    while elapsedTime < 1.5 do
-        fadeColor()
-        elapsedTime = elapsedTime + 1
-    end
-
-    if cameraShake then
-        cameraShake:Disconnect()
-    end
-
-    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
+    tweenservice:Create(skibidiblur, TweenInfo.new(0.5), {Size = 0}):Play()
     wait(0.5)
 
-    local returnTween = tweenService:Create(camera, cameraTweenInfo, {CFrame = camera.CFrame * CFrame.new(0, 0, 5)})
-    returnTween:Play()
-    
-    returnTween.Completed:Wait()
-
-    playery.CameraMaxZoomDistance = originalMaxZoom
-    playery.CameraMinZoomDistance = originalMinZoom
+    playery.CameraMaxZoomDistance = orgmz
+    playery.CameraMinZoomDistance = orgmnz
 end
 
 local function connectHealthChanged(humanoid)
