@@ -237,32 +237,24 @@ AddToggle(Main5u6, {
     end
 })
 
-local function allowCameraToPassThrough(object, canPassThrough)
-    if object:IsA("BasePart") then
-        object.CanCollide = not canPassThrough
-        object.LocalTransparencyModifier = canPassThrough and 0.5 or 0  -- เปลี่ยนความโปร่งใสให้เหมาะสม
-    end
+local function setCameraOcclusion()
+    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
 end
 
-local function setCameraPassThrough(canPassThrough)
-    for _, object in pairs(workspace:GetDescendants()) do
-        allowCameraToPassThrough(object, canPassThrough)
-    end
-end
+setCameraOcclusion()
 
-workspace.DescendantAdded:Connect(function(object)
-    allowCameraToPassThrough(object, false)
+lp.CharacterAdded:Connect(function()
+    setCameraOcclusion()
 end)
 
 AddToggle(Main5u6, {
-    Name = "Toggle Camera Pass-Through",
+    Name = "Camera no Occlusion",
     Default = false,
     Callback = function(value)
         if value then
-            setCameraPassThrough(true)
+            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
         else
-            setCameraPassThrough(false)
+            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
         end
-        setCameraPassThrough(value)
     end
 })
