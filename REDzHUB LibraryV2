@@ -1466,6 +1466,20 @@ local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75,
     isAutoPlayEnabled = not isAutoPlayEnabled
 end, autoPlayNext)
 
+local function onSongEnded()
+    if isAutoPlayEnabled then
+        currentSongIndex = currentSongIndex + 1
+        if currentSongIndex > #songs then
+            currentSongIndex = 1
+        end
+        resetSong()
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        updateSongButtons()
+    end
+end
+
+soundmusic.Ended:Connect(onSongEnded)
+
 local ReverbModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
 ReverbModeframe.Size = UDim2.new(1, 0, 0, 100)
 ReverbModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1496,76 +1510,6 @@ echoButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 echoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 echoButton.TextScaled = true
 echoButton.BackgroundTransparency = 0.4
-
-local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
-
-local modes = {
-    { name = "Off", decayTime = 0, density = 0 },
-    { name = "Room", decayTime = 0.3, density = 0.5 },
-    { name = "Hall", decayTime = 1.2, density = 0.8 },
-    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
-    { name = "Forest", decayTime = 0.7, density = 0.4 },
-    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
-    { name = "Mountains", decayTime = 3.5, density = 0.85 },
-    { name = "Cave", decayTime = 3.0, density = 0.7 },
-    { name = "Arena", decayTime = 1.8, density = 0.9 },
-    { name = "Underwater", decayTime = 2.2, density = 0.6 },
-    { name = "Open Field", decayTime = 0.5, density = 0.3 },
-    { name = "City", decayTime = 1.0, density = 0.65 },
-    { name = "Desert", decayTime = 0.9, density = 0.5 },
-    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
-    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
-    { name = "Swamp", decayTime = 1.7, density = 0.6 },
-    { name = "Factory", decayTime = 1.6, density = 0.75 },
-    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
-    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
-    { name = "Subway", decayTime = 1.4, density = 0.7 },
-    { name = "Library", decayTime = 1.1, density = 0.5 },
-}
-
-local currentMode = 1
-
-local chorusModes = {
-    { name = "Off", depth = 0, rate = 0 },
-    { name = "Light", depth = 0.5, rate = 1 },
-    { name = "Moderate", depth = 0.8, rate = 1.5 },
-    { name = "Heavy", depth = 1.0, rate = 2 },
-    { name = "Ultra", depth = 1.2, rate = 2.5 },
-    { name = "Extreme", depth = 1.5, rate = 3 },
-    { name = "Super Heavy", depth = 1.8, rate = 4 },
-    { name = "Max", depth = 2.0, rate = 5 },
-    { name = "Phantom", depth = 1.0, rate = 3.5 },
-    { name = "Super Phantom", depth = 2.5, rate = 6 },
-    { name = "Whisper", depth = 0.4, rate = 0.8 },
-    { name = "Echo", depth = 0.7, rate = 1.2 },
-    { name = "Cascading", depth = 1.3, rate = 3.0 },
-    { name = "Wavy", depth = 1.4, rate = 2.2 },
-    { name = "Siren", depth = 1.6, rate = 4.0 },
-    { name = "Ghostly", depth = 1.7, rate = 3.8 },
-    { name = "Dreamy", depth = 1.9, rate = 5.0 },
-    { name = "Vortex", depth = 2.1, rate = 5.5 },
-    { name = "Nebula", depth = 2.3, rate = 6.0 },
-    { name = "Warped", depth = 2.4, rate = 6.5 },
-}
-
-local currentChorusMode = 1
-
-local function updateReverb()
-    local mode = modes[currentMode]
-    echoButton.Text = "Reverb Mode: " .. mode.name
-    reverbEffect.DecayTime = mode.decayTime
-    reverbEffect.Density = mode.density
-    reverbEffect.Enabled = mode.name ~= "Off"
-end
-
-local function updateChorus()
-    local mode = chorusModes[currentChorusMode]
-    chorusEffect.Depth = mode.depth
-    chorusEffect.Rate = mode.rate
-    chorusEffect.Enabled = mode.name ~= "Off"
-end
 
 local ChorusModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
 ChorusModeframe.Size = UDim2.new(1, 0, 0, 100)
@@ -1598,44 +1542,86 @@ chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 chorusButton.TextScaled = true
 chorusButton.BackgroundTransparency = 0.4
 
+local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
+local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
+
+local modes = {
+    { name = "Off", decayTime = 0, density = 0 },
+    { name = "Room", decayTime = 0.3, density = 0.5 },
+    { name = "Hall", decayTime = 1.2, density = 0.8 },
+    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
+    { name = "Forest", decayTime = 0.7, density = 0.4 },
+    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
+    { name = "Mountains", decayTime = 3.5, density = 0.85 },
+    { name = "Cave", decayTime = 3.0, density = 0.7 },
+    { name = "Arena", decayTime = 1.8, density = 0.9 },
+    { name = "Underwater", decayTime = 2.2, density = 0.6 },
+    { name = "Open Field", decayTime = 0.5, density = 0.3 },
+    { name = "City", decayTime = 1.0, density = 0.65 },
+    { name = "Desert", decayTime = 0.9, density = 0.5 },
+    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
+    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
+    { name = "Swamp", decayTime = 1.7, density = 0.6 },
+    { name = "Factory", decayTime = 1.6, density = 0.75 },
+    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
+    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
+    { name = "Subway", decayTime = 1.4, density = 0.7 },
+    { name = "Library", decayTime = 1.1, density = 0.5 },
+}
+
+local chorusModes = {
+    { name = "Off", depth = 0, rate = 0 },
+    { name = "Light", depth = 0.5, rate = 1 },
+    { name = "Moderate", depth = 0.8, rate = 1.5 },
+    { name = "Heavy", depth = 1.0, rate = 2 },
+    { name = "Ultra", depth = 1.2, rate = 2.5 },
+    { name = "Extreme", depth = 1.5, rate = 3 },
+    { name = "Super Heavy", depth = 1.8, rate = 4 },
+    { name = "Max", depth = 2.0, rate = 5 },
+    { name = "Phantom", depth = 1.0, rate = 3.5 },
+    { name = "Super Phantom", depth = 2.5, rate = 6 },
+    { name = "Whisper", depth = 0.4, rate = 0.8 },
+    { name = "Echo", depth = 0.7, rate = 1.2 },
+    { name = "Cascading", depth = 1.3, rate = 3.0 },
+    { name = "Wavy", depth = 1.4, rate = 2.2 },
+    { name = "Siren", depth = 1.6, rate = 4.0 },
+    { name = "Ghostly", depth = 1.7, rate = 3.8 },
+    { name = "Dreamy", depth = 1.9, rate = 5.0 },
+    { name = "Vortex", depth = 2.1, rate = 5.5 },
+    { name = "Nebula", depth = 2.3, rate = 6.0 },
+    { name = "Warped", depth = 2.4, rate = 6.5 },
+}
+
+local currentMode = 1
+local currentChorusMode = 1
+
 echoButton.MouseButton1Click:Connect(function()
+    currentMode = currentMode % #modes + 1
+    local mode = modes[currentMode]
+    echoButton.Text = "Reverb Mode: " .. mode.name
+    reverbEffect.DecayTime = mode.decayTime
+    reverbEffect.Density = mode.density
+    reverbEffect.Enabled = mode.name ~= "Off"
     if currentMode == 1 then
         currentChorusMode = 1
         chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        updateChorus()
+        chorusEffect.Enabled = false
     end
-    currentMode = currentMode % #modes + 1
-    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-    updateReverb()
 end)
 
 chorusButton.MouseButton1Click:Connect(function()
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    local mode = chorusModes[currentChorusMode]
+    chorusButton.Text = "Chorus Mode: " .. mode.name
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
     if currentChorusMode == 1 then
         currentMode = 1
         echoButton.Text = "Reverb Mode: " .. modes[currentMode].name
-        updateReverb()
+        reverbEffect.Enabled = false
     end
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    updateChorus()
 end)
-
-updateReverb()
-updateChorus()
-
-local function onSongEnded()
-    if isAutoPlayEnabled then
-        currentSongIndex = currentSongIndex + 1
-        if currentSongIndex > #songs then
-            currentSongIndex = 1
-        end
-        resetSong()
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        updateSongButtons()
-    end
-end
-
-soundmusic.Ended:Connect(onSongEnded)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
@@ -4210,6 +4196,73 @@ end
   
   function SetSection(Section, NewName)
     Section.Text = NewName
+  end
+
+  function AddDiscord(parent, Configs)
+    local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
+    local DiscordIcon = Configs[2] or Configs.DiscordIcon or "rbxassetid://"
+    local DiscordTitle = Configs[3] or Configs.DiscordTitle or ""
+    
+    local Frame = Create("Frame", parent, {
+      Size = UDim2.new(1, 0, 0, 110),
+      BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+      Name = "Frame",
+      AutomaticSize = "Y"
+    })
+    
+    local LinkLabel = Create("TextLabel", Frame, {
+      Size = UDim2.new(1, 0, 0, 25),
+      Text = DiscordLink,
+      TextXAlignment = "Left",
+      BackgroundTransparency = 1,
+      Position = UDim2.new(0, 12, 0, 0),
+      TextColor3 = Color3.fromRGB(0, 120, 255),
+      Font = Enum.Font.GothamBold,
+      TextSize = 14
+    })
+    
+    local TitleLabel = Create("TextLabel", Frame, {
+      Size = UDim2.new(1, 0, 0, 25),
+      Text = DiscordTitle,
+      TextXAlignment = "Left",
+      BackgroundTransparency = 1,
+      Position = UDim2.new(0, 60, 0, 25),
+      TextColor3 = Color3.fromRGB(200, 200, 200),
+      Font = Enum.Font.GothamBold,
+      TextSize = 14
+    })
+    
+    local IconLabel = Create("ImageLabel", Frame, {
+      Size = UDim2.new(0, 40, 0, 40),
+      AnchorPoint = Vector2.new(0, 0.5),
+      Position = UDim2.new(0, 12, 0.45, 0),
+      Image = DiscordIcon
+    })Corner(IconLabel)
+    
+    local JoinButton = Create("TextButton", Frame, {
+      Size = UDim2.new(1, -24, 0, 25),
+      AnchorPoint = Vector2.new(0.5, 1),
+      Position = UDim2.new(0.5, 0, 1, -8),
+      Text = "Join",
+      Font = Enum.Font.GothamBold,
+      TextSize = 15,
+      TextColor3 = Color3.fromRGB(220, 220, 220),
+      BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+    })Corner(IconLabel)
+    
+    local time = tick()
+    ClickConter = 0
+    JoinButton.MouseButton1Click:Connect(function()
+      if ClickConter == 0 or tick() - time > 5 then time = tick() setclipboard(DiscordLink) ClickConter = ClickConter + 1
+        JoinButton.Text = "Copied to Clipboard"
+        JoinButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        JoinButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+        task.wait(5)
+        JoinButton.Text = "Join"
+        JoinButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+        JoinButton.TextColor3 = Color3.fromRGB(220, 220, 220)
+      end
+    end)
   end
   return Menu
 end
