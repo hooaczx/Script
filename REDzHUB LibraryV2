@@ -1518,15 +1518,17 @@ local uitogglemusicplayer = {
 
 musicplayer.MouseButton1Click:Connect(function()
     togglemusicplayer = not togglemusicplayer
-    
-    for _, elementData in ipairs(uitogglemusicplayer) do
-        local instance = elementData.instance
         if togglemusicplayer then
             click1:Play()
+       for _, elementData in ipairs(uitogglemusicplayer) do
+        local instance = elementData.instance
             elementData.instance.Visible = true
             CreateTween(instance, "Size", elementData.sizeOpen, 0.3, true)
+         end
         else
-            click2:Play()
+             click2:Play()
+        for _, elementData in ipairs(uitogglemusicplayer) do
+        local instance = elementData.instance
             CreateTween(instance, "Size", elementData.sizeClosed, 0.3, true)
             elementData.instance.Visible = false
         end
