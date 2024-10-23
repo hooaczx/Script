@@ -801,8 +801,8 @@ function StartProgressUpdate(Frame_4, TimeLabel)
     end
 
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
+        Frame_4.Rotation = (Frame_4.Rotation + soundmusic.IsPlaying * soundmusic.PlaybackLoudness * soundmusic.PlaybackSpeed * soundmusic.Volume) % 360
         if soundmusic.IsPlaying then
-            Frame_4.Rotation = (Frame_4.Rotation + soundmusic.PlaybackSpeed * soundmusic.Volume) % 360
             TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
@@ -1196,45 +1196,27 @@ searchButton.Position = UDim2.new(0.8, 0, 0.1, 0)
 searchButton.BackgroundTransparency = 1
 searchButton.Image = "rbxthumb://type=Asset&id=85019257025290&w=150&h=150"
 
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 347, 0, 115)
-Frame.BackgroundColor3 = Configs_HUB.Cor_Options
-Frame.Position = UDim2.new(0.3, 0, 0, 0)
-Frame.Active = true
-Frame.Draggable = true
-Frame.Visible = false
-local tweenGradient = CreateGradient(Frame, {
-    Color = {
-        Color3.fromRGB(255, 255, 255),
-        Color3.fromRGB(0, 0, 0),
-        Color3.fromRGB(255, 0, 0)
-    },
-    Rotation = 45,
-    Tween = true,
-    Speed = 3
-    })
-    Corner(Frame)
-    Stroke(Frame)
-
-local TitleLabel = Instance.new("TextLabel", Frame)
-TitleLabel.TextSize = 14
+local TitleLabel = Instance.new("TextLabel", ScreenGui)
+TitleLabel.TextSize = 12
 TitleLabel.TextWrapped = true
 TitleLabel.TextColor3 = Configs_HUB.Cor_Text
 TitleLabel.Text = songs[currentSongIndex].name
-TitleLabel.Size = UDim2.new(0.45, 0, 0, 40)
-TitleLabel.Position = UDim2.new(0.56, -25, 0.36, -25)
+TitleLabel.Size = UDim2.new(0.2, 0, 0.07, 0)
+TitleLabel.Position = UDim2.new(0.105, 0, 0.015, 0)
+TitleLabel.AnchorPoint = Vector2.new(0.3, 0.02)
 TitleLabel.BackgroundTransparency = 1
-TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Font = Configs_HUB.Text_Font
 TextSetColor(TitleLabel)
 
-local Frame_4 = Instance.new("Frame", Frame)
-Frame_4.Size = UDim2.new(0, 100, 0, 100)
-Frame_4.Position = UDim2.new(0.13, -25, 0.31, -25)
+local Frame_4 = Instance.new("Frame", ScreenGui)
+Frame_4.Size = UDim2.new(0.038, 0, 0.091, 0)
+Frame_4.Position = UDim2.new(0.01, 0, 0, 0)
+Frame_4.AnchorPoint = Vector2.new(0.23, 0.02)
 Frame_4.BackgroundTransparency = 0.5
 Frame_4.BackgroundColor3 = Configs_HUB.Cor_Options
 Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
-Stroke(Frame_4, {Color = Color3.fromRGB(1, 1, 1)})
+Stroke(Frame_4, {Color = Color3.fromRGB(255, 255, 255)})
 
 local ProgressCircle = Instance.new("ImageLabel", Frame_4)
 ProgressCircle.Size = UDim2.new(1, 0, 1, 0)
@@ -1243,20 +1225,22 @@ ProgressCircle.ImageTransparency = 0.6
 ProgressCircle.Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
 Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
 
-local TimeLabel = Instance.new("TextLabel", Frame)
+local TimeLabel = Instance.new("TextLabel", ScreenGui)
 TimeLabel.TextSize = 12
 TimeLabel.TextWrapped = true
 TimeLabel.TextColor3 = Color3.new(1, 1, 1)
 TimeLabel.Text = "0:00 / 0:00"
-TimeLabel.Size = UDim2.new(0.3, 0, 0, 20)
-TimeLabel.Position = UDim2.new(0.63, -25, 0.6, -25)
+TimeLabel.Size = UDim2.new(0.09, 0, 0.06, 0)
+TimeLabel.Position = UDim2.new(0.01, 0, 0.1, 0)
+TimeLabel.AnchorPoint = Vector2.new(0.3, 0.02)
 TimeLabel.BackgroundTransparency = 1
 TimeLabel.TextXAlignment = Enum.TextXAlignment.Center
 TimeLabel.Font = Enum.Font.SourceSans
 
-local ToggleButton = Instance.new("ImageButton", Frame)
-ToggleButton.Size = UDim2.new(0, 30, 0, 30)
-ToggleButton.Position = UDim2.new(0.57, 28, 0.21, 60)
+local ToggleButton = Instance.new("ImageButton", ScreenGui)
+ToggleButton.Size = UDim2.new(0.036, 0, 0.075, 0)
+ToggleButton.Position = UDim2.new(0.0857 + 0.037, 0, 0.085, 0)
+ToggleButton.AnchorPoint = Vector2.new(0.3, 0.02)
 ToggleButton.BackgroundTransparency = 1
 ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
 Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
@@ -1272,16 +1256,18 @@ Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
       end
    end)
    
-local NextButton = Instance.new("ImageButton", Frame)
-NextButton.Size = UDim2.new(0, 30, 0, 30)
-NextButton.Position = UDim2.new(0.69, 28, 0.21, 60)
+local NextButton = Instance.new("ImageButton", ScreenGui)
+NextButton.Size = UDim2.new(0.036, 0, 0.075, 0)
+NextButton.Position = UDim2.new(0.0857 + 0.0755, 0, 0.085, 0)
+NextButton.AnchorPoint = Vector2.new(0.3, 0.02)
 NextButton.BackgroundTransparency = 1
 NextButton.Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150"
 Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
 
-local PreviousButton = Instance.new("ImageButton", Frame)
-PreviousButton.Size = UDim2.new(0, 30, 0, 30)
-PreviousButton.Position = UDim2.new(0.46, 28, 0.21, 60)
+local PreviousButton = Instance.new("ImageButton", ScreenGui)
+PreviousButton.Size = UDim2.new(0.036, 0, 0.075, 0)
+PreviousButton.Position = UDim2.new(0.0857, 0, 0.085, 0)
+PreviousButton.AnchorPoint = Vector2.new(0.3, 0.02)
 PreviousButton.BackgroundTransparency = 1
 PreviousButton.Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150"
 Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
@@ -1478,7 +1464,7 @@ Text44.Position = UDim2.new(0, 0, 0.31, 0)
 Text44.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
 
-local isAutoPlayEnabled = true
+local isAutoPlayEnabled = false
 local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
     isAutoPlayEnabled = not isAutoPlayEnabled
 end, autoPlayNext)
@@ -1512,20 +1498,33 @@ musicplayer.Image = "rbxthumb://type=Asset&id=83193662937265&w=150&h=150"
 Corner(musicplayer, {CornerRadius = UDim.new(1, 0)})
 
 local togglemusicplayer = true
-     musicplayer.MouseButton1Click:Connect(function()
-        togglemusicplayer = not togglemusicplayer
 
+local uitogglemusicplayer = {
+    {instance = TitleLabel, sizeOpen = UDim2.new(0.2, 0, 0.07, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = Frame_4, sizeOpen = UDim2.new(0.038, 0, 0.091, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = ProgressCircle, sizeOpen = UDim2.new(1, 0, 1, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = TimeLabel, sizeOpen = UDim2.new(0.09, 0, 0.06, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = ToggleButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = NextButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = PreviousButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)}
+}
+
+musicplayer.MouseButton1Click:Connect(function()
+    togglemusicplayer = not togglemusicplayer
+    
+    for _, elementData in ipairs(uitogglemusicplayer) do
+        local instance = elementData.instance
         if togglemusicplayer then
             click1:Play()
-            Frame.Visible = true
-            CreateTween(Frame, "Size", UDim2.new(0, 347, 0, 115), 0.3, true)
+            elementData.instance.Visible = true
+            CreateTween(instance, "Size", elementData.sizeOpen, 0.5, false)
         else
             click2:Play()
-            CreateTween(Frame, "Size", UDim2.new(0, 347, 0, 0), 0.3, true)
-            Frame.Visible = false
-            Frame.Position = UDim2.new(0.3, 0, 0, 0)
+            CreateTween(instance, "Size", elementData.sizeClosed, 0.5, false)
+            elementData.instance.Visible = false
         end
-    end)
+    end
+end)
 
 local Listofsongs = Instance.new("ImageButton", Frame2)
 Listofsongs.Size = UDim2.new(0, 30, 0, 30)
@@ -2409,68 +2408,41 @@ Server.Parent = frame79
     infoToggleButton.BackgroundTransparency = 1
     infoToggleButton.Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150"
 
-     local minimize3 = true
-     infoToggleButton.MouseButton1Click:Connect(function()
-        minimize3 = not minimize3
+local minimize3 = true
 
-        if minimize3 then
-            click1:Play()
-            frameinfo.Visible = true
-            iconplayers.Visible = true
-            Wellcome.Visible = true
-            gameinfoframe.Visible = true
-            iconGame.Visible = true
-            GameName.Visible = true
-            frame100.Visible = true
-            iconfriend.Visible = true
-            friendnumber.Visible = true
-            TimePlay.Visible = true
-            AccountAge.Visible = true
-            Join.Visible = true
-            Position.Visible = true
-            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0.18, 0), 0.3, true)
-            CreateTween1(iconplayers, "Size", UDim2.new(0.06, 0, 0.124, 0), 0.3, true)
-            CreateTween1(Wellcome, "Size", UDim2.new(0.25, 0, 0.09, 0), 0.3, true)
-            CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0.3, 0), 0.3, true)
-            CreateTween1(iconGame, "Size", UDim2.new(0.06, 0, 0.124, 0), 0.3, true)
-            CreateTween1(GameName, "Size", UDim2.new(0.28, 0, 0.09, 0), 0.3, true)
-            CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0.48, 0), 0.3, true)
-            CreateTween1(iconfriend, "Size", UDim2.new(0.06, 0, 0.124, 0), 0.3, true)
-            CreateTween1(friendnumber, "Size", UDim2.new(0.28, 0, 0.09, 0), 0.3, true)
-            CreateTween1(TimePlay, "Size", UDim2.new(0.205, 0, 0.07, 0), 0.3, true)
-            CreateTween1(AccountAge, "Size", UDim2.new(0.205, 0, 0.07, 0), 0.3, true)
-            CreateTween1(Join, "Size", UDim2.new(0.101, 0, 0.07, 0), 0.3, true)
-            CreateTween1(Position, "Size", UDim2.new(0.101, 0, 0.07, 0), 0.3, true)
-        else
-            click2:Play()
-            CreateTween1(frameinfo, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
-            CreateTween1(iconplayers, "Size", UDim2.new(0.06, 0, 0, 0), 0.3, true)
-            CreateTween1(Wellcome, "Size", UDim2.new(0.25, 0, 0, 0), 0.3, true)
-            CreateTween1(gameinfoframe, "Size", UDim2.new(0.27, 0, 0, 0), 0.3, true)
-            CreateTween1(iconGame, "Size", UDim2.new(0.06, 0, 0, 0), 0.3, true)
-            CreateTween1(GameName, "Size", UDim2.new(0.28, 0, 0, 0), 0.3, true)
-            CreateTween1(frame100, "Size", UDim2.new(0.41, 0, 0, 0), 0.3, true)
-            CreateTween1(iconfriend, "Size", UDim2.new(0.06, 0, 0, 0), 0.3, true)
-            CreateTween1(friendnumber, "Size", UDim2.new(0.28, 0, 0, 0), 0.3, true)
-            CreateTween1(TimePlay, "Size", UDim2.new(0.205, 0, 0, 0), 0.3, true)
-            CreateTween1(AccountAge, "Size", UDim2.new(0.205, 0, 0, 0), 0.3, true)
-            CreateTween1(Join, "Size", UDim2.new(0.101, 0, 0, 0), 0.3, true)
-            CreateTween1(Position, "Size", UDim2.new(0.101, 0, 0, 0), 0.3, true)
-            frameinfo.Visible = false
-            iconplayers.Visible = false
-            Wellcome.Visible = false
-            gameinfoframe.Visible = false
-            iconGame.Visible = false
-            GameName.Visible = false
-            frame100.Visible = false
-            iconfriend.Visible = false
-            friendnumber.Visible = false
-            TimePlay.Visible = false
-            AccountAge.Visible = false
-            Join.Visible = false
-            Position.Visible = false
+local uiinfoToggle = {
+    {instance = frameinfo, sizeOpen = UDim2.new(0.25, 0, 0.18, 0), sizeClosed = UDim2.new(0.25, 0, 0, 0)},
+    {instance = iconplayers, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
+    {instance = Wellcome, sizeOpen = UDim2.new(0.25, 0, 0.09, 0), sizeClosed = UDim2.new(0.25, 0, 0, 0)},
+    {instance = gameinfoframe, sizeOpen = UDim2.new(0.27, 0, 0.3, 0), sizeClosed = UDim2.new(0.27, 0, 0, 0)},
+    {instance = iconGame, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
+    {instance = GameName, sizeOpen = UDim2.new(0.28, 0, 0.09, 0), sizeClosed = UDim2.new(0.28, 0, 0, 0)},
+    {instance = frame100, sizeOpen = UDim2.new(0.41, 0, 0.48, 0), sizeClosed = UDim2.new(0.41, 0, 0, 0)},
+    {instance = iconfriend, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
+    {instance = friendnumber, sizeOpen = UDim2.new(0.28, 0, 0.09, 0), sizeClosed = UDim2.new(0.28, 0, 0, 0)},
+    {instance = TimePlay, sizeOpen = UDim2.new(0.205, 0, 0.07, 0), sizeClosed = UDim2.new(0.205, 0, 0, 0)},
+    {instance = AccountAge, sizeOpen = UDim2.new(0.205, 0, 0.07, 0), sizeClosed = UDim2.new(0.205, 0, 0, 0)},
+    {instance = Join, sizeOpen = UDim2.new(0.101, 0, 0.07, 0), sizeClosed = UDim2.new(0.101, 0, 0, 0)},
+    {instance = Position, sizeOpen = UDim2.new(0.101, 0, 0.07, 0), sizeClosed = UDim2.new(0.101, 0, 0, 0)}
+}
+
+infoToggleButton.MouseButton1Click:Connect(function()
+    minimize3 = not minimize3
+
+    if minimize3 then
+        click1:Play()
+        for _, element in ipairs(uiinfoToggle) do
+            element.instance.Visible = true
+            CreateTween(element.instance, "Size", element.sizeOpen, 0.3, true)
         end
-    end)
+    else
+        click2:Play()
+        for _, element in ipairs(uiinfoToggle) do
+            CreateTween(element.instance, "Size", element.sizeClosed, 0.3, true)
+            element.instance.Visible = false
+        end
+    end
+end)
    
    local lastUpdate = tick()
    RunService.Heartbeat:Connect(function()
