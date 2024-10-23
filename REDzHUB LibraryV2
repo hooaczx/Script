@@ -795,7 +795,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
 
     progressUpdateConnection = RunService.Heartbeat:Connect(function()
         if soundmusic.IsPlaying then
-            Frame_4.Rotation = (Frame_4.Rotation + 0.3) % 360
+            Frame_4.Rotation = (Frame_4.Rotation " (soundmusic.PlaybackLoudness / 1000) * soundmusic.PlaybackSpeed * soundmusic.Volume) % 360
             TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
@@ -1217,7 +1217,7 @@ Frame_4.Position = UDim2.new(0.13, -25, 0.31, -25)
 Frame_4.BackgroundTransparency = 0.5
 Frame_4.BackgroundColor3 = Configs_HUB.Cor_Options
 Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
-Stroke(Frame_4, {Color = Color3.fromRGB(0, 255, 255)})
+Stroke(Frame_4, {Color = Color3.fromRGB(1, 1, 1)})
 
 local ProgressCircle = Instance.new("ImageLabel", Frame_4)
 ProgressCircle.Size = UDim2.new(1, 0, 1, 0)
