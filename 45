@@ -2265,76 +2265,47 @@ local players = game:GetService("Players")
 local LocalPlayer = players.LocalPlayer
 local accountAgeInDays = LocalPlayer.AccountAge
 local additionalPlayTimeInSeconds = 0
+local playtime = 0
 
-local function calculateTotalPlayTime()
-    local totalSeconds = accountAgeInDays * 86400
-
-    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
-
+local function updatePlaytime()
+    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+    playtime = playtime + 1
+    local totalSeconds = accountAgeInDays * 86400 + additionalPlayTimeInSeconds
     local years = math.floor(totalSeconds / 31536000)
     totalSeconds = totalSeconds % 31536000
     local months = math.floor(totalSeconds / 2592000)
     totalSeconds = totalSeconds % 2592000
     local days = math.floor(totalSeconds / 86400)
-
-    return string.format("%d years, %d months, %d days", years, months, days)
-end
-
-local function accountAgeMessage(accountAgeInDays)
+    local ageMessage
     if accountAgeInDays == 0 then
-        return "You just created an account"
+        ageMessage = "You just created an account"
     else
-        return string.format("Your account has been active for %d days", accountAgeInDays)
+        ageMessage = string.format("Your account has been active for %d days", accountAgeInDays)
     end
-end
+    local function formatElapsedTime(elapsedTime)
+        local secondsInMinute = 60
+        local secondsInHour = 3600
+        local secondsInDay = 86400
+        local secondsInMonth = 2592000
+        local secondsInYear = 31536000
 
-local function updatePlayTimeDisplay()
-    local totalPlayTime = calculateTotalPlayTime()
-    local ageMessage = accountAgeMessage(accountAgeInDays)
-    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
-end
-
-local function startUpdating()
-        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
-        updatePlayTimeDisplay()
-end
-
-startUpdating()
-
-local function formatElapsedTime(elapsedTime)
-    local secondsInMinute = 60
-    local secondsInHour = 3600
-    local secondsInDay = 86400
-    local secondsInMonth = 2592000
-    local secondsInYear = 31536000
-
-    if elapsedTime < secondsInMinute then
-        return string.format("%02d", elapsedTime)
-    elseif elapsedTime < secondsInHour then
-        return string.format("%d:%02d", math.floor(elapsedTime / secondsInMinute), elapsedTime % secondsInMinute)
-    elseif elapsedTime < secondsInDay then
-        return string.format("%d:%02d:%02d", math.floor(elapsedTime / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
-    elseif elapsedTime < secondsInMonth then
-        return string.format("%d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
-    elseif elapsedTime < secondsInYear then
-        return string.format("%d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
-    else
-        return string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInYear), math.floor((elapsedTime % secondsInYear) / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+        if elapsedTime < secondsInMinute then
+            return string.format("%02d", elapsedTime)
+        elseif elapsedTime < secondsInHour then
+            return string.format("%d:%02d", math.floor(elapsedTime / secondsInMinute), elapsedTime % secondsInMinute)
+        elseif elapsedTime < secondsInDay then
+            return string.format("%d:%02d:%02d", math.floor(elapsedTime / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+        elseif elapsedTime < secondsInMonth then
+            return string.format("%d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+        elseif elapsedTime < secondsInYear then
+            return string.format("%d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+        else
+            return string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInYear), math.floor((elapsedTime % secondsInYear) / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+        end
     end
-end
-
-local player = game.Players.LocalPlayer
-local playtime = 0
-
-local function updatePlaytime()
-    playtime = playtime + 1
     local formattedTime = formatElapsedTime(playtime)
-    TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
-end
-
-local function getAccountCreationDate(ageInDays)
-    local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
-    return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
+    AccountAge.Text = "Total Playtime since account creation: " .. string.format("%d years, %d months, %d days", years, months) .. "\n" .. ageMessage
+    TimePlay.Text = "Time Play: " .. formattedTime .. "\n" .. "This will show you how much time you have been playing in the game"
 end
 
 updatePlaytime()
