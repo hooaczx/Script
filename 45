@@ -2330,6 +2330,21 @@ local function updatePlaytime()
     playtime = playtime + 1
     local formattedTime = formatElapsedTime(playtime)
     TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
+        local currentTime = os.date("*t")
+        local hour = currentTime.hour
+        local amPm = "AM"
+
+        if hour >= 12 then
+            amPm = "PM"
+            if hour > 12 then
+                hour = hour - 12
+            end
+        elseif hour == 0 then
+            hour = 12
+        end
+
+        local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
+        TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
 end
 
 local function getAccountCreationDate(ageInDays)
@@ -2438,26 +2453,6 @@ Server.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Server.BackgroundTransparency = 1
 Server.Parent = frame79
 
-    local function updateTime()
-        local currentTime = os.date("*t")
-        local hour = currentTime.hour
-        local amPm = "AM"
-
-        if hour >= 12 then
-            amPm = "PM"
-            if hour > 12 then
-                hour = hour - 12
-            end
-        elseif hour == 0 then
-            hour = 12
-        end
-
-        local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
-        TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
-    end
-
-    updateTime()
-
     local infoToggleButton = Instance.new("ImageButton", frame)
     infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
     infoToggleButton.Position = UDim2.new(0.22 + 0.1, 0, 0, 13)
@@ -2522,16 +2517,9 @@ end)
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-          lastUpdate = currentTime
-        end
-     end) 
-   RunService.Heartbeat:Connect(function()
-   local currentTime = tick()
-    if currentTime - lastUpdate >= 1 then
         updatePlaytime()
         checkFriends()
         startUpdating()
-        updateTime()
         lastUpdate = currentTime
         end
     end)
