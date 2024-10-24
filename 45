@@ -1288,22 +1288,14 @@ decreaseVolumeButton.BackgroundTransparency = 1
 decreaseVolumeButton.Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150"
 Corner(decreaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
 
-local function increaseVolume(amount)
-    soundmusic.Volume = math.min(soundmusic.Volume + amount, 2.5)
-end
-local function decreaseVolume(amount)
-    soundmusic.Volume = math.max(soundmusic.Volume - amount, 0)
-end
 local volumeChangeAmount = 0.1
 
 increaseVolumeButton.MouseButton1Click:Connect(function()
-    increaseVolume(volumeChangeAmount)
-    updateVolumeLabel()
+    soundmusic.Volume = math.min(soundmusic.Volume + volumeChangeAmount, 2.5)
 end)
 
 decreaseVolumeButton.MouseButton1Click:Connect(function()
-    decreaseVolume(volumeChangeAmount)
-    updateVolumeLabel()
+    soundmusic.Volume = math.max(soundmusic.Volume - volumeChangeAmount, 0)
 end)
 
 local songList = Instance.new("ScrollingFrame", Frame1)
