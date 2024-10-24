@@ -1272,32 +1272,6 @@ PreviousButton.BackgroundTransparency = 1
 PreviousButton.Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150"
 Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
 
-local increaseVolumeButton = Instance.new("ImageButton", ScreenGui)
-increaseVolumeButton.Size = UDim2.new(0.036, 0, 0.075, 0)
-increaseVolumeButton.Position = UDim2.new(0.01, 0, 0.18, 0)
-increaseVolumeButton.AnchorPoint = Vector2.new(0.3, 0.02)
-increaseVolumeButton.BackgroundTransparency = 1
-increaseVolumeButton.Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150"
-Corner(increaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
-
-local decreaseVolumeButton = Instance.new("ImageButton", ScreenGui)
-decreaseVolumeButton.Size = UDim2.new(0.036, 0, 0.075, 0)
-decreaseVolumeButton.Position = UDim2.new(0.01 + 0.037, 0, 0.18, 0)
-decreaseVolumeButton.AnchorPoint = Vector2.new(0.3, 0.02)
-decreaseVolumeButton.BackgroundTransparency = 1
-decreaseVolumeButton.Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150"
-Corner(decreaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
-
-local volumeChangeAmount = 0.1
-
-increaseVolumeButton.MouseButton1Click:Connect(function()
-    soundmusic.Volume = math.min(soundmusic.Volume + volumeChangeAmount, 2.5)
-end)
-
-decreaseVolumeButton.MouseButton1Click:Connect(function()
-    soundmusic.Volume = math.max(soundmusic.Volume - volumeChangeAmount, 0)
-end)
-
 local songList = Instance.new("ScrollingFrame", Frame1)
 songList.BackgroundColor3 = Color3.new(0, 0, 0)
 songList.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
@@ -1502,6 +1476,51 @@ local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75,
     end)
 end)
 
+local increaseframe = Instance.new("Frame", scrollingsettingmusicFrame)
+increaseframe.Size = UDim2.new(1, 0, 0, 100)
+increaseframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+increaseframe.BackgroundTransparency = 0
+
+local increasetext = Instance.new("TextLabel", increaseframe)
+increasetext.Size = UDim2.new(1, 0, 0, 30)
+increasetext.TextScaled = true
+increasetext.TextXAlignment = Enum.TextXAlignment.Left
+increasetext.BackgroundTransparency = 1
+increasetext.TextColor3 = Color3.fromRGB(255, 255, 255)
+increasetext.Text = "AutoPlay NextSong"
+
+local increasetext1 = Instance.new("TextLabel", increaseframe)
+increasetext1.Size = UDim2.new(1, 0, 0, 50)
+increasetext1.TextScaled = true
+increasetext1.TextXAlignment = Enum.TextXAlignment.Left
+increasetext1.BackgroundTransparency = 1
+increasetext1.Position = UDim2.new(0, 0, 0.31, 0)
+increasetext1.TextColor3 = Color3.fromRGB(255, 255, 255)
+increasetext1.Text = [[Make the music louder Can increase up to 250 only]]
+
+local increaseVolumeButton = Instance.new("ImageButton", ScreenGui)
+increaseVolumeButton.Size = UDim2.new(0.1, 0, 0, 25)
+increaseVolumeButton.Position = UDim2.new(0.65, 0, 0.75, 0)
+increaseVolumeButton.BackgroundTransparency = 1
+increaseVolumeButton.Image = "rbxthumb://type=Asset&id=83302423067688&w=150&h=150"
+Corner(increaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
+
+local decreaseVolumeButton = Instance.new("ImageButton", ScreenGui)
+decreaseVolumeButton.Size = UDim2.new(0.1, 0, 0, 25)
+decreaseVolumeButton.Position = UDim2.new(0.35, 0, 0.75, 0)
+decreaseVolumeButton.BackgroundTransparency = 1
+decreaseVolumeButton.Image = "rbxthumb://type=Asset&id=99444312865147&w=150&h=150"
+Corner(decreaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
+
+local volumeChangeAmount = 0.1
+
+increaseVolumeButton.MouseButton1Click:Connect(function()
+    soundmusic.Volume = math.min(soundmusic.Volume + volumeChangeAmount, 2.5)
+end)
+
+decreaseVolumeButton.MouseButton1Click:Connect(function()
+    soundmusic.Volume = math.max(soundmusic.Volume - volumeChangeAmount, 0)
+end)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
@@ -1531,16 +1550,18 @@ local uitogglemusicplayer = {
 
 musicplayer.MouseButton1Click:Connect(function()
     togglemusicplayer = not togglemusicplayer
-    
-    for _, elementData in ipairs(uitogglemusicplayer) do
-        local instance = elementData.instance
         if togglemusicplayer then
             click1:Play()
+       for _, elementData in ipairs(uitogglemusicplayer) do
+        local instance = elementData.instance
             elementData.instance.Visible = true
-            CreateTween(instance, "Size", elementData.sizeOpen, 0.5, false)
+            CreateTween(instance, "Size", elementData.sizeOpen, 0.3, true)
+         end
         else
-            click2:Play()
-            CreateTween(instance, "Size", elementData.sizeClosed, 0.5, false)
+             click2:Play()
+        for _, elementData in ipairs(uitogglemusicplayer) do
+        local instance = elementData.instance
+            CreateTween(instance, "Size", elementData.sizeClosed, 0.3, true)
             elementData.instance.Visible = false
         end
     end
