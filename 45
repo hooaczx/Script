@@ -1498,6 +1498,14 @@ increasetext1.Position = UDim2.new(0, 0, 0.31, 0)
 increasetext1.TextColor3 = Color3.fromRGB(255, 255, 255)
 increasetext1.Text = [[Make the music louder Can increase up to 250 only]]
 
+local volumeLabel = Instance.new("TextLabel")
+volumeLabel.Size = UDim2.new(0.2, 0, 0, 25)
+volumeLabel.Position = UDim2.new(0.5, 0, 0.75, 0)
+volumeLabel.Text = "Volume:" .. tostring(math.floor(soundmusic.Volume * 100)) .. "/250"
+volumeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+volumeLabel.BackgroundTransparency = 1
+volumeLabel.TextScaled = true
+
 local increaseVolumeButton = Instance.new("ImageButton", increaseframe)
 increaseVolumeButton.Size = UDim2.new(0.1, 0, 0, 25)
 increaseVolumeButton.Position = UDim2.new(0.7, 0, 0.75, 0)
@@ -1516,10 +1524,12 @@ local volumeChangeAmount = 0.1
 
 increaseVolumeButton.MouseButton1Click:Connect(function()
     soundmusic.Volume = math.min(soundmusic.Volume + volumeChangeAmount, 2.5)
+    volumeLabel.Text = "Volume: " .. tostring(math.floor(sound.Volume * 100)) .. "/250"
 end)
 
 decreaseVolumeButton.MouseButton1Click:Connect(function()
     soundmusic.Volume = math.max(soundmusic.Volume - volumeChangeAmount, 0)
+    volumeLabel.Text = "Volume: " .. tostring(math.floor(sound.Volume * 100)) .. "/250"
 end)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
