@@ -2577,35 +2577,33 @@ local originalToClipboard = getgenv().toclipboard
 local originalSetClipboard = getgenv().setclipboard
 local originalOriginalSetClipboard = getgenv().originalSetClipboard
 
-local TogglecopyButton = createToggleButton(frameAnticopy, UDim2.new(0.82, 0, 0.75, 0), function()
-    copyEnabled = not copyEnabled
-
+getgenv().toggleClipboard = function(copyEnabled)
     if copyEnabled then
-        getgenv().toclipboard = function(data)
+    getgenv().toclipboard = function(data)
             notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
+                   Title = "Attempted to copy",
+                   Text = ""..tostring(data),
+                   buttonText = "ok",
+                   imageID = "",
+                   guiSize = Vector2.new(400, 70),
             })
         end
         getgenv().setclipboard = function(data)
             notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
+                   Title = "Attempted to copy",
+                   Text = ""..tostring(data),
+                   buttonText = "ok",
+                   imageID = "",
+                   guiSize = Vector2.new(400, 70),
             })
         end
         getgenv().originalSetClipboard = function(data)
             notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
+                   Title = "Attempted to copy",
+                   Text = ""..tostring(data),
+                   buttonText = "ok",
+                   imageID = "",
+                   guiSize = Vector2.new(400, 70),
             })
         end
     else
@@ -2613,8 +2611,11 @@ local TogglecopyButton = createToggleButton(frameAnticopy, UDim2.new(0.82, 0, 0.
         getgenv().setclipboard = originalSetClipboard
         getgenv().originalSetClipboard = originalOriginalSetClipboard
     end
-end, copyEnabled)
+end
 
+local TogglecopyButton = createToggleButton(frameAnticopy, UDim2.new(0.82, 0, 0.75, 0), function(state)
+    toggleClipboard(state)
+end, copyEnabled)
 
 local friendnotifications = {}
 local notifyFriendsEnabled = true
@@ -2643,188 +2644,129 @@ Text6.Text = [[This script will notify you when your friends join and exit the g
 
 local friendNotificationButton = createToggleButton(friendnotificationframe, UDim2.new(0.82, 0, 0.75, 0), function()
     notifyFriendsEnabled = not notifyFriendsEnabled
-
-    if notifyFriendsEnabled then
-        game.Players.PlayerAdded:Connect(function(player)
-            local isFriend = false
-            local success, friendsPage = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
-
-            if success then
-                repeat
-                    local friendsList = friendsPage:GetCurrentPage()
-                    for _, friendInfo in pairs(friendsList) do
-                        if friendInfo.Username == player.Name then
-                            isFriend = true
-                            break
-                        end
-                    end
-                    if not friendsPage.IsFinished then
-                        friendsPage:AdvanceToNextPageAsync()
-                    end
-                until friendsPage.IsFinished or isFriend
-            end
-
-            if isFriend then
-                local NotificationFrame = Instance.new("Frame", ScreenGui)
-                NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
-                NotificationFrame.BackgroundTransparency = 1
-                NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
-
-                local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
-                ProfileImage.Size = UDim2.new(0, 45, 1, 0)
-                ProfileImage.BackgroundTransparency = 1
-                ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
-
-                local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
-                NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
-                NotificationLabel.BackgroundTransparency = 1
-                NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
-                NotificationLabel.Text = player.Name .. " has joined the game"
-                NotificationLabel.TextScaled = true
-                NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
-                NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-                local ProgressBar = Instance.new("Frame")
-                ProgressBar.Parent = NotificationFrame
-                ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
-                ProgressBar.Position = UDim2.new(0, 0, 1, 0)
-                ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-
-                table.insert(friendnotifications, NotificationFrame)
-
-                if #friendnotifications > 5 then
-                    local oldNotification = table.remove(friendnotifications, 1)
-                    oldNotification:Destroy()
-                end
-
-                for i, notifyFrame in ipairs(friendnotifications) do
-                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                    tween:Play()
-                end
-
-                local timeLeft = 10
-                local startTime = tick()
-
-                local updateConnection
-                updateConnection = RunService.Heartbeat:Connect(function()
-                    local elapsedTime = tick() - startTime
-                    local remainingTime = timeLeft - elapsedTime
-
-                    if remainingTime <= 0 then
-                        remainingTime = 0
-                        updateConnection:Disconnect()
-                    end
-
-                    ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
-
-                    if remainingTime <= 0 then
-                        local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
-                        tweenOut:Play()
-
-                        tweenOut.Completed:Connect(function()
-                            NotificationFrame:Destroy()
-                            table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
-
-                            for i, notifyFrame in ipairs(friendnotifications) do
-                                local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                                tween:Play()
-                            end
-                        end)
-                    end
-                end)
-            end
-        end)
-        game.Players.PlayerRemoving:Connect(function(player)
-            local isFriend = false
-            local success, friendsPage = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
-
-            if success then
-                repeat
-                    local friendsList = friendsPage:GetCurrentPage()
-                    for _, friendInfo in pairs(friendsList) do
-                        if friendInfo.Username == player.Name then
-                            isFriend = true
-                            break
-                        end
-                    end
-                    if not friendsPage.IsFinished then
-                        friendsPage:AdvanceToNextPageAsync()
-                    end
-                until friendsPage.IsFinished or isFriend
-            end
-
-            if isFriend then
-                local NotificationFrame = Instance.new("Frame", ScreenGui)
-                NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
-                NotificationFrame.BackgroundTransparency = 1
-                NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
-
-                local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
-                ProfileImage.Size = UDim2.new(0, 45, 1, 0)
-                ProfileImage.BackgroundTransparency = 1
-                ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
-
-                local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
-                NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
-                NotificationLabel.BackgroundTransparency = 1
-                NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
-                NotificationLabel.Text = player.Name .. " has left the game"
-                NotificationLabel.TextScaled = true
-                NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
-                NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-                local ProgressBar = Instance.new("Frame")
-                ProgressBar.Parent = NotificationFrame
-                ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
-                ProgressBar.Position = UDim2.new(0, 0, 1, 0)
-                ProgressBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-
-                table.insert(friendnotifications, NotificationFrame)
-
-                if #friendnotifications > 5 then
-                    local oldNotification = table.remove(friendnotifications, 1)
-                    oldNotification:Destroy()
-                end
-
-                for i, notifyFrame in ipairs(friendnotifications) do
-                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                    tween:Play()
-                end
-
-                local timeLeft = 10
-                local startTime = tick()
-
-                local updateConnection
-                updateConnection = RunService.Heartbeat:Connect(function()
-                    local elapsedTime = tick() - startTime
-                    local remainingTime = timeLeft - elapsedTime
-
-                    if remainingTime <= 0 then
-                        remainingTime = 0
-                        updateConnection:Disconnect()
-                    end
-
-                    ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
-
-                    if remainingTime <= 0 then
-                        local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
-                        tweenOut:Play()
-
-                        tweenOut.Completed:Connect(function()
-                            NotificationFrame:Destroy()
-                            table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
-
-                            for i, notifyFrame in ipairs(friendnotifications) do
-                                local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                                tween:Play()
-                            end
-                        end)
-                    end
-                end)
-            end
-        end)
-    end
 end, notifyFriendsEnabled)
+
+local function notifyPlayer(player, action)
+    if not notifyFriendsEnabled then return end
+
+    local NotificationFrame = Instance.new("Frame", ScreenGui)
+    NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
+    NotificationFrame.BackgroundTransparency = 1
+    NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
+
+    local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
+    ProfileImage.Size = UDim2.new(0, 45, 1, 0)
+    ProfileImage.BackgroundTransparency = 1
+    ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
+
+    local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
+    NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
+    NotificationLabel.BackgroundTransparency = 1
+    NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
+    NotificationLabel.Text = player.Name .. " " .. action
+    NotificationLabel.TextScaled = true
+    NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
+    NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    local ProgressBar = Instance.new("Frame")
+    ProgressBar.Parent = NotificationFrame
+    ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
+    ProgressBar.Position = UDim2.new(0, 0, 1, 0)
+    ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+
+    table.insert(friendnotifications, NotificationFrame)
+
+    if #friendnotifications > 5 then
+        local oldNotification = table.remove(friendnotifications, 1)
+        oldNotification:Destroy()
+    end
+
+    for i, notifyFrame in ipairs(friendnotifications) do
+        local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+        tween:Play()
+    end
+
+    local timeLeft = 10
+    local startTime = tick()
+
+    local updateConnection
+    updateConnection = RunService.Heartbeat:Connect(function()
+        local elapsedTime = tick() - startTime
+        local remainingTime = timeLeft - elapsedTime
+
+        if remainingTime <= 0 then
+            remainingTime = 0
+            updateConnection:Disconnect()
+        end
+
+        ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
+
+        if remainingTime <= 0 then
+            local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
+            tweenOut:Play()
+
+            tweenOut.Completed:Connect(function()
+                NotificationFrame:Destroy()
+                table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
+
+                for i, notifyFrame in ipairs(friendnotifications) do
+                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+                    tween:Play()
+                end
+            end)
+        end
+    end)
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    local isFriend = false
+    local success, friendsPage = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+
+    if success then
+        repeat
+            local friendsList = friendsPage:GetCurrentPage()
+            for _, friendInfo in pairs(friendsList) do
+                if friendInfo.Username == player.Name then
+                    isFriend = true
+                    break
+                end
+            end
+            if not friendsPage.IsFinished then
+                friendsPage:AdvanceToNextPageAsync()
+            end
+        until friendsPage.IsFinished or isFriend
+    end
+
+    if isFriend then
+        notifyPlayer(player, "Friend has joined the game")
+        notifyfriend:Play()
+    end
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    local isFriend = false
+    local success, friendsPage = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+
+    if success then
+        repeat
+            local friendsList = friendsPage:GetCurrentPage()
+            for _, friendInfo in pairs(friendsList) do
+                if friendInfo.Username == player.Name then
+                    isFriend = true
+                    break
+                end
+            end
+            if not friendsPage.IsFinished then
+                friendsPage:AdvanceToNextPageAsync()
+            end
+        until friendsPage.IsFinished or isFriend
+    end
+
+    if isFriend then
+        notifyPlayer(player, "Friend has left the game")
+        notifyfriendleave:Play()
+    end
+end)
 
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
@@ -2833,7 +2775,29 @@ rainSound.SoundId = "rbxassetid://1516791621"
 rainSound.Volume = 1
 rainSound.Looped = true
 
-local function toggleLighting(isLightingEnabled)
+local framerain = Instance.new("Frame", scrollingSettingFrame)
+framerain.Size = UDim2.new(1, 0, 0, 100)
+framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
+framerain.BackgroundTransparency = 0
+
+local Text10 = Instance.new("TextLabel", framerain)
+Text10.Size = UDim2.new(1, 0, 0, 30)
+Text10.TextScaled = true
+Text10.TextXAlignment = Enum.TextXAlignment.Left
+Text10.BackgroundTransparency = 1
+Text10.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text10.Text = "Rain🌧"
+
+local Text11 = Instance.new("TextLabel", framerain)
+Text11.Size = UDim2.new(1, 0, 0, 50)
+Text11.TextScaled = true
+Text11.TextXAlignment = Enum.TextXAlignment.Left
+Text11.BackgroundTransparency = 1
+Text11.Position = UDim2.new(0, 0, 0.32, 0)
+Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
+
+local framerainButton = createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), function(isLightingEnabled)
     if isLightingEnabled then
         game.Lighting.ClockTime = 12
 
@@ -2908,31 +2872,7 @@ local function toggleLighting(isLightingEnabled)
         Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
         Lighting.GlobalShadows = false
     end
-end
-
-local framerain = Instance.new("Frame", scrollingSettingFrame)
-framerain.Size = UDim2.new(1, 0, 0, 100)
-framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
-framerain.BackgroundTransparency = 0
-
-local Text10 = Instance.new("TextLabel", framerain)
-Text10.Size = UDim2.new(1, 0, 0, 30)
-Text10.TextScaled = true
-Text10.TextXAlignment = Enum.TextXAlignment.Left
-Text10.BackgroundTransparency = 1
-Text10.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text10.Text = "Rain🌧"
-
-local Text11 = Instance.new("TextLabel", framerain)
-Text11.Size = UDim2.new(1, 0, 0, 50)
-Text11.TextScaled = true
-Text11.TextXAlignment = Enum.TextXAlignment.Left
-Text11.BackgroundTransparency = 1
-Text11.Position = UDim2.new(0, 0, 0.32, 0)
-Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
-
-createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
+end, isLightingEnabled)
 
 local togglehideName = false
 
