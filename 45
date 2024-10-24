@@ -2986,6 +2986,7 @@ ShiftlockCursor.BackgroundTransparency = 1
 ShiftlockCursor.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 ShiftlockCursor.Visible = false
 
+-- นำฟังก์ชันมารวมใน MouseButton1Click โดยตรง
 ShiftLockButton.MouseButton1Click:Connect(function()
     if not Active then
         Active = RunService.RenderStepped:Connect(function()
@@ -3021,13 +3022,6 @@ ShiftLockButton.MouseButton1Click:Connect(function()
     end
 end)
 
-local function ShiftLock(_, state)
-    if state == Enum.UserInputState.Begin then
-        ShiftLockButton:MouseButton1Click()
-    end
-end
-
-local ShiftLockAction = ContextActionService:BindAction("Shift Lock", ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
 RunService.Heartbeat:Connect(function()
