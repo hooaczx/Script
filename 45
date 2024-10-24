@@ -1310,11 +1310,6 @@ songList.ScrollingEnabled = true
 local songListTinniLayout = Instance.new("UIListLayout", songList) 
 songListTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-local function updateFrameSize()
-    local contentHeight = songListTinniLayout.AbsoluteContentSize.Y
-    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
-end
-
 local function updateSongButtons()
     local searchText = search.Text:lower()
     local colour = Color3.fromRGB(255, 255, 255)
@@ -1384,7 +1379,8 @@ local function updateSongButtons()
         end
     end
     songList.CanvasPosition = currentScrollPosition
-    updateFrameSize()
+    local contentHeight = songListTinniLayout.AbsoluteContentSize.Y
+    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
 updateSongButtons()
@@ -1491,23 +1487,21 @@ Text44.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
 
 local isAutoPlayEnabled = false
-local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
+local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
     isAutoPlayEnabled = not isAutoPlayEnabled
-end, autoPlayNext)
-
-local function onSongEnded()
-    if isAutoPlayEnabled then
-        currentSongIndex = currentSongIndex + 1
-        if currentSongIndex > #songs then
-            currentSongIndex = 1
+    soundmusic.Ended:Connect(function()
+        if isAutoPlayEnabled then
+            currentSongIndex = currentSongIndex + 1
+            if currentSongIndex > #songs then
+                currentSongIndex = 1
+            end
+            resetSong()
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+            updateSongButtons()
         end
-        resetSong()
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        updateSongButtons()
-    end
-end
+    end)
+end)
 
-soundmusic.Ended:Connect(onSongEnded)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
