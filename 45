@@ -759,18 +759,6 @@ local notifyfriendleave = Instance.new("Sound", ScreenGui)
 notifyfriendleave.SoundId = "rbxassetid://489103549"
 notifyfriendleave.Volume = 0.2
 
-local function resetSong()
-    soundmusic:Stop()
-    savedTimePosition = 0
-    isPaused = false
-end
-
-local function pauseSong()
-    savedTimePosition = soundmusic.TimePosition
-    soundmusic:Pause()
-    isPaused = true
-end
-
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
@@ -1247,7 +1235,9 @@ Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
 
    ToggleButton.MouseButton1Click:Connect(function()
     if soundmusic.IsPlaying then
-        pauseSong()
+        savedTimePosition = soundmusic.TimePosition
+        soundmusic:Pause()
+        isPaused = true
         TitleLabel.Text = "Stopped"
         ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
     else
@@ -1362,7 +1352,9 @@ updateSongButtons()
 search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
 
 NextButton.MouseButton1Click:Connect(function()
-    resetSong()
+    soundmusic:Stop()
+    savedTimePosition = 0
+    isPaused = false
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     updateSongButtons()
@@ -1370,7 +1362,9 @@ NextButton.MouseButton1Click:Connect(function()
 end)
 
 PreviousButton.MouseButton1Click:Connect(function()
-    resetSong()
+    soundmusic:Stop()
+    savedTimePosition = 0
+    isPaused = false
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     updateSongButtons()
