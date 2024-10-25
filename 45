@@ -1386,7 +1386,7 @@ TextReverbMode.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextReverbMode.Text = "Reverb Effect"
 
 local TextReverbMode1 = Instance.new("TextLabel", ReverbModeframe)
-TextReverbMode1.Size = UDim2.new(1, 0, 0, 50)
+TextReverbMode1.Size = UDim2.new(1, 0, 0, 30)
 TextReverbMode1.TextScaled = true
 TextReverbMode1.TextXAlignment = Enum.TextXAlignment.Left
 TextReverbMode1.BackgroundTransparency = 1
@@ -1396,7 +1396,7 @@ TextReverbMode1.Text = [[Makes sound sound like it echoes in an enclosed space, 
 
 local echoButton = Instance.new("TextButton", ReverbModeframe)
 echoButton.Size = UDim2.new(0, 100, 0, 30)
-echoButton.Position = UDim2.new(0.82, 0, 0.75, 0)
+echoButton.Position = UDim2.new(0.7, 0, 0.7, 0)
 echoButton.Text = "Reverb Mode: Room"
 echoButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 echoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1417,7 +1417,7 @@ TextChorusMode.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextChorusMode.Text = "Chorus Mode"
 
 local TextChorusMode1 = Instance.new("TextLabel", ChorusModeframe)
-TextChorusMode1.Size = UDim2.new(1, 0, 0, 50)
+TextChorusMode1.Size = UDim2.new(1, 0, 0, 30)
 TextChorusMode1.TextScaled = true
 TextChorusMode1.TextXAlignment = Enum.TextXAlignment.Left
 TextChorusMode1.BackgroundTransparency = 1
@@ -1427,7 +1427,7 @@ TextChorusMode1.Text = [[Makes the sound sound like there are slightly overlappi
 
 local chorusButton = Instance.new("TextButton", ChorusModeframe)
 chorusButton.Size = UDim2.new(0, 100, 0, 30)
-chorusButton.Position = UDim2.new(0.82, 0, 0.75, 0)
+chorusButton.Position = UDim2.new(0.7, 0, 0.7, 0)
 chorusButton.Text = "Chorus Mode: None"
 chorusButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1487,33 +1487,45 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-echoButton.MouseButton1Click:Connect(function()
-    currentMode = currentMode % #modes + 1
+local function updateReverb()
     local mode = modes[currentMode]
-    echoButton.Text = "Reverb Mode: " .. mode.name
+    echoButton.Text = "Echo Mode: " .. mode.name
     reverbEffect.DecayTime = mode.decayTime
     reverbEffect.Density = mode.density
     reverbEffect.Enabled = mode.name ~= "Off"
-    if currentMode == 1 then
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        chorusEffect.Enabled = false
-    end
-end)
+end
 
-chorusButton.MouseButton1Click:Connect(function()
-    currentChorusMode = currentChorusMode % #chorusModes + 1
+local function updateChorus()
     local mode = chorusModes[currentChorusMode]
-    chorusButton.Text = "Chorus Mode: " .. mode.name
     chorusEffect.Depth = mode.depth
     chorusEffect.Rate = mode.rate
     chorusEffect.Enabled = mode.name ~= "Off"
+end
+
+echoButton.MouseButton1Click:Connect(function()
+    if currentMode == 1 then
+        currentChorusMode = 1
+        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+        updateChorus()
+    end
+    currentMode = currentMode % #modes + 1
+    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+    updateReverb()
+end)
+
+chorusButton.MouseButton1Click:Connect(function()
     if currentChorusMode == 1 then
         currentMode = 1
-        echoButton.Text = "Reverb Mode: " .. modes[currentMode].name
-        reverbEffect.Enabled = false
+        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+        updateReverb()
     end
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    updateChorus()
 end)
+
+updateReverb()
+updateChorus()
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
