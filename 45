@@ -1481,7 +1481,7 @@ increasetext.TextScaled = true
 increasetext.TextXAlignment = Enum.TextXAlignment.Left
 increasetext.BackgroundTransparency = 1
 increasetext.TextColor3 = Color3.fromRGB(255, 255, 255)
-increasetext.Text = "Increase sound"
+increasetext.Text = "AutoPlay NextSong"
 
 local increasetext1 = Instance.new("TextLabel", increaseframe)
 increasetext1.Size = UDim2.new(1, 0, 0, 35)
@@ -1557,39 +1557,7 @@ echoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 echoButton.TextScaled = true
 echoButton.BackgroundTransparency = 0.4
 
-local ChorusModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
-ChorusModeframe.Size = UDim2.new(1, 0, 0, 100)
-ChorusModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
-ChorusModeframe.BackgroundTransparency = 0
-
-local TextChorusMode = Instance.new("TextLabel", ChorusModeframe)
-TextChorusMode.Size = UDim2.new(1, 0, 0, 30)
-TextChorusMode.TextScaled = true
-TextChorusMode.TextXAlignment = Enum.TextXAlignment.Left
-TextChorusMode.BackgroundTransparency = 1
-TextChorusMode.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextChorusMode.Text = "Chorus Mode"
-
-local TextChorusMode1 = Instance.new("TextLabel", ChorusModeframe)
-TextChorusMode1.Size = UDim2.new(1, 0, 0, 50)
-TextChorusMode1.TextScaled = true
-TextChorusMode1.TextXAlignment = Enum.TextXAlignment.Left
-TextChorusMode1.BackgroundTransparency = 1
-TextChorusMode1.Position = UDim2.new(0, 0, 0.31, 0)
-TextChorusMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextChorusMode1.Text = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
-
-local chorusButton = Instance.new("TextButton", ChorusModeframe)
-chorusButton.Size = UDim2.new(0, 100, 0, 30)
-chorusButton.Position = UDim2.new(0.82, 0, 0.75, 0)
-chorusButton.Text = "Chorus Mode: None"
-chorusButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-chorusButton.TextScaled = true
-chorusButton.BackgroundTransparency = 0.4
-
 local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 
 local modes = {
     { name = "Off", decayTime = 0, density = 0 },
@@ -1615,31 +1583,7 @@ local modes = {
     { name = "Library", decayTime = 1.1, density = 0.5 },
 }
 
-local chorusModes = {
-    { name = "Off", depth = 0, rate = 0 },
-    { name = "Light", depth = 0.5, rate = 1 },
-    { name = "Moderate", depth = 0.8, rate = 1.5 },
-    { name = "Heavy", depth = 1.0, rate = 2 },
-    { name = "Ultra", depth = 1.2, rate = 2.5 },
-    { name = "Extreme", depth = 1.5, rate = 3 },
-    { name = "Super Heavy", depth = 1.8, rate = 4 },
-    { name = "Max", depth = 2.0, rate = 5 },
-    { name = "Phantom", depth = 1.0, rate = 3.5 },
-    { name = "Super Phantom", depth = 2.5, rate = 6 },
-    { name = "Whisper", depth = 0.4, rate = 0.8 },
-    { name = "Echo", depth = 0.7, rate = 1.2 },
-    { name = "Cascading", depth = 1.3, rate = 3.0 },
-    { name = "Wavy", depth = 1.4, rate = 2.2 },
-    { name = "Siren", depth = 1.6, rate = 4.0 },
-    { name = "Ghostly", depth = 1.7, rate = 3.8 },
-    { name = "Dreamy", depth = 1.9, rate = 5.0 },
-    { name = "Vortex", depth = 2.1, rate = 5.5 },
-    { name = "Nebula", depth = 2.3, rate = 6.0 },
-    { name = "Warped", depth = 2.4, rate = 6.5 },
-}
-
 local currentMode = 1
-local currentChorusMode = 1
 
 echoButton.MouseButton1Click:Connect(function()
     currentMode = currentMode % #modes + 1
@@ -1648,25 +1592,6 @@ echoButton.MouseButton1Click:Connect(function()
     reverbEffect.DecayTime = mode.decayTime
     reverbEffect.Density = mode.density
     reverbEffect.Enabled = mode.name ~= "Off"
-    if currentMode == 1 then
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        chorusEffect.Enabled = false
-    end
-end)
-
-chorusButton.MouseButton1Click:Connect(function()
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    local mode = chorusModes[currentChorusMode]
-    chorusButton.Text = "Chorus Mode: " .. mode.name
-    chorusEffect.Depth = mode.depth
-    chorusEffect.Rate = mode.rate
-    chorusEffect.Enabled = mode.name ~= "Off"
-    if currentChorusMode == 1 then
-        currentMode = 1
-        echoButton.Text = "Reverb Mode: " .. modes[currentMode].name
-        reverbEffect.Enabled = false
-    end
 end)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
@@ -2403,30 +2328,48 @@ local LocalPlayer = players.LocalPlayer
 local accountAgeInDays = LocalPlayer.AccountAge
 local additionalPlayTimeInSeconds = 0
 
-local function startUpdating(accountAgeInDays, additionalPlayTimeInSeconds)
-    local totalSeconds = (accountAgeInDays * 86400) + additionalPlayTimeInSeconds
+local function calculateTotalPlayTime()
+    local totalSeconds = accountAgeInDays * 86400
+
+    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
+
     local years = math.floor(totalSeconds / 31536000)
     totalSeconds = totalSeconds % 31536000
     local months = math.floor(totalSeconds / 2592000)
     totalSeconds = totalSeconds % 2592000
     local days = math.floor(totalSeconds / 86400)
-    local ageMessage = (accountAgeInDays == 0) and "You just created an account" or 
-                       string.format("Your account has been active for %d days", accountAgeInDays)
-    AccountAge.Text = string.format("Total Playtime since account creation: %d years, %d months, %d days\n%s", years, months, days, ageMessage)
-    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+
+    return string.format("%d years, %d months, %d days", years, months, days)
 end
 
-startUpdating(accountAgeInDays, additionalPlayTimeInSeconds)
+local function accountAgeMessage(accountAgeInDays)
+    if accountAgeInDays == 0 then
+        return "You just created an account"
+    else
+        return string.format("Your account has been active for %d days", accountAgeInDays)
+    end
+end
 
-local TimeFormatter = {}
+local function updatePlayTimeDisplay()
+    local totalPlayTime = calculateTotalPlayTime()
+    local ageMessage = accountAgeMessage(accountAgeInDays)
+    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
+end
 
-local secondsInMinute = 60
-local secondsInHour = 3600
-local secondsInDay = 86400
-local secondsInMonth = 2592000
-local secondsInYear = 31536000
+local function startUpdating()
+        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+        updatePlayTimeDisplay()
+end
 
-function TimeFormatter.formatElapsedTime(elapsedTime)
+startUpdating()
+
+local function formatElapsedTime(elapsedTime)
+    local secondsInMinute = 60
+    local secondsInHour = 3600
+    local secondsInDay = 86400
+    local secondsInMonth = 2592000
+    local secondsInYear = 31536000
+
     if elapsedTime < secondsInMinute then
         return string.format("%02d", elapsedTime)
     elseif elapsedTime < secondsInHour then
@@ -2442,15 +2385,13 @@ function TimeFormatter.formatElapsedTime(elapsedTime)
     end
 end
 
-return TimeFormatter
 local player = game.Players.LocalPlayer
-local TimeFormatter = require(game.ReplicatedStorage.TimeFormatter) -- นำเข้า ModuleScript
 local playtime = 0
 
 local function updatePlaytime()
     playtime = playtime + 1
-    local formattedTime = TimeFormatter.formatElapsedTime(playtime)
-    TimePlay.Text = "Time Play: " .. formattedTime .. "\n" .. "This will show you how much time you have been playing in the game"
+    local formattedTime = formatElapsedTime(playtime)
+    TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
         local currentTime = os.date("*t")
         local hour = currentTime.hour
         local amPm = "AM"
@@ -2640,7 +2581,7 @@ end)
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
         updatePlaytime()
         checkFriends()
-        startUpdating(accountAgeInDays, additionalPlayTimeInSeconds)
+        startUpdating()
         lastUpdate = currentTime
         end
     end)
