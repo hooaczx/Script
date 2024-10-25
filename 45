@@ -1373,7 +1373,7 @@ decreaseVolumeButton.MouseButton1Click:Connect(function()
 end)
 
 local ReverbModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
-ReverbModeframe.Size = UDim2.new(1, 0, 0, 150)
+ReverbModeframe.Size = UDim2.new(1, 0, 0, 100)
 ReverbModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
 ReverbModeframe.BackgroundTransparency = 0
 
@@ -1392,44 +1392,126 @@ TextReverbMode1.TextXAlignment = Enum.TextXAlignment.Left
 TextReverbMode1.BackgroundTransparency = 1
 TextReverbMode1.Position = UDim2.new(0, 0, 0.31, 0)
 TextReverbMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextReverbMode1.Text = [[Adjust the decay time and density of the reverb effect]]
+TextReverbMode1.Text = [[Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping]]
 
-local decayTimeTextBox = Instance.new("TextBox", ReverbModeframe)
-decayTimeTextBox.Size = UDim2.new(0, 200, 0, 30)
-decayTimeTextBox.Position = UDim2.new(0.1, 0, 0.5, 0)
-decayTimeTextBox.PlaceholderText = "Decay Time (0 to 5)"
-decayTimeTextBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-decayTimeTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-decayTimeTextBox.TextScaled = true
-decayTimeTextBox.BackgroundTransparency = 0.4
-decayTimeTextBox.Text = ""
+local echoButton = Instance.new("TextButton", ReverbModeframe)
+echoButton.Size = UDim2.new(0, 100, 0, 30)
+echoButton.Position = UDim2.new(0.82, 0, 0.75, 0)
+echoButton.Text = "Reverb Mode: Room"
+echoButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+echoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+echoButton.TextScaled = true
+echoButton.BackgroundTransparency = 0.4
 
-local densityTextBox = Instance.new("TextBox", ReverbModeframe)
-densityTextBox.Size = UDim2.new(0, 200, 0, 30)
-densityTextBox.Position = UDim2.new(0.1, 0, 0.65, 0)
-densityTextBox.PlaceholderText = "Density (0 to 1)"
-densityTextBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-densityTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-densityTextBox.TextScaled = true
-densityTextBox.BackgroundTransparency = 0.4
-densityTextBox.Text = ""
+local ChorusModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
+ChorusModeframe.Size = UDim2.new(1, 0, 0, 100)
+ChorusModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+ChorusModeframe.BackgroundTransparency = 0
+
+local TextChorusMode = Instance.new("TextLabel", ChorusModeframe)
+TextChorusMode.Size = UDim2.new(1, 0, 0, 30)
+TextChorusMode.TextScaled = true
+TextChorusMode.TextXAlignment = Enum.TextXAlignment.Left
+TextChorusMode.BackgroundTransparency = 1
+TextChorusMode.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextChorusMode.Text = "Chorus Mode"
+
+local TextChorusMode1 = Instance.new("TextLabel", ChorusModeframe)
+TextChorusMode1.Size = UDim2.new(1, 0, 0, 50)
+TextChorusMode1.TextScaled = true
+TextChorusMode1.TextXAlignment = Enum.TextXAlignment.Left
+TextChorusMode1.BackgroundTransparency = 1
+TextChorusMode1.Position = UDim2.new(0, 0, 0.31, 0)
+TextChorusMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextChorusMode1.Text = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
+
+local chorusButton = Instance.new("TextButton", ChorusModeframe)
+chorusButton.Size = UDim2.new(0, 100, 0, 30)
+chorusButton.Position = UDim2.new(0.82, 0, 0.75, 0)
+chorusButton.Text = "Chorus Mode: None"
+chorusButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+chorusButton.TextScaled = true
+chorusButton.BackgroundTransparency = 0.4
 
 local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
+local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 
-decayTimeTextBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        local decayTime = tonumber(decayTimeTextBox.Text) or 0
-        decayTime = math.clamp(decayTime, 0, 5)
-        reverbEffect.DecayTime = decayTime
-        reverbEffect.Enabled = decayTime > 0
+local modes = {
+    { name = "Off", decayTime = 0, density = 0 },
+    { name = "Room", decayTime = 0.3, density = 0.5 },
+    { name = "Hall", decayTime = 1.2, density = 0.8 },
+    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
+    { name = "Forest", decayTime = 0.7, density = 0.4 },
+    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
+    { name = "Mountains", decayTime = 3.5, density = 0.85 },
+    { name = "Cave", decayTime = 3.0, density = 0.7 },
+    { name = "Arena", decayTime = 1.8, density = 0.9 },
+    { name = "Underwater", decayTime = 2.2, density = 0.6 },
+    { name = "Open Field", decayTime = 0.5, density = 0.3 },
+    { name = "City", decayTime = 1.0, density = 0.65 },
+    { name = "Desert", decayTime = 0.9, density = 0.5 },
+    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
+    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
+    { name = "Swamp", decayTime = 1.7, density = 0.6 },
+    { name = "Factory", decayTime = 1.6, density = 0.75 },
+    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
+    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
+    { name = "Subway", decayTime = 1.4, density = 0.7 },
+    { name = "Library", decayTime = 1.1, density = 0.5 },
+}
+
+local chorusModes = {
+    { name = "Off", depth = 0, rate = 0 },
+    { name = "Light", depth = 0.5, rate = 1 },
+    { name = "Moderate", depth = 0.8, rate = 1.5 },
+    { name = "Heavy", depth = 1.0, rate = 2 },
+    { name = "Ultra", depth = 1.2, rate = 2.5 },
+    { name = "Extreme", depth = 1.5, rate = 3 },
+    { name = "Super Heavy", depth = 1.8, rate = 4 },
+    { name = "Max", depth = 2.0, rate = 5 },
+    { name = "Phantom", depth = 1.0, rate = 3.5 },
+    { name = "Super Phantom", depth = 2.5, rate = 6 },
+    { name = "Whisper", depth = 0.4, rate = 0.8 },
+    { name = "Echo", depth = 0.7, rate = 1.2 },
+    { name = "Cascading", depth = 1.3, rate = 3.0 },
+    { name = "Wavy", depth = 1.4, rate = 2.2 },
+    { name = "Siren", depth = 1.6, rate = 4.0 },
+    { name = "Ghostly", depth = 1.7, rate = 3.8 },
+    { name = "Dreamy", depth = 1.9, rate = 5.0 },
+    { name = "Vortex", depth = 2.1, rate = 5.5 },
+    { name = "Nebula", depth = 2.3, rate = 6.0 },
+    { name = "Warped", depth = 2.4, rate = 6.5 },
+}
+
+local currentMode = 1
+local currentChorusMode = 1
+
+echoButton.MouseButton1Click:Connect(function()
+    currentMode = currentMode % #modes + 1
+    local mode = modes[currentMode]
+    echoButton.Text = "Reverb Mode: " .. mode.name
+    reverbEffect.DecayTime = mode.decayTime
+    reverbEffect.Density = mode.density
+    reverbEffect.Enabled = mode.name ~= "Off"
+    if currentMode == 1 then
+        currentChorusMode = 1
+        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+        chorusEffect.Enabled = false
     end
 end)
 
-densityTextBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        local density = tonumber(densityTextBox.Text) or 0
-        density = math.clamp(density, 0, 1)
-        reverbEffect.Density = density
+chorusButton.MouseButton1Click:Connect(function()
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    local mode = chorusModes[currentChorusMode]
+    chorusButton.Text = "Chorus Mode: " .. mode.name
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
+    if currentChorusMode == 1 then
+        currentMode = 1
+        echoButton.Text = "Reverb Mode: " .. modes[currentMode].name
+        reverbEffect.Enabled = false
     end
 end)
 
