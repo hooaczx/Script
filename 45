@@ -2438,13 +2438,15 @@ end
 
 startUpdating()
 
-local function formatElapsedTime(elapsedTime)
-    local secondsInMinute = 60
-    local secondsInHour = 3600
-    local secondsInDay = 86400
-    local secondsInMonth = 2592000
-    local secondsInYear = 31536000
+local TimeFormatter = {}
 
+local secondsInMinute = 60
+local secondsInHour = 3600
+local secondsInDay = 86400
+local secondsInMonth = 2592000
+local secondsInYear = 31536000
+
+function TimeFormatter.formatElapsedTime(elapsedTime)
     if elapsedTime < secondsInMinute then
         return string.format("%02d", elapsedTime)
     elseif elapsedTime < secondsInHour then
@@ -2460,13 +2462,15 @@ local function formatElapsedTime(elapsedTime)
     end
 end
 
+return TimeFormatter
 local player = game.Players.LocalPlayer
+local TimeFormatter = require(game.ReplicatedStorage.TimeFormatter) -- นำเข้า ModuleScript
 local playtime = 0
 
 local function updatePlaytime()
     playtime = playtime + 1
-    local formattedTime = formatElapsedTime(playtime)
-    TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
+    local formattedTime = TimeFormatter.formatElapsedTime(playtime)
+    TimePlay.Text = "Time Play: " .. formattedTime .. "\n" .. "This will show you how much time you have been playing in the game"
         local currentTime = os.date("*t")
         local hour = currentTime.hour
         local amPm = "AM"
