@@ -2403,40 +2403,20 @@ local LocalPlayer = players.LocalPlayer
 local accountAgeInDays = LocalPlayer.AccountAge
 local additionalPlayTimeInSeconds = 0
 
-local function calculateTotalPlayTime()
-    local totalSeconds = accountAgeInDays * 86400
-
-    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
-
+local function startUpdating(accountAgeInDays, additionalPlayTimeInSeconds)
+    local totalSeconds = (accountAgeInDays * 86400) + additionalPlayTimeInSeconds
     local years = math.floor(totalSeconds / 31536000)
     totalSeconds = totalSeconds % 31536000
     local months = math.floor(totalSeconds / 2592000)
     totalSeconds = totalSeconds % 2592000
     local days = math.floor(totalSeconds / 86400)
-
-    return string.format("%d years, %d months, %d days", years, months, days)
+    local ageMessage = (accountAgeInDays == 0) and "You just created an account" or 
+                       string.format("Your account has been active for %d days", accountAgeInDays)
+    AccountAge.Text = string.format("Total Playtime since account creation: %d years, %d months, %d days\n%s", years, months, days, ageMessage)
+    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
 end
 
-local function accountAgeMessage(accountAgeInDays)
-    if accountAgeInDays == 0 then
-        return "You just created an account"
-    else
-        return string.format("Your account has been active for %d days", accountAgeInDays)
-    end
-end
-
-local function updatePlayTimeDisplay()
-    local totalPlayTime = calculateTotalPlayTime()
-    local ageMessage = accountAgeMessage(accountAgeInDays)
-    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
-end
-
-local function startUpdating()
-        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
-        updatePlayTimeDisplay()
-end
-
-startUpdating()
+startUpdating(accountAgeInDays, additionalPlayTimeInSeconds)
 
 local TimeFormatter = {}
 
@@ -2660,7 +2640,7 @@ end)
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
         updatePlaytime()
         checkFriends()
-        startUpdating()
+        startUpdating(accountAgeInDays, additionalPlayTimeInSeconds)
         lastUpdate = currentTime
         end
     end)
