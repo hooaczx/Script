@@ -1487,41 +1487,40 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-local function updateReverb()
-    local mode = modes[currentMode]
-    echoButton.Text = "Echo Mode: " .. mode.name
-    reverbEffect.DecayTime = mode.decayTime
-    reverbEffect.Density = mode.density
-    reverbEffect.Enabled = mode.name ~= "Off"
-end
-
-local function updateChorus()
-    local mode = chorusModes[currentChorusMode]
-    chorusEffect.Depth = mode.depth
-    chorusEffect.Rate = mode.rate
-    chorusEffect.Enabled = mode.name ~= "Off"
-end
-
 echoButton.MouseButton1Click:Connect(function()
     if currentMode == 1 then
         currentChorusMode = 1
         chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        updateChorus()
+        local mode = chorusModes[currentChorusMode]
+        chorusEffect.Depth = mode.depth
+        chorusEffect.Rate = mode.rate
+        chorusEffect.Enabled = mode.name ~= "Off"
     end
     currentMode = currentMode % #modes + 1
     echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-    updateReverb()
+    local mode = chorusModes[currentChorusMode]
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
 end)
 
 chorusButton.MouseButton1Click:Connect(function()
     if currentChorusMode == 1 then
         currentMode = 1
         echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-        updateReverb()
+        local mode = modes[currentMode]
+        echoButton.Text = "Echo Mode: " .. mode.name
+        reverbEffect.DecayTime = mode.decayTime
+        reverbEffect.Density = mode.density
+        reverbEffect.Enabled = mode.name ~= "Off"
     end
     currentChorusMode = currentChorusMode % #chorusModes + 1
     chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    updateChorus()
+    local mode = modes[currentMode]
+    echoButton.Text = "Echo Mode: " .. mode.name
+    reverbEffect.DecayTime = mode.decayTime
+    reverbEffect.Density = mode.density
+    reverbEffect.Enabled = mode.name ~= "Off"
 end)
 
 updateReverb()
