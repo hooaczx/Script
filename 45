@@ -734,6 +734,8 @@ local songs = {
 local currentSongIndex = 1
 local soundmusic = Instance.new("Sound")
 soundmusic.Parent = ScreenGui
+local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
+local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 local isPaused = false
 local savedTimePosition = 0
 local progressUpdateConnection
@@ -1397,7 +1399,7 @@ TextReverbMode1.Text = [[Makes sound sound like it echoes in an enclosed space, 
 local echoButton = Instance.new("TextButton", ReverbModeframe)
 echoButton.Size = UDim2.new(0, 100, 0, 30)
 echoButton.Position = UDim2.new(0.7, 0, 0.7, 0)
-echoButton.Text = "Reverb Mode: Room"
+echoButton.Text = "Reverb Mode: off"
 echoButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 echoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 echoButton.TextScaled = true
@@ -1428,14 +1430,11 @@ TextChorusMode1.Text = [[Makes the sound sound like there are slightly overlappi
 local chorusButton = Instance.new("TextButton", ChorusModeframe)
 chorusButton.Size = UDim2.new(0, 100, 0, 30)
 chorusButton.Position = UDim2.new(0.7, 0, 0.7, 0)
-chorusButton.Text = "Chorus Mode: None"
+chorusButton.Text = "Chorus Mode: off"
 chorusButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 chorusButton.TextScaled = true
 chorusButton.BackgroundTransparency = 0.4
-
-local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 
 local modes = {
     { name = "Off", decayTime = 0, density = 0 },
@@ -1516,11 +1515,12 @@ chorusButton.MouseButton1Click:Connect(function()
     end
     currentChorusMode = currentChorusMode % #chorusModes + 1
     chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    local mode = modes[currentMode]
-    echoButton.Text = "Echo Mode: " .. mode.name
-    reverbEffect.DecayTime = mode.decayTime
-    reverbEffect.Density = mode.density
-    reverbEffect.Enabled = mode.name ~= "Off"
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    local mode = chorusModes[currentChorusMode]
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
 end)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
@@ -1622,7 +1622,7 @@ local togglesettingmusic = false
 
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0, 30, 0, 30)
-    MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.4, 0, 0, 13)
     MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
     MusicToggleButton.ZIndex = 10
@@ -3037,7 +3037,7 @@ local Active
 local ShiftLockButton = Instance.new("ImageButton", frame)
 ShiftLockButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 ShiftLockButton.BackgroundTransparency = 1.000
-ShiftLockButton.Position = UDim2.new(0.22 + 0.4, 0, 0, 13)
+ShiftLockButton.Position = UDim2.new(0.22 + 0.5, 0, 0, 13)
 ShiftLockButton.Size = UDim2.new(0, 30, 0, 30)
 ShiftLockButton.ZIndex = 10
 ShiftLockButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
