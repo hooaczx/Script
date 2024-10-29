@@ -937,7 +937,6 @@ notify({
     local Player = players.LocalPlayer
     local ContextActionService = game:GetService("ContextActionService")
     local UserInputService = game:GetService("UserInputService")
-    local HttpService = game:GetService("HttpService")
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -2012,8 +2011,6 @@ friendnumber. TextScaled = true
 friendnumber.TextXAlignment = Enum.TextXAlignment.Left
 friendnumber.Visible = false
 
-local MarketplaceService = game:GetService("MarketplaceService")
-
 local function checkFriends()
     if friendsCooldown <= 0 then
         friendsCooldown = 25
@@ -2073,16 +2070,7 @@ local function checkFriends()
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
 
                 if friend.IsOnline then
-                    if friend.PlaceId and friend.PlaceId > 0 then
-                        local success, productInfo = pcall(function()
-                            return MarketplaceService:GetProductInfo(friend.PlaceId)
-                        end)
-                        if success and productInfo then
-                            statusLabel.Text = "Playing: " .. productInfo.Name
-                        else
-                            statusLabel.Text = "Unable to display the name of the game your friends are playing"
-                        end
-                    elseif players:FindFirstChild(friend.Username) then
+                    if players:FindFirstChild(friend.Username) then
                         statusLabel.Text = "In Game"
                     else
                         statusLabel.Text = "Online"
