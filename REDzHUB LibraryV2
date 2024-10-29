@@ -937,6 +937,7 @@ notify({
     local Player = players.LocalPlayer
     local ContextActionService = game:GetService("ContextActionService")
     local UserInputService = game:GetService("UserInputService")
+    local HttpService = game:GetService("HttpService")
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -2015,85 +2016,92 @@ local function checkFriends()
     if friendsCooldown <= 0 then
         friendsCooldown = 25
 
-        local playersFriends = {}
-        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+        task.defer(function()
+            local playersFriends = {}
+            local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
 
-        if success then
-            repeat
-                local info = page:GetCurrentPage()
-                for _, friendInfo in pairs(info) do
-                    table.insert(playersFriends, friendInfo)
-                end
-                local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
-                if not pageSuccess or page.IsFinished then break end
-            until page.IsFinished
-        end
-
-        local friendsInTotal = #playersFriends
-
-        local function updateFriendsGUI(friends)
-            friendsFrame:ClearAllChildren()
-
-            local positionY = 0
-            for _, friend in pairs(friends) do
-                local friendFrame = Instance.new("Frame")
-                friendFrame.Size = UDim2.new(1, 0, 0, 50)
-                friendFrame.BackgroundTransparency = 1
-                friendFrame.Position = UDim2.new(0, 0, 0, positionY)
-                friendFrame.Parent = friendsFrame
-
-                local avatarImage = Instance.new("ImageLabel")
-                avatarImage.Size = UDim2.new(0, 50, 0, 50)
-                avatarImage.Position = UDim2.new(0, 0, 0, 0)
-                avatarImage.BackgroundColor3 = Configs_HUB.Cor_Hub
-                avatarImage.BackgroundTransparency = 0.4
-                avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
-                avatarImage.Parent = friendFrame
-                Corner(avatarImage, {CornerRadius = UDim.new(1, 0)})
-
-                local friendName = Instance.new("TextLabel")
-                friendName.Size = UDim2.new(0, 200, 1, 0)
-                friendName.Position = UDim2.new(0, 60, 0, 0)
-                friendName.BackgroundTransparency = 1
-                friendName.Text = friend.Username
-                friendName.TextColor3 = Color3.fromRGB(255, 255, 255)
-                friendName.TextWrapped = true
-                friendName.TextXAlignment = Enum.TextXAlignment.Left
-                friendName.Parent = friendFrame
-
-                local statusLabel = Instance.new("TextLabel")
-                statusLabel.Size = UDim2.new(0, 200, 1, 0)
-                statusLabel.BackgroundTransparency = 1
-                statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                statusLabel.TextWrapped = true
-                statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-                statusLabel.Position = UDim2.new(0, 260, 0, 0)
-
-                if friend.IsOnline then
-                    if players:FindFirstChild(friend.Username) then
-                        statusLabel.Text = "In Game"
-                    else
-                        statusLabel.Text = "Online"
+            if success then
+                repeat
+                    local info = page:GetCurrentPage()
+                    for _, friendInfo in pairs(info) do
+                        table.insert(playersFriends, friendInfo)
                     end
-                elseif friend.IsDeleted then
-                    statusLabel.Text = "Inactive"
-                else
-                    statusLabel.Text = "Offline"
-                end
-
-                statusLabel.Parent = friendFrame
-                positionY = positionY + 55
+                    local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
+                    if not pageSuccess or page.IsFinished then break end
+                until page.IsFinished
             end
 
-            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(positionY, 3000))
-        end
-
-        updateFriendsGUI(playersFriends)
-        friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
-        return friendsInTotal
+            local friendsInTotal = #playersFriends
+            updateFriendsGUI(playersFriends)
+            friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
+        end)
     else
         friendsCooldown = friendsCooldown - 1
     end
+end
+
+local function updateFriendsGUI(friends)
+    friendsFrame:ClearAllChildren()
+
+    local positionY = 0
+    for _, friend in pairs(friends) do
+        local friendFrame = Instance.new("Frame")
+        friendFrame.Size = UDim2.new(1, 0, 0, 50)
+        friendFrame.BackgroundTransparency = 1
+        friendFrame.Position = UDim2.new(0, 0, 0, positionY)
+        friendFrame.Parent = friendsFrame
+
+        local avatarImage = Instance.new("ImageLabel")
+        avatarImage.Size = UDim2.new(0, 50, 0, 50)
+        avatarImage.Position = UDim2.new(0, 0, 0, 0)
+        avatarImage.BackgroundColor3 = Configs_HUB.Cor_Hub
+        avatarImage.BackgroundTransparency = 0.4
+        avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
+        avatarImage.Parent = friendFrame
+        Corner(avatarImage, {CornerRadius = UDim.new(1, 0)})
+
+        local friendName = Instance.new("TextLabel")
+        friendName.Size = UDim2.new(0, 200, 1, 0)
+        friendName.Position = UDim2.new(0, 60, 0, 0)
+        friendName.BackgroundTransparency = 1
+        friendName.Text = friend.Username
+        friendName.TextColor3 = Color3.fromRGB(255, 255, 255)
+        friendName.TextWrapped = true
+        friendName.TextXAlignment = Enum.TextXAlignment.Left
+        friendName.Parent = friendFrame
+
+        local statusLabel = Instance.new("TextLabel")
+        statusLabel.Size = UDim2.new(0, 200, 1, 0)
+        statusLabel.BackgroundTransparency = 1
+        statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        statusLabel.TextWrapped = true
+        statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+        statusLabel.Position = UDim2.new(0, 260, 0, 0)
+
+        task.defer(function()
+            if friend.IsOnline then
+                if friend.PlaceId and friend.PlaceId > 0 then
+                    local success, productInfo = pcall(function()
+                        return MarketplaceService:GetProductInfo(friend.PlaceId)
+                    end)
+                    if success and productInfo then
+                        statusLabel.Text = "Playing: " .. productInfo.Name
+                    else
+                        statusLabel.Text = "In Another Game"
+                    end
+                else
+                    statusLabel.Text = "Online"
+                end
+            else
+                statusLabel.Text = "Offline"
+            end
+        end)
+
+        statusLabel.Parent = friendFrame
+        positionY = positionY + 55
+    end
+
+    friendsFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(positionY, 3000))
 end
 
 checkFriends()
