@@ -937,6 +937,7 @@ notify({
     local Player = players.LocalPlayer
     local ContextActionService = game:GetService("ContextActionService")
     local UserInputService = game:GetService("UserInputService")
+    local HttpService = game:GetService("HttpService")
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -967,21 +968,28 @@ notify({
     Button1.BackgroundTransparency = 1
 
     local minimize1 = false
-    Button1.MouseButton1Click:Connect(function()
-        minimize1 = not minimize1
 
-         if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0, 430, 0, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.48, 0, 1, 0), 0.3, true)
-            frame.Visible = false
-            Button1.Text = "^"
-         else
-            frame.Visible = true
-            CreateTween1(frame, "Size", UDim2.new(0, 430, 0, 50), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.48, 0, 1, -50), 0.3, true)
-            Button1.Text = "v"
-        end
-     end)
+Button1.MouseButton1Click:Connect(function()
+    minimize1 = not minimize1
+
+    local settings = minimize1 and {
+        UDim2.new(0, 430, 0, 0), 
+        UDim2.new(0.48, 0, 1, 0), 
+        false, 
+        "^"
+    } or {
+        UDim2.new(0, 430, 0, 50), 
+        UDim2.new(0.48, 0, 1, -60), 
+        true, 
+        "v"
+    }
+
+    CreateTween1(frame, "Size", settings[1], 0.3, false)
+    CreateTween1(Button1, "Position", settings[2], 0.3, false)
+    frame.Visible = settings[3]
+    Button1.Text = settings[4]
+end)
+
 
  local FrameChat = Instance.new("Frame", ScreenGui)
  FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1523,13 +1531,13 @@ musicplayer.MouseButton1Click:Connect(function()
        for _, elementData in ipairs(uitogglemusicplayer) do
         local instance = elementData.instance
             elementData.instance.Visible = true
-            CreateTween(instance, "Size", elementData.sizeOpen, 0.3, true)
+            CreateTween1(instance, "Size", elementData.sizeOpen, 0.3, true)
          end
         else
              click2:Play()
         for _, elementData in ipairs(uitogglemusicplayer) do
         local instance = elementData.instance
-            CreateTween(instance, "Size", elementData.sizeClosed, 0.3, true)
+            CreateTween1(instance, "Size", elementData.sizeClosed, 0.3, true)
             elementData.instance.Visible = false
         end
     end
@@ -2011,6 +2019,8 @@ friendnumber. TextScaled = true
 friendnumber.TextXAlignment = Enum.TextXAlignment.Left
 friendnumber.Visible = false
 
+local MarketplaceService = game:GetService("MarketplaceService")
+
 local function checkFriends()
     if friendsCooldown <= 0 then
         friendsCooldown = 25
@@ -2070,7 +2080,16 @@ local function checkFriends()
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
 
                 if friend.IsOnline then
-                    if players:FindFirstChild(friend.Username) then
+                    if friend.PlaceId and friend.PlaceId > 0 then
+                        local success, productInfo = pcall(function()
+                            return MarketplaceService:GetProductInfo(friend.PlaceId)
+                        end)
+                        if success and productInfo then
+                            statusLabel.Text = "Playing: " .. productInfo.Name
+                        else
+                            statusLabel.Text = "Unable to display the name of the game your friends are playing"
+                        end
+                    elseif players:FindFirstChild(friend.Username) then
                         statusLabel.Text = "In Game"
                     else
                         statusLabel.Text = "Online"
@@ -2442,12 +2461,12 @@ infoToggleButton.MouseButton1Click:Connect(function()
         click1:Play()
         for _, element in ipairs(uiinfoToggle) do
             element.instance.Visible = true
-            CreateTween(element.instance, "Size", element.sizeOpen, 0.3, true)
+            CreateTween1(element.instance, "Size", element.sizeOpen, 0.3, true)
         end
     else
         click2:Play()
         for _, element in ipairs(uiinfoToggle) do
-            CreateTween(element.instance, "Size", element.sizeClosed, 0.3, true)
+            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
             element.instance.Visible = false
         end
     end
