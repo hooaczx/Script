@@ -200,6 +200,47 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+local getinfo = getinfo or debug.getinfo
+local DEBUG = false
+local Hooked = {}
+
+local Detected, Kill
+
+setthreadidentity(2)
+
+for i, v in getgc(true) do
+    if typeof(v) == "table" then
+        local DetectFunc = rawget(v, "Detected")
+        local KillFunc = rawget(v, "Kill")
+    
+        if typeof(DetectFunc) == "function" and not Detected then
+            Detected = DetectFunc
+            table.insert(Hooked, Detected)
+        end
+
+        if rawget(v, "Variables") and rawget(v, "Process") and typeof(KillFunc) == "function" and not Kill then
+            Kill = KillFunc
+            table.insert(Hooked, Kill)
+        end
+    end
+end
+
+local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
+    local LevelOrFunc, Info = ...
+    if Detected and LevelOrFunc == Detected then
+        if DEBUG then
+            SendDetailedNotification("Adonis Bypass", "Adonis has been bypassed\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
+        end
+        return coroutine.yield(coroutine.running())
+    end
+    
+    return Old(...)
+end))
+
+setthreadidentity(7)
+
+local Players = game:GetService("Players")
+
 local Toggle = AddToggle(Main5u6, {
     Name = "Adonis AntiCheat Bypass",
     Default = false,
@@ -228,57 +269,16 @@ local Toggle = AddToggle(Main5u6, {
                 end)
             end
         else
-            for _, hookedFunc in ipairs(Hooked) do
-                unhookfunction(hookedFunc)
+            if Hooked and #Hooked > 0 then
+                for _, hookedFunc in ipairs(Hooked) do
+                    unhookfunction(hookedFunc)
+                end
             end
         end
     end
 })
 
-local getinfo = getinfo or debug.getinfo
-local DEBUG = false
-local Hooked = {}
-
-local Detected, Kill
-
-setthreadidentity(2)
-
-for i, v in getgc(true) do
-    if typeof(v) == "table" then
-        local DetectFunc = rawget(v, "Detected")
-        local KillFunc = rawget(v, "Kill")
-    
-        if typeof(DetectFunc) == "function" and not Detected then
-            Detected = DetectFunc
-            table.insert(Hooked, Detected)
-        end
-
-        if rawget(v, "Variables") and rawget(v, "Process") and typeof(KillFunc) == "function" and not Kill then
-            Kill = KillFunc
-            table.insert(Hooked, Kill)
-        end
-    end
-end
-
-local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
-    local LevelOrFunc, Info = ...
-
-    if Detected and LevelOrFunc == Detected then
-        if DEBUG then
-            SendDetailedNotification("Adonis Bypass",
-                "Adonis has been bypassed\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
-        end
-        return coroutine.yield(coroutine.running())
-    end
-    
-    return Old(...)
-end))
-
-setthreadidentity(7)
-
-local Players = game:GetService("Players")
-
-local Toggle = AddToggle(Main5u6, {
+local ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
     Default = false,
     Callback = function(isEnabled)
@@ -325,7 +325,6 @@ local Toggle = AddToggle(Main5u6, {
         end
     end
 })
-
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
