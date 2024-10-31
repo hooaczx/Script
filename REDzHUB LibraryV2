@@ -1025,10 +1025,10 @@ end)
  SendButton.BackgroundColor3 = Configs_HUB.Cor_Hub
  SendButton.Position = UDim2.new(0.8, 0, 1, 0)
  SendButton.Size = UDim2.new(0.2, 0, 0.1, 0)
- SendButton.Font = Enum.Font.SourceSans
  SendButton.BackgroundTransparency = 0.7
  SendButton.Text = "Send"
- SendButton.TextColor3 = Color3.new(255, 255, 255)
+ SendButton.TextColor3 = Configs_HUB.Cor_Text
+ SendButton.Font = Configs_HUB.Text_Font
  SendButton.TextSize = 14
 
  local title = Instance.new("TextLabel", FrameChat)
@@ -1036,9 +1036,9 @@ end)
  title.BackgroundTransparency = 0.7
  title.BackgroundColor3 = Configs_HUB.Cor_Hub
  title.Size = UDim2.new(1, 0, 0, 24)
- title.Font = Enum.Font.SourceSans
+ title.TextColor3 = Configs_HUB.Cor_Text
+ title.Font = Configs_HUB.Text_Font
  title.Text = "Chat"
- title.TextColor3 = Color3.new(255, 255, 255)
  title.TextSize = 14
  
  local ChatToggleButton = Instance.new("ImageButton", frame)
@@ -1056,6 +1056,8 @@ end)
  unreadLabel.Size = UDim2.new(0, 10, 0, 10)
  unreadLabel.Position = UDim2.new(0, 0, -0.003, 0)
  unreadLabel.BackgroundTransparency = 0
+ unreadLabel.TextColor3 = Configs_HUB.Cor_Text
+ unreadLabel.Font = Configs_HUB.Text_Font
  unreadLabel.TextColor3 = Color3.new(255, 255, 255)
  unreadLabel.ZIndex = 11
  unreadLabel.TextScaled = true
@@ -1083,8 +1085,6 @@ end)
    end
 
  local function output(msg, playerName, playerId)
-     local colour = Color3.fromRGB(255, 255, 255)
-
      local messageFrame = Instance.new("Frame", LogPanel)
      messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
      messageFrame.Size = UDim2.new(1, 0, 0, 40)
@@ -1105,10 +1105,11 @@ end)
      messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
      messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
      messageLabel.TextScaled = true
-     messageLabel.TextColor3 = colour
+     messageLabel.TextColor3 = Configs_HUB.Cor_Text
+     messageLabel.TextXAlignment = "Left"
+     messageLabel.Font = Configs_HUB.Text_Font
      messageLabel.BackgroundTransparency = 1
      messageLabel.BorderSizePixel = 0
-     messageLabel.TextXAlignment = Enum.TextXAlignment.Left
 
        LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
    end
@@ -1143,14 +1144,15 @@ end
 
 game.Players.PlayerAdded:Connect(setupPlayer)
 
-    local TimeLabelgui = Instance.new("TextLabel", frame)
-    TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
-    TimeLabelgui.TextSize = 20
-    TimeLabelgui.TextWrapped = true
-    TimeLabelgui.TextScaled = true
-    TimeLabelgui.Position = UDim2.new(-0.05, 0, 0, 15)
-    TimeLabelgui.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TimeLabelgui.BackgroundTransparency = 1
+local TimeLabelgui = Instance.new("TextLabel", frame)
+TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
+TimeLabelgui.TextSize = 20
+TimeLabelgui.TextWrapped = true
+TimeLabelgui.TextScaled = true
+TimeLabelgui.Position = UDim2.new(-0.05, 0, 0, 15)
+TimeLabelgui.TextColor3 = Configs_HUB.Cor_Text
+TimeLabelgui.Font = Configs_HUB.Text_Font
+TimeLabelgui.BackgroundTransparency = 1
      
 local Frame1 = Instance.new("Frame", ScreenGui)
 Frame1.Size = UDim2.new(0.4, 0, 0.85, 0)
@@ -1176,13 +1178,13 @@ local tweenGradient = CreateGradient(Frame1, {
 local TitleLabel1 = Instance.new("TextLabel", Frame1)
 TitleLabel1.TextSize = 14
 TitleLabel1.TextWrapped = true
-TitleLabel1.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel1.TextColor3 = Configs_HUB.Cor_Text
+TitleLabel1.TextXAlignment = "Left"
+TitleLabel1.Font = Configs_HUB.Text_Font
 TitleLabel1.Text = "Song List"
 TitleLabel1.Size = UDim2.new(1, 0, 0.05, 0)
 TitleLabel1.Position = UDim2.new(0, 0, 0, 0)
 TitleLabel1.BackgroundTransparency = 1
-TitleLabel1.TextXAlignment = Enum.TextXAlignment.Center
-TitleLabel1.Font = Enum.Font.SourceSans
 
 local search = Instance.new("TextBox", Frame1)
 search.TextSize = 14
@@ -1234,14 +1236,14 @@ Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
 local TimeLabel = Instance.new("TextLabel", ScreenGui)
 TimeLabel.TextSize = 12
 TimeLabel.TextWrapped = true
-TimeLabel.TextColor3 = Color3.new(1, 1, 1)
+TimeLabel.TextColor3 = Configs_HUB.Cor_Text
+TimeLabel.TextXAlignment = "Left"
+TimeLabel.Font = Configs_HUB.Text_Font
 TimeLabel.Text = "0:00 / 0:00"
 TimeLabel.Size = UDim2.new(0.09, 0, 0.06, 0)
 TimeLabel.Position = UDim2.new(0.01, 0, 0.1, 0)
 TimeLabel.AnchorPoint = Vector2.new(0.3, 0.02)
 TimeLabel.BackgroundTransparency = 1
-TimeLabel.TextXAlignment = Enum.TextXAlignment.Center
-TimeLabel.Font = Enum.Font.SourceSans
 
 local ToggleButton = Instance.new("ImageButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0.036, 0, 0.075, 0)
@@ -1297,7 +1299,6 @@ end
 
 local function updateSongButtons()
     local searchText = search.Text:lower()
-    local colour = Color3.fromRGB(255, 255, 255)
     local currentScrollPosition = songList.CanvasPosition
     for _, child in ipairs(songList:GetChildren()) do
         if child:IsA("Frame") and child.Name ~= "UIListLayout" then
@@ -1320,21 +1321,25 @@ local function updateSongButtons()
                 iconmusic.Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
 
                 local nameLabel = Instance.new("TextLabel", musiclistFrame)
-                nameLabel.Name = "NameLabel"  -- ชื่อ Label เพื่อป้องกันการสร้างซ้ำ
+                nameLabel.Name = "NameLabel"
                 nameLabel.Text = ":" .. tostring(i) .. "." .. song.name
                 nameLabel.Size = UDim2.new(0.61, 0, 1, 0)
                 nameLabel.Position = UDim2.new(0.11, 0, 0, 0)
                 nameLabel.TextScaled = true
-                nameLabel.TextColor3 = colour
+                nameLabel.TextColor3 = Configs_HUB.Cor_Text
+                nameLabel.TextXAlignment = "Left"
+                nameLabel.Font = Configs_HUB.Text_Font
                 nameLabel.BackgroundTransparency = 1
                 nameLabel.BorderSizePixel = 0
-                nameLabel.TextXAlignment = Enum.TextXAlignment.Left
             end
             if not musiclistFrame:FindFirstChild("SongButton") then
                 local songbutton = Instance.new("TextButton", musiclistFrame)
                 songbutton.Name = "SongButton"
                 songbutton.Size = UDim2.new(1, 0, 1, 0)
                 songbutton.Position = UDim2.new(0, 0, 0, 0)
+                songbutton.TextColor3 = Configs_HUB.Cor_Text
+                songbutton.TextXAlignment = "Left"
+                songbutton.Font = Configs_HUB.Text_Font
                 songbutton.Text = ""
                 songbutton.BackgroundTransparency = 1
                 songbutton.MouseButton1Click:Connect(function()
@@ -1434,7 +1439,8 @@ framemusic.Visible = false
 
 local Text77 = Instance.new("TextLabel", framemusic)
 Text77.Size = UDim2.new(1, 0, 0.15, 0)
-Text77.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text77.TextColor3 = Configs_HUB.Cor_Text
+Text77.Font = Configs_HUB.Text_Font
 Text77.TextScaled = true
 Text77.Text = "Setting Music Menu"
 
@@ -1456,18 +1462,20 @@ AutoPlayframe.BackgroundTransparency = 0
 local Text55 = Instance.new("TextLabel", AutoPlayframe)
 Text55.Size = UDim2.new(1, 0, 0, 30)
 Text55.TextScaled = true
-Text55.TextXAlignment = Enum.TextXAlignment.Left
 Text55.BackgroundTransparency = 1
-Text55.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text55.TextColor3 = Configs_HUB.Cor_Text
+Text55.TextXAlignment = "Left"
+Text55.Font = Configs_HUB.Text_Font
 Text55.Text = "AutoPlay NextSong"
 
 local Text44 = Instance.new("TextLabel", AutoPlayframe)
 Text44.Size = UDim2.new(1, 0, 0, 50)
 Text44.TextScaled = true
-Text44.TextXAlignment = Enum.TextXAlignment.Left
 Text44.BackgroundTransparency = 1
 Text44.Position = UDim2.new(0, 0, 0.31, 0)
-Text44.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text44.TextColor3 = Configs_HUB.Cor_Text
+Text44.TextXAlignment = "Left"
+Text44.Font = Configs_HUB.Text_Font
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
 
 local isAutoPlayEnabled = false
@@ -1629,8 +1637,9 @@ local tweenGradient = CreateGradient(framek, {
 local mainText = Instance.new("TextLabel", framek)
 mainText.Size = UDim2.new(1, 0, 0.15, 0)
 mainText.BackgroundTransparency = 0.7
-mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainText.Text = "Universal Viewer"
+mainText.TextColor3 = Configs_HUB.Cor_Text
+mainText.Font = Configs_HUB.Text_Font
 mainText.TextScaled = true
 
 local grnub7t = Instance.new("UIGradient", mainText)
@@ -1661,10 +1670,9 @@ local mainGameLabel = Instance.new("TextLabel", frameGame)
 mainGameLabel.Size = UDim2.new(1, 0, 0, 40)
 mainGameLabel.Text = "MainGame"
 mainGameLabel.BackgroundTransparency = 0.7
-mainGameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-mainGameLabel.TextXAlignment = Enum.TextXAlignment.Left
+mainGameLabel.TextColor3 = Configs_HUB.Cor_Text
+mainGameLabel.Font = Configs_HUB.Text_Font
 mainGameLabel.TextScaled = true
-mainGameLabel.TextXAlignment = Enum.TextXAlignment.Center
 
 local place = gamePlaces[1]
 
@@ -1699,7 +1707,8 @@ end
 
 local mainText = Instance.new("TextLabel", mainGameFrame)
 mainText.Size = UDim2.new(0.05, 0, 0, 20)
-mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainText.TextColor3 = Configs_HUB.Cor_Text
+mainText.Font = Configs_HUB.Text_Font
 mainText.BackgroundTransparency = 1
 mainText.Position = UDim2.new(0.324, 0, 0, 0)
 mainText.Text = count..""
@@ -1708,26 +1717,29 @@ mainText.TextScaled = true
 local mainGameText = Instance.new("TextLabel", mainGameFrame)
 mainGameText.Size = UDim2.new(0.672, 0, 0, 30)
 mainGameText.Position = UDim2.new(0.322, 0, 0.16, 0)
-mainGameText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainGameText.TextColor3 = Configs_HUB.Cor_Text
+mainGameText.TextXAlignment = "Left"
+mainGameText.Font = Configs_HUB.Text_Font
 mainGameText.BackgroundTransparency = 1
 mainGameText.Text = "Name:" .. place.Name
 mainGameText.TextScaled = true
-mainGameText.TextXAlignment = Enum.TextXAlignment.Left
 
 local mainidGame = Instance.new("TextLabel", mainGameFrame)
 mainidGame.Size = UDim2.new(0.672, 0, 0, 30)
 mainidGame.Position = UDim2.new(0.322, 0, 0.4, 0)
-mainidGame.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainidGame.TextColor3 = Configs_HUB.Cor_Text
+mainidGame.TextXAlignment = "Left"
+mainidGame.Font = Configs_HUB.Text_Font
 mainidGame.BackgroundTransparency = 1
 mainidGame.Text = "Id:"..place.PlaceId
 mainidGame.TextScaled = true
-mainidGame.TextXAlignment = Enum.TextXAlignment.Left
 
 local TeleportButton = Instance.new("TextButton", mainGameFrame)
 TeleportButton.Size = UDim2.new(1, 0, 0.17, 0)
 TeleportButton.Position = UDim2.new(0, 0, 0.83, 0)
 TeleportButton.BackgroundColor3 = Configs_HUB.Cor_Hub
-TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleportButton.TextColor3 = Configs_HUB.Cor_Text
+TeleportButton.Font = Configs_HUB.Text_Font
 TeleportButton.BackgroundTransparency = 0
 TeleportButton.Text = "Play"
 TeleportButton.TextScaled = true
@@ -1754,9 +1766,10 @@ local splitGamesLabel = Instance.new("TextLabel", frameGame)
 splitGamesLabel.Size = UDim2.new(1, 0, 0, 40)
 splitGamesLabel.BackgroundTransparency = 0
 splitGamesLabel.Text = "Splitgame"
-splitGamesLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+splitGamesLabel.TextColor3 = Configs_HUB.Cor_Text
+splitGamesLabel.TextXAlignment = "Left"
+splitGamesLabel.Font = Configs_HUB.Text_Font
 splitGamesLabel.TextScaled = true
-splitGamesLabel.TextXAlignment = Enum.TextXAlignment.Center
 
 local grnubfft = Instance.new("UIGradient", splitGamesLabel)
      grnubfft.Color = ColorSequence.new{
@@ -1808,34 +1821,38 @@ for i = 2, #gamePlaces do
     gameText.Size = UDim2.new(0.05, 0, 0, 20)
     gameText.Position = UDim2.new(0.324, 0, 0, 0)
     gameText.BackgroundTransparency = 1
-    gameText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameText.TextColor3 = Configs_HUB.Cor_Text
+    gameText.Font = Configs_HUB.Text_Font
     gameText.Text = count..""
     gameText.TextScaled = true
     
     local gameLabelText = Instance.new("TextLabel", gameFrame)
     gameLabelText.Size = UDim2.new(0.672, 0, 0, 30)
     gameLabelText.Position = UDim2.new(0.322, 0, 0.16, 0)
-    gameLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameLabelText.TextColor3 = Configs_HUB.Cor_Text
+    gameLabelText.TextXAlignment = "Left"
+    gameLabelText.Font = Configs_HUB.Text_Font
     gameLabelText.BackgroundTransparency = 1
     gameLabelText.Text = "Name:" .. place.Name
     gameLabelText.TextScaled = true
-    gameLabelText.TextXAlignment = Enum.TextXAlignment.Left
     
     local gameidLabel = Instance.new("TextLabel", gameFrame)
     gameidLabel.Size = UDim2.new(0.672, 0, 0, 30)
     gameidLabel.Position = UDim2.new(0.322, 0, 0.4, 0)
-    gameidLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameidLabel.TextColor3 = Configs_HUB.Cor_Text
+    gameidLabel.TextXAlignment = "Left"
+    gameidLabel.Font = Configs_HUB.Text_Font
     gameidLabel.BackgroundTransparency = 1
     gameidLabel.Text = "Id:" ..place.PlaceId
-    gameidLabel.TextScaled = true
-    gameidLabel.TextXAlignment = Enum.TextXAlignment.Left
+    gameidLabel.TextScaled = true.Left
 
     local teleportButton = Instance.new("TextButton", gameFrame)
     teleportButton.Size = UDim2.new(1, 0, 0.17, 0)
     teleportButton.Position = UDim2.new(0, 0, 0.83, 0)
     teleportButton.BackgroundTransparency = 0
     teleportButton.BackgroundColor3 = Configs_HUB.Cor_Hub
-    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Text11.TextColor3 = Configs_HUB.Cor_Text
+    Text11.Font = Configs_HUB.Text_Font
     teleportButton.Text = "Play"
     teleportButton.TextScaled = true
     teleportButton.MouseButton1Click:Connect(function()
@@ -1912,11 +1929,12 @@ Wellcome.Size = UDim2.new(0.25, 0, 0.09, 0)
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
 Wellcome.Position = UDim2.new(0.14, 0, 0.077, 0)
 Wellcome.AnchorPoint = Vector2.new(0.11, 0.085)
-Wellcome.TextColor3 = Color3.fromRGB(255, 255, 255)
+Wellcome.TextColor3 = Configs_HUB.Cor_Text
+Wellcome.TextXAlignment = "Left"
+Wellcome.Font = Configs_HUB.Text_Font
 Wellcome.BackgroundColor3 = Configs_HUB.Cor_Hub
 Wellcome.BackgroundTransparency = 1
-Wellcome. TextScaled = true
-Wellcome.TextXAlignment = Enum.TextXAlignment.Left
+Wellcome.TextScaled = true
 Wellcome.Visible = false
 
 local gameinfoframe= Instance.new("Frame", ScreenGui)
@@ -1942,11 +1960,12 @@ GameName.Size = UDim2.new(0.28, 0, 0.09, 0)
 GameName.Text = "Game Name: " .. gameName
 GameName.Position = UDim2.new(0.14, 0, 0.48, 0)
 GameName.AnchorPoint = Vector2.new(0.11, 0.405)
-GameName.TextColor3 = Color3.fromRGB(255, 255, 255)
+GameName.TextColor3 = Configs_HUB.Cor_Text
+GameName.TextXAlignment = "Left"
+GameName.Font = Configs_HUB.Text_Font
 GameName.BackgroundColor3 = Configs_HUB.Cor_Hub
 GameName.BackgroundTransparency = 1
 GameName.TextScaled = true
-GameName.TextXAlignment = Enum.TextXAlignment.Left
 GameName.Visible = false
 
 local frame100 = Instance.new("Frame", ScreenGui)
@@ -1961,7 +1980,8 @@ local FriendList = Instance.new("TextLabel", frame100)
 FriendList.Size = UDim2.new(1, 0, 0.13, 0)
 FriendList.Position = UDim2.new(0, 0, 0.001, 0)
 FriendList.Text = "Friend List"
-FriendList.TextColor3 = Color3.fromRGB(255, 255, 255)
+FriendList.TextColor3 = Configs_HUB.Cor_Text
+FriendList.Font = Configs_HUB.Text_Font
 FriendList.BackgroundColor3 = Configs_HUB.Cor_Hub
 FriendList.BackgroundTransparency = 0.5
 Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
@@ -2010,11 +2030,12 @@ friendnumber.Size = UDim2.new(0.28, 0, 0.09, 0)
 friendnumber.Text = "Friend: "..friendsData.total.."/200"
 friendnumber.Position = UDim2.new(0.67, 0, 0.03, 0)
 friendnumber.AnchorPoint = Vector2.new(0.49, 0.029)
-friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
+friendnumber.TextColor3 = Configs_HUB.Cor_Text
+friendnumber.TextXAlignment = "Left"
+friendnumber.Font = Configs_HUB.Text_Font
 friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
 friendnumber.BackgroundTransparency = 1
-friendnumber. TextScaled = true
-friendnumber.TextXAlignment = Enum.TextXAlignment.Left
+friendnumber.TextScaled = true
 friendnumber.Visible = false
 
 local function checkFriends()
@@ -2062,17 +2083,19 @@ local function checkFriends()
                 friendName.Position = UDim2.new(0, 60, 0, 0)
                 friendName.BackgroundTransparency = 1
                 friendName.Text = friend.Username
-                friendName.TextColor3 = Color3.fromRGB(255, 255, 255)
                 friendName.TextWrapped = true
-                friendName.TextXAlignment = Enum.TextXAlignment.Left
+                friendName.TextColor3 = Configs_HUB.Cor_Text
+                friendName.TextXAlignment = "Left"
+                friendName.Font = Configs_HUB.Text_Font
                 friendName.Parent = friendFrame
 
                 local statusLabel = Instance.new("TextLabel")
                 statusLabel.Size = UDim2.new(0, 200, 1, 0)
                 statusLabel.BackgroundTransparency = 1
-                statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
                 statusLabel.TextWrapped = true
-                statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+                statusLabel.TextColor3 = Configs_HUB.Cor_Text
+                statusLabel.TextXAlignment = "Left"
+                statusLabel.Font = Configs_HUB.Text_Font
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
 
                 if friend.IsOnline then
@@ -2107,11 +2130,12 @@ TimePlay.Size = UDim2.new(0.205, 0, 0.07, 0)
 TimePlay.Text = "TimePlay"
 TimePlay.Position = UDim2.new(0.5294, 0, 0.681, 0)
 TimePlay.AnchorPoint = Vector2.new(0.41, 0.623)
-TimePlay.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text11.TextColor3 = Configs_HUB.Cor_Text
+Text11.TextXAlignment = "Left"
+Text11.Font = Configs_HUB.Text_Font
 TimePlay.BackgroundColor3 = Configs_HUB.Cor_Hub
 TimePlay.BackgroundTransparency = 0.5
 TimePlay.TextScaled = true
-TimePlay.TextXAlignment = Enum.TextXAlignment.Left
 TimePlay.Visible = false
 Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2120,11 +2144,12 @@ AccountAge.Size = UDim2.new(0.205, 0, 0.07, 0)
 AccountAge.Text = "AccountAge"
 AccountAge.Position = UDim2.new(0.7781, 0, 0.681, 0)
 AccountAge.AnchorPoint = Vector2.new(0.62, 0.623)
-AccountAge.TextColor3 = Color3.fromRGB(255, 255, 255)
+AccountAge.TextColor3 = Configs_HUB.Cor_Text
+AccountAge.TextXAlignment = "Left"
+AccountAge.Font = Configs_HUB.Text_Font
 AccountAge.BackgroundColor3 = Configs_HUB.Cor_Hub
 AccountAge.BackgroundTransparency = 0.5
 AccountAge. TextScaled = true
-AccountAge.TextXAlignment = Enum.TextXAlignment.Left
 AccountAge.Visible = false
 Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2133,11 +2158,12 @@ Join.Size = UDim2.new(0.101, 0, 0.07, 0)
 Join.Text = "Join Game Script".."\nYou can press Copy"
 Join.Position = UDim2.new(0.4868, 0, 0.762, 0)
 Join.AnchorPoint = Vector2.new(0.41, 0.699)
-Join.TextColor3 = Color3.fromRGB(255, 255, 255)
+Join.TextColor3 = Configs_HUB.Cor_Text
+Join.TextXAlignment = "Left"
+Join.Font = Configs_HUB.Text_Font
 Join.BackgroundColor3 = Configs_HUB.Cor_Hub
 Join.BackgroundTransparency = 0.5
 Join.TextScaled = true
-Join.TextXAlignment = Enum.TextXAlignment.Left
 Join.Visible = false
 Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2146,11 +2172,12 @@ Position.Size = UDim2.new(0.101, 0, 0.07, 0)
 Position.Text = "Position".."\nYou can press Copy"
 Position.Position = UDim2.new(0.6026, 0, 0.762, 0)
 Position.AnchorPoint = Vector2.new(0.528, 0.699)
-Position.TextColor3 = Color3.fromRGB(255, 255, 255)
+Position.TextColor3 = Configs_HUB.Cor_Text
+Position.TextXAlignment = "Left"
+Position.Font = Configs_HUB.Text_Font
 Position.BackgroundColor3 = Configs_HUB.Cor_Hub
 Position.BackgroundTransparency = 0.5
 Position. TextScaled = true
-Position.TextXAlignment = Enum.TextXAlignment.Left
 Position.Visible = false
 Corner(Position, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2301,8 +2328,9 @@ DisplayName.Size = UDim2.new(1, 0, 0.3, 0)
 DisplayName.Text = "Display Name: " .. player.DisplayName
 DisplayName.Position = UDim2.new(0, 0, 0, 0)
 DisplayName.TextScaled = true
-DisplayName.TextColor3 = Color3.fromRGB(255, 255, 255)
-DisplayName.TextXAlignment = Enum.TextXAlignment.Left
+DisplayName.TextColor3 = Configs_HUB.Cor_Text
+DisplayName.TextXAlignment = "Left"
+DisplayName.Font = Configs_HUB.Text_Font
 DisplayName.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 DisplayName.BackgroundTransparency = 1
 DisplayName.Parent = frame9
@@ -2312,8 +2340,9 @@ UserIdg.Size = UDim2.new(1, 0, 0.3, 0)
 UserIdg.Text = "UserId: " .. player.UserId
 UserIdg.Position = UDim2.new(0, 0, 0.3, 0)
 UserIdg.TextScaled = true
-UserIdg.TextColor3 = Color3.fromRGB(255, 255, 255)
-UserIdg.TextXAlignment = Enum.TextXAlignment.Left
+UserIdg.TextColor3 = Configs_HUB.Cor_Text
+UserIdg.TextXAlignment = "Left"
+UserIdg.Font = Configs_HUB.Text_Font
 UserIdg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 UserIdg.BackgroundTransparency = 1
 UserIdg.Parent = frame9
@@ -2323,8 +2352,9 @@ AccountCreated.Size = UDim2.new(1, 0, 0.3, 0)
 AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
 AccountCreated.Position = UDim2.new(0, 0, 0.6, 0)
 AccountCreated.TextScaled = true
-AccountCreated.TextColor3 = Color3.fromRGB(255, 255, 255)
-AccountCreated.TextXAlignment = Enum.TextXAlignment.Left
+AccountCreated.TextColor3 = Configs_HUB.Cor_Text
+AccountCreated.TextXAlignment = "Left"
+AccountCreated.Font = Configs_HUB.Text_Font
 AccountCreated.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 AccountCreated.BackgroundTransparency = 1
 AccountCreated.Parent = frame9
@@ -2334,8 +2364,9 @@ Update.Size = UDim2.new(1, 0, 0.1, 0)
 Update.Text = "Update: "..result.Updated
 Update.Position = UDim2.new(0, 0, 0, 0)
 Update.TextScaled = true
-Update.TextColor3 = Color3.fromRGB(255, 255, 255)
-Update.TextXAlignment = Enum.TextXAlignment.Left
+Update.TextColor3 = Configs_HUB.Cor_Text
+Update.TextXAlignment = "Left"
+Update.Font = Configs_HUB.Text_Font
 Update.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Update.BackgroundTransparency = 1
 Update.Parent = frame79
@@ -2345,8 +2376,9 @@ CreationDate.Size = UDim2.new(1, 0, 0.1, 0)
 CreationDate.Text = "Creation Date: "..result.Created
 CreationDate.Position = UDim2.new(0, 0, 0.1, 0)
 CreationDate.TextScaled = true
-CreationDate.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreationDate.TextXAlignment = Enum.TextXAlignment.Left
+CreationDate.TextColor3 = Configs_HUB.Cor_Text
+CreationDate.TextXAlignment = "Left"
+CreationDate.Font = Configs_HUB.Text_Font
 CreationDate.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 CreationDate.BackgroundTransparency = 1
 CreationDate.Parent = frame79
@@ -2356,8 +2388,9 @@ Gameid.Size = UDim2.new(1, 0, 0.1, 0)
 Gameid.Text = "Gameid: " .. game.GameId
 Gameid.Position = UDim2.new(0, 0, 0.2, 0)
 Gameid.TextScaled = true
-Gameid.TextColor3 = Color3.fromRGB(255, 255, 255)
-Gameid.TextXAlignment = Enum.TextXAlignment.Left
+Gameid.TextColor3 = Configs_HUB.Cor_Text
+Gameid.TextXAlignment = "Left"
+Gameid.Font = Configs_HUB.Text_Font
 Gameid.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Gameid.BackgroundTransparency = 1
 Gameid.Parent = frame79
@@ -2367,8 +2400,9 @@ GamePlaceId.Size = UDim2.new(1, 0, 0.1, 0)
 GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
 GamePlaceId.Position = UDim2.new(0, 0, 0.3, 0)
 GamePlaceId.TextScaled = true
-GamePlaceId.TextColor3 = Color3.fromRGB(255, 255, 255)
-GamePlaceId.TextXAlignment = Enum.TextXAlignment.Left
+GamePlaceId.TextColor3 = Configs_HUB.Cor_Text
+GamePlaceId.TextXAlignment = "Left"
+GamePlaceId.Font = Configs_HUB.Text_Font
 GamePlaceId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 GamePlaceId.BackgroundTransparency = 1
 GamePlaceId.Parent = frame79
@@ -2378,8 +2412,9 @@ GameJobId.Size = UDim2.new(1, 0, 0.1, 0)
 GameJobId.Text = "GameJobId: " .. game.JobId
 GameJobId.Position = UDim2.new(0, 0, 0.4, 0)
 GameJobId.TextScaled = true
-GameJobId.TextColor3 = Color3.fromRGB(255, 255, 255)
-GameJobId.TextXAlignment = Enum.TextXAlignment.Left
+GameJobId.TextColor3 = Configs_HUB.Cor_Text
+GameJobId.TextXAlignment = "Left"
+GameJobId.Font = Configs_HUB.Text_Font
 GameJobId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 GameJobId.BackgroundTransparency = 1
 GameJobId.Parent = frame79
@@ -2389,8 +2424,9 @@ Server.Size = UDim2.new(1, 0, 0.1, 0)
 Server.Text = "Server Size: ".. maxPlayers
 Server.Position = UDim2.new(0, 0, 0.5, 0)
 Server.TextScaled = true
-Server.TextColor3 = Color3.fromRGB(255, 255, 255)
-Server.TextXAlignment = Enum.TextXAlignment.Left
+Server.TextColor3 = Configs_HUB.Cor_Text
+Server.TextXAlignment = "Left"
+Server.Font = Configs_HUB.Text_Font
 Server.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Server.BackgroundTransparency = 1
 Server.Parent = frame79
@@ -2529,7 +2565,9 @@ frameSetting.Visible = false
 
 local Text7 = Instance.new("TextLabel", frameSetting)
 Text7.Size = UDim2.new(1, 0, 0.15, 0)
-Text7.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text7.TextColor3 = Configs_HUB.Cor_Text
+Text7.TextXAlignment = "Left"
+Text7.Font = Configs_HUB.Text_Font
 Text7.TextScaled = true
 Text7.Text = "Setting Menu"
 
@@ -2551,18 +2589,20 @@ frameAnticopy.BackgroundTransparency = 0
 local Text3 = Instance.new("TextLabel", frameAnticopy)
 Text3.Size = UDim2.new(1, 0, 0, 30)
 Text3.TextScaled = true
-Text3.TextXAlignment = Enum.TextXAlignment.Left
 Text3.BackgroundTransparency = 1
-Text3.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text3.TextColor3 = Configs_HUB.Cor_Text
+Text3.TextXAlignment = "Left"
+Text3.Font = Configs_HUB.Text_Font
 Text3.Text = "Anti Copy"
 
 local Text4 = Instance.new("TextLabel", frameAnticopy)
 Text4.Size = UDim2.new(1, 0, 0, 50)
 Text4.TextScaled = true
-Text4.TextXAlignment = Enum.TextXAlignment.Left
 Text4.BackgroundTransparency = 1
 Text4.Position = UDim2.new(0, 0, 0.31, 0)
-Text4.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text4.TextColor3 = Configs_HUB.Cor_Text
+Text4.TextXAlignment = "Left"
+Text4.Font = Configs_HUB.Text_Font
 Text4.Text = [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
 It will notify you on the screen. If you feel annoyed, you can turn it off]]
 
@@ -2623,18 +2663,20 @@ friendnotificationframe.BackgroundTransparency = 0
 local Text5 = Instance.new("TextLabel", friendnotificationframe)
 Text5.Size = UDim2.new(1, 0, 0, 30)
 Text5.TextScaled = true
-Text5.TextXAlignment = Enum.TextXAlignment.Left
 Text5.BackgroundTransparency = 1
-Text5.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text5.TextColor3 = Configs_HUB.Cor_Text
+Text5.TextXAlignment = "Left"
+Text5.Font = Configs_HUB.Text_Font
 Text5.Text = "Notification Friends"
 
 local Text6 = Instance.new("TextLabel", friendnotificationframe)
 Text6.Size = UDim2.new(1, 0, 0, 50)
 Text6.TextScaled = true
-Text6.TextXAlignment = Enum.TextXAlignment.Left
 Text6.BackgroundTransparency = 1
 Text6.Position = UDim2.new(0, 0, 0.31, 0)
-Text6.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text6.TextColor3 = Configs_HUB.Cor_Text
+Text6.TextXAlignment = "Left"
+Text6.Font = Configs_HUB.Text_Font
 Text6.Text = [[This script will notify you when your friends join and exit the game and if you feel annoyed you can, turn it off]]
 
 local friendNotificationButton = createToggleButton(friendnotificationframe, UDim2.new(0.82, 0, 0.75, 0), function()
@@ -2855,18 +2897,20 @@ framerain.BackgroundTransparency = 0
 local Text10 = Instance.new("TextLabel", framerain)
 Text10.Size = UDim2.new(1, 0, 0, 30)
 Text10.TextScaled = true
-Text10.TextXAlignment = Enum.TextXAlignment.Left
 Text10.BackgroundTransparency = 1
-Text10.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text10.TextColor3 = Configs_HUB.Cor_Text
+Text10.TextXAlignment = "Left"
+Text10.Font = Configs_HUB.Text_Font
 Text10.Text = "Rain🌧"
 
 local Text11 = Instance.new("TextLabel", framerain)
 Text11.Size = UDim2.new(1, 0, 0, 50)
 Text11.TextScaled = true
-Text11.TextXAlignment = Enum.TextXAlignment.Left
 Text11.BackgroundTransparency = 1
 Text11.Position = UDim2.new(0, 0, 0.32, 0)
-Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text11.TextColor3 = Configs_HUB.Cor_Text
+Text11.TextXAlignment = "Left"
+Text11.Font = Configs_HUB.Text_Font
 Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
 
 createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), toggleLighting, false)
@@ -2900,18 +2944,20 @@ framehidename.BackgroundTransparency = 0
 local Text12 = Instance.new("TextLabel", framehidename)
 Text12.Size = UDim2.new(1, 0, 0, 30)
 Text12.TextScaled = true
-Text12.TextXAlignment = Enum.TextXAlignment.Left
 Text12.BackgroundTransparency = 1
-Text12.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text12.TextColor3 = Configs_HUB.Cor_Text
+Text12.TextXAlignment = "Left"
+Text12.Font = Configs_HUB.Text_Font
 Text12.Text = "Hide Name"
 
 local Text13 = Instance.new("TextLabel", framehidename)
 Text13.Size = UDim2.new(1, 0, 0, 50)
 Text13.TextScaled = true
-Text13.TextXAlignment = Enum.TextXAlignment.Left
 Text13.BackgroundTransparency = 1
 Text13.Position = UDim2.new(0, 0, 0.32, 0)
-Text13.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text13.TextColor3 = Configs_HUB.Cor_Text
+Text13.TextXAlignment = "Left"
+Text13.Font = Configs_HUB.Text_Font
 Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
 
 local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
@@ -3123,6 +3169,7 @@ end
     
     local TextLabel = Create("TextLabel", Frame, {
       Size = UDim2.new(1, 0, 1, 0),
+      TextWrapped = true,
       BackgroundTransparency = 1,
       Font = Configs_HUB.Text_Font,
       TextColor3 = textcolor,
@@ -3190,6 +3237,7 @@ end
     local TextLabel = Create("TextLabel", TextButton, {
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
+      TextWrapped = true,
       Text = ButtonName,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 35, 0, 0),
@@ -3231,6 +3279,7 @@ end
     local TextLabel = Create("TextLabel", TextButton, {
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
+      TextWrapped = true,
       Text = ToggleName,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 35, 0, 0),
@@ -3282,76 +3331,6 @@ end
     return {Frame2, Stroke, OnOff, Callback}
   end
   
-  function AddMobileToggle(Configs)
-    local name = Configs.Name or "Atalho"
-    local Callback = Configs.Callback or function() end
-    local visible = Configs.Visible or false
-    
-    local Toggle_Atalho = Create("Frame", ScreenGui, {
-      Size = UDim2.new(0, 100, 0, 60),
-      Position = UDim2.new(0.8, 0, 0.8, 0),
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Draggable = true,
-      Active = true,
-      Visible = visible
-    })Corner(Toggle_Atalho)
-    
-    local TextLabel = Create("TextLabel", Toggle_Atalho, {
-      Size = UDim2.new(1, 0, 0, 20),
-      TextSize = 20,
-      Font = Configs_HUB.Text_Font,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = name,
-      BackgroundTransparency = 1
-    })
-    
-    local Button = Create("TextButton", Toggle_Atalho, {
-      Size = UDim2.new(1, 0, 0, 40),
-      Position = UDim2.new(0, 0, 0, 20),
-      BackgroundTransparency = 1,
-      Text = ""
-    })
-    
-    local Frame = Create("Frame", Button, {
-      Position = UDim2.new(0.5, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      Size = UDim2.new(1, -40, 1, -15),
-      BackgroundTransparency = 1
-    })Corner(Frame, {CornerRadius = UDim.new(2, 0)})
-    
-    local Frame2 = Create("Frame", Frame, {
-      Position = UDim2.new(0, 5, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      Size = UDim2.new(0, 17, 0, 17),
-      BackgroundTransparency = 1
-    })Corner(Frame2, {CornerRadius = UDim.new(5, 0)})
-    
-    local stroke = Stroke(Frame, {
-      Color = Color3.fromRGB(100, 100, 100),
-      Thickness = 3
-    })
-    
-    local stroke = Stroke(Frame2, {
-      Color = Color3.fromRGB(100, 100, 100),
-      Thickness = 3
-    })
-    
-    local OnOff = false
-    Callback(OnOff)
-    Button.MouseButton1Click:Connect(function()
-      if OnOff == false then
-        CreateTween(Frame2, "Position", UDim2.new(1, -22, 0.5, 0), 0.2, false)
-      else
-        CreateTween(Frame2, "Position", UDim2.new(0, 5, 0.5, 0), 0.2, false)
-      end
-      OnOff = not OnOff
-      Callback(OnOff)
-    end)
-    
-    return Toggle_Atalho
-  end
-  
   function UpdateToggle(toggle, value)
     local Frame2 = toggle[1]
     local Stroke = toggle[2]
@@ -3391,6 +3370,7 @@ end
     local TextLabel = Create("TextButton", Frame, {
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
+      TextWrapped = true,
       Text = SliderName,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 150, 0, 0),
@@ -3506,6 +3486,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = KeybindName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 35, 0, 0),
       BackgroundTransparency = 1,
@@ -3550,6 +3531,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = TextBoxName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 150, 0, 0),
       BackgroundTransparency = 1,
@@ -3611,6 +3593,7 @@ end
       Size = UDim2.new(1, -10, 0, 25),
       Position = UDim2.new(0, 35, 0, 0),
       TextSize = 12,
+      TextWrapped = true,
       TextColor3 = Configs_HUB.Cor_Text,
       TextXAlignment = "Left",
       Text = name,
@@ -3758,6 +3741,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = DropdownName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 0, 25),
       Position = UDim2.new(0, 35, 0, 0),
       BackgroundTransparency = 1,
@@ -3937,6 +3921,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = LabelName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 0, 25),
       Position = UDim2.new(0, 20, 0, 0),
       BackgroundTransparency = 1,
@@ -3965,6 +3950,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = LabelName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 0, 25),
       BackgroundTransparency = 1,
       Font = Configs_HUB.Text_Font
