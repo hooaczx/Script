@@ -192,6 +192,90 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+local Toggle = AddToggle(Main5u6, {
+    Name = "Adonis AntiCheat",
+    Default = false,
+    Callback = function(isEnabled)
+        if isEnabled then
+            if Detected then
+                local Old; Old = hookfunction(Detected, function(Action, Info, NoCrash)
+                    if Action ~= "_" then
+                        if DEBUG then
+                            SendNotification({
+                                Title = "Adonis AntiCheat Flagged",
+                                Text = `Method: {Action}\nInfo: {Info}`,
+                                Duration = 5
+                            })
+                        end
+                    end
+                    return true
+                end)
+            end
+
+            if Kill then
+                local Old; Old = hookfunction(Kill, function(Info)
+                    if DEBUG then
+                        SendNotification({
+                            Title = "Adonis AntiCheat Kill Attempt",
+                            Text = `Tried to kill (fallback): {Info}`,
+                            Duration = 5
+                        })
+                    end
+                end)
+            end
+        else
+            for _, hookedFunc in ipairs(Hooked) do
+                unhookfunction(hookedFunc)
+            end
+        end
+    end
+})
+
+local getinfo = getinfo or debug.getinfo
+local DEBUG = false
+local Hooked = {}
+
+local Detected, Kill
+
+setthreadidentity(2)
+
+for i, v in getgc(true) do
+    if typeof(v) == "table" then
+        local DetectFunc = rawget(v, "Detected")
+        local KillFunc = rawget(v, "Kill")
+    
+        if typeof(DetectFunc) == "function" and not Detected then
+            Detected = DetectFunc
+            table.insert(Hooked, Detected)
+        end
+
+        if rawget(v, "Variables") and rawget(v, "Process") and typeof(KillFunc) == "function" and not Kill then
+            Kill = KillFunc
+            table.insert(Hooked, Kill)
+        end
+    end
+end
+
+local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
+    local LevelOrFunc, Info = ...
+
+    if Detected and LevelOrFunc == Detected then
+        if DEBUG then
+            SendNotification({
+                Title = "Adonis Bypass",
+                Text = "Adonis has been bypassed",
+                Duration = 5
+            })
+        end
+
+        return coroutine.yield(coroutine.running())
+    end
+    
+    return Old(...)
+end))
+
+setthreadidentity(7)
+
 local lastCF, stop, heartbeatConnection
 local Enabled = false
 
