@@ -148,6 +148,89 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+getgenv().name = ""
+getgenv().ProtectName = false
+
+local RunService = game:GetService("RunService")
+local Plr = game.Players.LocalPlayer
+
+local function replaceNameInTextLabels()
+    for _, Value in ipairs(game:GetDescendants()) do
+        if Value.ClassName == "TextLabel" then
+            local has = string.find(Value.Text, Plr.Name)
+            if has then
+                local str = Value.Text:gsub(Plr.Name, getgenv().name)
+                Value.Text = str
+            end
+            Value:GetPropertyChangedSignal("Text"):Connect(function()
+                local str = Value.Text:gsub(Plr.Name, getgenv().name)
+                Value.Text = str
+            end)
+        end
+    end
+end
+
+game.DescendantAdded:Connect(function(Value)
+    if Value.ClassName == "TextLabel" and getgenv().ProtectName then
+        local has = string.find(Value.Text, Plr.Name)
+        if has then
+            local str = Value.Text:gsub(Plr.Name, getgenv().name)
+            Value.Text = str
+        end
+        Value:GetPropertyChangedSignal("Text"):Connect(function()
+            local str = Value.Text:gsub(Plr.Name, getgenv().name)
+            Value.Text = str
+        end)
+    end
+end)
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScollingFrame.OffsetUndoFrame
+
+RunService.Heartbeat:Connect(function()
+    if getgenv().ProtectName then
+        for _, v in ipairs(leaderboard:GetDescendants()) do
+            if v:IsA("TextLabel") and (v.Text == Plr.Name or v.Text == "Protected by " .. getgenv().name) then
+                v.Text = "Protected by " .. getgenv().name
+            end
+        end
+    end
+    task.wait(1)
+end)
+
+AddTextBox(Main5u6, {
+    Name = "Custom Name Input",
+    Default = "Enter",
+    PlaceholderText = "Enter Name",
+    ClearText = true,
+    Callback = function(text)
+        getgenv().name = text
+        if getgenv().ProtectName then
+            replaceNameInTextLabels()
+        end
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Enable Name Protection",
+    Default = false,
+    Callback = function(state)
+        getgenv().ProtectName = state
+        if state then
+            replaceNameInTextLabels()
+        else
+            for _, Value in ipairs(game:GetDescendants()) do
+                if Value:IsA("TextLabel") and Value.Text:find(getgenv().name) then
+                    Value.Text = Value.Text:gsub(getgenv().name, Plr.Name)
+                end
+            end
+        end
+    end
+})
+
 local lastCF, stop, heartbeatConnection
 local Enabled = false
 
