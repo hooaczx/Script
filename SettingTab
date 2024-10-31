@@ -18,6 +18,13 @@ local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
+getgenv().name = ""
+getgenv().ProtectName = false
+getgenv().otherName = ""
+getgenv().ProtectOtherName = false
+local Players = game:GetService("Players")
+local Plr = Players.LocalPlayer
+local SelectedPlayer
 
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
@@ -148,88 +155,108 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-getgenv().name = ""
-getgenv().ProtectName = false
-
-local RunService = game:GetService("RunService")
-local Plr = game.Players.LocalPlayer
-
-local function replaceNameInTextLabels()
+local function replaceNameInTextLabels(targetPlayerName, replacementName)
     for _, Value in ipairs(game:GetDescendants()) do
-        if Value.ClassName == "TextLabel" then
-            local has = string.find(Value.Text, Plr.Name)
+        if Value:IsA("TextLabel") then
+            local has = string.find(Value.Text, targetPlayerName)
             if has then
-                local str = Value.Text:gsub(Plr.Name, getgenv().name)
+                local str = Value.Text:gsub(targetPlayerName, replacementName)
                 Value.Text = str
             end
             Value:GetPropertyChangedSignal("Text"):Connect(function()
-                local str = Value.Text:gsub(Plr.Name, getgenv().name)
+                local str = Value.Text:gsub(targetPlayerName, replacementName)
                 Value.Text = str
             end)
         end
     end
 end
 
-game.DescendantAdded:Connect(function(Value)
-    if Value.ClassName == "TextLabel" and getgenv().ProtectName then
-        local has = string.find(Value.Text, Plr.Name)
-        if has then
-            local str = Value.Text:gsub(Plr.Name, getgenv().name)
-            Value.Text = str
-        end
-        Value:GetPropertyChangedSignal("Text"):Connect(function()
-            local str = Value.Text:gsub(Plr.Name, getgenv().name)
-            Value.Text = str
-        end)
+local function updateDropdownOptions(dropdown)
+    local playerNames = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        table.insert(playerNames, player.Name)
     end
-end)
-
-if not game:IsLoaded() then
-    game.Loaded:Wait()
+    dropdown:UpdateOptions(playerNames)
 end
 
-local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScollingFrame.OffsetUndoFrame
-
-RunService.Heartbeat:Connect(function()
-    if getgenv().ProtectName then
-        for _, v in ipairs(leaderboard:GetDescendants()) do
-            if v:IsA("TextLabel") and (v.Text == Plr.Name or v.Text == "Protected by " .. getgenv().name) then
-                v.Text = "Protected by " .. getgenv().name
-            end
-        end
-    end
-    task.wait(1)
-end)
-
-AddTextBox(Main5u6, {
-    Name = "Custom Name Input",
+local SelfNameTextBox = AddTextBox(Main5u6, {
+    Name = "Enter Custom Name (Self)",
     Default = "Enter",
     PlaceholderText = "Enter Name",
     ClearText = true,
     Callback = function(text)
         getgenv().name = text
         if getgenv().ProtectName then
-            replaceNameInTextLabels()
+            replaceNameInTextLabels(Plr.Name, getgenv().name)
         end
     end
 })
 
-AddToggle(Main5u6, {
-    Name = "Enable Name Protection",
+local SelfProtectToggle = AddToggle(Main5u6, {
+    Name = "Enable Name Protection (Self)",
     Default = false,
     Callback = function(state)
         getgenv().ProtectName = state
         if state then
-            replaceNameInTextLabels()
+            replaceNameInTextLabels(Plr.Name, getgenv().name)
         else
-            for _, Value in ipairs(game:GetDescendants()) do
-                if Value:IsA("TextLabel") and Value.Text:find(getgenv().name) then
-                    Value.Text = Value.Text:gsub(getgenv().name, Plr.Name)
-                end
-            end
+            replaceNameInTextLabels(getgenv().name, Plr.Name)
         end
     end
 })
+
+-- Elements for renaming other players
+local OtherNameTextBox = AddTextBox(Main5u6, {
+    Name = "Enter Custom Name (Other Player)",
+    Default = "Enter",
+    PlaceholderText = "Enter Name",
+    ClearText = true,
+    Callback = function(text)
+        getgenv().otherName = text
+        if getgenv().ProtectOtherName and SelectedPlayer then
+            replaceNameInTextLabels(SelectedPlayer.Name, getgenv().otherName)
+        end
+    end
+})
+
+local OtherProtectToggle = AddToggle(Main5u6, {
+    Name = "Enable Name Protection (Other Player)",
+    Default = false,
+    Callback = function(state)
+        getgenv().ProtectOtherName = state
+        if state and SelectedPlayer then
+            replaceNameInTextLabels(SelectedPlayer.Name, getgenv().otherName)
+        elseif not state and SelectedPlayer then
+            replaceNameInTextLabels(getgenv().otherName, SelectedPlayer.Name)
+        end
+    end
+})
+
+local PlayerDropdown = AddDropdown(Main66, {
+    Name = "Select Player",
+    Options = {},
+    Callback = function(selected)
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player.Name == selected then
+                SelectedPlayer = player
+                break
+            end
+        end
+        if getgenv().ProtectOtherName and SelectedPlayer then
+            replaceNameInTextLabels(SelectedPlayer.Name, getgenv().otherName)
+        end
+    end
+})
+
+updateDropdownOptions(PlayerDropdown)
+
+Players.PlayerAdded:Connect(function()
+    updateDropdownOptions(PlayerDropdown)
+end)
+
+Players.PlayerRemoving:Connect(function()
+    updateDropdownOptions(PlayerDropdown)
+end)
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
