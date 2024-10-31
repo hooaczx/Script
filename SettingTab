@@ -258,6 +258,52 @@ Players.PlayerRemoving:Connect(function()
     updateDropdownOptions(PlayerDropdown)
 end)
 
+local Player = game.Players.LocalPlayer
+local originalUserId
+local idInput
+
+local function setPlayerId(newId)
+    if newId then
+        Player.UserId = newId
+    else
+        if game.CreatorType == Enum.CreatorType.User then
+            Player.UserId = game.CreatorId
+        elseif game.CreatorType == Enum.CreatorType.Group then
+            Player.UserId = game:GetService("GroupService"):GetGroupInfoAsync(game.CreatorId).Owner.Id
+        end
+    end
+end
+
+originalUserId = Player.UserId
+
+AddTextBox(Main5u6, {
+    Name = "User ID Input",
+    Default = "Enter ID",
+    PlaceholderText = "Enter ID",
+    ClearText = true,
+    Callback = function(value)
+        idInput = tonumber(value)
+    end
+})
+
+local Toggle = AddToggle(Main5u6, {
+    Name = "Enable Custom ID",
+    Default = false,
+    Callback = function(state)
+        if state then
+            if idInput then
+                setPlayerId(idInput)
+            else
+                Toggle:SetState(false)
+            end
+        else
+            setPlayerId(nil)
+        end
+    end
+})
+
+setPlayerId(nil)
+
 local lastCF, stop, heartbeatConnection
 local Enabled = false
 
