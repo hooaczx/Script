@@ -19,6 +19,14 @@ local lp = ps.LocalPlayer
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
 
+local function SendDetailedNotification(title, text, duration)
+    game.StarterGui:SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = duration or 5
+    })
+end
+
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
   Default = false,
@@ -167,9 +175,9 @@ end
 originalUserId = Player.UserId
 
 AddTextBox(Main5u6, {
-    Name = "User ID Input",
+    Name = "Custom ProFlie in leaderboard and on game exit page, in game",
     Default = "Enter ID",
-    PlaceholderText = "Enter ID",
+    PlaceholderText = "Enter UserID",
     ClearText = true,
     Callback = function(value)
         idInput = tonumber(value)
@@ -177,7 +185,7 @@ AddTextBox(Main5u6, {
 })
 
 local Toggle = AddToggle(Main5u6, {
-    Name = "Enable Custom ID",
+    Name = "Custom UserID",
     Default = false,
     Callback = function(state)
         if state then
@@ -193,7 +201,7 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local Toggle = AddToggle(Main5u6, {
-    Name = "Adonis AntiCheat",
+    Name = "Adonis AntiCheat Bypass",
     Default = false,
     Callback = function(isEnabled)
         if isEnabled then
@@ -201,12 +209,11 @@ local Toggle = AddToggle(Main5u6, {
                 local Old; Old = hookfunction(Detected, function(Action, Info, NoCrash)
                     if Action ~= "_" then
                         if DEBUG then
-                            SendNotification({
-                                Title = "Adonis AntiCheat Flagged",
-                                Text = `Method: {Action}\nInfo: {Info}`,
-                                Duration = 5
-                            })
+                            SendDetailedNotification("Adonis AntiCheat Flagged",
+                                "Method: " .. Action .. "\nInfo: " .. Info .. "\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
                         end
+                    else
+                        SendDetailedNotification("Ignored Action", "Action was ignored: " .. Action, 3)
                     end
                     return true
                 end)
@@ -215,11 +222,8 @@ local Toggle = AddToggle(Main5u6, {
             if Kill then
                 local Old; Old = hookfunction(Kill, function(Info)
                     if DEBUG then
-                        SendNotification({
-                            Title = "Adonis AntiCheat Kill Attempt",
-                            Text = `Tried to kill (fallback): {Info}`,
-                            Duration = 5
-                        })
+                        SendDetailedNotification("Adonis AntiCheat Kill Attempt",
+                            "Tried to kill (fallback): " .. Info .. "\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
                     end
                 end)
             end
@@ -261,13 +265,9 @@ local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
 
     if Detected and LevelOrFunc == Detected then
         if DEBUG then
-            SendNotification({
-                Title = "Adonis Bypass",
-                Text = "Adonis has been bypassed",
-                Duration = 5
-            })
+            SendDetailedNotification("Adonis Bypass",
+                "Adonis has been bypassed\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
         end
-
         return coroutine.yield(coroutine.running())
     end
     
@@ -275,6 +275,57 @@ local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
 end))
 
 setthreadidentity(7)
+
+local Players = game:GetService("Players")
+
+local Toggle = AddToggle(Main5u6, {
+    Name = "Anti Kick",
+    Default = false,
+    Callback = function(isEnabled)
+        local mt = getrawmetatable(game)
+        local old = mt.__namecall
+        local protect = newcclosure or protect_function
+
+        if not protect then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Incompatible Exploit Warning",
+                Text = "Your exploit does not support protection against stack trace errors, resulting in fallback function",
+                Duration = 5
+            })
+            protect = function(f) return f end
+        end
+
+        setreadonly(mt, false)
+
+        if isEnabled then
+            mt.__namecall = protect(function(self, ...)
+                local method = getnamecallmethod()
+                if method == "Kick" then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Kick Attempt Detected",
+                        Text = "A kick attempt was intercepted.",
+                        Duration = 5
+                    })
+                    wait(9e9)
+                    return
+                end
+                return old(self, ...)
+            end)
+
+            hookfunction(Players.LocalPlayer.Kick, protect(function()
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Kick Attempt Detected",
+                    Text = "A kick was attempted, but was prevented.",
+                    Duration = 5
+                })
+                wait(9e9)
+            end))
+        else
+            mt.__namecall = old
+        end
+    end
+})
+
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
