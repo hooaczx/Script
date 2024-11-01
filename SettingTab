@@ -243,12 +243,15 @@ local Players = game:GetService("Players")
 
 local kickReasons = {}
 
-local Dropdown = AddDropdown(Main5u6, {
-    Name = "log a Adonis Kick Reasons",
-    Options = kickReasons,
-    Callback = function(selectedOption)
-    end
+local myTable = AddTextTable(Main5u6, {
+    Name = "My Label",
+    Default = "Click Me"
 })
+
+myTable[5] = function(reason)
+    table.insert(kickReasons, reason)
+    SendDetailedNotification("Reason Recorded", "Kick reason has been added: " .. reason, 3)
+end
 
 local Toggle = AddToggle(Main5u6, {
     Name = "Adonis AntiCheat Bypass",
@@ -265,9 +268,7 @@ local Toggle = AddToggle(Main5u6, {
 
                         local reason = "Detected: " .. Action .. " | Info: " .. Info
                         if not table.find(kickReasons, reason) then
-                            table.insert(kickReasons, reason)
-                            SendDetailedNotification("Reason Recorded", "Kick reason has been recorded in the Dropdown.", 3)
-                            Dropdown:UpdateOptions(kickReasons)
+                            myTable[5](reason)
                         else
                             return nil
                         end
@@ -288,9 +289,7 @@ local Toggle = AddToggle(Main5u6, {
 
                     local reason = "Kill Attempt: " .. Info
                     if not table.find(kickReasons, reason) then
-                        table.insert(kickReasons, reason)
-                        SendDetailedNotification("Reason Recorded", "Kick reason has been recorded in the Dropdown.", 3)
-                        Dropdown:UpdateOptions(kickReasons)
+                        myTable[5](reason)
                     else
                         return nil
                     end
@@ -307,15 +306,19 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
+
 local kickAttempts = {}
 local kickReasons = {}
 
-local Dropdown = AddDropdown(Main5u6, {
-    Name = "log a Kick Reasons",
-    Options = {},
-    Callback = function(option)
-    end
+local myTable = AddTextTable(Main5u6, {
+    Name = "My Label",
+    Default = "Click Me"
 })
+
+myTable[5] = function(reason)
+    table.insert(kickReasons, reason)
+    SendDetailedNotification("Kick Reason Recorded", "Kick reason has been added: " .. reason, 3)
+end
 
 local ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
@@ -346,8 +349,7 @@ local ToggleKick = AddToggle(Main5u6, {
                     table.insert(kickAttempts, {time = os.time(), reason = reasonText})
 
                     if not table.find(kickReasons, reasonText) then
-                        table.insert(kickReasons, reasonText)
-                        Dropdown:AddOption(reasonText)
+                        myTable[5](reasonText)
                     end
 
                     game.StarterGui:SetCore("SendNotification", {
@@ -369,8 +371,7 @@ local ToggleKick = AddToggle(Main5u6, {
                 table.insert(kickAttempts, {time = os.time(), reason = reasonText})
 
                 if not table.find(kickReasons, reasonText) then
-                    table.insert(kickReasons, reasonText)
-                    Dropdown:AddOption(reasonText)
+                    myTable[5](reasonText)
                 end
 
                 game.StarterGui:SetCore("SendNotification", {
