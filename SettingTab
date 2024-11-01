@@ -87,7 +87,7 @@ local UserInputService = game:GetService("UserInputService")
 
 local scriptableCamera = Instance.new("Camera")
 scriptableCamera.Name = "ScriptableCamera"
-scriptableCamera.FieldOfView = Camera.FieldOfView  -- กำหนด FieldOfView ตามค่าจริงจากกล้องในเกม
+scriptableCamera.FieldOfView = Camera.FieldOfView
 
 local isCameraEnabled = false
 
@@ -99,7 +99,7 @@ end
 local function disableScriptableCamera()
     Camera.CameraType = Enum.CameraType.Custom
     local player = Players.LocalPlayer
-    Camera.CameraSubject = player.Character.Humanoid  -- กลับไปติดตามผู้เล่น
+    Camera.CameraSubject = player.Character.Humanoid
 end
 
 AddTextBox(Main5u6, {
@@ -129,6 +129,42 @@ local Toggle = AddToggle(Main5u6, {
         end
     end
 })
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local PersonCameraEnabled = false
+local originalMaxZoomDistance = LocalPlayer.CameraMaxZoomDistance
+local originalMinZoomDistance = LocalPlayer.CameraMinZoomDistance
+
+local function enableFirstPersonView()
+    local camera = workspace.CurrentCamera
+    camera.CameraType = Enum.CameraType.Scriptable
+    camera.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0)
+    LocalPlayer.CameraMaxZoomDistance = 0
+    LocalPlayer.CameraMinZoomDistance = 0
+end
+
+local function disableFirstPersonView()
+    local camera = workspace.CurrentCamera
+    camera.CameraType = Enum.CameraType.Custom
+    LocalPlayer.CameraMaxZoomDistance = originalMaxZoomDistance
+    LocalPlayer.CameraMinZoomDistance = originalMinZoomDistance
+end
+
+local Toggle = AddToggle(Main5u6, {
+    Name = "First Person View",
+    Default = false,
+    Callback = function(state)
+        PersonCameraEnabled = state
+        if state then
+            enableFirstPersonView()
+        else
+            disableFirstPersonView()
+        end
+    end
+})
+
 
 local originalWalkSpeed, originalJumpPower
 
