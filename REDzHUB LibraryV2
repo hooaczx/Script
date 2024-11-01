@@ -4016,6 +4016,28 @@ function AddTextTable(parent, Configs)
     Create("UIListLayout", ScrollBar, {
         Padding = UDim.new(0, 5)
     })
+
+  TextButton.MouseButton1Click:Connect(function()
+        local OptionSize, OptionsNumber = 25, 0
+        for _, v in pairs(ScrollBar:GetChildren()) do
+            if v:IsA("TextButton") and OptionsNumber < 5 then
+                OptionsNumber = OptionsNumber + 1
+                OptionSize = OptionSize + tonumber(v.Size.Y.Offset + 10)
+            end
+        end
+        if not DropOnOff then
+            CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, OptionSize), 0.3, false)
+            CreateTween(Arrow, "Rotation", 180, 0.3, false)
+            DropOnOff = true
+            Line.Visible = true
+        else
+            CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, 25), 0.3, false)
+            CreateTween(Arrow, "Rotation", 0, 0.3, true)
+            DropOnOff = false
+            Line.Visible = false
+        end
+    end)
+
     local function AddMessageToTable(message)
         local NewButton = Create("TextButton", ScrollBar, {
             Size = UDim2.new(1, 0, 0, 25),
