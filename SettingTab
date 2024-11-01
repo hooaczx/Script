@@ -242,16 +242,7 @@ setthreadidentity(7)
 local Players = game:GetService("Players")
 
 local kickReasons = {}
-
-local myTable = AddTextTable(Main5u6, {
-    Name = "My Label",
-    Default = "Click Me"
-})
-
-myTable[5] = function(reason)
-    table.insert(kickReasons, reason)
-    SendDetailedNotification("Reason Recorded", "Kick reason has been added: " .. reason, 3)
-end
+local textTable = AddTextTable(parent, {Name = "เหตุผลการเตะ"}) -- เพิ่ม Text Table สำหรับเหตุผลการเตะ
 
 local Toggle = AddToggle(Main5u6, {
     Name = "Adonis AntiCheat Bypass",
@@ -268,9 +259,9 @@ local Toggle = AddToggle(Main5u6, {
 
                         local reason = "Detected: " .. Action .. " | Info: " .. Info
                         if not table.find(kickReasons, reason) then
-                            myTable[5](reason)
-                        else
-                            return nil
+                            table.insert(kickReasons, reason)
+                            textTable.AddMessage(reason) -- เพิ่มเหตุผลลงใน Text Table
+                            SendDetailedNotification("Reason Recorded", "Kick reason has been recorded.", 3)
                         end
                         return nil
                     else
@@ -289,9 +280,9 @@ local Toggle = AddToggle(Main5u6, {
 
                     local reason = "Kill Attempt: " .. Info
                     if not table.find(kickReasons, reason) then
-                        myTable[5](reason)
-                    else
-                        return nil
+                        table.insert(kickReasons, reason)
+                        textTable.AddMessage(reason) -- เพิ่มเหตุผลลงใน Text Table
+                        SendDetailedNotification("Reason Recorded", "Kick reason has been recorded.", 3)
                     end
                     return nil
                 end)
@@ -306,19 +297,10 @@ local Toggle = AddToggle(Main5u6, {
     end
 })
 
-
 local kickAttempts = {}
 local kickReasons = {}
 
-local myTable = AddTextTable(Main5u6, {
-    Name = "My Label",
-    Default = "Click Me"
-})
-
-myTable[5] = function(reason)
-    table.insert(kickReasons, reason)
-    SendDetailedNotification("Kick Reason Recorded", "Kick reason has been added: " .. reason, 3)
-end
+local kickReasonTable = AddTextTable(Main5u6, {Name = "Kick Reasons"})
 
 local ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
@@ -349,7 +331,8 @@ local ToggleKick = AddToggle(Main5u6, {
                     table.insert(kickAttempts, {time = os.time(), reason = reasonText})
 
                     if not table.find(kickReasons, reasonText) then
-                        myTable[5](reasonText)
+                        table.insert(kickReasons, reasonText)
+                        kickReasonTable.AddMessage(reasonText) -- ใช้ kickReasonTable แทน
                     end
 
                     game.StarterGui:SetCore("SendNotification", {
@@ -371,7 +354,8 @@ local ToggleKick = AddToggle(Main5u6, {
                 table.insert(kickAttempts, {time = os.time(), reason = reasonText})
 
                 if not table.find(kickReasons, reasonText) then
-                    myTable[5](reasonText)
+                    table.insert(kickReasons, reasonText)
+                    kickReasonTable.AddMessage(reasonText) -- ใช้ kickReasonTable แทน
                 end
 
                 game.StarterGui:SetCore("SendNotification", {
@@ -389,6 +373,7 @@ local ToggleKick = AddToggle(Main5u6, {
         setreadonly(mt, true)
     end
 })
+
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
