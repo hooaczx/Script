@@ -601,6 +601,31 @@ AddToggle(Main5u6, {
     end
 })
 
+local Walkwithoutendtoggle = false
+
+local function Walkwithoutend()
+    while isBotActive do
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        
+        local randomX = math.random(-10, 10)
+        local randomZ = math.random(-10, 10)
+        local destination = character.HumanoidRootPart.Position + Vector3.new(randomX, 0, randomZ)
+        
+        character.Humanoid:MoveTo(destination)
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "Walk without end",
+    Default = false,
+    Callback = function(value)
+        Walkwithoutendtoggle = value
+        if Walkwithoutendtoggle then
+            Walkwithoutend()
+        end
+    end
+})
 
 AddToggle(Main5u6, {
     Name = "Injury effect character when hit or attack or blood reduction",
