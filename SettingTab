@@ -59,11 +59,13 @@ local Toggle = AddToggle(Main5u6, {
     local camera = game:GetService("Workspace").CurrentCamera
     if camera then
       if state then
-        originalFOV = 70
+        if not getgenv().originalFOV then
+          getgenv().originalFOV = camera.FieldOfView
+        end
         getgenv().zoomConnection = game:GetService("RunService").Heartbeat:Connect(function()
           if getgenv().loopZoom then
             pcall(function()
-              camera.FieldOfView = originalFOV + (getgenv().CameraZoom or 0)
+              camera.FieldOfView = getgenv().originalFOV + (getgenv().CameraZoom or 0)
             end)
           end
         end)
@@ -72,11 +74,14 @@ local Toggle = AddToggle(Main5u6, {
           getgenv().zoomConnection:Disconnect()
           getgenv().zoomConnection = nil
         end
-        camera.FieldOfView = originalFOV
+        if getgenv().originalFOV then
+          camera.FieldOfView = getgenv().originalFOV
+        end
       end
     end
   end
 })
+
 
 local originalWalkSpeed, originalJumpPower
 
