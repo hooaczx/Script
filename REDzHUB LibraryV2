@@ -3958,7 +3958,6 @@ end
 
 function AddTextTable(parent, Configs)
     local LabelName = Configs.Name or "Label!!"
-    local Default = Configs.Default or "TextBox"
     local DropOnOff = false
 
     local TextButton = Create("TextButton", parent, {
@@ -3999,20 +3998,6 @@ function AddTextTable(parent, Configs)
         BackgroundTransparency = 1
     })
 
-    local DefaultText = Create("TextLabel", TextButton, {
-        BackgroundColor3 = Configs_HUB.Cor_Hub,
-        BackgroundTransparency = 0.1,
-        Position = UDim2.new(1, -20, 0, 2.5),
-        AnchorPoint = Vector2.new(1, 0),
-        Size = UDim2.new(0, 100, 0, 20),
-        TextColor3 = Configs_HUB.Cor_DarkText,
-        TextScaled = true,
-        Font = Configs_HUB.Text_Font,
-        Text = Default
-    })
-    Corner(DefaultText) 
-    Stroke(DefaultText)
-
     local ScrollBar = Create("ScrollingFrame", TextButton, {
         Size = UDim2.new(1, 0, 1, -25),
         Position = UDim2.new(0, 0, 0, 25),
@@ -4031,28 +4016,7 @@ function AddTextTable(parent, Configs)
     Create("UIListLayout", ScrollBar, {
         Padding = UDim.new(0, 5)
     })
-
-    TextButton.MouseButton1Click:Connect(function()
-        local OptionSize, OptionsNumber = 25, 0
-        for _, v in pairs(ScrollBar:GetChildren()) do
-            if v:IsA("TextButton") and OptionsNumber < 5 then
-                OptionsNumber = OptionsNumber + 1
-                OptionSize = OptionSize + tonumber(v.Size.Y.Offset + 10)
-            end
-        end
-        if not DropOnOff then
-            CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, OptionSize), 0.3, false)
-            CreateTween(Arrow, "Rotation", 180, 0.3, false)
-            DropOnOff = true
-            Line.Visible = true
-        else
-            CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, 25), 0.3, false)
-            CreateTween(Arrow, "Rotation", 0, 0.3, true)
-            DropOnOff = false
-            Line.Visible = false
-        end
-    end)
-    function AddMessageToTable(message)
+    local function AddMessageToTable(message)
         local NewButton = Create("TextButton", ScrollBar, {
             Size = UDim2.new(1, 0, 0, 25),
             BackgroundColor3 = Color3.new(1, 1, 1),
@@ -4066,10 +4030,8 @@ function AddTextTable(parent, Configs)
         Stroke(NewButton)
     end
 
-    return {TextButton, Default, LabelName, ScrollBar, AddMessageToTable}
+    return {TextButton = TextButton, LabelName = LabelName, ScrollBar = ScrollBar, AddMessage = AddMessageToTable}
 end
-
-
 
   function AddTextLabel(parent, Configs)
     local LabelName = Configs[1] or Configs.Name or "Text Label!!"
