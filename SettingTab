@@ -40,16 +40,22 @@ local Toggle = AddToggle(Main5u6, {
   end
 })
 
+local originalWalkSpeed, originalJumpPower
+
 AddTextBox(Main5u6, {
   Name = "Number WalkSpeed",
   Default = "Enter",
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(value)
-    getgenv().Walkspeed = value
-    pcall(function()
-        game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
-        end) 
+    local additionalSpeed = tonumber(value)
+    if additionalSpeed then
+      local player = game:GetService("Players").LocalPlayer
+      local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+      if humanoid then
+        humanoid.WalkSpeed = humanoid.WalkSpeed + additionalSpeed
+      end
+    end
   end
 })
 
@@ -57,14 +63,23 @@ local Toggle = AddToggle(Main5u6, {
   Name = "WalkSpeed",
   Default = false,
   Callback = function(state)
-  getgenv().loopW = state
-    game:GetService("RunService").Heartbeat:Connect(function()
-        if loopW == true then
+    getgenv().loopW = state
+    local player = game:GetService("Players").LocalPlayer
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+      if state then
+        originalWalkSpeed = humanoid.WalkSpeed
+        game:GetService("RunService").Heartbeat:Connect(function()
+          if loopW then
             pcall(function()
-                game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = Walkspeed
+              humanoid.WalkSpeed = originalWalkSpeed + (getgenv().Walkspeed or 0)
             end)
-        end
-    end)
+          end
+        end)
+      else
+        humanoid.WalkSpeed = originalWalkSpeed
+      end
+    end
   end
 })
 
@@ -74,25 +89,38 @@ AddTextBox(Main5u6, {
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(value)
-    getgenv().Jumppower = value
-    pcall(function()
-        game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = value
-    end)
+    local additionalJump = tonumber(value)
+    if additionalJump then
+      local player = game:GetService("Players").LocalPlayer
+      local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+      if humanoid then
+        humanoid.JumpPower = humanoid.JumpPower + additionalJump
+      end
+    end
   end
 })
 
 local Toggle = AddToggle(Main5u6, {
   Name = "JumpPower",
   Default = false,
-  Callback = function(stahte)
-  getgenv().loopJ = stahte
-    game:GetService("RunService").Heartbeat:Connect(function()
-        if loopJ == true then
+  Callback = function(state)
+    getgenv().loopJ = state
+    local player = game:GetService("Players").LocalPlayer
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+      if state then
+        originalJumpPower = humanoid.JumpPower
+        game:GetService("RunService").Heartbeat:Connect(function()
+          if loopJ then
             pcall(function()
-                game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = Jumppower
+              humanoid.JumpPower = originalJumpPower + (getgenv().Jumppower or 0)
             end)
-        end
-    end)
+          end
+        end)
+      else
+        humanoid.JumpPower = originalJumpPower
+      end
+    end
   end
 })
 
@@ -390,8 +418,7 @@ local function start()
             lastCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
         end
     end)
-
-    lplr.Character:WaitForChild('Humanoid').RootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
+    lplr.Character:FindFirstChildOfClass('Humanoid').RootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
         if Enabled then
             stop = true
             if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
@@ -431,6 +458,7 @@ AddToggle(Main5u6, {
         end
     end
 })
+
 
 local function setCameraOcclusion()
     lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
