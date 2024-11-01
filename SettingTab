@@ -46,14 +46,7 @@ AddTextBox(Main5u6, {
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(value)
-    local cameraZoom = tonumber(value)
-    if cameraZoom then
-      local player = game:GetService("Players").LocalPlayer
-      local camera = game:GetService("Workspace").CurrentCamera
-      if camera then
-        camera.FieldOfView = cameraZoom
-      end
-    end
+    getgenv().CameraZoom = tonumber(value) or 0
   end
 })
 
@@ -67,14 +60,18 @@ local Toggle = AddToggle(Main5u6, {
     if camera then
       if state then
         originalFOV = camera.FieldOfView
-        game:GetService("RunService").Heartbeat:Connect(function()
-          if loopZoom then
+        getgenv().zoomConnection = game:GetService("RunService").Heartbeat:Connect(function()
+          if getgenv().loopZoom then
             pcall(function()
               camera.FieldOfView = originalFOV + (getgenv().CameraZoom or 0)
             end)
           end
         end)
       else
+        if getgenv().zoomConnection then
+          getgenv().zoomConnection:Disconnect()
+          getgenv().zoomConnection = nil
+        end
         camera.FieldOfView = originalFOV
       end
     end
