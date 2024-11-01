@@ -308,70 +308,81 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local kickAttempts = {}
+local kickReasons = {}
+
+local Dropdown = AddDropdown(Main5u6, {
+    Name = "Kick Reasons",
+    Options = {},
+    Callback = function(option)
+    end
+})
 
 local ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
     Default = false,
     Callback = function(isEnabled)
         local mt = getrawmetatable(game)
-        local old = mt.__namecall
+        local oldNameCall = mt.__namecall
         local protect = newcclosure or protect_function
+
         if not protect then
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Incompatible Exploit Warning",
-                Text = "Your exploit does not support protection against stack trace errors, resulting in fallback function",
+                Text = "Your exploit does not support protection against stack trace errors, using fallback function.",
                 Duration = 5
             })
             protect = function(f) return f end
         end
+
         setreadonly(mt, false)
+
         if isEnabled then
             mt.__namecall = protect(function(self, ...)
                 local method = getnamecallmethod()
                 local reason = {...}
+
                 if method == "Kick" then
-                    local isDuplicate = false
-                    for _, attempt in ipairs(kickAttempts) do
-                        if tostring(attempt.reason) == tostring(reason) then
-                            isDuplicate = true
-                            break
-                        end
+                    local reasonText = tostring(reason[1])
+                    table.insert(kickAttempts, {time = os.time(), reason = reasonText})
+
+                    if not table.find(kickReasons, reasonText) then
+                        table.insert(kickReasons, reasonText)
+                        Dropdown:AddOption(reasonText)
                     end
-                    if not isDuplicate then
-                        table.insert(kickAttempts, {time = os.time(), reason = reason})
-                        game.StarterGui:SetCore("SendNotification", {
-                            Title = "Kick Attempt Blocked",
-                            Text = "A kick attempt was intercepted and saved.\nReason: " .. tostring(reason[1]),
-                            Duration = 5
-                        })
-                    end
+
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Kick Attempt Blocked",
+                        Text = "A kick attempt was intercepted and saved.\nReason: " .. reasonText,
+                        Duration = 5
+                    })
+
                     self.Kick = nil
                     return
                 end
-                return old(self, ...)
+                return oldNameCall(self, ...)
             end)
 
             hookfunction(Players.LocalPlayer.Kick, protect(function(...)
                 local reason = {...}
-                local isDuplicate = false
-                for _, attempt in ipairs(kickAttempts) do
-                    if tostring(attempt.reason) == tostring(reason) then
-                        isDuplicate = true
-                        break
-                    end
+
+                local reasonText = tostring(reason[1])
+                table.insert(kickAttempts, {time = os.time(), reason = reasonText})
+
+                if not table.find(kickReasons, reasonText) then
+                    table.insert(kickReasons, reasonText)
+                    Dropdown:AddOption(reasonText)
                 end
-                if not isDuplicate then
-                    table.insert(kickAttempts, {time = os.time(), reason = reason})
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "Kick Attempt Blocked",
-                        Text = "A kick attempt was intercepted and saved.\nReason: " .. tostring(reason[1]),
-                        Duration = 5
-                    })
-                end
+
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Kick Attempt Blocked",
+                    Text = "A kick attempt was intercepted and saved.\nReason: " .. reasonText,
+                    Duration = 5
+                })
+
                 Players.LocalPlayer.Kick = nil
             end))
         else
-            mt.__namecall = old
+            mt.__namecall = oldNameCall
         end
 
         setreadonly(mt, true)
