@@ -771,51 +771,16 @@ local function pauseSong()
     isPaused = true
 end
 
-local RunService = game:GetService("RunService")
-local loadingTextConnection
-local loadingText = "loading"
-local dots = ""
-local maxDots = 3
-local loadingInterval = 0.7
-
-local function startLoadingDots(TitleLabel)
-    if loadingTextConnection then
-        loadingTextConnection:Disconnect()
-    end
-
-    loadingTextConnection = RunService.Heartbeat:Connect(function(deltaTime)
-        dots = dots .. "."
-        if #dots > maxDots then
-            dots = ""
-        end
-        TitleLabel.Text = loadingText..dots
-        wait(loadingInterval)
-    end)
-end
-
-local function stopLoadingDots(TitleLabel, songName)
-    if loadingTextConnection then
-        loadingTextConnection:Disconnect()
-        loadingTextConnection = nil
-    end
-    TitleLabel.Text = songName
-end
-
-
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
-        startLoadingDots(TitleLabel)
         soundmusic.SoundId = song.id
         soundmusic.TimePosition = savedTimePosition
-        soundmusic.Played:Connect(function()
-        stopLoadingDots(TitleLabel, song.name)
-        end)
         soundmusic:Play()
+        TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
     end
 end
-
 
 function FormatTime(seconds)
     local minutes = math.floor(seconds / 60)
@@ -1279,8 +1244,8 @@ TimeLabel.TextWrapped = true
 TimeLabel.TextColor3 = Configs_HUB.Cor_Text
 TimeLabel.Font = Configs_HUB.Text_Font
 TimeLabel.Text = "0:00 / 0:00"
-TimeLabel.Size = UDim2.new(0.09, 0, 0.06, 0)
-TimeLabel.Position = UDim2.new(0.01, 0, 0.1, 0)
+TimeLabel.Size = UDim2.new(0.06, 0, 0.06, 0)
+TimeLabel.Position = UDim2.new(0.04, 0, 0.1, 0)
 TimeLabel.AnchorPoint = Vector2.new(0.3, 0.02)
 TimeLabel.BackgroundTransparency = 1
 TextSetColor(TimeLabel) 
