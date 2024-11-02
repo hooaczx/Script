@@ -265,6 +265,7 @@ local Toggle = AddToggle(Main5u6, {
 
 getgenv().name = "Protected"
 getgenv().ProtectName = false
+local originalName = game.Players.LocalPlayer.Name
 
 AddTextBox(Main5u6, {
   Name = "Custom Name",
@@ -320,7 +321,7 @@ local function protectNameInTextLabels()
             return
         end
         for _, v in ipairs(leaderboard:GetDescendants()) do
-            if v:IsA("TextLabel") and v.Text == Plr.Name then
+            if v:IsA("TextLabel") and v.Text == originalName then
                 v.Text = getgenv().name
             end
         end
@@ -328,9 +329,16 @@ local function protectNameInTextLabels()
 end
 
 ToggleWalk.Callback = function(state)
+    local Plr = game.Players.LocalPlayer
     getgenv().ProtectName = state
     if state then
         protectNameInTextLabels()
+    else
+        for _, value in ipairs(game:GetDescendants()) do 
+            if value:IsA("TextLabel") then 
+                value.Text = value.Text:gsub(getgenv().name, originalName)
+            end
+        end
     end
 end
 
