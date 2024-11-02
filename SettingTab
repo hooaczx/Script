@@ -278,7 +278,9 @@ local function protectNameInTextLabels()
                 value.Text = value.Text:gsub(Plr.Name, getgenv().name)
             end
             value:GetPropertyChangedSignal("Text"):Connect(function()
-                value.Text = value.Text:gsub(Plr.Name, getgenv().name)
+                if getgenv().ProtectName then
+                    value.Text = value.Text:gsub(Plr.Name, getgenv().name)
+                end
             end)
         end
     end
@@ -287,7 +289,9 @@ local function protectNameInTextLabels()
         if value:IsA("TextLabel") then 
             local has = string.find(value.Text, Plr.Name)
             value:GetPropertyChangedSignal("Text"):Connect(function()
-                value.Text = value.Text:gsub(Plr.Name, getgenv().name)
+                if getgenv().ProtectName then
+                    value.Text = value.Text:gsub(Plr.Name, getgenv().name)
+                end
             end)
             if has then 
                 value.Text = value.Text:gsub(Plr.Name, getgenv().name)
@@ -325,6 +329,9 @@ AddTextBox(Main5u6, {
   ClearText = true,
   Callback = function(input)
       getgenv().name = input
+      if getgenv().ProtectName then
+          protectNameInTextLabels()
+      end
   end
 })
 
@@ -340,6 +347,7 @@ local ToggleWalk = AddToggle(Main5u6, {
       end
   end
 })
+
 
 local getinfo = getinfo or debug.getinfo
 local DEBUG = false
