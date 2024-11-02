@@ -83,7 +83,7 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 
-local originalWalkSpeed, originalJumpPower
+local originalWalkSpeed, originalJumpPower = 16, 50 -- ค่าเริ่มต้นสำหรับ WalkSpeed และ JumpPower
 
 AddTextBox(Main5u6, {
   Name = "Number WalkSpeed",
@@ -93,16 +93,12 @@ AddTextBox(Main5u6, {
   Callback = function(value)
     local additionalSpeed = tonumber(value)
     if additionalSpeed then
-      local player = game:GetService("Players").LocalPlayer
-      local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-      if humanoid then
-        humanoid.WalkSpeed = humanoid.WalkSpeed + additionalSpeed
-      end
+      getgenv().Walkspeed = additionalSpeed
     end
   end
 })
 
-local Toggle = AddToggle(Main5u6, {
+local ToggleWalk = AddToggle(Main5u6, {
   Name = "WalkSpeed",
   Default = false,
   Callback = function(state)
@@ -134,16 +130,12 @@ AddTextBox(Main5u6, {
   Callback = function(value)
     local additionalJump = tonumber(value)
     if additionalJump then
-      local player = game:GetService("Players").LocalPlayer
-      local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-      if humanoid then
-        humanoid.JumpPower = humanoid.JumpPower + additionalJump
-      end
+      getgenv().Jumppower = additionalJump
     end
   end
 })
 
-local Toggle = AddToggle(Main5u6, {
+local ToggleJump = AddToggle(Main5u6, {
   Name = "JumpPower",
   Default = false,
   Callback = function(state)
