@@ -3310,8 +3310,8 @@ end
     
     TextSetColor(TextLabel)
   end
-  
-  function AddToggle(parent, Configs)
+
+function AddToggle(parent, Configs)
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
     local Callback = Configs.Callback or function() end
@@ -3322,7 +3322,9 @@ end
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
-    })Corner(TextButton)Stroke(TextButton)
+    })
+    Corner(TextButton)
+    Stroke(TextButton)
     
     local TextLabel = Create("TextLabel", TextButton, {
       TextSize = 12,
@@ -3340,7 +3342,8 @@ end
       Size = UDim2.new(0, 25, 0, 15),
       Position = UDim2.new(0, 5, 0, 5),
       BackgroundTransparency = 1,
-    })Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
+    })
+    Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
     local Stroke = Stroke(Frame1, {Thickness = 2})
     
     local Frame2 = Create("Frame", Frame1, {
@@ -3348,7 +3351,8 @@ end
       Position = UDim2.new(0, 2, 0.5, 0),
       AnchorPoint = Vector2.new(0, 0.5),
       BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+    })
+    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
     
     local OnOff = false
     if Default then
@@ -3359,6 +3363,22 @@ end
       CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
     end
     Callback(OnOff)
+
+    local function ResetToggle()
+      OnOff = false
+      CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
+      CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
+      CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+      CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+      Callback(false)
+    end
+    
+    parent.AncestryChanged:Connect(function(_, parent)
+      if not parent then
+        ResetToggle()
+      end
+    end)
+
     TextButton.MouseButton1Click:Connect(function()
       if Frame2.Position.X.Offset < 5 then
         OnOff = true
@@ -3368,16 +3388,12 @@ end
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
         Callback(true)
       else
-        OnOff = false
-        CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
-        CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-        Callback(false)
+        ResetToggle()
       end
     end)
     return {Frame2, Stroke, OnOff, Callback}
   end
+
   
   function UpdateToggle(toggle, value)
     local Frame2 = toggle[1]
