@@ -220,7 +220,7 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 local Player = game.Players.LocalPlayer
-local originalUserId
+local originalUserId = Player.UserId
 local idInput
 
 local function setPlayerId(newId)
@@ -235,15 +235,16 @@ local function setPlayerId(newId)
     end
 end
 
-originalUserId = Player.UserId
-
 AddTextBox(Main5u6, {
-    Name = "Custom ProFlie in leaderboard and on game exit page, in game",
+    Name = "Custom Profile in leaderboard",
     Default = "Enter ID",
     PlaceholderText = "Enter UserID",
     ClearText = true,
     Callback = function(value)
         idInput = tonumber(value)
+        if Toggle:GetState() then
+            setPlayerId(idInput)
+        end
     end
 })
 
@@ -336,7 +337,7 @@ AddTextBox(Main5u6, {
 })
 
 local ToggleWalk = AddToggle(Main5u6, {
-  Name = "Enable Name Protection",
+  Name = "Name Protection",
   Default = false,
   Callback = function(state)
       getgenv().ProtectName = state
