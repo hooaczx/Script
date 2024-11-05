@@ -3310,6 +3310,36 @@ end
     TextSetColor(TextLabel)
   end
 
+function AddWarningMessage(parent, Configs)
+    WarningMessage = Configs.WarningMessage
+    ImageId = Configs.ImageId
+    local WarningFrame = Create("Frame", parent, {
+        Size = UDim2.new(1, 0, 0, 34),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    })
+    local FrameStroke = Create("UIStroke", WarningFrame, {
+        Thickness = 2,
+        Color = Color3.fromRGB(255, 165, 0),
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    })
+    local ImageLabel = Create("ImageLabel", WarningFrame, {
+        Image = ImageId,
+        Size = UDim2.new(0.14, 0, 1, 0),
+        BackgroundTransparency = 1
+    })
+    local WarningLabel = Create("TextLabel", WarningFrame, {
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextWrapped = true,
+        Text = WarningMessage,
+        Size = UDim2.new(0.86, 0, 0, 0),
+        Position = UDim2.new(0.14, 0, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
+    })TextSetColor(WarningLabel)
+end
+
 function AddToggle(parent, Configs)
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
