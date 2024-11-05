@@ -53,7 +53,7 @@ local function updateSpeed(newSpeed)
 end
 
 AddTextBox(Main5u6, {
-    Name = " Number Speed Freecam",
+    Name = "Number Speed Freecak",
     Default = "Enter",
     PlaceholderText = "Enter speed",
     ClearText = true,
@@ -73,18 +73,21 @@ local ToggleWalk = AddToggle(Main5u6, {
         if enabled then
             createPart()
             player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            camera.CameraSubject = part
+            camera.CFrame = CFrame.new(part.Position, part.Position + Vector3.new(0, 0, -1))
         else
             if part then
                 part:Destroy()
                 part = nil
             end
             camera.CameraSubject = player.Character:WaitForChild("Humanoid")
+            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
         end
     end
 })
 
 RunService.RenderStepped:Connect(function()
-    if freecamEnabled then
+    if freecamEnabled and part then
         local direction = controlModule:GetMoveVector()
         local desiredVelocity = Vector3.new()
 
@@ -96,6 +99,13 @@ RunService.RenderStepped:Connect(function()
         end
 
         part.Position = part.Position + desiredVelocity * RunService.Heartbeat:Wait()
+
+        if not checkFirstPersonView() then
+            part:Destroy()
+            part = nil
+            createPart()
+        end
+
         camera.CFrame = CFrame.new(part.Position, part.Position + camera.CFrame.LookVector)
     end
 end)
