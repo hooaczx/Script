@@ -3119,6 +3119,20 @@ end
 local ShiftLockAction = ContextActionService:BindAction("Shift Lock", ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
+ScreenGui.AncestryChanged:Connect(function()
+    if not ScreenGui:IsDescendantOf(game) then
+        if Active then
+            Player.Character.Humanoid.AutoRotate = true
+            ShiftLockButton.Image = States.Off
+            ShiftlockCursor.Visible = false
+            pcall(function()
+                Active:Disconnect()
+                Active = nil
+            end)
+        end
+    end
+end)
+
 RunService.Heartbeat:Connect(function()
     if not CoreGui:FindFirstChild(ScreenGui.Name) then
         if Active then
