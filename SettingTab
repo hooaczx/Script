@@ -4,6 +4,11 @@ local function isNumber(str)
     return true
   end
 end
+repeat
+    wait()
+until game:IsLoaded()
+local camera = workspace.CurrentCamera
+local controlModule = require(player.PlayerScripts:WaitForChild('PlayerModule'):WaitForChild("ControlModule"))
 getgenv().TPSpeed = 3
 getgenv().TPWalk = false
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
@@ -26,6 +31,76 @@ local function SendDetailedNotification(title, text, duration)
         Duration = duration or 5
     })
 end
+
+local speed = 50
+local freecamEnabled = false
+local part
+
+local function createPart()
+    if part then
+        part:Destroy()
+    end
+    
+    part = Instance.new("Part", workspace)
+    part.Transparency = 1
+    part.Anchored = true
+    part.CanCollide = false
+    camera.CameraSubject = part
+end
+
+local function updateSpeed(newSpeed)
+    speed = newSpeed
+end
+
+AddTextBox(Main5u6, {
+    Name = " Number Speed Freecam",
+    Default = "Enter",
+    PlaceholderText = "Enter speed",
+    ClearText = true,
+    Callback = function(value)
+        local newSpeed = tonumber(value)
+        if newSpeed then
+            updateSpeed(newSpeed)
+        end
+    end
+})
+
+local ToggleWalk = AddToggle(Main5u6, {
+    Name = "Freecam",
+    Default = false,
+    Callback = function(enabled)
+        freecamEnabled = enabled
+        if enabled then
+            createPart()
+        else
+            if part then
+                part:Destroy()
+                part = nil
+            end
+        end
+    end
+})
+
+RunService.RenderStepped:Connect(function()
+    if freecamEnabled then
+        local direction = controlModule:GetMoveVector()
+        local desiredVelocity = Vector3.new()
+
+        if direction.X ~= 0 then
+            desiredVelocity = desiredVelocity + camera.CFrame.RightVector * (direction.X * speed)
+        end
+        if direction.Z ~= 0 then
+            desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (direction.Z * speed)
+        end
+
+        part.Position = part.Position + desiredVelocity * RunService.Heartbeat:Wait()
+        camera.CFrame = CFrame.new(part.Position, part.Position + camera.CFrame.LookVector)
+    end
+end)
+
+player.CharacterAdded:Connect(function(character)
+    createPart()
+end)
 
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
