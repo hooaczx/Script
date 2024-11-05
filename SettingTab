@@ -72,11 +72,13 @@ local ToggleWalk = AddToggle(Main5u6, {
         freecamEnabled = enabled
         if enabled then
             createPart()
+            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
         else
             if part then
                 part:Destroy()
                 part = nil
             end
+            camera.CameraSubject = player.Character:WaitForChild("Humanoid")
         end
     end
 })
