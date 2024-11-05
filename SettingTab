@@ -85,25 +85,24 @@ local ToggleWalk = AddToggle(Main5u6, {
 })
 
 RunService.RenderStepped:Connect(function()
-    if freecamEnabled and part then -- ตรวจสอบว่า part มีอยู่ก่อนที่จะเข้าถึงคุณสมบัติ
-        local direction = controlModule:GetMoveVector()
+    if freecamEnabled and part then
+        local moveDirection = controlModule:GetMoveVector()
         local desiredVelocity = Vector3.new()
-
-        if direction.X ~= 0 then
-            desiredVelocity = desiredVelocity + camera.CFrame.RightVector * (direction.X * speed)
+        if moveDirection.X ~= 0 then
+            desiredVelocity = desiredVelocity + camera.CFrame.RightVector * (moveDirection.X * speed)
         end
-        if direction.Z ~= 0 then
-            desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (direction.Z * speed)
+        if moveDirection.Z ~= 0 then
+            desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
-
-        part.Position = part.Position + desiredVelocity * RunService.Heartbeat:Wait()
-        camera.CFrame = CFrame.new(part.Position + Vector3.new(0, 5, -10), part.Position) -- ปรับค่า Vector3 ใหม่เพื่อควบคุมระยะ
+        part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
+        camera.CFrame = CFrame.new(part.Position + Vector3.new(0, 5, -10), part.Position)
     end
 end)
 
 player.CharacterAdded:Connect(function(character)
     createPart()
 end)
+
 
 local Toggle = AddToggle(Main5u6, {
   Name = "Infinite Jump",
