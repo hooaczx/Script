@@ -1210,8 +1210,7 @@ searchButton.BackgroundTransparency = 1
 searchButton.Image = "rbxthumb://type=Asset&id=85019257025290&w=150&h=150"
 
 local TitleLabel = Instance.new("TextLabel", ScreenGui)
-TitleLabel.TextSize = 12
-TitleLabel.TextWrapped = true
+TitleLabel.TextScaled = true
 TitleLabel.TextColor3 = Configs_HUB.Cor_Text
 TitleLabel.Text = songs[currentSongIndex].name
 TitleLabel.Size = UDim2.new(0.2, 0, 0.07, 0)
@@ -1239,13 +1238,12 @@ ProgressCircle.Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
 Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
 
 local TimeLabel = Instance.new("TextLabel", ScreenGui)
-TimeLabel.TextSize = 12
-TimeLabel.TextWrapped = true
+TimeLabel.TextScaled = true
 TimeLabel.TextColor3 = Configs_HUB.Cor_Text
 TimeLabel.Font = Configs_HUB.Text_Font
 TimeLabel.Text = "0:00 / 0:00"
-TimeLabel.Size = UDim2.new(0.06, 0, 0.06, 0)
-TimeLabel.Position = UDim2.new(0.03, 0, 0.09, 0)
+TimeLabel.Size = UDim2.new(0.075, 0, 0.06, 0)
+TimeLabel.Position = UDim2.new(0.02, 0, 0.09, 0)
 TimeLabel.AnchorPoint = Vector2.new(0.3, 0.02)
 TimeLabel.BackgroundTransparency = 1
 TextSetColor(TimeLabel) 
@@ -1413,7 +1411,6 @@ local function createToggleButton(parent, position, callback, initialState)
     Frame2.AnchorPoint = Vector2.new(0, 0.5)
     Frame2.BackgroundColor3 = initialState and Color3.fromRGB(30, 140, 200) or Configs_HUB.Cor_Stroke
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
-    
 
     local OnOff = initialState
 
@@ -1430,6 +1427,15 @@ local function createToggleButton(parent, position, callback, initialState)
             CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
             callback(false)
             falsetoggle:Play()
+        end
+    end)
+
+    TextButton.AncestryChanged:Connect(function(_, parent)
+        if not parent and OnOff then
+            OnOff = false
+            Frame2.Position = UDim2.new(0, 2, 0.5, 0)
+            Frame2.BackgroundColor3 = Configs_HUB.Cor_Stroke
+            callback(false)
         end
     end)
 
@@ -3317,84 +3323,83 @@ function AddToggle(parent, Configs)
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      Text = "",
-      AutoButtonColor = false
+        Size = UDim2.new(1, 0, 0, 25),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame",
+        Text = "",
+        AutoButtonColor = false
     })
     Corner(TextButton)
     Stroke(TextButton)
     
     local TextLabel = Create("TextLabel", TextButton, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      TextWrapped = true,
-      Text = ToggleName,
-      Size = UDim2.new(1, 0, 1, 0),
-      Position = UDim2.new(0, 35, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextWrapped = true,
+        Text = ToggleName,
+        Size = UDim2.new(1, 0, 1, 0),
+        Position = UDim2.new(0, 35, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
     })
     
     local Frame1 = Create("Frame", TextButton, {
-      Size = UDim2.new(0, 25, 0, 15),
-      Position = UDim2.new(0, 5, 0, 5),
-      BackgroundTransparency = 1,
+        Size = UDim2.new(0, 25, 0, 15),
+        Position = UDim2.new(0, 5, 0, 5),
+        BackgroundTransparency = 1,
     })
     Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
     local Stroke = Stroke(Frame1, {Thickness = 2})
     
     local Frame2 = Create("Frame", Frame1, {
-      Size = UDim2.new(0, 13, 0, 13),
-      Position = UDim2.new(0, 2, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke
+        Size = UDim2.new(0, 13, 0, 13),
+        Position = UDim2.new(0, 2, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = Configs_HUB.Cor_Stroke
     })
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
     
     local OnOff = false
     if Default then
-      OnOff = true
-      CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
-      CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-    end
-    Callback(OnOff)
-
-    local function ResetToggle()
-      OnOff = false
-      CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
-      CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-      CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-      CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-      Callback(false)
-    end
-    
-    parent.AncestryChanged:Connect(function(_, parent)
-      if not parent then
-        ResetToggle()
-      end
-    end)
-
-    TextButton.MouseButton1Click:Connect(function()
-      if Frame2.Position.X.Offset < 5 then
         OnOff = true
         CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        Callback(true)
-      else
-        ResetToggle()
-      end
+    end
+    Callback(OnOff)
+
+    local function ResetToggle()
+        OnOff = false
+        CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+        Callback(false)
+    end
+    
+    parent.AncestryChanged:Connect(function(_, parent)
+        if not parent and OnOff then
+            ResetToggle()
+        end
+    end)
+
+    TextButton.MouseButton1Click:Connect(function()
+        if Frame2.Position.X.Offset < 5 then
+            OnOff = true
+            CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            Callback(true)
+        else
+            ResetToggle()
+        end
     end)
     return {Frame2, Stroke, OnOff, Callback}
-  end
+end
 
-  
   function UpdateToggle(toggle, value)
     local Frame2 = toggle[1]
     local Stroke = toggle[2]
