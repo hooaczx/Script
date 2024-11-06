@@ -2614,6 +2614,7 @@ function createSettingSection(parent, title, description, buttonCallback, button
     titleLabel.BackgroundTransparency = 1
     titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     titleLabel.Text = title
+    TextSetColor(titleLabel)
     
     local descriptionLabel = Instance.new("TextLabel", sectionFrame)
     descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
@@ -2623,6 +2624,7 @@ function createSettingSection(parent, title, description, buttonCallback, button
     descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
     descriptionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     descriptionLabel.Text = description
+    TextSetColor(titleLabel)
     
     local toggleButton = createToggleButton(sectionFrame, UDim2.new(0.82, 0, 0.75, 0), buttonCallback, buttonState)
     
@@ -2907,104 +2909,87 @@ rainSound.SoundId = "rbxassetid://1516791621"
 rainSound.Volume = 1
 rainSound.Looped = true
 
-local framerain = Instance.new("Frame", scrollingSettingFrame)
-framerain.Size = UDim2.new(1, 0, 0, 100)
-framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
-framerain.BackgroundTransparency = 0
+createSettingSection(scrollingSettingFrame, "Rain🌧", 
+    [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
+    function(isLightingEnabled)
+        if isLightingEnabled then
+            Lighting.ClockTime = 12
 
-local Text10 = Instance.new("TextLabel", framerain)
-Text10.Size = UDim2.new(1, 0, 0, 30)
-Text10.TextScaled = true
-Text10.TextXAlignment = Enum.TextXAlignment.Left
-Text10.BackgroundTransparency = 1
-Text10.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text10.Text = "Rain🌧"
-
-local Text11 = Instance.new("TextLabel", framerain)
-Text11.Size = UDim2.new(1, 0, 0, 50)
-Text11.TextScaled = true
-Text11.TextXAlignment = Enum.TextXAlignment.Left
-Text11.BackgroundTransparency = 1
-Text11.Position = UDim2.new(0, 0, 0.32, 0)
-Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
-
-local framerainButton = createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), function(isLightingEnabled)
-    if isLightingEnabled then
-        game.Lighting.ClockTime = 12
-
-        for _, v in pairs(Lighting:GetChildren()) do
-            v:Destroy()
-        end
-
-        local Bloom = Instance.new("BloomEffect")
-        Bloom.Parent = Lighting
-        Bloom.Intensity = 0.1
-        Bloom.Size = 20
-        Bloom.Threshold = 0.5
-
-        local Blur = Instance.new("BlurEffect")
-        Blur.Parent = Lighting
-        Blur.Size = 5
-
-        local ColorCor = Instance.new("ColorCorrectionEffect")
-        ColorCor.Parent = Lighting
-        ColorCor.Brightness = -0.2
-        ColorCor.Contrast = 0.1
-        ColorCor.Saturation = 0.0
-        ColorCor.TintColor = Color3.fromRGB(150, 150, 150)
-
-        local SunRays = Instance.new("SunRaysEffect")
-        SunRays.Parent = Lighting
-        SunRays.Intensity = 0.0
-        SunRays.Spread = 0.6
-
-        local Sky = Instance.new("Sky")
-        Sky.Parent = Lighting
-        Sky.SkyboxBk = "rbxassetid://4498828382"
-        Sky.SkyboxDn = "rbxassetid://4498828812"
-        Sky.SkyboxFt = "rbxassetid://4498829917"
-        Sky.SkyboxLf = "rbxassetid://4498830911"
-        Sky.SkyboxRt = "rbxassetid://4498830417"
-        Sky.SkyboxUp = "rbxassetid://4498831746"
-        Sky.SunAngularSize = 30
-
-        local Atm = Instance.new("Atmosphere")
-        Atm.Parent = Lighting
-        Atm.Density = 0.6
-        Atm.Offset = 0.1
-        Atm.Color = Color3.fromRGB(150, 150, 150)
-        Atm.Decay = Color3.fromRGB(150, 150, 150)
-        Atm.Glare = 0.5
-        Atm.Haze = 1
-
-        rainSound:Play()
-
-        Lighting.Ambient = Color3.fromRGB(200, 200, 200)
-        Lighting.Brightness = 2.5
-        Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
-        Lighting.ColorShift_Top = Color3.fromRGB(150, 150, 150)
-        Lighting.EnvironmentDiffuseScale = 0.1
-        Lighting.EnvironmentSpecularScale = 0.1
-        Lighting.GlobalShadows = true
-        Lighting.OutdoorAmbient = Color3.fromRGB(10, 10, 10)
-        Lighting.ShadowSoftness = 0.5
-        Lighting.GeographicLatitude = 45
-        Lighting.ExposureCompensation = 0.6
-    else
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+            for _, v in pairs(Lighting:GetChildren()) do
                 v:Destroy()
             end
+
+            local Bloom = Instance.new("BloomEffect")
+            Bloom.Parent = Lighting
+            Bloom.Intensity = 0.1
+            Bloom.Size = 20
+            Bloom.Threshold = 0.5
+
+            local Blur = Instance.new("BlurEffect")
+            Blur.Parent = Lighting
+            Blur.Size = 5
+
+            local ColorCor = Instance.new("ColorCorrectionEffect")
+            ColorCor.Parent = Lighting
+            ColorCor.Brightness = -0.2
+            ColorCor.Contrast = 0.1
+            ColorCor.Saturation = 0.0
+            ColorCor.TintColor = Color3.fromRGB(150, 150, 150)
+
+            local SunRays = Instance.new("SunRaysEffect")
+            SunRays.Parent = Lighting
+            SunRays.Intensity = 0.0
+            SunRays.Spread = 0.6
+
+            local Sky = Instance.new("Sky")
+            Sky.Parent = Lighting
+            Sky.SkyboxBk = "rbxassetid://4498828382"
+            Sky.SkyboxDn = "rbxassetid://4498828812"
+            Sky.SkyboxFt = "rbxassetid://4498829917"
+            Sky.SkyboxLf = "rbxassetid://4498830911"
+            Sky.SkyboxRt = "rbxassetid://4498830417"
+            Sky.SkyboxUp = "rbxassetid://4498831746"
+            Sky.SunAngularSize = 30
+
+            local Atm = Instance.new("Atmosphere")
+            Atm.Parent = Lighting
+            Atm.Density = 0.6
+            Atm.Offset = 0.1
+            Atm.Color = Color3.fromRGB(150, 150, 150)
+            Atm.Decay = Color3.fromRGB(150, 150, 150)
+            Atm.Glare = 0.5
+            Atm.Haze = 1
+
+            rainSound:Play()
+
+            Lighting.Ambient = Color3.fromRGB(200, 200, 200)
+            Lighting.Brightness = 2.5
+            Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
+            Lighting.ColorShift_Top = Color3.fromRGB(150, 150, 150)
+            Lighting.EnvironmentDiffuseScale = 0.1
+            Lighting.EnvironmentSpecularScale = 0.1
+            Lighting.GlobalShadows = true
+            Lighting.OutdoorAmbient = Color3.fromRGB(10, 10, 10)
+            Lighting.ShadowSoftness = 0.5
+            Lighting.GeographicLatitude = 45
+            Lighting.ExposureCompensation = 0.6
+        else
+            for _, v in pairs(Lighting:GetChildren()) do
+                if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+                    v:Destroy()
+                end
+            end
+
+            rainSound:Pause()
+
+            Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+            Lighting.Brightness = 2
+            Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
+            Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
+            Lighting.GlobalShadows = false
         end
-        rainSound:Pause()
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.Brightness = 2
-        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
-        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-        Lighting.GlobalShadows = false
-    end
-end, isLightingEnabled)
+    end, 
+    isLightingEnabled)
 
 local togglehideName = false
 
@@ -3027,32 +3012,12 @@ end
 
 game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
-local framehidename = Instance.new("Frame", scrollingSettingFrame)
-framehidename.Size = UDim2.new(1, 0, 0, 100)
-framehidename.BackgroundColor3 = Configs_HUB.Cor_Hub
-framehidename.BackgroundTransparency = 0
-
-local Text12 = Instance.new("TextLabel", framehidename)
-Text12.Size = UDim2.new(1, 0, 0, 30)
-Text12.TextScaled = true
-Text12.TextXAlignment = Enum.TextXAlignment.Left
-Text12.BackgroundTransparency = 1
-Text12.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text12.Text = "Hide Name"
-
-local Text13 = Instance.new("TextLabel", framehidename)
-Text13.Size = UDim2.new(1, 0, 0, 50)
-Text13.TextScaled = true
-Text13.TextXAlignment = Enum.TextXAlignment.Left
-Text13.BackgroundTransparency = 1
-Text13.Position = UDim2.new(0, 0, 0.32, 0)
-Text13.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
-
-local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
+createSettingSection(scrollingSettingFrame, "Hide Name", 
+[[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]],
+    function(state)
     togglehideName = state
     toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
-end, togglehideName)
+end, isLightingEnabled)
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
