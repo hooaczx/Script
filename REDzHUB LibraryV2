@@ -2753,14 +2753,13 @@ local TinnLayout = Instance.new("UIListLayout", scrollingSettingFrame)
 TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TinnLayout.Padding = UDim.new(0, 5)
 
-local screenGui
 local ripples = {}
 local isClickEffectEnabled = true
 
 functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
 [[This creates an effect where, when you press the screen, it will look like a circle. Like water hits with something, it widens and disappears]], 
 function(isClickEffectEnabled)
-if isClickEffectEnabled then
+    if isClickEffectEnabled then
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -2782,7 +2781,7 @@ if isClickEffectEnabled then
                     local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
                     tween:Play()
 
-                    ripples[input.UserInputObject] = ripple
+                    table.insert(ripples, ripple)
 
                     local clickSound = Instance.new("Sound")
                     clickSound.SoundId = "rbxassetid://15675059323"
@@ -2798,8 +2797,8 @@ if isClickEffectEnabled then
 
         UserInputService.InputEnded:Connect(function(input, gameProcessed)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                if ripples[input.UserInputObject] then
-                    local ripple = ripples[input.UserInputObject]
+                if #ripples > 0 then
+                    local ripple = ripples[#ripples]
                     local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
                     local sizeGoal = {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}
                     local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
@@ -2807,16 +2806,18 @@ if isClickEffectEnabled then
                     tween.Completed:Connect(function()
                         ripple:Destroy()
                     end)
-                    ripples[input.UserInputObject] = nil
+                    table.remove(ripples, #ripples)
                 end
             end
         end)
     else
+        for _, ripple in ipairs(ripples) do
+            ripple:Destroy()
+        end
         ripples = {}
     end
 end,
 isClickEffectEnabled)
-
 
 local copyEnabled = false
 
