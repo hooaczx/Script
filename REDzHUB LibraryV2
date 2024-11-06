@@ -1422,7 +1422,7 @@ end)
 
 local functions = {}
 
-functions.createToggleButton = function(parent, position, callback, initialState)
+functions.createToggleButton = function(parent, position, callback, initialState, linkedToggle)
     local TextButton = Instance.new("TextButton", parent)
     TextButton.Size = UDim2.new(0.17, 0, 0, 25)
     TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
@@ -1439,10 +1439,8 @@ functions.createToggleButton = function(parent, position, callback, initialState
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
 
     local OnOff = initialState
-
-    TextButton.MouseButton1Click:Connect(function()
-        OnOff = not OnOff
-
+    local function toggle(state)
+        OnOff = state
         if OnOff then
             CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
             CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
@@ -1454,21 +1452,26 @@ functions.createToggleButton = function(parent, position, callback, initialState
             callback(false)
             falsetoggle:Play()
         end
+    end
+
+    TextButton.MouseButton1Click:Connect(function()
+        toggle(not OnOff)
+        if linkedToggle and OnOff then
+            linkedToggle(false)
+        end
     end)
 
     TextButton.AncestryChanged:Connect(function(_, parent)
         if not parent and OnOff then
-            OnOff = false
-            Frame2.Position = UDim2.new(0, 2, 0.5, 0)
-            Frame2.BackgroundColor3 = Configs_HUB.Cor_Stroke
-            callback(false)
+            toggle(false)
         end
     end)
 
-    return TextButton
+    return toggle
 end
 
-functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
+
+functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState, linkedToggle)
     local sectionFrame = Instance.new("Frame", parent)
     sectionFrame.Size = UDim2.new(1, 0, 0, 100)
     sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1493,11 +1496,12 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     descriptionLabel.Text = description
     TextSetColor(descriptionLabel)
     
-    local toggleButtonPosition = buttonPosition or UDim2.new(0.82, 0, 0.75, 0)
-    local toggleButton = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState)
+    local toggleButtonPosition = UDim2.new(0.82, 0, 0.75, 0)
+    local toggleButton = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState, linkedToggle)
 
     return sectionFrame
 end
+
 
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
@@ -1550,17 +1554,29 @@ Text44.Font = Configs_HUB.Text_Font
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
 TextSetColor(Text44)
 
-functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
+local toggleLoop
+local toggleAutoPlay
+
+toggleLoop = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
 [[Make the song repeat. If you don't want it, you can turn it off.]],
 function()
     isAutoPlayEnabled = false
     isLooping = not isLooping
+
+    if isLooping and toggleAutoPlay then
+        toggleAutoPlay(false)
+    end
 end, isLooping)
 
-local AutoPlayframe = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
+toggleAutoPlay = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
     isLooping = false
     isAutoPlayEnabled = not isAutoPlayEnabled
+
+    if isAutoPlayEnabled and toggleLoop then
+        toggleLoop(false)
+    end
 end, isAutoPlayEnabled)
+
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
