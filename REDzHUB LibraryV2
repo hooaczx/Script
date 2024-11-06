@@ -1456,6 +1456,66 @@ functions.createToggleButton = function(parent, position, callback, initialState
     return setState
 end
 
+functions.createSliderButton = function(parent, position, callback)
+    local TextButton = Instance.new("TextButton", parent)
+    TextButton.Size = UDim2.new(0.17, 0, 0, 25)
+    TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
+    TextButton.Position = position
+    TextButton.Name = "VolumeSlider"
+    TextButton.Text = ""
+    TextButton.AutoButtonColor = false
+
+    local percentageLabel = Instance.new("TextLabel", TextButton)
+    percentageLabel.Size = UDim2.new(1, 0, 1, 0)
+    percentageLabel.Position = UDim2.new(0, 0, 0, 0)
+    percentageLabel.Text = "0%"  -- เริ่มต้นที่ 0%
+    percentageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    percentageLabel.BackgroundTransparency = 1
+    percentageLabel.Font = Enum.Font.SourceSans
+    percentageLabel.TextSize = 14
+    percentageLabel.TextAlignment = Enum.TextAlignment.Center
+
+    local Frame2 = Instance.new("Frame", TextButton)
+    Frame2.Size = UDim2.new(0.25, 0, 0.82, 0)
+    Frame2.Position = UDim2.new(0, 2, 0.5, 0)
+    Frame2.AnchorPoint = Vector2.new(0, 0.5)
+    Frame2.BackgroundColor3 = Configs_HUB.Cor_Stroke
+    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+
+    local dragging = false
+
+    Frame2.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+        end
+    end)
+
+    Frame2.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    Frame2.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local relativePos = (input.Position.X - TextButton.AbsolutePosition.X) / TextButton.AbsoluteSize.X
+            relativePos = math.clamp(relativePos, 0, 1)
+            Frame2.Position = UDim2.new(relativePos, 0, 0.5, 0)
+            local percentage = math.floor(relativePos * 100)
+            percentageLabel.Text = tostring(percentage) .. "%"
+            callback(relativePos)
+        end
+    end)
+    Frame2.MouseEnter:Connect(function()
+        Frame2.BackgroundColor3 = Color3.fromRGB(50, 170, 230)
+    end)
+    Frame2.MouseLeave:Connect(function()
+        Frame2.BackgroundColor3 = Configs_HUB.Cor_Stroke
+    end)
+
+    return TextButton
+end
+
 
 functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
     local sectionFrame = Instance.new("Frame", parent)
@@ -1571,6 +1631,11 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
     isSettingAutoPlayState = false
 end, isAutoPlayEnabled)
 
+local gameSettings = UserSettings():GetService("UserGameSettings")
+local volumeSlider = functions.createSliderButton(scrollingsettingmusicFrame, UDim2.new(0.1, 0, 0.5, 0), function(volume)
+        gameSettings.MasterVolume = volume
+    end
+)
 
 soundmusic.Ended:Connect(function()
   if isLooping then
