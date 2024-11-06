@@ -1538,26 +1538,26 @@ Text44.Font = Configs_HUB.Text_Font
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
 TextSetColor(Text44)
 
-local toggleLoop
-local toggleAutoPlay
+local toggleLoopState
+local toggleAutoPlayState
 
-toggleLoop = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
+toggleLoopState = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
 [[Make the song repeat. If you don't want it, you can turn it off.]],
 function()
     isAutoPlayEnabled = false
     isLooping = not isLooping
 
-    if isLooping and toggleAutoPlay then
-        toggleAutoPlay(false)
+    if isLooping and toggleAutoPlayState then
+        toggleAutoPlayState(false)
     end
 end, isLooping)
 
-toggleAutoPlay = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
+toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
     isLooping = false
     isAutoPlayEnabled = not isAutoPlayEnabled
 
-    if isAutoPlayEnabled and toggleLoop then
-        toggleLoop(false)
+    if isAutoPlayEnabled and toggleLoopState then
+        toggleLoopState(false)
     end
 end, isAutoPlayEnabled)
 
