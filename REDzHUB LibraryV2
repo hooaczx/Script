@@ -780,20 +780,7 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
         soundmusic.TimePosition = savedTimePosition
         soundmusic:Play()
         TitleLabel.Text = song.name
-        StartProgressUpdate(Frame_4, TimeLabel)
-        soundmusic.Ended:Connect(function()
-        if isLooping then
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        elseif isAutoPlayEnabled then
-        currentSongIndex = currentSongIndex + 1
-        if currentSongIndex > #songs then
-            currentSongIndex = 1
-        end
-        resetSong()
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        updateSongButtons()
-        end
-        end) 
+        StartProgressUpdate(Frame_4, TimeLabel) 
     end
 end
 
@@ -1577,6 +1564,19 @@ toggleAutoPlay = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 
     end
 end, isAutoPlayEnabled)
 
+soundmusic.Ended:Connect(function()
+  if isLooping then
+      PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+      elseif isAutoPlayEnabled then
+     currentSongIndex = currentSongIndex + 1
+        if currentSongIndex > #songs then
+         currentSongIndex = 1
+       end
+     resetSong()
+     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+     updateSongButtons()
+   end
+end)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
