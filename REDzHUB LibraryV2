@@ -1317,6 +1317,7 @@ local function updateSongButtons()
             musiclistFrame.Size = UDim2.new(1, 0, 0, 25)
             musiclistFrame.BorderSizePixel = 0
             musiclistFrame.BackgroundTransparency = 0
+
             if not musiclistFrame:FindFirstChild("NameLabel") then
                 local iconmusic = Instance.new("ImageLabel", musiclistFrame)
                 iconmusic.Size = UDim2.new(0.1, 0, 1, 0)
@@ -1338,6 +1339,7 @@ local function updateSongButtons()
                 nameLabel.BorderSizePixel = 0
                 TextSetColor(nameLabel)
             end
+
             if not musiclistFrame:FindFirstChild("SongButton") then
                 local songbutton = Instance.new("TextButton", musiclistFrame)
                 songbutton.Name = "SongButton"
@@ -1348,23 +1350,25 @@ local function updateSongButtons()
                 songbutton.Text = ""
                 songbutton.BackgroundTransparency = 1
                 TextSetColor(songbutton)
+
                 songbutton.MouseButton1Click:Connect(function()
-                it isLooping then
-                notify({
-                    Title = "Loop Songs is on",
-                    Text = "You are in loop music playing mode. Please turn off loop music in settings music to select a song",
-                    buttonText = "ok",
-                    imageID = "",
-                    guiSize = Vector2.new(400, 70),
-                 })
-                 else
-                    currentSongIndex = i
-                    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-                    ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-                    updateSongButtons()
-                   end
+                    if isLooping then
+                        notify({
+                            Title = "Loop Songs is on",
+                            Text = "You are in loop music playing mode. Please turn off loop music in settings to select a song",
+                            buttonText = "ok",
+                            imageID = "",
+                            guiSize = Vector2.new(400, 70),
+                        })
+                    else
+                        currentSongIndex = i
+                        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+                        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+                        updateSongButtons()
+                    end
                 end)
             end
+
             if currentSongIndex == i then
                 local frameimage = Instance.new("Frame", musiclistFrame)
                 frameimage.Size = UDim2.new(0, 30, 1, 0)
@@ -1376,7 +1380,7 @@ local function updateSongButtons()
                         child:Destroy()
                     end
                 end
-                
+
                 local image = Instance.new("ImageLabel", frameimage)
                 image.Size = UDim2.new(1, 0, 1, 0)
                 image.BackgroundTransparency = 1
