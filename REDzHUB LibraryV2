@@ -758,6 +758,7 @@ notifyfriend.PlaybackSpeed = 0.9
 local notifyfriendleave = Instance.new("Sound", ScreenGui)
 notifyfriendleave.SoundId = "rbxassetid://489103549"
 notifyfriendleave.Volume = 0.2
+local isLooping = false
 
 local function resetSong()
     soundmusic:Stop()
@@ -812,7 +813,6 @@ function StartProgressUpdate(Frame_4, TimeLabel)
         end
     end)
 end
-
             TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
@@ -1347,10 +1347,20 @@ local function updateSongButtons()
                 songbutton.BackgroundTransparency = 1
                 TextSetColor(songbutton)
                 songbutton.MouseButton1Click:Connect(function()
+                it isLooping then
+                notify({
+                    Title = "Loop Songs is on",
+                    Text = "You are in loop music playing mode. Please turn off loop music in settings music to select a song",
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                 })
+                 else
                     currentSongIndex = i
                     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
                     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
                     updateSongButtons()
+                   end
                 end)
             end
             if currentSongIndex == i then
@@ -1381,19 +1391,23 @@ updateSongButtons()
 search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
 
 NextButton.MouseButton1Click:Connect(function()
+it not isLooping then
     resetSong()
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+end
 end)
 
 PreviousButton.MouseButton1Click:Connect(function()
+it not isLooping then
     resetSong()
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+end
 end)
 
 local functions = {}
@@ -1469,8 +1483,9 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     descriptionLabel.Text = description
     TextSetColor(descriptionLabel)
     
-    local toggleButton = functions.createToggleButton(sectionFrame, UDim2.new(0.82, 0, 0.75, 0), buttonCallback, buttonState)
-    
+    local toggleButtonPosition = buttonPosition or UDim2.new(0.82, 0, 0.75, 0)
+    local toggleButton = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState)
+
     return sectionFrame
 end
 
@@ -1526,12 +1541,23 @@ Text44.Text = [[will automatically play the next song when opened. If you don't 
 TextSetColor(Text44)
 
 local isAutoPlayEnabled = false
-local AutoPlayframe = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
-    isAutoPlayEnabled = not isAutoPlayEnabled
-end, autoPlayNext)
+
+functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
+[[Make the song repeat If you don't want it, you can turn it off]],
+function(isLooping)
+isAutoPlayEnabled = false
+isLooping = not isLooping
+end, isLooping)
+
+local AutoPlayframe = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(isAutoPlayEnabled)
+isLooping = false
+isAutoPlayEnabled = not isAutoPlayEnabled
+end, isAutoPlayEnabled)
 
 local function onSongEnded()
-    if isAutoPlayEnabled then
+    if isLooping then
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    elseif isAutoPlayEnabled then
         currentSongIndex = currentSongIndex + 1
         if currentSongIndex > #songs then
             currentSongIndex = 1
