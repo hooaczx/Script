@@ -758,7 +758,6 @@ notifyfriend.PlaybackSpeed = 0.9
 local notifyfriendleave = Instance.new("Sound", ScreenGui)
 notifyfriendleave.SoundId = "rbxassetid://489103549"
 notifyfriendleave.Volume = 0.2
-
 local isAutoPlayEnabled = false
 local isLooping = false
 
@@ -1402,7 +1401,7 @@ updateSongButtons()
 search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
 
 NextButton.MouseButton1Click:Connect(function()
-    if not isLooping then
+    if isLooping then
         resetSong()
         currentSongIndex = (currentSongIndex % #songs) + 1
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
@@ -1412,7 +1411,7 @@ NextButton.MouseButton1Click:Connect(function()
 end)
 
 PreviousButton.MouseButton1Click:Connect(function()
-    if not isLooping then
+    if isLooping then
         resetSong()
         currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
