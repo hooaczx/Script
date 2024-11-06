@@ -1397,23 +1397,23 @@ updateSongButtons()
 search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
 
 NextButton.MouseButton1Click:Connect(function()
-it not isLooping then
-    resetSong()
-    currentSongIndex = (currentSongIndex % #songs) + 1
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
-    ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-end
+    if not isLooping then
+        resetSong()
+        currentSongIndex = (currentSongIndex % #songs) + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        updateSongButtons()
+        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+    end
 end)
 
 PreviousButton.MouseButton1Click:Connect(function()
-it not isLooping then
-    resetSong()
-    currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
-    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
-    ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-end
+    if not isLooping then
+        resetSong()
+        currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        updateSongButtons()
+        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+    end
 end)
 
 local functions = {}
