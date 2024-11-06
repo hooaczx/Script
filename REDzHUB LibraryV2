@@ -910,11 +910,11 @@ end
 
 notify({
       Title = "Hi",
-      Text = "Hope you enjoy using it",
+      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
       buttonText = "ok",
       imageID = "",
       guiSize = Vector2.new(400, 70),
-      })
+})
 
   function MinimizeButton(Configs)
     local player = game.Players.LocalPlayer
@@ -2803,19 +2803,24 @@ function(isClickEffectEnabled)
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    local clickedObject = input.Target
-                    local isUIElement = false
+                    local targetObject = nil
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        targetObject = Mouse.Target
+                    elseif input.UserInputType == Enum.UserInputType.Touch then
+                        targetObject = game:GetService("Players").LocalPlayer:GetMouse().Target
+                    end
 
-                    for _, v in pairs(clickedObject:GetDescendants()) do
-                        if v:IsA("GuiObject") or v:IsA("TextButton") or v:IsA("TextLabel") then
-                            isUIElement = true
-                            break
+                    local isUIElement = false
+                    if targetObject then
+                        for _, v in pairs(targetObject:GetDescendants()) do
+                            if v:IsA("GuiObject") or v:IsA("TextButton") or v:IsA("TextLabel") then
+                                isUIElement = true
+                                break
+                            end
                         end
                     end
 
-                    if isUIElement then
-                        createClickEffect(input.Position)
-                    elseif not clickedObject:IsDescendantOf(scrollingSettingFrame) then
+                    if isUIElement or not targetObject then
                         createClickEffect(input.Position)
                     end
                 end
