@@ -2766,6 +2766,8 @@ function(isClickEffectEnabled)
         local UserInputService = game:GetService("UserInputService")
 
         local isPressing = false
+        local screenGui = nil
+        local ripple = nil
 
         local function createClickEffect(position)
             local coreGui = game:GetService("CoreGui")
@@ -2773,10 +2775,10 @@ function(isClickEffectEnabled)
                 coreGui:FindFirstChild("ClickEffectUI"):Destroy()
             end
 
-            local screenGui = Instance.new("ScreenGui", coreGui)
+            screenGui = Instance.new("ScreenGui", coreGui)
             screenGui.Name = "ClickEffectUI"
 
-            local ripple = Instance.new("Frame", screenGui)
+            ripple = Instance.new("Frame", screenGui)
             ripple.Size = UDim2.new(0, 0, 0, 0)
             ripple.Position = UDim2.new(0, position.X, 0, position.Y)
             ripple.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -2790,14 +2792,18 @@ function(isClickEffectEnabled)
             corner.CornerRadius = UDim.new(1, 0)
             corner.Parent = ripple
 
-            local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-            local sizeGoal = {Size = UDim2.new(0, 100, 0, 100), BackgroundTransparency = 1}
-            local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
+            if isPressing then
+                ripple.Size = UDim2.new(0, 100, 0, 100)
+            else
+                local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                local sizeGoal = {Size = UDim2.new(0, 100, 0, 100), BackgroundTransparency = 1}
+                local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
 
-            tween:Play()
-            tween.Completed:Connect(function()
-                ripple:Destroy()
-            end)
+                tween:Play()
+                tween.Completed:Connect(function()
+                    ripple:Destroy()
+                end)
+            end
 
             local clickSound = Instance.new("Sound")
             clickSound.SoundId = "rbxassetid://15675059323"
@@ -2823,8 +2829,21 @@ function(isClickEffectEnabled)
         UserInputService.InputEnded:Connect(function(input, gameProcessed)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 isPressing = false
+                if ripple then
+                    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                    local sizeGoal = {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}
+                    local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
+                    tween:Play()
+                    tween.Completed:Connect(function()
+                        ripple:Destroy()
+                    end)
+                end
             end
         end)
+    else
+        if screenGui and screenGui.Parent then
+            screenGui:Destroy()
+        end
     end
 end,
 isClickEffectEnabled)
