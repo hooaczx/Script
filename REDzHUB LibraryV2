@@ -2765,6 +2765,8 @@ function(isClickEffectEnabled)
         local TweenService = game:GetService("TweenService")
         local UserInputService = game:GetService("UserInputService")
 
+        local isPressing = false
+
         local function createClickEffect(position)
             local coreGui = game:GetService("CoreGui")
             if coreGui:FindFirstChild("ClickEffectUI") then
@@ -2810,8 +2812,17 @@ function(isClickEffectEnabled)
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    createClickEffect(input.Position)
+                    if not isPressing then
+                        isPressing = true
+                        createClickEffect(input.Position)
+                    end
                 end
+            end
+        end)
+
+        UserInputService.InputEnded:Connect(function(input, gameProcessed)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                isPressing = false
             end
         end)
     end
