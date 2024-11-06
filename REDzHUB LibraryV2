@@ -1456,64 +1456,59 @@ functions.createToggleButton = function(parent, position, callback, initialState
     return setState
 end
 
-functions.createSliderButton = function(parent, position, callback)
-    local TextButton = Instance.new("TextButton", parent)
-    TextButton.Size = UDim2.new(0.17, 0, 0, 25)
-    TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
-    TextButton.Position = position
-    TextButton.Name = "VolumeSlider"
-    TextButton.Text = ""
-    TextButton.AutoButtonColor = false
+local functions = {}
 
-    local percentageLabel = Instance.new("TextLabel", TextButton)
+functions.createSlider = function(parent, position, size, callback)
+    local progressBar = Instance.new("Frame", parent)
+    progressBar.Size = size
+    progressBar.Position = position
+    progressBar.BackgroundColor3 = Configs_HUB.Cor_Options
+
+    local sliderButton = Instance.new("TextButton", progressBar)
+    sliderButton.Size = UDim2.new(1, 0, 1, 0)
+    sliderButton.Text = ""
+    sliderButton.BackgroundTransparency = 1
+
+    local percentageLabel = Instance.new("TextLabel", progressBar)
     percentageLabel.Size = UDim2.new(1, 0, 1, 0)
-    percentageLabel.Position = UDim2.new(0, 0, 0, 0)
-    percentageLabel.Text = "0%"
-    percentageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     percentageLabel.BackgroundTransparency = 1
-    percentageLabel.Font = Enum.Font.SourceSans
-    percentageLabel.TextSize = 14
-    percentageLabel.TextAlignment = Enum.TextXAlignment.Left
-
-    local Frame2 = Instance.new("Frame", TextButton)
-    Frame2.Size = UDim2.new(0.25, 0, 0.82, 0)
-    Frame2.Position = UDim2.new(0, 2, 0.5, 0)
-    Frame2.AnchorPoint = Vector2.new(0, 0.5)
-    Frame2.BackgroundColor3 = Configs_HUB.Cor_Stroke
-    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+    percentageLabel.TextColor3 = Configs_HUB.Cor_Text
+    percentageLabel.TextScaled = true
+    percentageLabel.Text = "100%"
+    percentageLabel.Font = Configs_HUB.Text_Font
+    TextSetColor(percentageLabel)
 
     local dragging = false
 
-    Frame2.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    local function onUpdateSlider(input)
+        local relativePos = (input.Position.X - progressBar.AbsolutePosition.X) / progressBar.AbsoluteSize.X
+        relativePos = math.clamp(relativePos, 0, 1)
+        local percentage = (relativePos - 0.5) * 200
+        local value = 100 - math.abs(percentage)
+        percentageLabel.Text = tostring(math.floor(value)) .. "%"
+        callback(value)
+    end
+
+    sliderButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
+            onUpdateSlider(input)
         end
     end)
 
-    Frame2.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    sliderButton.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
         end
     end)
 
-    Frame2.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local relativePos = (input.Position.X - TextButton.AbsolutePosition.X) / TextButton.AbsoluteSize.X
-            relativePos = math.clamp(relativePos, 0, 1)
-            Frame2.Position = UDim2.new(relativePos, 0, 0.5, 0)
-            local percentage = math.floor(relativePos * 100)
-            percentageLabel.Text = tostring(percentage) .. "%"
-            callback(relativePos)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging then
+            onUpdateSlider(input)
         end
     end)
-    Frame2.MouseEnter:Connect(function()
-        Frame2.BackgroundColor3 = Color3.fromRGB(50, 170, 230)
-    end)
-    Frame2.MouseLeave:Connect(function()
-        Frame2.BackgroundColor3 = Configs_HUB.Cor_Stroke
-    end)
 
-    return TextButton
+    return progressBar
 end
 
 functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
@@ -1527,7 +1522,7 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     titleLabel.TextScaled = true
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.BackgroundTransparency = 1
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
     titleLabel.Text = title
     TextSetColor(titleLabel)
     
@@ -1537,7 +1532,7 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
     descriptionLabel.BackgroundTransparency = 1
     descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
-    descriptionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
     descriptionLabel.Text = description
     TextSetColor(descriptionLabel)
     
@@ -1631,10 +1626,9 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
 end, isAutoPlayEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
-local volumeSlider = functions.createSliderButton(scrollingsettingmusicFrame, UDim2.new(0.1, 0, 0.5, 0), function(volume)
-        gameSettings.MasterVolume = volume
-    end
-)
+local slider = functions.createSlider(scrollingsettingmusicFrame, UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 34), function(value)
+    gameSettings.MasterVolume = value / 100
+end)
 
 soundmusic.Ended:Connect(function()
   if isLooping then
