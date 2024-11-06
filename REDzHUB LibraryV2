@@ -1622,11 +1622,11 @@ local toggleAutoPlayState
 
 toggleLoopState = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
 [[Make the song repeat. If you don't want it, you can turn it off.]],
-function()
+function(forceState)
     if isSettingLoopState or isSettingAutoPlayState then return end
     isSettingLoopState = true
 
-    isLooping = not isLooping
+    isLooping = forceState ~= nil and forceState or not isLooping
     if isLooping and isAutoPlayEnabled then
         toggleAutoPlayState(false)
     end
@@ -1634,11 +1634,11 @@ function()
     isSettingLoopState = false
 end, isLooping)
 
-toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
+toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(forceState)
     if isSettingAutoPlayState or isSettingLoopState then return end
     isSettingAutoPlayState = true
 
-    isAutoPlayEnabled = not isAutoPlayEnabled
+    isAutoPlayEnabled = forceState ~= nil and forceState or not isAutoPlayEnabled
     if isAutoPlayEnabled and isLooping then
         toggleLoopState(false)
     end
