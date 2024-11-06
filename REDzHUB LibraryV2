@@ -1351,14 +1351,22 @@ local function updateSongButtons()
                 songbutton.BackgroundTransparency = 1
                 TextSetColor(songbutton)
 
-                songbutton.MouseButton1Click:Connect(function()
+             songbutton.MouseButton1Click:Connect(function()
                 if isLooping then
-                        currentSongIndex = i
-                        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-                        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-                        updateSongButtons() 
-                   end
-                end)
+                   notify({
+                      Title = "Loop Songs is on",
+                      Text = "Please go turn it off in settings music. If you want press to select a song",
+                      buttonText = "ok",
+                      imageID = "",
+                      guiSize = Vector2.new(400, 70),
+                    })
+                return
+              end
+                currentSongIndex = i
+                PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+                ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+                updateSongButtons()
+               end)
             end
 
             if currentSongIndex == i then
@@ -1624,7 +1632,7 @@ local toggleLoopState
 local toggleAutoPlayState
 
 toggleLoopState = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
-[[Make the song repeat. If you don't want it, you can turn it off.]],
+[[Make the song playing repeat. Oh, I forgot to tell you. Pressing the next song or pressing the song back, pressing to select a song in the songList. will not be able to press. If you don't want it, you can turn it off]],
 function(forceState)
     if isSettingLoopState or isSettingAutoPlayState then return end
     isSettingLoopState = true
