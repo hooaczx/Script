@@ -1456,7 +1456,36 @@ functions.createToggleButton = function(parent, position, callback, initialState
     return setState
 end
 
-local functions = {}
+functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+    
+    local toggleButtonPosition = UDim2.new(0.82, 0, 0.75, 0)
+    local toggleButtonState = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState)
+
+    return toggleButtonState
+end
 
 functions.createSlider = function(parent, position, size, callback)
     local progressBar = Instance.new("Frame", parent)
@@ -1509,37 +1538,6 @@ functions.createSlider = function(parent, position, size, callback)
     end)
 
     return progressBar
-end
-
-functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
-    local sectionFrame = Instance.new("Frame", parent)
-    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
-    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
-    sectionFrame.BackgroundTransparency = 0
-    
-    local titleLabel = Instance.new("TextLabel", sectionFrame)
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.TextScaled = true
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.TextColor3 = Configs_HUB.Cor_Text
-    titleLabel.Text = title
-    TextSetColor(titleLabel)
-    
-    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
-    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
-    descriptionLabel.TextScaled = true
-    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descriptionLabel.BackgroundTransparency = 1
-    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
-    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
-    descriptionLabel.Text = description
-    TextSetColor(descriptionLabel)
-    
-    local toggleButtonPosition = UDim2.new(0.82, 0, 0.75, 0)
-    local toggleButtonState = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState)
-
-    return toggleButtonState
 end
 
 local framemusic = Instance.new("Frame", ScreenGui)
