@@ -759,6 +759,9 @@ local notifyfriendleave = Instance.new("Sound", ScreenGui)
 notifyfriendleave.SoundId = "rbxassetid://489103549"
 notifyfriendleave.Volume = 0.2
 
+local isAutoPlayEnabled = false
+local isLooping = false
+
 local function resetSong()
     soundmusic:Stop()
     savedTimePosition = 0
@@ -779,6 +782,19 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
         soundmusic:Play()
         TitleLabel.Text = song.name
         StartProgressUpdate(Frame_4, TimeLabel)
+        soundmusic.Ended:Connect(function()
+        if isLooping then
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        elseif isAutoPlayEnabled then
+        currentSongIndex = currentSongIndex + 1
+        if currentSongIndex > #songs then
+            currentSongIndex = 1
+        end
+        resetSong()
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        updateSongButtons()
+        end
+        end) 
     end
 end
 
@@ -1299,9 +1315,6 @@ local function updateFrameSize()
     songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
 
-local isAutoPlayEnabled = false
-local isLooping = false
-
 local function updateSongButtons()
     local searchText = search.Text:lower()
     local currentScrollPosition = songList.CanvasPosition
@@ -1352,11 +1365,11 @@ local function updateSongButtons()
                 TextSetColor(songbutton)
 
                 songbutton.MouseButton1Click:Connect(function()
-                if not isLooping then
-                     currentSongIndex = i
-                     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-                     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-                     updateSongButtons() 
+                if isLooping then
+                        currentSongIndex = i
+                        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+                        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+                        updateSongButtons() 
                    end
                 end)
             end
@@ -1539,32 +1552,16 @@ Text44.Text = [[will automatically play the next song when opened. If you don't 
 TextSetColor(Text44)
 
 functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
-[[Make the song repeat If you don't want it, you can turn it off]],
-function(isLooping)
-isAutoPlayEnabled = false
-isLooping = not isLooping
+[[Make the song repeat. If you don't want it, you can turn it off.]],
+function()
+    isAutoPlayEnabled = false
+    isLooping = not isLooping
 end, isLooping)
 
-local AutoPlayframe = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(isAutoPlayEnabled)
-isLooping = false
-isAutoPlayEnabled = not isAutoPlayEnabled
+local AutoPlayframe = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
+    isLooping = false
+    isAutoPlayEnabled = not isAutoPlayEnabled
 end, isAutoPlayEnabled)
-
-local function onSongEnded()
-    if isLooping then
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    elseif isAutoPlayEnabled then
-        currentSongIndex = currentSongIndex + 1
-        if currentSongIndex > #songs then
-            currentSongIndex = 1
-        end
-        resetSong()
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        updateSongButtons()
-    end
-end
-
-soundmusic.Ended:Connect(onSongEnded)
 
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
