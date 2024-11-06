@@ -2769,10 +2769,12 @@ function(isClickEffectEnabled)
 
     local function createClickEffect(position, input)
         local coreGui = game:GetService("CoreGui")
-        if not coreGui:FindFirstChild("ClickEffectUI") then
-            screenGui = Instance.new("ScreenGui", coreGui)
-            screenGui.Name = "ClickEffectUI"
-        end
+            if coreGui:FindFirstChild("ClickEffectUI") then
+                coreGui:FindFirstChild("ClickEffectUI"):Destroy()
+            end
+
+        screenGui = Instance.new("ScreenGui", coreGui)
+        screenGui.Name = "ClickEffectUI"
 
         local ripple = Instance.new("Frame", screenGui)
         ripple.Size = UDim2.new(0, 0, 0, 0)
@@ -2796,10 +2798,10 @@ function(isClickEffectEnabled)
         ripples[input.UserInputObject] = ripple
 
         local clickSound = Instance.new("Sound")
-        clickSound.SoundId = "rbxassetid://15675059323"
-        clickSound.Parent = screenGui
-        clickSound.Volume = 1
-        clickSound:Play()
+            clickSound.SoundId = "rbxassetid://15675059323"
+            clickSound.Parent = screenGui
+            clickSound.Volume = 1
+            clickSound:Play()
         clickSound.Ended:Connect(function()
             clickSound:Destroy()
         end)
