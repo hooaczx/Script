@@ -1574,6 +1574,175 @@ functions.createSlider = function(parent, title, description, callback)
     return progressBar
 end
 
+local function sendMessageToDiscord(message)
+local player = game.Players.LocalPlayer
+local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
+local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
+local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
+
+    local data = {
+        ["content"] = message,
+        ["avatar_url"] = AvatarImage,
+    }
+
+    local newdata = game:GetService("HttpService"):JSONEncode(data)
+    local headers = {["content-type"] = "application/json"}
+    local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
+
+    local function CreateClose()
+        local IsMinimized = false
+        CreateTween(Menu, "Size", UDim2.new(0, 500, 0, 270), 0.3, false)
+        local CloseGui = Create("TextButton", Menu, {
+            BackgroundTransparency = 0.5,
+            BackgroundColor3 = Configs_HUB.Cor_Hub,
+            Size = UDim2.new(1, 0, 1, 0),
+            AutoButtonColor = false,
+            Text = "",
+            BackgroundTransparency = 0.5,
+            Visible = false
+        })
+        Corner(CloseGui)
+
+        local CloseMenu = Create("Frame", CloseGui, {
+            Size = UDim2.new(),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Transparency = 1,
+            BackgroundColor3 = Configs_HUB.Cor_Hub
+        })
+        Corner(CloseMenu)
+        Stroke(CloseMenu)
+
+        local Mensage = Create("TextLabel", CloseMenu, {
+            Size = UDim2.new(0.8, 0, 0.25, 0),
+            Text = "Are you sure you want to send this message?",
+            Position = UDim2.new(0.1, 0, 0.2),
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            TextScaled = true,
+            BackgroundTransparency = 1
+        })
+
+        local Confirm = Create("TextButton", CloseMenu, {
+            Size = UDim2.new(0.35, 0, 0.3, 0),
+            Position = UDim2.new(0.1, 0, 0.5, 0),
+            BackgroundColor3 = Configs_HUB.Cor_Hub,
+            Text = "Send Message",
+            Font = Configs_HUB.Text_Font,
+            TextColor3 = Color3.fromRGB(240, 0, 0),
+            TextSize = 20
+        })
+        Corner(Confirm)
+        Stroke(Confirm)
+
+        local Cancel = Create("TextButton", CloseMenu, {
+            Size = UDim2.new(0.35, 0, 0.3, 0),
+            Position = UDim2.new(0.9, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundColor3 = Configs_HUB.Cor_Hub,
+            Text = "Cancel",
+            Font = Configs_HUB.Text_Font,
+            TextColor3 = Color3.fromRGB(0, 240, 0),
+            TextSize = 20
+        })
+        Corner(Cancel)
+        Stroke(Cancel)
+
+        local function SetVisible()
+            if Menu.Size.Y.Offset > 100 then
+                CloseGui.Visible = true
+            else
+                CloseGui.Visible = false
+            end
+        end
+
+        SetVisible()
+        Menu:GetPropertyChangedSignal("Size"):Connect(SetVisible)
+
+        CreateTween(CloseMenu, "Transparency", 0, 0.2, false)
+        CreateTween(CloseMenu, "Size", UDim2.new(0.7, 0, 0.7, 0), 0.2, false)
+
+        Cancel.MouseButton1Click:Connect(function()
+            CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
+            CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
+            CloseGui:Destroy()
+        end)
+
+        Confirm.MouseButton1Click:Connect(function()
+            CloseGui:Destroy()
+            request({
+                Url = getgenv().webhookexercUrl,
+                Body = newdata,
+                Method = "POST",
+                Headers = headers
+            })
+        end)
+
+        CloseGui.MouseButton1Click:Connect(function()
+            CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
+            CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
+            CloseGui:Destroy()
+        end)
+    end
+
+    CreateClose()
+end
+
+functions.createTextboxWithButton = function(parent, title, description, callback)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 200)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+
+    local messageTextbox = Instance.new("TextBox", sectionFrame)
+    messageTextbox.Size = UDim2.new(1, 0, 0, 40)
+    messageTextbox.Position = UDim2.new(0, 0, 0.7, 0)
+    messageTextbox.BackgroundColor3 = Configs_HUB.Cor_Options
+    messageTextbox.TextColor3 = Configs_HUB.Cor_Text
+    messageTextbox.PlaceholderText = "Enter your message here..."
+    messageTextbox.ClearTextOnFocus = true
+    messageTextbox.TextScaled = true
+    messageTextbox.Font = Configs_HUB.Text_Font
+
+    local sendButton = Instance.new("TextButton", sectionFrame)
+    sendButton.Size = UDim2.new(1, 0, 0, 40)
+    sendButton.Position = UDim2.new(0, 0, 0.85, 0)
+    sendButton.BackgroundColor3 = Configs_HUB.Cor_Options
+    sendButton.TextColor3 = Configs_HUB.Cor_Text
+    sendButton.Text = "Send Message"
+    sendButton.TextScaled = true
+    sendButton.Font = Configs_HUB.Text_Font
+
+    sendButton.MouseButton1Click:Connect(function()
+        local message = messageTextbox.Text
+        if message and message ~= "" then
+            callback(message)
+            messageTextbox.Text = ""
+        end
+    end)
+
+    return sectionFrame
+end
+
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
 framemusic.Position = UDim2.new(0.5, 0, 0.4, 0)
