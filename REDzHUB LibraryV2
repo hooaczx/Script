@@ -1352,20 +1352,12 @@ local function updateSongButtons()
                 TextSetColor(songbutton)
 
                 songbutton.MouseButton1Click:Connect(function()
-                    if isLooping then
-                        notify({
-                            Title = "Loop Songs is on",
-                            Text = "You are in loop music playing mode. Please turn off loop music in settings to select a song",
-                            buttonText = "ok",
-                            imageID = "",
-                            guiSize = Vector2.new(400, 70),
-                        })
-                    else
+                if isLooping then
                         currentSongIndex = i
                         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
                         ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-                        updateSongButtons()
-                    end
+                        updateSongButtons() 
+                   end
                 end)
             end
 
