@@ -2790,12 +2790,14 @@ TinnLayout.Padding = UDim.new(0, 5)
 
 local ripples = {}
 local isClickEffectEnabled = true
+local inputBeganConnection
+local inputEndedConnection
 
 functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
 [[This creates an effect where, when you press the screen, it will look like a circle. Like water hits with something, it widens and disappears]], 
 function(isClickEffectEnabled)
     if isClickEffectEnabled then
-        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        inputBeganConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     local ripple = Instance.new("Frame", ScreenGui)
@@ -2820,7 +2822,7 @@ function(isClickEffectEnabled)
 
                     local clickSound = Instance.new("Sound")
                     clickSound.SoundId = "rbxassetid://15675059323"
-                    clickSound.Parent = screenGui
+                    clickSound.Parent = ScreenGui
                     clickSound.Volume = 1
                     clickSound:Play()
                     clickSound.Ended:Connect(function()
@@ -2830,7 +2832,7 @@ function(isClickEffectEnabled)
             end
         end)
 
-        UserInputService.InputEnded:Connect(function(input, gameProcessed)
+        inputEndedConnection = UserInputService.InputEnded:Connect(function(input, gameProcessed)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 if #ripples > 0 then
                     local ripple = ripples[#ripples]
@@ -2845,7 +2847,15 @@ function(isClickEffectEnabled)
                 end
             end
         end)
+
     else
+        if inputBeganConnection then
+            inputBeganConnection:Disconnect()
+        end
+        if inputEndedConnection then
+            inputEndedConnection:Disconnect()
+        end
+        
         for _, ripple in ipairs(ripples) do
             ripple:Destroy()
         end
