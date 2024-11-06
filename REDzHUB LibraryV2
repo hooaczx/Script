@@ -2904,6 +2904,54 @@ functions.createSettingSection(scrollingSettingFrame, "Notification Friends",
     end,
 notifyFriendsEnabled)
 
+local isWebhookNotificationEnabled = true
+
+functions.createSettingSection(scrollingSettingFrame, "Hide Name", 
+[[This will validate the Webhook. In the various scripts you are working on, if found, a notification will be displayed to you]],
+    function(state)
+    isWebhookNotificationEnabled = state
+
+    local function hookRequestFunction(requestFunc)
+        hookfunction(requestFunc, function(data)
+            if data.Url and data.Url:find("webhook") and isWebhookNotificationEnabled then
+                local details = "URL: " .. (data.Url or "N/A") ..
+                                "\nMethod: " .. (data.Method or "N/A") ..
+                                "\nHeaders: " .. (data.Headers and tostring(data.Headers) or "N/A") ..
+                                "\nBody: " .. (data.Body and tostring(data.Body) or "N/A")
+
+                notify({
+                    Title = "Detect webhook usage",
+                    Text = "Webhook request detected!\n" .. details,
+                    buttonText = "OK",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70)
+                })
+            end
+            requestFunc(data)
+        end)
+    end
+
+    if syn and syn.request then
+        hookRequestFunction(syn.request)
+    end
+
+    if fluxus and fluxus.request then
+        hookRequestFunction(fluxus.request)
+    end
+
+    if http and http.request then
+        hookRequestFunction(http.request)
+    end
+
+    if http_request then
+        hookRequestFunction(http_request)
+    end
+
+    if request then
+        hookRequestFunction(request)
+    end
+end, isWebhookNotificationEnabled)
+
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
 local rainSound = Instance.new("Sound", ScreenGui)
