@@ -2796,31 +2796,20 @@ function(isClickEffectEnabled)
             tween.Completed:Connect(function()
                 ripple:Destroy()
             end)
+
+            local clickSound = Instance.new("Sound")
+            clickSound.SoundId = "rbxassetid://15675059323"
+            clickSound.Parent = screenGui
+            clickSound:Play()
+            clickSound.Ended:Connect(function()
+                clickSound:Destroy()
+            end)
         end
 
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    local targetObject = nil
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        targetObject = Mouse.Target
-                    elseif input.UserInputType == Enum.UserInputType.Touch then
-                        targetObject = game:GetService("Players").LocalPlayer:GetMouse().Target
-                    end
-
-                    local isUIElement = false
-                    if targetObject then
-                        for _, v in pairs(targetObject:GetDescendants()) do
-                            if v:IsA("GuiObject") or v:IsA("TextButton") or v:IsA("TextLabel") then
-                                isUIElement = true
-                                break
-                            end
-                        end
-                    end
-
-                    if isUIElement or not targetObject then
-                        createClickEffect(input.Position)
-                    end
+                    createClickEffect(input.Position)
                 end
             end
         end)
