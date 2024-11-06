@@ -2601,6 +2601,34 @@ end)
         end
     end)
 
+function createSettingSection(parent, title, description, buttonCallback, buttonState)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Text = title
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    descriptionLabel.Text = description
+    
+    local toggleButton = createToggleButton(sectionFrame, UDim2.new(0.82, 0, 0.75, 0), buttonCallback, buttonState)
+    
+    return sectionFrame
+end
+
 local frameSetting = Instance.new("Frame", ScreenGui)
 frameSetting.Size = UDim2.new(0.35, 0, 0.8, 0)
 frameSetting.Position = UDim2.new(0.5, 0, 0.4, 0)
@@ -2624,72 +2652,57 @@ local TinnLayout = Instance.new("UIListLayout", scrollingSettingFrame)
 TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TinnLayout.Padding = UDim.new(0, 5)
 
-local frameAnticopy = Instance.new("Frame", scrollingSettingFrame)
-frameAnticopy.Size = UDim2.new(1, 0, 0, 100)
-frameAnticopy.BackgroundColor3 = Configs_HUB.Cor_Hub
-frameAnticopy.BackgroundTransparency = 0
-
-local Text3 = Instance.new("TextLabel", frameAnticopy)
-Text3.Size = UDim2.new(1, 0, 0, 30)
-Text3.TextScaled = true
-Text3.TextXAlignment = Enum.TextXAlignment.Left
-Text3.BackgroundTransparency = 1
-Text3.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text3.Text = "Anti Copy"
-
-local Text4 = Instance.new("TextLabel", frameAnticopy)
-Text4.Size = UDim2.new(1, 0, 0, 50)
-Text4.TextScaled = true
-Text4.TextXAlignment = Enum.TextXAlignment.Left
-Text4.BackgroundTransparency = 1
-Text4.Position = UDim2.new(0, 0, 0.31, 0)
-Text4.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text4.Text = [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
-It will notify you on the screen. If you feel annoyed, you can turn it off]]
-
 local copyEnabled = false
 
 local originalToClipboard = getgenv().toclipboard
 local originalSetClipboard = getgenv().setclipboard
 local originalOriginalSetClipboard = getgenv().originalSetClipboard
 
-local TogglecopyButton = createToggleButton(frameAnticopy, UDim2.new(0.82, 0, 0.75, 0), function()
-    copyEnabled = not copyEnabled
+createSettingSection(
+    scrollingSettingFrame, 
+    "Anti Copy", 
+    [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
+    It will notify you on the screen. If you feel annoyed, you can turn it off]], 
+    function()
+        copyEnabled = not copyEnabled
+        
+        if copyEnabled then
+            getgenv().toclipboard = function(data)
+                notify({
+                    Title = "Attempted to copy",
+                    Text = tostring(data),
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                })
+            end
+            getgenv().setclipboard = function(data)
+                notify({
+                    Title = "Attempted to copy",
+                    Text = tostring(data),
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                })
+            end
+            getgenv().originalSetClipboard = function(data)
+                notify({
+                    Title = "Attempted to copy",
+                    Text = tostring(data),
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                })
+            end
+        else
+            getgenv().toclipboard = originalToClipboard
+            getgenv().setclipboard = originalSetClipboard
+            getgenv().originalSetClipboard = originalOriginalSetClipboard
+        end
+    end, 
+    copyEnabled
+)
 
-    if copyEnabled then
-        getgenv().toclipboard = function(data)
-            notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
-            })
-        end
-        getgenv().setclipboard = function(data)
-            notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
-            })
-        end
-        getgenv().originalSetClipboard = function(data)
-            notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
-            })
-        end
-    else
-        getgenv().toclipboard = originalToClipboard
-        getgenv().setclipboard = originalSetClipboard
-        getgenv().originalSetClipboard = originalOriginalSetClipboard
-    end
-end, copyEnabled)
 
 local friendnotifications = {}
 local notifyFriendsEnabled = true
@@ -3006,76 +3019,6 @@ local framerainButton = createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0
         Lighting.GlobalShadows = false
     end
 end, isLightingEnabled)
-
-local WebhookNotificationframe = Instance.new("Frame", scrollingSettingFrame)
-WebhookNotificationframe.Size = UDim2.new(1, 0, 0, 100)
-WebhookNotificationframe.BackgroundColor3 = Configs_HUB.Cor_Hub
-WebhookNotificationframe.BackgroundTransparency = 0
-
-local WebhookNotification = Instance.new("TextLabel", WebhookNotificationframe)
-WebhookNotification.Size = UDim2.new(1, 0, 0, 30)
-WebhookNotification.TextScaled = true
-WebhookNotification.TextXAlignment = Enum.TextXAlignment.Left
-WebhookNotification.BackgroundTransparency = 1
-WebhookNotification.TextColor3 = Color3.fromRGB(255, 255, 255)
-WebhookNotification.Text = "Webhook Notification"
-
-local WebhookNotification1 = Instance.new("TextLabel", WebhookNotificationframe)
-WebhookNotification1.Size = UDim2.new(1, 0, 0, 50)
-WebhookNotification1.TextScaled = true
-WebhookNotification1.TextXAlignment = Enum.TextXAlignment.Left
-WebhookNotification1.BackgroundTransparency = 1
-WebhookNotification1.Position = UDim2.new(0, 0, 0.32, 0)
-WebhookNotification1.TextColor3 = Color3.fromRGB(255, 255, 255)
-WebhookNotification1.Text = [[This will validate the Webhook.
-In the various scripts you are working on, if found, a notification will be displayed to you]]
-
-local isWebhookNotificationEnabled = true
-
-local togglewebhookButton = createToggleButton(WebhookNotificationframe, UDim2.new(0.82, 0, 0.75, 0), function(state)
-    isWebhookNotificationEnabled = state
-
-    local function hookRequestFunction(requestFunc)
-        hookfunction(requestFunc, function(data)
-            if data.Url and data.Url:find("webhook") and isWebhookNotificationEnabled then
-                local details = "URL: " .. (data.Url or "N/A") ..
-                                "\nMethod: " .. (data.Method or "N/A") ..
-                                "\nHeaders: " .. (data.Headers and tostring(data.Headers) or "N/A") ..
-                                "\nBody: " .. (data.Body and tostring(data.Body) or "N/A")
-
-                notify({
-                    Title = "Detect webhook usage",
-                    Text = "Webhook request detected!\n" .. details,
-                    buttonText = "OK",
-                    imageID = "",
-                    guiSize = Vector2.new(400, 70)
-                })
-            end
-            requestFunc(data)
-        end)
-    end
-
-    if syn and syn.request then
-        hookRequestFunction(syn.request)
-    end
-
-    if fluxus and fluxus.request then
-        hookRequestFunction(fluxus.request)
-    end
-
-    if http and http.request then
-        hookRequestFunction(http.request)
-    end
-
-    if http_request then
-        hookRequestFunction(http_request)
-    end
-
-    if request then
-        hookRequestFunction(request)
-    end
-end, isWebhookNotificationEnabled)
-
 
 local togglehideName = false
 
