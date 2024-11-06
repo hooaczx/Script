@@ -1409,7 +1409,7 @@ end)
 
 local functions = {}
 
-functions.createToggleButton = function(parent, position, callback, initialState, linkedToggle)
+functions.createToggleButton = function(parent, position, callback, initialState)
     local TextButton = Instance.new("TextButton", parent)
     TextButton.Size = UDim2.new(0.17, 0, 0, 25)
     TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
@@ -1426,7 +1426,8 @@ functions.createToggleButton = function(parent, position, callback, initialState
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
 
     local OnOff = initialState
-    local function toggle(state)
+
+    local function setState(state)
         OnOff = state
         if OnOff then
             CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
@@ -1442,23 +1443,20 @@ functions.createToggleButton = function(parent, position, callback, initialState
     end
 
     TextButton.MouseButton1Click:Connect(function()
-        toggle(not OnOff)
-        if linkedToggle and OnOff then
-            linkedToggle(false)
-        end
+        setState(not OnOff)
     end)
 
     TextButton.AncestryChanged:Connect(function(_, parent)
         if not parent and OnOff then
-            toggle(false)
+            setState(false)
         end
     end)
 
-    return toggle
+    return setState
 end
 
 
-functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState, linkedToggle)
+functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
     local sectionFrame = Instance.new("Frame", parent)
     sectionFrame.Size = UDim2.new(1, 0, 0, 100)
     sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1484,11 +1482,10 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     TextSetColor(descriptionLabel)
     
     local toggleButtonPosition = UDim2.new(0.82, 0, 0.75, 0)
-    local toggleButton = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState, linkedToggle)
+    local toggleButton = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState)
 
     return sectionFrame
 end
-
 
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
