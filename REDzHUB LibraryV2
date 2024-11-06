@@ -2774,6 +2774,7 @@ function(isClickEffectEnabled)
             local screenGui = Instance.new("ScreenGui")
             screenGui.Name = "ClickEffectUI"
             screenGui.Parent = coreGui
+            screenGui.DisplayOrder = 9e9
 
             local ripple = Instance.new("Frame", screenGui)
             ripple.Size = UDim2.new(0, 0, 0, 0)
@@ -2802,7 +2803,21 @@ function(isClickEffectEnabled)
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    createClickEffect(input.Position)
+                    local clickedObject = input.Target
+                    local isUIElement = false
+
+                    for _, v in pairs(clickedObject:GetDescendants()) do
+                        if v:IsA("GuiObject") or v:IsA("TextButton") or v:IsA("TextLabel") then
+                            isUIElement = true
+                            break
+                        end
+                    end
+
+                    if isUIElement then
+                        createClickEffect(input.Position)
+                    elseif not clickedObject:IsDescendantOf(scrollingSettingFrame) then
+                        createClickEffect(input.Position)
+                    end
                 end
             end
         end)
