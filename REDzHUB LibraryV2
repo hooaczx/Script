@@ -1487,10 +1487,34 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     return toggleButtonState
 end
 
-functions.createSlider = function(parent, position, size, callback)
-    local progressBar = Instance.new("Frame", parent)
-    progressBar.Size = size
-    progressBar.Position = position
+functions.createSlider = function(parent, title, description, callback)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+
+    local progressBar = Instance.new("Frame", sectionFrame)
+    progressBar.Size = UDim2.new(1, 0, 0, 20)
+    progressBar.Position = UDim2.new(0, 0, 0, 81)
     progressBar.BackgroundColor3 = Configs_HUB.Cor_Options
 
     local sliderButton = Instance.new("TextButton", progressBar)
@@ -1623,8 +1647,8 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
 end, isAutoPlayEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
-local slider = functions.createSlider(scrollingsettingmusicFrame, UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 34), function(value)
-    gameSettings.MasterVolume = value / 100
+local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
+   gameSettings.MasterVolume = value / 100
 end)
 
 soundmusic.Ended:Connect(function()
