@@ -1396,7 +1396,9 @@ PreviousButton.MouseButton1Click:Connect(function()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
-local function createToggleButton(parent, position, callback, initialState)
+local functions = {}
+
+functions.createToggleButton = function(parent, position, callback, initialState)
     local TextButton = Instance.new("TextButton", parent)
     TextButton.Size = UDim2.new(0.17, 0, 0, 25)
     TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
@@ -1440,6 +1442,36 @@ local function createToggleButton(parent, position, callback, initialState)
     end)
 
     return TextButton
+end
+
+functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    descriptionLabel.Text = description
+    TextSetColor(titleLabel)
+    
+    local toggleButton = createToggleButton(sectionFrame, UDim2.new(0.82, 0, 0.75, 0), buttonCallback, buttonState)
+    
+    return sectionFrame
 end
 
 local framemusic = Instance.new("Frame", ScreenGui)
@@ -1494,7 +1526,7 @@ Text44.Text = [[will automatically play the next song when opened. If you don't 
 TextSetColor(Text44)
 
 local isAutoPlayEnabled = false
-local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
+local AutoPlayframe = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(autoPlayNext)
     isAutoPlayEnabled = not isAutoPlayEnabled
 end, autoPlayNext)
 
@@ -2601,36 +2633,6 @@ end)
         end
     end)
 
-function createSettingSection(parent, title, description, buttonCallback, buttonState)
-    local sectionFrame = Instance.new("Frame", parent)
-    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
-    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
-    sectionFrame.BackgroundTransparency = 0
-    
-    local titleLabel = Instance.new("TextLabel", sectionFrame)
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.TextScaled = true
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.Text = title
-    TextSetColor(titleLabel)
-    
-    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
-    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
-    descriptionLabel.TextScaled = true
-    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descriptionLabel.BackgroundTransparency = 1
-    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
-    descriptionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    descriptionLabel.Text = description
-    TextSetColor(titleLabel)
-    
-    local toggleButton = createToggleButton(sectionFrame, UDim2.new(0.82, 0, 0.75, 0), buttonCallback, buttonState)
-    
-    return sectionFrame
-end
-
 local frameSetting = Instance.new("Frame", ScreenGui)
 frameSetting.Size = UDim2.new(0.35, 0, 0.8, 0)
 frameSetting.Position = UDim2.new(0.5, 0, 0.4, 0)
@@ -2660,7 +2662,7 @@ local originalToClipboard = getgenv().toclipboard
 local originalSetClipboard = getgenv().setclipboard
 local originalOriginalSetClipboard = getgenv().originalSetClipboard
 
-createSettingSection(
+functions.createSettingSection(
     scrollingSettingFrame, 
     "Anti Copy", 
     [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
@@ -2709,7 +2711,7 @@ createSettingSection(
 local friendnotifications = {}
 local notifyFriendsEnabled = true
 
-createSettingSection(scrollingSettingFrame, "Notification Friends", 
+functions.createSettingSection(scrollingSettingFrame, "Notification Friends", 
     [[This script will notify you when your friends join and exit the game and if you feel annoyed you can, turn it off]], 
     function()
         notifyFriendsEnabled = not notifyFriendsEnabled
@@ -2909,7 +2911,7 @@ rainSound.SoundId = "rbxassetid://1516791621"
 rainSound.Volume = 1
 rainSound.Looped = true
 
-createSettingSection(scrollingSettingFrame, "Rain🌧", 
+functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
     [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
     function(isLightingEnabled)
         if isLightingEnabled then
@@ -3012,7 +3014,7 @@ end
 
 game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
-createSettingSection(scrollingSettingFrame, "Hide Name", 
+functions.createSettingSection(scrollingSettingFrame, "Hide Name", 
 [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]],
     function(state)
     togglehideName = state
