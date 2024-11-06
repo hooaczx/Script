@@ -1512,10 +1512,9 @@ functions.createSlider = function(parent, position, size, callback)
     local function onUpdateSlider(input)
         local relativePos = (input.Position.X - progressBar.AbsolutePosition.X) / progressBar.AbsoluteSize.X
         relativePos = math.clamp(relativePos, 0, 1)
-        local percentage = (relativePos - 0.5) * 200
-        local value = 100 - math.abs(percentage)
-        percentageLabel.Text = tostring(math.floor(value)) .. "%"
-        callback(value)
+        local percentage = relativePos * 100
+        percentageLabel.Text = tostring(math.floor(percentage)) .. "%"
+        callback(percentage)
     end
 
     sliderButton.InputBegan:Connect(function(input)
