@@ -2766,13 +2766,14 @@ function(isClickEffectEnabled)
         local UserInputService = game:GetService("UserInputService")
 
         local function createClickEffect(position)
-            if game:GetService("CoreGui"):FindFirstChild("ClickEffectUI") then
-                game:GetService("CoreGui"):FindFirstChild("ClickEffectUI"):Destroy()
+            local coreGui = game:GetService("CoreGui")
+            if coreGui:FindFirstChild("ClickEffectUI") then
+                coreGui:FindFirstChild("ClickEffectUI"):Destroy()
             end
 
-            local screenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-            screenGui.Name = "ClickEffect"
-            screenGui.DisplayOrder = 9e9
+            local screenGui = Instance.new("ScreenGui")
+            screenGui.Name = "ClickEffectUI"
+            screenGui.Parent = coreGui
 
             local ripple = Instance.new("Frame", screenGui)
             ripple.Size = UDim2.new(0, 0, 0, 0)
@@ -2800,7 +2801,7 @@ function(isClickEffectEnabled)
 
         UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     createClickEffect(input.Position)
                 end
             end
@@ -2808,7 +2809,6 @@ function(isClickEffectEnabled)
     end
 end,
 isClickEffectEnabled)
-
 
 local copyEnabled = false
 
