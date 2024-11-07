@@ -1731,17 +1731,18 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
         end
 
         currentMode = currentMode % #modeList + 1
-        effectButton.Text = buttonText .. ": " .. modeList[currentMode].name
         local mode = modeList[currentMode]
         
         if name == "Reverb Effect" then
             reverbEffect.DecayTime = mode.decayTime
             reverbEffect.Density = mode.density
             reverbEffect.Enabled = mode.name ~= "Off"
+            effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
+
             if chorusButton then
                 chorusButton.Visible = true
                 currentChorusMode = 1
-                chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+                chorusButton.Text = "Chorus Mode: " .. (chorusModes[currentChorusMode].name == "Off" and "off" or chorusModes[currentChorusMode].name)
                 local chorusMode = chorusModes[currentChorusMode]
                 chorusEffect.Depth = chorusMode.depth
                 chorusEffect.Rate = chorusMode.rate
@@ -1751,10 +1752,12 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
             chorusEffect.Depth = mode.depth
             chorusEffect.Rate = mode.rate
             chorusEffect.Enabled = mode.name ~= "Off"
+            effectButton.Text = "Chorus Mode: " .. (mode.name == "Off" and "off" or mode.name)
+
             if reverbButton then
                 reverbButton.Visible = true
                 currentMode = 1
-                reverbButton.Text = "Reverb Mode: " .. modes[currentMode].name
+                reverbButton.Text = "Reverb Mode: " .. (modes[currentMode].name == "Off" and "off" or modes[currentMode].name)
                 local reverbMode = modes[currentMode]
                 reverbEffect.DecayTime = reverbMode.decayTime
                 reverbEffect.Density = reverbMode.density
