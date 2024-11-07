@@ -1814,25 +1814,26 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
         local mode = modeList[currentMode]
 
         if name == "Reverb Effect" then
-            if chorusEffect.Enabled then
-                chorusEffect.Enabled = false
+            if chorusButton then
                 chorusButton.Text = "Chorus Mode: off"
-                local offChorus = chorusModes[1]
-                chorusEffect.Depth = offChorus.depth
-                chorusEffect.Rate = offChorus.rate
+                local offMode = chorusModes[1]
+                chorusEffect.Depth = offMode.depth
+                chorusEffect.Rate = offMode.rate
+                chorusEffect.Enabled = false
             end
+
             reverbEffect.DecayTime = mode.decayTime
             reverbEffect.Density = mode.density
             reverbEffect.Enabled = mode.name ~= "Off"
             effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
 
         elseif name == "Chorus Mode" then
-            if reverbEffect.Enabled then
-                reverbEffect.Enabled = false
+            if reverbButton then
                 reverbButton.Text = "Reverb Mode: off"
-                local offReverb = modes[1]
-                reverbEffect.DecayTime = offReverb.decayTime
-                reverbEffect.Density = offReverb.density
+                local offMode = modes[1]
+                reverbEffect.DecayTime = offMode.decayTime
+                reverbEffect.Density = offMode.density
+                reverbEffect.Enabled = false
             end
 
             chorusEffect.Depth = mode.depth
@@ -1849,8 +1850,7 @@ local reverbDescription = [[Makes sound sound like it echoes in an enclosed spac
 local reverbButton = functions.createEffectUI("Reverb Effect", reverbDescription, "Reverb Mode: off", modes, scrollingsettingmusicFrame)
 
 local chorusDescription = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
-local chorusButton = functions.createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame, reverbButton)
-
+local chorusButton = functions.createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
