@@ -1576,6 +1576,7 @@ functions.createSlider = function(parent, title, description, callback)
 end
 
 local function sendMessageToDiscord(message)
+getgenv().webhookUrl
 local player = game.Players.LocalPlayer
 local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
 local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
@@ -3382,6 +3383,8 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
     togglehideName = state
     toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
 end, isLightingEnabled)
+
+functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", sendMessageToDiscord)
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
