@@ -1642,7 +1642,57 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     return sectionFrame
 end
 
-functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame)
+local modes = {
+    { name = "Off", decayTime = 0, density = 0 },
+    { name = "Room", decayTime = 0.3, density = 0.5 },
+    { name = "Hall", decayTime = 1.2, density = 0.8 },
+    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
+    { name = "Forest", decayTime = 0.7, density = 0.4 },
+    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
+    { name = "Mountains", decayTime = 3.5, density = 0.85 },
+    { name = "Cave", decayTime = 3.0, density = 0.7 },
+    { name = "Arena", decayTime = 1.8, density = 0.9 },
+    { name = "Underwater", decayTime = 2.2, density = 0.6 },
+    { name = "Open Field", decayTime = 0.5, density = 0.3 },
+    { name = "City", decayTime = 1.0, density = 0.65 },
+    { name = "Desert", decayTime = 0.9, density = 0.5 },
+    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
+    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
+    { name = "Swamp", decayTime = 1.7, density = 0.6 },
+    { name = "Factory", decayTime = 1.6, density = 0.75 },
+    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
+    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
+    { name = "Subway", decayTime = 1.4, density = 0.7 },
+    { name = "Library", decayTime = 1.1, density = 0.5 },
+}
+
+local chorusModes = {
+    { name = "Off", depth = 0, rate = 0 },
+    { name = "Light", depth = 0.5, rate = 1 },
+    { name = "Moderate", depth = 0.8, rate = 1.5 },
+    { name = "Heavy", depth = 1.0, rate = 2 },
+    { name = "Ultra", depth = 1.2, rate = 2.5 },
+    { name = "Extreme", depth = 1.5, rate = 3 },
+    { name = "Super Heavy", depth = 1.8, rate = 4 },
+    { name = "Max", depth = 2.0, rate = 5 },
+    { name = "Phantom", depth = 1.0, rate = 3.5 },
+    { name = "Super Phantom", depth = 2.5, rate = 6 },
+    { name = "Whisper", depth = 0.4, rate = 0.8 },
+    { name = "Echo", depth = 0.7, rate = 1.2 },
+    { name = "Cascading", depth = 1.3, rate = 3.0 },
+    { name = "Wavy", depth = 1.4, rate = 2.2 },
+    { name = "Siren", depth = 1.6, rate = 4.0 },
+    { name = "Ghostly", depth = 1.7, rate = 3.8 },
+    { name = "Dreamy", depth = 1.9, rate = 5.0 },
+    { name = "Vortex", depth = 2.1, rate = 5.5 },
+    { name = "Nebula", depth = 2.3, rate = 6.0 },
+    { name = "Warped", depth = 2.4, rate = 6.5 },
+}
+
+local currentMode = 1
+local currentChorusMode = 1
+
+functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame, otherButton)
     local effectFrame = Instance.new("Frame", parentFrame)
     effectFrame.Size = UDim2.new(1, 0, 0, 100)
     effectFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1676,9 +1726,16 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
 
     local currentMode = 1
     effectButton.MouseButton1Click:Connect(function()
+        if otherButton then
+            otherButton.Text = otherButton.Text:match("Mode: (.+)")
+            otherButton.BackgroundTransparency = 0.4
+            otherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end
+        
         currentMode = currentMode % #modeList + 1
         effectButton.Text = buttonText .. ": " .. modeList[currentMode].name
         local mode = modeList[currentMode]
+        
         if name == "Reverb Effect" then
             reverbEffect.DecayTime = mode.decayTime
             reverbEffect.Density = mode.density
@@ -1776,61 +1833,11 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
     isSettingAutoPlayState = false
 end, isAutoPlayEnabled)
 
-local modes = {
-    { name = "Off", decayTime = 0, density = 0 },
-    { name = "Room", decayTime = 0.3, density = 0.5 },
-    { name = "Hall", decayTime = 1.2, density = 0.8 },
-    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
-    { name = "Forest", decayTime = 0.7, density = 0.4 },
-    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
-    { name = "Mountains", decayTime = 3.5, density = 0.85 },
-    { name = "Cave", decayTime = 3.0, density = 0.7 },
-    { name = "Arena", decayTime = 1.8, density = 0.9 },
-    { name = "Underwater", decayTime = 2.2, density = 0.6 },
-    { name = "Open Field", decayTime = 0.5, density = 0.3 },
-    { name = "City", decayTime = 1.0, density = 0.65 },
-    { name = "Desert", decayTime = 0.9, density = 0.5 },
-    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
-    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
-    { name = "Swamp", decayTime = 1.7, density = 0.6 },
-    { name = "Factory", decayTime = 1.6, density = 0.75 },
-    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
-    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
-    { name = "Subway", decayTime = 1.4, density = 0.7 },
-    { name = "Library", decayTime = 1.1, density = 0.5 },
-}
-
-local chorusModes = {
-    { name = "Off", depth = 0, rate = 0 },
-    { name = "Light", depth = 0.5, rate = 1 },
-    { name = "Moderate", depth = 0.8, rate = 1.5 },
-    { name = "Heavy", depth = 1.0, rate = 2 },
-    { name = "Ultra", depth = 1.2, rate = 2.5 },
-    { name = "Extreme", depth = 1.5, rate = 3 },
-    { name = "Super Heavy", depth = 1.8, rate = 4 },
-    { name = "Max", depth = 2.0, rate = 5 },
-    { name = "Phantom", depth = 1.0, rate = 3.5 },
-    { name = "Super Phantom", depth = 2.5, rate = 6 },
-    { name = "Whisper", depth = 0.4, rate = 0.8 },
-    { name = "Echo", depth = 0.7, rate = 1.2 },
-    { name = "Cascading", depth = 1.3, rate = 3.0 },
-    { name = "Wavy", depth = 1.4, rate = 2.2 },
-    { name = "Siren", depth = 1.6, rate = 4.0 },
-    { name = "Ghostly", depth = 1.7, rate = 3.8 },
-    { name = "Dreamy", depth = 1.9, rate = 5.0 },
-    { name = "Vortex", depth = 2.1, rate = 5.5 },
-    { name = "Nebula", depth = 2.3, rate = 6.0 },
-    { name = "Warped", depth = 2.4, rate = 6.5 },
-}
-
-local currentMode = 1
-local currentChorusMode = 1
-
 local reverbDescription = [[Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping]]
-functions.createEffectUI("Reverb Effect", reverbDescription, "Reverb Mode: off", modes, scrollingsettingmusicFrame)
+local reverbButton = createEffectUI("Reverb Effect", reverbDescription, "Reverb Mode: off", modes, scrollingsettingmusicFrame)
 
 local chorusDescription = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
-functions.createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame)
+local chorusButton = createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame, reverbButton)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
