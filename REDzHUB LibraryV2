@@ -1717,7 +1717,7 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
 
     local effectButton = Instance.new("TextButton", effectFrame)
     effectButton.Size = UDim2.new(0, 100, 0, 30)
-    effectButton.Position = UDim2.new(0.68, 0, 0.7, 0)
+    effectButton.Position = UDim2.new(0.7, 0, 0.7, 0)
     effectButton.Text = buttonText
     effectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     effectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1727,12 +1727,9 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
     local currentMode = 1
     effectButton.MouseButton1Click:Connect(function()
         if otherButton then
-            otherButton.Text = otherButton.Text:match("Mode: (.+)")
-            otherButton.BackgroundTransparency = 0.4
-            otherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             otherButton.Visible = false
         end
-        
+
         currentMode = currentMode % #modeList + 1
         effectButton.Text = buttonText .. ": " .. modeList[currentMode].name
         local mode = modeList[currentMode]
@@ -1741,10 +1738,28 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
             reverbEffect.DecayTime = mode.decayTime
             reverbEffect.Density = mode.density
             reverbEffect.Enabled = mode.name ~= "Off"
+            if chorusButton then
+                chorusButton.Visible = true
+                currentChorusMode = 1
+                chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+                local chorusMode = chorusModes[currentChorusMode]
+                chorusEffect.Depth = chorusMode.depth
+                chorusEffect.Rate = chorusMode.rate
+                chorusEffect.Enabled = chorusMode.name ~= "Off"
+            end
         elseif name == "Chorus Mode" then
             chorusEffect.Depth = mode.depth
             chorusEffect.Rate = mode.rate
             chorusEffect.Enabled = mode.name ~= "Off"
+            if reverbButton then
+                reverbButton.Visible = true
+                currentMode = 1
+                reverbButton.Text = "Reverb Mode: " .. modes[currentMode].name
+                local reverbMode = modes[currentMode]
+                reverbEffect.DecayTime = reverbMode.decayTime
+                reverbEffect.Density = reverbMode.density
+                reverbEffect.Enabled = reverbMode.name ~= "Off"
+            end
         end
     end)
 
