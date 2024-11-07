@@ -1692,7 +1692,7 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame, otherButton)
+functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame, otherEffect)
     local effectFrame = Instance.new("Frame", parentFrame)
     effectFrame.Size = UDim2.new(1, 0, 0, 100)
     effectFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1726,35 +1726,25 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
 
     local currentMode = 1
     effectButton.MouseButton1Click:Connect(function()
-        currentMode = currentMode % #modeList + 1
+        if otherEffect then
+            otherEffect.Enabled = false
+            otherEffect.DecayTime, otherEffect.Density = 0, 0
+            otherEffect.Depth, otherEffect.Rate = 0, 0
+            otherEffect.Text = otherEffect.Text:split(":")[1] .. ": Off"
+        end
+
+        currentMode = (currentMode % #modeList) + 1
+        effectButton.Text = buttonText:split(":")[1] .. ": " .. modeList[currentMode].name
         local mode = modeList[currentMode]
-        
+
         if name == "Reverb Effect" then
             reverbEffect.DecayTime = mode.decayTime
             reverbEffect.Density = mode.density
             reverbEffect.Enabled = mode.name ~= "Off"
-            effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
-            
-            if chorusButton then
-                chorusButton.Text = "Chorus Mode: off"
-                local offMode = chorusModes[1]
-                chorusEffect.Depth = offMode.depth
-                chorusEffect.Rate = offMode.rate
-                chorusEffect.Enabled = false
-            end
         elseif name == "Chorus Mode" then
             chorusEffect.Depth = mode.depth
             chorusEffect.Rate = mode.rate
             chorusEffect.Enabled = mode.name ~= "Off"
-            effectButton.Text = "Chorus Mode: " .. (mode.name == "Off" and "off" or mode.name)
-
-            if reverbButton then
-                reverbButton.Text = "Reverb Mode: off"
-                local offMode = modes[1]
-                reverbEffect.DecayTime = offMode.decayTime
-                reverbEffect.Density = offMode.density
-                reverbEffect.Enabled = false
-            end
         end
     end)
 
