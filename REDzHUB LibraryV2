@@ -3286,7 +3286,7 @@ end, isLightingEnabled)
 
 functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
     local Frames = Instance.new("Frame", ScreenGui)
-    Frames.Size = UDim2.new(0.5, 0, 0.5, 0)
+    Frames.Size = UDim2.new(0, 0, 0, 0)
     Frames.BackgroundColor3 = Configs_HUB.Cor_Options
     Frames.Position = UDim2.new(0.25, 0, 0.25, 0)
     Frames.BackgroundTransparency = 0
@@ -3319,24 +3319,8 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
     No.Font = Configs_HUB.Text_Font
     No.Text = "No"
 
-    local function SetVisible()
-        if Frames.Size.Y.Offset > 100 then
-            Frames.Visible = true
-        else
-            Frames.Visible = false
-        end
-    end
-
-    SetVisible()
-
-    CreateTween(Frames, "Transparency", 0, 0.2, false)
-    CreateTween(Frames, "Size", UDim2.new(0.7, 0, 0.7, 0), 0.2, false)
-
-    No.MouseButton1Click:Connect(function()
-        CreateTween(Frames, "Transparency", 1, 0.3, false)
-        CreateTween(Frames, "Size", UDim2.new(), 0.2, true)
-        Frames:Destroy()
-    end)
+    Frames.Visible = true
+    CreateTween(Frames, "Size", UDim2.new(0.5, 0, 0.5, 0), 0.5, true)
 
     Yes.MouseButton1Click:Connect(function()
         local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
@@ -3377,9 +3361,13 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
             warn("Failed to send webhook request:", response)
         end
 
+        CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
         Frames:Destroy()
-        CreateTween(Frames, "Size", UDim2.new(), 0.3, true)
-        DestroyScript()
+    end)
+
+    No.MouseButton1Click:Connect(function()
+        CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
+        Frames:Destroy()
     end)
 end)
 
