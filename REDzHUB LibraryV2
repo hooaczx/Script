@@ -1691,7 +1691,6 @@ local chorusModes = {
 
 local currentMode = 1
 local currentChorusMode = 1
-local activeMode = nil
 
 functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame, otherButton)
     local effectFrame = Instance.new("Frame", parentFrame)
@@ -1729,36 +1728,34 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
     effectButton.MouseButton1Click:Connect(function()
         currentMode = currentMode % #modeList + 1
         local mode = modeList[currentMode]
-        
+
         if name == "Reverb Effect" then
-            if activeMode == "Chorus" and chorusButton then
+            if chorusButton and chorusEffect.Enabled then
                 chorusButton.Text = "Chorus Mode: off"
                 local offMode = chorusModes[1]
                 chorusEffect.Depth = offMode.depth
                 chorusEffect.Rate = offMode.rate
                 chorusEffect.Enabled = false
             end
-            
+
             reverbEffect.DecayTime = mode.decayTime
             reverbEffect.Density = mode.density
             reverbEffect.Enabled = mode.name ~= "Off"
             effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
-            activeMode = "Reverb"
-            
+
         elseif name == "Chorus Mode" then
-            if activeMode == "Reverb" and reverbButton then
+            if reverbButton and reverbEffect.Enabled then
                 reverbButton.Text = "Reverb Mode: off"
                 local offMode = modes[1]
                 reverbEffect.DecayTime = offMode.decayTime
                 reverbEffect.Density = offMode.density
                 reverbEffect.Enabled = false
             end
-            
+
             chorusEffect.Depth = mode.depth
             chorusEffect.Rate = mode.rate
             chorusEffect.Enabled = mode.name ~= "Off"
             effectButton.Text = "Chorus Mode: " .. (mode.name == "Off" and "off" or mode.name)
-            activeMode = "Chorus"
         end
     end)
 
