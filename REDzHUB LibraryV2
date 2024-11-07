@@ -1642,46 +1642,55 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     return sectionFrame
 end
 
-functions.createModeSection = function(parent, title, description, buttonText, onClickCallback)
-    local frame = Instance.new("Frame", parent)
-    frame.Size = UDim2.new(1, 0, 0, 100)
-    frame.BackgroundColor3 = Configs_HUB.Cor_Hub
-    frame.BackgroundTransparency = 0
+functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame)
+    local effectFrame = Instance.new("Frame", parentFrame)
+    effectFrame.Size = UDim2.new(1, 0, 0, 100)
+    effectFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    effectFrame.BackgroundTransparency = 0
 
-    local textTitle = Instance.new("TextLabel")
-    textTitle.Parent = frame
-    textTitle.Size = UDim2.new(1, 0, 0, 30)
-    textTitle.TextScaled = true
-    textTitle.TextXAlignment = Enum.TextXAlignment.Left
-    textTitle.BackgroundTransparency = 1
-    textTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textTitle.Text = title
+    local effectLabel = Instance.new("TextLabel", effectFrame)
+    effectLabel.Size = UDim2.new(1, 0, 0, 30)
+    effectLabel.TextScaled = true
+    effectLabel.TextXAlignment = Enum.TextXAlignment.Left
+    effectLabel.BackgroundTransparency = 1
+    effectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    effectLabel.Text = name
 
-    local textDescription = Instance.new("TextLabel")
-    textDescription.Parent = frame
-    textDescription.Size = UDim2.new(1, 0, 0, 30)
-    textDescription.TextScaled = true
-    textDescription.TextXAlignment = Enum.TextXAlignment.Left
-    textDescription.BackgroundTransparency = 1
-    textDescription.Position = UDim2.new(0, 0, 0.31, 0)
-    textDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
-    textDescription.Text = description
+    local effectDescription = Instance.new("TextLabel", effectFrame)
+    effectDescription.Size = UDim2.new(1, 0, 0, 30)
+    effectDescription.TextScaled = true
+    effectDescription.TextXAlignment = Enum.TextXAlignment.Left
+    effectDescription.BackgroundTransparency = 1
+    effectDescription.Position = UDim2.new(0, 0, 0.31, 0)
+    effectDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
+    effectDescription.Text = description
 
-    local button = Instance.new("TextButton")
-    button.Parent = frame
-    button.Size = UDim2.new(0, 100, 0, 30)
-    button.Position = UDim2.new(0.7, 0, 0.7, 0)
-    button.Text = buttonText
-    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextScaled = true
-    button.BackgroundTransparency = 0.4
+    local effectButton = Instance.new("TextButton", effectFrame)
+    effectButton.Size = UDim2.new(0, 100, 0, 30)
+    effectButton.Position = UDim2.new(0.7, 0, 0.7, 0)
+    effectButton.Text = buttonText
+    effectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    effectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    effectButton.TextScaled = true
+    effectButton.BackgroundTransparency = 0.4
 
-    button.MouseButton1Click:Connect(function()
-        onClickCallback(button)
+    local currentMode = 1
+    effectButton.MouseButton1Click:Connect(function()
+        currentMode = currentMode % #modeList + 1
+        effectButton.Text = buttonText .. ": " .. modeList[currentMode].name
+        local mode = modeList[currentMode]
+        if name == "Reverb Effect" then
+            reverbEffect.DecayTime = mode.decayTime
+            reverbEffect.Density = mode.density
+            reverbEffect.Enabled = mode.name ~= "Off"
+        elseif name == "Chorus Mode" then
+            chorusEffect.Depth = mode.depth
+            chorusEffect.Rate = mode.rate
+            chorusEffect.Enabled = mode.name ~= "Off"
+        end
     end)
 
-    return button
+    return effectFrame
 end
 
 local framemusic = Instance.new("Frame", ScreenGui)
@@ -1816,63 +1825,12 @@ local chorusModes = {
 
 local currentMode = 1
 local currentChorusMode = 1
-local isReverbActive = false
-local isChorusActive = false
 
-local reverbButton = functions.createModeSection(scrollingsettingmusicFrame, "Reverb Effect", 
-    "Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping", 
-    "Reverb Mode: off", 
-    function(button)
-        if isChorusActive then
-            chorusButton.Text = "Chorus Mode: off"
-            chorusEffect.Enabled = false
-            isChorusActive = false
-        end
+local reverbDescription = [[Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping]]
+functions.createEffectUI("Reverb Effect", reverbDescription, "Reverb Mode: off", modes, scrollingsettingmusicFrame)
 
-        if not isReverbActive then
-            isReverbActive = true
-            if currentMode == 1 then
-                currentMode = 1
-                button.Text = "Reverb Mode: " .. modes[currentMode].name  -- ใช้ button ที่ส่งมาเพื่อเปลี่ยนชื่อ
-                local mode = modes[currentMode]
-                reverbEffect.DecayTime = mode.decayTime
-                reverbEffect.Density = mode.density
-                reverbEffect.Enabled = mode.name ~= "Off"
-            end
-        else
-            isReverbActive = false
-            button.Text = "Reverb Mode: off"  -- ใช้ button ที่ส่งมาเพื่อเปลี่ยนชื่อ
-            reverbEffect.Enabled = false
-        end
-    end)
-
-local chorusButton = functions.createModeSection(scrollingsettingmusicFrame, "Chorus Mode", 
-    "Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations", 
-    "Chorus Mode: off", 
-    function(button)
-        if isReverbActive then
-            reverbButton.Text = "Reverb Mode: off"
-            reverbEffect.Enabled = false
-            isReverbActive = false
-        end
-
-        if not isChorusActive then
-            isChorusActive = true
-            if currentChorusMode == 1 then
-                currentMode = 1
-                button.Text = "Echo Mode: " .. modes[currentMode].name  -- ใช้ button ที่ส่งมาเพื่อเปลี่ยนชื่อ
-                local mode = modes[currentMode]
-                button.Text = "Echo Mode: " .. mode.name
-                reverbEffect.DecayTime = mode.decayTime
-                reverbEffect.Density = mode.density
-                reverbEffect.Enabled = mode.name ~= "Off"
-            end
-        else
-            isChorusActive = false
-            button.Text = "Chorus Mode: off"  -- ใช้ button ที่ส่งมาเพื่อเปลี่ยนชื่อ
-            chorusEffect.Enabled = false
-        end
-    end)
+local chorusDescription = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
+functions.createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
