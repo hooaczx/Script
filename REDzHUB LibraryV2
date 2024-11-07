@@ -1575,45 +1575,6 @@ functions.createSlider = function(parent, title, description, callback)
     return progressBar
 end
 
-local function sendMessageToDiscord(message)
-    getgenv().webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
-    local player = game.Players.LocalPlayer
-    local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
-    local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
-    local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
-    local playerUsername = player.Name
-    local profileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
-    local data = {
-        ["content"] = message,
-        ["username"] = playerUsername,
-        ["avatar_url"] = AvatarImage,
-        ["embeds"] = {
-            {
-                ["title"] = "Message from " .. playerUsername,
-                ["description"] = message,
-                ["url"] = profileLink,
-                ["color"] = 0x7289DA,
-                ["author"] = {
-                    ["name"] = playerUsername,
-                    ["url"] = profileLink,
-                    ["icon_url"] = AvatarImage
-                }
-            }
-        }
-    }
-
-    local newdata = game:GetService("HttpService"):JSONEncode(data)
-    local headers = {["content-type"] = "application/json"}
-    local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
-
-    request({
-        Url = getgenv().webhookUrl,
-        Body = newdata,
-        Method = "POST",
-        Headers = headers
-    })
-end
-
 functions.createTextboxWithButton = function(parent, title, description, callback)
     local sectionFrame = Instance.new("Frame", parent)
     sectionFrame.Size = UDim2.new(1, 0, 0, 100)
@@ -1651,7 +1612,7 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
 
     local sendButton = Instance.new("TextButton", sectionFrame)
     sendButton.Size = UDim2.new(0.25, 0, 0, 20)
-    sendButton.Position = UDim2.new(0.75, 0, 0, 0)
+    sendButton.Position = UDim2.new(0.75, 0, 0, 81)
     sendButton.BackgroundColor3 = Configs_HUB.Cor_Options
     sendButton.TextColor3 = Configs_HUB.Cor_Text
     sendButton.Text = "Send Message"
@@ -3308,7 +3269,39 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
     toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
 end, isLightingEnabled)
 
-functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", sendMessageToDiscord)
+functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
+    local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
+    local player = game.Players.LocalPlayer
+    local playerUsername = player.Name
+    local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
+    local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
+    local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
+    local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
+
+    local data = {
+        ["username"] = playerUsername,
+        ["avatar_url"] = AvatarImage,
+        ["embeds"] = {
+            {
+                ["title"] = "Message from " .. playerUsername,
+                ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
+                ["color"] = 0x7289DA
+            }
+        }
+    }
+
+    local newdata = game:GetService("HttpService"):JSONEncode(data)
+    local headers = {["content-type"] = "application/json"}
+
+    local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
+
+    request({
+        Url = webhookUrl,
+        Body = newdata,
+        Method = "POST",
+        Headers = headers
+    })
+end)
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
