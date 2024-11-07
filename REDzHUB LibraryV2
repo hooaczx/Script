@@ -2859,7 +2859,7 @@ local function Size()
     local contentHeight = SettingTinniLayout.AbsoluteContentSize.Y
     songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
-local isClickEffectEnabled = true
+local isClickEffectEnabled = false
 local ripples = {}
 local inputBeganConnection
 
@@ -3284,6 +3284,16 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
     toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
 end, isLightingEnabled)
 
+local TweenService = game:GetService("TweenService")
+
+local function CreateTween(instance, prop, value, time, tweenWait)
+    local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
+    tween:Play()
+    if tweenWait then
+        tween.Completed:Wait()
+    end
+end
+
 functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
     local Frames = Instance.new("Frame", ScreenGui)
     Frames.Size = UDim2.new(0, 0, 0, 0)
@@ -3309,6 +3319,7 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
     Yes.TextColor3 = Configs_HUB.Cor_Text
     Yes.Font = Configs_HUB.Text_Font
     Yes.Text = "Yes"
+    Yes.Active = true  -- Ensure the button is initially clickable
 
     local No = Instance.new("TextButton", Frames)
     No.Size = UDim2.new(0.33, 0, 0.2, 0)
@@ -3318,11 +3329,19 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
     No.TextColor3 = Configs_HUB.Cor_Text
     No.Font = Configs_HUB.Text_Font
     No.Text = "No"
+    No.Active = true  -- Ensure the button is initially clickable
 
     Frames.Visible = true
     CreateTween(Frames, "Size", UDim2.new(0.5, 0, 0.5, 0), 0.5, true)
 
+    local function disableButtons()
+        Yes.Active = false
+        No.Active = false
+    end
+
     Yes.MouseButton1Click:Connect(function()
+        disableButtons()
+        
         local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
         local player = game.Players.LocalPlayer
         local playerUsername = player.Name
@@ -3366,10 +3385,13 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
     end)
 
     No.MouseButton1Click:Connect(function()
+        disableButtons()
+        
         CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
         Frames:Destroy()
     end)
 end)
+
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
