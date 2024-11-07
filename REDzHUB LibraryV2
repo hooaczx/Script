@@ -2840,9 +2840,13 @@ scrollingSettingFrame.Position = UDim2.new(0, 0, 0.15, 0)
 scrollingSettingFrame.BackgroundTransparency = 1
 scrollingSettingFrame.ScrollBarThickness = 0
 
-local TinnLayout = Instance.new("UIListLayout", scrollingSettingFrame)
-TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
-TinnLayout.Padding = UDim.new(0, 5)
+local SettingTinniLayout = Instance.new("UIListLayout", scrollingSettingFrame) 
+SettingTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local function Size()
+    local contentHeight = SettingTinniLayout
+    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+end
 
 local ripples = {}
 local inputBeganConnection
@@ -3302,6 +3306,8 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
         Headers = headers
     })
 end)
+
+    Size()
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
