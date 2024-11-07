@@ -1609,6 +1609,7 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     messageTextbox.ClearTextOnFocus = true
     messageTextbox.TextScaled = true
     messageTextbox.Font = Configs_HUB.Text_Font
+    messageTextbox.TextWrapped = true
 
     local sendButton = Instance.new("TextButton", sectionFrame)
     sendButton.Size = UDim2.new(0.25, 0, 0, 20)
@@ -1618,15 +1619,21 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     sendButton.Text = "Send Message"
     sendButton.TextScaled = true
     sendButton.Font = Configs_HUB.Text_Font
+    sendButton.TextButtonMode = Enum.ButtonMode.Command
 
-    sendButton.MouseButton1Click:Connect(function()
-    local message = messageTextbox.Text
-    if string.len(message:trim()) == 0 or message == "[[]]" then
-        return
+    local function updateButtonState()
+        sendButton.TextButtonMode = messageTextbox.Text ~= "" and Enum.ButtonMode.Command or Enum.ButtonMode.Disabled
     end
 
-    callback(message)
-    messageTextbox.Text = ""
+    messageTextbox:GetPropertyChangedSignal("Text"):Connect(updateButtonState)
+    updateButtonState()
+
+    sendButton.MouseButton1Click:Connect(function()
+        local message = messageTextbox.Text
+        if message and message ~= "" then
+            callback(message)
+            messageTextbox.Text = ""
+        end
     end)
 
     return sectionFrame
@@ -2835,6 +2842,7 @@ Text7.Size = UDim2.new(1, 0, 0.15, 0)
 Text7.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text7.TextScaled = true
 Text7.Text = "Setting Menu"
+TextSetColor(Text7)
 
 local scrollingSettingFrame = Instance.new("ScrollingFrame", frameSetting)
 scrollingSettingFrame.Size = UDim2.new(1, 0, 0.85, 0)
