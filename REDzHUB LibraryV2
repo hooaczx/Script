@@ -1691,6 +1691,7 @@ local chorusModes = {
 
 local currentMode = 1
 local currentChorusMode = 1
+local activeMode = nil
 
 functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame, otherButton)
     local effectFrame = Instance.new("Frame", parentFrame)
@@ -1730,36 +1731,40 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
         local mode = modeList[currentMode]
         
         if name == "Reverb Effect" then
-            reverbEffect.DecayTime = mode.decayTime
-            reverbEffect.Density = mode.density
-            reverbEffect.Enabled = mode.name ~= "Off"
-            effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
-            
-            if chorusButton then
+            if activeMode == "Chorus" and chorusButton then
                 chorusButton.Text = "Chorus Mode: off"
                 local offMode = chorusModes[1]
                 chorusEffect.Depth = offMode.depth
                 chorusEffect.Rate = offMode.rate
                 chorusEffect.Enabled = false
             end
+            
+            reverbEffect.DecayTime = mode.decayTime
+            reverbEffect.Density = mode.density
+            reverbEffect.Enabled = mode.name ~= "Off"
+            effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
+            activeMode = "Reverb"
+            
         elseif name == "Chorus Mode" then
-            chorusEffect.Depth = mode.depth
-            chorusEffect.Rate = mode.rate
-            chorusEffect.Enabled = mode.name ~= "Off"
-            effectButton.Text = "Chorus Mode: " .. (mode.name == "Off" and "off" or mode.name)
-
-            if reverbButton then
+            if activeMode == "Reverb" and reverbButton then
                 reverbButton.Text = "Reverb Mode: off"
                 local offMode = modes[1]
                 reverbEffect.DecayTime = offMode.decayTime
                 reverbEffect.Density = offMode.density
                 reverbEffect.Enabled = false
             end
+            
+            chorusEffect.Depth = mode.depth
+            chorusEffect.Rate = mode.rate
+            chorusEffect.Enabled = mode.name ~= "Off"
+            effectButton.Text = "Chorus Mode: " .. (mode.name == "Off" and "off" or mode.name)
+            activeMode = "Chorus"
         end
     end)
 
     return effectFrame
 end
+
 
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
