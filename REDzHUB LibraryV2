@@ -1575,71 +1575,109 @@ functions.createSlider = function(parent, title, description, callback)
     return progressBar
 end
 
-functions.createTextboxWithButton = function(parent, title, description, callback)
-    local sectionFrame = Instance.new("Frame", parent)
-    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
-    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
-    sectionFrame.BackgroundTransparency = 0
-    
-    local titleLabel = Instance.new("TextLabel", sectionFrame)
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
+    -- ตรวจสอบว่าข้อความมีค่าจริงและไม่ว่างเปล่า
+    if not message or message:match("^%s*$") then
+        return  -- ไม่ทำอะไรถ้าข้อความว่างเปล่า
+    end
+
+    -- สร้าง UI เมื่อข้อความไม่ว่างเปล่าเท่านั้น
+    local Frames = Instance.new("Frame", ScreenGui)
+    Frames.Size = UDim2.new(0, 0, 0, 0)
+    Frames.BackgroundColor3 = Configs_HUB.Cor_Options
+    Frames.Position = UDim2.new(0.25, 0, 0.25, 0)
+    Frames.BackgroundTransparency = 0
+    Frames.Visible = false
+
+    local titleLabel = Instance.new("TextLabel", Frames)
+    titleLabel.Size = UDim2.new(1, 0, 0.4, 0)
     titleLabel.TextScaled = true
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.BackgroundTransparency = 1
+    titleLabel.Position = UDim2.new(0, 0, 0.2, 0)
     titleLabel.TextColor3 = Configs_HUB.Cor_Text
-    titleLabel.Text = title
-    TextSetColor(titleLabel)
-    
-    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
-    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
-    descriptionLabel.TextScaled = true
-    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descriptionLabel.BackgroundTransparency = 1
-    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
-    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
-    descriptionLabel.Text = description
-    TextSetColor(descriptionLabel)
+    titleLabel.Text = "Are you sure you want to send it?"
 
-    local messageTextbox = Instance.new("TextBox", sectionFrame)
-    messageTextbox.Size = UDim2.new(0.75, 0, 0, 20)
-    messageTextbox.Position = UDim2.new(0, 0, 0, 81)
-    messageTextbox.BackgroundColor3 = Configs_HUB.Cor_Options
-    messageTextbox.TextColor3 = Configs_HUB.Cor_Text
-    messageTextbox.PlaceholderText = "Enter your message here..."
-    messageTextbox.ClearTextOnFocus = true
-    messageTextbox.TextScaled = true
-    messageTextbox.Font = Configs_HUB.Text_Font
+    local Yes = Instance.new("TextButton", Frames)
+    Yes.Size = UDim2.new(0.35, 0, 0.2, 0)
+    Yes.BackgroundColor3 = Configs_HUB.Cor_Options
+    Yes.Position = UDim2.new(0.07, 0, 0.75, 0)
+    Yes.TextScaled = true
+    Yes.TextColor3 = Configs_HUB.Cor_Text
+    Yes.Font = Configs_HUB.Text_Font
+    Yes.Text = "Yes"
+    Yes.Active = true
 
-    local sendButton = Instance.new("TextButton", sectionFrame)
-    sendButton.Size = UDim2.new(0.25, 0, 0, 20)
-    sendButton.Position = UDim2.new(0.75, 0, 0, 81)
-    sendButton.BackgroundColor3 = Configs_HUB.Cor_Options
-    sendButton.TextColor3 = Configs_HUB.Cor_Text
-    sendButton.Text = "Send Message"
-    sendButton.TextScaled = true
-    sendButton.Font = Configs_HUB.Text_Font
+    local No = Instance.new("TextButton", Frames)
+    No.Size = UDim2.new(0.33, 0, 0.2, 0)
+    No.BackgroundColor3 = Configs_HUB.Cor_Options
+    No.Position = UDim2.new(0.6, 0, 0.75, 0)
+    No.TextScaled = true
+    No.TextColor3 = Configs_HUB.Cor_Text
+    No.Font = Configs_HUB.Text_Font
+    No.Text = "No"
+    No.Active = true
 
-    sendButton.MouseButton1Click:Connect(function()
-        local message = messageTextbox.Text
-        if message and message:match("%S") then
-            callback(message)
-            messageTextbox.Text = ""
-            messageTextbox.TextColor3 = Configs_HUB.Cor_Text
-        else
-            messageTextbox.Text = "Please enter a message."
-            messageTextbox.TextColor3 = Color3.new(1, 0, 0)
+    Frames.Visible = true
+    CreateTween(Frames, "Size", UDim2.new(0.5, 0, 0.5, 0), 0.5, true)
+
+    local function disableButtons()
+        Yes.Active = false
+        No.Active = false
+    end
+
+    Yes.MouseButton1Click:Connect(function()
+        disableButtons()
+        
+        local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
+        local player = game.Players.LocalPlayer
+        local playerUsername = player.Name
+        local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
+        local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
+        local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
+        local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
+
+        local data = {
+            ["username"] = playerUsername,
+            ["avatar_url"] = AvatarImage,
+            ["embeds"] = {
+                {
+                    ["title"] = "Message from " .. playerUsername,
+                    ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
+                    ["color"] = 0x7289DA
+                }
+            }
+        }
+
+        local newdata = game:GetService("HttpService"):JSONEncode(data)
+        local headers = {["content-type"] = "application/json"}
+
+        local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
+
+        local success, response = pcall(function()
+            return request({
+                Url = webhookUrl,
+                Body = newdata,
+                Method = "POST",
+                Headers = headers
+            })
+        end)
+
+        if not success then
+            warn("Failed to send webhook request:", response)
         end
+
+        CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
+        Frames:Destroy()
     end)
 
-    messageTextbox.Focused:Connect(function()
-        if messageTextbox.Text == "Please enter a message." then
-            messageTextbox.Text = ""
-            messageTextbox.TextColor3 = Configs_HUB.Cor_Text
-        end
+    No.MouseButton1Click:Connect(function()
+        disableButtons()
+        
+        CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
+        Frames:Destroy()
     end)
-
-    return sectionFrame
-end
+end)
 
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
@@ -3284,12 +3322,15 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
     toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
 end, isLightingEnabled)
 
+local activeFrame = nil
+
 functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
-    if not message or message:match("^%s*$") then
+    if activeFrame then
         return
     end
 
     local Frames = Instance.new("Frame", ScreenGui)
+    activeFrame = Frames -- กำหนด UI ให้กับ activeFrame
     Frames.Size = UDim2.new(0, 0, 0, 0)
     Frames.BackgroundColor3 = Configs_HUB.Cor_Options
     Frames.Position = UDim2.new(0.25, 0, 0.25, 0)
@@ -3335,7 +3376,7 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
 
     Yes.MouseButton1Click:Connect(function()
         disableButtons()
-        
+
         local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
         local player = game.Players.LocalPlayer
         local playerUsername = player.Name
@@ -3376,6 +3417,7 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
 
         CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
         Frames:Destroy()
+        activeFrame = nil
     end)
 
     No.MouseButton1Click:Connect(function()
@@ -3383,8 +3425,10 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
         
         CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
         Frames:Destroy()
+        activeFrame = nil
     end)
 end)
+
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
