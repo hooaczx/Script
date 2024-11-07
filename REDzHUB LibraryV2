@@ -1692,7 +1692,7 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame, otherEffect)
+functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame)
     local effectFrame = Instance.new("Frame", parentFrame)
     effectFrame.Size = UDim2.new(1, 0, 0, 100)
     effectFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1724,30 +1724,33 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
     effectButton.TextScaled = true
     effectButton.BackgroundTransparency = 0.4
 
-    local currentMode = 1
     effectButton.MouseButton1Click:Connect(function()
-        if otherEffect then
-            otherEffect.Enabled = false
-            otherEffect.DecayTime, otherEffect.Density = 0, 0
-            otherEffect.Depth, otherEffect.Rate = 0, 0
-            otherEffect.Text = otherEffect.Text:split(":")[1] .. ": Off"
+    if name == "Reverb Effect" then
+        currentMode = currentMode % #modes + 1
+        local mode = modes[currentMode]
+        echoButton.Text = "Echo Mode: " .. mode.name
+        reverbEffect.DecayTime = mode.decayTime
+        reverbEffect.Density = mode.density
+        reverbEffect.Enabled = mode.name ~= "Off"
+        if currentMode ~= 1 then
+            currentChorusMode = 1
+            chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+            chorusEffect.Enabled = false
         end
-
-        currentMode = (currentMode % #modeList) + 1
-        effectButton.Text = buttonText:split(":")[1] .. ": " .. modeList[currentMode].name
-        local mode = modeList[currentMode]
-
-        if name == "Reverb Effect" then
-            reverbEffect.DecayTime = mode.decayTime
-            reverbEffect.Density = mode.density
-            reverbEffect.Enabled = mode.name ~= "Off"
-        elseif name == "Chorus Mode" then
-            chorusEffect.Depth = mode.depth
-            chorusEffect.Rate = mode.rate
-            chorusEffect.Enabled = mode.name ~= "Off"
+    elseif name == "Chorus Mode" then
+        currentChorusMode = currentChorusMode % #chorusModes + 1
+        local mode = chorusModes[currentChorusMode]
+        chorusButton.Text = "Chorus Mode: " .. mode.name
+        chorusEffect.Depth = mode.depth
+        chorusEffect.Rate = mode.rate
+        chorusEffect.Enabled = mode.name ~= "Off"
+        if currentChorusMode ~= 1 then
+            currentMode = 1
+            echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+            reverbEffect.Enabled = false
         end
-    end)
-
+    end
+end)
     return effectFrame
 end
 
