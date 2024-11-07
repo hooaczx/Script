@@ -1621,7 +1621,7 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
 
     sendButton.MouseButton1Click:Connect(function()
         local message = messageTextbox.Text
-        if message and message ~= "" then
+        if message and message:match("%S") then
             callback(message)
             messageTextbox.Text = ""
             messageTextbox.TextColor3 = Configs_HUB.Cor_Text
@@ -2893,7 +2893,7 @@ function(isClickEffectEnabled)
                     local clickSound = Instance.new("Sound")
                     clickSound.SoundId = "rbxassetid://15675059323"
                     clickSound.Parent = ScreenGui
-                    clickSound.Volume = 1
+                    clickSound.Volume = 0.5
                     clickSound:Play()
                     clickSound.Ended:Connect(function()
                         clickSound:Destroy()
@@ -3285,7 +3285,7 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
 end, isLightingEnabled)
 
 functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
-    if message == nil or message == "" then
+    if not message or message:match("^%s*$") then
         return
     end
 
@@ -3385,8 +3385,6 @@ functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can me
         Frames:Destroy()
     end)
 end)
-
-
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
