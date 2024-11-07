@@ -1734,15 +1734,13 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
             reverbEffect.Density = mode.density
             reverbEffect.Enabled = mode.name ~= "Off"
             effectButton.Text = "Reverb Mode: " .. (mode.name == "Off" and "off" or mode.name)
-
+            
             if chorusButton then
-                chorusButton.Visible = true
-                currentChorusMode = 1
-                chorusButton.Text = "Chorus Mode: " .. (chorusModes[currentChorusMode].name == "Off" and "off" or chorusModes[currentChorusMode].name)
-                local chorusMode = chorusModes[currentChorusMode]
-                chorusEffect.Depth = chorusMode.depth
-                chorusEffect.Rate = chorusMode.rate
-                chorusEffect.Enabled = chorusMode.name ~= "Off"
+                chorusButton.Text = "Chorus Mode: off"
+                local offMode = chorusModes[1]
+                chorusEffect.Depth = offMode.depth
+                chorusEffect.Rate = offMode.rate
+                chorusEffect.Enabled = false
             end
         elseif name == "Chorus Mode" then
             chorusEffect.Depth = mode.depth
@@ -1751,13 +1749,11 @@ functions.createEffectUI = function(name, description, buttonText, modeList, par
             effectButton.Text = "Chorus Mode: " .. (mode.name == "Off" and "off" or mode.name)
 
             if reverbButton then
-                reverbButton.Visible = true
-                currentMode = 1
-                reverbButton.Text = "Reverb Mode: " .. (modes[currentMode].name == "Off" and "off" or modes[currentMode].name)
-                local reverbMode = modes[currentMode]
-                reverbEffect.DecayTime = reverbMode.decayTime
-                reverbEffect.Density = reverbMode.density
-                reverbEffect.Enabled = reverbMode.name ~= "Off"
+                reverbButton.Text = "Reverb Mode: off"
+                local offMode = modes[1]
+                reverbEffect.DecayTime = offMode.decayTime
+                reverbEffect.Density = offMode.density
+                reverbEffect.Enabled = false
             end
         end
     end)
