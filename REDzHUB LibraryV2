@@ -1676,9 +1676,12 @@ functions.createModeSection = function(parent, title, description, buttonText, o
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.TextScaled = true
     button.BackgroundTransparency = 0.4
-    button.MouseButton1Click:Connect(onClickCallback)
 
-    return frame
+    button.MouseButton1Click:Connect(function()
+        onClickCallback(button)
+    end)
+
+    return button
 end
 
 local framemusic = Instance.new("Frame", ScreenGui)
@@ -1813,47 +1816,63 @@ local chorusModes = {
 
 local currentMode = 1
 local currentChorusMode = 1
+local isReverbActive = false
+local isChorusActive = false
 
-functions.createModeSection(scrollingsettingmusicFrame, "Reverb Effect", 
-    "Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping",
+local reverbButton = functions.createModeSection(scrollingsettingmusicFrame, "Reverb Effect", 
+    "Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping", 
     "Reverb Mode: off", 
-    function()
-        if currentMode == 1 then
-            currentChorusMode = 1
-            chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-            local mode = chorusModes[currentChorusMode]
-            chorusEffect.Depth = mode.depth
-            chorusEffect.Rate = mode.rate
-            chorusEffect.Enabled = mode.name ~= "Off"
+    function(button)
+        if isChorusActive then
+            chorusButton.Text = "Chorus Mode: off"
+            chorusEffect.Enabled = false
+            isChorusActive = false
         end
-        currentMode = currentMode % #modes + 1
-        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-        local mode = chorusModes[currentChorusMode]
-        chorusEffect.Depth = mode.depth
-        chorusEffect.Rate = mode.rate
-        chorusEffect.Enabled = mode.name ~= "Off"
-  end)
 
-functions.createModeSection(scrollingsettingmusicFrame, "Chorus Mode", 
-    "Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations",
-    "Chorus Mode: off", 
-    function()
-        if currentChorusMode == 1 then
-            currentMode = 1
-            echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-            local mode = modes[currentMode]
-            echoButton.Text = "Echo Mode: " .. mode.name
-            reverbEffect.DecayTime = mode.decayTime
-            reverbEffect.Density = mode.density
-            reverbEffect.Enabled = mode.name ~= "Off"
+        if not isReverbActive then
+            isReverbActive = true
+            if currentMode == 1 then
+                currentMode = 1
+                reverbButton.Text = "Reverb Mode: " .. modes[currentMode].name
+                local mode = modes[currentMode]
+                reverbEffect.DecayTime = mode.decayTime
+                reverbEffect.Density = mode.density
+                reverbEffect.Enabled = mode.name ~= "Off"
+            end
+        else
+            isReverbActive = false
+            reverbButton.Text = "Reverb Mode: off"
+            reverbEffect.Enabled = false
         end
-        currentChorusMode = currentChorusMode % #chorusModes + 1
-        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        local mode = chorusModes[currentChorusMode]
-        chorusEffect.Depth = mode.depth
-        chorusEffect.Rate = mode.rate
-        chorusEffect.Enabled = mode.name ~= "Off"
-   end)
+    end)
+
+local chorusButton = functions.createModeSection(scrollingsettingmusicFrame, "Chorus Mode", 
+    "Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations", 
+    "Chorus Mode: off", 
+    function(button)
+        if isReverbActive then
+            reverbButton.Text = "Reverb Mode: off"
+            reverbEffect.Enabled = false
+            isReverbActive = false
+        end
+
+        if not isChorusActive then
+            isChorusActive = true
+            if currentChorusMode == 1 then
+                currentMode = 1
+                echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+                local mode = modes[currentMode]
+                echoButton.Text = "Echo Mode: " .. mode.name
+                reverbEffect.DecayTime = mode.decayTime
+                reverbEffect.Density = mode.density
+                reverbEffect.Enabled = mode.name ~= "Off"
+            end
+        else
+            isChorusActive = false
+            chorusButton.Text = "Chorus Mode: off"
+            chorusEffect.Enabled = false
+        end
+    end)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
