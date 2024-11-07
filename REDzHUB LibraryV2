@@ -1619,23 +1619,22 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     sendButton.TextScaled = true
     sendButton.Font = Configs_HUB.Text_Font
 
-    local errorLabel = Instance.new("TextLabel", sectionFrame)
-    errorLabel.Size = UDim2.new(1, 0, 0, 20)
-    errorLabel.Position = UDim2.new(0, 0, 0, 102)
-    errorLabel.BackgroundTransparency = 1
-    errorLabel.TextColor3 = Color3.new(1, 0, 0)  -- Red color for error
-    errorLabel.TextScaled = true
-    errorLabel.Text = ""
-    errorLabel.TextXAlignment = Enum.TextXAlignment.Center
-
     sendButton.MouseButton1Click:Connect(function()
         local message = messageTextbox.Text
         if message and message ~= "" then
             callback(message)
             messageTextbox.Text = ""
-            errorLabel.Text = ""
+            messageTextbox.TextColor3 = Configs_HUB.Cor_Text
         else
-            errorLabel.Text = "Please enter a message."  -- Display error if empty
+            messageTextbox.Text = "Please enter a message."
+            messageTextbox.TextColor3 = Color3.new(1, 0, 0)
+        end
+    end)
+
+    messageTextbox.Focused:Connect(function()
+        if messageTextbox.Text == "Please enter a message." then
+            messageTextbox.Text = ""
+            messageTextbox.TextColor3 = Configs_HUB.Cor_Text
         end
     end)
 
