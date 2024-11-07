@@ -2958,9 +2958,7 @@ TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TinnLayout.Padding = UDim.new(0, 5)
 
 local ripples = {}
-local isClickEffectEnabled = true
 local inputBeganConnection
-local inputEndedConnection
 
 functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
 [[This creates an effect where, when you press the screen, it will look like a circle. Like water hits with something, it widens and disappears]], 
@@ -2997,41 +2995,27 @@ function(isClickEffectEnabled)
                     clickSound.Ended:Connect(function()
                         clickSound:Destroy()
                     end)
-                end
-            end
-        end)
 
-        inputEndedConnection = UserInputService.InputEnded:Connect(function(input, gameProcessed)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                if #ripples > 0 then
-                    local ripple = ripples[#ripples]
-                    local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                    local sizeGoal = {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}
-                    local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
-                    tween:Play()
                     tween.Completed:Connect(function()
                         ripple:Destroy()
+                        table.remove(ripples, #ripples)
                     end)
-                    table.remove(ripples, #ripples)
                 end
             end
         end)
-
     else
         if inputBeganConnection then
             inputBeganConnection:Disconnect()
         end
-        if inputEndedConnection then
-            inputEndedConnection:Disconnect()
-        end
-        
+
         for _, ripple in ipairs(ripples) do
             ripple:Destroy()
         end
         ripples = {}
     end
 end,
-isClickEffectEnabled)
+true)
+
 
 local copyEnabled = false
 
