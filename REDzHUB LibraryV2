@@ -1692,68 +1692,6 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame)
-    local effectFrame = Instance.new("Frame", parentFrame)
-    effectFrame.Size = UDim2.new(1, 0, 0, 100)
-    effectFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
-    effectFrame.BackgroundTransparency = 0
-
-    local effectLabel = Instance.new("TextLabel", effectFrame)
-    effectLabel.Size = UDim2.new(1, 0, 0, 30)
-    effectLabel.TextScaled = true
-    effectLabel.TextXAlignment = Enum.TextXAlignment.Left
-    effectLabel.BackgroundTransparency = 1
-    effectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    effectLabel.Text = name
-
-    local effectDescription = Instance.new("TextLabel", effectFrame)
-    effectDescription.Size = UDim2.new(1, 0, 0, 30)
-    effectDescription.TextScaled = true
-    effectDescription.TextXAlignment = Enum.TextXAlignment.Left
-    effectDescription.BackgroundTransparency = 1
-    effectDescription.Position = UDim2.new(0, 0, 0.31, 0)
-    effectDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
-    effectDescription.Text = description
-
-    local effectButton = Instance.new("TextButton", effectFrame)
-    effectButton.Size = UDim2.new(0, 100, 0, 30)
-    effectButton.Position = UDim2.new(0.7, 0, 0.7, 0)
-    effectButton.Text = buttonText
-    effectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    effectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    effectButton.TextScaled = true
-    effectButton.BackgroundTransparency = 0.4
-
-    effectButton.MouseButton1Click:Connect(function()
-    if name == "Reverb Effect" then
-        currentMode = currentMode % #modes + 1
-        local mode = modes[currentMode]
-        echoButton.Text = "Echo Mode: " .. mode.name
-        reverbEffect.DecayTime = mode.decayTime
-        reverbEffect.Density = mode.density
-        reverbEffect.Enabled = mode.name ~= "Off"
-        if currentMode ~= 1 then
-            currentChorusMode = 1
-            chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-            chorusEffect.Enabled = false
-        end
-    elseif name == "Chorus Mode" then
-        currentChorusMode = currentChorusMode % #chorusModes + 1
-        local mode = chorusModes[currentChorusMode]
-        chorusButton.Text = "Chorus Mode: " .. mode.name
-        chorusEffect.Depth = mode.depth
-        chorusEffect.Rate = mode.rate
-        chorusEffect.Enabled = mode.name ~= "Off"
-        if currentChorusMode ~= 1 then
-            currentMode = 1
-            echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-            reverbEffect.Enabled = false
-        end
-    end
-end)
-    return effectFrame
-end
-
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
 framemusic.Position = UDim2.new(0.5, 0, 0.4, 0)
@@ -1838,10 +1776,72 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
 end, isAutoPlayEnabled)
 
 local reverbDescription = [[Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping]]
-local reverbButton = functions.createEffectUI("Reverb Effect", reverbDescription, "Reverb Mode: off", modes, scrollingsettingmusicFrame)
-
 local chorusDescription = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
-local chorusButton = functions.createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame, reverbButton)
+
+local reverbButton = functions.createEffectUI("Reverb Effect", reverbDescription, "Reverb Mode: off", modes, scrollingsettingmusicFrame)
+local chorusButton = functions.createEffectUI("Chorus Mode", chorusDescription, "Chorus Mode: off", chorusModes, scrollingsettingmusicFrame)
+
+functions.createEffectUI = function(name, description, buttonText, modeList, parentFrame)
+    local effectFrame = Instance.new("Frame", parentFrame)
+    effectFrame.Size = UDim2.new(1, 0, 0, 100)
+    effectFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    effectFrame.BackgroundTransparency = 0
+
+    local effectLabel = Instance.new("TextLabel", effectFrame)
+    effectLabel.Size = UDim2.new(1, 0, 0, 30)
+    effectLabel.TextScaled = true
+    effectLabel.TextXAlignment = Enum.TextXAlignment.Left
+    effectLabel.BackgroundTransparency = 1
+    effectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    effectLabel.Text = name
+
+    local effectDescription = Instance.new("TextLabel", effectFrame)
+    effectDescription.Size = UDim2.new(1, 0, 0, 30)
+    effectDescription.TextScaled = true
+    effectDescription.TextXAlignment = Enum.TextXAlignment.Left
+    effectDescription.BackgroundTransparency = 1
+    effectDescription.Position = UDim2.new(0, 0, 0.31, 0)
+    effectDescription.TextColor3 = Color3.fromRGB(255, 255, 255)
+    effectDescription.Text = description
+
+    local effectButton = Instance.new("TextButton", effectFrame)
+    effectButton.Size = UDim2.new(0, 100, 0, 30)
+    effectButton.Position = UDim2.new(0.7, 0, 0.7, 0)
+    effectButton.Text = buttonText
+    effectButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    effectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    effectButton.TextScaled = true
+    effectButton.BackgroundTransparency = 0.4
+
+    effectButton.MouseButton1Click:Connect(function()
+        if name == "Reverb Effect" then
+            currentMode = currentMode % #modes + 1
+            local mode = modes[currentMode]
+            reverbButton.Text = "Reverb Mode: " .. mode.name
+            reverbEffect.DecayTime = mode.decayTime
+            reverbEffect.Density = mode.density
+            reverbEffect.Enabled = mode.name ~= "Off"
+            if currentMode ~= 1 then
+                currentChorusMode = 1
+                chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+                chorusEffect.Enabled = false
+            end
+        elseif name == "Chorus Mode" then
+            currentChorusMode = currentChorusMode % #chorusModes + 1
+            local mode = chorusModes[currentChorusMode]
+            chorusButton.Text = "Chorus Mode: " .. mode.name
+            chorusEffect.Depth = mode.depth
+            chorusEffect.Rate = mode.rate
+            chorusEffect.Enabled = mode.name ~= "Off"
+            if currentChorusMode ~= 1 then
+                currentMode = 1
+                reverbButton.Text = "Reverb Mode: " .. modes[currentMode].name
+                reverbEffect.Enabled = false
+            end
+        end
+    end)
+    return effectButton
+end
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
