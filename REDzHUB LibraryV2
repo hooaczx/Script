@@ -2433,7 +2433,7 @@ friendnumber.TextScaled = true
 TextSetColor(friendnumber)
 friendnumber.Visible = false
 
-local function checkFriends()
+functions.checkFriends = function()
     if friendsCooldown <= 0 then
         friendsCooldown = 25
 
@@ -2520,7 +2520,7 @@ local function checkFriends()
     end
 end
 
-checkFriends()
+functions.checkFriends()
 
 local TimePlay = Instance.new("TextLabel", ScreenGui)
 TimePlay.Size = UDim2.new(0.205, 0, 0.07, 0)
@@ -2651,7 +2651,7 @@ local LocalPlayer = players.LocalPlayer
 local accountAgeInDays = LocalPlayer.AccountAge
 local additionalPlayTimeInSeconds = 0
 
-local function calculateTotalPlayTime()
+functions.calculateTotalPlayTime = function()
     local totalSeconds = accountAgeInDays * 86400
 
     totalSeconds = totalSeconds + additionalPlayTimeInSeconds
@@ -2665,7 +2665,7 @@ local function calculateTotalPlayTime()
     return string.format("%d years, %d months, %d days", years, months, days)
 end
 
-local function accountAgeMessage(accountAgeInDays)
+functions.accountAgeMessage = function(accountAgeInDays)
     if accountAgeInDays == 0 then
         return "You just created an account"
     else
@@ -2674,8 +2674,8 @@ local function accountAgeMessage(accountAgeInDays)
 end
 
 local function updatePlayTimeDisplay()
-    local totalPlayTime = calculateTotalPlayTime()
-    local ageMessage = accountAgeMessage(accountAgeInDays)
+    local totalPlayTime = functions.calculateTotalPlayTime()
+    local ageMessage = functions.accountAgeMessage(accountAgeInDays)
     AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
 end
 
