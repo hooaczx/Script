@@ -43,7 +43,12 @@ else
 local speed = 50
 local freecamEnabled = false
 local part
+local player = game.Players.LocalPlayer
 local camera = game.Workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local userInputService = game:GetService("UserInputService")
+
+local mouseDelta = Vector2.new()
 
 local function createPart()
     if part then
@@ -96,6 +101,22 @@ local ToggleWalk = AddToggle(Main5u6, {
     end
 })
 
+local touchDelta = Vector2.new()
+local lastTouch = nil
+
+userInputService.InputChanged:Connect(function(input, gameProcessed)
+    if freecamEnabled then
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            mouseDelta = input.Delta
+        elseif input.UserInputType == Enum.UserInputType.Touch then
+             if lastTouch then
+                touchDelta = input.Position - lastTouch
+            end
+            lastTouch = input.Position
+        end
+    end
+end)
+
 RunService.RenderStepped:Connect(function()
     if freecamEnabled then
         local moveDirection = controlModule:GetMoveVector()
@@ -107,6 +128,15 @@ RunService.RenderStepped:Connect(function()
             desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
+        local newCameraCFrame = camera.CFrame
+        if mouseDelta.X ~= 0 then
+            newCameraCFrame = newCameraCFrame * CFrame.Angles(0, -mouseDelta.X * 0.002, 0)
+        end
+        if touchDelta.X ~= 0 then
+            newCameraCFrame = newCameraCFrame * CFrame.Angles(0, -touchDelta.X * 0.002, 0)
+        end
+        camera.CFrame = newCameraCFrame
+        camera.CFrame = CFrame.new(part.Position, part.Position + camera.CFrame.LookVector)
     end
 end)
 
