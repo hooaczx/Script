@@ -21,10 +21,6 @@ local players = game:GetService('Players')
 local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
-local speed = 50
-local freecamEnabled = false
-local part
-local mouse = player:GetMouse()
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
 
@@ -44,6 +40,15 @@ WarningMessage = "Freecam was removed due to safety concerns due to being banned
 ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
 })
 else
+local speed = 50
+local freecamEnabled = false
+local part
+local userInputService = game:GetService("UserInputService")
+local camera = game.Workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local player = game.Players.LocalPlayer
+
+local rotationX, rotationY = 0, 0
 
 local function createPart()
     if part then
@@ -96,6 +101,24 @@ local ToggleWalk = AddToggle(Main5u6, {
     end
 })
 
+userInputService.InputChanged:Connect(function(input)
+    if freecamEnabled then
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            local deltaX, deltaY
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                deltaX = input.Delta.X
+                deltaY = input.Delta.Y
+            elseif input.UserInputType == Enum.UserInputType.Touch then
+                deltaX = input.Position.X - input.PreviousPosition.X
+                deltaY = input.Position.Y - input.PreviousPosition.Y
+            end
+
+            rotationX = rotationX - deltaX * 0.002
+            rotationY = math.clamp(rotationY - deltaY * 0.002, -math.pi/2, math.pi/2)
+        end
+    end
+end)
+
 RunService.RenderStepped:Connect(function()
     if freecamEnabled and part then
         local moveDirection = controlModule:GetMoveVector()
@@ -107,15 +130,9 @@ RunService.RenderStepped:Connect(function()
             desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
-        if not freecamEnabled then
-            local playerPos = player.Character.HumanoidRootPart.Position
-            part.Position = playerPos - player.Character.HumanoidRootPart.CFrame.LookVector * 5
-        end
-        local mouseDelta = mouse.Delta
-        local cameraRotation = camera.CFrame
-            * CFrame.Angles(0, -mouseDelta.X * 0.002, 0)
-            * CFrame.Angles(-mouseDelta.Y * 0.002, 0, 0)
-        camera.CFrame = cameraRotation + part.Position + Vector3.new(0, 5, -10)
+        
+        local cameraRotation = CFrame.Angles(0, rotationX, 0) * CFrame.Angles(rotationY, 0, 0)
+        camera.CFrame = CFrame.new(part.Position) * cameraRotation + Vector3.new(0, 5, -10)
     end
 end)
 
@@ -138,7 +155,6 @@ player.CharacterRemoving:Connect(function(character)
         player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end)
-
 end
 
 local Toggle = AddToggle(Main5u6, {
