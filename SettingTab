@@ -48,7 +48,10 @@ local camera = game.Workspace.CurrentCamera
 local RunService = game:GetService("RunService")
 local userInputService = game:GetService("UserInputService")
 
+local isRotating = false
 local mouseDelta = Vector2.new()
+local cameraAngleX = 0
+local cameraAngleY = 0
 
 local function createPart()
     if part then
@@ -101,18 +104,24 @@ local ToggleWalk = AddToggle(Main5u6, {
     end
 })
 
-local touchDelta = Vector2.new()
-local lastTouch = nil
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Touch and not gameProcessed then
+        isRotating = true
+    end
+end)
+
+userInputService.InputEnded:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        isRotating = false
+    end
+end)
 
 userInputService.InputChanged:Connect(function(input, gameProcessed)
-    if freecamEnabled then
+    if freecamEnabled and isRotating then
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             mouseDelta = input.Delta
         elseif input.UserInputType == Enum.UserInputType.Touch then
-             if lastTouch then
-                touchDelta = input.Position - lastTouch
-            end
-            lastTouch = input.Position
+            mouseDelta = input.Delta
         end
     end
 end)
@@ -121,22 +130,25 @@ RunService.RenderStepped:Connect(function()
     if freecamEnabled then
         local moveDirection = controlModule:GetMoveVector()
         local desiredVelocity = Vector3.new()
+        
         if moveDirection.X ~= 0 then
             desiredVelocity = desiredVelocity + camera.CFrame.RightVector * (moveDirection.X * speed)
         end
         if moveDirection.Z ~= 0 then
             desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
+        
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
-        local newCameraCFrame = camera.CFrame
-        if mouseDelta.X ~= 0 then
-            newCameraCFrame = newCameraCFrame * CFrame.Angles(0, -mouseDelta.X * 0.002, 0)
+
+        if isRotating and mouseDelta ~= Vector2.new() then
+            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002
+            cameraAngleX = math.clamp(cameraAngleX - mouseDelta.Y * 0.002, -math.rad(90), math.rad(90))
         end
-        if touchDelta.X ~= 0 then
-            newCameraCFrame = newCameraCFrame * CFrame.Angles(0, -touchDelta.X * 0.002, 0)
-        end
-        camera.CFrame = newCameraCFrame
-        camera.CFrame = CFrame.new(part.Position, part.Position + camera.CFrame.LookVector)
+
+        local rotation = CFrame.Angles(cameraAngleX, cameraAngleY, 0)
+        camera.CFrame = CFrame.new(part.Position) * rotation
+
+        mouseDelta = Vector2.new()
     end
 end)
 
