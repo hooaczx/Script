@@ -65,8 +65,10 @@ local function createPart()
     camera.CameraSubject = part
 
     local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local headPosition = character:WaitForChild("Head").Position
-    local behindPosition = headPosition - character.HumanoidRootPart.CFrame.LookVector * 5  -- 5 studs จากด้านหลังของผู้เล่น
+    local behindPosition = headPosition - humanoidRootPart.CFrame.LookVector * 5
+
     camera.CFrame = CFrame.new(behindPosition, headPosition)
 end
 
@@ -92,9 +94,15 @@ local ToggleWalk = AddToggle(Main5u6, {
     Default = false,
     Callback = function(enabled)
         freecamEnabled = enabled
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
         if enabled then
             createPart()
-            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+            humanoid:MoveTo(character.PrimaryPart.Position)
+            humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
             camera.CameraType = Enum.CameraType.Scriptable
             camera.FieldOfView = 70
         else
@@ -102,8 +110,11 @@ local ToggleWalk = AddToggle(Main5u6, {
                 part:Destroy()
                 part = nil
             end
+
+            humanoid:MoveTo(character.PrimaryPart.Position)
+            humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+
             camera.CameraSubject = player.Character:WaitForChild("Humanoid")
-            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
             camera.CameraType = Enum.CameraType.Custom
         end
     end
@@ -132,8 +143,6 @@ userInputService.InputChanged:Connect(function(input, gameProcessed)
 end)
 
 local sensitivity = 6
-local cameraAngleX = 0
-local cameraAngleY = 0
 
 RunService.RenderStepped:Connect(function()
     if freecamEnabled then
@@ -153,7 +162,7 @@ RunService.RenderStepped:Connect(function()
             cameraAngleY = cameraAngleY - mouseDelta.X * 0.002 * sensitivity
             cameraAngleX = math.clamp(cameraAngleX + mouseDelta.Y * 0.002 * sensitivity, -math.pi/2, math.pi/2)
         end
-        
+
         local rotation = CFrame.Angles(cameraAngleX, cameraAngleY, 0)
         camera.CFrame = CFrame.new(part.Position) * rotation
 
@@ -166,7 +175,8 @@ player.CharacterAdded:Connect(function(character)
     if freecamEnabled then
         camera.CameraType = Enum.CameraType.Scriptable
         camera.FieldOfView = 70
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
     end
 end)
 
@@ -174,13 +184,14 @@ player.CharacterRemoving:Connect(function(character)
     if freecamEnabled then
         camera.CameraType = Enum.CameraType.Scriptable
         camera.FieldOfView = 70
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
     else
         camera.CameraType = Enum.CameraType.Custom
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end)
-
 end
 
 local Toggle = AddToggle(Main5u6, {
@@ -762,19 +773,16 @@ AddToggle(Main5u6, {
 
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local camera = workspace.CurrentCamera
 local tweenService = game:GetService("TweenService")
 local soundId = 1445412859
+local sound2 = 18424802758
 local effectEnabled = false
-local originalMaxZoom = player.CameraMaxZoomDistance
-local originalMinZoom = player.CameraMinZoomDistance
-local zoomedMaxZoom = 5
-local zoomedMinZoom = 2
-local followPlayer = true
-
-local hitSound = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
-hitSound.SoundId = "rbxassetid://" .. soundId
-hitSound.Volume = 1
+local losthealth = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
+losthealth.SoundId = "rbxassetid://" .. soundId
+losthealth.Volume = 1
+local healthincreased = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
+healthincreased.SoundId = "rbxassetid://" .. sound2
+healthincreased.Volume = 1
 
 local blurEffect = Instance.new("BlurEffect", camera)
 blurEffect.Size = 0
@@ -791,76 +799,56 @@ overlayFrame.BackgroundTransparency = 1
 overlayFrame.Visible = true
 overlayFrame.Parent = player:WaitForChild("PlayerGui")
 
-local function followCharacter()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    game:GetService("RunService").RenderStepped:Connect(function()
-        if followPlayer then
-            camera.CFrame = CFrame.new(camera.CFrame.Position, humanoidRootPart.Position)
-        end
-    end)
-end
-
 local function triggerHitEffect()
     if not effectEnabled then return end
 
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Alert!",
-        Text = "your blood, reduction",
-        icon = "rbxassetid://78608769732362",
-        Duration = 2,
-    })
-
-    followPlayer = true
-    followCharacter()
-
-    hitSound:Play()
     wait(0.1)
-
-    local zoomInTweenMax = tweenService:Create(player, TweenInfo.new(0.5), {CameraMaxZoomDistance = zoomedMaxZoom})
-    local zoomInTweenMin = tweenService:Create(player, TweenInfo.new(0.5), {CameraMinZoomDistance = zoomedMinZoom})
-    zoomInTweenMax:Play()
-    zoomInTweenMin:Play()
 
     tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 24}):Play()
     wait(0.5)
 
-    local shakeTween = tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = camera.CFrame * CFrame.new(0, 0, -2)})
-    shakeTween:Play()
+    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
+    wait(0.5)
 
-    local twistTween = tweenService:Create(camera, TweenInfo.new(0.5), {CFrame = camera.CFrame * CFrame.Angles(0, math.rad(45), 0)})
-    twistTween:Play()
-
-    twistTween.Completed:Connect(function()
-        local zoomOutTweenMax = tweenService:Create(player, TweenInfo.new(0.5), {CameraMaxZoomDistance = originalMaxZoom})
-        local zoomOutTweenMin = tweenService:Create(player, TweenInfo.new(0.5), {CameraMinZoomDistance = originalMinZoom})
-
-        zoomOutTweenMax:Play()
-        zoomOutTweenMin:Play()
-
-        followPlayer = false
-
-        tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
-        wait(0.5)
-    end)
-
-    local function changeColor()
-        tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
-        wait(0.5)
-        tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
-        wait(0.5)
+    local function changeColor(isHealthIncreasing)
+        if isHealthIncreasing then
+            healthincreased:Play()
+            tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(0, 1, 0), Saturation = 0}):Play()
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Health Increased!",
+                Text = "Your health has increased.",
+                icon = "rbxassetid://78608769732362",
+                Duration = 2,
+            })
+        else
+            losthealth:Play()
+            tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
+            wait(0.5)
+            tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Injury Alert!",
+                Text = "You have lost health.",
+                icon = "rbxassetid://78608769732362",
+                Duration = 2,
+            })
+        end
     end
 
     local elapsedTime = 0
     while elapsedTime < 1.5 do
-        changeColor()
+        changeColor(false)
         elapsedTime = elapsedTime + 1
     end
 end
 
 local function onHealthChanged(humanoid)
     humanoid.HealthChanged:Connect(function(newHealth)
-        if effectEnabled and newHealth < humanoid.MaxHealth then
-            triggerHitEffect()
+        if effectEnabled then
+            if newHealth < humanoid.MaxHealth then
+                triggerHitEffect()
+            elseif newHealth > humanoid.MaxHealth then
+                changeColor(true)
+            end
         end
     end)
 end
@@ -936,7 +924,7 @@ AddToggle(Main5u6, {
 })
 
 AddToggle(Main5u6, {
-    Name = "Injury effect character when hit or attack or blood reduction",
+    Name = "effect: Increase health And decrease health",
     Default = false,
     Callback = function(value) 
         effectEnabled = value
