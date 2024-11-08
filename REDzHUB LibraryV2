@@ -1641,6 +1641,59 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     return sectionFrame
 end
 
+functions.createTextBox = function(parent, title, description, callback, minValue, maxValue)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+
+    local inputBox = Instance.new("TextBox", sectionFrame)
+    inputBox.Size = UDim2.new(1, 0, 0, 20)
+    inputBox.Position = UDim2.new(0, 0, 0, 81)
+    inputBox.BackgroundColor3 = Configs_HUB.Cor_Options
+    inputBox.Text = tostring(minValue or 0)
+    inputBox.TextScaled = true
+    inputBox.TextColor3 = Configs_HUB.Cor_Text
+    inputBox.Font = Configs_HUB.Text_Font
+    TextSetColor(inputBox)
+
+    inputBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local value = tonumber(inputBox.Text)
+            if value then
+                if minValue then value = math.max(value, minValue) end
+                if maxValue then value = math.min(value, maxValue) end
+                inputBox.Text = tostring(value)
+                callback(value)
+            else
+                inputBox.Text = tostring(minValue or 0)
+            end
+        end
+    end)
+
+    return inputBox
+end
+
+
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
 framemusic.Position = UDim2.new(0.5, 0, 0.4, 0)
@@ -1728,6 +1781,14 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
 
     isSettingAutoPlayState = false
 end, isAutoPlayEnabled)
+
+local speedTextBox = functions.createTextBox(scrollingsettingmusicFrame, "Song Speed Music", "Adjust the speed of the song to a maximum of 2", function(speedMultiplier)
+if sound then
+    sound.Pitch = speedMultiplier
+    sound.PlaybackSpeed = 1 / speedMultiplier
+    end
+ end,
+0, 2)
 
 local increaseframe = Instance.new("Frame", scrollingsettingmusicFrame)
 increaseframe.Size = UDim2.new(1, 0, 0, 100)
