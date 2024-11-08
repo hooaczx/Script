@@ -145,11 +145,9 @@ RunService.RenderStepped:Connect(function()
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
 
         if isRotating and mouseDelta ~= Vector2.new() then
-            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002 * sensitivity  -- Horizontal rotation
-            cameraAngleX = cameraAngleX + mouseDelta.Y * 0.002 * sensitivity  -- Vertical rotation
+            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002 * sensitivity
+            cameraAngleX = math.clamp(cameraAngleX + mouseDelta.Y * 0.002 * sensitivity, -math.pi/2, math.pi/2)
         end
-
-        cameraAngleX = math.clamp(cameraAngleX, -math.pi/2, math.pi/2)
         
         local rotation = CFrame.Angles(cameraAngleX, cameraAngleY, 0)
         camera.CFrame = CFrame.new(part.Position) * rotation
@@ -177,6 +175,7 @@ player.CharacterRemoving:Connect(function(character)
         player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end)
+
 end
 
 local Toggle = AddToggle(Main5u6, {
