@@ -3723,11 +3723,17 @@ ScreenGui.AncestryChanged:Connect(function()
         if Active then
             Player.Character.Humanoid.AutoRotate = true
             ShiftLockButton.Image = States.Off
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
             ShiftlockCursor.Visible = false
+            if bodyGyro then
+               bodyGyro:Destroy()
+               bodyGyro = nil
+            end
             pcall(function()
-                Active:Disconnect()
-                Active = nil
-            end)
+                 Active:Disconnect()
+                 Active = nil
+              end)
+           end
         end
     end
 end)
