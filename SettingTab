@@ -49,7 +49,7 @@ local RunService = game:GetService("RunService")
 local player = game.Players.LocalPlayer
 
 local rotationX, rotationY = 0, 0
-local sensitivity = 0.002 -- sensitivity ของการหมุนกล้อง
+local sensitivity = 0.002
 
 local function createPart()
     if part then
@@ -104,15 +104,16 @@ local ToggleWalk = AddToggle(Main5u6, {
 
 userInputService.InputChanged:Connect(function(input)
     if freecamEnabled then
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            local deltaX, deltaY
-            if input.UserInputType == Enum.UserInputType.MouseMovement then
-                deltaX = input.Delta.X
-                deltaY = input.Delta.Y
-            elseif input.UserInputType == Enum.UserInputType.Touch then
-                deltaX = input.Position.X - input.PreviousPosition.X
-                deltaY = input.Position.Y - input.PreviousPosition.Y
-            end
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            local deltaX = input.Delta.X
+            local deltaY = input.Delta.Y
+            rotationX = rotationX - deltaX * sensitivity
+            rotationY = math.clamp(rotationY - deltaY * sensitivity, -math.pi/2, math.pi/2)
+        elseif input.UserInputType == Enum.UserInputType.Touch then
+            local touch = input
+            local touchDelta = touch.Position - touch.PreviousPosition
+            local deltaX = touchDelta.X
+            local deltaY = touchDelta.Y
             rotationX = rotationX - deltaX * sensitivity
             rotationY = math.clamp(rotationY - deltaY * sensitivity, -math.pi/2, math.pi/2)
         end
