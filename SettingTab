@@ -49,6 +49,7 @@ local RunService = game:GetService("RunService")
 local player = game.Players.LocalPlayer
 
 local rotationX, rotationY = 0, 0
+local sensitivity = 0.002 -- sensitivity ของการหมุนกล้อง
 
 local function createPart()
     if part then
@@ -112,9 +113,8 @@ userInputService.InputChanged:Connect(function(input)
                 deltaX = input.Position.X - input.PreviousPosition.X
                 deltaY = input.Position.Y - input.PreviousPosition.Y
             end
-
-            rotationX = rotationX - deltaX * 0.002
-            rotationY = math.clamp(rotationY - deltaY * 0.002, -math.pi/2, math.pi/2)
+            rotationX = rotationX - deltaX * sensitivity
+            rotationY = math.clamp(rotationY - deltaY * sensitivity, -math.pi/2, math.pi/2)
         end
     end
 end)
@@ -130,8 +130,7 @@ RunService.RenderStepped:Connect(function()
             desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
-        
-        local cameraRotation = CFrame.Angles(0, rotationX, 0) * CFrame.Angles(rotationY, 0, 0)
+        local cameraRotation = CFrame.Angles(rotationY, rotationX, 0)
         camera.CFrame = CFrame.new(part.Position) * cameraRotation + Vector3.new(0, 5, -10)
     end
 end)
