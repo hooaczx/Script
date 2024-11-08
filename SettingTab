@@ -126,6 +126,10 @@ userInputService.InputChanged:Connect(function(input, gameProcessed)
     end
 end)
 
+local sensitivity = 3
+local cameraAngleX = 0
+local cameraAngleY = 0
+
 RunService.RenderStepped:Connect(function()
     if freecamEnabled then
         local moveDirection = controlModule:GetMoveVector()
@@ -141,8 +145,8 @@ RunService.RenderStepped:Connect(function()
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
 
         if isRotating and mouseDelta ~= Vector2.new() then
-            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002
-            cameraAngleX = math.clamp(cameraAngleX - mouseDelta.Y * 0.002, -math.rad(90), math.rad(90))
+            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002 * sensitivity
+            cameraAngleX = cameraAngleX - mouseDelta.Y * 0.002 * sensitivity
         end
 
         local rotation = CFrame.Angles(cameraAngleX, cameraAngleY, 0)
