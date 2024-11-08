@@ -63,6 +63,11 @@ local function createPart()
     part.Anchored = true
     part.CanCollide = false
     camera.CameraSubject = part
+
+    local character = player.Character or player.CharacterAdded:Wait()
+    local headPosition = character:WaitForChild("Head").Position
+    local behindPosition = headPosition - character.HumanoidRootPart.CFrame.LookVector * 5  -- 5 studs จากด้านหลังของผู้เล่น
+    camera.CFrame = CFrame.new(behindPosition, headPosition)
 end
 
 local function updateSpeed(newSpeed)
