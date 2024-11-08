@@ -126,7 +126,7 @@ userInputService.InputChanged:Connect(function(input, gameProcessed)
     end
 end)
 
-local sensitivity = 3
+local sensitivity = 6
 local cameraAngleX = 0
 local cameraAngleY = 0
 
@@ -145,10 +145,12 @@ RunService.RenderStepped:Connect(function()
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
 
         if isRotating and mouseDelta ~= Vector2.new() then
-            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002 * sensitivity
-            cameraAngleX = cameraAngleX - mouseDelta.Y * 0.002 * sensitivity
+            cameraAngleY = cameraAngleY - mouseDelta.X * 0.002 * sensitivity  -- Horizontal rotation
+            cameraAngleX = cameraAngleX + mouseDelta.Y * 0.002 * sensitivity  -- Vertical rotation
         end
 
+        cameraAngleX = math.clamp(cameraAngleX, -math.pi/2, math.pi/2)
+        
         local rotation = CFrame.Angles(cameraAngleX, cameraAngleY, 0)
         camera.CFrame = CFrame.new(part.Position) * rotation
 
