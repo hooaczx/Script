@@ -43,13 +43,6 @@ else
 local speed = 50
 local freecamEnabled = false
 local part
-local userInputService = game:GetService("UserInputService")
-local camera = game.Workspace.CurrentCamera
-local RunService = game:GetService("RunService")
-local player = game.Players.LocalPlayer
-
-local rotationX, rotationY = 0, 0
-local sensitivity = 0.002
 
 local function createPart()
     if part then
@@ -102,26 +95,8 @@ local ToggleWalk = AddToggle(Main5u6, {
     end
 })
 
-userInputService.InputChanged:Connect(function(input)
-    if freecamEnabled then
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            local deltaX = input.Delta.X
-            local deltaY = input.Delta.Y
-            rotationX = rotationX - deltaX * sensitivity
-            rotationY = math.clamp(rotationY - deltaY * sensitivity, -math.pi/2, math.pi/2)
-        elseif input.UserInputType == Enum.UserInputType.Touch then
-            local touch = input
-            local touchDelta = touch.Position - touch.PreviousPosition
-            local deltaX = touchDelta.X
-            local deltaY = touchDelta.Y
-            rotationX = rotationX - deltaX * sensitivity
-            rotationY = math.clamp(rotationY - deltaY * sensitivity, -math.pi/2, math.pi/2)
-        end
-    end
-end)
-
 RunService.RenderStepped:Connect(function()
-    if freecamEnabled and part then
+    if freecamEnabled then
         local moveDirection = controlModule:GetMoveVector()
         local desiredVelocity = Vector3.new()
         if moveDirection.X ~= 0 then
@@ -131,8 +106,7 @@ RunService.RenderStepped:Connect(function()
             desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
-        local cameraRotation = CFrame.Angles(rotationY, rotationX, 0)
-        camera.CFrame = CFrame.new(part.Position) * cameraRotation + Vector3.new(0, 5, -10)
+        camera.CFrame = camera.CFrame * CFrame.new(0, 0, -speed * RunService.RenderStepped:Wait())
     end
 end)
 
