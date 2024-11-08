@@ -3638,7 +3638,6 @@ local States = {
     Lock = "rbxasset://textures/MouseLockedCursor.png",
     Lock2 = "rbxasset://SystemCursors/Cross"
 }
-
 local MaxLength = 900000
 local EnabledOffset = CFrame.new(1.7, 0, 0)
 local DisabledOffset = CFrame.new(-1.7, 0, 0)
@@ -3663,49 +3662,34 @@ ShiftlockCursor.BackgroundTransparency = 1
 ShiftlockCursor.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 ShiftlockCursor.Visible = false
 
-functions.lockCharacterParts = function()
-    local character = Player.Character
-    local humanoid = character and character:FindFirstChild("Humanoid")
-    if not character or not humanoid then return end
-
-    local newCFrame = CFrame.new(
-        character.HumanoidRootPart.Position,
-        character.HumanoidRootPart.Position + workspace.CurrentCamera.CFrame.LookVector
-    )
-    character.HumanoidRootPart.CFrame = newCFrame
-
-    local rightArm = character:FindFirstChild("RightUpperArm")
-    local leftArm = character:FindFirstChild("LeftUpperArm")
-    local torso = character:FindFirstChild("UpperTorso")
-    if rightArm then rightArm.CFrame = newCFrame * CFrame.Angles(0, math.rad(90), 0) end
-    if leftArm then leftArm.CFrame = newCFrame * CFrame.Angles(0, -math.rad(90), 0) end
-    if torso then torso.CFrame = newCFrame * CFrame.Angles(0, 0, math.rad(0)) end
-end
-
 ShiftLockButton.MouseButton1Click:Connect(function()
     if not Active then
         Active = RunService.RenderStepped:Connect(function()
             Player.Character.Humanoid.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            functions.lockCharacterParts()
-            local currentCamera = workspace.CurrentCamera
-            currentCamera.CFrame = currentCamera.CFrame:Lerp(
-                currentCamera.CFrame * EnabledOffset,
-                0.1
-            )
-            currentCamera.Focus = CFrame.fromMatrix(
-                currentCamera.Focus.Position,
-                currentCamera.CFrame.RightVector,
-                currentCamera.CFrame.UpVector
-            ) * EnabledOffset
+            Player.Character.HumanoidRootPart.CFrame =
+                CFrame.new(
+                    Player.Character.HumanoidRootPart.Position,
+                    Vector3.new(
+                        workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
+                        Player.Character.HumanoidRootPart.Position.Y,
+                        workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
+                    )
+                )
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * EnabledOffset
+            workspace.CurrentCamera.Focus =
+                CFrame.fromMatrix(
+                    workspace.CurrentCamera.Focus.Position,
+                    workspace.CurrentCamera.CFrame.RightVector,
+                    workspace.CurrentCamera.CFrame.UpVector
+                ) * EnabledOffset
         end)
     else
         Player.Character.Humanoid.AutoRotate = true
         ShiftLockButton.Image = States.Off
+        workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
         ShiftlockCursor.Visible = false
-        local currentCamera = workspace.CurrentCamera
-        currentCamera.CFrame = currentCamera.CFrame:Lerp(currentCamera.CFrame * DisabledOffset, 0.1)
         pcall(function()
             Active:Disconnect()
             Active = nil
@@ -3727,12 +3711,11 @@ ScreenGui.AncestryChanged:Connect(function()
         if Active then
             Player.Character.Humanoid.AutoRotate = true
             ShiftLockButton.Image = States.Off
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
             ShiftlockCursor.Visible = false
-            local currentCamera = workspace.CurrentCamera
-            currentCamera.CFrame = currentCamera.CFrame:Lerp(currentCamera.CFrame * DisabledOffset, 0.1)
             pcall(function()
-                Active:Disconnect()
-                Active = nil
+               Active:Disconnect()
+               Active = nil
             end)
         end
     end
