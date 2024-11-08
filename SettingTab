@@ -44,6 +44,7 @@ WarningMessage = "Freecam was removed due to safety concerns due to being banned
 ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
 })
 else
+
 local function createPart()
     if part then
         part:Destroy()
@@ -83,7 +84,6 @@ local ToggleWalk = AddToggle(Main5u6, {
             player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
             camera.CameraType = Enum.CameraType.Scriptable
             camera.FieldOfView = 70
-            player.DevCameraMode = Enum.DevCameraMode.CameraScriptable
         else
             if part then
                 part:Destroy()
@@ -92,7 +92,6 @@ local ToggleWalk = AddToggle(Main5u6, {
             camera.CameraSubject = player.Character:WaitForChild("Humanoid")
             player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
             camera.CameraType = Enum.CameraType.Custom
-            player.DevCameraMode = Enum.DevCameraMode.Default
         end
     end
 })
@@ -125,7 +124,6 @@ player.CharacterAdded:Connect(function(character)
     if freecamEnabled then
         camera.CameraType = Enum.CameraType.Scriptable
         camera.FieldOfView = 70
-        player.DevCameraMode = Enum.DevCameraMode.CameraScriptable
         player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
     end
 end)
@@ -134,14 +132,13 @@ player.CharacterRemoving:Connect(function(character)
     if freecamEnabled then
         camera.CameraType = Enum.CameraType.Scriptable
         camera.FieldOfView = 70
-        player.DevCameraMode = Enum.DevCameraMode.CameraScriptable
         player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
     else
         camera.CameraType = Enum.CameraType.Custom
-        player.DevCameraMode = Enum.DevCameraMode.Default
         player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end)
+
 end
 
 local Toggle = AddToggle(Main5u6, {
