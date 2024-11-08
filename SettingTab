@@ -21,6 +21,10 @@ local players = game:GetService('Players')
 local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
+local speed = 50
+local freecamEnabled = false
+local part
+local mouse = player:GetMouse()
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
 
@@ -32,9 +36,6 @@ local function SendDetailedNotification(title, text, duration)
     })
 end
 
-local speed = 50
-local freecamEnabled = false
-local part
 local currentGameId = game.PlaceId
 
 if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
@@ -60,7 +61,7 @@ local function updateSpeed(newSpeed)
 end
 
 AddTextBox(Main5u6, {
-    Name = " Number Speed Freecam",
+    Name = "Number Speed Freecam",
     Default = "Enter",
     PlaceholderText = "Enter speed",
     ClearText = true,
@@ -80,6 +81,9 @@ local ToggleWalk = AddToggle(Main5u6, {
         if enabled then
             createPart()
             player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            camera.CameraType = Enum.CameraType.Scriptable
+            camera.FieldOfView = 70
+            player.DevCameraMode = Enum.DevCameraMode.CameraScriptable
         else
             if part then
                 part:Destroy()
@@ -87,6 +91,8 @@ local ToggleWalk = AddToggle(Main5u6, {
             end
             camera.CameraSubject = player.Character:WaitForChild("Humanoid")
             player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+            camera.CameraType = Enum.CameraType.Custom
+            player.DevCameraMode = Enum.DevCameraMode.Default
         end
     end
 })
@@ -102,12 +108,39 @@ RunService.RenderStepped:Connect(function()
             desiredVelocity = desiredVelocity - camera.CFrame.LookVector * (moveDirection.Z * speed)
         end
         part.Position = part.Position + desiredVelocity * RunService.RenderStepped:Wait()
-        camera.CFrame = CFrame.new(part.Position + Vector3.new(0, 5, -10), part.Position)
+        if not freecamEnabled then
+            local playerPos = player.Character.HumanoidRootPart.Position
+            part.Position = playerPos - player.Character.HumanoidRootPart.CFrame.LookVector * 5
+        end
+        local mouseDelta = mouse.Delta
+        local cameraRotation = camera.CFrame
+            * CFrame.Angles(0, -mouseDelta.X * 0.002, 0)
+            * CFrame.Angles(-mouseDelta.Y * 0.002, 0, 0)
+        camera.CFrame = cameraRotation + part.Position + Vector3.new(0, 5, -10)
     end
 end)
 
 player.CharacterAdded:Connect(function(character)
     createPart()
+    if freecamEnabled then
+        camera.CameraType = Enum.CameraType.Scriptable
+        camera.FieldOfView = 70
+        player.DevCameraMode = Enum.DevCameraMode.CameraScriptable
+        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    end
+end)
+
+player.CharacterRemoving:Connect(function(character)
+    if freecamEnabled then
+        camera.CameraType = Enum.CameraType.Scriptable
+        camera.FieldOfView = 70
+        player.DevCameraMode = Enum.DevCameraMode.CameraScriptable
+        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    else
+        camera.CameraType = Enum.CameraType.Custom
+        player.DevCameraMode = Enum.DevCameraMode.Default
+        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
 end)
 end
 
