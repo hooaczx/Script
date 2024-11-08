@@ -3662,21 +3662,29 @@ ShiftlockCursor.BackgroundTransparency = 1
 ShiftlockCursor.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 ShiftlockCursor.Visible = false
 
+local bodyGyro
+
 ShiftLockButton.MouseButton1Click:Connect(function()
     if not Active then
         Active = RunService.RenderStepped:Connect(function()
             Player.Character.Humanoid.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            Player.Character.HumanoidRootPart.CFrame =
-                CFrame.new(
-                    Player.Character.HumanoidRootPart.Position,
-                    Vector3.new(
-                        workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
-                        Player.Character.HumanoidRootPart.Position.Y,
-                        workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
-                    )
+            if not bodyGyro then
+                bodyGyro = Instance.new("AlignOrientation")
+                bodyGyro.MaxTorque = 10000
+                bodyGyro.Responsiveness = 100
+                bodyGyro.PrimaryAxisOnly = true
+                bodyGyro.Parent = Player.Character.HumanoidRootPart
+            end
+            bodyGyro.CFrame = CFrame.new(
+                Player.Character.HumanoidRootPart.Position,
+                Vector3.new(
+                    workspace.CurrentCamera.CFrame.LookVector.X * MaxLength,
+                    Player.Character.HumanoidRootPart.Position.Y,
+                    workspace.CurrentCamera.CFrame.LookVector.Z * MaxLength
                 )
+            )
             workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * EnabledOffset
             workspace.CurrentCamera.Focus =
                 CFrame.fromMatrix(
@@ -3690,6 +3698,10 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         ShiftLockButton.Image = States.Off
         workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
         ShiftlockCursor.Visible = false
+        if bodyGyro then
+            bodyGyro:Destroy()
+            bodyGyro = nil
+        end
         pcall(function()
             Active:Disconnect()
             Active = nil
