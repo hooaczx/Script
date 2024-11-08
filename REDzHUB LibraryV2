@@ -1666,6 +1666,11 @@ local musicTinnLayout = Instance.new("UIListLayout", scrollingsettingmusicFrame)
 musicTinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
 musicTinnLayout.Padding = UDim.new(0, 5)
 
+functions.SizescrollingsettingmusicFrame = function()
+    local contentHeight = musicTinnLayout.AbsoluteContentSize.Y
+    songList.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
+end
+
 local AutoPlayframe = Instance.new("Frame", scrollingsettingmusicFrame)
 AutoPlayframe.Size = UDim2.new(1, 0, 0, 100)
 AutoPlayframe.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -2035,10 +2040,12 @@ local togglesettingmusic = false
      togglesettingmusic = not togglesettingmusic
 
         if togglesettingmusic then
+            functions.SizescrollingsettingmusicFrame()
             click1:Play()
             framemusic.Visible = true
             CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
         else
+            functions.SizescrollingsettingmusicFrame()
             click2:Play()
             CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
             framemusic.Visible = false
@@ -3060,9 +3067,9 @@ scrollingSettingFrame.ScrollBarThickness = 0
 local SettingTinniLayout = Instance.new("UIListLayout", scrollingSettingFrame) 
 SettingTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-local function Size()
+functions.Size = function()
     local contentHeight = SettingTinniLayout.AbsoluteContentSize.Y
-    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+    songList.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
 end
 local isClickEffectEnabled = false
 local ripples = {}
@@ -3614,12 +3621,12 @@ end)
 
         if minimize9 then
             click1:Play()
-            Size()
+            functions.Size()
             frameSetting.Visible = true
             CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
         else
             click2:Play()
-            Size()
+            functions.Size()
             CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
             frameSetting.Visible = false
         end
@@ -3690,7 +3697,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
     end
 end)
 
-local function ShiftLock(_, state)
+functions.ShiftLock = function(_, state)
     if state == Enum.UserInputState.Begin then
         ShiftLockButton:MouseButton1Click()
     end
