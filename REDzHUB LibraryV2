@@ -733,6 +733,8 @@ local songs = {
 
 local currentSongIndex = 1
 local soundmusic = Instance.new("Sound", ScreenGui) 
+local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
+local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 local isPaused = false
 local savedTimePosition = 0
 local progressUpdateConnection
@@ -1640,59 +1642,6 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     return sectionFrame
 end
 
-local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
-
-local modes = {
-    { name = "Off", decayTime = 0, density = 0 },
-    { name = "Room", decayTime = 0.3, density = 0.5 },
-    { name = "Hall", decayTime = 1.2, density = 0.8 },
-    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
-    { name = "Forest", decayTime = 0.7, density = 0.4 },
-    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
-    { name = "Mountains", decayTime = 3.5, density = 0.85 },
-    { name = "Cave", decayTime = 3.0, density = 0.7 },
-    { name = "Arena", decayTime = 1.8, density = 0.9 },
-    { name = "Underwater", decayTime = 2.2, density = 0.6 },
-    { name = "Open Field", decayTime = 0.5, density = 0.3 },
-    { name = "City", decayTime = 1.0, density = 0.65 },
-    { name = "Desert", decayTime = 0.9, density = 0.5 },
-    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
-    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
-    { name = "Swamp", decayTime = 1.7, density = 0.6 },
-    { name = "Factory", decayTime = 1.6, density = 0.75 },
-    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
-    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
-    { name = "Subway", decayTime = 1.4, density = 0.7 },
-    { name = "Library", decayTime = 1.1, density = 0.5 },
-}
-
-local chorusModes = {
-    { name = "Off", depth = 0, rate = 0 },
-    { name = "Light", depth = 0.5, rate = 1 },
-    { name = "Moderate", depth = 0.8, rate = 1.5 },
-    { name = "Heavy", depth = 1.0, rate = 2 },
-    { name = "Ultra", depth = 1.2, rate = 2.5 },
-    { name = "Extreme", depth = 1.5, rate = 3 },
-    { name = "Super Heavy", depth = 1.8, rate = 4 },
-    { name = "Max", depth = 2.0, rate = 5 },
-    { name = "Phantom", depth = 1.0, rate = 3.5 },
-    { name = "Super Phantom", depth = 2.5, rate = 6 },
-    { name = "Whisper", depth = 0.4, rate = 0.8 },
-    { name = "Echo", depth = 0.7, rate = 1.2 },
-    { name = "Cascading", depth = 1.3, rate = 3.0 },
-    { name = "Wavy", depth = 1.4, rate = 2.2 },
-    { name = "Siren", depth = 1.6, rate = 4.0 },
-    { name = "Ghostly", depth = 1.7, rate = 3.8 },
-    { name = "Dreamy", depth = 1.9, rate = 5.0 },
-    { name = "Vortex", depth = 2.1, rate = 5.5 },
-    { name = "Nebula", depth = 2.3, rate = 6.0 },
-    { name = "Warped", depth = 2.4, rate = 6.5 },
-}
-
-local currentMode = 1
-local currentChorusMode = 1
-
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
 framemusic.Position = UDim2.new(0.5, 0, 0.4, 0)
@@ -1776,87 +1725,210 @@ toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82
     isSettingAutoPlayState = false
 end, isAutoPlayEnabled)
 
-functions.createSettingFrame = function(parent, title, description, buttonText, buttonCallback)
-    local frame = Instance.new("Frame", parent)
-    frame.Size = UDim2.new(1, 0, 0, 100)
-    frame.BackgroundColor3 = Configs_HUB.Cor_Hub
-    frame.BackgroundTransparency = 0
+local increaseframe = Instance.new("Frame", scrollingsettingmusicFrame)
+increaseframe.Size = UDim2.new(1, 0, 0, 100)
+increaseframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+increaseframe.BackgroundTransparency = 0
 
-    local titleLabel = Instance.new("TextLabel", frame)
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.TextScaled = true
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.Text = title
+local increasetext = Instance.new("TextLabel", increaseframe)
+increasetext.Size = UDim2.new(1, 0, 0, 30)
+increasetext.TextScaled = true
+increasetext.TextXAlignment = Enum.TextXAlignment.Left
+increasetext.BackgroundTransparency = 1
+increasetext.TextColor3 = Color3.fromRGB(255, 255, 255)
+increasetext.Text = "AutoPlay NextSong"
 
-    local descLabel = Instance.new("TextLabel", frame)
-    descLabel.Size = UDim2.new(1, 0, 0, 30)
-    descLabel.TextScaled = true
-    descLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descLabel.BackgroundTransparency = 1
-    descLabel.Position = UDim2.new(0, 0, 0.31, 0)
-    descLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    descLabel.Text = description
+local increasetext1 = Instance.new("TextLabel", increaseframe)
+increasetext1.Size = UDim2.new(1, 0, 0, 35)
+increasetext1.TextScaled = true
+increasetext1.TextXAlignment = Enum.TextXAlignment.Left
+increasetext1.BackgroundTransparency = 1
+increasetext1.Position = UDim2.new(0, 0, 0.31, 0)
+increasetext1.TextColor3 = Color3.fromRGB(255, 255, 255)
+increasetext1.Text = [[Make the music louder Can increase up to 250 only]]
 
-    local button = Instance.new("TextButton", frame)
-    button.Size = UDim2.new(0, 100, 0, 30)
-    button.Position = UDim2.new(0.7, 0, 0.7, 0)
-    button.Text = buttonText
-    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextScaled = true
-    button.BackgroundTransparency = 0.4
-    button.MouseButton1Click:Connect(buttonCallback)
+local volumeLabel = Instance.new("TextLabel", increaseframe)
+volumeLabel.Size = UDim2.new(0.27, 0, 0, 25)
+volumeLabel.Position = UDim2.new(0.36, 0, 0.73, 0)
+volumeLabel.Text = "Volume:" ..tostring(math.floor(soundmusic.Volume * 100)).. "/250"
+volumeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+volumeLabel.BackgroundTransparency = 1
+volumeLabel.TextScaled = true
 
-    return frame, button
-end
+local increaseVolumeButton = Instance.new("ImageButton", increaseframe)
+increaseVolumeButton.Size = UDim2.new(0.1, 0, 0, 30)
+increaseVolumeButton.Position = UDim2.new(0.7, 0, 0.7, 0)
+increaseVolumeButton.BackgroundTransparency = 1
+increaseVolumeButton.Image = "rbxthumb://type=Asset&id=83302423067688&w=150&h=150"
+Corner(increaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
 
-local reverbFrame, echoButton = functions.createSettingFrame(
-    scrollingsettingmusicFrame,
-    "Reverb Effect",
-    "Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping",
-    "Reverb Mode: off",
-    function()
-        if currentMode == 1 then
-            currentChorusMode = 1
-            chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-            local mode = chorusModes[currentChorusMode]
-            chorusEffect.Depth = mode.depth
-            chorusEffect.Rate = mode.rate
-            chorusEffect.Enabled = mode.name ~= "Off"
-        end
-        currentMode = currentMode % #modes + 1
-        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-        local mode = modes[currentMode]
-        reverbEffect.DecayTime = mode.decayTime
-        reverbEffect.Density = mode.density
-        reverbEffect.Enabled = mode.name ~= "Off"
-    end
-)
+local decreaseVolumeButton = Instance.new("ImageButton", increaseframe)
+decreaseVolumeButton.Size = UDim2.new(0.1, 0, 0, 25)
+decreaseVolumeButton.Position = UDim2.new(0.2, 0, 0.75, 0)
+decreaseVolumeButton.BackgroundTransparency = 1
+decreaseVolumeButton.Image = "rbxthumb://type=Asset&id=99444312865147&w=150&h=150"
+Corner(decreaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
 
-local chorusFrame, chorusButton = functions.createSettingFrame(
-    scrollingsettingmusicFrame,
-    "Chorus Mode",
-    "Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations",
-    "Chorus Mode: off",
-    function()
-        if currentChorusMode == 1 then
-            currentMode = 1
-            echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-            local mode = modes[currentMode]
-            reverbEffect.DecayTime = mode.decayTime
-            reverbEffect.Density = mode.density
-            reverbEffect.Enabled = mode.name ~= "Off"
-        end
-        currentChorusMode = currentChorusMode % #chorusModes + 1
+local volumeChangeAmount = 0.1
+
+increaseVolumeButton.MouseButton1Click:Connect(function()
+    soundmusic.Volume = math.min(soundmusic.Volume + volumeChangeAmount, 2.5)
+    volumeLabel.Text = "Volume: " .. tostring(math.floor(soundmusic.Volume * 100)) .. "/250"
+end)
+
+decreaseVolumeButton.MouseButton1Click:Connect(function()
+    soundmusic.Volume = math.max(soundmusic.Volume - volumeChangeAmount, 0)
+    volumeLabel.Text = "Volume: " .. tostring(math.floor(soundmusic.Volume * 100)) .. "/250"
+end)
+
+local ReverbModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
+ReverbModeframe.Size = UDim2.new(1, 0, 0, 100)
+ReverbModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+ReverbModeframe.BackgroundTransparency = 0
+
+local TextReverbMode = Instance.new("TextLabel", ReverbModeframe)
+TextReverbMode.Size = UDim2.new(1, 0, 0, 30)
+TextReverbMode.TextScaled = true
+TextReverbMode.TextXAlignment = Enum.TextXAlignment.Left
+TextReverbMode.BackgroundTransparency = 1
+TextReverbMode.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextReverbMode.Text = "Reverb Effect"
+
+local TextReverbMode1 = Instance.new("TextLabel", ReverbModeframe)
+TextReverbMode1.Size = UDim2.new(1, 0, 0, 30)
+TextReverbMode1.TextScaled = true
+TextReverbMode1.TextXAlignment = Enum.TextXAlignment.Left
+TextReverbMode1.BackgroundTransparency = 1
+TextReverbMode1.Position = UDim2.new(0, 0, 0.31, 0)
+TextReverbMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextReverbMode1.Text = [[Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping]]
+
+local echoButton = Instance.new("TextButton", ReverbModeframe)
+echoButton.Size = UDim2.new(0, 100, 0, 30)
+echoButton.Position = UDim2.new(0.7, 0, 0.7, 0)
+echoButton.Text = "Reverb Mode: off"
+echoButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+echoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+echoButton.TextScaled = true
+echoButton.BackgroundTransparency = 0.4
+
+local ChorusModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
+ChorusModeframe.Size = UDim2.new(1, 0, 0, 100)
+ChorusModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
+ChorusModeframe.BackgroundTransparency = 0
+
+local TextChorusMode = Instance.new("TextLabel", ChorusModeframe)
+TextChorusMode.Size = UDim2.new(1, 0, 0, 30)
+TextChorusMode.TextScaled = true
+TextChorusMode.TextXAlignment = Enum.TextXAlignment.Left
+TextChorusMode.BackgroundTransparency = 1
+TextChorusMode.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextChorusMode.Text = "Chorus Mode"
+
+local TextChorusMode1 = Instance.new("TextLabel", ChorusModeframe)
+TextChorusMode1.Size = UDim2.new(1, 0, 0, 30)
+TextChorusMode1.TextScaled = true
+TextChorusMode1.TextXAlignment = Enum.TextXAlignment.Left
+TextChorusMode1.BackgroundTransparency = 1
+TextChorusMode1.Position = UDim2.new(0, 0, 0.31, 0)
+TextChorusMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextChorusMode1.Text = [[Makes the sound sound like there are slightly overlapping sounds. It is similar to a chorus or a sound that has slight vibrations]]
+
+local chorusButton = Instance.new("TextButton", ChorusModeframe)
+chorusButton.Size = UDim2.new(0, 100, 0, 30)
+chorusButton.Position = UDim2.new(0.7, 0, 0.7, 0)
+chorusButton.Text = "Chorus Mode: off"
+chorusButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+chorusButton.TextScaled = true
+chorusButton.BackgroundTransparency = 0.4
+
+local modes = {
+    { name = "Off", decayTime = 0, density = 0 },
+    { name = "Room", decayTime = 0.3, density = 0.5 },
+    { name = "Hall", decayTime = 1.2, density = 0.8 },
+    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
+    { name = "Forest", decayTime = 0.7, density = 0.4 },
+    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
+    { name = "Mountains", decayTime = 3.5, density = 0.85 },
+    { name = "Cave", decayTime = 3.0, density = 0.7 },
+    { name = "Arena", decayTime = 1.8, density = 0.9 },
+    { name = "Underwater", decayTime = 2.2, density = 0.6 },
+    { name = "Open Field", decayTime = 0.5, density = 0.3 },
+    { name = "City", decayTime = 1.0, density = 0.65 },
+    { name = "Desert", decayTime = 0.9, density = 0.5 },
+    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
+    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
+    { name = "Swamp", decayTime = 1.7, density = 0.6 },
+    { name = "Factory", decayTime = 1.6, density = 0.75 },
+    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
+    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
+    { name = "Subway", decayTime = 1.4, density = 0.7 },
+    { name = "Library", decayTime = 1.1, density = 0.5 },
+}
+
+local chorusModes = {
+    { name = "Off", depth = 0, rate = 0 },
+    { name = "Light", depth = 0.5, rate = 1 },
+    { name = "Moderate", depth = 0.8, rate = 1.5 },
+    { name = "Heavy", depth = 1.0, rate = 2 },
+    { name = "Ultra", depth = 1.2, rate = 2.5 },
+    { name = "Extreme", depth = 1.5, rate = 3 },
+    { name = "Super Heavy", depth = 1.8, rate = 4 },
+    { name = "Max", depth = 2.0, rate = 5 },
+    { name = "Phantom", depth = 1.0, rate = 3.5 },
+    { name = "Super Phantom", depth = 2.5, rate = 6 },
+    { name = "Whisper", depth = 0.4, rate = 0.8 },
+    { name = "Echo", depth = 0.7, rate = 1.2 },
+    { name = "Cascading", depth = 1.3, rate = 3.0 },
+    { name = "Wavy", depth = 1.4, rate = 2.2 },
+    { name = "Siren", depth = 1.6, rate = 4.0 },
+    { name = "Ghostly", depth = 1.7, rate = 3.8 },
+    { name = "Dreamy", depth = 1.9, rate = 5.0 },
+    { name = "Vortex", depth = 2.1, rate = 5.5 },
+    { name = "Nebula", depth = 2.3, rate = 6.0 },
+    { name = "Warped", depth = 2.4, rate = 6.5 },
+}
+
+local currentMode = 1
+local currentChorusMode = 1
+
+echoButton.MouseButton1Click:Connect(function()
+    if currentMode == 1 then
+        currentChorusMode = 1
         chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
         local mode = chorusModes[currentChorusMode]
         chorusEffect.Depth = mode.depth
         chorusEffect.Rate = mode.rate
         chorusEffect.Enabled = mode.name ~= "Off"
     end
-)
+    currentMode = currentMode % #modes + 1
+    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+    local mode = chorusModes[currentChorusMode]
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
+end)
+
+chorusButton.MouseButton1Click:Connect(function()
+    if currentChorusMode == 1 then
+        currentMode = 1
+        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+        local mode = modes[currentMode]
+        echoButton.Text = "Echo Mode: " .. mode.name
+        reverbEffect.DecayTime = mode.decayTime
+        reverbEffect.Density = mode.density
+        reverbEffect.Enabled = mode.name ~= "Off"
+    end
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    local mode = chorusModes[currentChorusMode]
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
+end)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local slider = functions.createSlider(scrollingsettingmusicFrame, "Volume", "Adjust the master volume", function(value)
@@ -2452,8 +2524,7 @@ functions.checkFriends = function()
         end
 
         local friendsInTotal = #playersFriends
-
-        local function updateFriendsGUI(friends)
+        functions.updateFriendsGUI = function(friends)
             friendsFrame:ClearAllChildren()
 
             local positionY = 0
@@ -2512,7 +2583,7 @@ functions.checkFriends = function()
             friendsFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(positionY, 3000))
         end
 
-        updateFriendsGUI(playersFriends)
+        functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
         return friendsInTotal
     else
@@ -2673,20 +2744,20 @@ functions.accountAgeMessage = function(accountAgeInDays)
     end
 end
 
-local function updatePlayTimeDisplay()
+functions.updatePlayTimeDisplay = function()
     local totalPlayTime = functions.calculateTotalPlayTime()
     local ageMessage = functions.accountAgeMessage(accountAgeInDays)
     AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
 end
 
-local function startUpdating()
-        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
-        updatePlayTimeDisplay()
+functions.startUpdating = function()
+    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+    functions.updatePlayTimeDisplay()
 end
 
-startUpdating()
+functions.startUpdating()
 
-local function formatElapsedTime(elapsedTime)
+functions.formatElapsedTime = function(elapsedTime)
     local secondsInMinute = 60
     local secondsInHour = 3600
     local secondsInDay = 86400
@@ -2711,18 +2782,18 @@ end
 local player = game.Players.LocalPlayer
 local playtime = 0
 
-local function updatePlaytime()
+functions.updatePlaytime = function()
     playtime = playtime + 1
-    local formattedTime = formatElapsedTime(playtime)
+    local formattedTime = functions.formatElapsedTime(playtime)
     TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
 end
 
-local function getAccountCreationDate(ageInDays)
+functions.getAccountCreationDate = function(ageInDays)
     local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
-updatePlaytime()
+functions.updatePlaytime()
 
 local DisplayName = Instance.new("TextLabel")
 DisplayName.Size = UDim2.new(1, 0, 0.3, 0)
@@ -2752,7 +2823,7 @@ UserIdg.Parent = frame9
 
 local AccountCreated = Instance.new("TextLabel")
 AccountCreated.Size = UDim2.new(1, 0, 0.3, 0)
-AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
+AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
 AccountCreated.Position = UDim2.new(0, 0, 0.6, 0)
 AccountCreated.TextScaled = true
 AccountCreated.TextColor3 = Configs_HUB.Cor_Text
@@ -2841,25 +2912,25 @@ Server.BackgroundTransparency = 1
 TextSetColor(Server)
 Server.Parent = frame79
 
-    local function updateTime()
-        local currentTime = os.date("*t")
-        local hour = currentTime.hour
-        local amPm = "AM"
+functions.updateTime = function()
+    local currentTime = os.date("*t")
+    local hour = currentTime.hour
+    local amPm = "AM"
 
-        if hour >= 12 then
-            amPm = "PM"
-            if hour > 12 then
-                hour = hour - 12
-            end
-        elseif hour == 0 then
-            hour = 12
+    if hour >= 12 then
+        amPm = "PM"
+        if hour > 12 then
+            hour = hour - 12
         end
-
-        local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
-        TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+    elseif hour == 0 then
+        hour = 12
     end
 
-    updateTime()
+    local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
+    TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+end
+
+    functions.updateTime()
 
     local infoToggleButton = Instance.new("ImageButton", frame)
     infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
@@ -2928,16 +2999,17 @@ end)
           lastUpdate = currentTime
         end
      end) 
+
    RunService.Heartbeat:Connect(function()
-   local currentTime = tick()
+    local currentTime = tick()
     if currentTime - lastUpdate >= 1 then
-        updatePlaytime()
-        checkFriends()
-        startUpdating()
-        updateTime()
+        functions.updatePlaytime()
+        functions.checkFriends()
+        functions.startUpdating()
+        functions.updateTime()
         lastUpdate = currentTime
-        end
-    end)
+      end
+   end)
 
     local Button = Instance.new("ImageButton", frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
