@@ -918,6 +918,7 @@ notify({
 })
 
   function MinimizeButton(Configs)
+    local functions = {}
     local player = game.Players.LocalPlayer
     local players = game:GetService("Players")
     local localPlayer = players.LocalPlayer
@@ -1083,12 +1084,12 @@ end)
         end
     end)
 
-   local function formatTime()
+   functions.formatTime = function()
       local currentTime = os.date("*t")
       return string.format("%02d:%02d", currentTime.hour, currentTime.min)
    end
 
- local function output(msg, playerName, playerId)
+  functions.output = function(msg, playerName, playerId)
      local messageFrame = Instance.new("Frame", LogPanel)
      messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
      messageFrame.Size = UDim2.new(1, 0, 0, 40)
@@ -1105,7 +1106,7 @@ end)
      Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
     
      local messageLabel = Instance.new("TextLabel", messageFrame)
-     messageLabel.Text = ":".. formatTime() .. ":" .. playerName .. ": " .. msg
+     messageLabel.Text = ":".. functions.formatTime() .. ":" .. playerName .. ": " .. msg
      messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
      messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
      messageLabel.TextScaled = true
@@ -1124,11 +1125,11 @@ end)
      if message ~= "" then
          game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
          MessageBox.Text = ""
-         output(message, game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId)
+         functions.output(message, game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId)
       end
    end)
 
-local function onChatMessageReceived(player, msg)
+functions.onChatMessageReceived = function(player, msg)
     output(msg, player.Name, player.UserId)
     if not ChatToggle then
         unreadCount = unreadCount + 1
@@ -1137,17 +1138,17 @@ local function onChatMessageReceived(player, msg)
     end
 end
 
-local function setupPlayer(player)
+functions.setupPlayer = function(player)
     player.Chatted:Connect(function(msg)
-        onChatMessageReceived(player, msg)
+        functions.onChatMessageReceived(player, msg)
     end)
 end
 
 for _, player in ipairs(game.Players:GetPlayers()) do
-    setupPlayer(player)
+    functions.setupPlayer(player)
 end
 
-game.Players.PlayerAdded:Connect(setupPlayer)
+game.Players.PlayerAdded:Connect(functions.setupPlayer)
 
 local TimeLabelgui = Instance.new("TextLabel", frame)
 TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
@@ -1420,8 +1421,6 @@ PreviousButton.MouseButton1Click:Connect(function()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
-
-local functions = {}
 
 functions.createToggleButton = function(parent, position, callback, initialState)
     local TextButton = Instance.new("TextButton", parent)
