@@ -931,7 +931,10 @@ AddToggle(Main5u6, {
     end
 })
 
+local Lighting = game:GetService("Lighting")
+
 local isFogEnabled = false
+local isRainbowEnabled = false
 local atmosphere = Lighting:FindFirstChild("Atmosphere")
 
 if not atmosphere then
@@ -939,12 +942,18 @@ if not atmosphere then
     atmosphere.Parent = Lighting
 end
 
-local originalFogColor, originalFogStart, originalFogEnd
+local originalFogColor = atmosphere.Color
+local originalFogStart = atmosphere.Start
+local originalFogEnd = atmosphere.End
 
-if atmosphere then
-    originalFogColor = atmosphere.Color
-    originalFogStart = atmosphere.Start
-    originalFogEnd = atmosphere.End
+local originalColors = {}
+
+local function storeOriginalColors()
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalColors[part] = part.BrickColor
+        end
+    end
 end
 
 local function createFogEffect()
@@ -981,38 +990,6 @@ local function createFogEffect()
     end)
 end
 
-AddToggle(Main5u6, {
-    Name = "Fog Rainbow Effect",
-    Default = false,
-    Callback = function(value)
-        isFogEnabled = value
-        if isFogEnabled then
-            if not atmosphere then
-                atmosphere = Instance.new("Atmosphere")
-                atmosphere.Parent = Lighting
-            end
-        else
-            if atmosphere then
-                atmosphere:Destroy()
-                atmosphere = nil
-            end
-        end
-    end
-})
-
-createFogEffect()
-
-local originalColors = {}
-local isRainbowEnabled = false
-
-local function storeOriginalColors()
-    for _, part in ipairs(workspace:GetDescendants()) do
-        if part:IsA("BasePart") then
-            originalColors[part] = part.BrickColor
-        end
-    end
-end
-
 local function createRainbowEffect()
     local hue = 0
     local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
@@ -1032,13 +1009,32 @@ local function createRainbowEffect()
             for part, originalColor in pairs(originalColors) do
                 if part and part:IsA("BasePart") then
                     local tweenGoal = {Color = originalColor.Color}
-                    local tween = TweenService:Create(part, tweenInfo, tweenGoal)
+                    local tween = TweenService:Create(part, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), tweenGoal)
                     tween:Play()
                 end
             end
         end
     end)
 end
+
+AddToggle(Main5u6, {
+    Name = "Fog Rainbow Effect",
+    Default = false,
+    Callback = function(value)
+        isFogEnabled = value
+        if isFogEnabled then
+            if not atmosphere then
+                atmosphere = Instance.new("Atmosphere")
+                atmosphere.Parent = Lighting
+            end
+        else
+            if atmosphere then
+                atmosphere:Destroy()
+                atmosphere = nil
+            end
+        end
+    end
+})
 
 AddToggle(Main5u6, {
     Name = "Rainbow Effect",
@@ -1059,5 +1055,5 @@ AddToggle(Main5u6, {
     end
 })
 
+createFogEffect()
 createRainbowEffect()
-
