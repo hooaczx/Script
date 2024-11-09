@@ -943,8 +943,8 @@ if not atmosphere then
 end
 
 local originalFogColor = atmosphere.Color
-local originalFogStart = atmosphere.Start
-local originalFogEnd = atmosphere.End
+local originalFogDensity = atmosphere.Density
+local originalFogOffset = atmosphere.Offset
 
 local originalColors = {}
 
@@ -969,23 +969,23 @@ local function createFogEffect()
             local tweenColor = TweenService:Create(atmosphere, tweenInfo, tweenGoalColor)
             tweenColor:Play()
 
-            local tweenGoalStart = {Start = 0.1}
-            local tweenGoalEnd = {End = 100}
-            local tweenStart = TweenService:Create(atmosphere, tweenInfo, tweenGoalStart)
-            local tweenEnd = TweenService:Create(atmosphere, tweenInfo, tweenGoalEnd)
-            tweenStart:Play()
-            tweenEnd:Play()
+            local tweenGoalDensity = {Density = 0.5}
+            local tweenGoalOffset = {Offset = 0.2}
+            local tweenDensity = TweenService:Create(atmosphere, tweenInfo, tweenGoalDensity)
+            local tweenOffset = TweenService:Create(atmosphere, tweenInfo, tweenGoalOffset)
+            tweenDensity:Play()
+            tweenOffset:Play()
         else
             local tweenGoalColor = {Color = originalFogColor}
             local tweenColor = TweenService:Create(atmosphere, tweenInfo, tweenGoalColor)
             tweenColor:Play()
 
-            local tweenGoalStart = {Start = originalFogStart}
-            local tweenGoalEnd = {End = originalFogEnd}
-            local tweenStart = TweenService:Create(atmosphere, tweenInfo, tweenGoalStart)
-            local tweenEnd = TweenService:Create(atmosphere, tweenInfo, tweenGoalEnd)
-            tweenStart:Play()
-            tweenEnd:Play()
+            local tweenGoalDensity = {Density = originalFogDensity}
+            local tweenGoalOffset = {Offset = originalFogOffset}
+            local tweenDensity = TweenService:Create(atmosphere, tweenInfo, tweenGoalDensity)
+            local tweenOffset = TweenService:Create(atmosphere, tweenInfo, tweenGoalOffset)
+            tweenDensity:Play()
+            tweenOffset:Play()
         end
     end)
 end
@@ -1057,3 +1057,4 @@ AddToggle(Main5u6, {
 
 createFogEffect()
 createRainbowEffect()
+
