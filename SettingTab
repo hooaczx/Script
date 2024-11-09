@@ -932,12 +932,14 @@ AddToggle(Main5u6, {
 })
 
 local isFogEnabled = false
-local atmosphere = Lighting:FindFirstChild("Atmosphere") or Instance.new("Atmosphere")
-local originalFogColor, originalFogStart, originalFogEnd
+local atmosphere = Lighting:FindFirstChild("Atmosphere")
 
-if atmosphere.Parent == nil then
+if not atmosphere then
+    atmosphere = Instance.new("Atmosphere")
     atmosphere.Parent = Lighting
 end
+
+local originalFogColor, originalFogStart, originalFogEnd
 
 if atmosphere then
     originalFogColor = atmosphere.Color
