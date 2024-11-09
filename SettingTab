@@ -930,3 +930,54 @@ AddToggle(Main5u6, {
         effectEnabled = value
     end
 })
+
+local RunService = game:GetService("RunService")
+local originalColors = {}
+local isRainbowEnabled = false
+
+local function storeOriginalColors()
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalColors[part] = part.BrickColor
+        end
+    end
+end
+
+local function createRainbowEffect()
+    local hue = 0
+    RunService.Heartbeat:Connect(function()
+        if isRainbowEnabled then
+            hue = (hue + 1) % 360
+            for _, part in ipairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.BrickColor = BrickColor.new(Color3.fromHSV(hue / 360, 1, 1))
+                end
+            end
+        else
+            for part, originalColor in pairs(originalColors) do
+                if part and part:IsA("BasePart") then
+                    part.BrickColor = originalColor
+                end
+            end
+        end
+    end)
+end
+
+AddToggle(Main5u6, {
+    Name = "Map Rainbow Effect",
+    Default = false,
+    Callback = function(value)
+        isRainbowEnabled = value
+        if isRainbowEnabled then
+            storeOriginalColors()
+        else
+            for part, originalColor in pairs(originalColors) do
+                if part and part:IsA("BasePart") then
+                    part.BrickColor = originalColor
+                end
+            end
+        end
+    end
+})
+
+createRainbowEffect()
