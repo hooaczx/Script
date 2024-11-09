@@ -932,16 +932,11 @@ AddToggle(Main5u6, {
 })
 
 local Lighting = game:GetService("Lighting")
-local workspace = game:GetService("Workspace")
-
 local isFogEnabled = false
 local isRainbowEnabled = false
-local originalFogSettings = {
-    FogColor = Lighting.FogColor,
-    FogStart = Lighting.FogStart,
-    FogEnd = Lighting.FogEnd
-}
+local rainbowEffectConnection
 local originalColors = {}
+local isChanging = false
 
 local function storeOriginalColors()
     for _, part in ipairs(workspace:GetDescendants()) do
@@ -951,41 +946,31 @@ local function storeOriginalColors()
     end
 end
 
-local function resetFog()
-    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-    local resetFogColorTween = TweenService:Create(Lighting, tweenInfo, {FogColor = originalFogSettings.FogColor})
-    local resetFogStartTween = TweenService:Create(Lighting, tweenInfo, {FogStart = originalFogSettings.FogStart})
-    local resetFogEndTween = TweenService:Create(Lighting, tweenInfo, {FogEnd = originalFogSettings.FogEnd})
-
-    resetFogColorTween:Play()
-    resetFogStartTween:Play()
-    resetFogEndTween:Play()
-end
-
-local function applyFogRainbowEffect()
-    if isFogEnabled then
-        local hue = 0
-        RunService.Heartbeat:Connect(function()
-            if isFogEnabled then
-                hue = (hue + 1) % 360
-                local targetColor = Color3.fromHSV(hue / 360, 1, 1)
-
-                local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
-                local tweenGoal = {FogColor = targetColor}
-                local tween = TweenService:Create(Lighting, tweenInfo, tweenGoal)
-                tween:Play()
-            end
-        end)
-    else
-        resetFog()
-    end
-end
+local originalLightingSettings = {
+    Ambient = Lighting.Ambient,
+    Brightness = Lighting.Brightness,
+    OutdoorAmbient = Lighting.OutdoorAmbient,
+    FogStart = Lighting.FogStart,
+    FogEnd = Lighting.FogEnd,
+    FogColor = Lighting.FogColor
+}
 
 local function createRainbowTween(targetColor)
     local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
     local tweenGoal = {Ambient = targetColor}
     local tween = TweenService:Create(Lighting, tweenInfo, tweenGoal)
     tween:Play()
+end
+
+local function createRainbowEffect()
+    local hue = 0
+    return RunService.Heartbeat:Connect(function()
+        if isFogEnabled then
+            hue = (hue + 1) % 360
+            local targetColor = Color3.fromHSV(hue / 360, 1, 1)
+            Lighting.FogColor = targetColor
+        end
+    end)
 end
 
 local function createMapRainbowEffect()
@@ -1019,13 +1004,33 @@ AddToggle(Main5u6, {
     Name = "Fog Rainbow Effect",
     Default = false,
     Callback = function(value)
+        if isChanging then return end
+        isChanging = true
         isFogEnabled = value
+
         if isFogEnabled then
-            storeOriginalFogSettings()
-            applyFogRainbowEffect()
+            rainbowEffectConnection = createRainbowEffect()
+            Lighting.FogStart = 10
+            Lighting.FogEnd = 100
         else
-            resetFog()
+            if rainbowEffectConnection then
+                rainbowEffectConnection:Disconnect()
+                rainbowEffectConnection = nil
+            end
+            local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+            local resetAmbientTween = TweenService:Create(Lighting, tweenInfo, {Ambient = originalLightingSettings.Ambient})
+            local resetBrightnessTween = TweenService:Create(Lighting, tweenInfo, {Brightness = originalLightingSettings.Brightness})
+            local resetOutdoorAmbientTween = TweenService:Create(Lighting, tweenInfo, {OutdoorAmbient = originalLightingSettings.OutdoorAmbient})
+
+            resetAmbientTween:Play()
+            resetBrightnessTween:Play()
+            resetOutdoorAmbientTween:Play()
+
+            Lighting.FogStart = originalLightingSettings.FogStart
+            Lighting.FogEnd = originalLightingSettings.FogEnd
+            Lighting.FogColor = originalLightingSettings.FogColor
         end
+        isChanging = false
     end
 })
 
@@ -1033,10 +1038,11 @@ AddToggle(Main5u6, {
     Name = "Map Rainbow Effect",
     Default = false,
     Callback = function(value)
+        if isChanging then return end
+        isChanging = true
         isRainbowEnabled = value
         if isRainbowEnabled then
             storeOriginalColors()
-            createMapRainbowEffect()
         else
             for part, originalColor in pairs(originalColors) do
                 if part and part:IsA("BasePart") then
@@ -1046,6 +1052,9 @@ AddToggle(Main5u6, {
                 end
             end
         end
+        isChanging = false
     end
 })
+
+createMapRainbowEffect()
 
