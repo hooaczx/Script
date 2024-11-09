@@ -932,20 +932,28 @@ AddToggle(Main5u6, {
 })
 
 local isFogEnabled = false
-local originalFogColor = Lighting.Atmosphere.Color
-local originalFogStart = Lighting.Atmosphere.Start
-local originalFogEnd = Lighting.Atmosphere.End
-local atmosphere = Lighting.Atmosphere
+local atmosphere = Lighting:FindFirstChild("Atmosphere") or Instance.new("Atmosphere")
+local originalFogColor, originalFogStart, originalFogEnd
+
+if atmosphere.Parent == nil then
+    atmosphere.Parent = Lighting
+end
+
+if atmosphere then
+    originalFogColor = atmosphere.Color
+    originalFogStart = atmosphere.Start
+    originalFogEnd = atmosphere.End
+end
 
 local function createFogEffect()
     local hue = 0
     local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
-    
+
     RunService.Heartbeat:Connect(function()
         if isFogEnabled then
             hue = (hue + 1) % 360
             local targetColor = Color3.fromHSV(hue / 360, 1, 1)
-            
+
             local tweenGoalColor = {Color = targetColor}
             local tweenColor = TweenService:Create(atmosphere, tweenInfo, tweenGoalColor)
             tweenColor:Play()
@@ -1006,7 +1014,7 @@ end
 local function createRainbowEffect()
     local hue = 0
     local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
-    
+
     RunService.Heartbeat:Connect(function()
         if isRainbowEnabled then
             hue = (hue + 1) % 360
@@ -1050,3 +1058,4 @@ AddToggle(Main5u6, {
 })
 
 createRainbowEffect()
+
