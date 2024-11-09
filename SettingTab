@@ -937,7 +937,14 @@ local isRainbowEnabled = false
 local rainbowEffectConnection
 local originalColors = {}
 local isChanging = false
-local isColorsSaved = false
+
+local function storeOriginalColors()
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalColors[part] = part.BrickColor
+        end
+    end
+end
 
 local originalLightingSettings = {
     Ambient = Lighting.Ambient,
@@ -948,26 +955,11 @@ local originalLightingSettings = {
     FogColor = Lighting.FogColor
 }
 
-local function storeOriginalColors()
-    if isColorsSaved then return end
-    for _, part in ipairs(workspace:GetDescendants()) do
-        if part:IsA("BasePart") then
-            originalColors[part] = part.BrickColor
-        end
-    end
-    isColorsSaved = true
-end
-
-local function resetColors()
-    if not isColorsSaved then return end
-    for part, originalColor in pairs(originalColors) do
-        if part and part:IsA("BasePart") then
-            local tweenGoal = {Color = originalColor.Color}
-            local tween = TweenService:Create(part, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), tweenGoal)
-            tween:Play()
-        end
-    end
-    isColorsSaved = false
+local function createRainbowTween(targetColor)
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+    local tweenGoal = {Ambient = targetColor}
+    local tween = TweenService:Create(Lighting, tweenInfo, tweenGoal)
+    tween:Play()
 end
 
 local function createRainbowEffect()
@@ -977,6 +969,8 @@ local function createRainbowEffect()
             hue = (hue + 1) % 360
             local targetColor = Color3.fromHSV(hue / 360, 1, 1)
             Lighting.FogColor = targetColor
+            Lighting.Ambient = targetColor
+            Lighting.Brightness = targetColor
         end
     end)
 end
@@ -997,7 +991,13 @@ local function createMapRainbowEffect()
                 end
             end
         else
-            resetColors()
+            for part, originalColor in pairs(originalColors) do
+                if part and part:IsA("BasePart") then
+                    local tweenGoal = {Color = originalColor.Color}
+                    local tween = TweenService:Create(part, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), tweenGoal)
+                    tween:Play()
+                end
+            end
         end
     end)
 end
@@ -1046,11 +1046,16 @@ AddToggle(Main5u6, {
         if isRainbowEnabled then
             storeOriginalColors()
         else
-            resetColors()
+            for part, originalColor in pairs(originalColors) do
+                if part and part:IsA("BasePart") then
+                    local tweenGoal = {Color = originalColor.Color}
+                    local tween = TweenService:Create(part, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), tweenGoal)
+                    tween:Play()
+                end
+            end
         end
         isChanging = false
     end
 })
 
 createMapRainbowEffect()
-
