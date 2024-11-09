@@ -949,6 +949,16 @@ local function createRainbowTween(targetColor)
     tween:Play()
 end
 
+local originalColors = {}
+
+local function storeOriginalColors()
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalColors[part] = part.BrickColor
+        end
+    end
+end
+
 local function createRainbowEffect()
     local hue = 0
     return RunService.Heartbeat:Connect(function()
@@ -983,6 +993,7 @@ AddToggle(Main5u6, {
         end
     end
 })
+
 AddToggle(Main5u6, {
     Name = "Map Rainbow Effect",
     Default = false,
