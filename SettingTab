@@ -931,7 +931,43 @@ AddToggle(Main5u6, {
     end
 })
 
-local RunService = game:GetService("RunService")
+local isFogEnabled = false
+local originalFogColor = Lighting.Atmosphere.Color
+local originalFogStart = Lighting.Atmosphere.Start
+local originalFogEnd = Lighting.Atmosphere.End
+
+local function createFogEffect()
+    local hue = 0
+    RunService.Heartbeat:Connect(function()
+        if isFogEnabled then
+            hue = (hue + 1) % 360
+            Lighting.Atmosphere.Color = Color3.fromHSV(hue / 360, 1, 1)
+            Lighting.Atmosphere.Start = 0.1
+            Lighting.Atmosphere.End = 100
+        else
+            Lighting.Atmosphere.Color = originalFogColor
+            Lighting.Atmosphere.Start = originalFogStart
+            Lighting.Atmosphere.End = originalFogEnd
+        end
+    end)
+end
+
+AddToggle(Main5u6, {
+    Name = "Fog Rainbow Effect",
+    Default = false,
+    Callback = function(value)
+        isFogEnabled = value
+        if isFogEnabled then
+            Lighting.Atmosphere = Instance.new("Atmosphere")
+            Lighting.Atmosphere.Parent = Lighting
+        else
+            Lighting.Atmosphere:Destroy()
+        end
+    end
+})
+
+createFogEffect()
+
 local originalColors = {}
 local isRainbowEnabled = false
 
