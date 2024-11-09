@@ -1957,8 +1957,18 @@ local chorusModes = {
 
 local currentMode = 1
 local currentChorusMode = 1
+local isReverbOn = false
+local isChorusOn = false
 
 echoButton.MouseButton1Click:Connect(function()
+if not isReverbOn then
+    currentMode = currentMode % #modes + 1
+    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+    local mode = chorusModes[currentMode]
+    reverbEffect.DecayTime = mode.decayTime
+    reverbEffect.Density = mode.density
+    reverbEffect.Enabled = mode.name ~= "Off"
+else
     if currentMode == 1 then
         currentChorusMode = 1
         chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
@@ -1966,16 +1976,19 @@ echoButton.MouseButton1Click:Connect(function()
         chorusEffect.Depth = mode.depth
         chorusEffect.Rate = mode.rate
         chorusEffect.Enabled = mode.name ~= "Off"
+       end
     end
-    currentMode = currentMode % #modes + 1
-    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-    local mode = chorusModes[currentMode]
-    reverbEffect.DecayTime = mode.decayTime
-    reverbEffect.Density = mode.density
-    reverbEffect.Enabled = mode.name ~= "Off"
 end)
 
 chorusButton.MouseButton1Click:Connect(function()
+if not isChorusOn then
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    local mode = chorusModes[currentChorusMode]
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
+ else
     if currentChorusMode == 1 then
         currentMode = 1
         echoButton.Text = "Echo Mode: " .. modes[currentMode].name
@@ -1985,14 +1998,7 @@ chorusButton.MouseButton1Click:Connect(function()
         reverbEffect.Density = mode.density
         reverbEffect.Enabled = mode.name ~= "Off"
     end
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    local mode = chorusModes[currentChorusMode]
-    chorusEffect.Depth = mode.depth
-    chorusEffect.Rate = mode.rate
-    chorusEffect.Enabled = mode.name ~= "Off"
+  end
 end)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
