@@ -975,33 +975,20 @@ end
 
 local function createMapRainbowEffect()
     local hue = 0
-    local lastColorChangeTime = 0
-    local colorChangeInterval = 5
-    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
-
-    local function changeColor(part, hue)
-        local targetColor = Color3.fromHSV(hue / 360, 1, 1)
-        local tweenGoal = {Color = targetColor}
-        local tween = TweenService:Create(part, tweenInfo, tweenGoal)
-        tween:Play()
-    end
+    local tweenInfo = TweenInfo.new(7, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
 
     RunService.Heartbeat:Connect(function()
         if isRainbowEnabled then
-            local currentTime = tick()
-            if currentTime - lastColorChangeTime >= colorChangeInterval then
-                hue = (hue + 1) % 360
-                for _, part in ipairs(workspace:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        local targetColor = Color3.fromHSV(hue / 360, 1, 1)
-                        local tweenGoal = {Color = targetColor}
-                        local tween = TweenService:Create(part, tweenInfo, tweenGoal)
-                        tween:Play()
-                    end
+            hue = (hue + 1) % 360
+            for _, part in ipairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    local targetColor = Color3.fromHSV(hue / 360, 1, 1)
+                    local tweenGoal = {Color = targetColor}
+                    local tween = TweenService:Create(part, tweenInfo, tweenGoal)
+                    tween:Play()
                 end
-                lastColorChangeTime = currentTime
             end
-          else
+        else
             for part, originalColor in pairs(originalColors) do
                 if part and part:IsA("BasePart") then
                     local tweenGoal = {Color = originalColor.Color}
