@@ -935,19 +935,38 @@ local isFogEnabled = false
 local originalFogColor = Lighting.Atmosphere.Color
 local originalFogStart = Lighting.Atmosphere.Start
 local originalFogEnd = Lighting.Atmosphere.End
+local atmosphere = Lighting.Atmosphere
 
 local function createFogEffect()
     local hue = 0
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
+    
     RunService.Heartbeat:Connect(function()
         if isFogEnabled then
             hue = (hue + 1) % 360
-            Lighting.Atmosphere.Color = Color3.fromHSV(hue / 360, 1, 1)
-            Lighting.Atmosphere.Start = 0.1
-            Lighting.Atmosphere.End = 100
+            local targetColor = Color3.fromHSV(hue / 360, 1, 1)
+            
+            local tweenGoalColor = {Color = targetColor}
+            local tweenColor = TweenService:Create(atmosphere, tweenInfo, tweenGoalColor)
+            tweenColor:Play()
+
+            local tweenGoalStart = {Start = 0.1}
+            local tweenGoalEnd = {End = 100}
+            local tweenStart = TweenService:Create(atmosphere, tweenInfo, tweenGoalStart)
+            local tweenEnd = TweenService:Create(atmosphere, tweenInfo, tweenGoalEnd)
+            tweenStart:Play()
+            tweenEnd:Play()
         else
-            Lighting.Atmosphere.Color = originalFogColor
-            Lighting.Atmosphere.Start = originalFogStart
-            Lighting.Atmosphere.End = originalFogEnd
+            local tweenGoalColor = {Color = originalFogColor}
+            local tweenColor = TweenService:Create(atmosphere, tweenInfo, tweenGoalColor)
+            tweenColor:Play()
+
+            local tweenGoalStart = {Start = originalFogStart}
+            local tweenGoalEnd = {End = originalFogEnd}
+            local tweenStart = TweenService:Create(atmosphere, tweenInfo, tweenGoalStart)
+            local tweenEnd = TweenService:Create(atmosphere, tweenInfo, tweenGoalEnd)
+            tweenStart:Play()
+            tweenEnd:Play()
         end
     end)
 end
@@ -958,10 +977,15 @@ AddToggle(Main5u6, {
     Callback = function(value)
         isFogEnabled = value
         if isFogEnabled then
-            Lighting.Atmosphere = Instance.new("Atmosphere")
-            Lighting.Atmosphere.Parent = Lighting
+            if not atmosphere then
+                atmosphere = Instance.new("Atmosphere")
+                atmosphere.Parent = Lighting
+            end
         else
-            Lighting.Atmosphere:Destroy()
+            if atmosphere then
+                atmosphere:Destroy()
+                atmosphere = nil
+            end
         end
     end
 })
@@ -981,18 +1005,25 @@ end
 
 local function createRainbowEffect()
     local hue = 0
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
+    
     RunService.Heartbeat:Connect(function()
         if isRainbowEnabled then
             hue = (hue + 1) % 360
             for _, part in ipairs(workspace:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    part.BrickColor = BrickColor.new(Color3.fromHSV(hue / 360, 1, 1))
+                    local targetColor = Color3.fromHSV(hue / 360, 1, 1)
+                    local tweenGoal = {Color = targetColor}
+                    local tween = TweenService:Create(part, tweenInfo, tweenGoal)
+                    tween:Play()
                 end
             end
         else
             for part, originalColor in pairs(originalColors) do
                 if part and part:IsA("BasePart") then
-                    part.BrickColor = originalColor
+                    local tweenGoal = {Color = originalColor.Color}
+                    local tween = TweenService:Create(part, tweenInfo, tweenGoal)
+                    tween:Play()
                 end
             end
         end
@@ -1000,7 +1031,7 @@ local function createRainbowEffect()
 end
 
 AddToggle(Main5u6, {
-    Name = "Map Rainbow Effect",
+    Name = "Rainbow Effect",
     Default = false,
     Callback = function(value)
         isRainbowEnabled = value
@@ -1009,7 +1040,9 @@ AddToggle(Main5u6, {
         else
             for part, originalColor in pairs(originalColors) do
                 if part and part:IsA("BasePart") then
-                    part.BrickColor = originalColor
+                    local tweenGoal = {Color = originalColor.Color}
+                    local tween = TweenService:Create(part, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), tweenGoal)
+                    tween:Play()
                 end
             end
         end
