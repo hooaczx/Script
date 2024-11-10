@@ -732,7 +732,9 @@ local songs = {
 }
 
 local currentSongIndex = 1
-local soundmusic = Instance.new("Sound", ScreenGui)
+local soundmusic = Instance.new("Sound", ScreenGui) 
+local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
+local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 local isPaused = false
 local savedTimePosition = 0
 local progressUpdateConnection
@@ -1906,234 +1908,95 @@ chorusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 chorusButton.TextScaled = true
 chorusButton.BackgroundTransparency = 0.4
 
-local DistortionModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
-DistortionModeframe.Size = UDim2.new(1, 0, 0, 100)
-DistortionModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
-DistortionModeframe.BackgroundTransparency = 0
-
-local TextDistortionMode = Instance.new("TextLabel", DistortionModeframe)
-TextDistortionMode.Size = UDim2.new(1, 0, 0, 30)
-TextDistortionMode.TextScaled = true
-TextDistortionMode.TextXAlignment = Enum.TextXAlignment.Left
-TextDistortionMode.BackgroundTransparency = 1
-TextDistortionMode.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextDistortionMode.Text = "Distortion Effect"
-
-local TextDistortionMode1 = Instance.new("TextLabel", DistortionModeframe)
-TextDistortionMode1.Size = UDim2.new(1, 0, 0, 30)
-TextDistortionMode1.TextScaled = true
-TextDistortionMode1.TextXAlignment = Enum.TextXAlignment.Left
-TextDistortionMode1.BackgroundTransparency = 1
-TextDistortionMode1.Position = UDim2.new(0, 0, 0.31, 0)
-TextDistortionMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextDistortionMode1.Text = "Adds harmonic distortion to the sound, making it rough and clipped."
-
-local distortionButton = Instance.new("TextButton", DistortionModeframe)
-distortionButton.Size = UDim2.new(0, 100, 0, 30)
-distortionButton.Position = UDim2.new(0.7, 0, 0.7, 0)
-distortionButton.Text = "Distortion Mode: off"
-distortionButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-distortionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-distortionButton.TextScaled = true
-distortionButton.BackgroundTransparency = 0.4
-
-local FlangerModeframe = Instance.new("Frame", scrollingsettingmusicFrame)
-FlangerModeframe.Size = UDim2.new(1, 0, 0, 100)
-FlangerModeframe.BackgroundColor3 = Configs_HUB.Cor_Hub
-FlangerModeframe.BackgroundTransparency = 0
-
-local TextFlangerMode = Instance.new("TextLabel", FlangerModeframe)
-TextFlangerMode.Size = UDim2.new(1, 0, 0, 30)
-TextFlangerMode.TextScaled = true
-TextFlangerMode.TextXAlignment = Enum.TextXAlignment.Left
-TextFlangerMode.BackgroundTransparency = 1
-TextFlangerMode.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextFlangerMode.Text = "Flanger Effect"
-
-local TextFlangerMode1 = Instance.new("TextLabel", FlangerModeframe)
-TextFlangerMode1.Size = UDim2.new(1, 0, 0, 30)
-TextFlangerMode1.TextScaled = true
-TextFlangerMode1.TextXAlignment = Enum.TextXAlignment.Left
-TextFlangerMode1.BackgroundTransparency = 1
-TextFlangerMode1.Position = UDim2.new(0, 0, 0.31, 0)
-TextFlangerMode1.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextFlangerMode1.Text = "Creates a sweeping sound by mixing two identical signals with one delayed."
-
-local flangerButton = Instance.new("TextButton", FlangerModeframe)
-flangerButton.Size = UDim2.new(0, 100, 0, 30)
-flangerButton.Position = UDim2.new(0.7, 0, 0.7, 0)
-flangerButton.Text = "Flanger Mode: off"
-flangerButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-flangerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-flangerButton.TextScaled = true
-flangerButton.BackgroundTransparency = 0.4
-
-local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
-local distortionEffect = Instance.new("DistortionSoundEffect", soundmusic)
-local flangerEffect = Instance.new("FlangerSoundEffect", soundmusic)
-
-local audioModes = {
-    echo = {
-        { name = "Off" },
-        { name = "Room" },
-        { name = "Hall" },
-        { name = "Concert Hall" },
-        { name = "Forest" },
-        { name = "Tunnel" },
-        { name = "Mountains" },
-        { name = "Cave" },
-        { name = "Arena" },
-        { name = "Underwater" },
-        { name = "Open Field" },
-        { name = "City" },
-        { name = "Desert" },
-        { name = "Snowy Mountain" },
-        { name = "Abandoned Building" },
-        { name = "Swamp" },
-        { name = "Factory" },
-        { name = "Waterfall" },
-        { name = "Cathedral" },
-        { name = "Subway" },
-        { name = "Library" }
-    },
-    chorus = {
-        { name = "Off" },
-        { name = "Light" },
-        { name = "Moderate" },
-        { name = "Heavy" },
-        { name = "Ultra" },
-        { name = "Extreme" },
-        { name = "Super Heavy" },
-        { name = "Max" },
-        { name = "Phantom" },
-        { name = "Super Phantom" },
-        { name = "Whisper" },
-        { name = "Echo" },
-        { name = "Cascading" },
-        { name = "Wavy" },
-        { name = "Siren" },
-        { name = "Ghostly" },
-        { name = "Dreamy" },
-        { name = "Vortex" },
-        { name = "Nebula" },
-        { name = "Warped" }
-    },
-    distortion = {
-        { name = "Off" },
-        { name = "Light" },
-        { name = "Moderate" },
-        { name = "Heavy" },
-        { name = "Extreme" }
-    },
-    flanger = {
-        { name = "Off" },
-        { name = "Light" },
-        { name = "Moderate" },
-        { name = "Heavy" },
-        { name = "Extreme" }
-    }
+local modes = {
+    { name = "Off", decayTime = 0, density = 0 },
+    { name = "Room", decayTime = 0.3, density = 0.5 },
+    { name = "Hall", decayTime = 1.2, density = 0.8 },
+    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
+    { name = "Forest", decayTime = 0.7, density = 0.4 },
+    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
+    { name = "Mountains", decayTime = 3.5, density = 0.85 },
+    { name = "Cave", decayTime = 3.0, density = 0.7 },
+    { name = "Arena", decayTime = 1.8, density = 0.9 },
+    { name = "Underwater", decayTime = 2.2, density = 0.6 },
+    { name = "Open Field", decayTime = 0.5, density = 0.3 },
+    { name = "City", decayTime = 1.0, density = 0.65 },
+    { name = "Desert", decayTime = 0.9, density = 0.5 },
+    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
+    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
+    { name = "Swamp", decayTime = 1.7, density = 0.6 },
+    { name = "Factory", decayTime = 1.6, density = 0.75 },
+    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
+    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
+    { name = "Subway", decayTime = 1.4, density = 0.7 },
+    { name = "Library", decayTime = 1.1, density = 0.5 },
 }
 
-functions.updateEffect = function(effectType, currentMode, effect)
-    local mode = effectType[currentMode]
-    
-    if effectType == audioModes.echo then
-        echoButton.Text = effectType[currentMode].name
-        reverbEffect.DecayTime = mode.decayTime
-        reverbEffect.Density = mode.density
-        reverbEffect.Enabled = mode.name ~= "Off"
-    elseif effectType == audioModes.chorus then
-        chorusEffect.Depth = mode.depth
-        chorusEffect.Rate = mode.rate
-        chorusEffect.Enabled = mode.name ~= "Off"
-    elseif effectType == audioModes.distortion then
-        distortionButton.Text = effectType[currentMode].name
-        distortionEffect.Amount = mode.distortionAmount
-        distortionEffect.Enabled = mode.name ~= "Off"
-    elseif effectType == audioModes.flanger then
-        flangerEffect.Depth = mode.depth
-        flangerEffect.Rate = mode.rate
-        flangerEffect.Enabled = mode.name ~= "Off"
-    end
+local chorusModes = {
+    { name = "Off", depth = 0, rate = 0 },
+    { name = "Light", depth = 0.5, rate = 1 },
+    { name = "Moderate", depth = 0.8, rate = 1.5 },
+    { name = "Heavy", depth = 1.0, rate = 2 },
+    { name = "Ultra", depth = 1.2, rate = 2.5 },
+    { name = "Extreme", depth = 1.5, rate = 3 },
+    { name = "Super Heavy", depth = 1.8, rate = 4 },
+    { name = "Max", depth = 2.0, rate = 5 },
+    { name = "Phantom", depth = 1.0, rate = 3.5 },
+    { name = "Super Phantom", depth = 2.5, rate = 6 },
+    { name = "Whisper", depth = 0.4, rate = 0.8 },
+    { name = "Echo", depth = 0.7, rate = 1.2 },
+    { name = "Cascading", depth = 1.3, rate = 3.0 },
+    { name = "Wavy", depth = 1.4, rate = 2.2 },
+    { name = "Siren", depth = 1.6, rate = 4.0 },
+    { name = "Ghostly", depth = 1.7, rate = 3.8 },
+    { name = "Dreamy", depth = 1.9, rate = 5.0 },
+    { name = "Vortex", depth = 2.1, rate = 5.5 },
+    { name = "Nebula", depth = 2.3, rate = 6.0 },
+    { name = "Warped", depth = 2.4, rate = 6.5 },
+}
+
+local currentMode = 1
+local currentChorusMode = 1
+
+functions.updateReverb = function()
+    local mode = modes[currentMode]
+    echoButton.Text = "Echo Mode: " .. mode.name
+    reverbEffect.DecayTime = mode.decayTime
+    reverbEffect.Density = mode.density
+    reverbEffect.Enabled = mode.name ~= "Off"
+end
+
+functions.updateChorus = function()
+    local mode = chorusModes[currentChorusMode]
+    chorusEffect.Depth = mode.depth
+    chorusEffect.Rate = mode.rate
+    chorusEffect.Enabled = mode.name ~= "Off"
 end
 
 echoButton.MouseButton1Click:Connect(function()
     if currentMode == 1 then
         currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. audioModes.chorus[currentChorusMode].name
-        functions.updateEffect(audioModes.chorus, currentChorusMode, chorusEffect)
-
-        currentDistortionMode = 1
-        distortionButton.Text = "Distortion Mode: " .. audioModes.distortion[currentDistortionMode].name
-        functions.updateEffect(audioModes.distortion, currentDistortionMode, distortionEffect)
-
-        currentFlangerMode = 1
-        flangerButton.Text = "Flanger Mode: " .. audioModes.flanger[currentFlangerMode].name
-        functions.updateEffect(audioModes.flanger, currentFlangerMode, flangerEffect)
+        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+        functions.updateChorus()
     end
-    currentMode = currentMode % #audioModes.echo + 1
-    echoButton.Text = "Echo Mode: " .. audioModes.echo[currentMode].name
-    functions.updateEffect(audioModes.echo, currentMode, reverbEffect)
+    currentMode = currentMode % #modes + 1
+    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+    functions.updateReverb()
 end)
 
 chorusButton.MouseButton1Click:Connect(function()
     if currentChorusMode == 1 then
         currentMode = 1
-        echoButton.Text = "Echo Mode: " .. audioModes.echo[currentMode].name
-        functions.updateEffect(audioModes.echo, currentMode, reverbEffect)
-
-        currentDistortionMode = 1
-        distortionButton.Text = "Distortion Mode: " .. audioModes.distortion[currentDistortionMode].name
-        functions.updateEffect(audioModes.distortion, currentDistortionMode, distortionEffect)
-
-        currentFlangerMode = 1
-        flangerButton.Text = "Flanger Mode: " .. audioModes.flanger[currentFlangerMode].name
-        functions.updateEffect(audioModes.flanger, currentFlangerMode, flangerEffect)
+        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+        functions.updateReverb()
     end
-    currentChorusMode = currentChorusMode % #audioModes.chorus + 1
-    chorusButton.Text = "Chorus Mode: " .. audioModes.chorus[currentChorusMode].name
-    functions.updateEffect(audioModes.chorus, currentChorusMode, chorusEffect)
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    functions.updateChorus()
 end)
 
-distortionButton.MouseButton1Click:Connect(function()
-    if currentDistortionMode == 1 then
-        currentMode = 1
-        echoButton.Text = "Echo Mode: " .. audioModes.echo[currentMode].name
-        functions.updateEffect(audioModes.echo, currentMode, reverbEffect)
-
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. audioModes.chorus[currentChorusMode].name
-        functions.updateEffect(audioModes.chorus, currentChorusMode, chorusEffect)
-
-        currentFlangerMode = 1
-        flangerButton.Text = "Flanger Mode: " .. audioModes.flanger[currentFlangerMode].name
-        functions.updateEffect(audioModes.flanger, currentFlangerMode, flangerEffect)
-    end
-    currentDistortionMode = currentDistortionMode % #audioModes.distortion + 1
-    distortionButton.Text = "Distortion Mode: " .. audioModes.distortion[currentDistortionMode].name
-    functions.updateEffect(audioModes.distortion, currentDistortionMode, distortionEffect)
-end)
-
-flangerButton.MouseButton1Click:Connect(function()
-    if currentFlangerMode == 1 then
-        currentMode = 1
-        echoButton.Text = "Echo Mode: " .. audioModes.echo[currentMode].name
-        functions.updateEffect(audioModes.echo, currentMode, reverbEffect)
-
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. audioModes.chorus[currentChorusMode].name
-        functions.updateEffect(audioModes.chorus, currentChorusMode, chorusEffect)
-
-        currentDistortionMode = 1
-        distortionButton.Text = "Distortion Mode: " .. audioModes.distortion[currentDistortionMode].name
-        functions.updateEffect(audioModes.distortion, currentDistortionMode, distortionEffect)
-    end
-    currentFlangerMode = currentFlangerMode % #audioModes.flanger + 1
-    flangerButton.Text = "Flanger Mode: " .. audioModes.flanger[currentFlangerMode].name
-    functions.updateEffect(audioModes.flanger, currentFlangerMode, flangerEffect)
-end)
-
+functions.updateReverb()
+functions.updateChorus()
 soundmusic.Ended:Connect(function()
     if isLooping and not isAutoPlayEnabled then
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
