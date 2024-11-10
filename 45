@@ -732,8 +732,7 @@ local songs = {
 }
 
 local currentSongIndex = 1
-local soundmusic = Instance.new("Sound")
-soundmusic.Parent = ScreenGui
+local soundmusic = Instance.new("Sound", ScreenGui) 
 local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
 local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
 local isPaused = false
@@ -761,6 +760,18 @@ local notifyfriendleave = Instance.new("Sound", ScreenGui)
 notifyfriendleave.SoundId = "rbxassetid://489103549"
 notifyfriendleave.Volume = 0.2
 
+local function resetSong()
+    soundmusic:Stop()
+    savedTimePosition = 0
+    isPaused = false
+end
+
+local function pauseSong()
+    savedTimePosition = soundmusic.TimePosition
+    soundmusic:Pause()
+    isPaused = true
+end
+
 function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
@@ -768,7 +779,7 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
         soundmusic.TimePosition = savedTimePosition
         soundmusic:Play()
         TitleLabel.Text = song.name
-        StartProgressUpdate(Frame_4, TimeLabel)
+        StartProgressUpdate(Frame_4, TimeLabel) 
     end
 end
 
@@ -790,9 +801,9 @@ function StartProgressUpdate(Frame_4, TimeLabel)
         progressUpdateConnection:Disconnect()
     end
 
-    progressUpdateConnection = RunService.Heartbeat:Connect(function()
-        Frame_4.Rotation = (Frame_4.Rotation + soundmusic.Volume * soundmusic.PlaybackSpeed) % 360
+    progressUpdateConnection = RunService.Heartbeat:Connect(function() 
         if soundmusic.IsPlaying then
+            Frame_4.Rotation = (Frame_4.Rotation + soundmusic.PlaybackSpeed * soundmusic.Volume + 0.3) % 360
             TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
@@ -802,7 +813,6 @@ function StartProgressUpdate(Frame_4, TimeLabel)
         end
     end)
 end
-
             TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
@@ -901,13 +911,14 @@ end
 
 notify({
       Title = "Hi",
-      Text = "Hope you enjoy using it",
+      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
       buttonText = "ok",
       imageID = "",
       guiSize = Vector2.new(400, 70),
-      })
+})
 
   function MinimizeButton(Configs)
+    local functions = {}
     local player = game.Players.LocalPlayer
     local players = game:GetService("Players")
     local localPlayer = players.LocalPlayer
@@ -926,7 +937,8 @@ notify({
     local count = 1
     local Player = players.LocalPlayer
     local ContextActionService = game:GetService("ContextActionService")
-    local UserInputService = game:GetService("UserInputService")
+    local Mouse = LocalPlayer:GetMouse()
+    local HttpService = game:GetService("HttpService")
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -957,31 +969,198 @@ notify({
     Button1.BackgroundTransparency = 1
 
     local minimize1 = false
-    Button1.MouseButton1Click:Connect(function()
-        minimize1 = not minimize1
 
-         if minimize1 then
-            CreateTween1(frame, "Size", UDim2.new(0, 430, 0, 0), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.48, 0, 1, 0), 0.3, true)
-            frame.Visible = false
-            Button1.Text = "^"
-         else
-            frame.Visible = true
-            CreateTween1(frame, "Size", UDim2.new(0, 430, 0, 50), 0.3, true)
-            CreateTween1(Button1, "Position", UDim2.new(0.48, 0, 1, -50), 0.3, true)
-            Button1.Text = "v"
+Button1.MouseButton1Click:Connect(function()
+    minimize1 = not minimize1
+
+    local settings = minimize1 and {
+        UDim2.new(0, 430, 0, 0), 
+        UDim2.new(0.48, 0, 1, 0), 
+        false, 
+        "^"
+    } or {
+        UDim2.new(0, 430, 0, 50), 
+        UDim2.new(0.48, 0, 1, -60), 
+        true, 
+        "v"
+    }
+
+    CreateTween1(frame, "Size", settings[1], 0.3, false)
+    CreateTween1(Button1, "Position", settings[2], 0.3, false)
+    frame.Visible = settings[3]
+    Button1.Text = settings[4]
+end)
+
+ local FrameChat = Instance.new("Frame", ScreenGui)
+ FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
+ FrameChat.BackgroundTransparency = 0.7
+ FrameChat.BorderSizePixel = 0
+ FrameChat.Position = UDim2.new(0.38, 0, 0.05, 0)
+ FrameChat.AnchorPoint = Vector2.new(0.23, 0.03)
+ FrameChat.Size = UDim2.new(0.5, 0, 0.72, 0)
+ FrameChat.Visible = false
+
+ local LogPanel = Instance.new("ScrollingFrame", FrameChat)
+ LogPanel.BackgroundColor3 = Configs_HUB.Cor_Hub
+ LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+ LogPanel.Position = UDim2.new(0, 0, 0, 25)
+ LogPanel.BackgroundTransparency = 1
+ LogPanel.Size = UDim2.new(1, 0, 0.9, 0)
+ LogPanel.ScrollBarThickness = 0
+ LogPanel.ScrollingEnabled = true
+
+ local UIListLayout = Instance.new("UIListLayout", LogPanel) 
+ UIListLayout.FillDirection = Enum.FillDirection.Vertical
+ UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+ local MessageBox = Instance.new("TextBox", FrameChat)
+ MessageBox.BackgroundColor3 = Configs_HUB.Cor_Hub
+ MessageBox.Position = UDim2.new(0, 0, 1, 0)
+ MessageBox.BackgroundTransparency = 0.7
+ MessageBox.Size = UDim2.new(0.8, 0, 0.1, 0)
+ MessageBox.TextColor3 = Color3.new(255, 255, 255)
+ MessageBox.Text = "Type your message here"
+ MessageBox.PlaceholderText = "Type your message here"
+
+ local SendButton = Instance.new("TextButton", FrameChat)
+ SendButton.BackgroundColor3 = Configs_HUB.Cor_Hub
+ SendButton.Position = UDim2.new(0.8, 0, 1, 0)
+ SendButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+ SendButton.BackgroundTransparency = 0.7
+ SendButton.Text = "Send"
+ SendButton.TextColor3 = Configs_HUB.Cor_Text
+ SendButton.Font = Configs_HUB.Text_Font
+ SendButton.TextSize = 14
+ TextSetColor(SendButton)
+
+ local title = Instance.new("TextLabel", FrameChat)
+ title.BackgroundColor3 = Color3.new(1, 1, 1)
+ title.BackgroundTransparency = 0.7
+ title.BackgroundColor3 = Configs_HUB.Cor_Hub
+ title.Size = UDim2.new(1, 0, 0, 24)
+ title.TextColor3 = Configs_HUB.Cor_Text
+ title.Font = Configs_HUB.Text_Font
+ title.Text = "Chat"
+ title.TextSize = 14
+ TextSetColor(title)
+
+ local ChatToggleButton = Instance.new("ImageButton", frame)
+ ChatToggleButton.Size = UDim2.new(0, 30, 0, 30)
+ ChatToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0, 13)
+ ChatToggleButton.BackgroundTransparency = 1
+ ChatToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+ ChatToggleButton.ZIndex = 10
+ ChatToggleButton.Image = "rbxthumb://type=Asset&id=97566386825378&w=150&h=150"
+
+ local ChatToggle = true
+ local unreadCount = 0
+
+ local unreadLabel = Instance.new("TextLabel", ChatToggleButton)
+ unreadLabel.Size = UDim2.new(0, 10, 0, 10)
+ unreadLabel.Position = UDim2.new(0, 0, -0.003, 0)
+ unreadLabel.BackgroundTransparency = 0
+ unreadLabel.TextColor3 = Configs_HUB.Cor_Text
+ unreadLabel.Font = Configs_HUB.Text_Font
+ unreadLabel.TextColor3 = Color3.new(255, 255, 255)
+ unreadLabel.ZIndex = 11
+ unreadLabel.TextScaled = true
+ unreadLabel.Visible = false
+ TextSetColor(unreadLabel)
+
+  ChatToggleButton.MouseButton1Click:Connect(function()
+        ChatToggle = not ChatToggle
+
+        if ChatToggle then
+            FrameChat.Visible = true
+            click1:Play()
+            CreateTween(FrameChat, "Size", UDim2.new(0.5, 0, 0.72, 0), 0.3, true)
+            unreadCount = 0
+            unreadLabel.Visible = false
+        else
+            click2:Play()
+            CreateTween(FrameChat, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
+            FrameChat.Visible = false
         end
-     end)
+    end)
 
-    local TimeLabelgui = Instance.new("TextLabel", frame)
-    TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
-    TimeLabelgui.TextSize = 20
-    TimeLabelgui.TextWrapped = true
-    TimeLabelgui.TextScaled = true
-    TimeLabelgui.Position = UDim2.new(-0.05, 0, 0, 15)
-    TimeLabelgui.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TimeLabelgui.BackgroundTransparency = 1
-     
+   functions.formatTime = function()
+      local currentTime = os.date("*t")
+      return string.format("%02d:%02d", currentTime.hour, currentTime.min)
+   end
+
+  functions.output = function(msg, playerName, playerId)
+     local messageFrame = Instance.new("Frame", LogPanel)
+     messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+     messageFrame.Size = UDim2.new(1, 0, 0, 40)
+     messageFrame.BorderSizePixel = 0
+     messageFrame.BackgroundTransparency = 0.7
+     messageFrame.LayoutOrder = LogPanel:GetChildren() and #LogPanel:GetChildren() + 1 or 1
+    
+     local imageplayer = Instance.new("ImageLabel", messageFrame)
+     imageplayer.Size = UDim2.new(0.1, 0, 1, 0)
+     imageplayer.Position = UDim2.new(0, 0, 0, 0)
+     imageplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+     imageplayer.BackgroundTransparency = 0.6
+     imageplayer.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerId .. "&width=420&height=420&format=png"
+     Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
+    
+     local messageLabel = Instance.new("TextLabel", messageFrame)
+     messageLabel.Text = ":".. functions.formatTime() .. ":" .. playerName .. ": " .. msg
+     messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
+     messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
+     messageLabel.TextScaled = true
+     messageLabel.TextColor3 = Configs_HUB.Cor_Text
+     messageLabel.TextXAlignment = "Left"
+     messageLabel.Font = Configs_HUB.Text_Font
+     messageLabel.BackgroundTransparency = 1
+     messageLabel.BorderSizePixel = 0
+     TextSetColor(messageLabel)
+
+       LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
+   end
+
+  SendButton.MouseButton1Click:Connect(function()
+     local message = MessageBox.Text
+     if message ~= "" then
+         game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+         MessageBox.Text = ""
+         functions.output(message, game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId)
+      end
+   end)
+
+functions.onChatMessageReceived = function(player, msg)
+    output(msg, player.Name, player.UserId)
+    if not ChatToggle then
+        unreadCount = unreadCount + 1
+        unreadLabel.Text = tostring(unreadCount)
+        unreadLabel.Visible = true
+    end
+end
+
+functions.setupPlayer = function(player)
+    player.Chatted:Connect(function(msg)
+        functions.onChatMessageReceived(player, msg)
+    end)
+end
+
+for _, player in ipairs(game.Players:GetPlayers()) do
+    functions.setupPlayer(player)
+end
+
+game.Players.PlayerAdded:Connect(functions.setupPlayer)
+
+local TimeLabelgui = Instance.new("TextLabel", frame)
+TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
+TimeLabelgui.TextSize = 20
+TimeLabelgui.TextWrapped = true
+TimeLabelgui.TextScaled = true
+TimeLabelgui.Position = UDim2.new(-0.05, 0, 0, 15)
+TimeLabelgui.TextColor3 = Configs_HUB.Cor_Text
+TimeLabelgui.Font = Configs_HUB.Text_Font
+TimeLabelgui.BackgroundTransparency = 1
+TextSetColor(TimeLabelgui)
+
 local Frame1 = Instance.new("Frame", ScreenGui)
 Frame1.Size = UDim2.new(0.4, 0, 0.85, 0)
 Frame1.BackgroundColor3 = Configs_HUB.Cor_Options
@@ -1006,13 +1185,13 @@ local tweenGradient = CreateGradient(Frame1, {
 local TitleLabel1 = Instance.new("TextLabel", Frame1)
 TitleLabel1.TextSize = 14
 TitleLabel1.TextWrapped = true
-TitleLabel1.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel1.TextColor3 = Configs_HUB.Cor_Text
+TitleLabel1.Font = Configs_HUB.Text_Font
 TitleLabel1.Text = "Song List"
 TitleLabel1.Size = UDim2.new(1, 0, 0.05, 0)
 TitleLabel1.Position = UDim2.new(0, 0, 0, 0)
 TitleLabel1.BackgroundTransparency = 1
-TitleLabel1.TextXAlignment = Enum.TextXAlignment.Center
-TitleLabel1.Font = Enum.Font.SourceSans
+TextSetColor(TitleLabel1)
 
 local search = Instance.new("TextBox", Frame1)
 search.TextSize = 14
@@ -1033,8 +1212,7 @@ searchButton.BackgroundTransparency = 1
 searchButton.Image = "rbxthumb://type=Asset&id=85019257025290&w=150&h=150"
 
 local TitleLabel = Instance.new("TextLabel", ScreenGui)
-TitleLabel.TextSize = 12
-TitleLabel.TextWrapped = true
+TitleLabel.TextScaled = true
 TitleLabel.TextColor3 = Configs_HUB.Cor_Text
 TitleLabel.Text = songs[currentSongIndex].name
 TitleLabel.Size = UDim2.new(0.2, 0, 0.07, 0)
@@ -1062,16 +1240,15 @@ ProgressCircle.Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
 Corner(ProgressCircle, {CornerRadius = UDim.new(1, 0)})
 
 local TimeLabel = Instance.new("TextLabel", ScreenGui)
-TimeLabel.TextSize = 12
-TimeLabel.TextWrapped = true
-TimeLabel.TextColor3 = Color3.new(1, 1, 1)
+TimeLabel.TextScaled = true
+TimeLabel.TextColor3 = Configs_HUB.Cor_Text
+TimeLabel.Font = Configs_HUB.Text_Font
 TimeLabel.Text = "0:00 / 0:00"
-TimeLabel.Size = UDim2.new(0.09, 0, 0.06, 0)
-TimeLabel.Position = UDim2.new(0.01, 0, 0.1, 0)
+TimeLabel.Size = UDim2.new(0.075, 0, 0.06, 0)
+TimeLabel.Position = UDim2.new(0.02, 0, 0.09, 0)
 TimeLabel.AnchorPoint = Vector2.new(0.3, 0.02)
 TimeLabel.BackgroundTransparency = 1
-TimeLabel.TextXAlignment = Enum.TextXAlignment.Center
-TimeLabel.Font = Enum.Font.SourceSans
+TextSetColor(TimeLabel) 
 
 local ToggleButton = Instance.new("ImageButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0.036, 0, 0.075, 0)
@@ -1083,9 +1260,7 @@ Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
 
    ToggleButton.MouseButton1Click:Connect(function()
     if soundmusic.IsPlaying then
-        savedTimePosition = soundmusic.TimePosition
-        soundmusic:Pause()
-        isPaused = true
+        pauseSong()
         TitleLabel.Text = "Stopped"
         ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
     else
@@ -1122,9 +1297,16 @@ songList.ScrollingEnabled = true
 local songListTinniLayout = Instance.new("UIListLayout", songList) 
 songListTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
+local function updateFrameSize()
+    local contentHeight = songListTinniLayout.AbsoluteContentSize.Y
+    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+end
+
+local isAutoPlayEnabled = false
+local isLooping = false
+
 local function updateSongButtons()
     local searchText = search.Text:lower()
-    local colour = Color3.fromRGB(255, 255, 255)
     local currentScrollPosition = songList.CanvasPosition
     for _, child in ipairs(songList:GetChildren()) do
         if child:IsA("Frame") and child.Name ~= "UIListLayout" then
@@ -1138,6 +1320,7 @@ local function updateSongButtons()
             musiclistFrame.Size = UDim2.new(1, 0, 0, 25)
             musiclistFrame.BorderSizePixel = 0
             musiclistFrame.BackgroundTransparency = 0
+
             if not musiclistFrame:FindFirstChild("NameLabel") then
                 local iconmusic = Instance.new("ImageLabel", musiclistFrame)
                 iconmusic.Size = UDim2.new(0.1, 0, 1, 0)
@@ -1147,30 +1330,48 @@ local function updateSongButtons()
                 iconmusic.Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
 
                 local nameLabel = Instance.new("TextLabel", musiclistFrame)
-                nameLabel.Name = "NameLabel"  -- ชื่อ Label เพื่อป้องกันการสร้างซ้ำ
+                nameLabel.Name = "NameLabel"
                 nameLabel.Text = ":" .. tostring(i) .. "." .. song.name
                 nameLabel.Size = UDim2.new(0.61, 0, 1, 0)
                 nameLabel.Position = UDim2.new(0.11, 0, 0, 0)
                 nameLabel.TextScaled = true
-                nameLabel.TextColor3 = colour
+                nameLabel.TextColor3 = Configs_HUB.Cor_Text
+                nameLabel.TextXAlignment = "Left"
+                nameLabel.Font = Configs_HUB.Text_Font
                 nameLabel.BackgroundTransparency = 1
                 nameLabel.BorderSizePixel = 0
-                nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+                TextSetColor(nameLabel)
             end
+
             if not musiclistFrame:FindFirstChild("SongButton") then
                 local songbutton = Instance.new("TextButton", musiclistFrame)
                 songbutton.Name = "SongButton"
                 songbutton.Size = UDim2.new(1, 0, 1, 0)
                 songbutton.Position = UDim2.new(0, 0, 0, 0)
+                songbutton.TextColor3 = Configs_HUB.Cor_Text
+                songbutton.Font = Configs_HUB.Text_Font
                 songbutton.Text = ""
                 songbutton.BackgroundTransparency = 1
-                songbutton.MouseButton1Click:Connect(function()
-                    currentSongIndex = i
-                    PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-                    ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-                    updateSongButtons()
-                end)
+                TextSetColor(songbutton)
+
+             songbutton.MouseButton1Click:Connect(function()
+                if isLooping then
+                   notify({
+                      Title = "Loop Songs is on",
+                      Text = "Please go turn it off in settings music. If you want press to select a song",
+                      buttonText = "ok",
+                      imageID = "",
+                      guiSize = Vector2.new(400, 70),
+                    })
+                return
+              end
+                currentSongIndex = i
+                PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+                ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+                updateSongButtons()
+               end)
             end
+
             if currentSongIndex == i then
                 local frameimage = Instance.new("Frame", musiclistFrame)
                 frameimage.Size = UDim2.new(0, 30, 1, 0)
@@ -1182,7 +1383,7 @@ local function updateSongButtons()
                         child:Destroy()
                     end
                 end
-                
+
                 local image = Instance.new("ImageLabel", frameimage)
                 image.Size = UDim2.new(1, 0, 1, 0)
                 image.BackgroundTransparency = 1
@@ -1191,8 +1392,7 @@ local function updateSongButtons()
         end
     end
     songList.CanvasPosition = currentScrollPosition
-    local contentHeight = songListTinniLayout.AbsoluteContentSize.Y
-    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
+    updateFrameSize()
 end
 
 updateSongButtons()
@@ -1200,9 +1400,10 @@ updateSongButtons()
 search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
 
 NextButton.MouseButton1Click:Connect(function()
-    soundmusic:Stop()
-    savedTimePosition = 0
-    isPaused = false
+    if isLooping then
+        return
+    end
+    resetSong()
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     updateSongButtons()
@@ -1210,16 +1411,18 @@ NextButton.MouseButton1Click:Connect(function()
 end)
 
 PreviousButton.MouseButton1Click:Connect(function()
-    soundmusic:Stop()
-    savedTimePosition = 0
-    isPaused = false
+    if isLooping then
+        return
+    end
+    resetSong()
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
     updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
-local function createToggleButton(parent, position, callback, initialState)
+
+functions.createToggleButton = function(parent, position, callback, initialState)
     local TextButton = Instance.new("TextButton", parent)
     TextButton.Size = UDim2.new(0.17, 0, 0, 25)
     TextButton.BackgroundColor3 = Configs_HUB.Cor_Options
@@ -1234,13 +1437,11 @@ local function createToggleButton(parent, position, callback, initialState)
     Frame2.AnchorPoint = Vector2.new(0, 0.5)
     Frame2.BackgroundColor3 = initialState and Color3.fromRGB(30, 140, 200) or Configs_HUB.Cor_Stroke
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
-    
 
     local OnOff = initialState
 
-    TextButton.MouseButton1Click:Connect(function()
-        OnOff = not OnOff
-
+    local function setState(state)
+        OnOff = state
         if OnOff then
             CreateTween(Frame2, "Position", UDim2.new(0.8, 0, 0.5, 0), 0.2, false)
             CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
@@ -1252,10 +1453,246 @@ local function createToggleButton(parent, position, callback, initialState)
             callback(false)
             falsetoggle:Play()
         end
+    end
+
+    TextButton.MouseButton1Click:Connect(function()
+        setState(not OnOff)
     end)
 
-    return TextButton
+    TextButton.AncestryChanged:Connect(function(_, parent)
+        if not parent and OnOff then
+            setState(false)
+        end
+    end)
+
+    return setState
 end
+
+functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+    
+    local toggleButtonPosition = UDim2.new(0.81, 0, 0.75, 0)
+    local toggleButtonState = functions.createToggleButton(sectionFrame, toggleButtonPosition, buttonCallback, buttonState)
+
+    return toggleButtonState
+end
+
+functions.createSlider = function(parent, title, description, callback)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+
+    local progressBar = Instance.new("Frame", sectionFrame)
+    progressBar.Size = UDim2.new(1, 0, 0, 20)
+    progressBar.Position = UDim2.new(0, 0, 0, 81)
+    progressBar.BackgroundColor3 = Configs_HUB.Cor_Options
+
+    local sliderButton = Instance.new("TextButton", progressBar)
+    sliderButton.Size = UDim2.new(1, 0, 1, 0)
+    sliderButton.Text = ""
+    sliderButton.BackgroundTransparency = 1
+
+    local percentageLabel = Instance.new("TextLabel", progressBar)
+    percentageLabel.Size = UDim2.new(1, 0, 1, 0)
+    percentageLabel.BackgroundTransparency = 1
+    percentageLabel.TextColor3 = Configs_HUB.Cor_Text
+    percentageLabel.TextScaled = true
+    percentageLabel.Text = "100%"
+    percentageLabel.Font = Configs_HUB.Text_Font
+    TextSetColor(percentageLabel)
+
+    local dragging = false
+
+    local function onUpdateSlider(input)
+        local relativePos = (input.Position.X - progressBar.AbsolutePosition.X) / progressBar.AbsoluteSize.X
+        relativePos = math.clamp(relativePos, 0, 1)
+        local percentage = relativePos * 100
+        percentageLabel.Text = tostring(math.floor(percentage)) .. "%"
+        callback(percentage)
+    end
+
+    sliderButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            onUpdateSlider(input)
+        end
+    end)
+
+    sliderButton.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging then
+            onUpdateSlider(input)
+        end
+    end)
+
+    return progressBar
+end
+
+functions.createTextboxWithButton = function(parent, title, description, callback)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+
+    local messageTextbox = Instance.new("TextBox", sectionFrame)
+    messageTextbox.Size = UDim2.new(0.75, 0, 0, 20)
+    messageTextbox.Position = UDim2.new(0, 0, 0, 81)
+    messageTextbox.BackgroundColor3 = Configs_HUB.Cor_Options
+    messageTextbox.TextColor3 = Configs_HUB.Cor_Text
+    messageTextbox.PlaceholderText = "Enter your message here..."
+    messageTextbox.ClearTextOnFocus = true
+    messageTextbox.TextScaled = true
+    messageTextbox.Font = Configs_HUB.Text_Font
+
+    local sendButton = Instance.new("TextButton", sectionFrame)
+    sendButton.Size = UDim2.new(0.25, 0, 0, 20)
+    sendButton.Position = UDim2.new(0.75, 0, 0, 81)
+    sendButton.BackgroundColor3 = Configs_HUB.Cor_Options
+    sendButton.TextColor3 = Configs_HUB.Cor_Text
+    sendButton.Text = "Send Message"
+    sendButton.TextScaled = true
+    sendButton.Font = Configs_HUB.Text_Font
+
+    sendButton.MouseButton1Click:Connect(function()
+        local message = messageTextbox.Text
+        if message and message:match("%S") then
+            callback(message)
+            messageTextbox.Text = ""
+            messageTextbox.TextColor3 = Configs_HUB.Cor_Text
+        else
+            messageTextbox.Text = "Please enter a message."
+            messageTextbox.TextColor3 = Color3.new(1, 0, 0)
+        end
+    end)
+
+    messageTextbox.Focused:Connect(function()
+        if messageTextbox.Text == "Please enter a message." then
+            messageTextbox.Text = ""
+            messageTextbox.TextColor3 = Configs_HUB.Cor_Text
+        end
+    end)
+
+    return sectionFrame
+end
+
+functions.createTextBox = function(parent, title, description, callback, minValue, maxValue)
+    local sectionFrame = Instance.new("Frame", parent)
+    sectionFrame.Size = UDim2.new(1, 0, 0, 100)
+    sectionFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
+    sectionFrame.BackgroundTransparency = 0
+    
+    local titleLabel = Instance.new("TextLabel", sectionFrame)
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = title
+    TextSetColor(titleLabel)
+    
+    local descriptionLabel = Instance.new("TextLabel", sectionFrame)
+    descriptionLabel.Size = UDim2.new(1, 0, 0, 50)
+    descriptionLabel.TextScaled = true
+    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    descriptionLabel.BackgroundTransparency = 1
+    descriptionLabel.Position = UDim2.new(0, 0, 0.31, 0)
+    descriptionLabel.TextColor3 = Configs_HUB.Cor_Text
+    descriptionLabel.Text = description
+    TextSetColor(descriptionLabel)
+
+    local inputBox = Instance.new("TextBox", sectionFrame)
+    inputBox.Size = UDim2.new(1, 0, 0, 20)
+    inputBox.Position = UDim2.new(0, 0, 0, 81)
+    inputBox.BackgroundColor3 = Configs_HUB.Cor_Options
+    inputBox.Text = tostring(minValue or 0)
+    inputBox.TextScaled = true
+    inputBox.TextColor3 = Configs_HUB.Cor_Text
+    inputBox.Font = Configs_HUB.Text_Font
+    TextSetColor(inputBox)
+
+    inputBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local value = tonumber(inputBox.Text)
+            if value then
+                if minValue then value = math.max(value, minValue) end
+                if maxValue then value = math.min(value, maxValue) end
+                inputBox.Text = tostring(value)
+                callback(value)
+            else
+                inputBox.Text = tostring(minValue or 0)
+            end
+        end
+    end)
+
+    return inputBox
+end
+
 
 local framemusic = Instance.new("Frame", ScreenGui)
 framemusic.Size = UDim2.new(0.35, 0, 0.8, 0)
@@ -1266,9 +1703,11 @@ framemusic.Visible = false
 
 local Text77 = Instance.new("TextLabel", framemusic)
 Text77.Size = UDim2.new(1, 0, 0.15, 0)
-Text77.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text77.TextColor3 = Configs_HUB.Cor_Text
+Text77.Font = Configs_HUB.Text_Font
 Text77.TextScaled = true
 Text77.Text = "Setting Music Menu"
+TextSetColor(Text77)
 
 local scrollingsettingmusicFrame = Instance.new("ScrollingFrame", framemusic)
 scrollingsettingmusicFrame.Size = UDim2.new(1, 0, 0.85, 0)
@@ -1280,6 +1719,11 @@ local musicTinnLayout = Instance.new("UIListLayout", scrollingsettingmusicFrame)
 musicTinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
 musicTinnLayout.Padding = UDim.new(0, 5)
 
+functions.SizescrollingsettingmusicFrame = function()
+    local contentHeight = musicTinnLayout.AbsoluteContentSize.Y
+    scrollingsettingmusicFrame.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
+end
+
 local AutoPlayframe = Instance.new("Frame", scrollingsettingmusicFrame)
 AutoPlayframe.Size = UDim2.new(1, 0, 0, 100)
 AutoPlayframe.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1288,35 +1732,63 @@ AutoPlayframe.BackgroundTransparency = 0
 local Text55 = Instance.new("TextLabel", AutoPlayframe)
 Text55.Size = UDim2.new(1, 0, 0, 30)
 Text55.TextScaled = true
-Text55.TextXAlignment = Enum.TextXAlignment.Left
 Text55.BackgroundTransparency = 1
-Text55.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text55.TextColor3 = Configs_HUB.Cor_Text
+Text55.TextXAlignment = "Left"
+Text55.Font = Configs_HUB.Text_Font
 Text55.Text = "AutoPlay NextSong"
+TextSetColor(Text55)
 
 local Text44 = Instance.new("TextLabel", AutoPlayframe)
 Text44.Size = UDim2.new(1, 0, 0, 50)
 Text44.TextScaled = true
-Text44.TextXAlignment = Enum.TextXAlignment.Left
 Text44.BackgroundTransparency = 1
 Text44.Position = UDim2.new(0, 0, 0.31, 0)
-Text44.TextColor3 = Color3.fromRGB(255, 255, 255)
+Text44.TextColor3 = Configs_HUB.Cor_Text
+Text44.TextXAlignment = "Left"
+Text44.Font = Configs_HUB.Text_Font
 Text44.Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
+TextSetColor(Text44)
 
-local isAutoPlayEnabled = false
-local AutoPlayframe = createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function()
-    isAutoPlayEnabled = not isAutoPlayEnabled
-    soundmusic.Ended:Connect(function()
-        if isAutoPlayEnabled then
-            currentSongIndex = currentSongIndex + 1
-            if currentSongIndex > #songs then
-                currentSongIndex = 1
-            end
-            resetSong()
-            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-            updateSongButtons()
-        end
-    end)
-end)
+local isSettingLoopState = false
+local isSettingAutoPlayState = false
+
+local toggleLoopState
+local toggleAutoPlayState
+
+toggleLoopState = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
+[[Make the song playing repeat. Oh, I forgot to tell you. Pressing the next song or pressing the song back, pressing to select a song in the songList. will not be able to press. If you don't want it, you can turn it off]],
+function(forceState)
+    if isSettingLoopState or isSettingAutoPlayState then return end
+    isSettingLoopState = true
+
+    isLooping = forceState ~= nil and forceState or not isLooping
+    if isLooping and isAutoPlayEnabled then
+        toggleAutoPlayState(false)
+    end
+
+    isSettingLoopState = false
+end, isLooping)
+
+toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(forceState)
+    if isSettingAutoPlayState or isSettingLoopState then return end
+    isSettingAutoPlayState = true
+
+    isAutoPlayEnabled = forceState ~= nil and forceState or not isAutoPlayEnabled
+    if isAutoPlayEnabled and isLooping then
+        toggleLoopState(false)
+    end
+
+    isSettingAutoPlayState = false
+end, isAutoPlayEnabled)
+
+local speedTextBox = functions.createTextBox(scrollingsettingmusicFrame, "Song Speed Music", "Adjust the speed of the song to a maximum of 2", function(speedMultiplier)
+if soundmusic then
+    soundmusic.Pitch = speedMultiplier
+    soundmusic.PlaybackSpeed = speedMultiplier
+ end
+ end,
+0, 2)
 
 local increaseframe = Instance.new("Frame", scrollingsettingmusicFrame)
 increaseframe.Size = UDim2.new(1, 0, 0, 100)
@@ -1329,7 +1801,7 @@ increasetext.TextScaled = true
 increasetext.TextXAlignment = Enum.TextXAlignment.Left
 increasetext.BackgroundTransparency = 1
 increasetext.TextColor3 = Color3.fromRGB(255, 255, 255)
-increasetext.Text = "AutoPlay NextSong"
+increasetext.Text = "Volume Music"
 
 local increasetext1 = Instance.new("TextLabel", increaseframe)
 increasetext1.Size = UDim2.new(1, 0, 0, 35)
@@ -1523,6 +1995,21 @@ chorusButton.MouseButton1Click:Connect(function()
     chorusEffect.Enabled = mode.name ~= "Off"
 end)
 
+
+soundmusic.Ended:Connect(function()
+    if isLooping and not isAutoPlayEnabled then
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+    elseif isAutoPlayEnabled and not isLooping then
+        currentSongIndex = currentSongIndex + 1
+        if currentSongIndex > #songs then
+            currentSongIndex = 1
+        end
+        resetSong()
+        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+        updateSongButtons()
+    end
+end)
+
 local Frame2 = Instance.new("Frame", ScreenGui)
 Frame2.Size = UDim2.new(0, 174, 0, 50)
 Frame2.BackgroundColor3 = Color3.new(0, 0, 0)
@@ -1550,7 +2037,7 @@ local uitogglemusicplayer = {
     {instance = TitleLabel, sizeOpen = UDim2.new(0.2, 0, 0.07, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = Frame_4, sizeOpen = UDim2.new(0.038, 0, 0.091, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = ProgressCircle, sizeOpen = UDim2.new(1, 0, 1, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
-    {instance = TimeLabel, sizeOpen = UDim2.new(0.09, 0, 0.06, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = TimeLabel, sizeOpen = UDim2.new(0.06, 0, 0.06, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = ToggleButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = NextButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = PreviousButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)}
@@ -1563,17 +2050,17 @@ musicplayer.MouseButton1Click:Connect(function()
        for _, elementData in ipairs(uitogglemusicplayer) do
         local instance = elementData.instance
             elementData.instance.Visible = true
-            CreateTween(instance, "Size", elementData.sizeOpen, 0.3, true)
+            CreateTween1(instance, "Size", elementData.sizeOpen, 0.3, false)
          end
         else
              click2:Play()
         for _, elementData in ipairs(uitogglemusicplayer) do
         local instance = elementData.instance
-            CreateTween(instance, "Size", elementData.sizeClosed, 0.3, true)
+            CreateTween1(instance, "Size", elementData.sizeClosed, 0.3, false)
             elementData.instance.Visible = false
         end
     end
-end)
+end) 
 
 local Listofsongs = Instance.new("ImageButton", Frame2)
 Listofsongs.Size = UDim2.new(0, 30, 0, 30)
@@ -1610,10 +2097,12 @@ local togglesettingmusic = false
      togglesettingmusic = not togglesettingmusic
 
         if togglesettingmusic then
+            functions.SizescrollingsettingmusicFrame()
             click1:Play()
             framemusic.Visible = true
             CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
         else
+            functions.SizescrollingsettingmusicFrame()
             click2:Play()
             CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
             framemusic.Visible = false
@@ -1663,9 +2152,11 @@ local tweenGradient = CreateGradient(framek, {
 local mainText = Instance.new("TextLabel", framek)
 mainText.Size = UDim2.new(1, 0, 0.15, 0)
 mainText.BackgroundTransparency = 0.7
-mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainText.Text = "Universal Viewer"
+mainText.TextColor3 = Configs_HUB.Cor_Text
+mainText.Font = Configs_HUB.Text_Font
 mainText.TextScaled = true
+TextSetColor(mainText)
 
 local grnub7t = Instance.new("UIGradient", mainText)
      grnub7t.Color = ColorSequence.new{
@@ -1695,10 +2186,10 @@ local mainGameLabel = Instance.new("TextLabel", frameGame)
 mainGameLabel.Size = UDim2.new(1, 0, 0, 40)
 mainGameLabel.Text = "MainGame"
 mainGameLabel.BackgroundTransparency = 0.7
-mainGameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-mainGameLabel.TextXAlignment = Enum.TextXAlignment.Left
+mainGameLabel.TextColor3 = Configs_HUB.Cor_Text
+mainGameLabel.Font = Configs_HUB.Text_Font
 mainGameLabel.TextScaled = true
-mainGameLabel.TextXAlignment = Enum.TextXAlignment.Center
+TextSetColor(mainGameLabel)
 
 local place = gamePlaces[1]
 
@@ -1733,38 +2224,46 @@ end
 
 local mainText = Instance.new("TextLabel", mainGameFrame)
 mainText.Size = UDim2.new(0.05, 0, 0, 20)
-mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainText.TextColor3 = Configs_HUB.Cor_Text
+mainText.Font = Configs_HUB.Text_Font
 mainText.BackgroundTransparency = 1
 mainText.Position = UDim2.new(0.324, 0, 0, 0)
 mainText.Text = count..""
 mainText.TextScaled = true
+TextSetColor(mainText)
 
 local mainGameText = Instance.new("TextLabel", mainGameFrame)
 mainGameText.Size = UDim2.new(0.672, 0, 0, 30)
 mainGameText.Position = UDim2.new(0.322, 0, 0.16, 0)
-mainGameText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainGameText.TextColor3 = Configs_HUB.Cor_Text
+mainGameText.TextXAlignment = "Left"
+mainGameText.Font = Configs_HUB.Text_Font
 mainGameText.BackgroundTransparency = 1
 mainGameText.Text = "Name:" .. place.Name
 mainGameText.TextScaled = true
-mainGameText.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(mainGameText)
 
 local mainidGame = Instance.new("TextLabel", mainGameFrame)
 mainidGame.Size = UDim2.new(0.672, 0, 0, 30)
 mainidGame.Position = UDim2.new(0.322, 0, 0.4, 0)
-mainidGame.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainidGame.TextColor3 = Configs_HUB.Cor_Text
+mainidGame.TextXAlignment = "Left"
+mainidGame.Font = Configs_HUB.Text_Font
 mainidGame.BackgroundTransparency = 1
 mainidGame.Text = "Id:"..place.PlaceId
 mainidGame.TextScaled = true
-mainidGame.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(mainidGame)
 
 local TeleportButton = Instance.new("TextButton", mainGameFrame)
 TeleportButton.Size = UDim2.new(1, 0, 0.17, 0)
 TeleportButton.Position = UDim2.new(0, 0, 0.83, 0)
 TeleportButton.BackgroundColor3 = Configs_HUB.Cor_Hub
-TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleportButton.TextColor3 = Configs_HUB.Cor_Text
+TeleportButton.Font = Configs_HUB.Text_Font
 TeleportButton.BackgroundTransparency = 0
 TeleportButton.Text = "Play"
 TeleportButton.TextScaled = true
+TextSetColor(TeleportButton)
 TeleportButton.MouseButton1Click:Connect(function()
     TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
 end)
@@ -1788,9 +2287,10 @@ local splitGamesLabel = Instance.new("TextLabel", frameGame)
 splitGamesLabel.Size = UDim2.new(1, 0, 0, 40)
 splitGamesLabel.BackgroundTransparency = 0
 splitGamesLabel.Text = "Splitgame"
-splitGamesLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+splitGamesLabel.TextColor3 = Configs_HUB.Cor_Text
+splitGamesLabel.Font = Configs_HUB.Text_Font
 splitGamesLabel.TextScaled = true
-splitGamesLabel.TextXAlignment = Enum.TextXAlignment.Center
+TextSetColor(splitGamesLabel)
 
 local grnubfft = Instance.new("UIGradient", splitGamesLabel)
      grnubfft.Color = ColorSequence.new{
@@ -1842,36 +2342,45 @@ for i = 2, #gamePlaces do
     gameText.Size = UDim2.new(0.05, 0, 0, 20)
     gameText.Position = UDim2.new(0.324, 0, 0, 0)
     gameText.BackgroundTransparency = 1
-    gameText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameText.TextColor3 = Configs_HUB.Cor_Text
+    gameText.Font = Configs_HUB.Text_Font
     gameText.Text = count..""
     gameText.TextScaled = true
-    
+    TextSetColor(gameText)
+
     local gameLabelText = Instance.new("TextLabel", gameFrame)
     gameLabelText.Size = UDim2.new(0.672, 0, 0, 30)
     gameLabelText.Position = UDim2.new(0.322, 0, 0.16, 0)
-    gameLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameLabelText.TextColor3 = Configs_HUB.Cor_Text
+    gameLabelText.TextXAlignment = "Left"
+    gameLabelText.Font = Configs_HUB.Text_Font
     gameLabelText.BackgroundTransparency = 1
     gameLabelText.Text = "Name:" .. place.Name
     gameLabelText.TextScaled = true
-    gameLabelText.TextXAlignment = Enum.TextXAlignment.Left
-    
+    TextSetColor(gameLabelText)
+
     local gameidLabel = Instance.new("TextLabel", gameFrame)
     gameidLabel.Size = UDim2.new(0.672, 0, 0, 30)
     gameidLabel.Position = UDim2.new(0.322, 0, 0.4, 0)
-    gameidLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    gameidLabel.TextColor3 = Configs_HUB.Cor_Text
+    gameidLabel.TextXAlignment = "Left"
+    gameidLabel.Font = Configs_HUB.Text_Font
     gameidLabel.BackgroundTransparency = 1
     gameidLabel.Text = "Id:" ..place.PlaceId
     gameidLabel.TextScaled = true
-    gameidLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TextSetColor(gameidLabel)
 
     local teleportButton = Instance.new("TextButton", gameFrame)
     teleportButton.Size = UDim2.new(1, 0, 0.17, 0)
     teleportButton.Position = UDim2.new(0, 0, 0.83, 0)
     teleportButton.BackgroundTransparency = 0
     teleportButton.BackgroundColor3 = Configs_HUB.Cor_Hub
-    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.TextColor3 = Configs_HUB.Cor_Text
+    teleportButton.Font = Configs_HUB.Text_Font
     teleportButton.Text = "Play"
     teleportButton.TextScaled = true
+    TextSetColor(teleportButton)
+
     teleportButton.MouseButton1Click:Connect(function()
         TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
     end)
@@ -1946,11 +2455,13 @@ Wellcome.Size = UDim2.new(0.25, 0, 0.09, 0)
 Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
 Wellcome.Position = UDim2.new(0.14, 0, 0.077, 0)
 Wellcome.AnchorPoint = Vector2.new(0.11, 0.085)
-Wellcome.TextColor3 = Color3.fromRGB(255, 255, 255)
+Wellcome.TextColor3 = Configs_HUB.Cor_Text
+Wellcome.TextXAlignment = "Left"
+Wellcome.Font = Configs_HUB.Text_Font
 Wellcome.BackgroundColor3 = Configs_HUB.Cor_Hub
 Wellcome.BackgroundTransparency = 1
-Wellcome. TextScaled = true
-Wellcome.TextXAlignment = Enum.TextXAlignment.Left
+Wellcome.TextScaled = true
+TextSetColor(Wellcome)
 Wellcome.Visible = false
 
 local gameinfoframe= Instance.new("Frame", ScreenGui)
@@ -1976,11 +2487,13 @@ GameName.Size = UDim2.new(0.28, 0, 0.09, 0)
 GameName.Text = "Game Name: " .. gameName
 GameName.Position = UDim2.new(0.14, 0, 0.48, 0)
 GameName.AnchorPoint = Vector2.new(0.11, 0.405)
-GameName.TextColor3 = Color3.fromRGB(255, 255, 255)
+GameName.TextColor3 = Configs_HUB.Cor_Text
+GameName.TextXAlignment = "Left"
+GameName.Font = Configs_HUB.Text_Font
 GameName.BackgroundColor3 = Configs_HUB.Cor_Hub
 GameName.BackgroundTransparency = 1
 GameName.TextScaled = true
-GameName.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(GameName)
 GameName.Visible = false
 
 local frame100 = Instance.new("Frame", ScreenGui)
@@ -1995,9 +2508,11 @@ local FriendList = Instance.new("TextLabel", frame100)
 FriendList.Size = UDim2.new(1, 0, 0.13, 0)
 FriendList.Position = UDim2.new(0, 0, 0.001, 0)
 FriendList.Text = "Friend List"
-FriendList.TextColor3 = Color3.fromRGB(255, 255, 255)
+FriendList.TextColor3 = Configs_HUB.Cor_Text
+FriendList.Font = Configs_HUB.Text_Font
 FriendList.BackgroundColor3 = Configs_HUB.Cor_Hub
 FriendList.BackgroundTransparency = 0.5
+TextSetColor(FriendList)
 Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
 
 local friendsFrame = Instance.new("ScrollingFrame", frame100)
@@ -2044,14 +2559,16 @@ friendnumber.Size = UDim2.new(0.28, 0, 0.09, 0)
 friendnumber.Text = "Friend: "..friendsData.total.."/200"
 friendnumber.Position = UDim2.new(0.67, 0, 0.03, 0)
 friendnumber.AnchorPoint = Vector2.new(0.49, 0.029)
-friendnumber.TextColor3 = Color3.fromRGB(255, 255, 255)
+friendnumber.TextColor3 = Configs_HUB.Cor_Text
+friendnumber.TextXAlignment = "Left"
+friendnumber.Font = Configs_HUB.Text_Font
 friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
 friendnumber.BackgroundTransparency = 1
-friendnumber. TextScaled = true
-friendnumber.TextXAlignment = Enum.TextXAlignment.Left
+friendnumber.TextScaled = true
+TextSetColor(friendnumber)
 friendnumber.Visible = false
 
-local function checkFriends()
+functions.checkFriends = function()
     if friendsCooldown <= 0 then
         friendsCooldown = 25
 
@@ -2070,8 +2587,7 @@ local function checkFriends()
         end
 
         local friendsInTotal = #playersFriends
-
-        local function updateFriendsGUI(friends)
+        functions.updateFriendsGUI = function(friends)
             friendsFrame:ClearAllChildren()
 
             local positionY = 0
@@ -2096,18 +2612,22 @@ local function checkFriends()
                 friendName.Position = UDim2.new(0, 60, 0, 0)
                 friendName.BackgroundTransparency = 1
                 friendName.Text = friend.Username
-                friendName.TextColor3 = Color3.fromRGB(255, 255, 255)
                 friendName.TextWrapped = true
-                friendName.TextXAlignment = Enum.TextXAlignment.Left
+                friendName.TextColor3 = Configs_HUB.Cor_Text
+                friendName.TextXAlignment = "Left"
+                friendName.Font = Configs_HUB.Text_Font
                 friendName.Parent = friendFrame
+                TextSetColor(friendName)
 
                 local statusLabel = Instance.new("TextLabel")
                 statusLabel.Size = UDim2.new(0, 200, 1, 0)
                 statusLabel.BackgroundTransparency = 1
-                statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
                 statusLabel.TextWrapped = true
-                statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+                statusLabel.TextColor3 = Configs_HUB.Cor_Text
+                statusLabel.TextXAlignment = "Left"
+                statusLabel.Font = Configs_HUB.Text_Font
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
+                TextSetColor(statusLabel)
 
                 if friend.IsOnline then
                     if players:FindFirstChild(friend.Username) then
@@ -2126,7 +2646,7 @@ local function checkFriends()
             friendsFrame.CanvasSize = UDim2.new(0, 0, 0, math.max(positionY, 3000))
         end
 
-        updateFriendsGUI(playersFriends)
+        functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
         return friendsInTotal
     else
@@ -2134,18 +2654,20 @@ local function checkFriends()
     end
 end
 
-checkFriends()
+functions.checkFriends()
 
 local TimePlay = Instance.new("TextLabel", ScreenGui)
 TimePlay.Size = UDim2.new(0.205, 0, 0.07, 0)
 TimePlay.Text = "TimePlay"
 TimePlay.Position = UDim2.new(0.5294, 0, 0.681, 0)
 TimePlay.AnchorPoint = Vector2.new(0.41, 0.623)
-TimePlay.TextColor3 = Color3.fromRGB(255, 255, 255)
+TimePlay.TextColor3 = Configs_HUB.Cor_Text
+TimePlay.TextXAlignment = "Left"
+TimePlay.Font = Configs_HUB.Text_Font
 TimePlay.BackgroundColor3 = Configs_HUB.Cor_Hub
 TimePlay.BackgroundTransparency = 0.5
 TimePlay.TextScaled = true
-TimePlay.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(TimePlay)
 TimePlay.Visible = false
 Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2154,11 +2676,13 @@ AccountAge.Size = UDim2.new(0.205, 0, 0.07, 0)
 AccountAge.Text = "AccountAge"
 AccountAge.Position = UDim2.new(0.7781, 0, 0.681, 0)
 AccountAge.AnchorPoint = Vector2.new(0.62, 0.623)
-AccountAge.TextColor3 = Color3.fromRGB(255, 255, 255)
+AccountAge.TextColor3 = Configs_HUB.Cor_Text
+AccountAge.TextXAlignment = "Left"
+AccountAge.Font = Configs_HUB.Text_Font
 AccountAge.BackgroundColor3 = Configs_HUB.Cor_Hub
 AccountAge.BackgroundTransparency = 0.5
 AccountAge. TextScaled = true
-AccountAge.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(AccountAge)
 AccountAge.Visible = false
 Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2167,11 +2691,13 @@ Join.Size = UDim2.new(0.101, 0, 0.07, 0)
 Join.Text = "Join Game Script".."\nYou can press Copy"
 Join.Position = UDim2.new(0.4868, 0, 0.762, 0)
 Join.AnchorPoint = Vector2.new(0.41, 0.699)
-Join.TextColor3 = Color3.fromRGB(255, 255, 255)
+Join.TextColor3 = Configs_HUB.Cor_Text
+Join.TextXAlignment = "Left"
+Join.Font = Configs_HUB.Text_Font
 Join.BackgroundColor3 = Configs_HUB.Cor_Hub
 Join.BackgroundTransparency = 0.5
 Join.TextScaled = true
-Join.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(Join)
 Join.Visible = false
 Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2180,11 +2706,13 @@ Position.Size = UDim2.new(0.101, 0, 0.07, 0)
 Position.Text = "Position".."\nYou can press Copy"
 Position.Position = UDim2.new(0.6026, 0, 0.762, 0)
 Position.AnchorPoint = Vector2.new(0.528, 0.699)
-Position.TextColor3 = Color3.fromRGB(255, 255, 255)
+Position.TextColor3 = Configs_HUB.Cor_Text
+Position.TextXAlignment = "Left"
+Position.Font = Configs_HUB.Text_Font
 Position.BackgroundColor3 = Configs_HUB.Cor_Hub
 Position.BackgroundTransparency = 0.5
 Position. TextScaled = true
-Position.TextXAlignment = Enum.TextXAlignment.Left
+TextSetColor(Position)
 Position.Visible = false
 Corner(Position, {CornerRadius = UDim.new(0.15, 0)})
 
@@ -2257,7 +2785,7 @@ local LocalPlayer = players.LocalPlayer
 local accountAgeInDays = LocalPlayer.AccountAge
 local additionalPlayTimeInSeconds = 0
 
-local function calculateTotalPlayTime()
+functions.calculateTotalPlayTime = function()
     local totalSeconds = accountAgeInDays * 86400
 
     totalSeconds = totalSeconds + additionalPlayTimeInSeconds
@@ -2271,7 +2799,7 @@ local function calculateTotalPlayTime()
     return string.format("%d years, %d months, %d days", years, months, days)
 end
 
-local function accountAgeMessage(accountAgeInDays)
+functions.accountAgeMessage = function(accountAgeInDays)
     if accountAgeInDays == 0 then
         return "You just created an account"
     else
@@ -2279,20 +2807,20 @@ local function accountAgeMessage(accountAgeInDays)
     end
 end
 
-local function updatePlayTimeDisplay()
-    local totalPlayTime = calculateTotalPlayTime()
-    local ageMessage = accountAgeMessage(accountAgeInDays)
+functions.updatePlayTimeDisplay = function()
+    local totalPlayTime = functions.calculateTotalPlayTime()
+    local ageMessage = functions.accountAgeMessage(accountAgeInDays)
     AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
 end
 
-local function startUpdating()
-        additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
-        updatePlayTimeDisplay()
+functions.startUpdating = function()
+    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
+    functions.updatePlayTimeDisplay()
 end
 
-startUpdating()
+functions.startUpdating()
 
-local function formatElapsedTime(elapsedTime)
+functions.formatElapsedTime = function(elapsedTime)
     local secondsInMinute = 60
     local secondsInHour = 3600
     local secondsInDay = 86400
@@ -2317,43 +2845,30 @@ end
 local player = game.Players.LocalPlayer
 local playtime = 0
 
-local function updatePlaytime()
+functions.updatePlaytime = function()
     playtime = playtime + 1
-    local formattedTime = formatElapsedTime(playtime)
+    local formattedTime = functions.formatElapsedTime(playtime)
     TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
-        local currentTime = os.date("*t")
-        local hour = currentTime.hour
-        local amPm = "AM"
-
-        if hour >= 12 then
-            amPm = "PM"
-            if hour > 12 then
-                hour = hour - 12
-            end
-        elseif hour == 0 then
-            hour = 12
-        end
-
-        local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
-        TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
 end
 
-local function getAccountCreationDate(ageInDays)
+functions.getAccountCreationDate = function(ageInDays)
     local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
-updatePlaytime()
+functions.updatePlaytime()
 
 local DisplayName = Instance.new("TextLabel")
 DisplayName.Size = UDim2.new(1, 0, 0.3, 0)
 DisplayName.Text = "Display Name: " .. player.DisplayName
 DisplayName.Position = UDim2.new(0, 0, 0, 0)
 DisplayName.TextScaled = true
-DisplayName.TextColor3 = Color3.fromRGB(255, 255, 255)
-DisplayName.TextXAlignment = Enum.TextXAlignment.Left
+DisplayName.TextColor3 = Configs_HUB.Cor_Text
+DisplayName.TextXAlignment = "Left"
+DisplayName.Font = Configs_HUB.Text_Font
 DisplayName.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 DisplayName.BackgroundTransparency = 1
+TextSetColor(DisplayName)
 DisplayName.Parent = frame9
 
 local UserIdg = Instance.new("TextLabel")
@@ -2361,21 +2876,25 @@ UserIdg.Size = UDim2.new(1, 0, 0.3, 0)
 UserIdg.Text = "UserId: " .. player.UserId
 UserIdg.Position = UDim2.new(0, 0, 0.3, 0)
 UserIdg.TextScaled = true
-UserIdg.TextColor3 = Color3.fromRGB(255, 255, 255)
-UserIdg.TextXAlignment = Enum.TextXAlignment.Left
+UserIdg.TextColor3 = Configs_HUB.Cor_Text
+UserIdg.TextXAlignment = "Left"
+UserIdg.Font = Configs_HUB.Text_Font
 UserIdg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 UserIdg.BackgroundTransparency = 1
+TextSetColor(UserIdg)
 UserIdg.Parent = frame9
 
 local AccountCreated = Instance.new("TextLabel")
 AccountCreated.Size = UDim2.new(1, 0, 0.3, 0)
-AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
+AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
 AccountCreated.Position = UDim2.new(0, 0, 0.6, 0)
 AccountCreated.TextScaled = true
-AccountCreated.TextColor3 = Color3.fromRGB(255, 255, 255)
-AccountCreated.TextXAlignment = Enum.TextXAlignment.Left
+AccountCreated.TextColor3 = Configs_HUB.Cor_Text
+AccountCreated.TextXAlignment = "Left"
+AccountCreated.Font = Configs_HUB.Text_Font
 AccountCreated.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 AccountCreated.BackgroundTransparency = 1
+TextSetColor(AccountCreated)
 AccountCreated.Parent = frame9
 
 local Update = Instance.new("TextLabel")
@@ -2383,10 +2902,12 @@ Update.Size = UDim2.new(1, 0, 0.1, 0)
 Update.Text = "Update: "..result.Updated
 Update.Position = UDim2.new(0, 0, 0, 0)
 Update.TextScaled = true
-Update.TextColor3 = Color3.fromRGB(255, 255, 255)
-Update.TextXAlignment = Enum.TextXAlignment.Left
+Update.TextColor3 = Configs_HUB.Cor_Text
+Update.TextXAlignment = "Left"
+Update.Font = Configs_HUB.Text_Font
 Update.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Update.BackgroundTransparency = 1
+TextSetColor(Update)
 Update.Parent = frame79
 
 local CreationDate = Instance.new("TextLabel")
@@ -2394,10 +2915,12 @@ CreationDate.Size = UDim2.new(1, 0, 0.1, 0)
 CreationDate.Text = "Creation Date: "..result.Created
 CreationDate.Position = UDim2.new(0, 0, 0.1, 0)
 CreationDate.TextScaled = true
-CreationDate.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreationDate.TextXAlignment = Enum.TextXAlignment.Left
+CreationDate.TextColor3 = Configs_HUB.Cor_Text
+CreationDate.TextXAlignment = "Left"
+CreationDate.Font = Configs_HUB.Text_Font
 CreationDate.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 CreationDate.BackgroundTransparency = 1
+TextSetColor(CreationDate)
 CreationDate.Parent = frame79
 
 local Gameid = Instance.new("TextLabel")
@@ -2405,10 +2928,12 @@ Gameid.Size = UDim2.new(1, 0, 0.1, 0)
 Gameid.Text = "Gameid: " .. game.GameId
 Gameid.Position = UDim2.new(0, 0, 0.2, 0)
 Gameid.TextScaled = true
-Gameid.TextColor3 = Color3.fromRGB(255, 255, 255)
-Gameid.TextXAlignment = Enum.TextXAlignment.Left
+Gameid.TextColor3 = Configs_HUB.Cor_Text
+Gameid.TextXAlignment = "Left"
+Gameid.Font = Configs_HUB.Text_Font
 Gameid.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Gameid.BackgroundTransparency = 1
+TextSetColor(Gameid)
 Gameid.Parent = frame79
 
 local GamePlaceId = Instance.new("TextLabel")
@@ -2416,10 +2941,12 @@ GamePlaceId.Size = UDim2.new(1, 0, 0.1, 0)
 GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
 GamePlaceId.Position = UDim2.new(0, 0, 0.3, 0)
 GamePlaceId.TextScaled = true
-GamePlaceId.TextColor3 = Color3.fromRGB(255, 255, 255)
-GamePlaceId.TextXAlignment = Enum.TextXAlignment.Left
+GamePlaceId.TextColor3 = Configs_HUB.Cor_Text
+GamePlaceId.TextXAlignment = "Left"
+GamePlaceId.Font = Configs_HUB.Text_Font
 GamePlaceId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 GamePlaceId.BackgroundTransparency = 1
+TextSetColor(GamePlaceId)
 GamePlaceId.Parent = frame79
 
 local GameJobId = Instance.new("TextLabel")
@@ -2427,10 +2954,12 @@ GameJobId.Size = UDim2.new(1, 0, 0.1, 0)
 GameJobId.Text = "GameJobId: " .. game.JobId
 GameJobId.Position = UDim2.new(0, 0, 0.4, 0)
 GameJobId.TextScaled = true
-GameJobId.TextColor3 = Color3.fromRGB(255, 255, 255)
-GameJobId.TextXAlignment = Enum.TextXAlignment.Left
+GameJobId.TextColor3 = Configs_HUB.Cor_Text
+GameJobId.TextXAlignment = "Left"
+GameJobId.Font = Configs_HUB.Text_Font
 GameJobId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 GameJobId.BackgroundTransparency = 1
+TextSetColor(GameJobId)
 GameJobId.Parent = frame79
 
 local Server = Instance.new("TextLabel")
@@ -2438,11 +2967,33 @@ Server.Size = UDim2.new(1, 0, 0.1, 0)
 Server.Text = "Server Size: ".. maxPlayers
 Server.Position = UDim2.new(0, 0, 0.5, 0)
 Server.TextScaled = true
-Server.TextColor3 = Color3.fromRGB(255, 255, 255)
-Server.TextXAlignment = Enum.TextXAlignment.Left
+Server.TextColor3 = Configs_HUB.Cor_Text
+Server.TextXAlignment = "Left"
+Server.Font = Configs_HUB.Text_Font
 Server.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Server.BackgroundTransparency = 1
+TextSetColor(Server)
 Server.Parent = frame79
+
+functions.updateTime = function()
+    local currentTime = os.date("*t")
+    local hour = currentTime.hour
+    local amPm = "AM"
+
+    if hour >= 12 then
+        amPm = "PM"
+        if hour > 12 then
+            hour = hour - 12
+        end
+    elseif hour == 0 then
+        hour = 12
+    end
+
+    local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
+    TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+end
+
+    functions.updateTime()
 
     local infoToggleButton = Instance.new("ImageButton", frame)
     infoToggleButton.Size = UDim2.new(0, 30, 0, 30)
@@ -2477,12 +3028,12 @@ infoToggleButton.MouseButton1Click:Connect(function()
         click1:Play()
         for _, element in ipairs(uiinfoToggle) do
             element.instance.Visible = true
-            CreateTween(element.instance, "Size", element.sizeOpen, 0.3, true)
+            CreateTween1(element.instance, "Size", element.sizeOpen, 0.3, false)
         end
     else
         click2:Play()
         for _, element in ipairs(uiinfoToggle) do
-            CreateTween(element.instance, "Size", element.sizeClosed, 0.3, true)
+            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, false)
             element.instance.Visible = false
         end
     end
@@ -2496,7 +3047,7 @@ end)
    local maxPlayers = players.MaxPlayers
         DisplayName.Text = "Display Name: " .. player.DisplayName
         UserIdg.Text = "UserId: " .. player.UserId
-        AccountCreated.Text = "Account Created: " .. getAccountCreationDate(ageInDays)
+        AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
         Update.Text = "Update: "..result.Updated
         CreationDate.Text = "Creation Date: "..result.Created
         Gameid.Text = "Gameid: " .. game.GameId
@@ -2508,12 +3059,20 @@ end)
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-        updatePlaytime()
-        checkFriends()
-        startUpdating()
-        lastUpdate = currentTime
+          lastUpdate = currentTime
         end
-    end)
+     end) 
+
+   RunService.Heartbeat:Connect(function()
+    local currentTime = tick()
+    if currentTime - lastUpdate >= 1 then
+        functions.updatePlaytime()
+        functions.checkFriends()
+        functions.startUpdating()
+        functions.updateTime()
+        lastUpdate = currentTime
+      end
+   end)
 
     local Button = Instance.new("ImageButton", frame)
     Button.Size = UDim2.new(0, 30, 0, 30)
@@ -2554,6 +3113,7 @@ Text7.Size = UDim2.new(1, 0, 0.15, 0)
 Text7.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text7.TextScaled = true
 Text7.Text = "Setting Menu"
+TextSetColor(Text7)
 
 local scrollingSettingFrame = Instance.new("ScrollingFrame", frameSetting)
 scrollingSettingFrame.Size = UDim2.new(1, 0, 0.85, 0)
@@ -2561,32 +3121,72 @@ scrollingSettingFrame.Position = UDim2.new(0, 0, 0.15, 0)
 scrollingSettingFrame.BackgroundTransparency = 1
 scrollingSettingFrame.ScrollBarThickness = 0
 
-local TinnLayout = Instance.new("UIListLayout", scrollingSettingFrame)
-TinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
-TinnLayout.Padding = UDim.new(0, 5)
+local SettingTinniLayout = Instance.new("UIListLayout", scrollingSettingFrame) 
+SettingTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-local frameAnticopy = Instance.new("Frame", scrollingSettingFrame)
-frameAnticopy.Size = UDim2.new(1, 0, 0, 100)
-frameAnticopy.BackgroundColor3 = Configs_HUB.Cor_Hub
-frameAnticopy.BackgroundTransparency = 0
+functions.Size = function()
+    local contentHeight = SettingTinniLayout.AbsoluteContentSize.Y
+    scrollingSettingFrame.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
+end
+local isClickEffectEnabled = false
+local ripples = {}
+local inputBeganConnection
 
-local Text3 = Instance.new("TextLabel", frameAnticopy)
-Text3.Size = UDim2.new(1, 0, 0, 30)
-Text3.TextScaled = true
-Text3.TextXAlignment = Enum.TextXAlignment.Left
-Text3.BackgroundTransparency = 1
-Text3.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text3.Text = "Anti Copy"
+functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
+[[This creates an effect where, when you press the screen, it will look like a circle. Like water hits with something, it widens and disappears]], 
+function(isClickEffectEnabled)
+    if isClickEffectEnabled then
+        inputBeganConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if not gameProcessed then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    local ripple = Instance.new("Frame", ScreenGui)
+                    ripple.Size = UDim2.new(0, 0, 0, 0)
+                    ripple.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
+                    ripple.AnchorPoint = Vector2.new(0.5, 0.5)
+                    ripple.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
+                    ripple.BackgroundTransparency = 0.5
+                    ripple.BorderSizePixel = 0
+                    ripple.ZIndex = 9e9
+                    ripple.ClipsDescendants = true
 
-local Text4 = Instance.new("TextLabel", frameAnticopy)
-Text4.Size = UDim2.new(1, 0, 0, 50)
-Text4.TextScaled = true
-Text4.TextXAlignment = Enum.TextXAlignment.Left
-Text4.BackgroundTransparency = 1
-Text4.Position = UDim2.new(0, 0, 0.31, 0)
-Text4.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text4.Text = [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
-It will notify you on the screen. If you feel annoyed, you can turn it off]]
+                    local corner = Instance.new("UICorner", ripple)
+                    corner.CornerRadius = UDim.new(1, 0)
+
+                    local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                    local sizeGoal = {Size = UDim2.new(0, 100, 0, 100), BackgroundTransparency = 1}
+                    local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
+                    tween:Play()
+
+                    table.insert(ripples, ripple)
+
+                    local clickSound = Instance.new("Sound")
+                    clickSound.SoundId = "rbxassetid://15675059323"
+                    clickSound.Parent = ScreenGui
+                    clickSound.Volume = 0.5
+                    clickSound:Play()
+                    clickSound.Ended:Connect(function()
+                        clickSound:Destroy()
+                    end)
+
+                    tween.Completed:Connect(function()
+                        ripple:Destroy()
+                        table.remove(ripples, #ripples)
+                    end)
+                end
+            end
+        end)
+    else
+        if inputBeganConnection then
+            inputBeganConnection:Disconnect()
+        end
+
+        for _, ripple in ipairs(ripples) do
+            ripple:Destroy()
+        end
+        ripples = {}
+    end
+end,
+isClickEffectEnabled)
 
 local copyEnabled = false
 
@@ -2594,254 +3194,247 @@ local originalToClipboard = getgenv().toclipboard
 local originalSetClipboard = getgenv().setclipboard
 local originalOriginalSetClipboard = getgenv().originalSetClipboard
 
-local TogglecopyButton = createToggleButton(frameAnticopy, UDim2.new(0.82, 0, 0.75, 0), function()
-    copyEnabled = not copyEnabled
+functions.createSettingSection(
+    scrollingSettingFrame, 
+    "Anti Copy", 
+    [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
+    It will notify you on the screen. If you feel annoyed, you can turn it off]], 
+    function()
+        copyEnabled = not copyEnabled
+        
+        if copyEnabled then
+            getgenv().toclipboard = function(data)
+                notify({
+                    Title = "Attempted to copy",
+                    Text = tostring(data),
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                })
+            end
+            getgenv().setclipboard = function(data)
+                notify({
+                    Title = "Attempted to copy",
+                    Text = tostring(data),
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                })
+            end
+            getgenv().originalSetClipboard = function(data)
+                notify({
+                    Title = "Attempted to copy",
+                    Text = tostring(data),
+                    buttonText = "ok",
+                    imageID = "",
+                    guiSize = Vector2.new(400, 70),
+                })
+            end
+        else
+            getgenv().toclipboard = originalToClipboard
+            getgenv().setclipboard = originalSetClipboard
+            getgenv().originalSetClipboard = originalOriginalSetClipboard
+        end
+    end, 
+    copyEnabled
+)
 
-    if copyEnabled then
-        getgenv().toclipboard = function(data)
-            notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
-            })
-        end
-        getgenv().setclipboard = function(data)
-            notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
-            })
-        end
-        getgenv().originalSetClipboard = function(data)
-            notify({
-                Title = "Attempted to copy",
-                Text = ""..tostring(data),
-                buttonText = "ok",
-                imageID = "",
-                guiSize = Vector2.new(400, 70),
-            })
-        end
-    else
-        getgenv().toclipboard = originalToClipboard
-        getgenv().setclipboard = originalSetClipboard
-        getgenv().originalSetClipboard = originalOriginalSetClipboard
-    end
-end, copyEnabled)
 
 local friendnotifications = {}
 local notifyFriendsEnabled = true
 
-local friendnotificationframe = Instance.new("Frame", scrollingSettingFrame)
-friendnotificationframe.Size = UDim2.new(1, 0, 0, 100)
-friendnotificationframe.BackgroundColor3 = Configs_HUB.Cor_Hub
-friendnotificationframe.BackgroundTransparency = 0
-
-local Text5 = Instance.new("TextLabel", friendnotificationframe)
-Text5.Size = UDim2.new(1, 0, 0, 30)
-Text5.TextScaled = true
-Text5.TextXAlignment = Enum.TextXAlignment.Left
-Text5.BackgroundTransparency = 1
-Text5.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text5.Text = "Notification Friends"
-
-local Text6 = Instance.new("TextLabel", friendnotificationframe)
-Text6.Size = UDim2.new(1, 0, 0, 50)
-Text6.TextScaled = true
-Text6.TextXAlignment = Enum.TextXAlignment.Left
-Text6.BackgroundTransparency = 1
-Text6.Position = UDim2.new(0, 0, 0.31, 0)
-Text6.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text6.Text = [[This script will notify you when your friends join and exit the game and if you feel annoyed you can, turn it off]]
-
-local friendNotificationButton = createToggleButton(friendnotificationframe, UDim2.new(0.82, 0, 0.75, 0), function()
-    notifyFriendsEnabled = not notifyFriendsEnabled
-
-    if notifyFriendsEnabled then
-        game.Players.PlayerAdded:Connect(function(player)
-            local isFriend = false
-            local success, friendsPage = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
-
-            if success then
-                repeat
-                    local friendsList = friendsPage:GetCurrentPage()
-                    for _, friendInfo in pairs(friendsList) do
-                        if friendInfo.Username == player.Name then
-                            isFriend = true
-                            break
-                        end
-                    end
-                    if not friendsPage.IsFinished then
-                        friendsPage:AdvanceToNextPageAsync()
-                    end
-                until friendsPage.IsFinished or isFriend
-            end
-
-            if isFriend then
-                local NotificationFrame = Instance.new("Frame", ScreenGui)
-                NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
-                NotificationFrame.BackgroundTransparency = 1
-                NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
-
-                local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
-                ProfileImage.Size = UDim2.new(0, 45, 1, 0)
-                ProfileImage.BackgroundTransparency = 1
-                ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
-
-                local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
-                NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
-                NotificationLabel.BackgroundTransparency = 1
-                NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
-                NotificationLabel.Text = player.Name .. " has joined the game"
-                NotificationLabel.TextScaled = true
-                NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
-                NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-                local ProgressBar = Instance.new("Frame")
-                ProgressBar.Parent = NotificationFrame
-                ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
-                ProgressBar.Position = UDim2.new(0, 0, 1, 0)
-                ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-
-                table.insert(friendnotifications, NotificationFrame)
-
-                if #friendnotifications > 5 then
-                    local oldNotification = table.remove(friendnotifications, 1)
-                    oldNotification:Destroy()
-                end
-
-                for i, notifyFrame in ipairs(friendnotifications) do
-                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                    tween:Play()
-                end
-
-                local timeLeft = 10
-                local startTime = tick()
-
-                local updateConnection
-                updateConnection = RunService.Heartbeat:Connect(function()
-                    local elapsedTime = tick() - startTime
-                    local remainingTime = timeLeft - elapsedTime
-
-                    if remainingTime <= 0 then
-                        remainingTime = 0
-                        updateConnection:Disconnect()
-                    end
-
-                    ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
-
-                    if remainingTime <= 0 then
-                        local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
-                        tweenOut:Play()
-
-                        tweenOut.Completed:Connect(function()
-                            NotificationFrame:Destroy()
-                            table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
-
-                            for i, notifyFrame in ipairs(friendnotifications) do
-                                local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                                tween:Play()
-                            end
-                        end)
-                    end
+functions.createSettingSection(scrollingSettingFrame, "Notification Friends", 
+    [[This script will notify you when your friends join and exit the game and if you feel annoyed you can, turn it off]], 
+    function()
+        notifyFriendsEnabled = not notifyFriendsEnabled
+        
+        if notifyFriendsEnabled then
+            game.Players.PlayerAdded:Connect(function(player)
+                local isFriend = false
+                local success, friendsPage = pcall(function()
+                    return game.Players.LocalPlayer:GetFriendsAsync()
                 end)
-            end
-        end)
-        game.Players.PlayerRemoving:Connect(function(player)
-            local isFriend = false
-            local success, friendsPage = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
 
-            if success then
-                repeat
-                    local friendsList = friendsPage:GetCurrentPage()
-                    for _, friendInfo in pairs(friendsList) do
-                        if friendInfo.Username == player.Name then
-                            isFriend = true
-                            break
-                        end
-                    end
-                    if not friendsPage.IsFinished then
-                        friendsPage:AdvanceToNextPageAsync()
-                    end
-                until friendsPage.IsFinished or isFriend
-            end
-
-            if isFriend then
-                -- สร้างการแจ้งเตือนเพื่อนที่ออกจากเกม
-                local NotificationFrame = Instance.new("Frame", ScreenGui)
-                NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
-                NotificationFrame.BackgroundTransparency = 1
-                NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
-
-                local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
-                ProfileImage.Size = UDim2.new(0, 45, 1, 0)
-                ProfileImage.BackgroundTransparency = 1
-                ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
-
-                local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
-                NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
-                NotificationLabel.BackgroundTransparency = 1
-                NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
-                NotificationLabel.Text = player.Name .. " has left the game"
-                NotificationLabel.TextScaled = true
-                NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
-                NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-                local ProgressBar = Instance.new("Frame")
-                ProgressBar.Parent = NotificationFrame
-                ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
-                ProgressBar.Position = UDim2.new(0, 0, 1, 0)
-                ProgressBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-
-                table.insert(friendnotifications, NotificationFrame)
-
-                if #friendnotifications > 5 then
-                    local oldNotification = table.remove(friendnotifications, 1)
-                    oldNotification:Destroy()
-                end
-
-                for i, notifyFrame in ipairs(friendnotifications) do
-                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                    tween:Play()
-                end
-
-                local timeLeft = 10
-                local startTime = tick()
-
-                local updateConnection
-                updateConnection = RunService.Heartbeat:Connect(function()
-                    local elapsedTime = tick() - startTime
-                    local remainingTime = timeLeft - elapsedTime
-
-                    if remainingTime <= 0 then
-                        remainingTime = 0
-                        updateConnection:Disconnect()
-                    end
-
-                    ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
-
-                    if remainingTime <= 0 then
-                        local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
-                        tweenOut:Play()
-
-                        tweenOut.Completed:Connect(function()
-                            NotificationFrame:Destroy()
-                            table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
-
-                            for i, notifyFrame in ipairs(friendnotifications) do
-                                local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
-                                tween:Play()
+                if success then
+                    repeat
+                        local friendsList = friendsPage:GetCurrentPage()
+                        for _, friendInfo in pairs(friendsList) do
+                            if friendInfo.Username == player.Name then
+                                isFriend = true
+                                break
                             end
-                        end)
+                        end
+                        if not friendsPage.IsFinished then
+                            friendsPage:AdvanceToNextPageAsync()
+                        end
+                    until friendsPage.IsFinished or isFriend
+                end
+
+                if isFriend then
+                    local NotificationFrame = Instance.new("Frame", ScreenGui)
+                    NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
+                    NotificationFrame.BackgroundTransparency = 1
+                    NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
+
+                    local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
+                    ProfileImage.Size = UDim2.new(0, 45, 1, 0)
+                    ProfileImage.BackgroundTransparency = 1
+                    ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
+
+                    local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
+                    NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
+                    NotificationLabel.BackgroundTransparency = 1
+                    NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
+                    NotificationLabel.Text = player.Name .. " has joined the game"
+                    NotificationLabel.TextScaled = true
+                    NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+                    local ProgressBar = Instance.new("Frame")
+                    ProgressBar.Parent = NotificationFrame
+                    ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
+                    ProgressBar.Position = UDim2.new(0, 0, 1, 0)
+                    ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+
+                    table.insert(friendnotifications, NotificationFrame)
+
+                    if #friendnotifications > 5 then
+                        local oldNotification = table.remove(friendnotifications, 1)
+                        oldNotification:Destroy()
                     end
+
+                    for i, notifyFrame in ipairs(friendnotifications) do
+                        local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+                        tween:Play()
+                    end
+
+                    local timeLeft = 10
+                    local startTime = tick()
+
+                    local updateConnection
+                    updateConnection = RunService.Heartbeat:Connect(function()
+                        local elapsedTime = tick() - startTime
+                        local remainingTime = timeLeft - elapsedTime
+
+                        if remainingTime <= 0 then
+                            remainingTime = 0
+                            updateConnection:Disconnect()
+                        end
+
+                        ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
+
+                        if remainingTime <= 0 then
+                            local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
+                            tweenOut:Play()
+
+                            tweenOut.Completed:Connect(function()
+                                NotificationFrame:Destroy()
+                                table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
+
+                                for i, notifyFrame in ipairs(friendnotifications) do
+                                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+                                    tween:Play()
+                                end
+                            end)
+                        end
+                    end)
+                end
+            end)
+
+            game.Players.PlayerRemoving:Connect(function(player)
+                local isFriend = false
+                local success, friendsPage = pcall(function()
+                    return game.Players.LocalPlayer:GetFriendsAsync()
                 end)
-            end
-        end)
-    end
-end, notifyFriendsEnabled)
+
+                if success then
+                    repeat
+                        local friendsList = friendsPage:GetCurrentPage()
+                        for _, friendInfo in pairs(friendsList) do
+                            if friendInfo.Username == player.Name then
+                                isFriend = true
+                                break
+                            end
+                        end
+                        if not friendsPage.IsFinished then
+                            friendsPage:AdvanceToNextPageAsync()
+                        end
+                    until friendsPage.IsFinished or isFriend
+                end
+
+                if isFriend then
+                    local NotificationFrame = Instance.new("Frame", ScreenGui)
+                    NotificationFrame.Size = UDim2.new(0.315, 0, 0.1, 0)
+                    NotificationFrame.BackgroundTransparency = 1
+                    NotificationFrame.Position = UDim2.new(0.56, -200, 0.6, 50)
+
+                    local ProfileImage = Instance.new("ImageLabel", NotificationFrame)
+                    ProfileImage.Size = UDim2.new(0, 45, 1, 0)
+                    ProfileImage.BackgroundTransparency = 1
+                    ProfileImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. player.UserId .. "&width=420&height=420&format=png"
+
+                    local NotificationLabel = Instance.new("TextLabel", NotificationFrame)
+                    NotificationLabel.Size = UDim2.new(0.85, 0, 1, 0)
+                    NotificationLabel.BackgroundTransparency = 1
+                    NotificationLabel.Position = UDim2.new(0, 45, 0, 0)
+                    NotificationLabel.Text = player.Name .. " has left the game"
+                    NotificationLabel.TextScaled = true
+                    NotificationLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+                    local ProgressBar = Instance.new("Frame")
+                    ProgressBar.Parent = NotificationFrame
+                    ProgressBar.Size = UDim2.new(1.016, 0, 0, 5)
+                    ProgressBar.Position = UDim2.new(0, 0, 1, 0)
+                    ProgressBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+                    table.insert(friendnotifications, NotificationFrame)
+
+                    if #friendnotifications > 5 then
+                        local oldNotification = table.remove(friendnotifications, 1)
+                        oldNotification:Destroy()
+                    end
+
+                    for i, notifyFrame in ipairs(friendnotifications) do
+                        local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+                        tween:Play()
+                    end
+
+                    local timeLeft = 10
+                    local startTime = tick()
+
+                    local updateConnection
+                    updateConnection = RunService.Heartbeat:Connect(function()
+                        local elapsedTime = tick() - startTime
+                        local remainingTime = timeLeft - elapsedTime
+
+                        if remainingTime <= 0 then
+                            remainingTime = 0
+                            updateConnection:Disconnect()
+                        end
+
+                        ProgressBar.Size = UDim2.new(remainingTime / timeLeft, 0, 0, 5)
+
+                        if remainingTime <= 0 then
+                            local tweenOut = TweenService:Create(NotificationFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 100), BackgroundTransparency = 1})
+                            tweenOut:Play()
+
+                            tweenOut.Completed:Connect(function()
+                                NotificationFrame:Destroy()
+                                table.remove(friendnotifications, table.find(friendnotifications, NotificationFrame))
+
+                                for i, notifyFrame in ipairs(friendnotifications) do
+                                    local tween = TweenService:Create(notifyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.56, -200, 0.6, 50 - (i * 80))})
+                                    tween:Play()
+                                end
+                            end)
+                        end
+                    end)
+                end
+            end)
+        end
+    end,
+notifyFriendsEnabled)
 
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
@@ -2850,104 +3443,87 @@ rainSound.SoundId = "rbxassetid://1516791621"
 rainSound.Volume = 1
 rainSound.Looped = true
 
-local framerain = Instance.new("Frame", scrollingSettingFrame)
-framerain.Size = UDim2.new(1, 0, 0, 100)
-framerain.BackgroundColor3 = Configs_HUB.Cor_Hub
-framerain.BackgroundTransparency = 0
+functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
+    [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
+    function(isLightingEnabled)
+        if isLightingEnabled then
+            Lighting.ClockTime = 12
 
-local Text10 = Instance.new("TextLabel", framerain)
-Text10.Size = UDim2.new(1, 0, 0, 30)
-Text10.TextScaled = true
-Text10.TextXAlignment = Enum.TextXAlignment.Left
-Text10.BackgroundTransparency = 1
-Text10.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text10.Text = "Rain🌧"
-
-local Text11 = Instance.new("TextLabel", framerain)
-Text11.Size = UDim2.new(1, 0, 0, 50)
-Text11.TextScaled = true
-Text11.TextXAlignment = Enum.TextXAlignment.Left
-Text11.BackgroundTransparency = 1
-Text11.Position = UDim2.new(0, 0, 0.32, 0)
-Text11.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text11.Text = [[This will make the clouds in the sky look like It's raining and there's the sound of rain, but now there's no rain, there's just the sound and Just changing the sky For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]]
-
-local framerainButton = createToggleButton(framerain, UDim2.new(0.82, 0, 0.75, 0), function(isLightingEnabled)
-    if isLightingEnabled then
-        game.Lighting.ClockTime = 12
-
-        for _, v in pairs(Lighting:GetChildren()) do
-            v:Destroy()
-        end
-
-        local Bloom = Instance.new("BloomEffect")
-        Bloom.Parent = Lighting
-        Bloom.Intensity = 0.1
-        Bloom.Size = 20
-        Bloom.Threshold = 0.5
-
-        local Blur = Instance.new("BlurEffect")
-        Blur.Parent = Lighting
-        Blur.Size = 5
-
-        local ColorCor = Instance.new("ColorCorrectionEffect")
-        ColorCor.Parent = Lighting
-        ColorCor.Brightness = -0.2
-        ColorCor.Contrast = 0.1
-        ColorCor.Saturation = 0.0
-        ColorCor.TintColor = Color3.fromRGB(150, 150, 150)
-
-        local SunRays = Instance.new("SunRaysEffect")
-        SunRays.Parent = Lighting
-        SunRays.Intensity = 0.0
-        SunRays.Spread = 0.6
-
-        local Sky = Instance.new("Sky")
-        Sky.Parent = Lighting
-        Sky.SkyboxBk = "rbxassetid://4498828382"
-        Sky.SkyboxDn = "rbxassetid://4498828812"
-        Sky.SkyboxFt = "rbxassetid://4498829917"
-        Sky.SkyboxLf = "rbxassetid://4498830911"
-        Sky.SkyboxRt = "rbxassetid://4498830417"
-        Sky.SkyboxUp = "rbxassetid://4498831746"
-        Sky.SunAngularSize = 30
-
-        local Atm = Instance.new("Atmosphere")
-        Atm.Parent = Lighting
-        Atm.Density = 0.6
-        Atm.Offset = 0.1
-        Atm.Color = Color3.fromRGB(150, 150, 150)
-        Atm.Decay = Color3.fromRGB(150, 150, 150)
-        Atm.Glare = 0.5
-        Atm.Haze = 1
-
-        rainSound:Play()
-
-        Lighting.Ambient = Color3.fromRGB(200, 200, 200)
-        Lighting.Brightness = 2.5
-        Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
-        Lighting.ColorShift_Top = Color3.fromRGB(150, 150, 150)
-        Lighting.EnvironmentDiffuseScale = 0.1
-        Lighting.EnvironmentSpecularScale = 0.1
-        Lighting.GlobalShadows = true
-        Lighting.OutdoorAmbient = Color3.fromRGB(10, 10, 10)
-        Lighting.ShadowSoftness = 0.5
-        Lighting.GeographicLatitude = 45
-        Lighting.ExposureCompensation = 0.6
-    else
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+            for _, v in pairs(Lighting:GetChildren()) do
                 v:Destroy()
             end
+
+            local Bloom = Instance.new("BloomEffect")
+            Bloom.Parent = Lighting
+            Bloom.Intensity = 0.1
+            Bloom.Size = 20
+            Bloom.Threshold = 0.5
+
+            local Blur = Instance.new("BlurEffect")
+            Blur.Parent = Lighting
+            Blur.Size = 5
+
+            local ColorCor = Instance.new("ColorCorrectionEffect")
+            ColorCor.Parent = Lighting
+            ColorCor.Brightness = -0.2
+            ColorCor.Contrast = 0.1
+            ColorCor.Saturation = 0.0
+            ColorCor.TintColor = Color3.fromRGB(150, 150, 150)
+
+            local SunRays = Instance.new("SunRaysEffect")
+            SunRays.Parent = Lighting
+            SunRays.Intensity = 0.0
+            SunRays.Spread = 0.6
+
+            local Sky = Instance.new("Sky")
+            Sky.Parent = Lighting
+            Sky.SkyboxBk = "rbxassetid://4498828382"
+            Sky.SkyboxDn = "rbxassetid://4498828812"
+            Sky.SkyboxFt = "rbxassetid://4498829917"
+            Sky.SkyboxLf = "rbxassetid://4498830911"
+            Sky.SkyboxRt = "rbxassetid://4498830417"
+            Sky.SkyboxUp = "rbxassetid://4498831746"
+            Sky.SunAngularSize = 30
+
+            local Atm = Instance.new("Atmosphere")
+            Atm.Parent = Lighting
+            Atm.Density = 0.6
+            Atm.Offset = 0.1
+            Atm.Color = Color3.fromRGB(150, 150, 150)
+            Atm.Decay = Color3.fromRGB(150, 150, 150)
+            Atm.Glare = 0.5
+            Atm.Haze = 1
+
+            rainSound:Play()
+
+            Lighting.Ambient = Color3.fromRGB(200, 200, 200)
+            Lighting.Brightness = 2.5
+            Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
+            Lighting.ColorShift_Top = Color3.fromRGB(150, 150, 150)
+            Lighting.EnvironmentDiffuseScale = 0.1
+            Lighting.EnvironmentSpecularScale = 0.1
+            Lighting.GlobalShadows = true
+            Lighting.OutdoorAmbient = Color3.fromRGB(10, 10, 10)
+            Lighting.ShadowSoftness = 0.5
+            Lighting.GeographicLatitude = 45
+            Lighting.ExposureCompensation = 0.6
+        else
+            for _, v in pairs(Lighting:GetChildren()) do
+                if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
+                    v:Destroy()
+                end
+            end
+
+            rainSound:Pause()
+
+            Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+            Lighting.Brightness = 2
+            Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
+            Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
+            Lighting.GlobalShadows = false
         end
-        rainSound:Pause()
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.Brightness = 2
-        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
-        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-        Lighting.GlobalShadows = false
-    end
-end, isLightingEnabled)
+    end, 
+    isLightingEnabled)
 
 local togglehideName = false
 
@@ -2970,32 +3546,173 @@ end
 
 game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
 
-local framehidename = Instance.new("Frame", scrollingSettingFrame)
-framehidename.Size = UDim2.new(1, 0, 0, 100)
-framehidename.BackgroundColor3 = Configs_HUB.Cor_Hub
-framehidename.BackgroundTransparency = 0
-
-local Text12 = Instance.new("TextLabel", framehidename)
-Text12.Size = UDim2.new(1, 0, 0, 30)
-Text12.TextScaled = true
-Text12.TextXAlignment = Enum.TextXAlignment.Left
-Text12.BackgroundTransparency = 1
-Text12.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text12.Text = "Hide Name"
-
-local Text13 = Instance.new("TextLabel", framehidename)
-Text13.Size = UDim2.new(1, 0, 0, 50)
-Text13.TextScaled = true
-Text13.TextXAlignment = Enum.TextXAlignment.Left
-Text13.BackgroundTransparency = 1
-Text13.Position = UDim2.new(0, 0, 0.32, 0)
-Text13.TextColor3 = Color3.fromRGB(255, 255, 255)
-Text13.Text = [[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]]
-
-local togglehidenameButton = createToggleButton(framehidename, UDim2.new(0.82, 0, 0.75, 0), function(state)
+functions.createSettingSection(scrollingSettingFrame, "Hide Name", 
+[[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]],
+    function(state)
     togglehideName = state
     toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
-end, togglehideName)
+end, isLightingEnabled)
+
+local gameSettings = UserSettings():GetService("UserGameSettings")
+local slider = functions.createSlider(scrollingSettingFrame, "Volume Game", "Adjust the master volume", function(value)
+   gameSettings.MasterVolume = value / 100
+end)
+
+functions.createSlider(scrollingSettingFrame, "Graphics Quality", "Adjust the graphics quality level", function(value)
+    local player = game.Players.LocalPlayer
+    local graphicsSettings = settings().Rendering
+    local runService = game:GetService("RunService")
+    local qualityLevel = math.floor(value / 100 * 21)
+    local success, errorMessage = pcall(function()
+        graphicsSettings.QualityLevel = qualityLevel
+        graphicsSettings.EagerBulkExecution = true
+        graphicsSettings.RayBunchingMode = Enum.RayBunchingMode.Automatic
+        graphicsSettings.RayBunchingBudget = 1024
+        graphicsSettings.RayBunchingMinimumRate = 1
+        graphicsSettings.RayBunchingMaximumRate = 1024
+        graphicsSettings.RayBunchingMinimumIntensity = 0.5
+        graphicsSettings.RayBunchingMaximumIntensity = 1
+    end)
+    if success then
+        print("\27[32mGraphics settings upgraded to level " .. qualityLevel .. " successfully :)\27[0m")
+    else
+        warn("Error upgrading graphics settings: " .. errorMessage)
+    end
+    settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness
+    settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled
+    settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentMappingMode = Enum.AutoConvertEnvironmentMappingMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentThrottlingMode = Enum.AutoConvertEnvironmentThrottlingMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentSizeMode = Enum.AutoConvertEnvironmentSizeMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentResolutionMode = Enum.AutoConvertEnvironmentResolutionMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentRoughnessMode = Enum.AutoConvertEnvironmentRoughnessMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentBiasMode = Enum.AutoConvertEnvironmentBiasMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled
+    runService.Heartbeat:Connect(function()
+        settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness
+        settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled
+        settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentMappingMode = Enum.AutoConvertEnvironmentMappingMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentThrottlingMode = Enum.AutoConvertEnvironmentThrottlingMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentSizeMode = Enum.AutoConvertEnvironmentSizeMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentResolutionMode = Enum.AutoConvertEnvironmentResolutionMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentRoughnessMode = Enum.AutoConvertEnvironmentRoughnessMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentBiasMode = Enum.AutoConvertEnvironmentBiasMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled
+    end)
+end)
+
+local activeFrame = nil
+
+functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
+    if activeFrame then
+        return
+    end
+
+    local Frames = Instance.new("Frame", ScreenGui)
+    activeFrame = Frames -- กำหนด UI ให้กับ activeFrame
+    Frames.Size = UDim2.new(0, 0, 0, 0)
+    Frames.BackgroundColor3 = Configs_HUB.Cor_Options
+    Frames.Position = UDim2.new(0.25, 0, 0.25, 0)
+    Frames.BackgroundTransparency = 0
+    Frames.Visible = false
+
+    local titleLabel = Instance.new("TextLabel", Frames)
+    titleLabel.Size = UDim2.new(1, 0, 0.4, 0)
+    titleLabel.TextScaled = true
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Position = UDim2.new(0, 0, 0.2, 0)
+    titleLabel.TextColor3 = Configs_HUB.Cor_Text
+    titleLabel.Text = "Are you sure you want to send it?"
+
+    local Yes = Instance.new("TextButton", Frames)
+    Yes.Size = UDim2.new(0.35, 0, 0.2, 0)
+    Yes.BackgroundColor3 = Configs_HUB.Cor_Options
+    Yes.Position = UDim2.new(0.07, 0, 0.75, 0)
+    Yes.TextScaled = true
+    Yes.TextColor3 = Configs_HUB.Cor_Text
+    Yes.Font = Configs_HUB.Text_Font
+    Yes.Text = "Yes"
+    Yes.Active = true
+
+    local No = Instance.new("TextButton", Frames)
+    No.Size = UDim2.new(0.33, 0, 0.2, 0)
+    No.BackgroundColor3 = Configs_HUB.Cor_Options
+    No.Position = UDim2.new(0.6, 0, 0.75, 0)
+    No.TextScaled = true
+    No.TextColor3 = Configs_HUB.Cor_Text
+    No.Font = Configs_HUB.Text_Font
+    No.Text = "No"
+    No.Active = true
+
+    Frames.Visible = true
+    CreateTween(Frames, "Size", UDim2.new(0.5, 0, 0.5, 0), 0.5, true)
+
+    local function disableButtons()
+        Yes.Active = false
+        No.Active = false
+    end
+
+    Yes.MouseButton1Click:Connect(function()
+        disableButtons()
+
+        local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
+        local player = game.Players.LocalPlayer
+        local playerUsername = player.Name
+        local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
+        local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
+        local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
+        local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
+
+        local data = {
+            ["username"] = playerUsername,
+            ["avatar_url"] = AvatarImage,
+            ["embeds"] = {
+                {
+                    ["title"] = "Message from " .. playerUsername,
+                    ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
+                    ["color"] = 0x7289DA
+                }
+            }
+        }
+
+        local newdata = game:GetService("HttpService"):JSONEncode(data)
+        local headers = {["content-type"] = "application/json"}
+
+        local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
+
+        local success, response = pcall(function()
+            return request({
+                Url = webhookUrl,
+                Body = newdata,
+                Method = "POST",
+                Headers = headers
+            })
+        end)
+
+        if not success then
+            warn("Failed to send webhook request:", response)
+        end
+
+        CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
+        Frames:Destroy()
+        activeFrame = nil
+    end)
+
+    No.MouseButton1Click:Connect(function()
+        disableButtons()
+        
+        CreateTween(Frames, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
+        Frames:Destroy()
+        activeFrame = nil
+    end)
+end)
+
 
     local SettingButton = Instance.new("ImageButton", frame)
     SettingButton.Size = UDim2.new(0, 30, 0, 30)
@@ -3014,10 +3731,12 @@ end, togglehideName)
 
         if minimize9 then
             click1:Play()
+            functions.Size()
             frameSetting.Visible = true
             CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
         else
             click2:Play()
+            functions.Size()
             CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
             frameSetting.Visible = false
         end
@@ -3088,32 +3807,33 @@ ShiftLockButton.MouseButton1Click:Connect(function()
     end
 end)
 
+functions.ShiftLock = function(_, state)
+    if state == Enum.UserInputState.Begin then
+        ShiftLockButton:MouseButton1Click()
+    end
+end
+
+local ShiftLockAction = ContextActionService:BindAction("Shift Lock", functions.ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
-RunService.Heartbeat:Connect(function()
-    if not CoreGui:FindFirstChild(ScreenGui.Name) then
+ScreenGui.AncestryChanged:Connect(function()
+    if not ScreenGui:IsDescendantOf(game) then
         if Active then
             Player.Character.Humanoid.AutoRotate = true
             ShiftLockButton.Image = States.Off
             workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
             ShiftlockCursor.Visible = false
             pcall(function()
-                Active:Disconnect()
-                Active = nil
+               Active:Disconnect()
+               Active = nil
             end)
         end
-        
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
-                v:Destroy()
-            end
-        end
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not CoreGui:FindFirstChild(ScreenGui.Name) and ScreenGui:IsDescendantOf(game) then
         rainSound:Destroy()
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.Brightness = 2
-        Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
-        Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-        Lighting.GlobalShadows = false
         notifyfriend:Destroy()
         notifyfriendleave:Destroy()
         click1:Destroy()
@@ -3121,6 +3841,8 @@ RunService.Heartbeat:Connect(function()
         falsetoggle:Destroy()
         clicktoggle:Destroy()
         soundmusic:Destroy()
+        chorusEffect:Destroy()
+        reverbEffect:Destroy()
     end
 end)
 end
@@ -3194,6 +3916,7 @@ end
     
     local TextLabel = Create("TextLabel", Frame, {
       Size = UDim2.new(1, 0, 1, 0),
+      TextWrapped = true,
       BackgroundTransparency = 1,
       Font = Configs_HUB.Text_Font,
       TextColor3 = textcolor,
@@ -3261,6 +3984,7 @@ end
     local TextLabel = Create("TextLabel", TextButton, {
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
+      TextWrapped = true,
       Text = ButtonName,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 35, 0, 0),
@@ -3285,144 +4009,121 @@ end
     
     TextSetColor(TextLabel)
   end
-  
-  function AddToggle(parent, Configs)
+
+function AddWarningMessage(parent, Configs)
+    WarningMessage = Configs.WarningMessage
+    ImageId = Configs.ImageId
+    local WarningFrame = Create("Frame", parent, {
+        Size = UDim2.new(1, 0, 0, 41),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+    })
+    local FrameStroke = Create("UIStroke", WarningFrame, {
+        Thickness = 2,
+        Color = Color3.fromRGB(255, 165, 0),
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    })
+    local ImageLabel = Create("ImageLabel", WarningFrame, {
+        Image = ImageId,
+        Size = UDim2.new(0.125, 0, 1, 0),
+        BackgroundTransparency = 1
+    })
+    local WarningLabel = Create("TextLabel", WarningFrame, {
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextScaled = true,
+        Text = WarningMessage,
+        Size = UDim2.new(0.875, 0, 1, 0),
+        Position = UDim2.new(0.125, 0, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
+    })TextSetColor(WarningLabel)
+end
+
+function AddToggle(parent, Configs)
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      Text = "",
-      AutoButtonColor = false
-    })Corner(TextButton)Stroke(TextButton)
+        Size = UDim2.new(1, 0, 0, 25),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame",
+        Text = "",
+        AutoButtonColor = false
+    })
+    Corner(TextButton)
+    Stroke(TextButton)
     
     local TextLabel = Create("TextLabel", TextButton, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = ToggleName,
-      Size = UDim2.new(1, 0, 1, 0),
-      Position = UDim2.new(0, 35, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextWrapped = true,
+        Text = ToggleName,
+        Size = UDim2.new(1, 0, 1, 0),
+        Position = UDim2.new(0, 35, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
     })
     
     local Frame1 = Create("Frame", TextButton, {
-      Size = UDim2.new(0, 25, 0, 15),
-      Position = UDim2.new(0, 5, 0, 5),
-      BackgroundTransparency = 1,
-    })Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
+        Size = UDim2.new(0, 25, 0, 15),
+        Position = UDim2.new(0, 5, 0, 5),
+        BackgroundTransparency = 1,
+    })
+    Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
     local Stroke = Stroke(Frame1, {Thickness = 2})
     
     local Frame2 = Create("Frame", Frame1, {
-      Size = UDim2.new(0, 13, 0, 13),
-      Position = UDim2.new(0, 2, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+        Size = UDim2.new(0, 13, 0, 13),
+        Position = UDim2.new(0, 2, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = Configs_HUB.Cor_Stroke
+    })
+    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
     
     local OnOff = false
     if Default then
-      OnOff = true
-      CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
-      CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-    end
-    Callback(OnOff)
-    TextButton.MouseButton1Click:Connect(function()
-      if Frame2.Position.X.Offset < 5 then
         OnOff = true
         CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        Callback(true)
-      else
+    end
+    Callback(OnOff)
+
+    local function ResetToggle()
         OnOff = false
         CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
         CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         Callback(false)
-      end
+    end
+    
+    parent.AncestryChanged:Connect(function(_, parent)
+        if not parent and OnOff then
+            ResetToggle()
+        end
+    end)
+
+    TextButton.MouseButton1Click:Connect(function()
+        if Frame2.Position.X.Offset < 5 then
+            clicktoggle:Play()
+            OnOff = true
+            CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            Callback(true)
+        else
+            falsetoggle:Play()
+            ResetToggle()
+        end
     end)
     return {Frame2, Stroke, OnOff, Callback}
-  end
-  
-  function AddMobileToggle(Configs)
-    local name = Configs.Name or "Atalho"
-    local Callback = Configs.Callback or function() end
-    local visible = Configs.Visible or false
-    
-    local Toggle_Atalho = Create("Frame", ScreenGui, {
-      Size = UDim2.new(0, 100, 0, 60),
-      Position = UDim2.new(0.8, 0, 0.8, 0),
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Draggable = true,
-      Active = true,
-      Visible = visible
-    })Corner(Toggle_Atalho)
-    
-    local TextLabel = Create("TextLabel", Toggle_Atalho, {
-      Size = UDim2.new(1, 0, 0, 20),
-      TextSize = 20,
-      Font = Configs_HUB.Text_Font,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = name,
-      BackgroundTransparency = 1
-    })
-    
-    local Button = Create("TextButton", Toggle_Atalho, {
-      Size = UDim2.new(1, 0, 0, 40),
-      Position = UDim2.new(0, 0, 0, 20),
-      BackgroundTransparency = 1,
-      Text = ""
-    })
-    
-    local Frame = Create("Frame", Button, {
-      Position = UDim2.new(0.5, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      Size = UDim2.new(1, -40, 1, -15),
-      BackgroundTransparency = 1
-    })Corner(Frame, {CornerRadius = UDim.new(2, 0)})
-    
-    local Frame2 = Create("Frame", Frame, {
-      Position = UDim2.new(0, 5, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      Size = UDim2.new(0, 17, 0, 17),
-      BackgroundTransparency = 1
-    })Corner(Frame2, {CornerRadius = UDim.new(5, 0)})
-    
-    local stroke = Stroke(Frame, {
-      Color = Color3.fromRGB(100, 100, 100),
-      Thickness = 3
-    })
-    
-    local stroke = Stroke(Frame2, {
-      Color = Color3.fromRGB(100, 100, 100),
-      Thickness = 3
-    })
-    
-    local OnOff = false
-    Callback(OnOff)
-    Button.MouseButton1Click:Connect(function()
-      if OnOff == false then
-        CreateTween(Frame2, "Position", UDim2.new(1, -22, 0.5, 0), 0.2, false)
-      else
-        CreateTween(Frame2, "Position", UDim2.new(0, 5, 0.5, 0), 0.2, false)
-      end
-      OnOff = not OnOff
-      Callback(OnOff)
-    end)
-    
-    return Toggle_Atalho
-  end
-  
+end
+
   function UpdateToggle(toggle, value)
     local Frame2 = toggle[1]
     local Stroke = toggle[2]
@@ -3462,6 +4163,7 @@ end
     local TextLabel = Create("TextButton", Frame, {
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
+      TextWrapped = true,
       Text = SliderName,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 150, 0, 0),
@@ -3577,6 +4279,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = KeybindName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 35, 0, 0),
       BackgroundTransparency = 1,
@@ -3621,6 +4324,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = TextBoxName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 150, 0, 0),
       BackgroundTransparency = 1,
@@ -3682,6 +4386,7 @@ end
       Size = UDim2.new(1, -10, 0, 25),
       Position = UDim2.new(0, 35, 0, 0),
       TextSize = 12,
+      TextWrapped = true,
       TextColor3 = Configs_HUB.Cor_Text,
       TextXAlignment = "Left",
       Text = name,
@@ -3829,6 +4534,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = DropdownName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 0, 25),
       Position = UDim2.new(0, 35, 0, 0),
       BackgroundTransparency = 1,
@@ -3994,7 +4700,106 @@ end
       AddOption(v)
     end
   end
-  
+
+function AddTextTable(parent, Configs)
+    local LabelName = Configs.Name or "Label!!"
+    local DropOnOff = false
+
+    local TextButton = Create("TextButton", parent, {
+        Size = UDim2.new(1, 0, 0, 25),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame",
+        Text = "",
+        AutoButtonColor = false
+    })
+    Corner(TextButton) 
+    Stroke(TextButton)
+
+    local TextLabel = Create("TextLabel", TextButton, {
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = LabelName,
+        TextWrapped = true,
+        Size = UDim2.new(1, 0, 0, 25),
+        Position = UDim2.new(0, 35, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
+    })
+    TextSetColor(TextLabel)
+
+    local Line = Create("Frame", TextButton, {
+        Size = UDim2.new(1, 0, 0, 1),
+        Position = UDim2.new(0, 0, 0, 25),
+        BorderSizePixel = 0,
+        BackgroundColor3 = Configs_HUB.Cor_Stroke,
+        Visible = false
+    })
+
+    local Arrow = Create("ImageLabel", TextButton, {
+        Image = "rbxassetid://6031090990",
+        Size = UDim2.new(0, 25, 0, 25),
+        Position = UDim2.new(0, 5, 0, 0),
+        BackgroundTransparency = 1
+    })
+
+    local ScrollBar = Create("ScrollingFrame", TextButton, {
+        Size = UDim2.new(1, 0, 1, -25),
+        Position = UDim2.new(0, 0, 0, 25),
+        CanvasSize = UDim2.new(),
+        ScrollingDirection = "Y",
+        AutomaticCanvasSize = "Y",
+        BackgroundTransparency = 1,
+        ScrollBarThickness = 2
+    })
+    Create("UIPadding", ScrollBar, {
+        PaddingLeft = UDim.new(0, 10),
+        PaddingRight = UDim.new(0, 10),
+        PaddingTop = UDim.new(0, 10),
+        PaddingBottom = UDim.new(0, 10)
+    })
+    Create("UIListLayout", ScrollBar, {
+        Padding = UDim.new(0, 5)
+    })
+
+  TextButton.MouseButton1Click:Connect(function()
+        local OptionSize, OptionsNumber = 25, 0
+        for _, v in pairs(ScrollBar:GetChildren()) do
+            if v:IsA("TextButton") and OptionsNumber < 5 then
+                OptionsNumber = OptionsNumber + 1
+                OptionSize = OptionSize + tonumber(v.Size.Y.Offset + 10)
+            end
+        end
+        if not DropOnOff then
+            CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, OptionSize), 0.3, false)
+            CreateTween(Arrow, "Rotation", 180, 0.3, false)
+            DropOnOff = true
+            Line.Visible = true
+        else
+            CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, 25), 0.3, false)
+            CreateTween(Arrow, "Rotation", 0, 0.3, true)
+            DropOnOff = false
+            Line.Visible = false
+        end
+    end)
+
+    local function AddMessageToTable(message)
+         local NewButton = Create("TextButton", ScrollBar, {
+         BackgroundColor3 = Configs_HUB.Cor_Hub,
+         BackgroundTransparency = 0.1,
+         Size = UDim2.new(1, 0, 0, 17),
+         TextColor3 = Configs_HUB.Cor_DarkText,
+         TextScaled = true,
+         Font = Configs_HUB.Text_Font,
+         Text = message,
+        })
+        Corner(NewButton)
+        Stroke(NewButton)
+    end
+
+    return {TextButton = TextButton, LabelName = LabelName, ScrollBar = ScrollBar, AddMessage = AddMessageToTable}
+end
+
   function AddTextLabel(parent, Configs)
     local LabelName = Configs[1] or Configs.Name or "Text Label!!"
     
@@ -4008,6 +4813,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = LabelName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 0, 25),
       Position = UDim2.new(0, 20, 0, 0),
       BackgroundTransparency = 1,
@@ -4036,6 +4842,7 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_Text,
       Text = LabelName,
+      TextWrapped = true,
       Size = UDim2.new(1, 0, 0, 25),
       BackgroundTransparency = 1,
       Font = Configs_HUB.Text_Font
