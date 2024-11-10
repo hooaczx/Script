@@ -1958,47 +1958,45 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-echoButton.MouseButton1Click:Connect(function()
-if reverbEffect then
-    if currentMode == 1 then
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        local mode = chorusModes[currentChorusMode]
-        chorusEffect.Depth = mode.depth
-        chorusEffect.Rate = mode.rate
-        chorusEffect.Enabled = mode.name ~= "Off"
-    end
-    currentMode = currentMode % #modes + 1
-    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+functions.updateReverb = function()
     local mode = modes[currentMode]
+    echoButton.Text = "Echo Mode: " .. mode.name
     reverbEffect.DecayTime = mode.decayTime
     reverbEffect.Density = mode.density
     reverbEffect.Enabled = mode.name ~= "Off"
-   end
-end)
+end
 
-chorusButton.MouseButton1Click:Connect(function()
-if chorusEffect then
-    if currentChorusMode == 1 then
-        currentMode = 1
-        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-        local mode = modes[currentMode]
-        echoButton.Text = "Echo Mode: " .. mode.name
-        reverbEffect.DecayTime = mode.decayTime
-        reverbEffect.Density = mode.density
-        reverbEffect.Enabled = mode.name ~= "Off"
-    end
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+functions.updateChorus = function()
     local mode = chorusModes[currentChorusMode]
     chorusEffect.Depth = mode.depth
     chorusEffect.Rate = mode.rate
     chorusEffect.Enabled = mode.name ~= "Off"
-   end
+end
+
+echoButton.MouseButton1Click:Connect(function()
+    if currentMode == 1 then
+        currentChorusMode = 1
+        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+        functions.updateChorus()
+    end
+    currentMode = currentMode % #modes + 1
+    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+    functions.updateReverb()
 end)
 
+chorusButton.MouseButton1Click:Connect(function()
+    if currentChorusMode == 1 then
+        currentMode = 1
+        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+        functions.updateReverb()
+    end
+    currentChorusMode = currentChorusMode % #chorusModes + 1
+    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+    functions.updateChorus()
+end)
+
+functions.updateReverb()
+functions.updateChorus()
 soundmusic.Ended:Connect(function()
     if isLooping and not isAutoPlayEnabled then
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
@@ -3561,51 +3559,56 @@ local slider = functions.createSlider(scrollingSettingFrame, "Volume Game", "Adj
    gameSettings.MasterVolume = value / 100
 end)
 
-functions.createSlider(scrollingSettingFrame, "Graphics Quality", "Adjust the graphics quality level", function(value)
+functions.createSlider(scrollingsettingmusicFrame, "Graphics Quality", "Adjust the graphics quality level", function(value)
     local player = game.Players.LocalPlayer
     local graphicsSettings = settings().Rendering
     local runService = game:GetService("RunService")
-
-    local qualityLevel = math.floor(value / 100 * 21)
-
-    pcall(function()
-        graphicsSettings.QualityLevel = qualityLevel
-    end)
     
-    pcall(function() graphicsSettings.EagerBulkExecution = true end)
-    pcall(function() graphicsSettings.RayBunchingMode = Enum.RayBunchingMode.Automatic end)
-    pcall(function() graphicsSettings.RayBunchingBudget = 1024 end)
-    pcall(function() graphicsSettings.RayBunchingMinimumRate = 1 end)
-    pcall(function() graphicsSettings.RayBunchingMaximumRate = 1024 end)
-    pcall(function() graphicsSettings.RayBunchingMinimumIntensity = 0.5 end)
-    pcall(function() graphicsSettings.RayBunchingMaximumIntensity = 1 end)
+    local qualityLevel = math.floor(value / 100 * 21)
+    
+    local success, errorMessage = pcall(function()
+        graphicsSettings.QualityLevel = qualityLevel
+        graphicsSettings.EagerBulkExecution = true
+        graphicsSettings.RayBunchingMode = Enum.RayBunchingMode.Automatic
+        graphicsSettings.RayBunchingBudget = 1024
+        graphicsSettings.RayBunchingMinimumRate = 1
+        graphicsSettings.RayBunchingMaximumRate = 1024
+        graphicsSettings.RayBunchingMinimumIntensity = 0.5
+        graphicsSettings.RayBunchingMaximumIntensity = 1
+    end)
 
-    pcall(function() settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness end)
-    pcall(function() settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentMappingMode = Enum.AutoConvertEnvironmentMappingMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentThrottlingMode = Enum.AutoConvertEnvironmentThrottlingMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentSizeMode = Enum.AutoConvertEnvironmentSizeMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentResolutionMode = Enum.AutoConvertEnvironmentResolutionMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentRoughnessMode = Enum.AutoConvertEnvironmentRoughnessMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentBiasMode = Enum.AutoConvertEnvironmentBiasMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled end)
-    pcall(function() settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled end)
+    if success then
+        print("\27[32mGraphics settings upgraded to level " .. qualityLevel .. " successfully :)\27[0m")
+    else
+        warn("Error upgrading graphics settings: " .. errorMessage)
+    end
+
+    settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness
+    settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled
+    settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentMappingMode = Enum.AutoConvertEnvironmentMappingMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentThrottlingMode = Enum.AutoConvertEnvironmentThrottlingMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentSizeMode = Enum.AutoConvertEnvironmentSizeMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentResolutionMode = Enum.AutoConvertEnvironmentResolutionMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentRoughnessMode = Enum.AutoConvertEnvironmentRoughnessMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentBiasMode = Enum.AutoConvertEnvironmentBiasMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled
+    settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled
 
     runService.Heartbeat:Connect(function()
-        pcall(function() settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness end)
-        pcall(function() settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentMappingMode = Enum.AutoConvertEnvironmentMappingMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentThrottlingMode = Enum.AutoConvertEnvironmentThrottlingMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentSizeMode = Enum.AutoConvertEnvironmentSizeMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentResolutionMode = Enum.AutoConvertEnvironmentResolutionMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentRoughnessMode = Enum.AutoConvertEnvironmentRoughnessMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentBiasMode = Enum.AutoConvertEnvironmentBiasMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled end)
-        pcall(function() settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled end)
+        settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness
+        settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled
+        settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentMappingMode = Enum.AutoConvertEnvironmentMappingMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentThrottlingMode = Enum.AutoConvertEnvironmentThrottlingMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentSizeMode = Enum.AutoConvertEnvironmentSizeMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentResolutionMode = Enum.AutoConvertEnvironmentResolutionMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentRoughnessMode = Enum.AutoConvertEnvironmentRoughnessMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentBiasMode = Enum.AutoConvertEnvironmentBiasMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled
+        settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled
     end)
 end)
 
