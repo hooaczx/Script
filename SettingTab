@@ -434,6 +434,7 @@ local Toggle = AddToggle(Main5u6, {
 getgenv().name = "Protected"
 getgenv().ProtectName = false
 local originalName = game.Players.LocalPlayer.Name
+local heartbeatConnection
 
 local function protectNameInTextLabels()
     local Plr = game.Players.LocalPlayer
@@ -468,10 +469,10 @@ local function protectNameInTextLabels()
     end)
 
     local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScrollingFrame.OffsetUndoFrame
-    local connection
-    connection = RunService.Heartbeat:Connect(function()
+    heartbeatConnection = RunService.Heartbeat:Connect(function()
         if not getgenv().ProtectName then
-            connection:Disconnect()
+            heartbeatConnection:Disconnect()
+            heartbeatConnection = nil
             return
         end
         for _, v in ipairs(leaderboard:GetDescendants()) do
@@ -488,6 +489,10 @@ local function revertNameInTextLabels()
             value.Text = value.Text:gsub(getgenv().name, originalName)
         end
     end
+    if heartbeatConnection then
+        heartbeatConnection:Disconnect()
+        heartbeatConnection = nil
+    end
 end
 
 AddTextBox(Main5u6, {
@@ -498,6 +503,7 @@ AddTextBox(Main5u6, {
   Callback = function(input)
       getgenv().name = input
       if getgenv().ProtectName then
+          revertNameInTextLabels()
           protectNameInTextLabels()
       end
   end
@@ -515,7 +521,6 @@ local ToggleWalk = AddToggle(Main5u6, {
       end
   end
 })
-
 
 local getinfo = getinfo or debug.getinfo
 local DEBUG = false
