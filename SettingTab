@@ -651,59 +651,27 @@ local function preventsitting(enable)
     end
 end
 
-local function preventsitting(enable)
-    local totalSeats = 0
-    local processedSeats = 0
-
-    for i, v in pairs(workspace:GetDescendants()) do
-        if (v.ClassName == "Seat" or v.ClassName == "VehicleSeat") and not v:FindFirstChild("SeatWeld") then
-            totalSeats = totalSeats + 1
-        end
-    end
-
-    if totalSeats == 0 then
-        SendNotification({
-            Title = "Anti Sit Progress",
-            Text = "No seats found to disable.",
-            Duration = 2
-        })
-        return
-    end
-
-    for i, v in pairs(workspace:GetDescendants()) do
-        if (v.ClassName == "Seat" or v.ClassName == "VehicleSeat") and not v:FindFirstChild("SeatWeld") then
-            v.Disabled = enable
-            processedSeats = processedSeats + 1
-            SendNotification({
-                Title = "Anti Sit Progress",
-                Text = "Processed " .. processedSeats .. "/" .. totalSeats .. " seats.",
-                Duration = 1
-            })
-        end
-    end
-
-    if processedSeats < totalSeats then
-        for i, v in pairs(workspace:GetDescendants()) do
-            if (v.ClassName == "Seat" or v.ClassName == "VehicleSeat") and not v:FindFirstChild("SeatWeld") and not v.Disabled then
-                v.Disabled = true
-                SendNotification({
-                    Title = "Anti Sit Progress",
-                    Text = "Automatically disabling remaining seat.",
-                    Duration = 1
-                })
-            end
-        end
-    end
-end
-
-local toggleValue = false
+local toggleAntiSit = false
+local heartbeatConnectionAntiSit = nil
 
 AddToggle(Main5u6, {
     Name = "Anti Sit",
     Default = false,
     Callback = function(value)
-        toggleValue = value
-        preventsitting(toggleValue)
+        toggleAntiSit = value
+        
+        if toggleAntiSit then
+            if not heartbeatConnectionAntiSit then
+                heartbeatConnectionAntiSit = RunService.Heartbeat:Connect(function()
+                    preventsitting(toggleAntiSit)
+                end)
+            end
+        else
+            if heartbeatConnectionAntiSit then
+                heartbeatConnectionAntiSit:Disconnect()
+                heartbeatConnectionAntiSit = nil
+            end
+        end
     end
 })
 
