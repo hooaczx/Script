@@ -1091,14 +1091,15 @@ local function toggleTransparency(value)
                 originalTransparency[v] = v.Transparency
             end
 
-            v.Transparency = value and 1 or originalTransparency[v]
+            v.Transparency = value and 0.5 or originalTransparency[v]
             if value then
                 if not v:FindFirstChildOfClass("SelectionBox") then
                     local outline = Instance.new("SelectionBox")
                     outline.Parent = v
                     outline.Adornee = v
-                    outline.Color3 = Color3.fromRGB(0, 255, 0)
-                    outline.LineThickness = 0.1
+                    outline.Color3 = Color3.fromRGB(255, 0, 0)
+                    outline.LineThickness = 0.04
+                    outline.Transparency = 0.7
                 end
             else
                 if v:FindFirstChildOfClass("SelectionBox") then
@@ -1120,8 +1121,9 @@ local function toggleTransparency(value)
                             local outline = Instance.new("SelectionBox")
                             outline.Parent = part
                             outline.Adornee = part
-                            outline.Color3 = Color3.fromRGB(0, 255, 0)
-                            outline.LineThickness = 0.1
+                            outline.Color3 = Color3.fromRGB(255, 0, 0)  -- เปลี่ยนสีกรอบที่นี่
+                            outline.LineThickness = 0.04  -- ปรับความหนาของกรอบที่นี่
+                            outline.Transparency = 0.7  -- ปรับความโปร่งใสของกรอบ
                         end
                     else
                         if part:FindFirstChildOfClass("SelectionBox") then
