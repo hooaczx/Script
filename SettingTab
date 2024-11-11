@@ -1067,41 +1067,39 @@ createMapRainbowEffect()
 
 local function toggleTransparency(value)
     for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("BasePart") or v:IsA("Model") or v:IsA("MeshPart") then
+        if v:IsA("BasePart") or v:IsA("MeshPart") then
             v.Transparency = value and 0.5 or 0
             if v:IsA("BasePart") or v:IsA("MeshPart") then
-                local outline = v:FindFirstChildOfClass("SelectionBox")
                 if value then
-                    if not outline then
-                        outline = Instance.new("SelectionBox")
+                    if not v:FindFirstChildOfClass("SelectionBox") then
+                        local outline = Instance.new("SelectionBox")
                         outline.Parent = v
                         outline.Adornee = v
                         outline.Color3 = Color3.fromRGB(0, 255, 0)
                         outline.LineThickness = 0.1
                     end
                 else
-                    if outline then
-                        outline:Destroy()
+                    if v:FindFirstChildOfClass("SelectionBox") then
+                        v:FindFirstChildOfClass("SelectionBox"):Destroy()
                     end
                 end
             end
-            if v:IsA("Model") then
-                for _, part in pairs(v:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.Transparency = value and 0.5 or 0
-                        local outline = part:FindFirstChildOfClass("SelectionBox")
-                        if value then
-                            if not outline then
-                                outline = Instance.new("SelectionBox")
-                                outline.Parent = part
-                                outline.Adornee = part
-                                outline.Color3 = Color3.fromRGB(0, 255, 0)
-                                outline.LineThickness = 0.1
-                            end
-                        else
-                            if outline then
-                                outline:Destroy()
-                            end
+        end
+        if v:IsA("Model") then
+            for _, part in pairs(v:GetDescendants()) do
+                if part:IsA("BasePart") or part:IsA("MeshPart") then
+                    part.Transparency = value and 0.5 or 0
+                    if value then
+                        if not part:FindFirstChildOfClass("SelectionBox") then
+                            local outline = Instance.new("SelectionBox")
+                            outline.Parent = part
+                            outline.Adornee = part
+                            outline.Color3 = Color3.fromRGB(0, 255, 0)
+                            outline.LineThickness = 0.1
+                        end
+                    else
+                        if part:FindFirstChildOfClass("SelectionBox") then
+                            part:FindFirstChildOfClass("SelectionBox"):Destroy()
                         end
                     end
                 end
