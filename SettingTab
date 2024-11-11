@@ -1065,21 +1065,24 @@ AddToggle(Main5u6, {
 
 createMapRainbowEffect()
 
+local function isPlayerCharacter(model, players)
+    for _, player in pairs(players) do
+        if player.Character == model then
+            return true
+        end
+    end
+    return false
+end
+
 local function toggleTransparency(value)
     local players = game.Players:GetPlayers()
 
     for _, v in pairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("MeshPart") then
             local parentModel = v.Parent
+
             if parentModel:IsA("Model") and parentModel:FindFirstChildOfClass("Humanoid") then
-                local isPlayerModel = false
-                for _, player in pairs(players) do
-                    if player.Character == parentModel and player.Character:FindFirstChild("HumanoidRootPart") then
-                        isPlayerModel = true
-                        break
-                    end
-                end
-                if isPlayerModel then
+                if isPlayerCharacter(parentModel, players) then
                     continue
                 end
             end
