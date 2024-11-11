@@ -659,7 +659,11 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(value)
         toggleAntiSit = value
-        
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Anti Sit",
+            Text = "true",
+            Duration = 3
+        })
         if toggleAntiSit then
             if not heartbeatConnectionAntiSit then
                 heartbeatConnectionAntiSit = RunService.Heartbeat:Connect(function()
@@ -667,6 +671,11 @@ AddToggle(Main5u6, {
                 end)
             end
         else
+          game.StarterGui:SetCore("SendNotification", {
+              Title = "Anti Sit",
+              Text = "false",
+              Duration = 3
+           })
             if heartbeatConnectionAntiSit then
                 heartbeatConnectionAntiSit:Disconnect()
                 heartbeatConnectionAntiSit = nil
