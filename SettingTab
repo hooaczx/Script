@@ -528,7 +528,15 @@ local ToggleWalk = AddToggle(Main5u6, {
   end
 })
 
-local success, errorMsg = pcall(function()
+local function safeCall(func)
+    return function(...)
+        local success, err = pcall(func, ...)
+        if not success then
+        end
+    end
+end
+
+local function setupAdonisHooks()
     local getinfo = getinfo or debug.getinfo
     local DEBUG = false
     local Hooked = {}
@@ -562,69 +570,14 @@ local success, errorMsg = pcall(function()
             end
             return coroutine.yield(coroutine.running())
         end
-        
         return Old(...)
     end))
 
     setthreadidentity(7)
+end
 
+local function setupKickBypass()
     local Players = game:GetService("Players")
-
-    local kickReasonsAdonis = {}
-    local textTable = AddTextTable(Main5u6, {Name = "log a Adonis Kick Reasons"})
-
-    local Toggle = AddToggle(Main5u6, {
-        Name = "Adonis AntiCheat Bypass",
-        Default = false,
-        Callback = function(isEnabled)
-            if isEnabled then
-                if Detected then
-                    local Old; Old = hookfunction(Detected, function(Action, Info, NoCrash)
-                        if Action ~= "_" then
-                            if DEBUG then
-                                SendDetailedNotification("Adonis AntiCheat Flagged",
-                                    "Method: " .. Action .. "\nInfo: " .. Info .. "\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
-                            end
-                            local reason = "Detected: " .. Action .. " | Info: " .. Info
-                            if not table.find(kickReasonsAdonis, reason) then
-                                table.insert(kickReasonsAdonis, reason)
-                                textTable.AddMessage(reason)
-                                SendDetailedNotification("Reason Recorded", "Kick reason has been recorded.", 3)
-                            end
-                            return nil
-                        else
-                            SendDetailedNotification("Ignored Action", "Action was ignored: " .. Action, 3)
-                        end
-                        return true
-                    end)
-                end
-
-                if Kill then
-                    local Old; Old = hookfunction(Kill, function(Info)
-                        if DEBUG then
-                            SendDetailedNotification("Adonis AntiCheat Kill Attempt",
-                                "Tried to kill (fallback): " .. Info .. "\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
-                        end
-
-                        local reason = "Kill Attempt: " .. Info
-                        if not table.find(kickReasonsAdonis, reason) then
-                            table.insert(kickReasonsAdonis, reason)
-                            textTable.AddMessage(reason)
-                            SendDetailedNotification("Reason Recorded", "Kick reason has been recorded.", 3)
-                        end
-                        return nil
-                    end)
-                end
-            else
-                if Hooked and #Hooked > 0 then
-                    for _, hookedFunc in ipairs(Hooked) do
-                        unhookfunction(hookedFunc)
-                    end
-                end
-            end
-        end
-    })
-
     local kickAttempts = {}
     local kickReasons = {}
 
@@ -674,26 +627,6 @@ local success, errorMsg = pcall(function()
                     end
                     return oldNameCall(self, ...)
                 end)
-
-                hookfunction(Players.LocalPlayer.Kick, protect(function(...)
-                    local reason = {...}
-
-                    local reasonText = tostring(reason[1])
-                    table.insert(kickAttempts, {time = os.time(), reason = reasonText})
-
-                    if not table.find(kickReasons, reasonText) then
-                        table.insert(kickReasons, reasonText)
-                        kickReasonTable.AddMessage(reasonText)
-                    end
-
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "Kick Attempt Blocked",
-                        Text = "A kick attempt was intercepted and saved.\nReason: " .. reasonText,
-                        Duration = 5
-                    })
-
-                    Players.LocalPlayer.Kick = nil
-                end))
             else
                 mt.__namecall = oldNameCall
             end
@@ -701,16 +634,14 @@ local success, errorMsg = pcall(function()
             setreadonly(mt, true)
         end
     })
-end)
-
-if not success then
-game.StarterGui:SetCore("SendNotification", {
-        Title = "Script Error in SettingTab",
-        Text = "Anti Kick and Adonis AntiCheat Bypass cannot be used",
-        Duration = 5
-    })
-    return
 end
+
+local function runScript()
+    safeCall(setupAdonisHooks)()
+    safeCall(setupKickBypass)()
+end
+
+runScript()
 
 local function preventsitting(enable)
     for i, v in pairs(workspace:GetDescendants()) do
