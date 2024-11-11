@@ -1073,8 +1073,23 @@ local function isPlayerCharacter(part, players)
     return false
 end
 
+local function recordOriginalTransparency()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") or v:IsA("MeshPart") or v:IsA("Model") then
+            if originalTransparency[v] == nil then
+                originalTransparency[v] = v.Transparency
+            end
+        end
+    end
+    isTransparencyRecorded = true
+end
+
 local function toggleTransparency(value)
     local players = game.Players:GetPlayers()
+
+    if not isTransparencyRecorded then
+        recordOriginalTransparency()
+    end
 
     for _, v in pairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("MeshPart") then
@@ -1082,19 +1097,14 @@ local function toggleTransparency(value)
                 continue
             end
 
-            if not isTransparencyRecorded then
-                originalTransparency[v] = v.Transparency
-            end
-
-            v.Transparency = value and 1 or originalTransparency[v]
+            v.Transparency = value and 0.5 or originalTransparency[v] or 0
             if value then
                 if not v:FindFirstChildOfClass("SelectionBox") then
                     local outline = Instance.new("SelectionBox")
                     outline.Parent = v
                     outline.Adornee = v
-                    outline.Color3 = Color3.fromRGB(255, 255, 255)
-                    outline.LineThickness = 0.04
-                    outline.Transparency = 0.7
+                    outline.Color3 = Color3.fromRGB(0, 255, 0)
+                    outline.LineThickness = 0.1
                 end
             else
                 if v:FindFirstChildOfClass("SelectionBox") then
@@ -1106,19 +1116,14 @@ local function toggleTransparency(value)
         if v:IsA("Model") and not v:FindFirstChildOfClass("Humanoid") then
             for _, part in pairs(v:GetDescendants()) do
                 if part:IsA("BasePart") or part:IsA("MeshPart") then
-                    if not isTransparencyRecorded then
-                        originalTransparency[part] = part.Transparency
-                    end
-
-                    part.Transparency = value and 1 or originalTransparency[part]
+                    part.Transparency = value and 0.5 or originalTransparency[part] or 0
                     if value then
                         if not part:FindFirstChildOfClass("SelectionBox") then
                             local outline = Instance.new("SelectionBox")
                             outline.Parent = part
                             outline.Adornee = part
-                            outline.Color3 = Color3.fromRGB(255, 255, 255)
-                            outline.LineThickness = 0.04
-                            outline.Transparency = 0.7
+                            outline.Color3 = Color3.fromRGB(0, 255, 0)
+                            outline.LineThickness = 0.1
                         end
                     else
                         if part:FindFirstChildOfClass("SelectionBox") then
@@ -1129,14 +1134,10 @@ local function toggleTransparency(value)
             end
         end
     end
-
-    if not isTransparencyRecorded then
-        isTransparencyRecorded = true
-    end
 end
 
 AddToggle(Main5u6, {
-    Name = "X-ray\n⚠️Lag",
+    Name = "X-ray",
     Default = false,
     Callback = function(enabled)
         transparencyEnabled = enabled
