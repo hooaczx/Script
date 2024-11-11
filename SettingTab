@@ -643,32 +643,41 @@ end
 
 runScript()
 
+local toggleAntiSit = false
+local heartbeatConnectionAntiSit = nil
+local firstRun = true
+
 local function preventsitting(enable)
     local seatsLeft = false
     for _, v in pairs(workspace:GetDescendants()) do
-        if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") and v.Disabled ~= enable then
-            v.Disabled = enable
-        end
-        if not v.Disabled then
-            seatsLeft = true
+        if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
+            if v.Disabled ~= enable then
+                v.Disabled = enable
+            end
+            if not v.Disabled then
+                seatsLeft = true
+            end
         end
     end
     return seatsLeft
 end
 
-local toggleAntiSit = false
-local heartbeatConnectionAntiSit = nil
-
 AddToggle(Main5u6, {
     Name = "Anti Sit",
     Default = false,
     Callback = function(value)
+        if firstRun then
+            firstRun = false
+            return
+        end
+
         toggleAntiSit = value
         game.StarterGui:SetCore("SendNotification", {
             Title = "Anti Sit",
             Text = tostring(value),
             Duration = 3
         })
+        
         if toggleAntiSit then
             if not heartbeatConnectionAntiSit then
                 heartbeatConnectionAntiSit = RunService.Heartbeat:Connect(function()
