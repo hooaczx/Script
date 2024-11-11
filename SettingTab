@@ -682,7 +682,7 @@ local ToggleKick = AddToggle(Main5u6, {
 
                 if not table.find(kickReasons, reasonText) then
                     table.insert(kickReasons, reasonText)
-                    kickReasonTable.AddMessage(reasonText) -- ใช้ kickReasonTable แทน
+                    kickReasonTable.AddMessage(reasonText)
                 end
 
                 game.StarterGui:SetCore("SendNotification", {
@@ -701,6 +701,28 @@ local ToggleKick = AddToggle(Main5u6, {
     end
 })
 
+local function preventsitting(enable)
+    for i, v in pairs(workspace:GetDescendants()) do
+        if (not v:FindFirstChild("SeatWeld") and (v.ClassName == "Seat" or v.ClassName == "VehicleSeat")) then
+            v.CanCollide = not enable
+        end
+    end
+end
+
+local toggleValue = false
+
+AddToggle(Main5u6, {
+    Name = "Anti Sit",
+    Default = false,
+    Callback = function(value)
+        toggleValue = value
+        preventsitting(toggleValue)
+    end
+})
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    toggleSeatPart(toggleValue)
+end)
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
