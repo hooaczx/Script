@@ -1958,44 +1958,45 @@ local chorusModes = {
 local currentMode = 1
 local currentChorusMode = 1
 
-echoButton.MouseButton1Click:Connect(function()
-    if currentMode == 1 then
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        local mode = chorusModes[currentChorusMode]
-        chorusEffect.Depth = mode.depth
-        chorusEffect.Rate = mode.rate
-        chorusEffect.Enabled = mode.name ~= "Off"
-    end
-    currentMode = currentMode % #modes + 1
-    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+functions.updateReverb = function()
+    local mode = modes[currentMode]
+    echoButton.Text = "Echo Mode: " .. mode.name
+    reverbEffect.DecayTime = mode.decayTime
+    reverbEffect.Density = mode.density
+    reverbEffect.Enabled = mode.name ~= "Off"
+end
+
+functions.updateChorus = function()
     local mode = chorusModes[currentChorusMode]
     chorusEffect.Depth = mode.depth
     chorusEffect.Rate = mode.rate
     chorusEffect.Enabled = mode.name ~= "Off"
+end
+
+echoButton.MouseButton1Click:Connect(function()
+    if currentMode == 1 then
+        currentChorusMode = 1
+        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
+        functions.updateChorus()
+    end
+    currentMode = currentMode % #modes + 1
+    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
+    functions.updateReverb()
 end)
 
 chorusButton.MouseButton1Click:Connect(function()
     if currentChorusMode == 1 then
         currentMode = 1
         echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-        local mode = modes[currentMode]
-        echoButton.Text = "Echo Mode: " .. mode.name
-        reverbEffect.DecayTime = mode.decayTime
-        reverbEffect.Density = mode.density
-        reverbEffect.Enabled = mode.name ~= "Off"
+        functions.updateReverb()
     end
     currentChorusMode = currentChorusMode % #chorusModes + 1
     chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    local mode = chorusModes[currentChorusMode]
-    chorusEffect.Depth = mode.depth
-    chorusEffect.Rate = mode.rate
-    chorusEffect.Enabled = mode.name ~= "Off"
+    functions.updateChorus()
 end)
 
-
+functions.updateReverb()
+functions.updateChorus()
 soundmusic.Ended:Connect(function()
     if isLooping and not isAutoPlayEnabled then
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
@@ -3562,7 +3563,9 @@ functions.createSlider(scrollingSettingFrame, "Graphics Quality", "Adjust the gr
     local player = game.Players.LocalPlayer
     local graphicsSettings = settings().Rendering
     local runService = game:GetService("RunService")
+    
     local qualityLevel = math.floor(value / 100 * 21)
+    
     local success, errorMessage = pcall(function()
         graphicsSettings.QualityLevel = qualityLevel
         graphicsSettings.EagerBulkExecution = true
@@ -3573,11 +3576,13 @@ functions.createSlider(scrollingSettingFrame, "Graphics Quality", "Adjust the gr
         graphicsSettings.RayBunchingMinimumIntensity = 0.5
         graphicsSettings.RayBunchingMaximumIntensity = 1
     end)
+
     if success then
         print("\27[32mGraphics settings upgraded to level " .. qualityLevel .. " successfully :)\27[0m")
     else
         warn("Error upgrading graphics settings: " .. errorMessage)
     end
+
     settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness
     settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled
     settings().Rendering.AutoConvertEncodingMode = Enum.AutoConvertEncodingMode.Enabled
@@ -3590,6 +3595,7 @@ functions.createSlider(scrollingSettingFrame, "Graphics Quality", "Adjust the gr
     settings().Rendering.AutoConvertEnvironmentNormalMode = Enum.AutoConvertEnvironmentNormalMode.Enabled
     settings().Rendering.AutoConvertEnvironmentSpecularMode = Enum.AutoConvertEnvironmentSpecularMode.Enabled
     settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled
+
     runService.Heartbeat:Connect(function()
         settings().Rendering.AutoConvertMaterialType = Enum.AutoConvertMaterialType.PBRMetallicRoughness
         settings().Rendering.AutoConvertOcclusionMode = Enum.AutoConvertOcclusionMode.Enabled
@@ -3605,6 +3611,7 @@ functions.createSlider(scrollingSettingFrame, "Graphics Quality", "Adjust the gr
         settings().Rendering.AutoConvertEnvironmentClearCoatMode = Enum.AutoConvertEnvironmentClearCoatMode.Enabled
     end)
 end)
+
 
 local activeFrame = nil
 
