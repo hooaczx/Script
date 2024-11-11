@@ -1066,25 +1066,40 @@ AddToggle(Main5u6, {
 createMapRainbowEffect()
 
 local function toggleTransparency(value)
+    local players = game.Players:GetPlayers()
+
     for _, v in pairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("MeshPart") then
-            v.Transparency = value and 0.8 or 0
-            if v:IsA("BasePart") or v:IsA("MeshPart") then
-                if value then
-                    if not v:FindFirstChildOfClass("SelectionBox") then
-                        local outline = Instance.new("SelectionBox")
-                        outline.Parent = v
-                        outline.Adornee = v
-                        outline.Color3 = Color3.fromRGB(0, 255, 0)
-                        outline.LineThickness = 0.1
+            local parentModel = v.Parent
+            if parentModel:IsA("Model") and parentModel:FindFirstChildOfClass("Humanoid") then
+                local isPlayerModel = false
+                for _, player in pairs(players) do
+                    if player.Character == parentModel then
+                        isPlayerModel = true
+                        break
                     end
-                else
-                    if v:FindFirstChildOfClass("SelectionBox") then
-                        v:FindFirstChildOfClass("SelectionBox"):Destroy()
-                    end
+                end
+                if isPlayerModel then
+                    continue
+                end
+            end
+
+            v.Transparency = value and 0.5 or 0
+            if value then
+                if not v:FindFirstChildOfClass("SelectionBox") then
+                    local outline = Instance.new("SelectionBox")
+                    outline.Parent = v
+                    outline.Adornee = v
+                    outline.Color3 = Color3.fromRGB(0, 255, 0)
+                    outline.LineThickness = 0.1
+                end
+            else
+                if v:FindFirstChildOfClass("SelectionBox") then
+                    v:FindFirstChildOfClass("SelectionBox"):Destroy()
                 end
             end
         end
+
         if v:IsA("Model") and not v:FindFirstChildOfClass("Humanoid") then
             for _, part in pairs(v:GetDescendants()) do
                 if part:IsA("BasePart") or part:IsA("MeshPart") then
