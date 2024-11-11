@@ -1064,3 +1064,54 @@ AddToggle(Main5u6, {
 })
 
 createMapRainbowEffect()
+
+local function toggleTransparency(value)
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") or v:IsA("Model") or v:IsA("MeshPart") then
+            v.Transparency = value and 0.5 or 0
+            if v:IsA("BasePart") or v:IsA("MeshPart") then
+                local outline = v:FindFirstChildOfClass("SelectionBox")
+                if value then
+                    if not outline then
+                        outline = Instance.new("SelectionBox")
+                        outline.Parent = v
+                        outline.Adornee = v
+                        outline.Color3 = Color3.fromRGB(0, 255, 0)
+                        outline.LineThickness = 0.1
+                    end
+                else
+                    if outline then
+                        outline:Destroy()
+                    end
+                end
+            end
+            if v:IsA("Model") then
+                for _, part in pairs(v:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = value and 0.5 or 0
+                        local outline = part:FindFirstChildOfClass("SelectionBox")
+                        if value then
+                            if not outline then
+                                outline = Instance.new("SelectionBox")
+                                outline.Parent = part
+                                outline.Adornee = part
+                                outline.Color3 = Color3.fromRGB(0, 255, 0)
+                                outline.LineThickness = 0.1
+                            end
+                        else
+                            if outline then
+                                outline:Destroy()
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "X-ray",
+    Default = false,
+    Callback = toggleTransparency,
+})
