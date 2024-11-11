@@ -1065,6 +1065,10 @@ AddToggle(Main5u6, {
 
 createMapRainbowEffect()
 
+local transparencyEnabled = false
+local originalTransparency = {}
+local isTransparencyRecorded = false
+
 local function isPlayerCharacter(part, players)
     for _, player in pairs(players) do
         if player.Character and part:IsDescendantOf(player.Character) then
@@ -1083,7 +1087,11 @@ local function toggleTransparency(value)
                 continue
             end
 
-            v.Transparency = value and 0.5 or 0
+            if not isTransparencyRecorded then
+                originalTransparency[v] = v.Transparency
+            end
+
+            v.Transparency = value and 0.5 or originalTransparency[v]
             if value then
                 if not v:FindFirstChildOfClass("SelectionBox") then
                     local outline = Instance.new("SelectionBox")
@@ -1102,7 +1110,11 @@ local function toggleTransparency(value)
         if v:IsA("Model") and not v:FindFirstChildOfClass("Humanoid") then
             for _, part in pairs(v:GetDescendants()) do
                 if part:IsA("BasePart") or part:IsA("MeshPart") then
-                    part.Transparency = value and 0.5 or 0
+                    if not isTransparencyRecorded then
+                        originalTransparency[part] = part.Transparency
+                    end
+
+                    part.Transparency = value and 0.5 or originalTransparency[part]
                     if value then
                         if not part:FindFirstChildOfClass("SelectionBox") then
                             local outline = Instance.new("SelectionBox")
@@ -1120,10 +1132,17 @@ local function toggleTransparency(value)
             end
         end
     end
+
+    if not isTransparencyRecorded then
+        isTransparencyRecorded = true
+    end
 end
 
 AddToggle(Main5u6, {
     Name = "X-ray",
     Default = false,
-    Callback = toggleTransparency,
+    Callback = function(enabled)
+        transparencyEnabled = enabled
+        toggleTransparency(transparencyEnabled)
+    end
 })
