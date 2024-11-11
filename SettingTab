@@ -644,11 +644,16 @@ end
 runScript()
 
 local function preventsitting(enable)
-    for i, v in pairs(workspace:GetDescendants()) do
-        if (v.ClassName == "Seat" or v.ClassName == "VehicleSeat") and not v:FindFirstChild("SeatWeld") then
+    local seatsLeft = false
+    for _, v in pairs(workspace:GetDescendants()) do
+        if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") and v.Disabled ~= enable then
             v.Disabled = enable
         end
+        if not v.Disabled then
+            seatsLeft = true
+        end
     end
+    return seatsLeft
 end
 
 local toggleAntiSit = false
@@ -661,21 +666,20 @@ AddToggle(Main5u6, {
         toggleAntiSit = value
         game.StarterGui:SetCore("SendNotification", {
             Title = "Anti Sit",
-            Text = "true",
+            Text = tostring(value),
             Duration = 3
         })
         if toggleAntiSit then
             if not heartbeatConnectionAntiSit then
                 heartbeatConnectionAntiSit = RunService.Heartbeat:Connect(function()
-                    preventsitting(toggleAntiSit)
+                    local seatsLeft = preventsitting(toggleAntiSit)
+                    if not seatsLeft then
+                        heartbeatConnectionAntiSit:Disconnect()
+                        heartbeatConnectionAntiSit = nil
+                    end
                 end)
             end
         else
-          game.StarterGui:SetCore("SendNotification", {
-              Title = "Anti Sit",
-              Text = "false",
-              Duration = 3
-           })
             if heartbeatConnectionAntiSit then
                 heartbeatConnectionAntiSit:Disconnect()
                 heartbeatConnectionAntiSit = nil
@@ -1029,7 +1033,7 @@ AddToggle(Main5u6, {
 })
 
 AddToggle(Main5u6, {
-    Name = "Map Rainbow Effect\n⚠️Lag",
+    Name = "Map Rainbow Effect",
     Default = false,
     Callback = function(value)
         if isChanging then return end
