@@ -342,9 +342,11 @@ local function setupTPWalk()
                         local direction = hum.MoveDirection
                         if rootPart.CFrame.LookVector.Y > 0.5 then
                             direction = Vector3.new(0, 1, 0)
+                        else
+                            direction = rootPart.CFrame.LookVector
                         end
                         local moveDistance = direction * (getgenv().TPSpeed and tonumber(getgenv().TPSpeed) or 1)
-                        character:TranslateBy(moveDistance)
+                        rootPart.CFrame = rootPart.CFrame + moveDistance
                     end
                 else
                     connection:Disconnect()
