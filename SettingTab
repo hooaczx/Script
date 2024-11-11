@@ -645,8 +645,8 @@ runScript()
 
 local function preventsitting(enable)
     for i, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("BasePart") and not v:FindFirstChild("SeatWeld") and (v.ClassName == "Seat" or v.ClassName == "VehicleSeat") then
-            v.CanCollide = not enable
+        if (v.ClassName == "Seat" or v.ClassName == "VehicleSeat") and not v:FindFirstChild("SeatWeld") then
+            v.Disabled = enable
         end
     end
 end
@@ -661,12 +661,6 @@ AddToggle(Main5u6, {
         preventsitting(toggleValue)
     end
 })
-
-game:GetService("RunService").Heartbeat:Connect(function()
-    if toggleValue then
-        preventHitboxCollision()
-    end
-end)
 
 local lastCF, stop, heartbeatConnection
 local Enabled = false
