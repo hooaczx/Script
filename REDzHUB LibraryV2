@@ -3439,6 +3439,52 @@ functions.createSettingSection(scrollingSettingFrame, "Notification Friends",
     end,
 notifyFriendsEnabled)
 
+functions.createSettingSection(scrollingSettingFrame, "Esp", 
+    [[Will create highlights of other players. You can see it even if it is blocked by a wall]],
+    function()
+        local Players = game:GetService("Players")
+        local RunService = game:GetService("RunService")
+        local ESPEnabled = false
+        local highlightInstances = {}
+
+        local renderSteppedConnection = RunService.RenderStepped:Connect(function()
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= Players.LocalPlayer then
+                    if ESPEnabled then
+                        if not highlightInstances[player.UserId] then
+                            local character = player.Character or player.CharacterAdded:Wait()
+                            
+                            local highlight = Instance.new("Highlight")
+                            highlight.Parent = character
+                            highlight.Adornee = character
+                            highlight.FillColor = Color3.new(0, 0, 0)
+                            highlight.FillTransparency = 0.5
+                            highlight.OutlineColor = Color3.new(1, 1, 1)
+                            highlight.OutlineTransparency = 0
+                            
+                            highlightInstances[player.UserId] = highlight
+                        end
+                    else
+                        if highlightInstances[player.UserId] then
+                            highlightInstances[player.UserId]:Destroy()
+                            highlightInstances[player.UserId] = nil
+                        end
+                    end
+                end
+            end
+        end)
+        ESPEnabled = not ESPEnabled
+        if not ESPEnabled then
+            for _, player in pairs(Players:GetPlayers()) do
+                if highlightInstances[player.UserId] then
+                    highlightInstances[player.UserId]:Destroy()
+                    highlightInstances[player.UserId] = nil
+                end
+            end
+        end
+    end
+)
+
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
 local rainSound = Instance.new("Sound", ScreenGui)
