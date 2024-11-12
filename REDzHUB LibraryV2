@@ -920,6 +920,7 @@ notify({
   function MinimizeButton(Configs)
     local functions = {}
     local player = game.Players.LocalPlayer
+    local Players = game:GetService("Players")
     local players = game:GetService("Players")
     local localPlayer = players.LocalPlayer
     local LocalPlayer = players.LocalPlayer
@@ -3129,6 +3130,7 @@ functions.Size = function()
     local contentHeight = SettingTinniLayout.AbsoluteContentSize.Y
     scrollingSettingFrame.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
 end
+
 local isClickEffectEnabled = false
 local ripples = {}
 local inputBeganConnection
@@ -3436,6 +3438,102 @@ functions.createSettingSection(scrollingSettingFrame, "Notification Friends",
         end
     end,
 notifyFriendsEnabled)
+
+local ESPEnabled = false
+local highlightInstances = {}
+local distanceConnections = {}
+local heartbeatConnection
+
+functions.createSettingSection(scrollingSettingFrame, "Esp", 
+    [[Will create highlights of other players. You can see it even if it is blocked by a wall]],
+    function(ESPEnabled)
+        local function updatePlayerInfo(player, character)
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+            local label = character:FindFirstChild("BillboardGui") and character.BillboardGui:FindFirstChild("TextLabel")
+            if label then
+                local distance = (humanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude
+                label.Text = player.Name .. " - " .. math.floor(distance) .. " studs"
+            end
+        end
+
+        local function updateESPForPlayer(player)
+            local character = player.Character or player.CharacterAdded:Wait()
+            if not character then return end
+
+            if ESPEnabled then
+                if not highlightInstances[player.UserId] then
+                    local highlight = Instance.new("Highlight")
+                    highlight.Parent = character
+                    highlight.Adornee = character
+                    highlight.FillColor = Color3.new(0, 0, 0)
+                    highlight.FillTransparency = 0.5
+                    highlight.OutlineColor = Color3.new(1, 1, 1)
+                    highlight.OutlineTransparency = 0
+                    highlightInstances[player.UserId] = highlight
+
+                    local billboardGui = Instance.new("BillboardGui")
+                    billboardGui.Parent = character:WaitForChild("Head")
+                    billboardGui.Adornee = character:WaitForChild("Head")
+                    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+                    billboardGui.StudsOffset = Vector3.new(0, 2, 0)
+                    billboardGui.AlwaysOnTop = true
+
+                    local label = Instance.new("TextLabel")
+                    label.Parent = billboardGui
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.TextColor3 = Color3.new(1, 1, 1)
+                    label.BackgroundTransparency = 1
+                    label.TextSize = 14
+                    label.TextStrokeTransparency = 0.8
+                    label.Text = player.Name
+                end
+
+                updatePlayerInfo(player, character)
+
+            else
+                if highlightInstances[player.UserId] then
+                    highlightInstances[player.UserId]:Destroy()
+                    highlightInstances[player.UserId] = nil
+                end
+            end
+        end
+
+        local function startESP()
+            heartbeatConnection = RunService.Heartbeat:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    updateESPForPlayer(player)
+                end
+            end)
+        end
+
+        local function stopESP()
+            if heartbeatConnection then
+                heartbeatConnection:Disconnect()
+                heartbeatConnection = nil
+            end
+
+            for _, player in pairs(Players:GetPlayers()) do
+                if highlightInstances[player.UserId] then
+                    highlightInstances[player.UserId]:Destroy()
+                    highlightInstances[player.UserId] = nil
+                end
+            end
+        end
+
+        if ESPEnabled then
+            startESP()
+        else
+            stopESP()
+        end
+
+        Players.PlayerAdded:Connect(function(player)
+            player.CharacterAdded:Connect(function()
+                updateESPForPlayer(player)
+            end)
+        end)
+
+    end, 
+    ESPEnabled)
 
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
