@@ -1075,7 +1075,7 @@ end
 
 local function recordOriginalTransparency()
     for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("Instance") and v:FindFirstChildWhichIsA("Transparency") then
+        if v:IsA("BasePart") or v:IsA("MeshPart") then
             if originalTransparency[v] == nil then
                 originalTransparency[v] = v.Transparency
             end
@@ -1097,14 +1097,14 @@ local function toggleTransparency(value)
                 continue
             end
 
-            v.Transparency = value and 0.5 or originalTransparency[v] or 0
+            v.Transparency = value and 1 or originalTransparency[v]
             if value then
                 if not v:FindFirstChildOfClass("SelectionBox") then
                     local outline = Instance.new("SelectionBox")
                     outline.Parent = v
                     outline.Adornee = v
-                    outline.Color3 = Color3.fromRGB(0, 255, 0)
-                    outline.LineThickness = 0.1
+                    outline.Color3 = Color3.fromRGB(255, 255, 255)
+                    outline.LineThickness = 0.04
                 end
             else
                 if v:FindFirstChildOfClass("SelectionBox") then
@@ -1116,14 +1116,14 @@ local function toggleTransparency(value)
         if v:IsA("Model") and not v:FindFirstChildOfClass("Humanoid") then
             for _, part in pairs(v:GetDescendants()) do
                 if part:IsA("BasePart") or part:IsA("MeshPart") then
-                    part.Transparency = value and 0.5 or originalTransparency[part] or 0
+                    part.Transparency = value and 1 or originalTransparency[part]
                     if value then
                         if not part:FindFirstChildOfClass("SelectionBox") then
                             local outline = Instance.new("SelectionBox")
                             outline.Parent = part
                             outline.Adornee = part
-                            outline.Color3 = Color3.fromRGB(0, 255, 0)
-                            outline.LineThickness = 0.1
+                            outline.Color3 = Color3.fromRGB(255, 255, 255)
+                            outline.LineThickness = 0.04
                         end
                     else
                         if part:FindFirstChildOfClass("SelectionBox") then
