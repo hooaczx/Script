@@ -693,6 +693,7 @@ AddToggle(Main5u6, {
 })
 
 local isEnabled = false
+local heartbeatConnection
 
 AddToggle(Main5u6, {
     Name = "Anti Fling",
@@ -700,22 +701,29 @@ AddToggle(Main5u6, {
     Callback = function(state)
         isEnabled = state
         if isEnabled then
-            for _, v in pairs(game:GetService("Players"):GetPlayers()) do
-                if v ~= player and v.Character then
-                    for _, part in pairs(v.Character:GetDescendants()) do
-                        if part:IsA("BasePart") and part.CanCollide then
-                            part.CanCollide = false
-                            part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                            part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                            part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+            heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                    if player.Character then
+                        for _, part in pairs(player.Character:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                                part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                            end
                         end
                     end
                 end
-            end
+            end)
         else
-            for _, v in pairs(game:GetService("Players"):GetPlayers()) do
-                if v ~= player and v.Character then
-                    for _, part in pairs(v.Character:GetDescendants()) do
+            if heartbeatConnection then
+                heartbeatConnection:Disconnect()
+                heartbeatConnection = nil
+            end
+
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                if player.Character then
+                    for _, part in pairs(player.Character:GetDescendants()) do
                         if part:IsA("BasePart") and not part.CanCollide then
                             part.CanCollide = true
                         end
