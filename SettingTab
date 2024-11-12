@@ -692,6 +692,26 @@ AddToggle(Main5u6, {
     end
 })
 
+local connection
+
+AddToggle(Main5u6, {
+    Name = "Anti-Idle",
+    Default = false,
+    Callback = function(state)
+        if state then
+            connection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                game:GetService("VirtualUser"):CaptureController()
+                game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+            end)
+        else
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
+        end
+    end
+})
+
 local lastCF, stop, heartbeatConnection
 local Enabled = false
 
