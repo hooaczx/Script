@@ -16,6 +16,7 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local Hooked = {}
 
 local function Create(instance, parent, props)
   local new = Instance.new(instance, parent)
@@ -917,7 +918,7 @@ notify({
       guiSize = Vector2.new(400, 70),
 })
 
-  function MinimizeButton(Configs)
+ function MinimizeButton(Configs)
     local functions = {}
     local player = game.Players.LocalPlayer
     local Players = game:GetService("Players")
@@ -3439,61 +3440,37 @@ functions.createSettingSection(scrollingSettingFrame, "Notification Friends",
     end,
 notifyFriendsEnabled)
 
-local highlightInstances = {}
-local renderSteppedConnection
-
 functions.createSettingSection(scrollingSettingFrame, "Esp", 
     [[Will create highlights of other players. You can see it even if it is blocked by a wall]],
     function(ESPEnabled)
         ESPEnabled = not ESPEnabled
-        
         if ESPEnabled then
-            renderSteppedConnection = game:GetService("RunService").RenderStepped:Connect(function()
+            game:GetService("RunService").RenderStepped:Connect(function()
                 for _, player in pairs(Players:GetPlayers()) do
                     if player ~= Players.LocalPlayer then
-                        if not highlightInstances[player.UserId] then
-                            local character = player.Character or player.CharacterAdded:Wait()
-
-                            local highlight = Instance.new("Highlight")
-                            highlight.Parent = character
-                            highlight.Adornee = character
-                            highlight.FillColor = Color3.new(0, 0, 0)
-                            highlight.FillTransparency = 0.5
-                            highlight.OutlineColor = Color3.new(1, 1, 1)
-                            highlight.OutlineTransparency = 0
-                            
-                            highlightInstances[player.UserId] = highlight
+                        local character = player.Character or player.CharacterAdded:Wait()
+                        local existingHighlight = character:FindFirstChildOfClass("Highlight")
+                        if existingHighlight then
+                            existingHighlight:Destroy()
                         end
+                        local highlight = Instance.new("Highlight")
+                        highlight.Parent = character
+                        highlight.Adornee = character
+                        highlight.FillColor = Color3.new(0, 0, 0)
+                        highlight.FillTransparency = 0.5
+                        highlight.OutlineColor = Color3.new(1, 1, 1)
+                        highlight.OutlineTransparency = 0
                     end
                 end
             end)
-
-            for _, player in pairs(Players:GetPlayers()) do
-                if player ~= Players.LocalPlayer then
-                    local character = player.Character or player.CharacterAdded:Wait()
-
-                    local highlight = Instance.new("Highlight")
-                    highlight.Parent = character
-                    highlight.Adornee = character
-                    highlight.FillColor = Color3.new(0, 0, 0)
-                    highlight.FillTransparency = 0.5
-                    highlight.OutlineColor = Color3.new(1, 1, 1)
-                    highlight.OutlineTransparency = 0
-                    
-                    highlightInstances[player.UserId] = highlight
-                end
-            end
-
         else
-            if renderSteppedConnection then
-                renderSteppedConnection:Disconnect()
-                renderSteppedConnection = nil
-            end
-
             for _, player in pairs(Players:GetPlayers()) do
-                if highlightInstances[player.UserId] then
-                    highlightInstances[player.UserId]:Destroy()
-                    highlightInstances[player.UserId] = nil
+                local character = player.Character
+                if character then
+                    local highlight = character:FindFirstChildOfClass("Highlight")
+                    if highlight then
+                        highlight:Destroy()
+                    end
                 end
             end
         end
@@ -3955,7 +3932,7 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 end
-  
+
   local ScrollBar = Create("ScrollingFrame", Menu, {
     Size = UDim2.new(0, 140, 1, -tonumber(TopBar.Size.Y.Offset + 2)),
     Position = UDim2.new(0, 0, 1, 0),
