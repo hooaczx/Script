@@ -3439,14 +3439,12 @@ functions.createSettingSection(scrollingSettingFrame, "Notification Friends",
     end,
 notifyFriendsEnabled)
 
+local highlightInstances = {}
+local renderSteppedConnection
+
 functions.createSettingSection(scrollingSettingFrame, "Esp", 
     [[Will create highlights of other players. You can see it even if it is blocked by a wall]],
-    function()
-        local Players = game:GetService("Players")
-        local highlightInstances = {}
-        local ESPEnabled = false
-        local renderSteppedConnection
-        
+    function(ESPEnabled)
         ESPEnabled = not ESPEnabled
         
         if ESPEnabled then
