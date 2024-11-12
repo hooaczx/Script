@@ -3443,13 +3443,9 @@ local ESPEnabled = false
 local highlightInstances = {}
 local heartbeatConnection
 
-functions.createSettingSection(
-    scrollingSettingFrame, 
-    "Esp", 
+functions.createSettingSection(scrollingSettingFrame, "Esp", 
     [[Will create highlights of other players. You can see it even if it is blocked by a wall]],
-    function(ESPEnabledState)
-        ESPEnabled = ESPEnabledState
-
+    function(ESPEnabled)
         if ESPEnabled then
             heartbeatConnection = RunService.Heartbeat:Connect(function()
                 for _, player in pairs(Players:GetPlayers()) do
@@ -3559,7 +3555,8 @@ functions.createSettingSection(
                 end
             end)
         end
-    end, ESPEnabled)
+    end, 
+ESPEnabled)
 
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
