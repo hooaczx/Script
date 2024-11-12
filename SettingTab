@@ -692,63 +692,36 @@ AddToggle(Main5u6, {
     end
 })
 
-local player = game:GetService("Players").LocalPlayer
-local RunService = game:GetService("RunService")
+local antiflingEnabled = false
+local antiflingConnection
 
-local isRun = false
-local connectionantifling
-
-AddToggle(Main5u6, {
-    Name = "Anti Fling",
-    Default = false,
-    Callback = function(state)
-        if state then
-            if not isRun then
-                isRun = true
-                connectionantifling = RunService.Stepped:Connect(function()
-                    for _, CoPlayer in pairs(game:GetService("Players"):GetPlayers()) do
-                        if CoPlayer ~= player and CoPlayer.Character then
-                            for _, Part in pairs(CoPlayer.Character:GetDescendants()) do
-                                if Part:IsA("BasePart") then
-                                    Part.Touched:Connect(function(hit)
-                                        if hit and hit:IsDescendantOf(CoPlayer.Character) then
-                                            hit.CanCollide = false
-                                        end
-                                    end)
-                                    if Part.CanCollide then
-                                        Part.CanCollide = false
-                                    end
-                                end
-                            end
-                            for _, Accessory in pairs(CoPlayer.Character:GetChildren()) do
-                                if Accessory:IsA("Accessory") then
-                                    for _, AccPart in pairs(Accessory:GetDescendants()) do
-                                        if AccPart:IsA("BasePart") then
-                                            AccPart.Touched:Connect(function(hit)
-                                                if hit and hit:IsDescendantOf(CoPlayer.Character) then
-                                                    hit.CanCollide = false
-                                                end
-                                            end)
-                                            if AccPart.CanCollide then
-                                                AccPart.CanCollide = false
-                                            end
-                                        end
-                                    end
-                                end
-                            end
+local function toggleAntifling(enabled)
+    if enabled and not antiflingEnabled then
+        antiflingEnabled = true
+        antiflingConnection = RunService.Stepped:Connect(function()
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= player and p.Character then
+                    for _, v in pairs(p.Character:GetDescendants()) do
+                        if v:IsA("BasePart") then
+                            v.CanCollide = false
                         end
                     end
-                end)
-            end
-        else
-            if isRun then
-                isRun = false
-                if connectionantifling then
-                    connectionantifling:Disconnect()
-                    connectionantifling = nil
                 end
             end
+        end)
+    elseif not enabled and antiflingEnabled then
+        antiflingEnabled = false
+        if antiflingConnection then
+            antiflingConnection:Disconnect()
         end
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "Enable AntiFling",
+    Default = false,
+    Callback = function(enabled)
+        toggleAntifling(enabled)
     end
 })
 
