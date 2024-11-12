@@ -131,7 +131,7 @@ local function TextSetColor(instance)
 end
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
-  Name = "REDz HUB library",
+  Name = "HUB library",
   DisplayOrder = 9999999999999,
 })
 
@@ -3163,7 +3163,7 @@ function(isClickEffectEnabled)
                     local clickSound = Instance.new("Sound")
                     clickSound.SoundId = "rbxassetid://15675059323"
                     clickSound.Parent = ScreenGui
-                    clickSound.Volume = 0.5
+                    clickSound.Volume = 0.2
                     clickSound:Play()
                     clickSound.Ended:Connect(function()
                         clickSound:Destroy()
@@ -3441,11 +3441,12 @@ local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
 local rainSound = Instance.new("Sound", ScreenGui)
 rainSound.SoundId = "rbxassetid://1516791621"
-rainSound.Volume = 1
+rainSound.Volume = 0.5
 rainSound.Looped = true
+local rainParts = {}
 
 functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
-    [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
+    [[hi]],
     function(isLightingEnabled)
         if isLightingEnabled then
             Lighting.ClockTime = 12
@@ -3497,6 +3498,38 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
 
             rainSound:Play()
 
+            local minX, maxX = -2000, 2000
+            local minZ, maxZ = -2000, 2000
+            local height = 400
+            for i = 1, 2000 do
+                local parentPart = Instance.new("Part")
+                parentPart.Size = Vector3.new(1, 1, 1)
+                parentPart.Position = Vector3.new(
+                    math.random(minX, maxX),
+                    height,
+                    math.random(minZ, maxZ)
+                )
+                parentPart.Transparency = 1
+                parentPart.Anchored = true
+                parentPart.Parent = workspace
+
+                local particleEmitter = Instance.new("ParticleEmitter")
+                particleEmitter.Speed = NumberRange.new(10, 13)
+                particleEmitter.Lifetime = NumberRange.new(2, 6)
+                particleEmitter.Rate = 10000
+                particleEmitter.Size = NumberSequence.new(1)
+                particleEmitter.Transparency = NumberSequence.new(0.4)
+                particleEmitter.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+                particleEmitter.LightEmission = 4
+                particleEmitter.RotSpeed = NumberRange.new(50, 100)
+                particleEmitter.VelocityInheritance = 0
+                particleEmitter.Acceleration = Vector3.new(0, -160, 0)
+                particleEmitter.SpreadAngle = Vector2.new(300, 300)
+                particleEmitter.Parent = parentPart
+
+                table.insert(rainParts, parentPart)
+            end
+
             Lighting.Ambient = Color3.fromRGB(200, 200, 200)
             Lighting.Brightness = 2.5
             Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
@@ -3516,6 +3549,11 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             end
 
             rainSound:Pause()
+
+            for _, rainPart in pairs(rainParts) do
+                rainPart:Destroy()
+            end
+            rainParts = {}
 
             Lighting.Ambient = Color3.fromRGB(255, 255, 255)
             Lighting.Brightness = 2
