@@ -1075,10 +1075,8 @@ end
 
 local function recordOriginalTransparency()
     for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("BasePart") or v:IsA("MeshPart") then
-            if originalTransparency[v] == nil then
-                originalTransparency[v] = v.Transparency
-            end
+        if (v:IsA("BasePart") or v:IsA("MeshPart")) and originalTransparency[v] == nil then
+            originalTransparency[v] = v.Transparency
         end
     end
     isTransparencyRecorded = true
@@ -1097,7 +1095,8 @@ local function toggleTransparency(value)
                 continue
             end
 
-            v.Transparency = value and 1 or originalTransparency[v]
+            v.Transparency = value and 1 or (originalTransparency[v] or 0)
+
             if value then
                 if not v:FindFirstChildOfClass("SelectionBox") then
                     local outline = Instance.new("SelectionBox")
@@ -1109,27 +1108,6 @@ local function toggleTransparency(value)
             else
                 if v:FindFirstChildOfClass("SelectionBox") then
                     v:FindFirstChildOfClass("SelectionBox"):Destroy()
-                end
-            end
-        end
-
-        if v:IsA("Model") and not v:FindFirstChildOfClass("Humanoid") then
-            for _, part in pairs(v:GetDescendants()) do
-                if part:IsA("BasePart") or part:IsA("MeshPart") then
-                    part.Transparency = value and 1 or originalTransparency[part]
-                    if value then
-                        if not part:FindFirstChildOfClass("SelectionBox") then
-                            local outline = Instance.new("SelectionBox")
-                            outline.Parent = part
-                            outline.Adornee = part
-                            outline.Color3 = Color3.fromRGB(255, 255, 255)
-                            outline.LineThickness = 0.04
-                        end
-                    else
-                        if part:FindFirstChildOfClass("SelectionBox") then
-                            part:FindFirstChildOfClass("SelectionBox"):Destroy()
-                        end
-                    end
                 end
             end
         end
