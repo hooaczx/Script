@@ -692,36 +692,37 @@ AddToggle(Main5u6, {
     end
 })
 
-local antiflingEnabled = false
-local antiflingConnection
+local isEnabled = false
 
-local function toggleAntifling(enabled)
-    if enabled and not antiflingEnabled then
-        antiflingEnabled = true
-        antiflingConnection = RunService.Stepped:Connect(function()
-            for _, p in pairs(Players:GetPlayers()) do
-                if p ~= player and p.Character then
-                    for _, v in pairs(p.Character:GetDescendants()) do
-                        if v:IsA("BasePart") then
-                            v.CanCollide = false
+AddToggle(Main5u6, {
+    Name = "Anti Fling",
+    Default = false,
+    Callback = function(state)
+        isEnabled = state
+        if isEnabled then
+            for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+                if v ~= player and v.Character then
+                    for _, part in pairs(v.Character:GetDescendants()) do
+                        if part:IsA("BasePart") and part.CanCollide then
+                            part.CanCollide = false
+                            part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                            part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                            part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
                         end
                     end
                 end
             end
-        end)
-    elseif not enabled and antiflingEnabled then
-        antiflingEnabled = false
-        if antiflingConnection then
-            antiflingConnection:Disconnect()
+        else
+            for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+                if v ~= player and v.Character then
+                    for _, part in pairs(v.Character:GetDescendants()) do
+                        if part:IsA("BasePart") and not part.CanCollide then
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
         end
-    end
-end
-
-AddToggle(Main5u6, {
-    Name = "Enable AntiFling",
-    Default = false,
-    Callback = function(enabled)
-        toggleAntifling(enabled)
     end
 })
 
