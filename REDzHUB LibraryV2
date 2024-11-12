@@ -3439,14 +3439,17 @@ functions.createSettingSection(scrollingSettingFrame, "Notification Friends",
     end,
 notifyFriendsEnabled)
 
-local highlightInstances = {}
-local ESPEnabled = false
-local renderSteppedConnection
-
 functions.createSettingSection(scrollingSettingFrame, "Esp", 
     [[Will create highlights of other players. You can see it even if it is blocked by a wall]],
-    function(ESPEnabled)
-         if ESPEnabled then
+    function()
+        local Players = game:GetService("Players")
+        local highlightInstances = {}
+        local ESPEnabled = false
+        local renderSteppedConnection
+        
+        ESPEnabled = not ESPEnabled
+        
+        if ESPEnabled then
             renderSteppedConnection = game:GetService("RunService").RenderStepped:Connect(function()
                 for _, player in pairs(Players:GetPlayers()) do
                     if player ~= Players.LocalPlayer then
@@ -3483,31 +3486,6 @@ functions.createSettingSection(scrollingSettingFrame, "Esp",
                 end
             end
 
-            Players.PlayerAdded:Connect(function(player)
-                if ESPEnabled then
-                    player.CharacterAdded:Connect(function()
-                        local character = player.Character or player.CharacterAdded:Wait()
-
-                        local highlight = Instance.new("Highlight")
-                        highlight.Parent = character
-                        highlight.Adornee = character
-                        highlight.FillColor = Color3.new(0, 0, 0)
-                        highlight.FillTransparency = 0.5
-                        highlight.OutlineColor = Color3.new(1, 1, 1)
-                        highlight.OutlineTransparency = 0
-
-                        highlightInstances[player.UserId] = highlight
-                    end)
-                end
-            end)
-
-            Players.PlayerRemoving:Connect(function(player)
-                if highlightInstances[player.UserId] then
-                    highlightInstances[player.UserId]:Destroy()
-                    highlightInstances[player.UserId] = nil
-                end
-            end)
-
         else
             if renderSteppedConnection then
                 renderSteppedConnection:Disconnect()
@@ -3521,8 +3499,8 @@ functions.createSettingSection(scrollingSettingFrame, "Esp",
                 end
             end
         end
-    end,
-ESPEnabled)
+    end
+)
 
 local Lighting = game:GetService("Lighting")
 local isLightingEnabled = false
