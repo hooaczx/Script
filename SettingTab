@@ -698,6 +698,7 @@ WarningMessage = "Anti Fling was removed due to safety concerns due to being ban
 ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
 })
 else
+local player = game:GetService("Players").LocalPlayer
 local isEnabled = false
 local heartbeatConnection
 AddToggle(Main5u6, {
@@ -707,9 +708,9 @@ AddToggle(Main5u6, {
         isEnabled = state
         if isEnabled then
             heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
-                for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                    if player.Character then
-                        for _, part in pairs(player.Character:GetDescendants()) do
+                for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
+                    if otherPlayer ~= player and otherPlayer.Character then
+                        for _, part in pairs(otherPlayer.Character:GetDescendants()) do
                             if part:IsA("BasePart") and part.CanCollide then
                                 part.CanCollide = false
                                 part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
@@ -725,10 +726,9 @@ AddToggle(Main5u6, {
                 heartbeatConnection:Disconnect()
                 heartbeatConnection = nil
             end
-
-            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                if player.Character then
-                    for _, part in pairs(player.Character:GetDescendants()) do
+            for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
+                if otherPlayer ~= player and otherPlayer.Character then
+                    for _, part in pairs(otherPlayer.Character:GetDescendants()) do
                         if part:IsA("BasePart") and not part.CanCollide then
                             part.CanCollide = true
                         end
