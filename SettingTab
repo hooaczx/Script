@@ -727,6 +727,7 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         isEnabled = state
+
         if isEnabled then
             heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
                 for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
@@ -739,6 +740,18 @@ AddToggle(Main5u6, {
                                 part.CanCollide = false
                                 part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                 part.CustomPhysicalProperties = nil
+                                
+                                if part:IsA("BasePart") then
+                                    part.CanCollide = false
+
+                                    if part.Name == "Torso" then
+                                        part.Massless = true
+                                    end
+
+                                    local vector = Vector3.new()
+                                    part.Velocity = vector
+                                    part.RotVelocity = vector
+                                end
                             end
                         end
                     end
@@ -749,6 +762,7 @@ AddToggle(Main5u6, {
                 heartbeatConnection:Disconnect()
                 heartbeatConnection = nil
             end
+
             for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character then
                     for _, part in pairs(otherPlayer.Character:GetDescendants()) do
@@ -758,6 +772,7 @@ AddToggle(Main5u6, {
                     end
                 end
             end
+
             previousRotations = {}
         end
     end
