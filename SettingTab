@@ -722,14 +722,6 @@ local function isPartInLocalPlayerCharacter(part)
 	return false
 end
 
-local function sendNotification(title, text)
-	game.StarterGui:SetCore("SendNotification", {
-		Title = title;
-		Text = text;
-		Duration = 5;
-	})
-end
-
 AddToggle(Main5u6, {
     Name = "Anti Fling",
     Default = false,
@@ -740,20 +732,15 @@ AddToggle(Main5u6, {
             heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
                 for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
                     if otherPlayer ~= player and otherPlayer.Character then
-                        local isExploiter = false
                         for _, part in pairs(otherPlayer.Character:GetDescendants()) do
                             if part:IsA("BasePart") and part.CanCollide and not isPartInLocalPlayerCharacter(part) then
                                 if isPartRotatingTooFast(part) then
                                     part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                    isExploiter = true
                                 end
                                 part.CanCollide = false
                                 part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                 part.CustomPhysicalProperties = nil
                             end
-                        end
-                        if isExploiter then
-                            sendNotification("Alert", "Fling detected from: " .. otherPlayer.Name)
                         end
                     end
                 end
@@ -879,100 +866,6 @@ AddToggle(Main5u6, {
     end
 })
 
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local tweenService = game:GetService("TweenService")
-local soundId = 1445412859
-local sound2 = 18424802758
-local effectEnabled = false
-local losthealth = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
-losthealth.SoundId = "rbxassetid://" .. soundId
-losthealth.Volume = 1
-local healthincreased = Instance.new("Sound", player:WaitForChild("PlayerScripts"))
-healthincreased.SoundId = "rbxassetid://" .. sound2
-healthincreased.Volume = 1
-
-local blurEffect = Instance.new("BlurEffect", camera)
-blurEffect.Size = 0
-
-local colorCorrectionEffect = Instance.new("ColorCorrectionEffect", camera)
-colorCorrectionEffect.TintColor = Color3.new(1, 1, 1)
-colorCorrectionEffect.Saturation = 0
-
-local overlayFrame = Instance.new("Frame")
-overlayFrame.Size = UDim2.new(1, 0, 1, 0)
-overlayFrame.Position = UDim2.new(0, 0, 0, 0)
-overlayFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-overlayFrame.BackgroundTransparency = 1
-overlayFrame.Visible = true
-overlayFrame.Parent = player:WaitForChild("PlayerGui")
-
-local function triggerHitEffect()
-    if not effectEnabled then return end
-
-    wait(0.1)
-
-    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 24}):Play()
-    wait(0.5)
-
-    tweenService:Create(blurEffect, TweenInfo.new(0.5), {Size = 0}):Play()
-    wait(0.5)
-
-    local function changeColor(isHealthIncreasing)
-        if isHealthIncreasing then
-            healthincreased:Play()
-            tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(0, 1, 0), Saturation = 0}):Play()
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Health Increased!",
-                Text = "Your health has increased.",
-                icon = "rbxassetid://78608769732362",
-                Duration = 2,
-            })
-        else
-            losthealth:Play()
-            tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 0, 0), Saturation = -1}):Play()
-            wait(0.5)
-            tweenService:Create(colorCorrectionEffect, TweenInfo.new(0.5), {TintColor = Color3.new(1, 1, 1), Saturation = 0}):Play()
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Injury Alert!",
-                Text = "You have lost health.",
-                icon = "rbxassetid://78608769732362",
-                Duration = 2,
-            })
-        end
-    end
-
-    local elapsedTime = 0
-    while elapsedTime < 1.5 do
-        changeColor(false)
-        elapsedTime = elapsedTime + 1
-    end
-end
-
-local function onHealthChanged(humanoid)
-    humanoid.HealthChanged:Connect(function(newHealth)
-        if effectEnabled then
-            if newHealth < humanoid.MaxHealth then
-                triggerHitEffect()
-            elseif newHealth > humanoid.MaxHealth then
-                changeColor(true)
-            end
-        end
-    end)
-end
-
-local function onCharacterAdded(newCharacter)
-    character = newCharacter
-    local humanoid = character:WaitForChild("Humanoid")
-    onHealthChanged(humanoid)
-end
-
-if player.Character then
-    onCharacterAdded(player.Character)
-end
-
-player.CharacterAdded:Connect(onCharacterAdded)
-
 local isBotActive = false
 
 local function startBotMovement()
@@ -1028,14 +921,6 @@ AddToggle(Main5u6, {
         if Walkwithoutendtoggle then
             Walkwithoutend()
         end
-    end
-})
-
-AddToggle(Main5u6, {
-    Name = "effect: Increase health And decrease health",
-    Default = false,
-    Callback = function(value) 
-        effectEnabled = value
     end
 })
 
