@@ -722,6 +722,14 @@ local function isPartInLocalPlayerCharacter(part)
 	return false
 end
 
+local function sendNotification(title, text)
+	game.StarterGui:SetCore("SendNotification", {
+		Title = title;
+		Text = text;
+		Duration = 5; -- Notification duration in seconds
+	})
+end
+
 AddToggle(Main5u6, {
     Name = "Anti Fling",
     Default = false,
@@ -732,27 +740,20 @@ AddToggle(Main5u6, {
             heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
                 for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
                     if otherPlayer ~= player and otherPlayer.Character then
+                        local isExploiter = false
                         for _, part in pairs(otherPlayer.Character:GetDescendants()) do
                             if part:IsA("BasePart") and part.CanCollide and not isPartInLocalPlayerCharacter(part) then
                                 if isPartRotatingTooFast(part) then
                                     part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                    isExploiter = true
                                 end
                                 part.CanCollide = false
                                 part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
                                 part.CustomPhysicalProperties = nil
-                                
-                                if part:IsA("BasePart") then
-                                    part.CanCollide = false
-
-                                    if part.Name == "Torso" then
-                                        part.Massless = true
-                                    end
-
-                                    local vector = Vector3.new()
-                                    part.Velocity = vector
-                                    part.RotVelocity = vector
-                                end
                             end
+                        end
+                        if isExploiter then
+                            sendNotification("Alert", "Fling detected from: " .. otherPlayer.Name)
                         end
                     end
                 end
