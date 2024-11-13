@@ -701,6 +701,27 @@ else
 local player = game:GetService("Players").LocalPlayer
 local isEnabled = false
 local heartbeatConnection
+local previousRotations = {}
+
+local function isPartRotatingTooFast(part)
+	if part and part:IsA("BasePart") then
+		local lastRotation = previousRotations[part] or part.Rotation
+		local currentRotation = part.Rotation
+		local rotationChange = (currentRotation - lastRotation).Magnitude
+		previousRotations[part] = currentRotation
+		return rotationChange > 5
+	end
+	return false
+end
+
+local function isPartInLocalPlayerCharacter(part)
+	local localPlayer = game.Players.LocalPlayer
+	if localPlayer and localPlayer.Character then
+		return part:IsDescendantOf(localPlayer.Character)
+	end
+	return false
+end
+
 AddToggle(Main5u6, {
     Name = "Anti Fling",
     Default = false,
@@ -711,11 +732,13 @@ AddToggle(Main5u6, {
                 for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
                     if otherPlayer ~= player and otherPlayer.Character then
                         for _, part in pairs(otherPlayer.Character:GetDescendants()) do
-                            if part:IsA("BasePart") and part.CanCollide then
+                            if part:IsA("BasePart") and part.CanCollide and not isPartInLocalPlayerCharacter(part) then
+                                if isPartRotatingTooFast(part) then
+                                    part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                end
                                 part.CanCollide = false
-                                part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
                                 part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                                part.CustomPhysicalProperties = nil
                             end
                         end
                     end
@@ -735,6 +758,7 @@ AddToggle(Main5u6, {
                     end
                 end
             end
+            previousRotations = {}
         end
     end
 })
