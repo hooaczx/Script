@@ -893,7 +893,8 @@ AddToggle(Main5u6, {
 
 createMapRainbowEffect()
 
-local char = player.Character or player.CharacterAdded:Wait()
+local plr = game:GetService("Players").LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
 
 local trail = nil
 local a0, a1
@@ -935,15 +936,17 @@ local function createTrail()
     end
 end
 
-char.CharacterAdded:Connect(function(newChar)
+local function onCharacterAdded(newChar)
     char = newChar
     if trail then
+        trail.Enabled = false
         trail.Parent = nil
+        trail = nil
     end
-    if trail then
-        createTrail()
-    end
-end)
+    createTrail()
+end
+
+plr.CharacterAdded:Connect(onCharacterAdded)
 
 AddToggle(Main5u6, {
     Name = "Trail Rainbow",
