@@ -892,3 +892,70 @@ AddToggle(Main5u6, {
 })
 
 createMapRainbowEffect()
+
+local char = player.Character or player.CharacterAdded:Wait()
+
+local trail = nil
+local a0, a1
+
+local function createTrail()
+    if not trail then
+        trail = Instance.new("Trail")
+        trail.Parent = char.HumanoidRootPart
+        local a0 = Instance.new("Attachment", char.HumanoidRootPart)
+        a0.Name = "TrailAttachment"
+        
+        local a1 = Instance.new("Attachment", char.HumanoidRootPart)
+        a1.Name = "TrailAttachment1"
+        trail.Attachment0 = a0
+        trail.Attachment1 = a1
+
+        RunService.Heartbeat:Connect(function()
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                local rootPart = char.HumanoidRootPart
+                a0.Position = Vector3.new(0, 0, 0)
+                a1.Position = Vector3.new(0, -0.2, 0)
+            end
+        end)
+        
+        local function createRainbowEffect()
+            local hue = 0
+            RunService.Heartbeat:Connect(function()
+                hue = (hue + 1) % 360
+                local colors = {}
+                for i = 0, 4 do
+                    local segmentHue = (hue + i * 72) % 360
+                    local color = Color3.fromHSV(segmentHue / 360, 1, 1)
+                    table.insert(colors, ColorSequenceKeypoint.new(i / 4, color))
+                end
+                trail.Color = ColorSequence.new(colors)
+            end)
+        end
+        createRainbowEffect()
+    end
+end
+
+player.CharacterAdded:Connect(function(newChar)
+    char = newChar
+    if trail then
+        trail.Parent = nil
+    end
+    if trail then
+        createTrail()
+    end
+end)
+
+AddToggle(Main5u6, {
+    Name = "Enable Trail",
+    Default = false,
+    Callback = function(value)
+        if value then
+            createTrail()
+            trail.Enabled = true
+        else
+            if trail then
+                trail.Enabled = false
+            end
+        end
+    end
+})
