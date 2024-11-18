@@ -412,63 +412,72 @@ local function setupAdonisHooks()
 end
 
 local function setupKickBypass()
-    local Players = game:GetService("Players")
-    local kickAttempts = {}
-    local kickReasons = {}
+local Players = game:GetService("Players")
+local kickAttempts = {}
+local kickReasons = {}
 
-    local kickReasonTable = AddTextTable(Main5u6, {Name = "log a Kick Reasons"})
+local kickReasonTable = AddTextTable(Main5u6, {Name = "log a Kick Reasons"})
 
-    local ToggleKick = AddToggle(Main5u6, {
-        Name = "Anti Kick",
-        Default = false,
-        Callback = function(isEnabled)
-            local mt = getrawmetatable(game)
-            local oldNameCall = mt.__namecall
-            local protect = newcclosure or protect_function
+local ToggleKick = AddToggle(Main5u6, {
+    Name = "Anti Kick",
+    Default = false,
+    Callback = function(isEnabled)
+        local mt = getrawmetatable(game)
+        local oldNameCall = mt.__namecall
+        local protect = newcclosure or protect_function
 
-            if not protect then
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Incompatible Exploit Warning",
-                    Text = "Your exploit does not support protection against stack trace errors, using fallback function.",
-                    Duration = 5
-                })
-                protect = function(f) return f end
-            end
+        if not protect then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Incompatible Exploit Warning",
+                Text = "Your exploit does not support protection against stack trace errors, using fallback function.",
+                Duration = 5
+            })
+            protect = function(f) return f end
+        end
 
-            setreadonly(mt, false)
+        setreadonly(mt, false)
 
-            if isEnabled then
-                mt.__namecall = protect(function(self, ...)
-                    local method = getnamecallmethod()
-                    local reason = {...}
+        if isEnabled then
+            mt.__namecall = protect(function(self, ...)
+                local method = getnamecallmethod()
+                local reason = {...}
 
-                    if method == "Kick" then
-                        local reasonText = tostring(reason[1])
-                        table.insert(kickAttempts, {time = os.time(), reason = reasonText})
+                -- Block Kick attempt
+                if method == "Kick" then
+                    local reasonText = tostring(reason[1])
+                    table.insert(kickAttempts, {time = os.time(), reason = reasonText})
 
-                        if not table.find(kickReasons, reasonText) then
-                            table.insert(kickReasons, reasonText)
-                            kickReasonTable.AddMessage(reasonText)
-                        end
+                    if not table.find(kickReasons, reasonText) then
+                        table.insert(kickReasons, reasonText)
+                        kickReasonTable.AddMessage(reasonText)
+                    end
 
-                        game.StarterGui:SetCore("SendNotification", {
-                            Title = "Kick Attempt Blocked",
-                            Text = "A kick attempt was intercepted and saved.\nReason: " .. reasonText,
-                            Duration = 5
-                        })
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Kick Attempt Blocked",
+                        Text = "A kick attempt was intercepted and saved.\nReason: " .. reasonText,
+                        Duration = 5
+                    })
 
-                        self.Kick = nil
+                    self.Kick = nil
+                    return
+                end
+                if method == "Remove" then
+                    local target = {...}[1]
+
+                    if target and (target == game.Players.LocalPlayer.Character or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)) then
                         return
                     end
-                    return oldNameCall(self, ...)
-                end)
-            else
-                mt.__namecall = oldNameCall
-            end
+                end
 
-            setreadonly(mt, true)
+                return oldNameCall(self, ...)
+            end)
+        else
+            mt.__namecall = oldNameCall
         end
-    })
+
+        setreadonly(mt, true)
+    end
+})
 end
 
 local function runScript()
