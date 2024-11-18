@@ -3598,16 +3598,14 @@ end, isLightingEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local lastKnownVolume = gameSettings.MasterVolume
-
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
     local currentVolume = gameSettings.MasterVolume
-    gameSettings.MasterVolume = currentVolume > 1 and 0 or 1
+    gameSettings.MasterVolume = (currentVolume > 0) and 0 or 1
 end)
-
 functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
 [[Notification for changes in MasterVolume from other sources. If you feel annoyed, you can turn it off.]], function(state)
-    if not state then
+    if state then
         local changeConnection
         changeConnection = RunService.Heartbeat:Connect(function()
             local currentVolume = gameSettings.MasterVolume
@@ -3621,7 +3619,11 @@ functions.createSettingSection(scrollingSettingFrame, "Volume Notifications",
                 lastKnownVolume = currentVolume
             end
         end)
-        return function() if changeConnection then changeConnection:Disconnect() end end
+        return function()
+            if changeConnection then
+                changeConnection:Disconnect()
+            end
+        end
     end
 end)
 
