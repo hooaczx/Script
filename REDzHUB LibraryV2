@@ -3599,6 +3599,7 @@ end, isLightingEnabled)
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local soundEnabled = false
 local isScriptAdjusting = false
+local lastKnownVolume = gameSettings.MasterVolume
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
     soundEnabled = not soundEnabled
@@ -3615,16 +3616,18 @@ functions.createSettingSection(scrollingSettingFrame, "Volume Notifications",
     local isNotificationEnabled = not state
     if isNotificationEnabled then
         local changeConnection
-        changeConnection = gameSettings.Changed:Connect(function(property)
-            if property == "MasterVolume" and not isScriptAdjusting then
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Volume Changed",
-                    Text = "MasterVolume has been changed to: " .. tostring(gameSettings.MasterVolume),
-                    Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150",
-                    Duration = 5,
-                })
+        changeConnection = RunService.Heartbeat:Connect(function()
+          local currentVolume = gameSettings.MasterVolume
+           if currentVolume ~= lastKnownVolume then
+                  game.StarterGui:SetCore("SendNotification", {
+                          Title = "Volume Changed";
+                          Text = "Volume has been changed to: " .. tostring(currentVolume);
+                          Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150";
+                          Duration = 3;
+                   })
+               lastKnownVolume = currentVolume
             end
-        end)
+         end)
         return function() if changeConnection then changeConnection:Disconnect() end end
     end
 end)
