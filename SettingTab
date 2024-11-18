@@ -893,56 +893,63 @@ AddToggle(Main5u6, {
 
 createMapRainbowEffect()
 
-local plr = game:GetService("Players").LocalPlayer
-local char = plr.Character or plr.CharacterAdded:Wait()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
+local plr = Players.LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
 local trail = nil
 local a0, a1
-
+local heartbeatConnectionrainbow, rainbowConnection
 local function createTrail()
     if not trail then
         trail = Instance.new("Trail")
-        trail.Parent = char.HumanoidRootPart
-        local a0 = Instance.new("Attachment", char.HumanoidRootPart)
+        trail.Parent = char:WaitForChild("HumanoidRootPart")
+        a0 = Instance.new("Attachment", char.HumanoidRootPart)
         a0.Name = "TrailAttachment"
-        
-        local a1 = Instance.new("Attachment", char.HumanoidRootPart)
+        a1 = Instance.new("Attachment", char.HumanoidRootPart)
         a1.Name = "TrailAttachment1"
         trail.Attachment0 = a0
         trail.Attachment1 = a1
-
-        RunService.Heartbeat:Connect(function()
+        heartbeatConnectionrainbow = RunService.Heartbeat:Connect(function()
             if char and char:FindFirstChild("HumanoidRootPart") then
-                local rootPart = char.HumanoidRootPart
                 a0.Position = Vector3.new(0, 0, 0)
                 a1.Position = Vector3.new(0, -0.2, 0)
             end
         end)
-        
-        local function createRainbowEffect()
-            local hue = 0
-            RunService.Heartbeat:Connect(function()
-                hue = (hue + 1) % 360
-                local colors = {}
-                for i = 0, 4 do
-                    local segmentHue = (hue + i * 72) % 360
-                    local color = Color3.fromHSV(segmentHue / 360, 1, 1)
-                    table.insert(colors, ColorSequenceKeypoint.new(i / 4, color))
-                end
-                trail.Color = ColorSequence.new(colors)
-            end)
-        end
-        createRainbowEffect()
+        local hue = 0
+        rainbowConnection = RunService.Heartbeat:Connect(function()
+            hue = (hue + 1) % 360
+            local colors = {}
+            for i = 0, 4 do
+                local segmentHue = (hue + i * 72) % 360
+                local color = Color3.fromHSV(segmentHue / 360, 1, 1)
+                table.insert(colors, ColorSequenceKeypoint.new(i / 4, color))
+            end
+            trail.Color = ColorSequence.new(colors)
+        end)
+    end
+end
+
+local function cleanupTrail()
+    if trail then
+        trail.Enabled = false
+        trail:Destroy()
+        trail = nil
+    end
+    if heartbeatConnectionrainbow then
+        heartbeatConnectionrainbow:Disconnect()
+        heartbeatConnectionrainbow = nil
+    end
+    if rainbowConnection then
+        rainbowConnection:Disconnect()
+        rainbowConnection = nil
     end
 end
 
 local function onCharacterAdded(newChar)
     char = newChar
-    if trail then
-        trail.Enabled = false
-        trail.Parent = nil
-        trail = nil
-    end
+    cleanupTrail()
     createTrail()
 end
 
@@ -956,9 +963,7 @@ AddToggle(Main5u6, {
             createTrail()
             trail.Enabled = true
         else
-            if trail then
-                trail.Enabled = false
-            end
+            cleanupTrail()
         end
     end
 })
