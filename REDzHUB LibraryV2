@@ -3597,33 +3597,32 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
 end, isLightingEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
-local soundService = game:GetService("SoundService")
 local soundEnabled = false
+local isScriptAdjusting = false
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
     soundEnabled = not soundEnabled
+    isScriptAdjusting = true
     if soundEnabled then
         gameSettings.MasterVolume = 0
     else
         gameSettings.MasterVolume = 1
     end
+    isScriptAdjusting = false
 end, soundEnabled)
-
 functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
-[[Notification for changes Is the audio from another source or not my script, If you feel annoyed, you can turn it off.]], function(state)
+[[Notification for changes in MasterVolume from other sources. If you feel annoyed, you can turn it off.]], function(state)
     local isNotificationEnabled = not state
     if isNotificationEnabled then
         local changeConnection
-        changeConnection = gameSettings.Changed:Connect(function()
-            if soundService.Volume ~= gameSettings.GameVolume and not (gameSettings.MasterVolume == 0) then
-                if not soundEnabled then
+        changeConnection = gameSettings.Changed:Connect(function(property)
+            if property == "MasterVolume" and not isScriptAdjusting then
                 game.StarterGui:SetCore("SendNotification", {
                     Title = "Volume Changed",
-                    Text = "Volume has been changed from elsewhere to: " .. tostring(soundService.Volume),
+                    Text = "MasterVolume has been changed to: " .. tostring(gameSettings.MasterVolume),
                     Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150",
                     Duration = 5,
                 })
-                end
             end
         end)
         return function() if changeConnection then changeConnection:Disconnect() end end
