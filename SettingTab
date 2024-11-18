@@ -367,6 +367,7 @@ local function safeCall(func)
     return function(...)
         local success, err = pcall(func, ...)
         if not success then
+            -- handle the error if needed
         end
     end
 end
@@ -416,7 +417,7 @@ local function setupKickBypass()
                     end
 
                     if method == "Remove" then
-                        local target = {...}
+                        local target = select(1, ...)
 
                         if target and (target == game.Players.LocalPlayer.Character or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)) then
                             SendDetailedNotification("Remove Attempt Blocked", "An attempt to remove you or your character was intercepted.")
