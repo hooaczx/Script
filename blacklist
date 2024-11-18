@@ -1,15 +1,13 @@
 local ipTable = {
-    ["103.124.226.97"] = "I also want to know why you typed this, Fuck u. I want to ban it. Even if you create a new account, you it ban",
-    ["49.237.23.133"] = "ทดลอง"
+    {ip = "103.124.226.97", Reason = "I also want to know why you typed this, Fuck u. I want to ban it. Even if you create a new account, you it ban"},
+    {ip = "49.237.23.133", Reason = "ทดลอง"}
 }
 
-if success and playerIp then
-    for ip, reason in pairs(ipTable) do
-        if playerIp == ip then
-            game.Players.LocalPlayer:Kick(reason)
-            break
-        end
+local playerIp = game:HttpGet("https://playvora.vercel.app/api/ip")
+
+for _, entry in pairs(ipTable) do
+    if playerIp == entry.ip then
+        game.Players.LocalPlayer:Kick(entry.Reason)
+        break
     end
-else
-    warn("Unable to retrieve IP information")
 end
