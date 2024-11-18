@@ -34,7 +34,197 @@ end
 
 local currentGameId = game.PlaceId
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/script1"))()
+local Toggle = AddToggle(Main5u6, {
+  Name = "Infinite Jump",
+  Default = false,
+  Callback = function(s)
+  getgenv().InfJ = s
+    game:GetService("UserInputService").JumpRequest:connect(function()
+        if InfJ == true then
+            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+        end
+    end)
+  end
+})
+
+AddTextBox(Main5u6, {
+  Name = "Number CameraZoom",
+  Default = "Enter",
+  PlaceholderText = "Enter number",
+  ClearText = true,
+  Callback = function(value)
+    getgenv().CameraZoom = tonumber(value) or 70
+  end
+})
+
+local Toggle = AddToggle(Main5u6, {
+  Name = "Camera Zoom",
+  Default = false,
+  Callback = function(state)
+    getgenv().loopZoom = state
+    local player = game:GetService("Players").LocalPlayer
+    local camera = game:GetService("Workspace").CurrentCamera
+    if camera then
+      if state then
+        if not getgenv().originalFOV then
+          getgenv().originalFOV = camera.FieldOfView
+        end
+        getgenv().zoomConnection = game:GetService("RunService").Heartbeat:Connect(function()
+          if getgenv().loopZoom then
+            pcall(function()
+              camera.FieldOfView = getgenv().originalFOV + (getgenv().CameraZoom or 0)
+            end)
+          end
+        end)
+      else
+        if getgenv().zoomConnection then
+          getgenv().zoomConnection:Disconnect()
+          getgenv().zoomConnection = nil
+        end
+        if getgenv().originalFOV then
+          camera.FieldOfView = getgenv().originalFOV
+        end
+      end
+    end
+  end
+})
+
+
+local originalWalkSpeed, originalJumpPower = 16, 50
+
+AddTextBox(Main5u6, {
+  Name = "Number WalkSpeed",
+  Default = "Enter",
+  PlaceholderText = "Enter number",
+  ClearText = true,
+  Callback = function(value)
+    local additionalSpeed = tonumber(value)
+    if additionalSpeed then
+      getgenv().Walkspeed = additionalSpeed
+    end
+  end
+})
+
+local ToggleWalk = AddToggle(Main5u6, {
+  Name = "WalkSpeed",
+  Default = false,
+  Callback = function(state)
+    getgenv().loopW = state
+    local player = game:GetService("Players").LocalPlayer
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+      if state then
+        originalWalkSpeed = humanoid.WalkSpeed
+        game:GetService("RunService").Heartbeat:Connect(function()
+          if loopW then
+            pcall(function()
+              humanoid.WalkSpeed = originalWalkSpeed + (getgenv().Walkspeed or 0)
+            end)
+          end
+        end)
+      else
+        humanoid.WalkSpeed = originalWalkSpeed
+      end
+    end
+  end
+})
+
+AddTextBox(Main5u6, {
+  Name = "Number JumpPower",
+  Default = "Enter",
+  PlaceholderText = "Enter number",
+  ClearText = true,
+  Callback = function(value)
+    local additionalJump = tonumber(value)
+    if additionalJump then
+      getgenv().Jumppower = additionalJump
+    end
+  end
+})
+
+local ToggleJump = AddToggle(Main5u6, {
+  Name = "JumpPower",
+  Default = false,
+  Callback = function(state)
+    getgenv().loopJ = state
+    local player = game:GetService("Players").LocalPlayer
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+      if state then
+        originalJumpPower = humanoid.JumpPower
+        game:GetService("RunService").Heartbeat:Connect(function()
+          if loopJ then
+            pcall(function()
+              humanoid.JumpPower = originalJumpPower + (getgenv().Jumppower or 0)
+            end)
+          end
+        end)
+      else
+        humanoid.JumpPower = originalJumpPower
+      end
+    end
+  end
+})
+
+local function setupTPWalk()
+    local runService = game:GetService("RunService")
+    local connection
+    if connection then
+        connection:Disconnect()
+    end
+    local function onCharacterAdded(character)
+        local hum = character:WaitForChild("Humanoid")
+        connection = runService.Stepped:Connect(function()
+            if getgenv().TPWalk and hum and hum.Parent then
+                if hum.Health > 0 then
+                    if hum.MoveDirection.Magnitude > 0 then
+                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
+                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                        else
+                            character:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+                else
+                    connection:Disconnect()
+                end
+            else
+                connection:Disconnect()
+            end
+        end)
+    end
+
+    player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+end
+
+AddTextBox(Main5u6, {
+    Name = "Number Tpwalk",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        if isNumber(value) then
+            getgenv().TPSpeed = tonumber(value)
+        end
+    end
+})
+
+local Toggle = AddToggle(Main5u6, {
+    Name = "Tpwalk",
+    Default = false,
+    Callback = function(s)
+        getgenv().TPWalk = s
+        if s then
+            setupTPWalk() 
+        else
+            if connection then
+                connection:Disconnect()
+            end
+        end
+    end
+})
 
 local Player = game.Players.LocalPlayer
 local originalUserId = Player.UserId
