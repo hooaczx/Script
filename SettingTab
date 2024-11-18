@@ -367,7 +367,6 @@ local function safeCall(func)
     return function(...)
         local success, err = pcall(func, ...)
         if not success then
-            -- Handle error if needed
         end
     end
 end
@@ -380,53 +379,13 @@ local function SendDetailedNotification(title, message)
     })
 end
 
-local function setupAdonisHooks()
-    local getinfo = (debug and debug.getinfo) or function() end
-    local DEBUG = false
-    local Hooked = {}
-
-    local Detected, Kill
-
-    setthreadidentity(2)
-
-    for i, v in getgc(true) do
-        if typeof(v) == "table" then
-            local DetectFunc = rawget(v, "Detected")
-            local KillFunc = rawget(v, "Kill")
-        
-            if typeof(DetectFunc) == "function" and not Detected then
-                Detected = DetectFunc
-                table.insert(Hooked, Detected)
-            end
-
-            if rawget(v, "Variables") and rawget(v, "Process") and typeof(KillFunc) == "function" and not Kill then
-                Kill = KillFunc
-                table.insert(Hooked, Kill)
-            end
-        end
-    end
-
-    local Old
-    if getrenv() and getrenv().debug then
-        Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
-            local LevelOrFunc, Info = ...
-            if Detected and LevelOrFunc == Detected then
-                if DEBUG then
-                    SendDetailedNotification("Adonis Bypass", "Adonis has been bypassed\nDetected at: " .. os.date("%Y-%m-%d %H:%M:%S"))
-                end
-                return coroutine.yield(coroutine.running())
-            end
-            return Old(...)
-        end))
-    end
-
-    setthreadidentity(7)
-end
-
 local function setupKickBypass()
     local Players = game:GetService("Players")
     local kickAttempts = {}
     local kickReasons = {}
+    local mt = getrawmetatable(game)
+    local oldNameCall = mt.__namecall
+    local protect = newcclosure or function(f) return f end
 
     local kickReasonTable = AddTextTable(Main5u6, {Name = "log a Kick Reasons"})
 
@@ -434,10 +393,6 @@ local function setupKickBypass()
         Name = "Anti Kick",
         Default = false,
         Callback = function(isEnabled)
-            local mt = getrawmetatable(game)
-            local oldNameCall = mt.__namecall
-            local protect = newcclosure or function(f) return f end
-
             setreadonly(mt, false)
 
             if isEnabled then
@@ -455,6 +410,7 @@ local function setupKickBypass()
                         end
 
                         SendDetailedNotification("Kick Attempt Blocked", "A kick attempt was intercepted and saved.\nReason: " .. reasonText)
+
                         self.Kick = nil
                         return
                     end
@@ -480,7 +436,6 @@ local function setupKickBypass()
 end
 
 local function runScript()
-    safeCall(setupAdonisHooks)()
     safeCall(setupKickBypass)()
 end
 
