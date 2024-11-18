@@ -898,11 +898,14 @@ local RunService = game:GetService("RunService")
 
 local plr = Players.LocalPlayer
 local char = plr.Character or plr.CharacterAdded:Wait()
+
 local trail = nil
 local a0, a1
 local heartbeatConnectionrainbow, rainbowConnection
+local isTrailEnabled = false
+
 local function createTrail()
-    if not trail then
+    if not trail and isTrailEnabled then
         trail = Instance.new("Trail")
         trail.Parent = char:WaitForChild("HumanoidRootPart")
         a0 = Instance.new("Attachment", char.HumanoidRootPart)
@@ -919,6 +922,7 @@ local function createTrail()
         end)
         local hue = 0
         rainbowConnection = RunService.Heartbeat:Connect(function()
+            if not isTrailEnabled then return end
             hue = (hue + 1) % 360
             local colors = {}
             for i = 0, 4 do
@@ -949,8 +953,10 @@ end
 
 local function onCharacterAdded(newChar)
     char = newChar
-    cleanupTrail()
-    createTrail()
+    if isTrailEnabled then
+        cleanupTrail()
+        createTrail()
+    end
 end
 
 plr.CharacterAdded:Connect(onCharacterAdded)
@@ -959,9 +965,12 @@ AddToggle(Main5u6, {
     Name = "Trail Rainbow",
     Default = false,
     Callback = function(value)
+        isTrailEnabled = value
         if value then
             createTrail()
-            trail.Enabled = true
+            if trail then
+                trail.Enabled = true
+            end
         else
             cleanupTrail()
         end
