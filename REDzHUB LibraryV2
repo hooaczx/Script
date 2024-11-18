@@ -3598,38 +3598,26 @@ end, isLightingEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local soundService = game:GetService("SoundService")
-local isNotificationEnabled = true
-local changeConnection
-local isSoundOn = true
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function(state)
-    isSoundOn = state
-    if isSoundOn then
-        gameSettings.MasterVolume = 0
-    else
-        gameSettings.MasterVolume = 1
-    end
+    gameSettings.MasterVolume = state and 0 or 1
 end)
 functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
-[[Notification for changes Is the audio from another source or not my script, If you feel annoyed, you can turn it off]], function(state)
-    isNotificationEnabled = not state
-    if isNotificationEnabled and not changeConnection then
+[[Turn off volume change notifications]], function(state)
+    local isNotificationEnabled = not state
+    if isNotificationEnabled then
+        local changeConnection
         changeConnection = gameSettings.Changed:Connect(function()
-            if soundService.Volume ~= gameSettings.GameVolume then
-                if not isSoundOn then
-                    local currentVolume = soundService.Volume
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "Volume Changed",
-                        Text = "Volume has been changed from elsewhere to: " .. tostring(currentVolume),
-                        Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150",
-                        Duration = 5,
-                    })
-                end
+            if soundService.Volume ~= gameSettings.GameVolume and not (gameSettings.MasterVolume == 0) then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Volume Changed",
+                    Text = "Volume has been changed from elsewhere to: " .. tostring(soundService.Volume),
+                    Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150",
+                    Duration = 5,
+                })
             end
         end)
-    elseif not isNotificationEnabled and changeConnection then
-        changeConnection:Disconnect()
-        changeConnection = nil
+        return function() if changeConnection then changeConnection:Disconnect() end end
     end
 end)
 
