@@ -3597,37 +3597,30 @@ functions.createSettingSection(scrollingSettingFrame, "Hide Name",
 end, isLightingEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
-local soundEnabled = false
-local isScriptAdjusting = false
 local lastKnownVolume = gameSettings.MasterVolume
+
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
-    soundEnabled = not soundEnabled
-    isScriptAdjusting = true
-    if soundEnabled then
-        gameSettings.MasterVolume = 0
-    else
-        gameSettings.MasterVolume = 1
-    end
-    isScriptAdjusting = false
-end, soundEnabled)
+    local currentVolume = gameSettings.MasterVolume
+    gameSettings.MasterVolume = currentVolume > 1 and 0 or 1
+end)
+
 functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
 [[Notification for changes in MasterVolume from other sources. If you feel annoyed, you can turn it off.]], function(state)
-    local isNotificationEnabled = not state
-    if isNotificationEnabled then
+    if not state then
         local changeConnection
         changeConnection = RunService.Heartbeat:Connect(function()
-          local currentVolume = gameSettings.MasterVolume
-           if currentVolume ~= lastKnownVolume then
-                  game.StarterGui:SetCore("SendNotification", {
-                          Title = "Volume Changed";
-                          Text = "Volume has been changed to: " .. tostring(currentVolume);
-                          Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150";
-                          Duration = 3;
-                   })
-               lastKnownVolume = currentVolume
+            local currentVolume = gameSettings.MasterVolume
+            if currentVolume ~= lastKnownVolume then
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Volume Changed",
+                    Text = "Volume has been changed to: " .. tostring(currentVolume),
+                    Icon = "rbxthumb://type=Asset&id=16855304544&w=150&h=150",
+                    Duration = 3,
+                })
+                lastKnownVolume = currentVolume
             end
-         end)
+        end)
         return function() if changeConnection then changeConnection:Disconnect() end end
     end
 end)
