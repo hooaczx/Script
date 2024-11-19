@@ -950,3 +950,86 @@ AddToggle(Main5u6, {
         end
     end
 })
+
+local playerGui = game:GetService("CoreGui")
+
+local Settings = {
+    ZoomTime = 0.6,
+    ZoomedAmount = 10,
+    FadeTime = 0.5
+}
+
+local oldZoom = game.Workspace.CurrentCamera.FieldOfView
+
+local function createTween(object, properties, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+    return TweenService:Create(object, tweenInfo, properties)
+end
+
+local function createZoomGui()
+    local ScreenGui = Instance.new("ScreenGui", playerGui)
+    ScreenGui.Name = "ZoomGui"
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    ScreenGui.IgnoreGuiInset = true
+
+    local zoomButton = Instance.new("ImageButton", ScreenGui)
+    zoomButton.Name = "ZoomButton"
+    zoomButton.Size = UDim2.new(0.09, 0, 0.16, 0)
+    zoomButton.Position = UDim2.new(0.79, 0, 0.55, 0)
+    zoomButton.AnchorPoint = Vector2.new(0.74, 0.5)
+    zoomButton.BackgroundTransparency = 1
+    zoomButton.ImageTransparency = 1
+    zoomButton.Image = "rbxthumb://type=Asset&id=92429393851260&w=150&h=150"
+
+    local fadeIn = createTween(zoomButton, {BackgroundTransparency = 0, ImageTransparency = 0}, Settings.FadeTime)
+    fadeIn:Play()
+
+    local function createZoom(time, amount)
+        local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut) 
+        local Tween = TweenService:Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
+        return Tween
+    end
+
+    local zoomInTween = createZoom(Settings.ZoomTime, Settings.ZoomedAmount)
+    local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
+
+    zoomButton.MouseButton1Down:Connect(function()
+        zoomInTween:Play()
+    end)
+
+    zoomButton.MouseButton1Up:Connect(function()
+        zoomOutTween:Play()
+    end)
+
+    zoomButton.MouseLeave:Connect(function()
+        zoomOutTween:Play()
+    end)
+end
+
+local function removeZoomGui()
+    local zoomGui = playerGui:FindFirstChild("ZoomGui")
+    if zoomGui then
+        local zoomButton = zoomGui:FindFirstChild("ZoomButton")
+        if zoomButton then
+            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settings.FadeTime)
+            fadeOut:Play()
+            fadeOut.Completed:Connect(function()
+                zoomGui:Destroy()
+            end)
+        else
+            zoomGui:Destroy()
+        end
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "Zoom gui",
+    Default = false,
+    Callback = function(state)
+        if state then
+            createZoomGui()
+        else
+            removeZoomGui()
+        end
+    end
+})
