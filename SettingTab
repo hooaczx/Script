@@ -363,99 +363,81 @@ local ToggleWalk = AddToggle(Main5u6, {
   end
 })
 
-local function safeCall(func)
-    return function(...)
-        local success, err = pcall(func, ...)
-        if not success then
-            warn("Error in safeCall:", err)
+local kickAttempts = {}
+local kickReasons = {}
+
+local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
+
+local ToggleKick = AddToggle(Main5u6, {
+    Name = "Anti Kick",
+    Default = false,
+    Callback = function(isEnabled)
+        local mt = getrawmetatable(game)
+        local oldNameCall = mt.__namecall
+        local protect = newcclosure or protect_function
+
+        if not protect then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Incompatible Exploit Warning",
+                Text = "Your exploit does not support stack trace protection, using fallback function.",
+                Duration = 5
+            })
+            protect = function(f) return f end
         end
-    end
-end
 
-local function setupKickBypass()
-    local Players = game:GetService("Players")
-    local kickAttempts = {}
-    local kickReasons = {}
-    local mt = getrawmetatable(game)
-    local oldNameCall = mt.__namecall
-    local protect = newcclosure or function(f) return f end
-
-    local isAntiKickEnabled = false
-
-    local kickReasonTable = AddTextTable(Main5u6, {Name = "log a Kick Reasons"})
-
-    local function enableAntiKick()
         setreadonly(mt, false)
-        mt.__namecall = protect(function(self, ...)
-            local method = getnamecallmethod()
-            local reason = {...}
 
-            if method == "Kick" then
-                local reasonText = tostring(reason[1])
-                table.insert(kickAttempts, {time = os.time(), reason = reasonText})
+        if isEnabled then
+            mt.__namecall = protect(function(self, ...)
+                local method = getnamecallmethod()
+                local args = {...}
+                local target = self
 
-                if not table.find(kickReasons, reasonText) then
-                    table.insert(kickReasons, reasonText)
-                    kickReasonTable.AddMessage(reasonText)
+                if method == "Kick" then
+                    local reasonText = tostring(args[1] or "No reason provided")
+                    table.insert(kickAttempts, {time = os.time(), reason = reasonText})
+
+                    if not table.find(kickReasons, reasonText) then
+                        table.insert(kickReasons, reasonText)
+                        pcall(function()
+                            kickReasonTable.AddMessage(reasonText)
+                        end)
+                    end
+
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Kick Attempt Blocked",
+                        Text = "A kick attempt was intercepted.\nReason: " .. reasonText,
+                        Duration = 5
+                    })
+
+                    return
                 end
 
-              game.StarterGui:SetCore("SendNotification", {
-                   Title = "Kick Attempt Blocked",
-                   Text = "A kick attempt was intercepted and saved.\nReason: " .. reasonText,
-                   Duration = 5
-              })
-
-                self.Kick = nil
-                return
-            end
-
-            if method == "Remove" then
-                local target = select(1, ...)
-
-                if target and (target == game.Players.LocalPlayer.Character or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name) or target:IsDescendantOf(game.Players.LocalPlayer)) then
-                     local removedObjectName = target.Name or "Unknown"
-                     table.insert(kickAttempts, {time = os.time(), reason = "Remove: " .. removedObjectName})
-
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Remove Attempt Blocked",
-                    Text = "An attempt to remove '" .. removedObjectName .. "' was intercepted.",
-                    Duration = 5
-                })
-                return nil
+                if method == "Remove" then
+                    if target and (target == game.Players.LocalPlayer.Character 
+                        or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) 
+                        or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name) 
+                        or target:IsDescendantOf(game.Players.LocalPlayer)) then
+                        
+                        game.StarterGui:SetCore("SendNotification", {
+                            Title = "Remove Attempt Blocked",
+                            Text = "An attempt to remove the local player or their assets was intercepted.",
+                            Duration = 5
+                        })
+                        
+                        return
+                    end
                 end
-            end
 
-            return oldNameCall(self, ...)
-        end)
-        setreadonly(mt, true)
-        isAntiKickEnabled = true
-    end
-
-    local function disableAntiKick()
-        setreadonly(mt, false)
-        mt.__namecall = oldNameCall
-        setreadonly(mt, true)
-        isAntiKickEnabled = false
-    end
-
-    local ToggleKick = AddToggle(Main5u6, {
-        Name = "Anti Kick",
-        Default = false,
-        Callback = function(isEnabled)
-            if isEnabled and not isAntiKickEnabled then
-                enableAntiKick()
-            elseif not isEnabled and isAntiKickEnabled then
-                disableAntiKick()
-            end
+                return oldNameCall(self, ...)
+            end)
+        else
+            mt.__namecall = oldNameCall
         end
-    })
-end
 
-local function runScript()
-    safeCall(setupKickBypass)()
-end
-
-runScript()
+        setreadonly(mt, true)
+    end
+})
 
 local toggleAntiSit = false
 local heartbeatConnectionAntiSit = nil
