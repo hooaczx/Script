@@ -965,36 +965,44 @@ local oldZoom = game.Workspace.CurrentCamera.FieldOfView
 local originalTransparency = {}
 local transparencySaved = false
 
+local function createTween(object, properties, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+    return TweenService:Create(object, tweenInfo, properties)
+end
+
 local function saveTransparency()
     if not transparencySaved then
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                originalTransparency[part] = part.LocalTransparencyModifier
+        for _, v in pairs(character:GetDescendants()) do
+            if v:IsA("BasePart") or v:IsA("Decal") then
+                originalTransparency[v] = v.LocalTransparencyModifier
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+                originalTransparency[v] = v.Enabled
             end
         end
         transparencySaved = true
     end
 end
 
-local function setCharacterTransparency(value)
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.LocalTransparencyModifier = value
+local function tweenCharacterTransparency(value, duration)
+    for _, v in pairs(character:GetDescendants()) do
+        if v:IsA("BasePart") or v:IsA("Decal") then
+            createTween(v, {LocalTransparencyModifier = value}, duration):Play()
+        elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            createTween(v, {Enabled = value > 0 and false or true}, duration):Play()
         end
     end
 end
 
-local function restoreTransparency()
-    for part, transparency in pairs(originalTransparency) do
-        if part:IsDescendantOf(character) then
-            part.LocalTransparencyModifier = transparency
+local function restoreTransparency(duration)
+    for v, transparency in pairs(originalTransparency) do
+        if v:IsDescendantOf(character) then
+            if v:IsA("BasePart") or v:IsA("Decal") then
+                createTween(v, {LocalTransparencyModifier = transparency}, duration):Play()
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+                createTween(v, {Enabled = transparency}, duration):Play()
+            end
         end
     end
-end
-
-local function createTween(object, properties, duration)
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-    return TweenService:Create(object, tweenInfo, properties)
 end
 
 local function createZoomGui()
@@ -1026,17 +1034,17 @@ local function createZoomGui()
 
     zoomButton.MouseButton1Down:Connect(function()
         saveTransparency()
-        setCharacterTransparency(1)
+        tweenCharacterTransparency(1, Settings.FadeTime)
         zoomInTween:Play()
     end)
 
     zoomButton.MouseButton1Up:Connect(function()
-        restoreTransparency()
+        restoreTransparency(Settings.FadeTime)
         zoomOutTween:Play()
     end)
 
     zoomButton.MouseLeave:Connect(function()
-        restoreTransparency()
+        restoreTransparency(Settings.FadeTime)
         zoomOutTween:Play()
     end)
 end
