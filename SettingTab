@@ -412,13 +412,13 @@ local function setupKickBypass()
             if method == "Remove" then
                 local target = select(1, ...)
 
-                if target and (target == game.Players.LocalPlayer.Character or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name)) then
+                if target and (target == game.Players.LocalPlayer.Character or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name) or target:IsDescendantOf(game.Players.LocalPlayer)) then
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "Remove Attempt Blocked",
                         Text = "An attempt to remove you or your character was intercepted.",
                         Duration = 5
                      })
-                    return
+                    return nil
                 end
             end
 
@@ -453,7 +453,6 @@ local function runScript()
 end
 
 runScript()
-
 
 local toggleAntiSit = false
 local heartbeatConnectionAntiSit = nil
