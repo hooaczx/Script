@@ -380,7 +380,7 @@ local function setupKickBypass()
     local oldNameCall = mt.__namecall
     local protect = newcclosure or function(f) return f end
 
-    local isAntiKickEnabled = false -- ตัวแปรสถานะเปิด/ปิด
+    local isAntiKickEnabled = false
 
     local kickReasonTable = AddTextTable(Main5u6, {Name = "log a Kick Reasons"})
 
@@ -413,12 +413,15 @@ local function setupKickBypass()
                 local target = select(1, ...)
 
                 if target and (target == game.Players.LocalPlayer.Character or target == game.Players:FindFirstChild(game.Players.LocalPlayer.Name) or target == game.Workspace:FindFirstChild(game.Players.LocalPlayer.Name) or target:IsDescendantOf(game.Players.LocalPlayer)) then
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "Remove Attempt Blocked",
-                        Text = "An attempt to remove you or your character was intercepted.",
-                        Duration = 5
-                     })
-                    return nil
+                     local removedObjectName = target.Name or "Unknown"
+                     table.insert(kickAttempts, {time = os.time(), reason = "Remove: " .. removedObjectName})
+
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Remove Attempt Blocked",
+                    Text = "An attempt to remove '" .. removedObjectName .. "' was intercepted.",
+                    Duration = 5
+                })
+                return nil
                 end
             end
 
