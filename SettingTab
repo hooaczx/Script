@@ -936,3 +936,16 @@ AddToggle(Main5u6, {
         end
     end
 })
+
+local ToggleFakeLag = false
+AddToggle(Main5u6, {
+    Name = "Fake Lag",
+    Default = false,
+    Callback = function(ToggleFakeLag)
+    if ToggleFakeLag then
+            settings():GetService("NetworkSettings").IncomingReplicationLag = 99999999999999
+        else
+            settings():GetService("NetworkSettings").IncomingReplicationLag = 0
+        end
+    end
+})
