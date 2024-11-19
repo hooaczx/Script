@@ -952,6 +952,8 @@ AddToggle(Main5u6, {
 })
 
 local playerGui = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 
 local Settings = {
     ZoomTime = 0.4,
@@ -960,6 +962,35 @@ local Settings = {
 }
 
 local oldZoom = game.Workspace.CurrentCamera.FieldOfView
+local originalTransparency = {}
+local transparencySaved = false
+
+local function saveTransparency()
+    if not transparencySaved then
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                originalTransparency[part] = part.LocalTransparencyModifier
+            end
+        end
+        transparencySaved = true
+    end
+end
+
+local function setCharacterTransparency(value)
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.LocalTransparencyModifier = value
+        end
+    end
+end
+
+local function restoreTransparency()
+    for part, transparency in pairs(originalTransparency) do
+        if part:IsDescendantOf(character) then
+            part.LocalTransparencyModifier = transparency
+        end
+    end
+end
 
 local function createTween(object, properties, duration)
     local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
@@ -994,14 +1025,18 @@ local function createZoomGui()
     local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
 
     zoomButton.MouseButton1Down:Connect(function()
+        saveTransparency()
+        setCharacterTransparency(1)
         zoomInTween:Play()
     end)
 
     zoomButton.MouseButton1Up:Connect(function()
+        restoreTransparency()
         zoomOutTween:Play()
     end)
 
     zoomButton.MouseLeave:Connect(function()
+        restoreTransparency()
         zoomOutTween:Play()
     end)
 end
