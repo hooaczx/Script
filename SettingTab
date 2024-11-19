@@ -363,7 +363,6 @@ local ToggleWalk = AddToggle(Main5u6, {
   end
 })
 
-local kickAttempts = {}
 local kickReasons = {}
 
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
@@ -431,6 +430,15 @@ local ToggleKick = AddToggle(Main5u6, {
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "Shutdown Attempt Blocked",
                         Text = "A shutdown attempt was intercepted.",
+                        Duration = 5
+                    })
+                    return
+                end
+
+                if method == "ClearAllChildren" and self == game.Players then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "ClearAllChildren Attempt Blocked",
+                        Text = "An attempt to clear all players was intercepted.",
                         Duration = 5
                     })
                     return
