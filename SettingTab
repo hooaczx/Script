@@ -409,7 +409,6 @@ local ToggleKick = AddToggle(Main5u6, {
                         Text = "A kick attempt was intercepted.\nReason: " .. reasonText,
                         Duration = 5
                     })
-
                     return
                 end
 
@@ -424,9 +423,17 @@ local ToggleKick = AddToggle(Main5u6, {
                             Text = "An attempt to remove the local player or their assets was intercepted.",
                             Duration = 5
                         })
-                        
                         return
                     end
+                end
+
+                if method == "Shutdown" then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Shutdown Attempt Blocked",
+                        Text = "A shutdown attempt was intercepted.",
+                        Duration = 5
+                    })
+                    return
                 end
 
                 return oldNameCall(self, ...)
