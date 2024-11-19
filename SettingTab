@@ -956,50 +956,56 @@ local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
 local Settings = {
-    ZoomTime = 0.4,
+    ZoomTime = 0.3,
     ZoomedAmount = 10,
-    FadeTime = 0.5
+    FadeTime = 0.3
 }
 
 local oldZoom = game.Workspace.CurrentCamera.FieldOfView
-local originalTransparency = {}
-local transparencySaved = false
+local originalState = {}
+local stateSaved = false
 
 local function createTween(object, properties, duration)
     local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
     return TweenService:Create(object, tweenInfo, properties)
 end
 
-local function saveTransparency()
-    if not transparencySaved then
+local function saveState()
+    if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
             if v:IsA("BasePart") or v:IsA("Decal") then
-                originalTransparency[v] = v.LocalTransparencyModifier
+                originalState[v] = v.LocalTransparencyModifier
             elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                originalTransparency[v] = v.Enabled
+                originalState[v] = v.Enabled
             end
         end
-        transparencySaved = true
+        stateSaved = true
     end
 end
 
-local function tweenCharacterTransparency(value, duration)
+local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("Decal") then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
-        elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-            createTween(v, {Enabled = value > 0 and false or true}, duration):Play()
         end
     end
 end
 
-local function restoreTransparency(duration)
-    for v, transparency in pairs(originalTransparency) do
+local function setGuiEnabled(enabled)
+    for _, v in pairs(character:GetDescendants()) do
+        if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            v.Enabled = enabled
+        end
+    end
+end
+
+local function restoreState(duration)
+    for v, state in pairs(originalState) do
         if v:IsDescendantOf(character) then
             if v:IsA("BasePart") or v:IsA("Decal") then
-                createTween(v, {LocalTransparencyModifier = transparency}, duration):Play()
+                createTween(v, {LocalTransparencyModifier = state}, duration):Play()
             elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                createTween(v, {Enabled = transparency}, duration):Play()
+                v.Enabled = state
             end
         end
     end
@@ -1024,7 +1030,7 @@ local function createZoomGui()
     fadeIn:Play()
 
     local function createZoom(time, amount)
-        local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut) 
+        local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
         local Tween = TweenService:Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
         return Tween
     end
@@ -1033,18 +1039,19 @@ local function createZoomGui()
     local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
 
     zoomButton.MouseButton1Down:Connect(function()
-        saveTransparency()
-        tweenCharacterTransparency(1, Settings.FadeTime)
+        saveState()
+        setCharacterTransparency(1, Settings.FadeTime)
+        setGuiEnabled(false)
         zoomInTween:Play()
     end)
 
     zoomButton.MouseButton1Up:Connect(function()
-        restoreTransparency(Settings.FadeTime)
+        restoreState(Settings.FadeTime)
         zoomOutTween:Play()
     end)
 
     zoomButton.MouseLeave:Connect(function()
-        restoreTransparency(Settings.FadeTime)
+        restoreState(Settings.FadeTime)
         zoomOutTween:Play()
     end)
 end
