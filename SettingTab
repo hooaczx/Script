@@ -1004,16 +1004,22 @@ end
 local function saveState()
     if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
-            if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
+            if (v:IsA("BasePart") or v:IsA("Decal")) then
                 originalState[v] = v.LocalTransparencyModifier
-            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(character) then
-                originalState[v] = v.Enabled
+            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
+                if v.Visible ~= nil then
+                    originalState[v] = v.Visible
+                elseif v.Enabled ~= nil then
+                    originalState[v] = v.Enabled
+                end
             end
         end
-        
+
         for _, v in pairs(playerGui:GetDescendants()) do
-            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
-                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
+                if v.Visible ~= nil then
+                    originalState[v] = v.Visible
+                elseif v.Enabled ~= nil then
                     originalState[v] = v.Enabled
                 end
             end
@@ -1023,9 +1029,27 @@ local function saveState()
     end
 end
 
+local function restoreState(duration)
+    for v, state in pairs(originalState) do
+        if v.Parent then
+            if v:IsA("BasePart") or v:IsA("Decal") then
+                createTween(v, {LocalTransparencyModifier = state}, duration):Play()
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+                if v.Visible ~= nil then
+                    v.Visible = state
+                elseif v.Enabled ~= nil then
+                    v.Enabled = state
+                end
+            end
+        else
+            originalState[v] = nil
+        end
+    end
+end
+
 local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
-        if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
+        if (v:IsA("BasePart") or v:IsA("Decal")) then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
         end
     end
@@ -1034,34 +1058,20 @@ end
 local function setGuiEnabled(enabled)
     for _, v in pairs(character:GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v:IsDescendantOf(character) then
+            if v.Visible ~= nil then
+                v.Visible = enabled
+            elseif v.Enabled ~= nil then
                 v.Enabled = enabled
             end
         end
     end
 
     for _, v in pairs(playerGui:GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v:IsDescendantOf(playerGui) then
-                if v.Name ~= "ZoomGui" then
-                    v.Enabled = enabled
-                end
-            end
-        end
-    end
-end
-
-local function restoreState(duration)
-    for v, state in pairs(originalState) do
-        if v:IsDescendantOf(character) then
-            if v:IsA("BasePart") or v:IsA("Decal") then
-                createTween(v, {LocalTransparencyModifier = state}, duration):Play()
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                v.Enabled = state
-            end
-        elseif v:IsDescendantOf(playerGui) then
-            if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                v.Enabled = state
+        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
+            if v.Visible ~= nil then
+                v.Visible = enabled
+            elseif v.Enabled ~= nil then
+                v.Enabled = enabled
             end
         end
     end
