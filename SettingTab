@@ -1005,6 +1005,11 @@ local function setGuiEnabled(enabled)
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
             if v:IsDescendantOf(character) then
                 v.Enabled = enabled
+                if enabled then
+                    v.LocalTransparencyModifier = 0
+                else
+                    v.LocalTransparencyModifier = 1
+                end
             end
         end
     end
@@ -1014,6 +1019,11 @@ local function setGuiEnabled(enabled)
             if v:IsDescendantOf(playerGui) then
                 if v.Name ~= "ZoomGui" then
                     v.Enabled = enabled
+                    if enabled then
+                        v.LocalTransparencyModifier = 0
+                    else
+                        v.LocalTransparencyModifier = 1
+                    end
                 end
             end
         end
