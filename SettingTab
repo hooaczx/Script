@@ -1001,6 +1001,7 @@ local function createTween(object, properties, duration)
     return game:GetService("TweenService"):Create(object, tweenInfo, properties)
 end
 
+
 local function saveState()
     if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
@@ -1021,10 +1022,12 @@ local function saveState()
                     originalState[v] = v.Enabled
                 elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
                     originalState[v] = v.Enabled
+                elseif (v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame")) then
+                    originalState[v] = v.Visible
                 end
             end
         end
-        
+
         stateSaved = true
     end
 end
@@ -1040,6 +1043,8 @@ local function restoreState(duration)
                 elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
                     v.Enabled = state
                 end
+            elseif v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame") then
+                v.Visible = state
             end
         else
             originalState[v] = nil
@@ -1072,6 +1077,8 @@ local function setGuiEnabled(enabled)
                 v.Enabled = enabled
             elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
                 v.Enabled = enabled
+            elseif (v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame")) then
+                v.Visible = enabled
             end
         end
     end
