@@ -95,9 +95,10 @@ AddTextBox(Main5u6, {
   PlaceholderText = "Enter zoom distance",
   ClearText = true,
   Callback = function(value)
-    local zoomValue = tonumber(value) or 0
-    game.Players.LocalPlayer.CameraMaxZoomDistance = zoomValue
-  end
+    getgenv().CameraZoom = tonumber(value) or 0
+    if getgenv().isZoomActive then
+      game.Players.LocalPlayer.CameraMaxZoomDistance = getgenv().CameraZoom
+   end
 })
 
 local ZoomToggle = AddToggle(Main5u6, {
@@ -115,7 +116,7 @@ local ZoomToggle = AddToggle(Main5u6, {
         getgenv().zoomUpdateConnection = game:GetService("RunService").Heartbeat:Connect(function()
           if getgenv().isZoomActive then
             pcall(function()
-              local zoomValue = getgenv().CameraZoomDistance or 0
+              local zoomValue = getgenv().CameraZoom or 0
               player.CameraMaxZoomDistance = zoomValue
             end)
           end
