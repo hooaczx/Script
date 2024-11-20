@@ -997,6 +997,7 @@ AddToggle(Main5u6, {
 })
 
 local playerGui = game:GetService("CoreGui")
+local StarterGui = game:GetService("StarterGui")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
@@ -1010,145 +1011,121 @@ local oldZoom = game.Workspace.CurrentCamera.FieldOfView
 local originalState = {}
 local stateSaved = false
 
+local function SendNotification(title, text, duration)
+    local success, err = pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = title or "Notification",
+            Text = text or "An error occurred.",
+            Duration = duration or 5
+        })
+    end)
+    if not success then
+        warn("Failed to send notification: " .. tostring(err))
+    end
+end
+
+local function wrapFunction(func)
+    return function(...)
+        local success, result = pcall(func, ...)
+        if not success then
+            SendNotification("Error", "An error occurred: " .. tostring(result), 5)
+            return nil, result
+        end
+        return result
+    end
+end
+
 local function createTween(object, properties, duration)
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-    return game:GetService("TweenService"):Create(object, tweenInfo, properties)
+    return wrapFunction(function()
+        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+        return game:GetService("TweenService"):Create(object, tweenInfo, properties)
+    end)()
 end
 
 local function saveState()
-    if not stateSaved then
-        for _, v in pairs(character:GetDescendants()) do
-            if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
-                originalState[v] = v.LocalTransparencyModifier
-            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(character) then
-                originalState[v] = v.Enabled
-            end
-        end
-        
-        for _, v in pairs(playerGui:GetDescendants()) do
-            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
-                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+    wrapFunction(function()
+        if not stateSaved then
+            for _, v in pairs(character:GetDescendants()) do
+                if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
+                    originalState[v] = v.LocalTransparencyModifier
+                elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(character) then
                     originalState[v] = v.Enabled
                 end
             end
+            stateSaved = true
         end
-        
-        stateSaved = true
-    end
-end
-
-local function setCharacterTransparency(value, duration)
-    for _, v in pairs(character:GetDescendants()) do
-        if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
-            createTween(v, {LocalTransparencyModifier = value}, duration):Play()
-        end
-    end
-end
-
-local function setGuiEnabled(enabled)
-    for _, v in pairs(character:GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v:IsDescendantOf(character) then
-                v.Enabled = enabled
-            end
-        end
-    end
-
-    for _, v in pairs(playerGui:GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v:IsDescendantOf(playerGui) then
-                if v.Name ~= "ZoomGui" then
-                    v.Enabled = enabled
-                end
-            end
-        end
-    end
+    end)()
 end
 
 local function restoreState(duration)
-    for v, state in pairs(originalState) do
-        if v:IsDescendantOf(character) then
+    wrapFunction(function()
+        for v, state in pairs(originalState) do
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
             elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
                 v.Enabled = state
             end
-        elseif v:IsDescendantOf(playerGui) then
-            if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                v.Enabled = state
-            end
         end
-    end
+    end)()
 end
 
 local function createZoomGui()
-    local ScreenGui = Instance.new("ScreenGui", playerGui)
-    ScreenGui.Name = "ZoomGui"
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-    ScreenGui.IgnoreGuiInset = true
+    wrapFunction(function()
+        local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+        ScreenGui.Name = "ZoomGui"
 
-    local zoomButton = Instance.new("ImageButton", ScreenGui)
-    zoomButton.Name = "ZoomButton"
-    zoomButton.Size = UDim2.new(0.09, 0, 0.16, 0)
-    zoomButton.Position = UDim2.new(0.79, 0, 0.55, 0)
-    zoomButton.AnchorPoint = Vector2.new(0.74, 0.5)
-    zoomButton.BackgroundTransparency = 1
-    zoomButton.ImageTransparency = 1
-    zoomButton.Image = "rbxthumb://type=Asset&id=92429393851260&w=150&h=150"
+        local zoomButton = Instance.new("ImageButton", ScreenGui)
+        zoomButton.Name = "ZoomButton"
+        zoomButton.Size = UDim2.new(0.09, 0, 0.16, 0)
+        zoomButton.Position = UDim2.new(0.79, 0, 0.55, 0)
+        zoomButton.BackgroundTransparency = 1
+        zoomButton.ImageTransparency = 1
+        zoomButton.Image = "rbxthumb://type=Asset&id=92429393851260&w=150&h=150"
 
-    local fadeIn = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 0}, Settings.FadeTime)
-    fadeIn:Play()
+        local fadeIn = createTween(zoomButton, {ImageTransparency = 0}, Settings.FadeTime)
+        fadeIn:Play()
 
-    local function createZoom(time, amount)
-        local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-        return game:GetService("TweenService"):Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
-    end
+        local zoomInTween = createTween(game.Workspace.CurrentCamera, {FieldOfView = Settings.ZoomedAmount}, Settings.ZoomTime)
+        local zoomOutTween = createTween(game.Workspace.CurrentCamera, {FieldOfView = oldZoom}, Settings.ZoomTime)
 
-    local zoomInTween = createZoom(Settings.ZoomTime, Settings.ZoomedAmount)
-    local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
+        zoomButton.MouseButton1Down:Connect(function()
+            saveState()
+            zoomInTween:Play()
+        end)
 
-    zoomButton.MouseButton1Down:Connect(function()
-        saveState()
-        setCharacterTransparency(1, Settings.FadeTime)
-        setGuiEnabled(false)
-        zoomInTween:Play()
-    end)
-
-    zoomButton.MouseButton1Up:Connect(function()
-        restoreState(Settings.FadeTime)
-        zoomOutTween:Play()
-    end)
-
-    zoomButton.MouseLeave:Connect(function()
-        restoreState(Settings.FadeTime)
-        zoomOutTween:Play()
-    end)
+        zoomButton.MouseButton1Up:Connect(function()
+            restoreState(Settings.FadeTime)
+            zoomOutTween:Play()
+        end)
+    end)()
 end
 
 local function removeZoomGui()
-    local zoomGui = playerGui:FindFirstChild("ZoomGui")
-    if zoomGui then
-        local zoomButton = zoomGui:FindFirstChild("ZoomButton")
-        if zoomButton then
-            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settings.FadeTime)
-            fadeOut:Play()
-            fadeOut.Completed:Connect(function()
+    wrapFunction(function()
+        local zoomGui = player.PlayerGui:FindFirstChild("ZoomGui")
+        if zoomGui then
+            local zoomButton = zoomGui:FindFirstChild("ZoomButton")
+            if zoomButton then
+                local fadeOut = createTween(zoomButton, {ImageTransparency = 1}, Settings.FadeTime)
+                fadeOut:Play()
+                fadeOut.Completed:Connect(function()
+                    zoomGui:Destroy()
+                end)
+            else
                 zoomGui:Destroy()
-            end)
-        else
-            zoomGui:Destroy()
+            end
         end
-    end
+    end)()
 end
 
 AddToggle(Main5u6, {
     Name = "Zoom gui",
     Default = false,
-    Callback = function(state)
+    Callback = wrapFunction(function(state)
         if state then
             createZoomGui()
         else
             removeZoomGui()
         end
-    end
+    end)
 })
