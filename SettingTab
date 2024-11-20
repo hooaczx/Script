@@ -1003,13 +1003,16 @@ end
 local function setGuiEnabled(enabled)
     for _, v in pairs(character:GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(character) then
+           if v.Name ~= "ZoomGui" then
             v.Enabled = enabled
         end
     end
 
     for _, v in pairs(playerGui:GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
-            v.Enabled = enabled
+            if v.Name ~= "ZoomGui" then
+                v.Enabled = enabled
+            end
         end
     end
 end
@@ -1017,13 +1020,13 @@ end
 local function restoreState(duration)
     for v, state in pairs(originalState) do
         if v:IsDescendantOf(character) then
-            if v:IsA("BasePart") or v:IsA("Decal") then
+            if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
                 v.Enabled = state
             end
         elseif v:IsDescendantOf(playerGui) then
-            if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
                 v.Enabled = state
             end
         end
@@ -1101,3 +1104,4 @@ AddToggle(Main5u6, {
         end
     end
 })
+
