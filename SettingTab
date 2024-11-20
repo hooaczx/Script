@@ -1007,7 +1007,9 @@ local function saveState()
             if (v:IsA("BasePart") or v:IsA("Decal")) then
                 originalState[v] = v.LocalTransparencyModifier
             elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-                if v.Visible ~= nil then
+                if v:IsA("BillboardGui") then
+                    originalState[v] = v.Enabled
+                elseif v.Visible ~= nil then
                     originalState[v] = v.Visible
                 elseif v.Enabled ~= nil then
                     originalState[v] = v.Enabled
@@ -1017,7 +1019,9 @@ local function saveState()
 
         for _, v in pairs(playerGui:GetDescendants()) do
             if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
-                if v.Visible ~= nil then
+                if v:IsA("BillboardGui") then
+                    originalState[v] = v.Enabled
+                elseif v.Visible ~= nil then
                     originalState[v] = v.Visible
                 elseif v.Enabled ~= nil then
                     originalState[v] = v.Enabled
@@ -1035,7 +1039,9 @@ local function restoreState(duration)
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
             elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                if v.Visible ~= nil then
+                if v:IsA("BillboardGui") then
+                    v.Enabled = state  -- Use Enabled for BillboardGui
+                elseif v.Visible ~= nil then
                     v.Visible = state
                 elseif v.Enabled ~= nil then
                     v.Enabled = state
@@ -1058,7 +1064,9 @@ end
 local function setGuiEnabled(enabled)
     for _, v in pairs(character:GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v.Visible ~= nil then
+            if v:IsA("BillboardGui") then
+                v.Enabled = enabled  -- Use Enabled for BillboardGui
+            elseif v.Visible ~= nil then
                 v.Visible = enabled
             elseif v.Enabled ~= nil then
                 v.Enabled = enabled
@@ -1068,7 +1076,9 @@ local function setGuiEnabled(enabled)
 
     for _, v in pairs(playerGui:GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
-            if v.Visible ~= nil then
+            if v:IsA("BillboardGui") then
+                v.Enabled = enabled  -- Use Enabled for BillboardGui
+            elseif v.Visible ~= nil then
                 v.Visible = enabled
             elseif v.Enabled ~= nil then
                 v.Enabled = enabled
