@@ -973,26 +973,28 @@ end
 local function saveState()
     if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
-            if v:IsA("BasePart") or v:IsA("Decal") then
+            if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
                 originalState[v] = v.LocalTransparencyModifier
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(character) then
                 originalState[v] = v.Enabled
             end
         end
+        
         for _, v in pairs(playerGui:GetDescendants()) do
-            if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
                 if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
                     originalState[v] = v.Enabled
                 end
             end
         end
+        
         stateSaved = true
     end
 end
 
 local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("BasePart") or v:IsA("Decal") then
+        if (v:IsA("BasePart") or v:IsA("Decal")) and v:IsDescendantOf(character) then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
         end
     end
@@ -1000,17 +1002,14 @@ end
 
 local function setGuiEnabled(enabled)
     for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-            if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
-                v.Enabled = enabled
-            end
+        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(character) then
+            v.Enabled = enabled
         end
     end
+
     for _, v in pairs(playerGui:GetDescendants()) do
-        if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-            if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
-                v.Enabled = enabled
-            end
+        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v:IsDescendantOf(playerGui) then
+            v.Enabled = enabled
         end
     end
 end
@@ -1021,15 +1020,11 @@ local function restoreState(duration)
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
             elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
-                    v.Enabled = state
-                end
+                v.Enabled = state
             end
         elseif v:IsDescendantOf(playerGui) then
             if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
-                    v.Enabled = state
-                end
+                v.Enabled = state
             end
         end
     end
