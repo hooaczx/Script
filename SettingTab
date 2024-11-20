@@ -1000,9 +1000,9 @@ local playerGui = game:GetService("CoreGui")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
-local Settingzoom = {
+local Settings = {
     ZoomTime = 0.3,
-    ZoomedAmount = 13,
+    ZoomedAmount = 10,
     FadeTime = 0.3
 }
 
@@ -1104,23 +1104,23 @@ local function createZoomGui()
         return game:GetService("TweenService"):Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
     end
 
-    local zoomInTween = createZoom(Settingzoom.ZoomTime, Settingzoom.ZoomedAmount)
-    local zoomOutTween = createZoom(Settingzoom.ZoomTime, oldZoom)
+    local zoomInTween = createZoom(Settings.ZoomTime, Settings.ZoomedAmount)
+    local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
 
     zoomButton.MouseButton1Down:Connect(function()
         saveState()
-        setCharacterTransparency(1, Settingzoom.FadeTime)
+        setCharacterTransparency(1, Settings.FadeTime)
         setGuiEnabled(false)
         zoomInTween:Play()
     end)
 
     zoomButton.MouseButton1Up:Connect(function()
-        restoreState(Settingzoom.FadeTime)
+        restoreState(Settings.FadeTime)
         zoomOutTween:Play()
     end)
 
     zoomButton.MouseLeave:Connect(function()
-        restoreState(Settingzoom.FadeTime)
+        restoreState(Settings.FadeTime)
         zoomOutTween:Play()
     end)
 end
@@ -1130,7 +1130,7 @@ local function removeZoomGui()
     if zoomGui then
         local zoomButton = zoomGui:FindFirstChild("ZoomButton")
         if zoomButton then
-            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settingzoom.FadeTime)
+            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settings.FadeTime)
             fadeOut:Play()
             fadeOut.Completed:Connect(function()
                 zoomGui:Destroy()
