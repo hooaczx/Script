@@ -2630,16 +2630,19 @@ functions.checkFriends = function()
                 statusLabel.TextXAlignment = "Left"
                 statusLabel.Font = Configs_HUB.Text_Font
                 statusLabel.Position = UDim2.new(0, 260, 0, 0)
-                TextSetColor(statusLabel)
 
-                if friend.IsOnline then
-                    if players:FindFirstChild(friend.Username) then
+                local player = game:GetService("Players"):GetPlayerByUserId(friend.Id)
+                if player then
+                    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                         statusLabel.Text = "In Game"
+                        statusLabel.TextColor3 = Color3.fromRGB(17, 17, 17)
                     else
                         statusLabel.Text = "Online"
+                        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
                     end
                 else
                     statusLabel.Text = "Offline"
+                    statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
                 end
 
                 statusLabel.Parent = friendFrame
