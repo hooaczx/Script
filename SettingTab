@@ -998,9 +998,9 @@ local playerGui = game:GetService("CoreGui")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
-local Settings = {
+local Settingzoom = {
     ZoomTime = 0.3,
-    ZoomedAmount = 10,
+    ZoomedAmount = 13,
     FadeTime = 0.3
 }
 
@@ -1098,27 +1098,27 @@ local function createZoomGui()
     fadeIn:Play()
 
     local function createZoom(time, amount)
-        local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+        local Tween_Info = TweenInfo.new(time * 2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
         return game:GetService("TweenService"):Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
     end
 
-    local zoomInTween = createZoom(Settings.ZoomTime, Settings.ZoomedAmount)
-    local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
+    local zoomInTween = createZoom(Settingzoom.ZoomTime, Settingzoom.ZoomedAmount)
+    local zoomOutTween = createZoom(Settingzoom.ZoomTime, oldZoom)
 
     zoomButton.MouseButton1Down:Connect(function()
         saveState()
-        setCharacterTransparency(1, Settings.FadeTime)
+        setCharacterTransparency(1, Settingzoom.FadeTime)
         setGuiEnabled(false)
         zoomInTween:Play()
     end)
 
     zoomButton.MouseButton1Up:Connect(function()
-        restoreState(Settings.FadeTime)
+        restoreState(Settingzoom.FadeTime)
         zoomOutTween:Play()
     end)
 
     zoomButton.MouseLeave:Connect(function()
-        restoreState(Settings.FadeTime)
+        restoreState(Settingzoom.FadeTime)
         zoomOutTween:Play()
     end)
 end
@@ -1128,7 +1128,7 @@ local function removeZoomGui()
     if zoomGui then
         local zoomButton = zoomGui:FindFirstChild("ZoomButton")
         if zoomButton then
-            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settings.FadeTime)
+            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settingzoom.FadeTime)
             fadeOut:Play()
             fadeOut.Completed:Connect(function()
                 zoomGui:Destroy()
