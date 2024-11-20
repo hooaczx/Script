@@ -967,7 +967,7 @@ local stateSaved = false
 
 local function createTween(object, properties, duration)
     local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-    return TweenService:Create(object, tweenInfo, properties)
+    return game:GetService("TweenService"):Create(object, tweenInfo, properties)
 end
 
 local function saveState()
@@ -975,8 +975,15 @@ local function saveState()
         for _, v in pairs(character:GetDescendants()) do
             if v:IsA("BasePart") or v:IsA("Decal") then
                 originalState[v] = v.LocalTransparencyModifier
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") or v:IsA("CoreGui") then
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
                 originalState[v] = v.Enabled
+            end
+        end
+        for _, v in pairs(playerGui:GetDescendants()) do
+            if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+                    originalState[v] = v.Enabled
+                end
             end
         end
         stateSaved = true
@@ -993,8 +1000,17 @@ end
 
 local function setGuiEnabled(enabled)
     for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") or v:IsA("CoreGui") then
-            v.Enabled = enabled
+        if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+                v.Enabled = enabled
+            end
+        end
+    end
+    for _, v in pairs(playerGui:GetDescendants()) do
+        if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+            if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+                v.Enabled = enabled
+            end
         end
     end
 end
@@ -1004,8 +1020,16 @@ local function restoreState(duration)
         if v:IsDescendantOf(character) then
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") or v:IsA("CoreGui") then
-                v.Enabled = state
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+                    v.Enabled = state
+                end
+            end
+        elseif v:IsDescendantOf(playerGui) then
+            if v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
+                if v.Name ~= "ZoomGui" and v.Enabled ~= nil then
+                    v.Enabled = state
+                end
             end
         end
     end
@@ -1031,8 +1055,7 @@ local function createZoomGui()
 
     local function createZoom(time, amount)
         local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-        local Tween = TweenService:Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
-        return Tween
+        return game:GetService("TweenService"):Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
     end
 
     local zoomInTween = createZoom(Settings.ZoomTime, Settings.ZoomedAmount)
