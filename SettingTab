@@ -982,6 +982,8 @@ AddToggle(Main5u6, {
     end
 })
 
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Controls = require(LocalPlayer.PlayerScripts.PlayerModule):GetControls()
 local playerGui = game:GetService("CoreGui")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -1097,6 +1099,7 @@ local function createZoomGui()
         saveState()
         setCharacterTransparency(1, Settings.FadeTime)
         setGuiEnabled(false)
+        Controls:Enable()
         zoomInTween:Play()
     end)
 
@@ -1138,3 +1141,4 @@ AddToggle(Main5u6, {
         end
     end
 })
+
