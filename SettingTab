@@ -1001,22 +1001,15 @@ local function createTween(object, properties, duration)
     return game:GetService("TweenService"):Create(object, tweenInfo, properties)
 end
 
-
 local function saveState()
     if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
-            if (v:IsA("BasePart") or v:IsA("Decal")) then
+            if v:IsA("BasePart") or v:IsA("Decal") then
                 originalState[v] = v.LocalTransparencyModifier
-            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-                if v:IsA("BillboardGui") then
-                    originalState[v] = v.Enabled
-                elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
-                    originalState[v] = v.Enabled
-                end
             end
         end
-
-        for _, v in pairs(playerGui:GetDescendants()) do
+        
+        for _, v in pairs(player:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
             if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
                 if v:IsA("BillboardGui") then
                     originalState[v] = v.Enabled
@@ -1054,24 +1047,14 @@ end
 
 local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
-        if (v:IsA("BasePart") or v:IsA("Decal")) then
+        if v:IsA("BasePart") or v:IsA("Decal") then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
         end
     end
 end
 
 local function setGuiEnabled(enabled)
-    for _, v in pairs(character:GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v:IsA("BillboardGui") then
-                v.Enabled = enabled
-            elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
-                v.Enabled = enabled
-            end
-        end
-    end
-
-    for _, v in pairs(playerGui:GetDescendants()) do
+    for _, v in pairs(player:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
             if v:IsA("BillboardGui") then
                 v.Enabled = enabled
