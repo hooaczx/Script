@@ -1164,13 +1164,11 @@ local function addLightToCharacter(character)
             light.Parent = rootPart
             light.Range = 15
             light.Brightness = 5
-            
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Parent = rootPart
-            billboardGui.Adornee = rootPart
-            billboardGui.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
-            billboardGui.StudsOffset = Vector3.new(0, 0, 0)
-            billboardGui.StudsOffsetWorldSpace = Vector3.new(0, 0, 0)
+
+            local surfaceGui = Instance.new("SurfaceGui")
+            surfaceGui.Parent = rootPart
+            surfaceGui.Adornee = rootPart
+            surfaceGui.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
 
             local circleFrame = Instance.new("Frame")
             circleFrame.Name = "CircleFrame"
@@ -1179,12 +1177,12 @@ local function addLightToCharacter(character)
             circleFrame.AnchorPoint = Vector2.new(0.5, 0.5)
             circleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             circleFrame.BackgroundTransparency = 0.5
-            
+
             local corner = Instance.new("UICorner")
             corner.CornerRadius = UDim.new(1, 0)
             corner.Parent = circleFrame
 
-            circleFrame.Parent = billboardGui
+            circleFrame.Parent = surfaceGui
         end
     end
 end
@@ -1196,10 +1194,10 @@ local function removeLightFromCharacter(character)
         if playerLight then
             playerLight:Destroy()
         end
-        
-        local billboardGui = rootPart:FindFirstChild("BillboardGui")
-        if billboardGui then
-            billboardGui:Destroy()
+
+        local surfaceGui = rootPart:FindFirstChild("SurfaceGui")
+        if surfaceGui then
+            surfaceGui:Destroy()
         end
     end
 end
