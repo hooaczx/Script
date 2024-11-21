@@ -1021,13 +1021,15 @@ local function saveState()
         for _, v in pairs(character:GetDescendants()) do
             if v:IsA("BasePart") or v:IsA("Decal") then
                 originalState[v] = v.LocalTransparencyModifier
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") then
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("Frame") then
                 originalState[v] = {}
                 for _, child in pairs(v:GetDescendants()) do
                     if child:IsA("TextLabel") or child:IsA("TextButton") then
                         originalState[v][child] = {TextTransparency = child.TextTransparency}
                     elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
                         originalState[v][child] = {ImageTransparency = child.ImageTransparency}
+                    elseif child:IsA("Frame") then
+                        originalState[v][child] = {BackgroundTransparency = child.BackgroundTransparency}
                     end
                 end
             end
@@ -1041,12 +1043,14 @@ local function restoreState(duration)
         if v.Parent then
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") then
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("Frame") then
                 for child, childState in pairs(state) do
                     if child:IsA("TextLabel") or child:IsA("TextButton") then
                         createTween(child, {TextTransparency = childState.TextTransparency}, duration):Play()
                     elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
                         createTween(child, {ImageTransparency = childState.ImageTransparency}, duration):Play()
+                    elseif child:IsA("Frame") then
+                        createTween(child, {BackgroundTransparency = childState.BackgroundTransparency}, duration):Play()
                     end
                 end
             end
@@ -1058,7 +1062,7 @@ local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("Decal") then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
-        elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") then
+        elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("Frame") then
             local hasText, hasImage = checkGuiContent(v)
 
             for _, child in pairs(v:GetDescendants()) do
@@ -1067,6 +1071,9 @@ local function setCharacterTransparency(value, duration)
                 end
                 if hasImage and (child:IsA("ImageLabel") or child:IsA("ImageButton")) and child.ImageTransparency ~= nil then
                     createTween(child, {ImageTransparency = value}, duration):Play()
+                end
+                if child:IsA("Frame") and child.BackgroundTransparency ~= nil then
+                    createTween(child, {BackgroundTransparency = value}, duration):Play()
                 end
             end
         end
@@ -1140,6 +1147,80 @@ AddToggle(Main5u6, {
             createZoomGui()
         else
             removeZoomGui()
+        end
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Light Around Character",
+    Default = false,
+    Callback = function(state)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        if character then
+            local head = character:FindFirstChild("Head")
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            local light = nil
+            local heartbeatConnection = nil
+
+            local function createLight()
+                light = Instance.new("PointLight")
+                light.Parent = head
+                light.Range = 20
+                light.Brightness = 0.5
+                light.Color = Color3.fromRGB(255, 255, 255)
+                light.Shadows = false
+                light.Enabled = true
+            end
+
+            local function moveLightRandomly()
+                if light and light.Parent then
+                    local randomOffset = Vector3.new(math.random(-5, 5), 0, math.random(-5, 5))
+                    local randomPosition = head.Position + randomOffset
+                    
+                    local lightTweenInfo = TweenInfo.new(
+                        1,
+                        Enum.EasingStyle.Linear,
+                        Enum.EasingDirection.Out
+                    )
+                    local lightGoal = {Position = randomPosition}
+                    local tween = TweenService:Create(light, lightTweenInfo, lightGoal)
+                    tween:Play()
+                end
+            end
+
+            local function moveLightToCharacter()
+                if light and light.Parent then
+                    local lightTweenInfo = TweenInfo.new(
+                        0.5,
+                        Enum.EasingStyle.Linear,
+                        Enum.EasingDirection.Out
+                    )
+                    local lightGoal = {Position = head.Position + Vector3.new(0, 2, 0)}
+                    local tween = TweenService:Create(light, lightTweenInfo, lightGoal)
+                    tween:Play()
+                end
+            end
+
+            if state then
+                heartbeatConnection = RunService.Heartbeat:Connect(function()
+                    if humanoid.MoveDirection.Magnitude > 0 then
+                        moveLightToCharacter()
+                    else
+                        moveLightRandomly()
+                    end
+                end)
+            else
+                if light then
+                    light:Destroy()
+                end
+
+                if heartbeatConnection then
+                    heartbeatConnection:Disconnect()
+                    heartbeatConnection = nil
+                end
+            end
         end
     end
 })
