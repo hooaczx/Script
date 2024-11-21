@@ -1161,17 +1161,25 @@ local function addLightToCharacter(character)
             local light = Instance.new("PointLight")
             light.Name = "Light"
             light.Parent = rootPart
-            light.Range = 30
-            light.Brightness = 2.3
+            light.Range = 15  -- Set the range of the light
+            light.Brightness = 5
+        end
+        local highlightGui = rootPart:FindFirstChild("HighlightGui")
+        if not highlightGui then
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "HighlightGui"
+            billboardGui.Parent = rootPart
+            billboardGui.Size = UDim2.new(0, 2 * playerLight.Range, 0, 2 * playerLight.Range)
+            billboardGui.Adornee = rootPart
+            billboardGui.StudsOffset = Vector3.new(0, playerLight.Range / 2, 0)
 
-            local highlight = Instance.new("Highlight")
-            highlight.Name = "Highlight"
-            highlight.Parent = rootPart
-            highlight.Adornee = rootPart
-            highlight.FillTransparency = 0.6
-            highlight.OutlineTransparency = 0.5
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-            highlight.FillColor = Color3.fromRGB(255, 255, 255)
+            local frame = Instance.new("Frame")
+            frame.Parent = billboardGui
+            frame.Size = UDim2.new(1, 0, 1, 0)
+            frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            frame.BackgroundTransparency = 0.6
+            frame.BorderSizePixel = 0
+            frame.Shape = Enum.FrameShape.Circle
         end
     end
 end
@@ -1184,9 +1192,9 @@ local function removeLightFromCharacter(character)
             playerLight:Destroy()
         end
 
-        local highlight = rootPart:FindFirstChild("Highlight")
-        if highlight then
-            highlight:Destroy()
+        local highlightGui = rootPart:FindFirstChild("HighlightGui")
+        if highlightGui then
+            highlightGui:Destroy()
         end
     end
 end
@@ -1206,6 +1214,13 @@ local function toggleLight(state)
         end
     end
 end
+
+AddToggle(Main5u6, {
+    Name = "Toggle Character Light",
+    Default = false,
+    Callback = toggleLight
+})
+
 
 AddToggle(Main5u6, {
     Name = "Light Around Character",
