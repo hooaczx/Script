@@ -1151,74 +1151,29 @@ AddToggle(Main5u6, {
     end
 })
 
+local playerChar = player.Character or player.CharacterAdded:Wait()
+
 AddToggle(Main5u6, {
     Name = "Light Around Character",
     Default = false,
     Callback = function(state)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        local torso = playerChar:FindFirstChild("Torso")
 
-        if character then
-            local head = character:FindFirstChild("Head")
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            local light = nil
-            local heartbeatConnection = nil
-
-            local function createLight()
-                light = Instance.new("PointLight")
-                light.Parent = head
-                light.Range = 20
-                light.Brightness = 0.5
-                light.Color = Color3.fromRGB(255, 255, 255)
-                light.Shadows = false
-                light.Enabled = true
-            end
-
-            local function moveLightRandomly()
-                if light and light.Parent then
-                    local randomOffset = Vector3.new(math.random(-5, 5), 0, math.random(-5, 5))
-                    local randomPosition = head.Position + randomOffset
-                    
-                    local lightTweenInfo = TweenInfo.new(
-                        1,
-                        Enum.EasingStyle.Linear,
-                        Enum.EasingDirection.Out
-                    )
-                    local lightGoal = {Position = randomPosition}
-                    local tween = TweenService:Create(light, lightTweenInfo, lightGoal)
-                    tween:Play()
-                end
-            end
-
-            local function moveLightToCharacter()
-                if light and light.Parent then
-                    local lightTweenInfo = TweenInfo.new(
-                        0.5,
-                        Enum.EasingStyle.Linear,
-                        Enum.EasingDirection.Out
-                    )
-                    local lightGoal = {Position = head.Position + Vector3.new(0, 2, 0)}
-                    local tween = TweenService:Create(light, lightTweenInfo, lightGoal)
-                    tween:Play()
-                end
-            end
+        if torso then
+            local playerLight = torso:FindFirstChild("Light")
 
             if state then
-                heartbeatConnection = RunService.Heartbeat:Connect(function()
-                    if humanoid.MoveDirection.Magnitude > 0 then
-                        moveLightToCharacter()
-                    else
-                        moveLightRandomly()
-                    end
-                end)
-            else
-                if light then
-                    light:Destroy()
+                if not playerLight then
+                    local light = Instance.new("SurfaceLight")
+                    light.Name = "Light"
+                    light.Parent = torso
+                    light.Range = 75
+                    light.Brightness = 75
+                    light.Shadows = false
                 end
-
-                if heartbeatConnection then
-                    heartbeatConnection:Disconnect()
-                    heartbeatConnection = nil
+            else
+                if playerLight then
+                    playerLight:Destroy()
                 end
             end
         end
