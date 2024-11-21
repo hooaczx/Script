@@ -1152,32 +1152,93 @@ AddToggle(Main5u6, {
 })
 
 local player = game.Players.LocalPlayer
-local playerChar = player.Character or player.CharacterAdded:Wait()
 
-AddToggle(Main5u6, {
-    Name = "Toggle Character Light",
-    Default = false,
-    Callback = function(state)
-        local rootPart = playerChar:WaitForChild("HumanoidRootPart", 5)
-
-        if rootPart then
-            local playerLight = rootPart:FindFirstChild("Light")
-
-            if state then
-                if not playerLight then
-                    local light = Instance.new("PointLight")
-                    light.Name = "Light"
-                    light.Parent = rootPart
-                    light.Range = 15
-                    light.Brightness = 5
-                end
-            else
-                if playerLight then
-                    playerLight:Destroy()
+local function addLightAboveHead(character)
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)
+    if humanoidRootPart then
+        local lightPart = Instance.new("Part")
+        lightPart.Name = "LightPart"
+        lightPart.Size = Vector3.new(1, 1, 1)
+        lightPart.Position = humanoidRootPart.Position + Vector3.new(0, 5, 0)
+        lightPart.Anchored = true
+        lightPart.CanCollide = false
+        lightPart.Transparency = 1
+        lightPart.Parent = workspace
+        
+        local spotLight = Instance.new("SpotLight")
+        spotLight.Name = "SpotLight"
+        spotLight.Parent = lightPart
+        spotLight.Range = 20
+        spotLight.Brightness = 10
+        spotLight.Angle = 60
+        spotLight.Color = Color3.fromRGB(255, 255, 255)
+        spotLight.CastsShadows = false
+        spotLight.Enabled = true
+        
+        local imageLabel = Instance.new("ImageLabel")
+        imageLabel.Name = "LightIcon"
+        imageLabel.Size = UDim2.new(1, 0, 1, 0)
+        imageLabel.BackgroundTransparency = 1
+        imageLabel.Image = "rbxassetid://129213804217647"
+        imageLabel.Parent = lightPart
+        
+        local isLightOn = true
+        lightPart.Touched:Connect(function(hit)
+            if hit and hit.Parent == player.Character then
+                isLightOn = not isLightOn
+                
+                if isLightOn then
+                    spotLight.Enabled = true
+                    imageLabel.Image = "rbxassetid://129213804217647"
+                else
+                    spotLight.Enabled = false
+                    imageLabel.Image = "rbxassetid://98023383703700"
                 end
             end
-        else
-            warn("HumanoidRootPart not found!")
+        end)
+
+        local tweenInfo = TweenInfo.new(
+            0.5,
+            Enum.EasingStyle.Sine,
+            Enum.EasingDirection.InOut,
+            -1,
+            true
+        )
+
+        game:GetService("RunService").Heartbeat:Connect(function()
+            if lightPart.Parent then
+                local targetPosition = humanoidRootPart.Position + Vector3.new(0, 5, 0)
+                local tween = TweenService:Create(lightPart, tweenInfo, {Position = targetPosition})
+                tween:Play()
+            end
+        end)
+    end
+end
+
+local function removeLightAboveHead(character)
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart then
+        local lightPart = workspace:FindFirstChild("LightPart")
+        if lightPart then
+            lightPart:Destroy()
         end
     end
+end
+
+local function toggleLight(state)
+    local character = player.Character or player.CharacterAdded:Wait()
+    if state then
+        addLightAboveHead(character)
+        player.CharacterAdded:Connect(function(newCharacter)
+            addLightAboveHead(newCharacter)
+        end)
+    else
+        removeLightAboveHead(character)
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "Light Around Character",
+    Default = false,
+    Callback = toggleLight
 })
