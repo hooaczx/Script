@@ -1001,11 +1001,36 @@ local function createTween(object, properties, duration)
     return game:GetService("TweenService"):Create(object, tweenInfo, properties)
 end
 
+local function checkGuiContent(gui)
+    local hasText = false
+    local hasImage = false
+
+    for _, child in pairs(gui:GetDescendants()) do
+        if child:IsA("TextLabel") or child:IsA("TextButton") then
+            hasText = true
+        elseif child:IsA("ImageLabel") then
+            hasImage = true
+        end
+    end
+
+    return hasText, hasImage
+end
+
 local function saveState()
     if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
             if v:IsA("BasePart") or v:IsA("Decal") then
                 originalState[v] = v.LocalTransparencyModifier
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") then
+                originalState[v] = {}
+                for _, child in pairs(v:GetDescendants()) do
+                    if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("ImageLabel") then
+                        originalState[v][child] = {
+                            TextTransparency = child.TextTransparency,
+                            ImageTransparency = child.ImageTransparency
+                        }
+                    end
+                end
             end
         end
         stateSaved = true
@@ -1017,6 +1042,17 @@ local function restoreState(duration)
         if v.Parent then
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
+            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") then
+                local hasText, hasImage = checkGuiContent(v)
+
+                for _, child in pairs(v:GetDescendants()) do
+                    if hasText and (child:IsA("TextLabel") or child:IsA("TextButton")) then
+                        createTween(child, {TextTransparency = originalState[v][child].TextTransparency}, duration):Play()
+                    end
+                    if hasImage and child:IsA("ImageLabel") then
+                        createTween(child, {ImageTransparency = originalState[v][child].ImageTransparency}, duration):Play()
+                    end
+                end
             end
         end
     end
@@ -1026,6 +1062,17 @@ local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("Decal") then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
+        elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") then
+            local hasText, hasImage = checkGuiContent(v)
+
+            for _, child in pairs(v:GetDescendants()) do
+                if hasText and (child:IsA("TextLabel") or child:IsA("TextButton")) then
+                    createTween(child, {TextTransparency = value}, duration):Play()
+                end
+                if hasImage and child:IsA("ImageLabel") then
+                    createTween(child, {ImageTransparency = value}, duration):Play()
+                end
+            end
         end
     end
 end
