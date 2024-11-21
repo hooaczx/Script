@@ -1152,53 +1152,46 @@ AddToggle(Main5u6, {
 })
 
 local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
 
 local function addLightAboveHead(character)
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)
     if humanoidRootPart then
         local lightPart = Instance.new("Part")
         lightPart.Name = "LightPart"
-        lightPart.Size = Vector3.new(2, 1, 2)
+        lightPart.Size = Vector3.new(1, 1, 1)
         lightPart.Position = humanoidRootPart.Position + Vector3.new(0, 5, 0)
         lightPart.Anchored = true
         lightPart.CanCollide = false
-        lightPart.Transparency = 0.5
+        lightPart.Transparency = 1
         lightPart.Parent = workspace
         
-        local spotLight = Instance.new("SpotLight")
-        spotLight.Name = "SpotLight"
-        spotLight.Parent = lightPart
-        spotLight.Range = 20
-        spotLight.Brightness = 10
-        spotLight.Angle = 60
-        spotLight.Color = Color3.fromRGB(255, 255, 255)
-        spotLight.Enabled = true
-        
-        local imageLabel = Instance.new("ImageLabel")
-        imageLabel.Name = "LightIcon"
-        imageLabel.Size = UDim2.new(0, 50, 0, 50)
-        imageLabel.Position = UDim2.new(0.5, -25, 0.5, -25)
-        imageLabel.BackgroundTransparency = 1
-        imageLabel.Image = "rbxassetid://129213804217647"
-        imageLabel.Parent = lightPart
-        
-        local isLightOn = true
+        local pointLight = Instance.new("PointLight")
+        pointLight.Name = "PointLight"
+        pointLight.Parent = lightPart
+        pointLight.Range = 15
+        pointLight.Brightness = 5
+        pointLight.Color = Color3.fromRGB(255, 255, 255)
+
+        local decal = Instance.new("Decal")
+        decal.Texture = "rbxassetid://98023383703700"
+        decal.Parent = lightPart
+
         lightPart.Touched:Connect(function(hit)
-            if hit and hit.Parent == player.Character then
-                isLightOn = not isLightOn
-                
-                if isLightOn then
-                    spotLight.Enabled = true
-                    imageLabel.Image = "rbxassetid://129213804217647"
+            if hit.Target == character:FindFirstChild("HumanoidRootPart") then
+                local currentTexture = decal.Texture
+                if currentTexture == "rbxassetid://98023383703700" then
+                    decal.Texture = "rbxassetid://129213804217647"
+                    pointLight.Enabled = true
                 else
-                    spotLight.Enabled = false
-                    imageLabel.Image = "rbxassetid://98023383703700"
+                    decal.Texture = "rbxassetid://98023383703700"
+                    pointLight.Enabled = false
                 end
             end
         end)
 
         local tweenInfo = TweenInfo.new(
-            0.5,
+            0.1,
             Enum.EasingStyle.Sine,
             Enum.EasingDirection.InOut,
             -1,
@@ -1238,7 +1231,7 @@ local function toggleLight(state)
 end
 
 AddToggle(Main5u6, {
-    Name = "Toggle Light Above Head",
+    Name = "Light Around Character",
     Default = false,
     Callback = toggleLight
 })
