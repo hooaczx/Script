@@ -987,9 +987,9 @@ local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
 local Settings = {
-    ZoomTime = 0.3,
-    ZoomedAmount = 10,
-    FadeTime = 0.3
+    ZoomTime = 0.4,
+    ZoomedAmount = 14,
+    FadeTime = 0.4
 }
 
 local oldZoom = game.Workspace.CurrentCamera.FieldOfView
@@ -1008,29 +1008,6 @@ local function saveState()
                 originalState[v] = v.LocalTransparencyModifier
             end
         end
-
-        local function saveGuiState(v)
-            if v:IsA("BillboardGui") then
-                originalState[v] = v.Enabled
-            elseif v:IsA("SurfaceGui") or v:IsA("ScreenGui") then
-                originalState[v] = v.Enabled
-            elseif v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame") then
-                originalState[v] = v.Visible
-            end
-        end
-
-        for _, v in pairs(playerGui:GetDescendants()) do
-            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") or v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame")) then
-                saveGuiState(v)
-            end
-        end
-
-        for _, v in pairs(player:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
-            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") or v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame")) then
-                saveGuiState(v)
-            end
-        end
-        
         stateSaved = true
     end
 end
@@ -1040,10 +1017,6 @@ local function restoreState(duration)
         if v.Parent then
             if v:IsA("BasePart") or v:IsA("Decal") then
                 createTween(v, {LocalTransparencyModifier = state}, duration):Play()
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui") then
-                v.Enabled = state
-            elseif v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame") then
-                v.Visible = state
             end
         end
     end
@@ -1053,38 +1026,6 @@ local function setCharacterTransparency(value, duration)
     for _, v in pairs(character:GetDescendants()) do
         if v:IsA("BasePart") or v:IsA("Decal") then
             createTween(v, {LocalTransparencyModifier = value}, duration):Play()
-        end
-    end
-end
-
-local function setGuiEnabled(enabled)
-    for _, v in pairs(character:GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
-            if v:IsA("BillboardGui") then
-                v.Enabled = enabled
-            elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
-                v.Enabled = enabled
-            end
-        end
-    end
-           
-    for _, v in pairs(playerGui:GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
-            if v:IsA("BillboardGui") or v:IsA("SurfaceGui") or v:IsA("ScreenGui") then
-                v.Enabled = enabled
-            elseif v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame") then
-                v.Visible = enabled
-            end
-        end
-    end
-
-    for _, v in pairs(player:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
-        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
-            if v:IsA("BillboardGui") or v:IsA("SurfaceGui") or v:IsA("ScreenGui") then
-                v.Enabled = enabled
-            elseif v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame") then
-                v.Visible = enabled
-            end
         end
     end
 end
@@ -1118,7 +1059,6 @@ local function createZoomGui()
     zoomButton.MouseButton1Down:Connect(function()
         saveState()
         setCharacterTransparency(1, Settings.FadeTime)
-        setGuiEnabled(false)
         zoomInTween:Play()
     end)
 
