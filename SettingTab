@@ -1151,31 +1151,34 @@ AddToggle(Main5u6, {
     end
 })
 
+local player = game.Players.LocalPlayer
 local playerChar = player.Character or player.CharacterAdded:Wait()
 
 AddToggle(Main5u6, {
-    Name = "Light Around Character",
+    Name = "Toggle Character Light",
     Default = false,
     Callback = function(state)
-        local torso = playerChar:FindFirstChild("Torso")
+        local rootPart = playerChar:WaitForChild("HumanoidRootPart", 5)
 
-        if torso then
-            local playerLight = torso:FindFirstChild("Light")
+        if rootPart then
+            local playerLight = rootPart:FindFirstChild("Light")
 
             if state then
                 if not playerLight then
                     local light = Instance.new("SurfaceLight")
                     light.Name = "Light"
-                    light.Parent = torso
-                    light.Range = 75
-                    light.Brightness = 75
-                    light.Shadows = false
+                    light.Parent = rootPart
+                    light.Range = 15
+                    light.Brightness = 5
+                    light.Shadows = true
                 end
             else
                 if playerLight then
                     playerLight:Destroy()
                 end
             end
+        else
+            warn("HumanoidRootPart not found!")
         end
     end
 })
