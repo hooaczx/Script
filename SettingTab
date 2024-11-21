@@ -1157,7 +1157,6 @@ local function addLightToCharacter(character)
     local rootPart = character:WaitForChild("HumanoidRootPart", 5)
     if rootPart then
         local playerLight = rootPart:FindFirstChild("Light")
-
         if not playerLight then
             local light = Instance.new("PointLight")
             light.Name = "Light"
@@ -1165,24 +1164,14 @@ local function addLightToCharacter(character)
             light.Range = 15
             light.Brightness = 5
 
-            local surfaceGui = Instance.new("SurfaceGui")
-            surfaceGui.Parent = rootPart
-            surfaceGui.Adornee = rootPart
-            surfaceGui.Face = Enum.NormalId.Front
-
-            local circleFrame = Instance.new("Frame")
-            circleFrame.Name = "CircleFrame"
-            circleFrame.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
-            circleFrame.Position = UDim2.new(0.5, -light.Range, 0.5, -light.Range)
-            circleFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-            circleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            circleFrame.BackgroundTransparency = 0.5
-
-            local corner = Instance.new("UICorner")
-            corner.CornerRadius = UDim.new(1, 0)
-            corner.Parent = circleFrame
-
-            circleFrame.Parent = surfaceGui
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "Highlight"
+            highlight.Parent = rootPart
+            highlight.Adornee = rootPart
+            highlight.FillTransparency = 0.6
+            highlight.OutlineTransparency = 0.5
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            highlight.FillColor = Color3.fromRGB(255, 255, 255)
         end
     end
 end
@@ -1195,9 +1184,9 @@ local function removeLightFromCharacter(character)
             playerLight:Destroy()
         end
 
-        local surfaceGui = rootPart:FindFirstChild("SurfaceGui")
-        if surfaceGui then
-            surfaceGui:Destroy()
+        local highlight = rootPart:FindFirstChild("Highlight")
+        if highlight then
+            highlight:Destroy()
         end
     end
 end
