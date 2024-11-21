@@ -1004,8 +1004,26 @@ end
 local function saveState()
     if not stateSaved then
         for _, v in pairs(character:GetDescendants()) do
-            if v:IsA("BasePart") or v:IsA("Decal") then
+            if (v:IsA("BasePart") or v:IsA("Decal")) then
                 originalState[v] = v.LocalTransparencyModifier
+            elseif (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
+                if v:IsA("BillboardGui") then
+                    originalState[v] = v.Enabled
+                elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
+                    originalState[v] = v.Enabled
+                end
+            end
+        end
+
+        for _, v in pairs(playerGui:GetDescendants()) do
+            if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
+                if v:IsA("BillboardGui") then
+                    originalState[v] = v.Enabled
+                elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
+                    originalState[v] = v.Enabled
+                elseif (v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame")) then
+                    originalState[v] = v.Visible
+                end
             end
         end
         
