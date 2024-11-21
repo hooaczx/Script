@@ -1165,9 +1165,16 @@ local function addLightToCharacter(character)
             light.Range = 15
             light.Brightness = 5
             
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Parent = rootPart
+            billboardGui.Adornee = rootPart
+            billboardGui.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
+            billboardGui.StudsOffset = Vector3.new(0, 0, 0)
+            billboardGui.StudsOffsetWorldSpace = Vector3.new(0, 0, 0)
+
             local circleFrame = Instance.new("Frame")
             circleFrame.Name = "CircleFrame"
-            circleFrame.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
+            circleFrame.Size = UDim2.new(1, 0, 1, 0)
             circleFrame.Position = UDim2.new(0.5, -light.Range, 0.5, -light.Range)
             circleFrame.AnchorPoint = Vector2.new(0.5, 0.5)
             circleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1176,12 +1183,7 @@ local function addLightToCharacter(character)
             local corner = Instance.new("UICorner")
             corner.CornerRadius = UDim.new(1, 0)
             corner.Parent = circleFrame
-            
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Parent = rootPart
-            billboardGui.Adornee = rootPart
-            billboardGui.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
-            billboardGui.StudsOffset = Vector3.new(0, 0, 0)
+
             circleFrame.Parent = billboardGui
         end
     end
