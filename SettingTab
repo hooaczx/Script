@@ -1152,81 +1152,69 @@ AddToggle(Main5u6, {
 })
 
 local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
 
-local function addLightAboveHead(character)
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)
-    if humanoidRootPart then
-        local lightPart = Instance.new("Part")
-        lightPart.Name = "LightPart"
-        lightPart.Size = Vector3.new(1, 1, 1)
-        lightPart.Position = humanoidRootPart.Position + Vector3.new(0, 5, 0)
-        lightPart.Anchored = true
-        lightPart.CanCollide = false
-        lightPart.Transparency = 1
-        lightPart.Parent = workspace
-        
-        local pointLight = Instance.new("PointLight")
-        pointLight.Name = "PointLight"
-        pointLight.Parent = lightPart
-        pointLight.Range = 15
-        pointLight.Brightness = 5
-        pointLight.Color = Color3.fromRGB(255, 255, 255)
+local function addLightToCharacter(character)
+    local rootPart = character:WaitForChild("HumanoidRootPart", 5)
+    if rootPart then
+        local playerLight = rootPart:FindFirstChild("Light")
 
-        local decal = Instance.new("Decal")
-        decal.Texture = "rbxassetid://98023383703700"
-        decal.Parent = lightPart
-
-        lightPart.Touched:Connect(function(hit)
-            if hit.Target == character:FindFirstChild("HumanoidRootPart") then
-                local currentTexture = decal.Texture
-                if currentTexture == "rbxassetid://98023383703700" then
-                    decal.Texture = "rbxassetid://129213804217647"
-                    pointLight.Enabled = true
-                else
-                    decal.Texture = "rbxassetid://98023383703700"
-                    pointLight.Enabled = false
-                end
-            end
-        end)
-
-        local tweenInfo = TweenInfo.new(
-            0.1,
-            Enum.EasingStyle.Sine,
-            Enum.EasingDirection.InOut,
-            -1,
-            true
-        )
-
-        game:GetService("RunService").Heartbeat:Connect(function()
-            if lightPart.Parent then
-                local targetPosition = humanoidRootPart.Position + Vector3.new(0, 5, 0)
-                local tween = TweenService:Create(lightPart, tweenInfo, {Position = targetPosition})
-                tween:Play()
-            end
-        end)
+        if not playerLight then
+            local light = Instance.new("PointLight")
+            light.Name = "Light"
+            light.Parent = rootPart
+            light.Range = 15
+            light.Brightness = 5
+            
+            local circleFrame = Instance.new("Frame")
+            circleFrame.Name = "CircleFrame"
+            circleFrame.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
+            circleFrame.Position = UDim2.new(0.5, -light.Range, 0.5, -light.Range)
+            circleFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+            circleFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            circleFrame.BackgroundTransparency = 0.5
+            
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(1, 0)
+            corner.Parent = circleFrame
+            
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Parent = rootPart
+            billboardGui.Adornee = rootPart
+            billboardGui.Size = UDim2.new(0, light.Range * 2, 0, light.Range * 2)
+            billboardGui.StudsOffset = Vector3.new(0, 0, 0)
+            circleFrame.Parent = billboardGui
+        end
     end
 end
 
-local function removeLightAboveHead(character)
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-    if humanoidRootPart then
-        local lightPart = workspace:FindFirstChild("LightPart")
-        if lightPart then
-            lightPart:Destroy()
+local function removeLightFromCharacter(character)
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if rootPart then
+        local playerLight = rootPart:FindFirstChild("Light")
+        if playerLight then
+            playerLight:Destroy()
+        end
+        
+        local billboardGui = rootPart:FindFirstChild("BillboardGui")
+        if billboardGui then
+            billboardGui:Destroy()
         end
     end
 end
 
 local function toggleLight(state)
-    local character = player.Character or player.CharacterAdded:Wait()
     if state then
-        addLightAboveHead(character)
+        local character = player.Character or player.CharacterAdded:Wait()
+        addLightToCharacter(character)
+
         player.CharacterAdded:Connect(function(newCharacter)
-            addLightAboveHead(newCharacter)
+            addLightToCharacter(newCharacter)
         end)
     else
-        removeLightAboveHead(character)
+        local character = player.Character
+        if character then
+            removeLightFromCharacter(character)
+        end
     end
 end
 
