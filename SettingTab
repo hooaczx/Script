@@ -982,8 +982,6 @@ AddToggle(Main5u6, {
     end
 })
 
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local Controls = require(LocalPlayer.PlayerScripts.PlayerModule):GetControls()
 local playerGui = game:GetService("CoreGui")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -1056,6 +1054,28 @@ local function setCharacterTransparency(value, duration)
 end
 
 local function setGuiEnabled(enabled)
+    for _, v in pairs(character:GetDescendants()) do
+        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) then
+            if v:IsA("BillboardGui") then
+                v.Enabled = enabled
+            elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
+                v.Enabled = enabled
+            end
+        end
+    end
+
+    for _, v in pairs(playerGui:GetDescendants()) do
+        if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
+            if v:IsA("BillboardGui") then
+                v.Enabled = enabled
+            elseif v:IsA("ScreenGui") or v:IsA("SurfaceGui") then
+                v.Enabled = enabled
+            elseif (v:IsA("TextLabel") or v:IsA("ImageLabel") or v:IsA("Frame") or v:IsA("TextButton") or v:IsA("ImageButton") or v:IsA("TextBox") or v:IsA("ScrollingFrame")) then
+                v.Visible = enabled
+            end
+        end
+    end
+
     for _, v in pairs(player:FindFirstChildWhichIsA("PlayerGui"):GetDescendants()) do
         if (v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("ScreenGui")) and v.Name ~= "ZoomGui" then
             if v:IsA("BillboardGui") then
@@ -1068,6 +1088,7 @@ local function setGuiEnabled(enabled)
         end
     end
 end
+
 
 local function createZoomGui()
     local ScreenGui = Instance.new("ScreenGui", playerGui)
@@ -1099,7 +1120,6 @@ local function createZoomGui()
         saveState()
         setCharacterTransparency(1, Settings.FadeTime)
         setGuiEnabled(false)
-        Controls:Enable()
         zoomInTween:Play()
     end)
 
