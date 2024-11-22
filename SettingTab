@@ -1152,6 +1152,7 @@ AddToggle(Main5u6, {
 })
 
 local player = game.Players.LocalPlayer
+local lightEnabled = false
 
 local function addLightToCharacter(character)
     local rootPart = character:WaitForChild("HumanoidRootPart", 5)
@@ -1161,9 +1162,10 @@ local function addLightToCharacter(character)
             local light = Instance.new("PointLight")
             light.Name = "Light"
             light.Parent = rootPart
-            light.Range = 15  -- Set the range of the light
+            light.Range = 15
             light.Brightness = 5
         end
+
         local highlightGui = rootPart:FindFirstChild("HighlightGui")
         if not highlightGui then
             local billboardGui = Instance.new("BillboardGui")
@@ -1199,28 +1201,27 @@ local function removeLightFromCharacter(character)
     end
 end
 
-local function toggleLight(state)
-    if state then
-        local character = player.Character or player.CharacterAdded:Wait()
+local function onCharacterAdded(character)
+    if lightEnabled then
         addLightToCharacter(character)
-
-        player.CharacterAdded:Connect(function(newCharacter)
-            addLightToCharacter(newCharacter)
-        end)
     else
-        local character = player.Character
-        if character then
+        removeLightFromCharacter(character)
+    end
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+
+local function toggleLight(state)
+    lightEnabled = state
+    local character = player.Character
+    if character then
+        if state then
+            addLightToCharacter(character)
+        else
             removeLightFromCharacter(character)
         end
     end
 end
-
-AddToggle(Main5u6, {
-    Name = "Toggle Character Light",
-    Default = false,
-    Callback = toggleLight
-})
-
 
 AddToggle(Main5u6, {
     Name = "Light Around Character",
