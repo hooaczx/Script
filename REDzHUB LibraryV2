@@ -1166,7 +1166,7 @@ songList.ScrollingEnabled = true
 local songListTinniLayout = Instance.new("UIListLayout", songList) 
 songListTinniLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-local function updateFrameSize()
+functions.updateFrameSize = function()
     local contentHeight = songListTinniLayout.AbsoluteContentSize.Y
     songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
 end
@@ -1174,7 +1174,7 @@ end
 local isAutoPlayEnabled = false
 local isLooping = false
 
-local function updateSongButtons()
+functions.updateSongButtons = function()
     local searchText = search.Text:lower()
     local currentScrollPosition = songList.CanvasPosition
     for _, child in ipairs(songList:GetChildren()) do
@@ -1237,7 +1237,7 @@ local function updateSongButtons()
                 currentSongIndex = i
                 PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
                 ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-                updateSongButtons()
+                functions.updateSongButtons()
                end)
             end
 
@@ -1261,10 +1261,10 @@ local function updateSongButtons()
         end
     end
     songList.CanvasPosition = currentScrollPosition
-    updateFrameSize()
+    functions.updateFrameSize()
 end
 
-updateSongButtons()
+functions.updateSongButtons()
 
 search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
 
@@ -1275,7 +1275,7 @@ NextButton.MouseButton1Click:Connect(function()
     resetSong()
     currentSongIndex = (currentSongIndex % #songs) + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
+    functions.updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
@@ -1286,7 +1286,7 @@ PreviousButton.MouseButton1Click:Connect(function()
     resetSong()
     currentSongIndex = (currentSongIndex - 2 + #songs) % #songs + 1
     PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-    updateSongButtons()
+    functions.updateSongButtons()
     ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
 end)
 
@@ -2393,6 +2393,15 @@ friendsFrame.ScrollBarThickness = 3
 friendsFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
 friendsFrame.BackgroundTransparency = 0.5
 
+local friendsFrameTinnLayout = Instance.new("UIListLayout", friendsFrame)
+friendsFrameTinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
+friendsFrameTinnLayout.Padding = UDim.new(0, 5)
+
+functions.friendsFrameSize = function()
+    local contentHeight = friendsFrameTinnLayout.AbsoluteContentSize.Y
+    friendsFrameTinnLayout.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
+end
+
 local iconfriend = Instance.new("ImageLabel", ScreenGui)
 iconfriend.Size = UDim2.new(0.06, 0, 0.124, 0)
 iconfriend.Position = UDim2.new(0.48, 0, 0.006, 0)
@@ -2465,12 +2474,12 @@ functions.checkFriends = function()
                 local friendFrame = Instance.new("Frame")
                 friendFrame.Size = UDim2.new(1, 0, 0, 50)
                 friendFrame.BackgroundTransparency = 1
-                friendFrame.Position = UDim2.new(0, 0, 0, positionY)
+                friendFrame.Position = UDim2.new(0, 0, 0, 0)
                 friendFrame.Parent = friendsFrame
 
                 local avatarImage = Instance.new("ImageLabel")
-                avatarImage.Size = UDim2.new(0.1, 0, 0, 32)
-                avatarImage.Position = UDim2.new(0, 0, 0.04, 0)
+                avatarImage.Size = UDim2.new(0.1, 0, 0, 30)
+                avatarImage.Position = UDim2.new(0, 0, 0.07, 0)
                 avatarImage.BackgroundColor3 = Configs_HUB.Cor_Hub
                 avatarImage.BackgroundTransparency = 0.4
                 avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
@@ -2488,7 +2497,7 @@ functions.checkFriends = function()
                 friendName.Font = Configs_HUB.Text_Font
                 friendName.Parent = friendFrame
                 TextSetColor(friendName)
-               positionY = positionY + 55
+              functions.friendsFrameSize()
             end
         end
         functions.updateFriendsGUI(playersFriends)
