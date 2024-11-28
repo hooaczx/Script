@@ -268,15 +268,8 @@ function MakeWindow(Configs)
     Visible = false
   })
   
-  local ButtonsFrame = Create("Frame", TopBar, {
-    Size = UDim2.new(0.1, 0, 1, 0),
-    Position = UDim2.new(1, 0, 0, 0),
-    AnchorPoint = Vector2.new(1, 0),
-    BackgroundTransparency = 1
-  })
-  
   local Title = Create("TextLabel", TopBar, {
-    Size = UDim2.new(0.89, 0, 1, 0),
+    Size = UDim2.new(1, 0, 1, 0),
     Position = UDim2.new(0, 0, 0, 0),
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
@@ -285,127 +278,6 @@ function MakeWindow(Configs)
     TextScaled = true,
     BackgroundTransparency = 1
   })
-  
-  local Minimize_BTN = Create("TextButton", ButtonsFrame, {
-    Text = "-",
-    TextColor3 = Configs_HUB.Cor_Text,
-    Size = UDim2.new(0.5, 0, 1, 0),
-    BackgroundTransparency = 1,
-    Font = Configs_HUB.Text_Font,
-    TextYAlignment = "Bottom",
-    TextSize = 27
-  })
-  
-  IsMinimized = false
-  Minimize_BTN.MouseButton1Click:Connect(function()
-    Minimize_BTN.Text = not IsMinimized and "+" or "-"
-    if IsMinimized then
-      IsMinimized = false
-      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, false)
-    else
-      IsMinimized = true
-      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.09, 0), 0.15, true)
-    end
-  end)
-  
-  local Close_Button = Create("TextButton", ButtonsFrame, {
-    Text = "×",
-    TextYAlignment = "Bottom",
-    TextColor3 = Configs_HUB.Cor_Text,
-    Size = UDim2.new(0.5, 0, 1, 0),
-    AnchorPoint = Vector2.new(1, 0),
-    Position = UDim2.new(1, 0, 0, 0),
-    BackgroundTransparency = 1,
-    Font = Configs_HUB.Text_Font,
-    TextSize = 27
-  })
-  
-  local function CreateClose()
-    IsMinimized = false
-    CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
-    local CloseGui = Create("TextButton", Menu, {
-      BackgroundTransparency = 0.5,
-      BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Size = UDim2.new(1, 0, 1, 0),
-      AutoButtonColor = false,
-      Text = "",
-      BackgroundTransparency = 0.5,
-      Visible = false
-    })Corner(CloseGui)
-    
-    local CloseMenu = Create("Frame", CloseGui, {
-      Size = UDim2.new(),
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      Position = UDim2.new(0.5, 0, 0.5, 0),
-      Transparency = 1,
-      BackgroundColor3 = Configs_HUB.Cor_Hub
-    })Corner(CloseMenu)Stroke(CloseMenu)
-    
-    local Mensage = Create("TextLabel", CloseMenu, {
-      Size = UDim2.new(0.8, 0, 0.25, 0),
-      Text = "are you sure you want to close this script??",
-      Position = UDim2.new(0.1, 0, 0.2),
-      TextColor3 = Configs_HUB.Cor_Text,
-      Font = Configs_HUB.Text_Font,
-      TextScaled = true,
-      BackgroundTransparency = 1
-    })
-    
-    local Confirm = Create("TextButton", CloseMenu, {
-      Size = UDim2.new(0.35, 0, 0.3, 0),
-      Position = UDim2.new(0.1, 0, 0.5, 0),
-      BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Text = "Close Script",
-      Font = Configs_HUB.Text_Font,
-      TextColor3 = Color3.fromRGB(240, 0, 0),
-      TextSize = 20
-    })Corner(Confirm)Stroke(Confirm)
-    
-    local Cancel = Create("TextButton", CloseMenu, {
-      Size = UDim2.new(0.35, 0, 0.3, 0),
-      Position = UDim2.new(0.9, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(1, 0),
-      BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Text = "Cancel",
-      Font = Configs_HUB.Text_Font,
-      TextColor3 = Color3.fromRGB(0, 240, 0),
-      TextSize = 20
-    })Corner(Cancel)Stroke(Cancel)
-    
-    local function SetVisible()
-      if Menu.Size.Y.Offset > 0.63 then
-        CloseGui.Visible = true
-      else
-        CloseGui.Visible = false
-      end
-    end
-    
-    SetVisible()
-    Menu:GetPropertyChangedSignal("Size"):Connect(SetVisible)
-    
-    CreateTween(CloseMenu, "Transparency", 0, 0.2, false)
-    CreateTween(CloseMenu, "Size", UDim2.new(0.7, 0, 0.7, 0), 0.2, false)
-    
-    Cancel.MouseButton1Click:Connect(function()
-      CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
-      CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
-      CloseGui:Destroy()
-    end)
-    
-    Confirm.MouseButton1Click:Connect(function()
-      CloseGui:Destroy()
-      CreateTween(Menu, "Size", UDim2.new(), 0.3, true)
-      DestroyScript()
-    end)
-    
-    CloseGui.MouseButton1Click:Connect(function()
-      CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
-      CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
-      CloseGui:Destroy()
-    end)
-  end
-  
-  Close_Button.MouseButton1Click:Connect(CreateClose)
   
   local AnimMenu = Create("Frame", ScreenGui, {
     Position = UDim2.new(0.5, 0, 0.5, 0),
