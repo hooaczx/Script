@@ -345,7 +345,15 @@ function MakeWindow(Configs)
   })Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5)
   })
-  
+
+  local Bottomright = Create("Frame", ScrollBar, {
+    Size = UDim2.new(0, 2, 1, 0),
+    Position = UDim2.new(1, -2, 0, 0),
+    AnchorPoint = Vector2.new(1, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Stroke,
+    BorderSizePixel = 0
+  })
+
   local Containers = Create("Frame", Menu, {
     Size = UDim2.new(0.765, 0, 0.91, 0),
     AnchorPoint = Vector2.new(1, 1),
@@ -353,16 +361,6 @@ function MakeWindow(Configs)
     BackgroundTransparency = 1
   })Corner(Containers)
   
-  local function Add_Line(props)
-    local line = Create("Frame", line_Containers, props)
-    line.BackgroundColor3 = Configs_HUB.Cor_Stroke
-    line.BorderSizePixel = 0
-  end
-  
-  Add_Line({Size = UDim2.new(1, 0, 0, 1),Position = UDim2.new(0, 0, 0, TopBar.Size.Y.Offset)})
-  Add_Line({Size = UDim2.new(0, 1, 0.91, -tonumber(TopBar.Size.Y.Offset + 1)),
-  Position = UDim2.new(0, ScrollBar.Size.X.Offset, 0.09, TopBar.Size.Y.Offset)})
-
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
@@ -2854,9 +2852,11 @@ end)
         ScrollBar.Visible = true
         Containers.Visible = true
         line_Containers.Visible = true
+        Menu.Visible = true
     else
         minimize = true
         click2:Play()
+        Menu.Visible = false
         ScrollBar.Visible = false
         Containers.Visible = false
         line_Containers.Visible = false
