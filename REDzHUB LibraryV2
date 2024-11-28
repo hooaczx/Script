@@ -1266,7 +1266,7 @@ end
 
 functions.updateSongButtons()
 
-search:GetPropertyChangedSignal("Text"):Connect(updateSongButtons)
+search:GetPropertyChangedSignal("Text"):Connect(functions.updateSongButtons)
 
 NextButton.MouseButton1Click:Connect(function()
     if isLooping then
@@ -2467,6 +2467,7 @@ functions.checkFriends = function()
 
         local friendsInTotal = #playersFriends
         functions.updateFriendsGUI = function(friends)
+         local currentScrollPosition = friendsFrame.CanvasPosition
             friendsFrame:ClearAllChildren()
 
             local positionY = 0
@@ -2497,8 +2498,9 @@ functions.checkFriends = function()
                 friendName.Font = Configs_HUB.Text_Font
                 friendName.Parent = friendFrame
                 TextSetColor(friendName)
-              functions.friendsFrameSize()
             end
+           friendsFrame.CanvasPosition = currentScrollPosition
+          functions.friendsFrameSize()
         end
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
