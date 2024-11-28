@@ -2393,21 +2393,6 @@ friendsFrame.ScrollBarThickness = 3
 friendsFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
 friendsFrame.BackgroundTransparency = 0.5
 
-local friendsFramePadding = Instance.new("UIPadding", friendsFrame)
-friendsFramePadding.PaddingTop = UDim.new(0, 5)
-friendsFramePadding.PaddingBottom = UDim.new(0, 5)
-friendsFramePadding.PaddingLeft = UDim.new(0, 5)
-friendsFramePadding.PaddingRight = UDim.new(0, 5)
-
-local friendsFrameTinnLayout = Instance.new("UIListLayout", friendsFrame) 
-friendsFrameTinnLayout.SortOrder = Enum.SortOrder.LayoutOrder
-friendsFrameTinnLayout.Padding = UDim.new(0, 5) -- ระยะห่างระหว่างแต่ละ Frame (แก้ปัญหาติดกัน)
-
-functions.friendsFrameSize = function()
-    local contentHeight = friendsFrameTinnLayout.AbsoluteContentSize.Y
-    friendsFrame.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
-end
-
 local iconfriend = Instance.new("ImageLabel", ScreenGui)
 iconfriend.Size = UDim2.new(0.06, 0, 0.124, 0)
 iconfriend.Position = UDim2.new(0.48, 0, 0.006, 0)
@@ -2472,41 +2457,40 @@ functions.checkFriends = function()
         end
 
         local friendsInTotal = #playersFriends
-        functions.updateFriendsGUI = function(friends)
-         local currentScrollPosition = friendsFrame.CanvasPosition
-            friendsFrame:ClearAllChildren()
+  functions.updateFriendsGUI = function(friends)
+          friendsFrame:ClearAllChildren()
 
             local positionY = 0
-            for _, friend in pairs(friends) do
-                local friendFrame = Instance.new("Frame")
-                friendFrame.Size = UDim2.new(1, 0, 0, 50)
-                friendFrame.BackgroundTransparency = 1
-                friendFrame.Position = UDim2.new(0, 0, 0, 0)
-                friendFrame.Parent = friendsFrame
+           for _, friend in pairs(friends) do
+              local friendFrame = Instance.new("Frame")
+              friendFrame.Size = UDim2.new(1, 0, 0, 50)
+              friendFrame.BackgroundTransparency = 1
+              friendFrame.Position = UDim2.new(0, 0, 0, positionY)
+              friendFrame.Parent = friendsFrame
 
-                local avatarImage = Instance.new("ImageLabel")
-                avatarImage.Size = UDim2.new(0.1, 0, 0, 30)
-                avatarImage.Position = UDim2.new(0, 0, 0.07, 0)
-                avatarImage.BackgroundColor3 = Configs_HUB.Cor_Hub
-                avatarImage.BackgroundTransparency = 0.4
-                avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
-                avatarImage.Parent = friendFrame
-                Corner(avatarImage, {CornerRadius = UDim.new(1, 0)})
+              local avatarImage = Instance.new("ImageLabel")
+              avatarImage.Size = UDim2.new(0.1, 0, 0, 30)
+              avatarImage.Position = UDim2.new(0, 0, 0.07, 0)
+              avatarImage.BackgroundColor3 = Configs_HUB.Cor_Hub
+              avatarImage.BackgroundTransparency = 0.4
+              avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
+              avatarImage.Parent = friendFrame
+              Corner(avatarImage, {CornerRadius = UDim.new(1, 0)})
 
-                local friendName = Instance.new("TextLabel")
-                friendName.Size = UDim2.new(0.9, 0, 1, 0)
-                friendName.Position = UDim2.new(0.1, 0, 0, 0)
-                friendName.BackgroundTransparency = 1
-                friendName.Text = friend.Username
-                friendName.TextWrapped = true
-                friendName.TextColor3 = Configs_HUB.Cor_Text
-                friendName.TextXAlignment = "Left"
-                friendName.Font = Configs_HUB.Text_Font
-                friendName.Parent = friendFrame
-                TextSetColor(friendName)
-            end
-           friendsFrame.CanvasPosition = currentScrollPosition
-          functions.friendsFrameSize()
+              local friendName = Instance.new("TextLabel")
+              friendName.Size = UDim2.new(0.9, 0, 1, 0)
+              friendName.Position = UDim2.new(0.1, 0, 0, 0)
+              friendName.BackgroundTransparency = 1
+              friendName.Text = friend.Username
+              friendName.TextWrapped = true
+              friendName.TextColor3 = Configs_HUB.Cor_Text
+              friendName.TextXAlignment = "Left"
+              friendName.Font = Configs_HUB.Text_Font
+              friendName.Parent = friendFrame
+              TextSetColor(friendName)
+           positionY = positionY + 60
+          end
+           friendsFrame.CanvasSize = UDim2.new(0, 0, 0, positionY)
         end
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/200"
