@@ -321,19 +321,26 @@ function MakeWindow(Configs)
     Size = UDim2.new(0.23, 0, 0.91, 0),
     Position = UDim2.new(0, 0, 1, 0),
     AnchorPoint = Vector2.new(0, 1),
-    CanvasSize = UDim2.new(),
     ScrollingDirection = "Y",
-    AutomaticCanvasSize = "Y",
     BackgroundTransparency = 1,
     ScrollBarThickness = 2
-  })Create("UIPadding", ScrollBar, {
+ })ScrollBar:GetPropertyChangedSignal("Children"):Connect(function()
+    local totalHeight = 0
+    for _, child in ipairs(ScrollBar:GetChildren()) do
+        if child:IsA("GuiObject") then
+            totalHeight = totalHeight + child.Size.Y.Offset + 5 -- Padding between items
+        end
+    end
+    ScrollBar.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+ end)Create("UIPadding", ScrollBar, {
     PaddingLeft = UDim.new(0, 10),
     PaddingRight = UDim.new(0, 10),
     PaddingTop = UDim.new(0, 10),
     PaddingBottom = UDim.new(0, 10)
-  })Create("UIListLayout", ScrollBar, {
+ })Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5)
-  })
+ })
+
 
   local Bottomright = Create("Frame", Menu, {
     Size = UDim2.new(0, 1, 0.92, 0),
