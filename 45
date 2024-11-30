@@ -323,19 +323,17 @@ function MakeWindow(Configs)
     AnchorPoint = Vector2.new(0, 1),
     CanvasSize = UDim2.new(),
     ScrollingDirection = "Y",
-    AutomaticCanvasSize = Enum.AutomaticSize.None,
+    AutomaticCanvasSize = "Y",
     BackgroundTransparency = 1,
     ScrollBarThickness = 2
-})Create("UIPadding", ScrollBar, {
+  })Create("UIPadding", ScrollBar, {
     PaddingLeft = UDim.new(0, 10),
     PaddingRight = UDim.new(0, 10),
     PaddingTop = UDim.new(0, 10),
     PaddingBottom = UDim.new(0, 10)
-})local layout = Create("UIListLayout", ScrollBar, {
+  })Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5)
-})layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    ScrollBar.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-end)
+  })
 
   local Bottomright = Create("Frame", Menu, {
     Size = UDim2.new(0, 1, 0.92, 0),
@@ -3433,74 +3431,62 @@ end
     local TabTitle = Configs.TabTitle or false
     
     local Frame = Create("Frame", ScrollBar, {
-        Size = UDim2.new(1, 0, 0.09, 0),
-        BackgroundTransparency = 1
-    }) Corner(Frame) Stroke(Frame)
+      Size = UDim2.new(1, 0, 0.09, 0),
+      BackgroundTransparency = 1
+    })Corner(Frame)Stroke(Frame)
     
     local TextButton = Create("TextButton", Frame, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        Text = ""
+      Size = UDim2.new(1, 0, 1, 0),
+      BackgroundTransparency = 1,
+      Text = ""
     })
     
     local TextLabel = Create("TextLabel", Frame, {
-        Size = UDim2.new(1, 0, 1, 0),
-        TextWrapped = true,
-        BackgroundTransparency = 1,
-        Font = Configs_HUB.Text_Font,
-        TextColor3 = textcolor,
-        TextSize = textsize,
-        Text = TabName
+      Size = UDim2.new(1, 0, 1, 0),
+      TextWrapped = true,
+      BackgroundTransparency = 1,
+      Font = Configs_HUB.Text_Font,
+      TextColor3 = textcolor,
+      TextSize = textsize,
+      Text = TabName
     })
     
     local Container = Create("ScrollingFrame", Containers, {
-        Size = UDim2.new(1, 0, 1, 0),
-        ScrollingDirection = "Y",
-        AutomaticCanvasSize = "None",
-        CanvasSize = UDim2.new(),
-        BackgroundTransparency = 1,
-        ScrollBarThickness = 2,
-        Visible = firstVisible
+      Size = UDim2.new(1, 0, 1, 0),
+      ScrollingDirection = "Y",
+      AutomaticCanvasSize = "Y",
+      CanvasSize = UDim2.new(),
+      BackgroundTransparency = 1,
+      ScrollBarThickness = 2,
+      Visible = firstVisible
     })Create("UIPadding", Container, {
-        PaddingLeft = UDim.new(0, 10),
-        PaddingRight = UDim.new(0, 10),
-        PaddingTop = UDim.new(0, 10),
-        PaddingBottom = UDim.new(0, 10)
-    })local layout = Create("UIListLayout", Container, {
-        Padding = UDim.new(0, 5)
-    })layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        Container.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
-    end)
+      PaddingLeft = UDim.new(0, 10),
+      PaddingRight = UDim.new(0, 10),
+      PaddingTop = UDim.new(0, 10),
+      PaddingBottom = UDim.new(0, 10)
+    })Create("UIListLayout", Container, {
+      Padding = UDim.new(0, 5)
+    })
     
     if TabTitle then
-        Create("TextLabel", Container, {
-            BackgroundTransparency = 1,
-            Text = "#" .. string.gsub(TabName, " ", "-"),
-            TextSize = 12,
-            TextWrapped = true,
-            Font = Configs_HUB.Text_Font,
-            TextXAlignment = "Left",
-            TextColor3 = Configs_HUB.Cor_Text,
-            Size = UDim2.new(1, 0, 0.12, 0),
-            Position = UDim2.new(0, 0, 0.1, 0),
-            Name = "Frame"
-        })
+      Create("TextLabel",Container,{BackgroundTransparency=1,Text="#"..string.gsub(TabName," ","-"),TextSize=25,Font=Configs_HUB.Text_Font,TextXAlignment="Left",TextColor3=Configs_HUB.Cor_Text,Size=UDim2.new(1, 0, 0, 30),Position=UDim2.new(0, 30, 0, 0),Name="Frame"})
     end
+    
     TextButton.MouseButton1Click:Connect(function()
-        for _, container in pairs(Containers:GetChildren()) do
-            if container:IsA("ScrollingFrame") then
-                container.Visible = false
-            end
+      for _,container in pairs(Containers:GetChildren()) do
+        if container:IsA("ScrollingFrame") then
+          container.Visible = false
         end
-        for _, frame in pairs(ScrollBar:GetChildren()) do
-            if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
-                CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-                frame.TextLabel.TextSize = 14
-            end
+      end
+      for _,frame in pairs(ScrollBar:GetChildren()) do
+        if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
+          CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+          frame.TextLabel.TextSize = 14
         end
-        Container.Visible = true
-        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.3, false)
-        TextLabel.TextSize = 15
+      end
+      Container.Visible = true
+      CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.3, false)
+      TextLabel.TextSize = 15
     end)
     
     firstVisible = false
@@ -3508,7 +3494,7 @@ end
     textsize = 14
     textcolor = Configs_HUB.Cor_DarkText
     return Container
-end
+  end
   
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
