@@ -3661,10 +3661,10 @@ end
     local Callback = Configs.Callback or function() end
     
     local Frame = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
+      Size = UDim2.new(1, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
-      Text = 0
+      Text = ""
     })Corner(Frame)Stroke(Frame)
     
     local TextLabel = Create("TextButton", Frame, {
@@ -3672,8 +3672,8 @@ end
       TextColor3 = Configs_HUB.Cor_Text,
       TextWrapped = true,
       Text = SliderName,
-      Size = UDim2.new(1, 0, 1, 0),
-      Position = UDim2.new(0, 150, 0, 0),
+      Size = UDim2.new(0.65, 0, 1, 0),
+      Position = UDim2.new(0 + 0.08 + 0.27, 0, 0, 0),
       BackgroundTransparency = 1,
       TextXAlignment = "Left",
       Font = Configs_HUB.Text_Font
@@ -3681,8 +3681,8 @@ end
     
     local TextLabelNumber = Create("TextLabel", Frame, {
       Font = Configs_HUB.Text_Font,
-      Size = UDim2.new(0, 20, 0, 20),
-      Text = "...",
+      Size = UDim2.new(0.06, 0, 1, 0),
+      Text = "0",
       Position = UDim2.new(0, 5, 0, 2.5),
       TextScaled = true,
       TextColor3 = Configs_HUB.Cor_Text,
@@ -3690,8 +3690,8 @@ end
     })
     
     local SliderBar1 = Create("TextLabel", Frame, {
-      Size = UDim2.new(0, 100, 0, 7.5),
-      Position = UDim2.new(0, 35, 0.5, 0),
+      Size = UDim2.new(0.25, 0, 0.12, 0),
+      Position = UDim2.new(0.08, 0, 0.5, 0),
       AnchorPoint = Vector2.new(0, 0.5),
       BackgroundColor3 = Configs_HUB.Cor_Stroke,
       Text = ""
@@ -3704,7 +3704,7 @@ end
     
     local Slider = Create("Frame", SliderBar1, {
       BackgroundColor3 = Configs_HUB.Cor_Text,
-      Size = UDim2.new(0, 7.5, 0, 15),
+      Size = UDim2.new(0.08, 0, 0, 15),
       Position = UDim2.new(0, 0, 0.5, 0),
       AnchorPoint = Vector2.new(0, 0.5),
       Active = true,
@@ -3727,11 +3727,12 @@ end
     
     local MouseEnterOrLeave = false
     Frame.MouseButton1Down:Connect(function()
-      MouseEnterOrLeave = true
+     MouseEnterOrLeave = true
       while MouseEnterOrLeave do task.wait()
-        local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
-        Slider.Position = UDim2.new(0, MousePos, 0.5, 0)
-      end
+          local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
+          local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
+          Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+       end
     end)
     Frame.MouseLeave:Connect(function()
       MouseEnterOrLeave = false
@@ -3740,78 +3741,23 @@ end
     local function SliderSet(NewValue)
       local max, min = MaxValue * Increase, MinValue * Increase
       local SliderPos = (NewValue - min) / (max - min)
-      local X_Offset = SliderPos * 100
-      local SliderPosition = UDim2.new(0, X_Offset + 1, 0, 0)
+      local X_Offset = SliderPos * SliderBar1.AbsoluteSize.X
+      local SliderPosition = UDim2.new(0, X_Offset, 0.5, 0)
       CreateTween(Slider, "Position", SliderPosition, 0.5, false)
     end
     SliderSet(Default)
     
     Slider.Changed:Connect(function(prop)
-      if prop == "Position" then
-        Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, 100), 0.5, 0)
+     if prop == "Position" then
+        local MaxOffset = SliderBar1.AbsoluteSize.X
+        Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
         SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-        local SliderPos = Slider.Position.X.Offset / 100
+        local SliderPos = Slider.Position.X.Offset / MaxOffset
         local A_1 = math.floor(((SliderPos * MaxValue) / MaxValue) * (MaxValue - MinValue) + MinValue)
         UpdCounter(A_1)
-      end
+       end
     end)
     return {Slider, Increase, MaxValue, MinValue}
-  end
-  
-  function UpdateSlider(Slider, NewValue)
-    local Frame = Slider[1]
-    local Increase = Slider[2]
-    local Max = Slider[3] * Increase
-    local Min = Slider[4] * Increase
-    
-    local SliderPos = (NewValue - Min) / (Max - Min)
-    local X_Offset = SliderPos * 100
-    local SliderPosition = UDim2.new(0, X_Offset + 1, 0, 0)
-    CreateTween(Frame, "Position", SliderPosition, 0.5, false)
-  end
-  
-  function AddKeybind(parent, Configs)
-    local KeybindName = Configs.Name or "Slider!!"
-    local KeyCode = Configs.KeyCode or "E"
-    local Default = Configs.Default or false
-    local Callback = Configs.Callback or function() end
-    
-    local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame"
-    })Corner(Frame)Stroke(Frame)
-    
-    local TextLabel = Create("TextButton", Frame, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = KeybindName,
-      TextWrapped = true,
-      Size = UDim2.new(1, 0, 1, 0),
-      Position = UDim2.new(0, 35, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
-    })
-    
-    local Keybind = Create("TextLabel", Frame, {
-      Font = Configs_HUB.Text_Font,
-      Size = UDim2.new(0, 18, 0, 18),
-      Text = KeyCode,
-      Position = UDim2.new(0, 5, 0, 3.5),
-      TextScaled = true,
-      TextColor3 = Configs_HUB.Cor_Text,
-      BackgroundTransparency = 1
-    })Corner(Keybind)Stroke(Keybind)
-    
-    local OnOff = Default
-    UserInputService.InputBegan:Connect(function(input)
-      if input.KeyCode == Enum.KeyCode[KeyCode] then
-        OnOff = not OnOff
-        Callback(OnOff)
-      end
-    end)
-    TextSetColor(TextLabel)
   end
   
   function AddTextBox(parent, Configs)
@@ -3822,7 +3768,7 @@ end
     local Callback = Configs.Callback or function() end
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
+      Size = UDim2.new(1, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame"
     })Corner(Frame)Stroke(Frame)
@@ -3832,8 +3778,8 @@ end
       TextColor3 = Configs_HUB.Cor_Text,
       Text = TextBoxName,
       TextWrapped = true,
-      Size = UDim2.new(1, 0, 1, 0),
-      Position = UDim2.new(0, 150, 0, 0),
+      Size = UDim2.new(0.66, 0, 1, 0),
+      Position = UDim2.new(0.34, 0, 0, 0),
       BackgroundTransparency = 1,
       TextXAlignment = "Left",
       Font = Configs_HUB.Text_Font
@@ -3841,8 +3787,8 @@ end
     TextSetColor(TextLabel)
     
     local TextBox = Create("TextBox", Frame, {
-      Size = UDim2.new(0, 120, 0, 20),
-      Position = UDim2.new(0, 15, 0, 2.5),
+      Size = UDim2.new(0.3, 0, 0.82, 0),
+      Position = UDim2.new(0.03, 0, 0.1, 0),
       TextColor3 = Configs_HUB.Cor_Text,
       Text = Default,
       ClearTextOnFocus = ClearText,
