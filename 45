@@ -3421,7 +3421,17 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 end
-  
+
+function UpdateCanvasSize(ScrollingFrame)
+    local totalHeight = 0
+    for _, child in pairs(ScrollingFrame:GetChildren()) do
+        if child:IsA("GuiObject") then
+            totalHeight = totalHeight + child.Size.Y.Offset + 5  -- เพิ่ม padding ระหว่างไอเท็ม
+        end
+    end
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+end
+
   local firstVisible = true
   local FirstTab = true
   local textsize = 15
@@ -3536,6 +3546,7 @@ end
     end)
     
     TextSetColor(TextLabel)
+    UpdateCanvasSize(parent)
   end
   
   function AddWarningMessage(parent, Configs)
@@ -3566,6 +3577,7 @@ end
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
     })TextSetColor(WarningLabel)
+    UpdateCanvasSize(parent)
 end
 
 function AddToggle(parent, Configs)
@@ -3651,6 +3663,7 @@ function AddToggle(parent, Configs)
             ResetToggle()
         end
     end)
+    UpdateCanvasSize(parent)
     return {Frame2, Stroke, OnOff, Callback}
 end
   
@@ -3759,6 +3772,7 @@ end
         UpdCounter(A_1)
        end
     end)
+    UpdateCanvasSize(parent)
     return {Slider, Increase, MaxValue, MinValue}
   end
   
@@ -3816,6 +3830,7 @@ end
     TextBox.FocusLost:Connect(function()
       Callback(TextBox.Text)
     end)
+    UpdateCanvasSize(parent)
   end
   
   function AddColorPicker(parent, Configs)
