@@ -3455,8 +3455,9 @@ function MakeTab(Configs)
         SortOrder = Enum.SortOrder.LayoutOrder,
     })
     
-    Container:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        Container.CanvasSize = UDim2.new(0, 0, 0, Container.AbsoluteContentSize.Y)
+    Container:GetPropertyChangedSignal("ChildAdded"):Connect(function()
+        wait(0.1)
+        Container.CanvasSize = UDim2.new(0, 0, 0, Container.UIListLayout.AbsoluteContentSize.Y)
     end)
     
     if TabTitle then
