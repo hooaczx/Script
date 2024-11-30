@@ -330,7 +330,9 @@ function MakeWindow(Configs)
     local totalHeight = 0
     for _, child in ipairs(ScrollBar:GetChildren()) do
         if child:IsA("GuiObject") then
-            totalHeight = totalHeight + child.Size.Y.Offset + 5
+            if child.Size.Y and child.Size.Y.IsUDim then
+                totalHeight = totalHeight + child.Size.Y.Offset + 5
+            end
         end
     end
     ScrollBar.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
@@ -349,6 +351,7 @@ end)Create("UIPadding", ScrollBar, {
 })Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5)
 })
+
 
   local Bottomright = Create("Frame", Menu, {
     Size = UDim2.new(0, 1, 0.92, 0),
@@ -3478,7 +3481,10 @@ end
     local totalHeight = 0
     for _, child in ipairs(Container:GetChildren()) do
         if child:IsA("GuiObject") then
-            totalHeight = totalHeight + child.Size.Y.Offset + 5
+            -- Ensure that child.Size.Y is a valid UDim before accessing the Offset
+            if child.Size.Y and child.Size.Y.IsUDim then
+                totalHeight = totalHeight + child.Size.Y.Offset + 5
+            end
         end
     end
     Container.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
@@ -3497,7 +3503,7 @@ end)Create("UIPadding", Container, {
 })Create("UIListLayout", Container, {
     Padding = UDim.new(0, 5)
 })
-    
+
     if TabTitle then
       Create("TextLabel",Container,{BackgroundTransparency=1,Text="#"..string.gsub(TabName," ","-"),TextSize=25,Font=Configs_HUB.Text_Font,TextXAlignment="Left",TextColor3=Configs_HUB.Cor_Text,Size=UDim2.new(1, 0, 0, 30),Position=UDim2.new(0, 30, 0, 0),Name="Frame"})
     end
