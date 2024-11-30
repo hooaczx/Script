@@ -3613,7 +3613,7 @@ function AddToggle(parent, Configs)
     local OnOff = false
     if Default then
         OnOff = true
-        CreateTween(Frame2, "Position", UDim2.new(0.1, 0, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
@@ -3636,7 +3636,7 @@ function AddToggle(parent, Configs)
     end)
 
     TextButton.MouseButton1Click:Connect(function()
-        if Frame2.Position.X.Offset < 5 then
+        if not OnOff then
             clicktoggle:Play()
             OnOff = true
             CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
@@ -3651,27 +3651,6 @@ function AddToggle(parent, Configs)
     end)
     return {Frame2, Stroke, OnOff, Callback}
 end
-
-  function UpdateToggle(toggle, value)
-    local Frame2 = toggle[1]
-    local Stroke = toggle[2]
-    local OnOff = value
-    local Callback = toggle[4]
-    
-    if OnOff then
-      Callback(true)
-      CreateTween(Frame2, "Position", UDim2.new(0, 10, 0.5, 0), 0.2, false)
-      CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-      CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-    else
-      Callback(false)
-      CreateTween(Frame2, "Position", UDim2.new(0, 2, 0.5, 0), 0.2, false)
-      CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-      CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-      CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-    end
-  end
   
   function AddSlider(parent, Configs)
     local SliderName = Configs.Name or "Slider!!"
