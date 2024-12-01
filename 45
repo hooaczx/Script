@@ -4132,48 +4132,6 @@ end)
     end)
     return {ScrollBar, Default, Callback, DefaultText}
   end
-    
-    local function AddOption(OptionName)
-      local TextButton = Create("TextButton", ScrollBar, {
-        Size = UDim2.new(1, 0, 0.08, 0),
-        Text = OptionName,
-        Font = Configs_HUB.Text_Font,
-        TextSize = 12,
-        TextWrapped = true,
-        TextColor3 = Color3.fromRGB(180, 180, 180),
-        BackgroundTransparency = 1
-      })Corner(TextButton)
-      
-      local SelectTable = {}
-      local OnOff = false
-      if OptionName == Default then
-        OnOff = true
-        TextButton.BackgroundTransparency = 0.8
-        TextButton.TextColor3 = Configs_HUB.Cor_Text
-        DefaultText.Text = OptionName
-        Callback(OptionName)
-      else
-        DefaultText.Text = "..."
-      end
-      
-      TextButton.MouseButton1Click:Connect(function()
-        for _,v in pairs(ScrollBar:GetChildren()) do
-          if v:IsA("TextButton") then
-            v.BackgroundTransparency = 1
-            v.TextColor3 = Color3.fromRGB(180, 180, 180)
-          end
-        end
-        DefaultText.Text = OptionName
-        Callback(OptionName)
-        TextButton.BackgroundTransparency = 0.8
-        TextButton.TextColor3 = Configs_HUB.Cor_Text
-      end)
-    end
-    
-    for _,v in pairs(NewOptions) do
-      AddOption(v)
-    end
-  end
 
 function AddTextTable(parent, Configs)
     local LabelName = Configs.Name or "Label!!"
