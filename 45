@@ -4307,28 +4307,120 @@ end
     local LabelImage = Configs[2] or Configs.Image or "Image Label"
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(0, 95, 0, 110),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame"
+        Size = UDim2.new(0.3, 0, 0.6, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
     local TextButton = Create("TextButton", Frame, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = LabelName,
-      TextWrapped = true,
-      Size = UDim2.new(1, 0, 0, 25),
-      BackgroundTransparency = 1,
-      Font = Configs_HUB.Text_Font
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = LabelName,
+        TextWrapped = true,
+        Size = UDim2.new(0.76, 0, 0.2, 0),
+        BackgroundTransparency = 1,
+        Font = Configs_HUB.Text_Font
     })
     
-    local ImageLabel = Create("ImageLabel", Frame, {
-      Image = LabelImage,
-      Size = UDim2.new(0, 75, 0, 75),
-      BackgroundTransparency = 1,
-      Position = UDim2.new(0, 10, 0, 25)
-    })
-    TextSetColor(TextButton)
+    local ExpandImageButton = Create("ImageButton", Frame, {
+        Size = UDim2.new(0.2, 0, 0.2, 0),
+        Position = UDim2.new(0.79, 0, 0., 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://74760368115181"
+    })Corner(ExpandImageButton)Stroke(ExpandImageButton)
+    
+    local ImageLabel1 = Create("ImageLabel", Frame, {
+        Image = LabelImage,
+        Size = UDim2.new(1, 0, 0.78, 0),
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0.22, 0)
+    })TextSetColor(TextButton)
+    
+    function TypeTextLabel(TextLabel, Text, Delay)
+           local index = 1
+           local startTime = tick()
+
+           RunService.Heartbeat:Connect(function()
+                if index <= #Text then
+                   if tick() - startTime >= Delay then
+                       TextLabel.Text = string.sub(Text, 1, index)
+                        index = index + 1
+                        startTime = tick()
+                      end
+                  end
+             end)
+         end
+
+    local isExpanded = false
+    
+    function ExpandImage()
+        if isExpanded then return end
+        isExpanded = true
+
+        local MenuBackground = Create("TextButton", Menu, {
+            BackgroundTransparency = 0.5,
+            BackgroundColor3 = Configs_HUB.Cor_Hub,
+            Size = UDim2.new(),
+            Position = UDim2.new(1 , 0, 0, 0),
+            AnchorPoint = Vector2.new(1, 0),
+            AutoButtonColor = false,
+            Text = "",
+            BackgroundTransparency = 0.2,
+        })
+        Corner(Frame)
+
+        local ImageLabel = Create("ImageLabel", Menu, {
+            Image = LabelImage,
+            Size = UDim2.new(),
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.35, 0, 0.2, 0)
+        })TextSetColor(TextButton)
+
+        local TextLabel = Create("TextLabel", Menu, {
+            TextSize = 12,
+            TextColor3 = Configs_HUB.Cor_Text,
+            Text = LabelName,
+            TextWrapped = true,
+            Size = UDim2.new(),
+            AnchorPoint = Vector2.new(1, 0),
+            Position = UDim2.new(0.95, 0, 0.43, 0), 
+            BackgroundTransparency = 1,
+            Font = Configs_HUB.Text_Font
+        })
+
+        local ExitExpandImageButton = Create("ImageButton", Menu, {
+            Size = UDim2.new(),
+            Position = UDim2.new(0.95, 0, 0.21, 0),
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundColor3 = Configs_HUB.Cor_Options,
+            BackgroundTransparency = 0,
+            Image = "rbxthumb://type=Asset&id=103081297652130&w=420&h=420"
+        })
+        Corner(ExitExpandImageButton)
+        Stroke(ExitExpandImageButton)
+
+        ExitExpandImageButton.MouseButton1Click:Connect(function()
+          CreateTween(MenuBackground, "Size", UDim2.new(), 0.3, true)
+          CreateTween(ImageLabel, "Size", UDim2.new(), 0.3, true)
+          CreateTween(TextLabel, "Size", UDim2.new(), 0.3, true)
+          CreateTween(ExitExpandImageButton, "Size", UDim2.new(), 0.3, true)
+          MenuBackground:Destroy()
+          ImageLabel:Destroy()
+          TextLabel:Destroy()
+          ExitExpandImageButton:Destroy()
+          isExpanded = false
+       end)
+
+        CreateTween(MenuBackground, "Size", UDim2.new(1, 0, 1, 0), 0.3, false)
+        CreateTween(ImageLabel, "Size", UDim2.new(0.33, 0, 0.67, 0), 0.3, false)
+        CreateTween(TextLabel, "Size", UDim2.new(0.67 -0.1, 0, 0.2, 0), 0.3, false)
+        TypeTextLabel(TextLabel, LabelName, 0.15)
+        CreateTween(ExitExpandImageButton, "Size", UDim2.new(0.1, 0, 0.2, 0), 0.3, false)
+    end
+
+    ExpandImageButton.MouseButton1Click:Connect(ExpandImage)
     return ImageLabel
   end
   
@@ -4337,7 +4429,7 @@ end
     local ParagraphName2 = Configs[1] or Configs.Text or "Paragraph!!"
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
+      Size = UDim2.new(1, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       AutomaticSize = "Y"
@@ -4375,16 +4467,11 @@ end
     return {TextButton, TextLabel}
   end
   
-  function SetParagraph(Paragraph, NewValue)
-    Paragraph[1].Text = NewValue[1]
-    Paragraph[2].Text = NewValue[2]
-  end
-  
   function AddSection(parent, Configs)
     local SectionName = Configs[1] or Configs.Name or "Section!!"
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0, 25),
+      Size = UDim2.new(1, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Hub,
       Name = "Frame",
       Transparency = 1
@@ -4394,17 +4481,13 @@ end
       TextSize = 12,
       TextColor3 = Configs_HUB.Cor_DarkText,
       Text = SectionName,
-      Size = UDim2.new(1, 0, 0, 25),
+      Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 10, 0, 0),
       BackgroundTransparency = 1,
       TextXAlignment = "Left",
       Font = Configs_HUB.Text_Font
     })
     return TextButton
-  end
-  
-  function SetSection(Section, NewName)
-    Section.Text = NewName
   end
 
   function AddDiscord(parent, Configs)
