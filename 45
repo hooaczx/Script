@@ -4434,6 +4434,137 @@ function AddTextTable(parent, Configs)
     return TextButton
   end
 
+  function AddMusicPlayer(parent, Configs)
+    local Default = Configs.Default or ""
+    local ClearText = Configs.ClearText or false
+    local placeholderText = Configs.PlaceholderText or "Enter Music ID"
+
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(1, 0, 0.7, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "MusicPlayerFrame",
+    })
+    Corner(Frame)
+    Stroke(Frame)
+    
+    local NameSongFrame = Create("TextLabel", Frame, {
+        Size = UDim2.new(1, 0, 0.2, 0),
+        Position = UDim2.new(0, 0, 0.05, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Text = "No Song",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true,
+        BackgroundTransparency = 1,
+    })
+
+    local TimeSongText = Create("TextLabel", Frame, {
+        Size = UDim2.new(0.2, 0, 0.1, 0),
+        Position = UDim2.new(0.1, 0, 0.35, 0),
+        BorderSizePixel = 0,
+        Text = "00:00",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true,
+        BackgroundTransparency = 1,
+    })
+
+    local TextID = Create("TextLabel", Frame, {
+        Size = UDim2.new(0.1, 0, 0.1, 0),
+        Position = UDim2.new(0.4, 0, 0.35, 0),
+        Text = "ID",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true,
+        BackgroundTransparency = 1,
+    })
+
+    local TextBoxID = Create("TextBox", Frame, {
+        Size = UDim2.new(0.23, 0, 0.2, 0),
+        Position = UDim2.new(0.53, 0, 0.3, 0),
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = Default,
+        ClearTextOnFocus = ClearText,
+        PlaceholderText = placeholderText,
+        TextScaled = true,
+        Font = Configs_HUB.Text_Font,
+        BackgroundTransparency = 1,
+    })
+    
+    local LineTextboxId = Create("Frame", TextBoxID, {
+      Size = UDim2.new(1, 0, 0, 1),
+      Position = UDim2.new(0.5, 0, 1, 0),
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      BackgroundColor3 = Configs_HUB.Cor_Stroke,
+      BorderSizePixel = 0
+    })
+    
+    TextBoxID.MouseEnter:Connect(function()
+      CreateTween(LineTextboxId, "Size", UDim2.new(0, 0, 0, 1), 0.3, true)
+      CreateTween(LineTextboxId, "Size", UDim2.new(1, 0, 0, 1), 0.3, true)
+    end)
+
+    local Toggle = Create("ImageButton", Frame, {
+        Size = UDim2.new(0.09, 0, 0.19, 0),
+        Position = UDim2.new(0.55, 0, 0.6, 0),
+        AnchorPoint = Vector2.new(1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        BackgroundTransparency = 1,
+        Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
+    })
+
+    local Line = Create("Frame", Frame, {
+        Size = UDim2.new(0.8, 0, 0.05, 0),
+        Position = UDim2.new(0.1, 0, 0.8, 0),
+        BorderSizePixel = 0,
+        BackgroundColor3 = Configs_HUB.Cor_Stroke,
+    })
+
+    local Progress = Create("Frame", Line, {
+        Size = UDim2.new(0, 0, 1, 0),
+        Position = UDim2.new(0, 0, 0, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Text,
+        BorderSizePixel = 0,
+    })
+
+    local sound = Instance.new("Sound")
+    sound.Parent = Frame
+
+    local function formatTime(seconds)
+        local minutes = math.floor(seconds / 60)
+        local remainingSeconds = seconds % 60
+        return string.format("%d:%02d", minutes, remainingSeconds)
+    end
+
+    local function updateProgressBar()
+        RunService.RenderStepped:Connect(function()
+            if sound.Playing then
+                local progress = sound.TimePosition / sound.TimeLength
+                Progress.Size = UDim2.new(progress, 0, 1, 0)
+                TimeSongText.Text = formatTime(math.floor(sound.TimePosition)) .. " / " .. formatTime(math.floor(sound.TimeLength))
+            end
+        end)
+    end
+
+    Toggle.MouseButton1Click:Connect(function()
+        if sound.IsPlaying then
+            soundsavedTimePosition = sound.TimePosition
+            sound:Stop()
+            NameSongFrame.Text = "Stopped"
+            Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
+            musicPlaying = false
+        else
+                sound.SoundId = "rbxassetid://" .. TextBoxID.Text
+                sound:Play()
+                sound.TimePosition = soundsavedTimePosition
+                updateProgressBar()
+                NameSongFrame.Text = game:GetService("MarketplaceService"):GetProductInfo(tonumber(TextBoxID.Text)).Name
+                Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
+                musicPlaying = true
+            end
+        end)
+    end
+
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
     local DiscordIcon = Configs[2] or Configs.DiscordIcon or "rbxassetid://"
