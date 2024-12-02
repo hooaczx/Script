@@ -4614,7 +4614,7 @@ function AddTextTable(parent, Configs)
     })
 
     local sound = Instance.new("Sound")
-    sound.Parent = Frame
+    sound.Parent = Frame 
 
     local function formatTime(seconds)
         local minutes = math.floor(seconds / 60)
@@ -4622,8 +4622,17 @@ function AddTextTable(parent, Configs)
         return string.format("%d:%02d", minutes, remainingSeconds)
     end
 
+    local RunServiceforsong
+
     local function updateProgressBar()
-        RunService.RenderStepped:Connect(function()
+     if RunServiceforsong then
+         RunServiceforsong:Disconnect()
+     end
+
+       RunServiceforsong = RunService.RenderStepped:Connect(function()
+           if not Frame then
+              sound:Destroy()
+           end
             if sound.Playing then
                 local progress = sound.TimePosition / sound.TimeLength
                 Progress.Size = UDim2.new(progress, 0, 1, 0)
@@ -4631,6 +4640,15 @@ function AddTextTable(parent, Configs)
             end
         end)
     end
+
+    sound.Ended:Connect(function()
+      sound:Play()
+      sound.TimePosition = soundsavedTimePosition
+      updateProgressBar()
+      NameSongFrame.Text = game:GetService("MarketplaceService"):GetProductInfo(tonumber(TextBoxID.Text)).Name
+      Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
+      musicPlaying = true
+    end)
 
     Toggle.MouseButton1Click:Connect(function()
         if sound.IsPlaying then
