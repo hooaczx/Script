@@ -541,7 +541,7 @@ function PlaySongByIndex(index, TitleLabel, TimeLabel, Frame_4)
     local song = songs[index]
     if song then
         local success, productInfo = pcall(function()
-            return game:GetService("MarketplaceService"):GetProductInfo(tonumber(song.id:match("%d+")), Enum.InfoType.Asset)
+            return game:GetService("MarketplaceService"):GetProductInfo(tonumber(song.id::gsub("rbxassetid://", ""))
         end)
 
         if success and productInfo then
@@ -1099,7 +1099,7 @@ functions.updateSongButtons = function()
     end
     for i, song in ipairs(songs) do
         local success, productInfo = pcall(function()
-            return game:GetService("MarketplaceService"):GetProductInfo(tonumber(song.id:match("rbxassetid://(%d+)")))
+            return game:GetService("MarketplaceService"):GetProductInfo(tonumber(song.id::gsub("rbxassetid://", ""))
         end)
 
         local songName = success and productInfo.Name or "Unknown Song"
