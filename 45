@@ -4052,13 +4052,8 @@ end)
       BackgroundTransparency = 1,
       ScrollBarThickness = 2,
       Visible = false
-    })Create("UIPadding", ScrollBar, {
-      PaddingLeft = UDim.new(0, 10),
-      PaddingRight = UDim.new(0, 10),
-      PaddingTop = UDim.new(0, 10),
-      PaddingBottom = UDim.new(0, 10)
-    })Create("UIListLayout", ScrollBar, {
-      Padding = UDim.new(0, 5)
+      })Create("UIListLayout", ScrollBar, {
+      Padding = UDim.new(0, 2)
     })
     
     local function AddOption(OptionName)
@@ -4093,6 +4088,7 @@ end)
         TextButton.BackgroundTransparency = 0.8
         TextButton.TextColor3 = Configs_HUB.Cor_Text
       end)
+    ScrollBar.CanvasSize = UDim2.new(0, 0, 0, ScrollBar.UIListLayout.AbsoluteContentSize.Y)
     end
     
     for _,v in pairs(Options) do
@@ -4101,19 +4097,13 @@ end)
     
     local DropOnOff = false
     TextButton.MouseButton1Click:Connect(function()
-      local OptionSize, OptionsNumber = 30, 0
-      for _,v in pairs(ScrollBar:GetChildren()) do
-        if v:IsA("TextButton") and OptionsNumber < 5 then
-          OptionsNumber = OptionsNumber + 1
-          OptionSize = OptionSize + tonumber(v.Size.Y.Offset + 10)
-        end
-      end
       if not DropOnOff then
         TextLabel.Size = UDim2.new(0.94, 0, 0.5, 0)
         Arrow.Size = UDim2.new(0.06, 0, 0.5, 0)
         DefaultText.Size = UDim2.new(0.2, 0, 0.45, 0)
         Line.Position = UDim2.new(0, 0, 0.52, 0)
-        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, OptionSize), 0.3, false)
+        ScrollBar.Size = UDim2.new(1, 0, 0.5, 0)
+        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0.45, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 180, 0.3, false)
         DropOnOff = true
         Line.Visible = true
@@ -4128,6 +4118,7 @@ end)
         Arrow.Size = UDim2.new(0.06, 0, 1, 0)
         DefaultText.Size = UDim2.new(0.2, 0, 0.9, 0)
         Line.Position = UDim2.new(0, 0, 0, 0)
+        ScrollBar.Size = UDim2.new(1, 0, 0.8, 0)
       end
     end)
     return {ScrollBar, Default, Callback, DefaultText}
@@ -4191,18 +4182,12 @@ function AddTextTable(parent, Configs)
 
   local DropOnOff = false
     TextButton.MouseButton1Click:Connect(function()
-      local OptionSize, OptionsNumber = 30, 0
-      for _,v in pairs(ScrollBar:GetChildren()) do
-        if v:IsA("TextButton") and OptionsNumber < 5 then
-          OptionsNumber = OptionsNumber + 1
-          OptionSize = OptionSize + tonumber(v.Size.Y.Offset + 10)
-        end
-      end
       if not DropOnOff then
         TextLabel.Size = UDim2.new(0.94, 0, 0.5, 0)
         Arrow.Size = UDim2.new(0.06, 0, 0.5, 0)
         Line.Position = UDim2.new(0, 0, 0.52, 0)
-        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0, OptionSize), 0.3, false)
+        ScrollBar.Size = UDim2.new(1, 0, 0.5, 0)
+        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0.45, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 180, 0.3, false)
         DropOnOff = true
         Line.Visible = true
@@ -4216,6 +4201,7 @@ function AddTextTable(parent, Configs)
         TextLabel.Size = UDim2.new(0.94, 0, 1, 0)
         Arrow.Size = UDim2.new(0.06, 0, 1, 0)
         Line.Position = UDim2.new(0, 0, 0, 0)
+        ScrollBar.Size = UDim2.new(1, 0, 0.8, 0)
       end
     end)
 
