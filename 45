@@ -1027,14 +1027,25 @@ ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
 Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
 
    ToggleButton.MouseButton1Click:Connect(function()
+    if musicPlaying then
+       notify({
+            Title = "Error",
+            Text = "You are playing a song in Music Player. Please close it",
+            buttonText = "ok",
+            imageID = "",
+            guiSize = Vector2.new(400, 70),
+          })
+         pauseSong()
+       else
     if soundmusic.IsPlaying then
         pauseSong()
         TitleLabel.Text = "Stopped"
         ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-    else
+      else
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
         ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-      end
+       end
+    end
    end)
    
 local NextButton = Instance.new("ImageButton", ScreenGui)
@@ -1131,6 +1142,7 @@ functions.updateSongButtons = function()
                       imageID = "",
                       guiSize = Vector2.new(400, 70),
                     })
+                   pauseSong()
                  else
                 if isLooping then
                    notify({
@@ -1186,6 +1198,7 @@ if musicPlaying then
         imageID = "",
         guiSize = Vector2.new(400, 70),
       })
+    pauseSong()
    else
     if isLooping then
         return
@@ -1207,6 +1220,7 @@ if musicPlaying then
         imageID = "",
         guiSize = Vector2.new(400, 70),
       })
+     pauseSong()
    else
     if isLooping then
         return
