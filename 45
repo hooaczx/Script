@@ -4308,6 +4308,21 @@ function AddTextTable(parent, Configs)
     return {TextButton = TextButton, LabelName = LabelName, ScrollBar = ScrollBar, AddMessage = AddMessageToTable}
   end
 
+  function TypeTextLabel(TextLabel, Text, Delay)
+           local index = 1
+           local startTime = tick()
+
+           RunService.Heartbeat:Connect(function()
+                if index <= #Text then
+                   if tick() - startTime >= Delay then
+                       TextLabel.Text = string.sub(Text, 1, index)
+                        index = index + 1
+                        startTime = tick()
+                      end
+                  end
+             end)
+         end
+
   function AddTextLabel(parent, Configs)
     local LabelName = Configs[1] or Configs.Name or "Text Label!!"
     
@@ -4366,21 +4381,6 @@ function AddTextTable(parent, Configs)
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 0, 0.22, 0)
     })TextSetColor(TextButton)
-    
-    function TypeTextLabel(TextLabel, Text, Delay)
-           local index = 1
-           local startTime = tick()
-
-           RunService.Heartbeat:Connect(function()
-                if index <= #Text then
-                   if tick() - startTime >= Delay then
-                       TextLabel.Text = string.sub(Text, 1, index)
-                        index = index + 1
-                        startTime = tick()
-                      end
-                  end
-             end)
-         end
 
     local isExpanded = false
     
@@ -4533,9 +4533,26 @@ function AddTextTable(parent, Configs)
     Corner(Frame)
     Stroke(Frame)
     
+    local MusicPlayerText = Create("TextLabel", Frame, {
+        Size = UDim2.new(1, 0, 0.1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Text = "Music Player",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true,
+        BackgroundTransparency = 1,
+    })
+    
+    local LineMusicPlayerText = Create("Frame", MusicPlayerText, {
+      Size = UDim2.new(1, 0, 0, 1),
+      Position = UDim2.new(0, 0, 1, 0),
+      BackgroundColor3 = Configs_HUB.Cor_Stroke,
+      BorderSizePixel = 0
+    })
+    
     local NameSongFrame = Create("TextLabel", Frame, {
         Size = UDim2.new(1, 0, 0.2, 0),
-        Position = UDim2.new(0, 0, 0.05, 0),
+        Position = UDim2.new(0, 0, 0.1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Text = "No Song",
         TextColor3 = Configs_HUB.Cor_Text,
@@ -4546,7 +4563,7 @@ function AddTextTable(parent, Configs)
 
     local TimeSongText = Create("TextLabel", Frame, {
         Size = UDim2.new(0.2, 0, 0.1, 0),
-        Position = UDim2.new(0.1, 0, 0.35, 0),
+        Position = UDim2.new(0.1, 0, 0.73, 0),
         BorderSizePixel = 0,
         Text = "00:00",
         TextColor3 = Configs_HUB.Cor_Text,
@@ -4557,7 +4574,7 @@ function AddTextTable(parent, Configs)
 
     local TextID = Create("TextLabel", Frame, {
         Size = UDim2.new(0.1, 0, 0.1, 0),
-        Position = UDim2.new(0.4, 0, 0.35, 0),
+        Position = UDim2.new(0.4, 0, 0.4, 0),
         Text = "ID",
         TextColor3 = Configs_HUB.Cor_Text,
         Font = Configs_HUB.Text_Font,
@@ -4566,8 +4583,8 @@ function AddTextTable(parent, Configs)
     })
 
     local TextBoxID = Create("TextBox", Frame, {
-        Size = UDim2.new(0.23, 0, 0.2, 0),
-        Position = UDim2.new(0.53, 0, 0.3, 0),
+        Size = UDim2.new(0.27, 0, 0.2, 0),
+        Position = UDim2.new(0.53, 0, 0.34, 0),
         TextColor3 = Configs_HUB.Cor_Text,
         Text = Default,
         ClearTextOnFocus = ClearText,
@@ -4592,16 +4609,16 @@ function AddTextTable(parent, Configs)
 
     local Toggle = Create("ImageButton", Frame, {
         Size = UDim2.new(0.09, 0, 0.19, 0),
-        Position = UDim2.new(0.55, 0, 0.6, 0),
+        Position = UDim2.new(0.55, 0, 0.64, 0),
         AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 0,
         Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
     })
 
     local Line = Create("Frame", Frame, {
         Size = UDim2.new(0.8, 0, 0.05, 0),
-        Position = UDim2.new(0.1, 0, 0.8, 0),
+        Position = UDim2.new(0.1, 0, 0.84, 0),
         BorderSizePixel = 0,
         BackgroundColor3 = Configs_HUB.Cor_Stroke,
     })
@@ -4614,7 +4631,7 @@ function AddTextTable(parent, Configs)
     })
 
     local sound = Instance.new("Sound")
-    sound.Parent = Frame 
+    sound.Parent = Frame
 
     local function formatTime(seconds)
         local minutes = math.floor(seconds / 60)
@@ -4622,17 +4639,8 @@ function AddTextTable(parent, Configs)
         return string.format("%d:%02d", minutes, remainingSeconds)
     end
 
-    local RunServiceforsong
-
     local function updateProgressBar()
-     if RunServiceforsong then
-         RunServiceforsong:Disconnect()
-     end
-
-       RunServiceforsong = RunService.RenderStepped:Connect(function()
-           if not Frame then
-              sound:Destroy()
-           end
+        RunService.RenderStepped:Connect(function()
             if sound.Playing then
                 local progress = sound.TimePosition / sound.TimeLength
                 Progress.Size = UDim2.new(progress, 0, 1, 0)
@@ -4641,33 +4649,46 @@ function AddTextTable(parent, Configs)
         end)
     end
 
-    sound.Ended:Connect(function()
-      sound:Play()
-      sound.TimePosition = soundsavedTimePosition
-      updateProgressBar()
-      NameSongFrame.Text = game:GetService("MarketplaceService"):GetProductInfo(tonumber(TextBoxID.Text)).Name
-      Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-      musicPlaying = true
-    end)
+    local function extractAssetId(input)
+    local assetId = input:match("rbxassetid://(%d+)") 
+    if assetId then
+        return assetId
+    end
+    assetId = input:match("https://www.roblox.com/asset/%?id=(%d+)")
+    if assetId then
+        return assetId
+    end
+    assetId = input:match("^(%d+)$")
+    if assetId then
+        return assetId
+    end
+    return nil
+end
 
-    Toggle.MouseButton1Click:Connect(function()
-        if sound.IsPlaying then
-            soundsavedTimePosition = sound.TimePosition
-            sound:Stop()
-            NameSongFrame.Text = "Stopped"
-            Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
-            musicPlaying = false
-        else
-            sound.SoundId = "rbxassetid://" .. TextBoxID.Text
-            sound:Play()
-            sound.TimePosition = soundsavedTimePosition
-            updateProgressBar()
-            NameSongFrame.Text = game:GetService("MarketplaceService"):GetProductInfo(tonumber(TextBoxID.Text)).Name
-            Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-            musicPlaying = true
-          end
-      end)
-  end
+Toggle.MouseButton1Click:Connect(function()
+    local inputText = TextBoxID.Text
+    local assetId = extractAssetId(inputText)
+    if not assetId then
+        NameSongFrame.Text = "Invalid ID"
+        return
+    end
+    if sound.IsPlaying then
+        soundsavedTimePosition = sound.TimePosition
+        sound:Stop()
+        TypeTextLabel(NameSongFrame, "Stopped", 0.15) 
+        Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
+        musicPlaying = false
+    else
+       sound.SoundId = "rbxassetid://" .. assetId
+       sound:Play()
+       sound.TimePosition = soundsavedTimePosition
+       updateProgressBar()
+       TypeTextLabel(NameSongFrame, game:GetService("MarketplaceService"):GetProductInfo(assetId).Name, 0.15) 
+       Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
+        musicPlaying = true
+       end
+   end)
+end
 
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
