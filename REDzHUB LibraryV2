@@ -3503,9 +3503,14 @@ RunService.Heartbeat:Connect(function()
 end)
 end
 
+  local firstVisible = true
+  local FirstTab = true
+  local textsize = 15
+  local textcolor = Configs_HUB.Cor_Text
+
 function MakeTab(Configs)
     local TabName = Configs.Name or "Tab"
-    local TabTitle = Configs.TabTitle or false
+    local TabImage = Configs.image
     
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(1, 0, 0.09, 0),
@@ -3519,7 +3524,8 @@ function MakeTab(Configs)
     })
     
     local TextLabel = Create("TextLabel", Frame, {
-        Size = UDim2.new(1, 0, 1, 0),
+        Size = TabImage and UDim2.new(0.85, 0, 1, 0) or UDim2.new(1, 0, 1, 0),
+        Position = TabImage and UDim2.new(0.15, 0, 0, 0) or UDim2.new(0, 0, 0, 0),
         TextWrapped = true,
         BackgroundTransparency = 1,
         Font = Configs_HUB.Text_Font,
@@ -3527,6 +3533,16 @@ function MakeTab(Configs)
         TextSize = textsize,
         Text = TabName
     })
+    
+    if TabImage then
+        local image = Create("ImageLabel", Frame, {
+            Size = UDim2.new(0.15, 0, 0.8, 0),
+            Position = UDim2.new(0, 0, 0.05, 0),
+            BackgroundColor3 = Configs_HUB.Cor_Options,
+            BackgroundTransparency = 1,
+            Image = TabImage
+        })Corner(image)
+    end
     
     local Container = Create("ScrollingFrame", Containers, {
         Size = UDim2.new(1, 0, 1, 0),
@@ -3541,20 +3557,6 @@ function MakeTab(Configs)
         SortOrder = Enum.SortOrder.LayoutOrder,
     })
     
-    if TabTitle then
-        Create("TextLabel", Container, {
-            BackgroundTransparency = 1,
-            Text = "#" .. string.gsub(TabName, " ", "-"),
-            TextSize = 30,
-            Font = Configs_HUB.Text_Font,
-            TextXAlignment = "Left",
-            TextColor3 = Configs_HUB.Cor_Text,
-            Size = UDim2.new(0.8, 0, 1, 0),
-            Position = UDim2.new(0, 0, 0, 0),
-            Name = "Frame"
-        })
-    end
-    
     TextButton.MouseButton1Click:Connect(function()
         for _, container in pairs(Containers:GetChildren()) do
             if container:IsA("ScrollingFrame") then
@@ -3565,11 +3567,11 @@ function MakeTab(Configs)
             if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
                 CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
                 frame.TextLabel.TextSize = 14
-            end
+             end
         end
         Container.Visible = true
-        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.3, false)
-        TextLabel.TextSize = 15
+        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+        CreateTween(TextLabel, "TextSize", 17, 0.2, false)
     end)
     
     firstVisible = false
@@ -3577,7 +3579,7 @@ function MakeTab(Configs)
     textsize = 14
     textcolor = Configs_HUB.Cor_DarkText
     return Container
-end
+   end
   
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
