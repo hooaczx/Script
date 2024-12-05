@@ -1238,10 +1238,14 @@ local isLocking = false
 local function saveCharacterState(character)
     local characterState = {}
     for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") or part:IsA("Decal") then
+        if part:IsA("BasePart") then
             characterState[part] = {
                 Transparency = part.Transparency,
                 CanCollide = part.CanCollide
+            }
+        elseif part:IsA("Decal") then
+            characterState[part] = {
+                Transparency = part.Transparency
             }
         elseif part:IsA("Accessory") then
             local handle = part:FindFirstChild("Handle")
@@ -1258,9 +1262,11 @@ end
 local function restoreCharacterState(character, characterState)
     for part, state in pairs(characterState) do
         if part and part.Parent then
-            if part:IsA("BasePart") or part:IsA("Decal") then
+            if part:IsA("BasePart") then
                 part.Transparency = state.Transparency
                 part.CanCollide = state.CanCollide
+            elseif part:IsA("Decal") then
+                part.Transparency = state.Transparency
             elseif part:IsA("Accessory") then
                 local handle = part:FindFirstChild("Handle")
                 if handle then
