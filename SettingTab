@@ -1232,21 +1232,76 @@ AddToggle(Main5u6, {
 local playersService = game:GetService("Players")
 local localPlayerService = playersService.LocalPlayer
 local isCharacterHidden = false
+local savedCharacterState = {}
+local isLocking = false
+
+local function saveCharacterState(character)
+    local characterState = {}
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") or part:IsA("Decal") then
+            characterState[part] = {
+                Transparency = part.Transparency,
+                CanCollide = part.CanCollide
+            }
+        elseif part:IsA("Accessory") then
+            local handle = part:FindFirstChild("Handle")
+            if handle then
+                characterState[handle] = {
+                    Transparency = handle.Transparency
+                }
+            end
+        end
+    end
+    return characterState
+end
+
+local function restoreCharacterState(character, characterState)
+    for part, state in pairs(characterState) do
+        if part and part.Parent then
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = state.Transparency
+                part.CanCollide = state.CanCollide
+            elseif part:IsA("Accessory") then
+                local handle = part:FindFirstChild("Handle")
+                if handle then
+                    handle.Transparency = state.Transparency
+                end
+            end
+        end
+    end
+end
 
 local function updateCharacterVisibility()
+    if isLocking then
+        return
+    end
+
     for _, targetPlayer in pairs(playersService:GetPlayers()) do
         if targetPlayer.Name ~= localPlayerService.Name then
             local character = targetPlayer.Character or targetPlayer.CharacterAdded:Wait()
             if character then
-                for _, part in pairs(character:GetChildren()) do
-                    if part:IsA("Part") or part:IsA("MeshPart") then
-                        part.Transparency = isCharacterHidden and 1 or 0
-                        part.CanCollide = not isCharacterHidden
-                    elseif part:IsA("Accessory") then
-                        local handle = part:FindFirstChild("Handle")
-                        if handle then
-                            handle.Transparency = isCharacterHidden and 1 or 0
+                if isCharacterHidden then
+                    isLocking = true
+                    savedCharacterState[targetPlayer] = saveCharacterState(character)
+                    for _, part in pairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Transparency = 1
+                            part.CanCollide = false
+                        elseif part:IsA("Decal") then
+                            part.Transparency = 1
+                        elseif part:IsA("Accessory") then
+                            local handle = part:FindFirstChild("Handle")
+                            if handle then
+                                handle.Transparency = 1
+                            end
                         end
+                    end
+                    isLocking = false
+                else
+                    if savedCharacterState[targetPlayer] then
+                        isLocking = true
+                        restoreCharacterState(character, savedCharacterState[targetPlayer])
+                        isLocking = false
                     end
                 end
             end
@@ -1262,6 +1317,7 @@ AddToggle(Main5u6, {
         updateCharacterVisibility()
     end
 })
+
 
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
