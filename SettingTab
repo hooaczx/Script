@@ -1281,8 +1281,9 @@ local function updateCharacterVisibility()
             local character = targetPlayer.Character or targetPlayer.CharacterAdded:Wait()
             if character then
                 if isCharacterHidden then
-                    isLocking = true
                     savedCharacterState[targetPlayer] = saveCharacterState(character)
+                    wait() 
+                    isLocking = true
                     for _, part in pairs(character:GetDescendants()) do
                         if part:IsA("BasePart") then
                             part.Transparency = 1
