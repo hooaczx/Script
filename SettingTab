@@ -1229,6 +1229,38 @@ AddToggle(Main5u6, {
     Callback = toggleLight
 })
 
+local isHidden = false
+
+local function toggleCharacterVisibility()
+    for _, plr in pairs(player:GetPlayers()) do
+        if plr.Name ~= player.Name then
+            local char = plr.Character or plr.CharacterAdded:Wait()
+            if char then
+                for _, child in pairs(char:GetChildren()) do
+                    if child:IsA("Part") or child:IsA("MeshPart") then
+                        child.Transparency = isHidden and 1 or 0
+                        child.CanCollide = not isHidden
+                    elseif child:IsA("Accessory") then
+                        local handle = child:FindFirstChild("Handle")
+                        if handle then
+                            handle.Transparency = isHidden and 1 or 0
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "Hide Other Players",
+    Default = false,
+    Callback = function(value)
+        isHidden = value
+        toggleCharacterVisibility()
+    end
+})
+
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
    image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
