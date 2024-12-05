@@ -1229,21 +1229,23 @@ AddToggle(Main5u6, {
     Callback = toggleLight
 })
 
-local isHidden = false
+local playersService = game:GetService("Players")
+local localPlayerService = playersService.LocalPlayer
+local isCharacterHidden = false
 
-local function toggleCharacterVisibility()
-    for _, plr in pairs(player:GetPlayers()) do
-        if plr.Name ~= player.Name then
-            local char = plr.Character or plr.CharacterAdded:Wait()
-            if char then
-                for _, child in pairs(char:GetChildren()) do
-                    if child:IsA("Part") or child:IsA("MeshPart") then
-                        child.Transparency = isHidden and 1 or 0
-                        child.CanCollide = not isHidden
-                    elseif child:IsA("Accessory") then
-                        local handle = child:FindFirstChild("Handle")
+local function updateCharacterVisibility()
+    for _, targetPlayer in pairs(playersService:GetPlayers()) do
+        if targetPlayer.Name ~= localPlayerService.Name then
+            local character = targetPlayer.Character or targetPlayer.CharacterAdded:Wait()
+            if character then
+                for _, part in pairs(character:GetChildren()) do
+                    if part:IsA("Part") or part:IsA("MeshPart") then
+                        part.Transparency = isCharacterHidden and 1 or 0
+                        part.CanCollide = not isCharacterHidden
+                    elseif part:IsA("Accessory") then
+                        local handle = part:FindFirstChild("Handle")
                         if handle then
-                            handle.Transparency = isHidden and 1 or 0
+                            handle.Transparency = isCharacterHidden and 1 or 0
                         end
                     end
                 end
@@ -1255,9 +1257,9 @@ end
 AddToggle(Main5u6, {
     Name = "Hide Other Players",
     Default = false,
-    Callback = function(value)
-        isHidden = value
-        toggleCharacterVisibility()
+    Callback = function(isToggled)
+        isCharacterHidden = isToggled
+        updateCharacterVisibility()
     end
 })
 
