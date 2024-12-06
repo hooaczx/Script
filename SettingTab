@@ -1232,8 +1232,8 @@ AddToggle(Main5u6, {
 local playersService = game:GetService("Players")
 local localPlayerService = playersService.LocalPlayer
 local isCharacterHidden = false
-local savedCharacterState = {}
-local isLocking = false
+local savedCharacterStates = {}
+local isProcessing = false
 
 local function saveCharacterState(character)
     local characterState = {}
@@ -1252,8 +1252,12 @@ local function saveCharacterState(character)
             if handle then
                 characterState[handle] = {
                     Transparency = handle.Transparency
-                }
+                end
             end
+        elseif part:IsA("BillboardGui") or part:IsA("SurfaceGui") then
+            characterState[part] = {
+                Enabled = part.Enabled
+            }
         end
     end
     return characterState
@@ -1272,59 +1276,83 @@ local function restoreCharacterState(character, characterState)
                 if handle then
                     handle.Transparency = state.Transparency
                 end
+            elseif part:IsA("BillboardGui") or part:IsA("SurfaceGui") then
+                part.Enabled = state.Enabled
             end
         end
     end
 end
 
-local function updateCharacterVisibility()
-    if isLocking then
+local function hideCharacter(character)
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 1
+            part.CanCollide = false
+        elseif part:IsA("Decal") then
+            part.Transparency = 1
+        elseif part:IsA("Accessory") then
+            local handle = part:FindFirstChild("Handle")
+            if handle then
+                handle.Transparency = 1
+            end
+        elseif part:IsA("BillboardGui") or part:IsA("SurfaceGui") then
+            part.Enabled = false
+        end
+    end
+end
+
+local function processAllPlayers()
+    if isProcessing then
         return
     end
-
+    isProcessing = true
     for _, targetPlayer in pairs(playersService:GetPlayers()) do
-        if targetPlayer.Name ~= localPlayerService.Name then
+        if targetPlayer ~= localPlayerService then
             local character = targetPlayer.Character or targetPlayer.CharacterAdded:Wait()
             if character then
                 if isCharacterHidden then
-                    savedCharacterState[targetPlayer] = saveCharacterState(character)
-                    wait() 
-                    isLocking = true
-                    for _, part in pairs(character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.Transparency = 1
-                            part.CanCollide = false
-                        elseif part:IsA("Decal") then
-                            part.Transparency = 1
-                        elseif part:IsA("Accessory") then
-                            local handle = part:FindFirstChild("Handle")
-                            if handle then
-                                handle.Transparency = 1
-                            end
-                        end
+                    if not savedCharacterStates[targetPlayer] then
+                        savedCharacterStates[targetPlayer] = saveCharacterState(character)
                     end
-                    isLocking = false
+                    hideCharacter(character)
                 else
-                    if savedCharacterState[targetPlayer] then
-                        isLocking = true
-                        restoreCharacterState(character, savedCharacterState[targetPlayer])
-                        isLocking = false
+                    if savedCharacterStates[targetPlayer] then
+                        restoreCharacterState(character, savedCharacterStates[targetPlayer])
+                        savedCharacterStates[targetPlayer] = nil
                     end
                 end
             end
         end
     end
+    isProcessing = false
+end
+
+local function onPlayerAdded(player)
+    player.CharacterAdded:Connect(function(character)
+        if isCharacterHidden then
+            wait(1)
+            savedCharacterStates[player] = saveCharacterState(character)
+            hideCharacter(character)
+        end
+    end)
+end
+
+playersService.PlayerAdded:Connect(onPlayerAdded)
+
+for _, player in pairs(playersService:GetPlayers()) do
+    if player ~= localPlayer then
+        onPlayerAdded(player)
+    end
 end
 
 AddToggle(Main5u6, {
-    Name = "Hide Other Players",
+    Name = "Hide All Players",
     Default = false,
     Callback = function(isToggled)
         isCharacterHidden = isToggled
-        updateCharacterVisibility()
+        processAllPlayers()
     end
 })
-
 
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
