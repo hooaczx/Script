@@ -408,10 +408,10 @@ local ToggleWalk = AddToggle(Main5u6, {
   end
 })
 
+local isAntiKickEnabled = false
 local kickReasons = {}
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
 local kickAttempts = {}
-local isEnabled = false
 
 local ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
@@ -423,8 +423,14 @@ local ToggleKick = AddToggle(Main5u6, {
 
         setreadonly(mt, false)
 
+        isAntiKickEnabled = isEnabled
+
         if isEnabled then
             mt.__namecall = protect(function(self, ...)
+                if not isAntiKickEnabled then
+                    return oldNameCall(self, ...)
+                end
+
                 local method = getnamecallmethod()
                 local args = {...}
 
@@ -492,6 +498,7 @@ local ToggleKick = AddToggle(Main5u6, {
         setreadonly(mt, true)
     end
 })
+
 
 local toggleAntiSit = false
 local heartbeatConnectionAntiSit = nil
