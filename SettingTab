@@ -411,6 +411,7 @@ local ToggleWalk = AddToggle(Main5u6, {
 local kickReasons = {}
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
 local kickAttempts = {}
+local isEnabled = false
 
 local ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
@@ -468,6 +469,15 @@ local ToggleKick = AddToggle(Main5u6, {
                     game.StarterGui:SetCore("SendNotification", {
                         Title = "Server Close Attempt Blocked",
                         Text = "An attempt to close the server was intercepted.",
+                        Duration = 5
+                    })
+                    return
+                end
+
+                if method == "remove" and self == game.Players.LocalPlayer then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Remove Attempt Blocked",
+                        Text = "An attempt to remove the LocalPlayer was intercepted.",
                         Duration = 5
                     })
                     return
