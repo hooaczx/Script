@@ -224,9 +224,9 @@ local function setupTPWalk()
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
                         if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                            character:TranslateBy(hum.MoveDirection * (tonumber(getgenv().TPSpeed) * 2))
                         else
-                            character:TranslateBy(hum.MoveDirection)
+                            character:TranslateBy(hum.MoveDirection * 2)
                         end
                     end
                 else
@@ -270,6 +270,7 @@ local Toggle = AddToggle(Main5u6, {
         end
     end
 })
+
 
 local Player = game.Players.LocalPlayer
 local originalUserId = Player.UserId
@@ -320,7 +321,6 @@ getgenv().name = "Protected"
 getgenv().ProtectName = false
 local originalName = game.Players.LocalPlayer.Name
 local heartbeatConnection
-local RunService = game:GetService("RunService")
 
 local function updateNameInTextLabels(newName)
     local Plr = game.Players.LocalPlayer
@@ -346,21 +346,33 @@ local function updateNameInTextLabels(newName)
         end
     end
 
-    local leaderboard = game.Players.LocalPlayer.PlayerGui:FindFirstChild("Leaderboard")
-    if leaderboard then
-        heartbeatConnection = RunService.Heartbeat:Connect(function()
-            if not getgenv().ProtectName then
-                heartbeatConnection:Disconnect()
-                heartbeatConnection = nil
-                return
-            end
-            for _, v in ipairs(leaderboard:GetDescendants()) do
-                if v:IsA("TextLabel") and v.Text == originalName then
-                    v.Text = newName
+    game.DescendantAdded:Connect(function(value)
+        if value:IsA("TextLabel") then
+            local has = string.find(value.Text, Plr.Name)
+            value:GetPropertyChangedSignal("Text"):Connect(function()
+                if getgenv().ProtectName then
+                    value.Text = value.Text:gsub(Plr.Name, newName)
                 end
+            end)
+            if has then
+                value.Text = value.Text:gsub(Plr.Name, newName)
             end
-        end)
-    end
+        end
+    end)
+
+    local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScrollingFrame.OffsetUndoFrame
+    heartbeatConnection = RunService.Heartbeat:Connect(function()
+        if not getgenv().ProtectName then
+            heartbeatConnection:Disconnect()
+            heartbeatConnection = nil
+            return
+        end
+        for _, v in ipairs(leaderboard:GetDescendants()) do
+            if v:IsA("TextLabel") and v.Text == originalName then
+                v.Text = newName
+            end
+        end
+    end)
 end
 
 local function revertNameInTextLabels()
@@ -401,7 +413,6 @@ AddToggle(Main5u6, {
       end
   end
 })
-
 local isAntiKickEnabled = false
 local kickReasons = {}
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
