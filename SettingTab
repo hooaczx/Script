@@ -320,26 +320,21 @@ getgenv().name = "Protected"
 getgenv().ProtectName = false
 local originalName = game.Players.LocalPlayer.Name
 local heartbeatConnection
+local player = game.Players.LocalPlayer
 
 local function updateNameInTextLabels(newName)
-    local Plr = game.Players.LocalPlayer
     if not game:IsLoaded() then game.Loaded:Wait() end
 
-    if heartbeatConnection then
-        heartbeatConnection:Disconnect()
-        heartbeatConnection = nil
-    end
-
-    for _, value in ipairs(game:GetDescendants()) do
+    for _, value in ipairs(player.PlayerGui:GetDescendants()) do
         if value:IsA("TextLabel") then
-            local has = string.find(value.Text, Plr.Name)
+            local has = string.find(value.Text, player.Name)
             if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
+                value.Text = value.Text:gsub(player.Name, newName)
             end
 
             value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(Plr.Name, newName)
+                    value.Text = value.Text:gsub(player.Name, newName)
                 end
             end)
         end
@@ -347,26 +342,26 @@ local function updateNameInTextLabels(newName)
 
     game.DescendantAdded:Connect(function(value)
         if value:IsA("TextLabel") then
-            local has = string.find(value.Text, Plr.Name)
+            local has = string.find(value.Text, player.Name)
+            if has then
+                value.Text = value.Text:gsub(player.Name, newName)
+            end
+
             value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(Plr.Name, newName)
+                    value.Text = value.Text:gsub(player.Name, newName)
                 end
             end)
-            if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
-            end
         end
     end)
 
-    local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScrollingFrame.OffsetUndoFrame
-    heartbeatConnection = RunService.Heartbeat:Connect(function()
+    heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
         if not getgenv().ProtectName then
             heartbeatConnection:Disconnect()
             heartbeatConnection = nil
             return
         end
-        for _, v in ipairs(leaderboard:GetDescendants()) do
+        for _, v in ipairs(player.PlayerGui:GetDescendants()) do
             if v:IsA("TextLabel") and v.Text == originalName then
                 v.Text = newName
             end
