@@ -325,6 +325,11 @@ local function updateNameInTextLabels(newName)
     local Plr = game.Players.LocalPlayer
     if not game:IsLoaded() then game.Loaded:Wait() end
 
+    if heartbeatConnection then
+        heartbeatConnection:Disconnect()
+        heartbeatConnection = nil
+    end
+
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
             local has = string.find(value.Text, Plr.Name)
@@ -395,7 +400,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-local ToggleWalk = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "Name Protection",
   Default = false,
   Callback = function(state)
