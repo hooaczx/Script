@@ -24,24 +24,6 @@ local lp = ps.LocalPlayer
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
 
-local function Create(instance, parent, props)
-    local new = Instance.new(instance, parent)
-    if props then
-        for prop, value in pairs(props) do
-            new[prop] = value
-        end
-    end
-    return new
-end
-
-local function CreateTween(instance, prop, value, time, tweenWait)
-    local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
-    tween:Play()
-    if tweenWait then
-        tween.Completed:Wait()
-    end
-end
-
 local function SendDetailedNotification(title, text, duration)
     game.StarterGui:SetCore("SendNotification", {
         Title = title,
@@ -1245,6 +1227,18 @@ AddToggle(Main5u6, {
     Callback = toggleLight
 })
 
+local function Create(instance, parent, props)
+    local new = Instance.new(instance, parent)
+    if props then
+        for prop, value in pairs(props) do
+            new[prop] = value
+        end
+    end
+    return new
+end
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local previousCFrame = humanoidRootPart.CFrame
 local humanoid = character:WaitForChild("Humanoid")
@@ -1253,6 +1247,14 @@ local screenGui, toggle, speedLabel, togglemodLabelButton, modLabel
 local currentSpeed, targetSpeed = 0, 0
 local isSpeedLabelVisible, useWalkSpeed, isButtonActive = false, false, true
 local stopupdatespeed
+
+local function CreateTween(instance, prop, value, time, tweenWait)
+    local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
+    tween:Play()
+    if tweenWait then
+        tween.Completed:Wait()
+    end
+end
 
 local function FadeIn(instance, time)
     instance.BackgroundTransparency = 1
@@ -1367,7 +1369,6 @@ local function ToggleSpeedGui(create)
         FadeOut(toggle, 1)
         FadeOut(speedLabel, 1)
         FadeOut(modLabel, 1)
-        
         if screenGui then
             screenGui:Destroy()
             screenGui = nil
