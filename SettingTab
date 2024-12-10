@@ -1228,13 +1228,13 @@ AddToggle(Main5u6, {
 })
 
 local function Create(instance, parent, props)
-  local new = Instance.new(instance, parent)
-  if props then
-    table.foreach(props, function(prop, value)
-      new[prop] = value
-    end)
-  end
-  return new
+    local new = Instance.new(instance, parent)
+    if props then
+        for prop, value in pairs(props) do
+            new[prop] = value
+        end
+    end
+    return new
 end
 
 local player = game.Players.LocalPlayer
@@ -1256,59 +1256,59 @@ local function CreateTween(instance, prop, value, time, tweenWait)
     end
 end
 
+local function CreateButton(parent, size, position, image, transparency, zIndex, visible)
+    return Create("ImageButton", parent, {
+        Size = size,
+        Position = position,
+        Image = image,
+        BackgroundTransparency = transparency,
+        ZIndex = zIndex,
+        Visible = visible
+    })
+end
+
 local function ToggleSpeedGui(create)
     if create then
-        screenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+        screenGui = Create("ScreenGui", game:GetService("CoreGui"))
 
-        toggle = Instance.new("ImageButton", screenGui)
-        toggle.Size = UDim2.new(0.06, 0, 0.124, 0)
-        toggle.Position = UDim2.new(0.39, 0, 0.004, 0)
-        toggle.AnchorPoint = Vector2.new(0.43, 0.006)
-        toggle.Image = "rbxassetid://116250785038242"
-        toggle.ZIndex = 2
-        toggle.BackgroundTransparency = 1
+        toggle = CreateButton(screenGui, UDim2.new(0.06, 0, 0.124, 0), UDim2.new(0.39, 0, 0.004, 0), "rbxassetid://116250785038242", 1, 2, true)
 
-        speedLabel = Instance.new("TextLabel", toggle)
-        speedLabel.Size = UDim2.new(1.9, 0, 0.45, 0)
-        speedLabel.Position = UDim2.new(-0.04, 0, 0.5, 0)
-        speedLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-        speedLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        speedLabel.TextScaled = true
-        speedLabel.Text = "Speed: 0"
-        speedLabel.BackgroundTransparency = 1
-        speedLabel.ZIndex = 1
-        speedLabel.Visible = false
+        speedLabel = Create("TextLabel", toggle, {
+            Size = UDim2.new(1.9, 0, 0.45, 0),
+            Position = UDim2.new(-0.04, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextScaled = true,
+            Text = "Speed: 0",
+            BackgroundTransparency = 1,
+            ZIndex = 1,
+            Visible = false
+        })
 
-        togglemodLabelButton = Instance.new("ImageButton", toggle)
-        togglemodLabelButton.Size = UDim2.new(1, 0, 1, 0)
-        togglemodLabelButton.Position = UDim2.new(0, 0, 0, 0)
-        togglemodLabelButton.AnchorPoint = Vector2.new(0.43, 0.006)
-        togglemodLabelButton.Image = "rbxassetid://93917932838439"
-        togglemodLabelButton.ZIndex = 1
-        togglemodLabelButton.BackgroundTransparency = 1
-        togglemodLabelButton.Visible = false
+        togglemodLabelButton = CreateButton(toggle, UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), "rbxassetid://116250785038242", 1, 1, false)
 
-        modLabel = Instance.new("TextLabel", toggle)
-        modLabel.Size = UDim2.new(1.9, 0, 0.45, 0)
-        modLabel.Position = UDim2.new(0, 0, 0, 0)
-        modLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-        modLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        modLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        modLabel.TextScaled = true
-        modLabel.Text = "CFrame Mode"
-        modLabel.ZIndex = 1
-        modLabel.BackgroundTransparency = 1
-        modLabel.Visible = false
-
+        modLabel = Create("TextLabel", toggle, {
+            Size = UDim2.new(1.9, 0, 0.45, 0),
+            Position = UDim2.new(0, 0, 0, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextScaled = true,
+            Text = "CFrame Mode",
+            ZIndex = 1,
+            BackgroundTransparency = 1,
+            Visible = false
+        })
+        
         toggle.MouseButton1Click:Connect(function()
             if not isButtonActive then return end
             isButtonActive = false
 
             if isSpeedLabelVisible then
                 speedLabel.Visible = true
-                toggleLabel.Visible = true
-                toggleButton.Visible = true
+                modLabel.Visible = true
+                togglemodLabelButton.Visible = true
                 CreateTween(speedLabel, "Position", UDim2.new(0, 0, 0.75, 0), 1, false)
                 CreateTween(modLabel, "Position", UDim2.new(0, 0, 0.25, 0), 1, false)
                 CreateTween(togglemodLabelButton, "Position", UDim2.new(0, 0, 0, 0), 1, false)
@@ -1317,8 +1317,8 @@ local function ToggleSpeedGui(create)
                 CreateTween(modLabel, "Position", UDim2.new(2, 0, 0.25, 0), 1, false)
                 CreateTween(togglemodLabelButton, "Position", UDim2.new(1 + 2.4, 0, 0, 0), 1, true)
                 speedLabel.Visible = false
-                toggleLabel.Visible = false
-                toggleButton.Visible = false
+                modLabel.Visible = false
+                togglemodLabelButton.Visible = false
             end
             isSpeedLabelVisible = not isSpeedLabelVisible
 
