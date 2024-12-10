@@ -322,33 +322,50 @@ local originalName = Plr.Name
 local isNameProtectionEnabled = false
 local ConnectionsName = {}
 
-local function Changename()
-    for _, Value in pairs(game:GetDescendants()) do
-        if Value:IsA("TextLabel") then
-            if isNameProtectionEnabled then
-                local has = string.find(Value.Text, originalName)
-                if has then
-                    local str = Value.Text:gsub(originalName, getgenv().name)
-                    Value.Text = str
-                end
-                local connection = Value:GetPropertyChangedSignal("Text"):Connect(function()
-                    local str = Value.Text:gsub(originalName, getgenv().name)
-                    Value.Text = str
-                end)
-                table.insert(ConnectionsName, connection)
-            end
-        end
-    end
-end
-
-local function stopChangename()
+local function ClearConnections()
     for _, connection in pairs(ConnectionsName) do
         connection:Disconnect()
     end
     ConnectionsName = {}
 end
 
+local function Changename()
+    ClearConnections()
+    for _, Value in pairs(game:GetDescendants()) do
+        if Value:IsA("TextLabel") then
+            local has = string.find(Value.Text, originalName)
+            if has then
+                local str = Value.Text:gsub(originalName, getgenv().name)
+                Value.Text = str
+            end
+            local connection = Value:GetPropertyChangedSignal("Text"):Connect(function()
+                local str = Value.Text:gsub(originalName, getgenv().name)
+                Value.Text = str
+            end)
+            table.insert(ConnectionsName, connection)
+        end
+    end
+end
+
+local function ResetNames()
+    for _, Value in pairs(game:GetDescendants()) do
+        if Value:IsA("TextLabel") then
+            local has = string.find(Value.Text, getgenv().name)
+            if has then
+                local str = Value.Text:gsub(getgenv().name, originalName)
+                Value.Text = str
+            end
+        end
+    end
+end
+
+local function stopChangename()
+    ClearConnections()
+    ResetNames()
+end
+
 local function Name()
+    ClearConnections()
     if isNameProtectionEnabled then
         local connection = game.DescendantAdded:Connect(function(Value)
             if Value:IsA("TextLabel") then
