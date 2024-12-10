@@ -24,6 +24,24 @@ local lp = ps.LocalPlayer
 getgenv().TweenSpeed = 16
 getgenv().TweenWalk = false
 
+local function Create(instance, parent, props)
+    local new = Instance.new(instance, parent)
+    if props then
+        for prop, value in pairs(props) do
+            new[prop] = value
+        end
+    end
+    return new
+end
+
+local function CreateTween(instance, prop, value, time, tweenWait)
+    local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
+    tween:Play()
+    if tweenWait then
+        tween.Completed:Wait()
+    end
+end
+
 local function SendDetailedNotification(title, text, duration)
     game.StarterGui:SetCore("SendNotification", {
         Title = title,
@@ -1225,6 +1243,148 @@ AddToggle(Main5u6, {
     Name = "Light Around Character",
     Default = false,
     Callback = toggleLight
+})
+
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local previousCFrame = humanoidRootPart.CFrame
+local humanoid = character:WaitForChild("Humanoid")
+
+local screenGui, toggle, speedLabel, togglemodLabelButton, modLabel
+local currentSpeed, targetSpeed = 0, 0
+local isSpeedLabelVisible, useWalkSpeed, isButtonActive = false, false, true
+local stopupdatespeed
+
+local function FadeIn(instance, time)
+    instance.BackgroundTransparency = 1
+    instance.Visible = true
+    CreateTween(instance, "BackgroundTransparency", 0, time, true)
+end
+
+local function FadeOut(instance, time)
+    CreateTween(instance, "BackgroundTransparency", 1, time, true)
+    instance.Visible = false
+end
+
+local function CreateButton(parent, size, position, image, transparency, zIndex, visible)
+    return Create("ImageButton", parent, {
+        Size = size,
+        Position = position,
+        Image = image,
+        BackgroundTransparency = transparency,
+        ZIndex = zIndex,
+        Visible = visible
+    })
+end
+
+local function ToggleSpeedGui(create)
+    if create then
+        screenGui = Create("ScreenGui", game:GetService("CoreGui"))
+
+        toggle = CreateButton(screenGui, UDim2.new(0.06, 0, 0.124, 0), UDim2.new(0.39, 0, 0.004, 0), "rbxassetid://116250785038242", 1, 2, true)
+
+        speedLabel = Create("TextLabel", toggle, {
+            Size = UDim2.new(1.9, 0, 0.45, 0),
+            Position = UDim2.new(-0.04, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextScaled = true,
+            Text = "Speed: 0",
+            BackgroundTransparency = 1,
+            ZIndex = 1,
+            Visible = false
+        })
+
+        togglemodLabelButton = CreateButton(toggle, UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), "rbxassetid://116250785038242", 1, 1, false)
+
+        modLabel = Create("TextLabel", toggle, {
+            Size = UDim2.new(1.9, 0, 0.45, 0),
+            Position = UDim2.new(0, 0, 0, 0),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextScaled = true,
+            Text = "CFrame Mode",
+            ZIndex = 1,
+            BackgroundTransparency = 1,
+            Visible = false
+        })
+        FadeIn(toggle, 0)
+        FadeIn(speedLabel, 0)
+        FadeIn(modLabel, 0)
+
+        toggle.MouseButton1Click:Connect(function()
+            if not isButtonActive then return end
+            isButtonActive = false
+
+            if isSpeedLabelVisible then
+                CreateTween(speedLabel, "Position", UDim2.new(2, 0, 0.75, 0), 1, false)
+                CreateTween(modLabel, "Position", UDim2.new(2, 0, 0.25, 0), 1, false)
+                CreateTween(togglemodLabelButton, "Position", UDim2.new(1 + 2.4, 0, 0, 0), 1, false)
+                speedLabel.Visible = false
+                modLabel.Visible = false
+            else
+                CreateTween(speedLabel, "Position", UDim2.new(0, 0, 0.75, 0), 1, false)
+                CreateTween(modLabel, "Position", UDim2.new(0, 0, 0.25, 0), 1, false)
+                CreateTween(togglemodLabelButton, "Position", UDim2.new(0, 0, 0, 0), 1, true)
+                speedLabel.Visible = true
+                modLabel.Visible = true
+            end
+            isSpeedLabelVisible = not isSpeedLabelVisible
+
+            wait(1)
+            isButtonActive = true
+        end)
+
+        togglemodLabelButton.MouseButton1Click:Connect(function()
+            useWalkSpeed = not useWalkSpeed
+            modLabel.Text = useWalkSpeed and "WalkSpeed Mode" or "CFrame Mode"
+        end)
+
+        stopupdatespeed = game:GetService("RunService").RenderStepped:Connect(function()
+            if humanoidRootPart then
+                if useWalkSpeed then
+                    local walkSpeed = humanoid.WalkSpeed
+                    if humanoid.MoveDirection.Magnitude > 0 then
+                        currentSpeed = math.min(currentSpeed + 1, walkSpeed)
+                    else
+                        currentSpeed = math.max(currentSpeed - 1, 0)
+                    end
+                    speedLabel.Text = string.format("Speed: %.0f", currentSpeed)
+                else
+                    local currentCFrame = humanoidRootPart.CFrame
+                    local horizontalMovement = (currentCFrame.Position - previousCFrame.Position)
+                    local movementXZ = Vector3.new(horizontalMovement.X, 0, horizontalMovement.Z)
+                    local distance = movementXZ.Magnitude
+                    targetSpeed = distance / (1 / 60)
+                    currentSpeed = currentSpeed + (targetSpeed - currentSpeed) * 0.1
+                    speedLabel.Text = string.format("Speed: %.0f", currentSpeed)
+                    previousCFrame = currentCFrame
+                end
+            end
+        end)
+    else
+        FadeOut(toggle, 1)
+        FadeOut(speedLabel, 1)
+        FadeOut(modLabel, 1)
+        
+        if screenGui then
+            screenGui:Destroy()
+            screenGui = nil
+        end
+        if stopupdatespeed then
+            stopupdatespeed:Disconnect()
+            stopupdatespeed = nil
+        end
+    end
+end
+
+AddToggle(Main5u6, {
+    Name = "Checker Speed GUI",
+    Default = false,
+    Callback = function(state)
+        ToggleSpeedGui(state)
+    end
 })
 
 local MusicPlayerTab = MakeTab({
