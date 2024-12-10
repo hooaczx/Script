@@ -224,9 +224,9 @@ local function setupTPWalk()
                 if hum.Health > 0 then
                     if hum.MoveDirection.Magnitude > 0 then
                         if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * (tonumber(getgenv().TPSpeed) * 2))
+                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
                         else
-                            character:TranslateBy(hum.MoveDirection * 2)
+                            character:TranslateBy(hum.MoveDirection)
                         end
                     end
                 else
@@ -270,7 +270,6 @@ local Toggle = AddToggle(Main5u6, {
         end
     end
 })
-
 
 local Player = game.Players.LocalPlayer
 local originalUserId = Player.UserId
@@ -325,11 +324,6 @@ local heartbeatConnection
 local function updateNameInTextLabels(newName)
     local Plr = game.Players.LocalPlayer
     if not game:IsLoaded() then game.Loaded:Wait() end
-
-    if heartbeatConnection then
-        heartbeatConnection:Disconnect()
-        heartbeatConnection = nil
-    end
 
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
@@ -401,7 +395,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-AddToggle(Main5u6, {
+local ToggleWalk = AddToggle(Main5u6, {
   Name = "Name Protection",
   Default = false,
   Callback = function(state)
@@ -413,6 +407,7 @@ AddToggle(Main5u6, {
       end
   end
 })
+
 local isAntiKickEnabled = false
 local kickReasons = {}
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
