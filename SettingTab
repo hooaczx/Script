@@ -1256,17 +1256,6 @@ local function CreateTween(instance, prop, value, time, tweenWait)
     end
 end
 
-local function FadeIn(instance, time)
-    instance.BackgroundTransparency = 1
-    instance.Visible = true
-    CreateTween(instance, "BackgroundTransparency", 0, time, true)
-end
-
-local function FadeOut(instance, time)
-    CreateTween(instance, "BackgroundTransparency", 1, time, true)
-    instance.Visible = false
-end
-
 local function CreateButton(parent, size, position, image, transparency, zIndex, visible)
     return Create("ImageButton", parent, {
         Size = size,
@@ -1311,10 +1300,7 @@ local function ToggleSpeedGui(create)
             BackgroundTransparency = 1,
             Visible = false
         })
-        FadeIn(toggle, 0)
-        FadeIn(speedLabel, 0)
-        FadeIn(modLabel, 0)
-
+        
         toggle.MouseButton1Click:Connect(function()
             if not isButtonActive then return end
             isButtonActive = false
@@ -1324,13 +1310,15 @@ local function ToggleSpeedGui(create)
                 CreateTween(modLabel, "Position", UDim2.new(2, 0, 0.25, 0), 1, false)
                 CreateTween(togglemodLabelButton, "Position", UDim2.new(1 + 2.4, 0, 0, 0), 1, false)
                 speedLabel.Visible = false
-                modLabel.Visible = false
+                toggleLabel.Visible = false
+                toggleButton.Visible = false
             else
                 CreateTween(speedLabel, "Position", UDim2.new(0, 0, 0.75, 0), 1, false)
                 CreateTween(modLabel, "Position", UDim2.new(0, 0, 0.25, 0), 1, false)
                 CreateTween(togglemodLabelButton, "Position", UDim2.new(0, 0, 0, 0), 1, true)
                 speedLabel.Visible = true
-                modLabel.Visible = true
+                toggleLabel.Visible = true
+                toggleButton.Visible = true
             end
             isSpeedLabelVisible = not isSpeedLabelVisible
 
@@ -1366,9 +1354,6 @@ local function ToggleSpeedGui(create)
             end
         end)
     else
-        FadeOut(toggle, 1)
-        FadeOut(speedLabel, 1)
-        FadeOut(modLabel, 1)
         if screenGui then
             screenGui:Destroy()
             screenGui = nil
