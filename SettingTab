@@ -317,95 +317,84 @@ local Toggle = AddToggle(Main5u6, {
 })
 
 getgenv().name = "Protected"
-getgenv().ProtectName = false
-local originalName = game.Players.LocalPlayer.Name
-local heartbeatConnection
+local Plr = game.Players.LocalPlayer
+local originalName = Plr.Name
+local isNameProtectionEnabled = false
+local ConnectionsName = {}
 
-local function updateNameInTextLabels(newName)
-    local Plr = game.Players.LocalPlayer
-    if not game:IsLoaded() then game.Loaded:Wait() end
-
-    for _, value in ipairs(game:GetDescendants()) do
-        if value:IsA("TextLabel") then
-            local has = string.find(value.Text, Plr.Name)
-            if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
-            end
-
-            value:GetPropertyChangedSignal("Text"):Connect(function()
-                if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(Plr.Name, newName)
+local function Changename()
+    for _, Value in pairs(game:GetDescendants()) do
+        if Value:IsA("TextLabel") then
+            if isNameProtectionEnabled then
+                local has = string.find(Value.Text, originalName)
+                if has then
+                    local str = Value.Text:gsub(originalName, getgenv().name)
+                    Value.Text = str
                 end
-            end)
+                local connection = Value:GetPropertyChangedSignal("Text"):Connect(function()
+                    local str = Value.Text:gsub(originalName, getgenv().name)
+                    Value.Text = str
+                end)
+                table.insert(ConnectionsName, connection)
+            end
         end
     end
-
-    game.DescendantAdded:Connect(function(value)
-        if value:IsA("TextLabel") then
-            local has = string.find(value.Text, Plr.Name)
-            value:GetPropertyChangedSignal("Text"):Connect(function()
-                if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(Plr.Name, newName)
-                end
-            end)
-            if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
-            end
-        end
-    end)
-
-    local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScrollingFrame.OffsetUndoFrame
-    heartbeatConnection = RunService.Heartbeat:Connect(function()
-        if not getgenv().ProtectName then
-            heartbeatConnection:Disconnect()
-            heartbeatConnection = nil
-            return
-        end
-        for _, v in ipairs(leaderboard:GetDescendants()) do
-            if v:IsA("TextLabel") and v.Text == originalName then
-                v.Text = newName
-            end
-        end
-    end)
 end
 
-local function revertNameInTextLabels()
-    for _, value in ipairs(game:GetDescendants()) do
-        if value:IsA("TextLabel") then
-            value.Text = value.Text:gsub(getgenv().name, originalName)
-        end
+local function stopChangename()
+    for _, connection in pairs(ConnectionsName) do
+        connection:Disconnect()
     end
-    if heartbeatConnection then
-        heartbeatConnection:Disconnect()
-        heartbeatConnection = nil
+    ConnectionsName = {}
+end
+
+local function Name()
+    if isNameProtectionEnabled then
+        local connection = game.DescendantAdded:Connect(function(Value)
+            if Value:IsA("TextLabel") then
+                local has = string.find(Value.Text, originalName)
+                if has then
+                    local str = Value.Text:gsub(originalName, getgenv().name)
+                    Value.Text = str
+                end
+                local textConnection = Value:GetPropertyChangedSignal("Text"):Connect(function()
+                    local str = Value.Text:gsub(originalName, getgenv().name)
+                    Value.Text = str
+                end)
+                table.insert(ConnectionsName, textConnection)
+            end
+        end)
+        table.insert(ConnectionsName, connection)
     end
 end
 
 AddTextBox(Main5u6, {
-  Name = "Custom Name",
-  Default = "Enter",
-  PlaceholderText = "Enter name to replace",
-  ClearText = true,
-  Callback = function(input)
-      getgenv().name = input
-      if getgenv().ProtectName then
-          revertNameInTextLabels()
-          updateNameInTextLabels(getgenv().name)
-      end
-  end
+    Name = "Custom Name",
+    Default = "Enter",
+    PlaceholderText = "Enter name to replace",
+    ClearText = true,
+    Callback = function(inputText)
+        getgenv().name = inputText
+        if isNameProtectionEnabled then
+            stopChangename()
+            Changename()
+            Name()
+        end
+    end
 })
 
-local ToggleWalk = AddToggle(Main5u6, {
-  Name = "Name Protection",
-  Default = false,
-  Callback = function(state)
-      getgenv().ProtectName = state
-      if state then
-          updateNameInTextLabels(getgenv().name)
-      else
-          revertNameInTextLabels()
-      end
-  end
+AddToggle(Main5u6, {
+    Name = "Name Protection",
+    Default = false,
+    Callback = function(state)
+        isNameProtectionEnabled = state
+        if isNameProtectionEnabled then
+            Changename()
+            Name()
+        else
+            stopChangename()
+        end
+    end
 })
 
 local isAntiKickEnabled = false
