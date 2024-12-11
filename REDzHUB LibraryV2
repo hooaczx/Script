@@ -747,8 +747,8 @@ Button1.MouseButton1Click:Connect(function()
         false, 
         "^"
     } or {
-        UDim2.new(0.5, 0, 0.1, 0), 
-        UDim2.new(0.5, 0, 0.9, 0), 
+        UDim2.new(0.5, 0, 0.12, 0), 
+        UDim2.new(0.5, 0, 0.88, 0), 
         true, 
         "v"
     }
@@ -2969,40 +2969,28 @@ local ripples = {}
 local inputBeganConnection
 
 functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
-[[This creates an effect where, when you press the screen, it will look like a circle. Like water hits with something, it widens and disappears]], 
+[[This creates an effect where, when you press the screen, it will create a 5-point star effect that expands and disappears.]], 
 function(isClickEffectEnabled)
     if isClickEffectEnabled then
         inputBeganConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     local screenSize = workspace.CurrentCamera.ViewportSize
-                    local ripple = Instance.new("Frame", ScreenGui)
-                    ripple.Size = UDim2.new(0, 0, 0, 0)
-                    ripple.Position = UDim2.new(input.Position.X / screenSize.X, 0, input.Position.Y / screenSize.Y, 0)
-                    ripple.AnchorPoint = Vector2.new(0.5, 0.5)
-                    ripple.BackgroundTransparency = 1
-                    ripple.BorderSizePixel = 0
-                    ripple.ZIndex = 9e9
-                    ripple.ClipsDescendants = true
-
-                    local corner = Instance.new("UICorner", ripple)
-                    corner.CornerRadius = UDim.new(1, 0)
-
-                    local stroke = Instance.new("UIStroke", ripple)
-                    stroke.Thickness = 5
-                    stroke.Color = Color3.fromRGB(0, 162, 255)
-                    stroke.Transparency = 0.5
+                    local star = Instance.new("ImageLabel", ScreenGui)
+                    star.Size = UDim2.new(0, 0, 0, 0)
+                    star.Position = UDim2.new(input.Position.X / screenSize.X, 0, input.Position.Y / screenSize.Y, 0)
+                    star.AnchorPoint = Vector2.new(0.5, 0.5)
+                    star.Image = "rbxassetid://111774818209101"
+                    star.BackgroundTransparency = 1
+                    star.ImageTransparency = 0.5
+                    star.ZIndex = 9e9
 
                     local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                    local sizeGoal = {Size = UDim2.new(0.2, 0, 0.2, 0), BackgroundTransparency = 1}
-                    local strokeGoal = {Transparency = 1}
-                    local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
-                    local strokeTween = TweenService:Create(stroke, tweenInfo, strokeGoal)
+                    local sizeGoal = {Size = UDim2.new(0.2, 0, 0.2, 0), ImageTransparency = 1}
+                    local tween = TweenService:Create(star, tweenInfo, sizeGoal)
 
                     tween:Play()
-                    strokeTween:Play()
-
-                    table.insert(ripples, ripple)
+                    table.insert(ripples, star)
 
                     local clickSound = Instance.new("Sound")
                     clickSound.SoundId = "rbxassetid://15675059323"
@@ -3014,7 +3002,7 @@ function(isClickEffectEnabled)
                     end)
 
                     tween.Completed:Connect(function()
-                        ripple:Destroy()
+                        star:Destroy()
                         table.remove(ripples, #ripples)
                     end)
                 end
@@ -3025,8 +3013,8 @@ function(isClickEffectEnabled)
             inputBeganConnection:Disconnect()
         end
 
-        for _, ripple in ipairs(ripples) do
-            ripple:Destroy()
+        for _, star in ipairs(ripples) do
+            star:Destroy()
         end
         ripples = {}
     end
