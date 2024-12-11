@@ -2975,12 +2975,12 @@ function(isClickEffectEnabled)
         inputBeganConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    local screenSize = workspace.CurrentCamera.ViewportSize
                     local ripple = Instance.new("Frame", ScreenGui)
                     ripple.Size = UDim2.new(0, 0, 0, 0)
-                    ripple.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
+                    ripple.Position = UDim2.new(input.Position.X / screenSize.X, 0, input.Position.Y / screenSize.Y, 0)
                     ripple.AnchorPoint = Vector2.new(0.5, 0.5)
-                    ripple.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
-                    ripple.BackgroundTransparency = 0.5
+                    ripple.BackgroundTransparency = 1
                     ripple.BorderSizePixel = 0
                     ripple.ZIndex = 9e9
                     ripple.ClipsDescendants = true
@@ -2988,10 +2988,19 @@ function(isClickEffectEnabled)
                     local corner = Instance.new("UICorner", ripple)
                     corner.CornerRadius = UDim.new(1, 0)
 
+                    local stroke = Instance.new("UIStroke", ripple)
+                    stroke.Thickness = 5
+                    stroke.Color = Color3.fromRGB(0, 162, 255)
+                    stroke.Transparency = 0.5
+
                     local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                    local sizeGoal = {Size = UDim2.new(0, 100, 0, 100), BackgroundTransparency = 1}
+                    local sizeGoal = {Size = UDim2.new(0.2, 0, 0.2, 0), BackgroundTransparency = 1}
+                    local strokeGoal = {Transparency = 1}
                     local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
+                    local strokeTween = TweenService:Create(stroke, tweenInfo, strokeGoal)
+
                     tween:Play()
+                    strokeTween:Play()
 
                     table.insert(ripples, ripple)
 
@@ -3233,6 +3242,7 @@ end, isLightingEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local lastKnownVolume = gameSettings.MasterVolume
+local changeConnection
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
     local currentVolume = gameSettings.MasterVolume
@@ -3241,23 +3251,24 @@ end)
 functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
 [[Notification for changes in MasterVolume from other sources. If you feel annoyed, you can turn it off.]], function(state)
     if state then
-        local changeConnection
-        changeConnection = RunService.Heartbeat:Connect(function()
-            local currentVolume = gameSettings.MasterVolume
-            if currentVolume ~= lastKnownVolume then
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Volume Changed",
-                    Text = "Volume has been changed to: " .. tostring(currentVolume),
-                    Icon = "rbxthumb://type=Asset&id=92416463477961&w=150&h=150",
-                    Duration = 3,
-                })
-                lastKnownVolume = currentVolume
-            end
-        end)
-        return function()
-            if changeConnection then
-                changeConnection:Disconnect()
-            end
+        if not changeConnection then
+            changeConnection = RunService.Heartbeat:Connect(function()
+                local currentVolume = gameSettings.MasterVolume
+                if currentVolume ~= lastKnownVolume then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Volume Changed",
+                        Text = "Volume has been changed to: " .. tostring(currentVolume),
+                        Icon = "rbxthumb://type=Asset&id=92416463477961&w=150&h=150",
+                        Duration = 3,
+                    })
+                    lastKnownVolume = currentVolume
+                end
+            end)
+        end
+    else
+        if changeConnection then
+            changeConnection:Disconnect()
+            changeConnection = nil
         end
     end
 end)
