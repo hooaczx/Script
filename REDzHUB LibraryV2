@@ -707,6 +707,7 @@ notify({
     local ContextActionService = game:GetService("ContextActionService")
     local Mouse = LocalPlayer:GetMouse()
     local HttpService = game:GetService("HttpService")
+    local ChatService = game:GetService("Chat")
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
@@ -771,7 +772,7 @@ end)
  local LogPanel = Instance.new("ScrollingFrame", FrameChat)
  LogPanel.BackgroundColor3 = Configs_HUB.Cor_Hub
  LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
- LogPanel.Position = UDim2.new(0, 0, 0, 25)
+ LogPanel.Position = UDim2.new(0, 0, 0.1, 0)
  LogPanel.BackgroundTransparency = 1
  LogPanel.Size = UDim2.new(1, 0, 0.9, 0)
  LogPanel.ScrollBarThickness = 0
@@ -782,31 +783,11 @@ end)
  UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
  UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
- local MessageBox = Instance.new("TextBox", FrameChat)
- MessageBox.BackgroundColor3 = Configs_HUB.Cor_Hub
- MessageBox.Position = UDim2.new(0, 0, 1, 0)
- MessageBox.BackgroundTransparency = 0.7
- MessageBox.Size = UDim2.new(0.8, 0, 0.1, 0)
- MessageBox.TextColor3 = Color3.new(255, 255, 255)
- MessageBox.Text = "Type your message here"
- MessageBox.PlaceholderText = "Type your message here"
-
- local SendButton = Instance.new("TextButton", FrameChat)
- SendButton.BackgroundColor3 = Configs_HUB.Cor_Hub
- SendButton.Position = UDim2.new(0.8, 0, 1, 0)
- SendButton.Size = UDim2.new(0.2, 0, 0.1, 0)
- SendButton.BackgroundTransparency = 0.7
- SendButton.Text = "Send"
- SendButton.TextColor3 = Configs_HUB.Cor_Text
- SendButton.Font = Configs_HUB.Text_Font
- SendButton.TextSize = 14
- TextSetColor(SendButton)
-
  local title = Instance.new("TextLabel", FrameChat)
  title.BackgroundColor3 = Color3.new(1, 1, 1)
  title.BackgroundTransparency = 0.7
  title.BackgroundColor3 = Configs_HUB.Cor_Hub
- title.Size = UDim2.new(1, 0, 0, 24)
+ title.Size = UDim2.new(1, 0, 0.1, 0)
  title.TextColor3 = Configs_HUB.Cor_Text
  title.Font = Configs_HUB.Text_Font
  title.Text = "Chat"
@@ -857,66 +838,40 @@ end)
       return string.format("%02d:%02d", currentTime.hour, currentTime.min)
    end
 
-  functions.output = function(msg, playerName, playerId)
-     local messageFrame = Instance.new("Frame", LogPanel)
-     messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-     messageFrame.Size = UDim2.new(1, 0, 0, 40)
-     messageFrame.BorderSizePixel = 0
-     messageFrame.BackgroundTransparency = 0.7
-     messageFrame.LayoutOrder = LogPanel:GetChildren() and #LogPanel:GetChildren() + 1 or 1
+functions.output = function(msg, playerName, playerId)
+    local messageFrame = Instance.new("Frame", LogPanel)
+    messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    messageFrame.Size = UDim2.new(1, 0, 0, 40)
+    messageFrame.BorderSizePixel = 0
+    messageFrame.BackgroundTransparency = 0.7
+    messageFrame.LayoutOrder = LogPanel:GetChildren() and #LogPanel:GetChildren() + 1 or 1
     
-     local imageplayer = Instance.new("ImageLabel", messageFrame)
-     imageplayer.Size = UDim2.new(0.1, 0, 1, 0)
-     imageplayer.Position = UDim2.new(0, 0, 0, 0)
-     imageplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-     imageplayer.BackgroundTransparency = 0.6
-     imageplayer.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerId .. "&width=420&height=420&format=png"
-     Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
+    local imageplayer = Instance.new("ImageLabel", messageFrame)
+    imageplayer.Size = UDim2.new(0.1, 0, 1, 0)
+    imageplayer.Position = UDim2.new(0, 0, 0, 0)
+    imageplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    imageplayer.BackgroundTransparency = 0.6
+    imageplayer.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerId .. "&width=420&height=420&format=png"
+    Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
     
-     local messageLabel = Instance.new("TextLabel", messageFrame)
-     messageLabel.Text = ":".. functions.formatTime() .. ":" .. playerName .. ": " .. msg
-     messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
-     messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
-     messageLabel.TextScaled = true
-     messageLabel.TextColor3 = Configs_HUB.Cor_Text
-     messageLabel.TextXAlignment = "Left"
-     messageLabel.Font = Configs_HUB.Text_Font
-     messageLabel.BackgroundTransparency = 1
-     messageLabel.BorderSizePixel = 0
-     TextSetColor(messageLabel)
+    local messageLabel = Instance.new("TextLabel", messageFrame)
+    messageLabel.Text = ":".. functions.formatTime() .. ":" .. playerName .. ": " .. msg
+    messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
+    messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
+    messageLabel.TextScaled = true
+    messageLabel.TextColor3 = Configs_HUB.Cor_Text
+    messageLabel.TextXAlignment = "Left"
+    messageLabel.Font = Configs_HUB.Text_Font
+    messageLabel.BackgroundTransparency = 1
+    messageLabel.BorderSizePixel = 0
+    TextSetColor(messageLabel)
 
-       LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
-   end
-
-  SendButton.MouseButton1Click:Connect(function()
-     local message = MessageBox.Text
-     if message ~= "" then
-         game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
-         MessageBox.Text = ""
-         functions.output(message, game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId)
-      end
-   end)
-
-functions.onChatMessageReceived = function(player, msg)
-    output(msg, player.Name, player.UserId)
-    if not ChatToggle then
-        unreadCount = unreadCount + 1
-        unreadLabel.Text = tostring(unreadCount)
-        unreadLabel.Visible = true
-    end
+    LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
 end
 
-functions.setupPlayer = function(player)
-    player.Chatted:Connect(function(msg)
-        functions.onChatMessageReceived(player, msg)
-    end)
-end
-
-for _, player in ipairs(game.Players:GetPlayers()) do
-    functions.setupPlayer(player)
-end
-
-game.Players.PlayerAdded:Connect(functions.setupPlayer)
+ChatService.PlayerChatted:Connect(function(player, message)
+    functions.output(message, player.Name, player.UserId)
+end)
 
 local TimeLabelgui = Instance.new("TextLabel", frame)
 TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
