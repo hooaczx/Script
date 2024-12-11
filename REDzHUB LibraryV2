@@ -760,119 +760,6 @@ Button1.MouseButton1Click:Connect(function()
     Button1.Text = settings[4]
 end)
 
- local FrameChat = Instance.new("Frame", ScreenGui)
- FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
- FrameChat.BackgroundTransparency = 0.7
- FrameChat.BorderSizePixel = 0
- FrameChat.Position = UDim2.new(0.38, 0, 0.05, 0)
- FrameChat.AnchorPoint = Vector2.new(0.23, 0.03)
- FrameChat.Size = UDim2.new(0.5, 0, 0.72, 0)
- FrameChat.Visible = false
-
- local LogPanel = Instance.new("ScrollingFrame", FrameChat)
- LogPanel.BackgroundColor3 = Configs_HUB.Cor_Hub
- LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
- LogPanel.Position = UDim2.new(0, 0, 0.1, 0)
- LogPanel.BackgroundTransparency = 1
- LogPanel.Size = UDim2.new(1, 0, 0.9, 0)
- LogPanel.ScrollBarThickness = 0
- LogPanel.ScrollingEnabled = true
-
- local UIListLayout = Instance.new("UIListLayout", LogPanel) 
- UIListLayout.FillDirection = Enum.FillDirection.Vertical
- UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
- UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
- local title = Instance.new("TextLabel", FrameChat)
- title.BackgroundColor3 = Color3.new(1, 1, 1)
- title.BackgroundTransparency = 0.7
- title.BackgroundColor3 = Configs_HUB.Cor_Hub
- title.Size = UDim2.new(1, 0, 0.1, 0)
- title.TextColor3 = Configs_HUB.Cor_Text
- title.Font = Configs_HUB.Text_Font
- title.Text = "Chat"
- title.TextSize = 14
- TextSetColor(title)
-
- local ChatToggleButton = Instance.new("ImageButton", frame)
- ChatToggleButton.Size = UDim2.new(0.06, 0, 0.6, 0)
- ChatToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0)
- ChatToggleButton.BackgroundTransparency = 1
- ChatToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
- ChatToggleButton.ZIndex = 10
- ChatToggleButton.Image = "rbxthumb://type=Asset&id=97566386825378&w=150&h=150"
-
- local ChatToggle = true
- local unreadCount = 0
-
- local unreadLabel = Instance.new("TextLabel", ChatToggleButton)
- unreadLabel.Size = UDim2.new(0, 10, 0, 10)
- unreadLabel.Position = UDim2.new(0, 0, -0.003, 0)
- unreadLabel.BackgroundTransparency = 0
- unreadLabel.TextColor3 = Configs_HUB.Cor_Text
- unreadLabel.Font = Configs_HUB.Text_Font
- unreadLabel.TextColor3 = Color3.new(255, 255, 255)
- unreadLabel.ZIndex = 11
- unreadLabel.TextScaled = true
- unreadLabel.Visible = false
- TextSetColor(unreadLabel)
-
-  ChatToggleButton.MouseButton1Click:Connect(function()
-        ChatToggle = not ChatToggle
-
-        if ChatToggle then
-            FrameChat.Visible = true
-            click1:Play()
-            CreateTween(FrameChat, "Size", UDim2.new(0.5, 0, 0.72, 0), 0.3, true)
-            unreadCount = 0
-            unreadLabel.Visible = false
-        else
-            click2:Play()
-            CreateTween(FrameChat, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
-            FrameChat.Visible = false
-        end
-    end)
-
-   functions.formatTime = function()
-      local currentTime = os.date("*t")
-      return string.format("%02d:%02d", currentTime.hour, currentTime.min)
-   end
-
-functions.output = function(msg, playerName, playerId)
-    local messageFrame = Instance.new("Frame", LogPanel)
-    messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-    messageFrame.Size = UDim2.new(1, 0, 0, 40)
-    messageFrame.BorderSizePixel = 0
-    messageFrame.BackgroundTransparency = 0.7
-    messageFrame.LayoutOrder = LogPanel:GetChildren() and #LogPanel:GetChildren() + 1 or 1
-    
-    local imageplayer = Instance.new("ImageLabel", messageFrame)
-    imageplayer.Size = UDim2.new(0.1, 0, 1, 0)
-    imageplayer.Position = UDim2.new(0, 0, 0, 0)
-    imageplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    imageplayer.BackgroundTransparency = 0.6
-    imageplayer.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerId .. "&width=420&height=420&format=png"
-    Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
-    
-    local messageLabel = Instance.new("TextLabel", messageFrame)
-    messageLabel.Text = ":".. functions.formatTime() .. ":" .. playerName .. ": " .. msg
-    messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
-    messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
-    messageLabel.TextScaled = true
-    messageLabel.TextColor3 = Configs_HUB.Cor_Text
-    messageLabel.TextXAlignment = "Left"
-    messageLabel.Font = Configs_HUB.Text_Font
-    messageLabel.BackgroundTransparency = 1
-    messageLabel.BorderSizePixel = 0
-    TextSetColor(messageLabel)
-
-    LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
-end
-
-ChatService.PlayerChatted:Connect(function(player, message)
-    functions.output(message, player.Name, player.UserId)
-end)
-
 local TimeLabelgui = Instance.new("TextLabel", frame)
 TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
 TimeLabelgui.TextSize = 20
@@ -1919,7 +1806,7 @@ local togglesettingmusic = false
 
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0.06, 0, 0.6, 0)
-    MusicToggleButton.Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0)
     MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
     MusicToggleButton.ZIndex = 10
@@ -3366,7 +3253,7 @@ local Active
 local ShiftLockButton = Instance.new("ImageButton", frame)
 ShiftLockButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 ShiftLockButton.BackgroundTransparency = 1.000
-ShiftLockButton.Position = UDim2.new(0.22 + 0.5, 0, 0.22, 0)
+ShiftLockButton.Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0)
 ShiftLockButton.Size = UDim2.new(0.06, 0, 0.06, 0)
 ShiftLockButton.ZIndex = 10
 ShiftLockButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
