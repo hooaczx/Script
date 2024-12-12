@@ -1463,10 +1463,13 @@ function createStatusUI()
         lastInputTime = tick()
     end
 
-    local checkafkuserInputConnection
-    checkafkuserInputConnection = UserInputService.InputBegan:Connect(onUserInput)
-    checkafkuserInputConnection = UserInputService.InputEnded:Connect(onUserInput)
-    checkafkuserInputConnection = UserInputService.InputChanged:Connect(onUserInput)
+    local checkafkuserInputConnectionBegan
+    local checkafkuserInputConnectionEnded
+    local checkafkuserInputConnectionChanged
+
+    checkafkuserInputConnectionBegan = UserInputService.InputBegan:Connect(onUserInput)
+    checkafkuserInputConnectionEnded = UserInputService.InputEnded:Connect(onUserInput)
+    checkafkuserInputConnectionChanged = UserInputService.InputChanged:Connect(onUserInput)
         
     function getPlayerStatus(humanoid, rootPart)
         local velocity = rootPart.Velocity
@@ -1538,13 +1541,18 @@ function createStatusUI()
     heartbeatConnection = RunService.Heartbeat:Connect(updateStatus)
 
     screenGui.AncestryChanged:Connect(function()
-        if not screenGui:IsDescendantOf(game) then
-            heartbeatConnection:Disconnect()
-            checkafkuserInputConnection:Disconnect()
-            heartbeatConnection = nil
-            checkafkuserInputConnection = nil
-        end
+       if not screenGui:IsDescendantOf(game) then
+           checkafkuserInputConnectionBegan:Disconnect()
+           checkafkuserInputConnectionEnded:Disconnect()
+           checkafkuserInputConnectionChanged:Disconnect()
+           heartbeatConnection:Disconnect()
+           checkafkuserInputConnectionBegan = nil
+           checkafkuserInputConnectionEnded = nil
+           checkafkuserInputConnectionChanged = nil
+           heartbeatConnection = nil
+       end
     end)
+
 
     return screenGui, heartbeatConnection
 end
