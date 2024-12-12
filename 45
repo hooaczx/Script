@@ -326,16 +326,47 @@ function ConstrainFramePosition()
     local maxX = screenSize.X - frameSize.X
     local maxY = screenSize.Y - frameSize.Y
 
+    if not parent:FindFirstChild("EdgeEffect") then
+        local edgeEffect = Instance.new("Frame")
+        edgeEffect.Name = "EdgeEffect"
+        edgeEffect.Size = UDim2.new(0, 0, 0, 0)
+        edgeEffect.BackgroundColor3 = Color3.new(1, 0, 0)
+        edgeEffect.BackgroundTransparency = 0.5
+        edgeEffect.BorderSizePixel = 0
+        edgeEffect.AnchorPoint = Vector2.new(0.5, 0.5)
+        edgeEffect.ZIndex = Menu.ZIndex + 1
+        edgeEffect.Parent = parent
+    end
+
+    local edgeEffect = parent:FindFirstChild("EdgeEffect")
+    edgeEffect.Visible = false
+       function showEdgeEffect(size, position)
+        edgeEffect.Size = UDim2.new(0, 0, 0, 0)
+        edgeEffect.Position = position
+        edgeEffect.Visible = true
+
+        CreateTween(edgeEffect, "Size", size, 0.3, false)
+
+        task.delay(0.6, function()
+            CreateTween(edgeEffect, "Size", UDim2.new(0, 0, 0, 0), 0.3, true)
+            edgeEffect.Visible = false
+        end)
+    end
+
     if position.X < minX then
         Menu.Position = UDim2.new(0, minX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
+        showEdgeEffect(UDim2.new(0, 5, 0, frameSize.Y), UDim2.new(0, minX - 2.5, 0, position.Y + frameSize.Y / 2))
     elseif position.X > maxX then
         Menu.Position = UDim2.new(0, maxX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
+        showEdgeEffect(UDim2.new(0, 5, 0, frameSize.Y), UDim2.new(0, maxX + frameSize.X + 2.5, 0, position.Y + frameSize.Y / 2))
     end
 
     if position.Y < minY then
         Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, minY)
+        showEdgeEffect(UDim2.new(0, frameSize.X, 0, 5), UDim2.new(0, position.X + frameSize.X / 2, 0, minY - 2.5))
     elseif position.Y > maxY then
         Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, maxY)
+        showEdgeEffect(UDim2.new(0, frameSize.X, 0, 5), UDim2.new(0, position.X + frameSize.X / 2, 0, maxY + frameSize.Y + 2.5))
     end
 end
 
