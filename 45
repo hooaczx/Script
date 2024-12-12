@@ -1,7 +1,7 @@
 if not game:IsLoaded() then
 game.Loaded:Wait()
 end
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/blacklist"))()
+
 local Configs_HUB = {
   Cor_Hub = Color3.fromRGB(15, 15, 15),
   Cor_Options = Color3.fromRGB(15, 15, 15),
@@ -710,7 +710,7 @@ notify({
     local image = Configs.Image or ""
 
     local frame = Instance.new("Frame", ScreenGui)
-    frame.Size = UDim2.new(0.5, 0, 0.16, 0)
+    frame.Size = UDim2.new(0.5, 0, 0.12, 0)
     frame.AnchorPoint = Vector2.new(0.5, 0.5)
     frame.Position = UDim2.new(0.5, 0, 0.95, 0)
     frame.BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -729,7 +729,7 @@ notify({
     local Button1 = Instance.new("TextButton", ScreenGui)
     Button1.Size = UDim2.new(0.06, 0, 0.07, 0)
     Button1.AnchorPoint = Vector2.new(0.5, 1)
-    Button1.Position = UDim2.new(0.5, 0, 0.87, 0)
+    Button1.Position = UDim2.new(0.5, 0, 0.89, 0)
     Button1.TextScaled = true
     Button1.Text = "v"
     Button1.ZIndex = 10
@@ -747,8 +747,8 @@ Button1.MouseButton1Click:Connect(function()
         false, 
         "^"
     } or {
-        UDim2.new(0.5, 0, 0.1, 0), 
-        UDim2.new(0.5, 0, 0.9, 0), 
+        UDim2.new(0.5, 0, 0.12, 0), 
+        UDim2.new(0.5, 0, 0.89, 0), 
         true, 
         "v"
     }
@@ -758,165 +758,6 @@ Button1.MouseButton1Click:Connect(function()
     frame.Visible = settings[3]
     Button1.Text = settings[4]
 end)
-
- local FrameChat = Instance.new("Frame", ScreenGui)
- FrameChat.BackgroundColor3 = Configs_HUB.Cor_Hub
- FrameChat.BackgroundTransparency = 0.7
- FrameChat.BorderSizePixel = 0
- FrameChat.Position = UDim2.new(0.38, 0, 0.05, 0)
- FrameChat.AnchorPoint = Vector2.new(0.23, 0.03)
- FrameChat.Size = UDim2.new(0.5, 0, 0.72, 0)
- FrameChat.Visible = false
-
- local LogPanel = Instance.new("ScrollingFrame", FrameChat)
- LogPanel.BackgroundColor3 = Configs_HUB.Cor_Hub
- LogPanel.BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529)
- LogPanel.Position = UDim2.new(0, 0, 0, 25)
- LogPanel.BackgroundTransparency = 1
- LogPanel.Size = UDim2.new(1, 0, 0.9, 0)
- LogPanel.ScrollBarThickness = 0
- LogPanel.ScrollingEnabled = true
-
- local UIListLayout = Instance.new("UIListLayout", LogPanel) 
- UIListLayout.FillDirection = Enum.FillDirection.Vertical
- UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
- UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
- local MessageBox = Instance.new("TextBox", FrameChat)
- MessageBox.BackgroundColor3 = Configs_HUB.Cor_Hub
- MessageBox.Position = UDim2.new(0, 0, 1, 0)
- MessageBox.BackgroundTransparency = 0.7
- MessageBox.Size = UDim2.new(0.8, 0, 0.1, 0)
- MessageBox.TextColor3 = Color3.new(255, 255, 255)
- MessageBox.Text = "Type your message here"
- MessageBox.PlaceholderText = "Type your message here"
-
- local SendButton = Instance.new("TextButton", FrameChat)
- SendButton.BackgroundColor3 = Configs_HUB.Cor_Hub
- SendButton.Position = UDim2.new(0.8, 0, 1, 0)
- SendButton.Size = UDim2.new(0.2, 0, 0.1, 0)
- SendButton.BackgroundTransparency = 0.7
- SendButton.Text = "Send"
- SendButton.TextColor3 = Configs_HUB.Cor_Text
- SendButton.Font = Configs_HUB.Text_Font
- SendButton.TextSize = 14
- TextSetColor(SendButton)
-
- local title = Instance.new("TextLabel", FrameChat)
- title.BackgroundColor3 = Color3.new(1, 1, 1)
- title.BackgroundTransparency = 0.7
- title.BackgroundColor3 = Configs_HUB.Cor_Hub
- title.Size = UDim2.new(1, 0, 0, 24)
- title.TextColor3 = Configs_HUB.Cor_Text
- title.Font = Configs_HUB.Text_Font
- title.Text = "Chat"
- title.TextSize = 14
- TextSetColor(title)
-
- local ChatToggleButton = Instance.new("ImageButton", frame)
- ChatToggleButton.Size = UDim2.new(0.06, 0, 0.6, 0)
- ChatToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0)
- ChatToggleButton.BackgroundTransparency = 1
- ChatToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
- ChatToggleButton.ZIndex = 10
- ChatToggleButton.Image = "rbxthumb://type=Asset&id=97566386825378&w=150&h=150"
-
- local ChatToggle = true
- local unreadCount = 0
-
- local unreadLabel = Instance.new("TextLabel", ChatToggleButton)
- unreadLabel.Size = UDim2.new(0, 10, 0, 10)
- unreadLabel.Position = UDim2.new(0, 0, -0.003, 0)
- unreadLabel.BackgroundTransparency = 0
- unreadLabel.TextColor3 = Configs_HUB.Cor_Text
- unreadLabel.Font = Configs_HUB.Text_Font
- unreadLabel.TextColor3 = Color3.new(255, 255, 255)
- unreadLabel.ZIndex = 11
- unreadLabel.TextScaled = true
- unreadLabel.Visible = false
- TextSetColor(unreadLabel)
-
-  ChatToggleButton.MouseButton1Click:Connect(function()
-        ChatToggle = not ChatToggle
-
-        if ChatToggle then
-            FrameChat.Visible = true
-            click1:Play()
-            CreateTween(FrameChat, "Size", UDim2.new(0.5, 0, 0.72, 0), 0.3, true)
-            unreadCount = 0
-            unreadLabel.Visible = false
-        else
-            click2:Play()
-            CreateTween(FrameChat, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
-            FrameChat.Visible = false
-        end
-    end)
-
-   functions.formatTime = function()
-      local currentTime = os.date("*t")
-      return string.format("%02d:%02d", currentTime.hour, currentTime.min)
-   end
-
-  functions.output = function(msg, playerName, playerId)
-     local messageFrame = Instance.new("Frame", LogPanel)
-     messageFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-     messageFrame.Size = UDim2.new(1, 0, 0, 40)
-     messageFrame.BorderSizePixel = 0
-     messageFrame.BackgroundTransparency = 0.7
-     messageFrame.LayoutOrder = LogPanel:GetChildren() and #LogPanel:GetChildren() + 1 or 1
-    
-     local imageplayer = Instance.new("ImageLabel", messageFrame)
-     imageplayer.Size = UDim2.new(0.1, 0, 1, 0)
-     imageplayer.Position = UDim2.new(0, 0, 0, 0)
-     imageplayer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-     imageplayer.BackgroundTransparency = 0.6
-     imageplayer.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerId .. "&width=420&height=420&format=png"
-     Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
-    
-     local messageLabel = Instance.new("TextLabel", messageFrame)
-     messageLabel.Text = ":".. functions.formatTime() .. ":" .. playerName .. ": " .. msg
-     messageLabel.Size = UDim2.new(0.9, 0, 1, 0)
-     messageLabel.Position = UDim2.new(0.11, 0, 0, 0)
-     messageLabel.TextScaled = true
-     messageLabel.TextColor3 = Configs_HUB.Cor_Text
-     messageLabel.TextXAlignment = "Left"
-     messageLabel.Font = Configs_HUB.Text_Font
-     messageLabel.BackgroundTransparency = 1
-     messageLabel.BorderSizePixel = 0
-     TextSetColor(messageLabel)
-
-       LogPanel.CanvasSize = UDim2.new(0, 0, 0, LogPanel.UIListLayout.AbsoluteContentSize.Y)
-   end
-
-  SendButton.MouseButton1Click:Connect(function()
-     local message = MessageBox.Text
-     if message ~= "" then
-         game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
-         MessageBox.Text = ""
-         functions.output(message, game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId)
-      end
-   end)
-
-functions.onChatMessageReceived = function(player, msg)
-    output(msg, player.Name, player.UserId)
-    if not ChatToggle then
-        unreadCount = unreadCount + 1
-        unreadLabel.Text = tostring(unreadCount)
-        unreadLabel.Visible = true
-    end
-end
-
-functions.setupPlayer = function(player)
-    player.Chatted:Connect(function(msg)
-        functions.onChatMessageReceived(player, msg)
-    end)
-end
-
-for _, player in ipairs(game.Players:GetPlayers()) do
-    functions.setupPlayer(player)
-end
-
-game.Players.PlayerAdded:Connect(functions.setupPlayer)
 
 local TimeLabelgui = Instance.new("TextLabel", frame)
 TimeLabelgui.Size = UDim2.new(0.3, 0, 0.5, 0)
@@ -1964,7 +1805,7 @@ local togglesettingmusic = false
 
     local MusicToggleButton = Instance.new("ImageButton", frame)
     MusicToggleButton.Size = UDim2.new(0.06, 0, 0.6, 0)
-    MusicToggleButton.Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0)
+    MusicToggleButton.Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0)
     MusicToggleButton.BackgroundTransparency = 1
     MusicToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
     MusicToggleButton.ZIndex = 10
@@ -2969,43 +2810,40 @@ local ripples = {}
 local inputBeganConnection
 
 functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
-[[This creates an effect where, when you press the screen, it will look like a circle. Like water hits with something, it widens and disappears]], 
+[[This creates an effect where, when you press the screen, it will create a 5-point star effect that expands and disappears.]], 
 function(isClickEffectEnabled)
     if isClickEffectEnabled then
         inputBeganConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
             if not gameProcessed then
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    local ripple = Instance.new("Frame", ScreenGui)
-                    ripple.Size = UDim2.new(0, 0, 0, 0)
-                    ripple.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
-                    ripple.AnchorPoint = Vector2.new(0.5, 0.5)
-                    ripple.BackgroundColor3 = Color3.fromRGB(0, 162, 255)
-                    ripple.BackgroundTransparency = 0.5
-                    ripple.BorderSizePixel = 0
-                    ripple.ZIndex = 9e9
-                    ripple.ClipsDescendants = true
-
-                    local corner = Instance.new("UICorner", ripple)
-                    corner.CornerRadius = UDim.new(1, 0)
+                    local screenSize = workspace.CurrentCamera.ViewportSize
+                    local star = Instance.new("ImageLabel", ScreenGui)
+                    star.Size = UDim2.new(0, 0, 0, 0)
+                    star.Position = UDim2.new(input.Position.X / screenSize.X, 0, input.Position.Y / screenSize.Y, 0)
+                    star.AnchorPoint = Vector2.new(0.5, 0.5)
+                    star.Image = "rbxassetid://111774818209101"
+                    star.BackgroundTransparency = 1
+                    star.ImageTransparency = 0.5
+                    star.ZIndex = 9e9
 
                     local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                    local sizeGoal = {Size = UDim2.new(0, 100, 0, 100), BackgroundTransparency = 1}
-                    local tween = TweenService:Create(ripple, tweenInfo, sizeGoal)
-                    tween:Play()
+                    local sizeGoal = {Size = UDim2.new(0.06, 0, 0.124, 0), ImageTransparency = 1}
+                    local tween = TweenService:Create(star, tweenInfo, sizeGoal)
 
-                    table.insert(ripples, ripple)
+                    tween:Play()
+                    table.insert(ripples, star)
 
                     local clickSound = Instance.new("Sound")
                     clickSound.SoundId = "rbxassetid://15675059323"
                     clickSound.Parent = ScreenGui
-                    clickSound.Volume = 0.2
+                    clickSound.Volume = 0.07
                     clickSound:Play()
                     clickSound.Ended:Connect(function()
                         clickSound:Destroy()
                     end)
 
                     tween.Completed:Connect(function()
-                        ripple:Destroy()
+                        star:Destroy()
                         table.remove(ripples, #ripples)
                     end)
                 end
@@ -3016,8 +2854,8 @@ function(isClickEffectEnabled)
             inputBeganConnection:Disconnect()
         end
 
-        for _, ripple in ipairs(ripples) do
-            ripple:Destroy()
+        for _, star in ipairs(ripples) do
+            star:Destroy()
         end
         ripples = {}
     end
@@ -3233,6 +3071,7 @@ end, isLightingEnabled)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local lastKnownVolume = gameSettings.MasterVolume
+local changeConnection
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
     local currentVolume = gameSettings.MasterVolume
@@ -3241,23 +3080,24 @@ end)
 functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
 [[Notification for changes in MasterVolume from other sources. If you feel annoyed, you can turn it off.]], function(state)
     if state then
-        local changeConnection
-        changeConnection = RunService.Heartbeat:Connect(function()
-            local currentVolume = gameSettings.MasterVolume
-            if currentVolume ~= lastKnownVolume then
-                game.StarterGui:SetCore("SendNotification", {
-                    Title = "Volume Changed",
-                    Text = "Volume has been changed to: " .. tostring(currentVolume),
-                    Icon = "rbxthumb://type=Asset&id=92416463477961&w=150&h=150",
-                    Duration = 3,
-                })
-                lastKnownVolume = currentVolume
-            end
-        end)
-        return function()
-            if changeConnection then
-                changeConnection:Disconnect()
-            end
+        if not changeConnection then
+            changeConnection = RunService.Heartbeat:Connect(function()
+                local currentVolume = gameSettings.MasterVolume
+                if currentVolume ~= lastKnownVolume then
+                    game.StarterGui:SetCore("SendNotification", {
+                        Title = "Volume Changed",
+                        Text = "Volume has been changed to: " .. tostring(currentVolume),
+                        Icon = "rbxthumb://type=Asset&id=92416463477961&w=150&h=150",
+                        Duration = 3,
+                    })
+                    lastKnownVolume = currentVolume
+                end
+            end)
+        end
+    else
+        if changeConnection then
+            changeConnection:Disconnect()
+            changeConnection = nil
         end
     end
 end)
@@ -3412,7 +3252,7 @@ local Active
 local ShiftLockButton = Instance.new("ImageButton", frame)
 ShiftLockButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 ShiftLockButton.BackgroundTransparency = 1.000
-ShiftLockButton.Position = UDim2.new(0.22 + 0.5, 0, 0.22, 0)
+ShiftLockButton.Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0)
 ShiftLockButton.Size = UDim2.new(0.06, 0, 0.06, 0)
 ShiftLockButton.ZIndex = 10
 ShiftLockButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
@@ -3518,15 +3358,14 @@ function MakeTab(Configs)
     }) Corner(Frame) Stroke(Frame)
     
     local TextButton = Create("TextButton", Frame, {
-        Size = TabImage and UDim2.new(0.85, 0, 1, 0) or UDim2.new(0.8, 0, 1, 0),
-        Position = TabImage and UDim2.new(0.15, 0, 0, 0) or UDim2.new(0.05, 0, 0, 0),
+        Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         Text = ""
     })
     
     local TextLabel = Create("TextLabel", Frame, {
-        Size = TabImage and UDim2.new(0.85, 0, 1, 0) or UDim2.new(0.8, 0, 1, 0),
-        Position = TabImage and UDim2.new(0.15, 0, 0, 0) or UDim2.new(0.05, 0, 0, 0),
+        Size = TabImage and UDim2.new(0.85, 0, 1, 0) or UDim2.new(1, 0, 1, 0),
+        Position = TabImage and UDim2.new(0.15, 0, 0, 0) or UDim2.new(0, 0, 0, 0),
         TextWrapped = true,
         BackgroundTransparency = 1,
         Font = Configs_HUB.Text_Font,
@@ -4368,7 +4207,7 @@ function AddTextTable(parent, Configs)
         Size = UDim2.new(0.76, 0, 0.2, 0),
         BackgroundTransparency = 1,
         Font = Configs_HUB.Text_Font
-    })TextSetColor(TextButton)
+    })
     
     local ExpandImageButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0.2, 0, 0.2, 0),
@@ -4383,7 +4222,7 @@ function AddTextTable(parent, Configs)
         Size = UDim2.new(1, 0, 0.78, 0),
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 0, 0.22, 0)
-    })
+    })TextSetColor(TextButton)
 
     local isExpanded = false
     
@@ -4436,6 +4275,9 @@ function AddTextTable(parent, Configs)
 
         ExitExpandImageButton.MouseButton1Click:Connect(function()
           CreateTween(MenuBackground, "Size", UDim2.new(), 0.3, true)
+          CreateTween(ImageLabel, "Size", UDim2.new(), 0.3, true)
+          CreateTween(TextLabel, "Size", UDim2.new(), 0.3, true)
+          CreateTween(ExitExpandImageButton, "Size", UDim2.new(), 0.3, true)
           MenuBackground:Destroy()
           ImageLabel:Destroy()
           TextLabel:Destroy()
