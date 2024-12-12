@@ -313,69 +313,24 @@ Corner(Menu)
   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, true)
   Menu.Draggable = true
 
-function CreateBorder(size, position, parent)
-    local border = Instance.new("Frame")
-    border.Size = size
-    border.Position = position
-    border.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    border.Visible = false
-    border.ZIndex = 2
-    border.Parent = parent
-    return border
-end
-
-local edgeDistance = 3
-
-local borders = {
-    top = CreateBorder(UDim2.new(1, 0, 0, 5), UDim2.new(0, 0, 0, 0), ScreenGui),
-    bottom = CreateBorder(UDim2.new(1, 0, 0, 5), UDim2.new(0, 0, 1, -5), ScreenGui),
-    left = CreateBorder(UDim2.new(0, 5, 1, 0), UDim2.new(0, 0, 0, 0), ScreenGui),
-    right = CreateBorder(UDim2.new(0, 5, 1, 0), UDim2.new(1, -5, 0, 0), ScreenGui)
-}
-
-function UpdateBorders(position, maxX, maxY)
-    local isNearLeft = position.X <= edgeDistance
-    local isNearRight = position.X >= maxX - edgeDistance
-    local isNearTop = position.Y <= edgeDistance
-    local isNearBottom = position.Y >= maxY - edgeDistance
-
-    borders.left.Visible = isNearLeft
-    borders.right.Visible = isNearRight
-    borders.top.Visible = isNearTop
-    borders.bottom.Visible = isNearBottom
-
-    if isNearLeft or isNearRight or isNearTop or isNearBottom then
-        for _, border in pairs(borders) do
-            if border.Visible then
-                CreateTween(border, "Transparency", 0, 0.3, true)
-            end
-        end
-    else
-        for _, border in pairs(borders) do
-            if not border.Visible then
-                CreateTween(border, "Transparency", 1, 0.3, true)
-            end
-        end
-    end
-end
-
 function ConstrainFramePosition()
-    local parent = ScreenGui
+    local parent = Menu.Parent
+    if not parent:IsA("ScreenGui") then return end
+
     local screenSize = parent.AbsoluteSize
     local frameSize = Menu.AbsoluteSize
     local position = Menu.AbsolutePosition
 
-    local minX, minY = 0, 0
-    local maxX, maxY = screenSize.X - frameSize.X, screenSize.Y - frameSize.Y
-
-    UpdateBorders(position, maxX, maxY)
-
+    local minX = 0
+    local maxX = screenSize.X - frameSize.X
     if position.X < minX then
         Menu.Position = UDim2.new(0, minX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
     elseif position.X > maxX then
         Menu.Position = UDim2.new(0, maxX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
     end
 
+    local minY = 0
+    local maxY = screenSize.Y - frameSize.Y
     if position.Y < minY then
         Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, minY)
     elseif position.Y > maxY then
