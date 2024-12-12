@@ -244,12 +244,34 @@ function MakeWindow(Configs)
   local title = Configs.Hub.Title or "REDz HUB"
   local Anim_Title = Configs.Hub.Animation or "by : redz9999"
   
-  local Menu = Create("Frame", ScreenGui, {
+  local UserInputService = game:GetService("UserInputService")
+
+local Menu = Create("Frame", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     Position = UDim2.new(0.5, -500/2, 0.5, -270/2),
+    Size = UDim2.new(0, 500, 0, 270),
     Active = true,
     Draggable = true
-  })Corner(Menu)
+})
+Corner(Menu)
+
+function ConstrainToScreen()
+    local screenSize = workspace.CurrentCamera.ViewportSize
+    local menuPosition = Menu.Position
+    local menuAbsolutePosition = Menu.AbsolutePosition
+    local menuSize = Menu.AbsoluteSize
+
+    local newX = math.clamp(menuAbsolutePosition.X, 0, screenSize.X - menuSize.X)
+    local newY = math.clamp(menuAbsolutePosition.Y, 0, screenSize.Y - menuSize.Y)
+
+    Menu.Position = UDim2.new(0, newX, 0, newY)
+end
+
+Menu.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        ConstrainToScreen()
+    end
+end)
   
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
