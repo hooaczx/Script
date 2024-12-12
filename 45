@@ -313,76 +313,62 @@ Corner(Menu)
   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, true)
   Menu.Draggable = true
 
-local topBorder = Instance.new("Frame")
-topBorder.Size = UDim2.new(1, 0, 0, 5)
-topBorder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-topBorder.Visible = false
-topBorder.ZIndex = 2
-topBorder.Parent = Menu
+function CreateBorder(size, position, parent)
+    local border = Instance.new("Frame")
+    border.Size = size
+    border.Position = position
+    border.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    border.Visible = false
+    border.ZIndex = 2
+    border.Parent = parent
+    return border
+end
 
-local bottomBorder = Instance.new("Frame")
-bottomBorder.Size = UDim2.new(1, 0, 0, 5)
-bottomBorder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-bottomBorder.Visible = false
-bottomBorder.ZIndex = 2
-bottomBorder.Parent = Menu
+local edgeDistance = 3
 
-local leftBorder = Instance.new("Frame")
-leftBorder.Size = UDim2.new(0, 5, 1, 0)
-leftBorder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-leftBorder.Visible = false
-leftBorder.ZIndex = 2
-leftBorder.Parent = Menu
+local borders = {
+    top = CreateBorder(UDim2.new(1, 0, 0, 5), UDim2.new(0, 0, 0, 0), ScreenGui),
+    bottom = CreateBorder(UDim2.new(1, 0, 0, 5), UDim2.new(0, 0, 1, -5), ScreenGui),
+    left = CreateBorder(UDim2.new(0, 5, 1, 0), UDim2.new(0, 0, 0, 0), ScreenGui),
+    right = CreateBorder(UDim2.new(0, 5, 1, 0), UDim2.new(1, -5, 0, 0), ScreenGui)
+}
 
-local rightBorder = Instance.new("Frame")
-rightBorder.Size = UDim2.new(0, 5, 1, 0)
-rightBorder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-rightBorder.Visible = false
-rightBorder.ZIndex = 2
-rightBorder.Parent = Menu
+function UpdateBorders(position, maxX, maxY)
+    local isNearLeft = position.X <= edgeDistance
+    local isNearRight = position.X >= maxX - edgeDistance
+    local isNearTop = position.Y <= edgeDistance
+    local isNearBottom = position.Y >= maxY - edgeDistance
+
+    borders.left.Visible = isNearLeft
+    borders.right.Visible = isNearRight
+    borders.top.Visible = isNearTop
+    borders.bottom.Visible = isNearBottom
+
+    if isNearLeft or isNearRight or isNearTop or isNearBottom then
+        for _, border in pairs(borders) do
+            if border.Visible then
+                CreateTween(border, "Transparency", 0, 0.3, true)
+            end
+        end
+    else
+        for _, border in pairs(borders) do
+            if not border.Visible then
+                CreateTween(border, "Transparency", 1, 0.3, true)
+            end
+        end
+    end
+end
 
 function ConstrainFramePosition()
-    local parent = Menu.Parent
-    if not parent:IsA("ScreenGui") then return end
-
+    local parent = ScreenGui
     local screenSize = parent.AbsoluteSize
     local frameSize = Menu.AbsoluteSize
     local position = Menu.AbsolutePosition
 
-    local minX = 0
-    local minY = 0
-    local maxX = screenSize.X - frameSize.X
-    local maxY = screenSize.Y - frameSize.Y
+    local minX, minY = 0, 0
+    local maxX, maxY = screenSize.X - frameSize.X, screenSize.Y - frameSize.Y
 
-    local edgeDistance = 50
-
-    if position.X <= edgeDistance then
-        leftBorder.Visible = true
-        CreateTween(leftBorder, "Transparency", 0, 0.3, true)
-    else
-        leftBorder.Visible = false
-    end
-
-    if position.X >= maxX - edgeDistance then
-        rightBorder.Visible = true
-        CreateTween(rightBorder, "Transparency", 0, 0.3, true)
-    else
-        rightBorder.Visible = false
-    end
-
-    if position.Y <= edgeDistance then
-        topBorder.Visible = true
-        CreateTween(topBorder, "Transparency", 0, 0.3, true)
-    else
-        topBorder.Visible = false
-    end
-
-    if position.Y >= maxY - edgeDistance then
-        bottomBorder.Visible = true
-        CreateTween(bottomBorder, "Transparency", 0, 0.3, true)
-    else
-        bottomBorder.Visible = false
-    end
+    UpdateBorders(position, maxX, maxY)
 
     if position.X < minX then
         Menu.Position = UDim2.new(0, minX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
@@ -398,7 +384,6 @@ function ConstrainFramePosition()
 end
 
 Menu:GetPropertyChangedSignal("Position"):Connect(ConstrainFramePosition)
-
 
   local line_Containers = Create("Frame", Menu, {
     BackgroundTransparency = 1,
