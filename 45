@@ -772,17 +772,17 @@ Button1.MouseButton1Click:Connect(function()
     local settings = minimize1 and {
         UDim2.new(0.5, 0, 0, 0), 
         UDim2.new(0.5, 0, 1, 0), 
-        false, 
+        false,
         "^"
     } or {
+        true,
         UDim2.new(0.5, 0, 0.12, 0), 
-        UDim2.new(0.5, 0, 0.89, 0), 
-        true, 
+        UDim2.new(0.5, 0, 0.89, 0),  
         "v"
     }
 
     CreateTween1(frame, "Size", settings[1], 0.3, false)
-    CreateTween1(Button1, "Position", settings[2], 0.3, false)
+    CreateTween1(Button1, "Position", settings[2], 0.3, true)
     frame.Visible = settings[3]
     Button1.Text = settings[4]
 end)
@@ -2787,20 +2787,19 @@ end)
     Button.MouseButton1Click:Connect(function()
     if minimize then
         minimize = false
-        click1:Play()
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
-        ScrollBar.Visible = true
-        Containers.Visible = true
-        line_Containers.Visible = true
-        Menu.Visible = true
-    else
-        minimize = true
-        click2:Play()
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
         Menu.Visible = false
         ScrollBar.Visible = false
         Containers.Visible = false
         line_Containers.Visible = false
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
+    else
+        minimize = true
+        ScrollBar.Visible = true
+        Containers.Visible = true
+        line_Containers.Visible = true
+        Menu.Visible = true
+        click1:Play()
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
     end
 end)
 
