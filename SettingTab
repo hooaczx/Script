@@ -1371,6 +1371,199 @@ AddToggle(Main5u6, {
     end
 })
 
+function createStatusUI()
+    local existingUI = player.PlayerGui:FindFirstChild("StatusUI")
+    if existingUI then
+        existingUI:Destroy()
+    end
+    
+    local screenGui = Create("ScreenGui", game:GetService("CoreGui"), {Name = "StatusUI"})
+    
+    local frame = Create("Frame", screenGui, {
+        Size = UDim2.new(0.14, 0, 0.25, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.48, 0)
+        BackgroundTransparency = 1,
+        Active = true,
+        Draggable = true
+    })
+    
+   local Label = Create("TextLabel", frame, {
+        Size = UDim2.new(1, 0, 0.1, 0),
+        BackgroundTransparency = 1,
+        Text = "Status"
+    })
+    
+    local scrollingFrame = Create("ScrollingFrame", frame, {
+        Size = UDim2.new(1, 0, 0.9, 0),
+        CanvasSize = UDim2.new(1, 0, 6, 0),
+        BackgroundTransparency = 1,
+        ScrollingEnabled = true
+    })
+
+    local layout = Create("UIListLayout", scrollingFrame, {
+        FillDirection = Enum.FillDirection.Vertical,
+        Padding = UDim.new(0, 5)
+    })
+
+    local statusLabel = Create("TextLabel", scrollingFrame, {
+        Size = UDim2.new(1, 0, 0.09, 0),
+        BackgroundTransparency = 1,
+        TextScaled = true,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextStrokeTransparency = 0.2,
+        Text = "Loading..."
+    })
+
+    local physicsStatusLabel = Create("TextLabel", scrollingFrame, {
+        Size = UDim2.new(1, 0, 0.09, 0),
+        BackgroundTransparency = 1,
+        TextScaled = true,
+        TextColor3 = Color3.fromRGB(255, 0, 0),
+        TextStrokeTransparency = 0.2,
+        Text = "Not Ragdoll"
+    })
+
+    local swimmingStatusLabel = Create("TextLabel", scrollingFrame, {
+        Size = UDim2.new(1, 0, 0.09, 0),
+        BackgroundTransparency = 1,
+        TextScaled = true,
+        TextColor3 = Color3.fromRGB(0, 0, 255),
+        TextStrokeTransparency = 0.2,
+        Text = "Not swimming"
+    })
+
+    local afkLabel = Create("TextLabel", scrollingFrame, {
+        Size = UDim2.new(1, 0, 0.09, 0),
+        BackgroundTransparency = 1,
+        TextScaled = true,
+        TextColor3 = Color3.fromRGB(0, 255, 0),
+        TextStrokeTransparency = 0.2,
+        Text = "AFK: No"
+    })
+    
+    local jumpCount = 0
+    local jumpResetTime = 2
+    local lastJumpTime = tick()
+    local afkTimeout = 25
+    local lastInputTime = tick()
+    
+    function updateAfkStatus()
+        local timeSinceLastInput = tick() - lastInputTime
+        if timeSinceLastInput > afkTimeout then
+            afkLabel.Text = "AFK: Yes 💤"
+            afkLabel.TextColor3 = Color3.fromRGB(98, 37, 209)
+        else
+            afkLabel.Text = "AFK: No"
+            afkLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        end
+    end
+    
+    function onUserInput()
+        lastInputTime = tick()
+    end
+
+    local checkafkuserInputConnection
+    checkafkuserInputConnection = UserInputService.InputBegan:Connect(onUserInput)
+    checkafkuserInputConnection = UserInputService.InputEnded:Connect(onUserInput)
+    checkafkuserInputConnection = UserInputService.InputChanged:Connect(onUserInput)
+        
+    function getPlayerStatus(humanoid, rootPart)
+        local velocity = rootPart.Velocity
+        local speed = velocity.Magnitude
+        local walkSpeed = humanoid.WalkSpeed
+
+        if tick() - lastJumpTime > jumpResetTime then
+            jumpCount = 0
+        end
+
+        if humanoid:GetState() == Enum.HumanoidStateType.Jumping then
+            jumpCount = jumpCount + 1
+            lastJumpTime = tick()
+            if jumpCount == 1 then
+                return "Jumping 🦘"
+            else
+                return "Jumping #" .. jumpCount .. " 🦘"
+            end
+        elseif humanoid:GetState() == Enum.HumanoidStateType.Freefall then
+            if velocity.Y < -150 then
+                return "Low ground 🌑"
+            elseif velocity.Y > 150 then
+                return "High ground or above the clouds 🌌"
+            else
+                return "Falling ⛰️"
+            end
+        elseif humanoid:GetState() == Enum.HumanoidStateType.Seated then
+            return "Sitting 🪑"
+        elseif humanoid:GetState() == Enum.HumanoidStateType.Climbing then
+            return "Climbing 🧗"
+        elseif speed > 0.1 then
+            if speed >= 20 then
+                return "Running 🏃"
+            elseif speed >= 15 then
+                return "Walking 🚶"
+            else
+                return "Moving slowly 🐢"
+            end
+        elseif speed <= 0.1 then
+            return "Standing still😪"
+        else
+            return "Unknown 💫"
+        end
+    end
+
+    function updateStatus()
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid and player.Character:FindFirstChild("HumanoidRootPart") then
+            local rootPart = player.Character.HumanoidRootPart
+            local status = getPlayerStatus(humanoid, rootPart)
+            statusLabel.Text = status or "Unknown 💫"
+            
+            if humanoid:GetState() == Enum.HumanoidStateType.Physics then
+                physicsStatusLabel.Text = "Ragdoll🤕"
+            else
+                physicsStatusLabel.Text = "Not Ragdoll"
+            end
+
+            if humanoid:GetState() == Enum.HumanoidStateType.Swimming then
+                swimmingStatusLabel.Text = "Swimming 🏊"
+            else
+                swimmingStatusLabel.Text = "Not swimming"
+            end
+            updateAfkStatus()
+        end
+    end
+    
+    local heartbeatConnection
+    heartbeatConnection = RunService.Heartbeat:Connect(updateStatus)
+
+    screenGui.AncestryChanged:Connect(function()
+        if not screenGui:IsDescendantOf(game) then
+            heartbeatConnection:Disconnect()
+            checkafkuserInputConnection:Disconnect()
+            heartbeatConnection = nil
+            checkafkuserInputConnection = nil
+        end
+    end)
+
+    return screenGui, heartbeatConnection
+end
+
+AddToggle(Main5u6, {
+    Name = "Character Status",
+    Default = false,
+    Callback = function(state)
+        if state then
+            local screenGui, heartbeatConnection = createStatusUI()
+        else
+            local screenGui = player.PlayerGui:FindFirstChild("StatusUI")
+            if screenGui then
+                screenGui:Destroy()
+            end
+        end
+    end
+})
+
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
    image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
