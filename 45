@@ -247,39 +247,30 @@ function MakeWindow(Configs)
 local Menu = Create("Frame", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     Position = UDim2.new(0.5, -500/2, 0.5, -270/2),
-    Size = UDim2.new(0, 500, 0, 270),
     Active = true,
     Draggable = true
 })
 Corner(Menu)
 
-local function ConstrainFramePosition()
-    local parent = Menu.Parent
-    if not parent:IsA("ScreenGui") then return end
+Menu.InputChanged:Connect(function(input)
+    if Menu.Draggable and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local absPosition = Menu.AbsolutePosition
+        local absSize = Menu.AbsoluteSize
+        local screenSize = workspace.CurrentCamera.ViewportSize
 
-    local screenSize = parent.AbsoluteSize
-    local frameSize = Menu.AbsoluteSize
-    local position = Menu.AbsolutePosition
+        if absPosition.X < 0 then
+            Menu.Position = UDim2.new(0, 0, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
+        elseif absPosition.X + absSize.X > screenSize.X then
+            Menu.Position = UDim2.new(0, screenSize.X - absSize.X, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
+        end
 
-    local minX = 0
-    local minY = 0
-    local maxX = screenSize.X - frameSize.X
-    local maxY = screenSize.Y - frameSize.Y
-
-    if position.X < minX then
-        Menu.Position = UDim2.new(0, minX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
-    elseif position.X > maxX then
-        Menu.Position = UDim2.new(0, maxX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
+        if absPosition.Y < 0 then
+            Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, 0)
+        elseif absPosition.Y + absSize.Y > screenSize.Y then
+            Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, screenSize.Y - absSize.Y)
+        end
     end
-
-    if position.Y < minY then
-        Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, minY)
-    elseif position.Y > maxY then
-        Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, maxY)
-    end
-end
-
-Menu:GetPropertyChangedSignal("Position"):Connect(ConstrainFramePosition)
+end)
   
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
