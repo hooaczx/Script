@@ -1373,7 +1373,36 @@ AddToggle(Main5u6, {
 })
 
 if game.Players.LocalPlayer.Name == "iskbsbh" then 
-local isStatusUICreated = false
+function AddUi(parent, labelText, labelColor)
+    local frame = Create("Frame", parent, {
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        Size = UDim2.new(0.14, 0, 0.07, 0),
+        Draggable = true,
+        Active = true,
+    })
+
+    local textLabel = Create("TextLabel", frame, {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
+        Font = Enum.Font.Gotham,
+        Text = labelText,
+        TextColor3 = labelColor,
+        TextScaled = true,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
+    Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
+
+    function textLabel:updateText(newText, newColor)
+        self.Text = newText
+        self.TextColor3 = newColor or self.TextColor3
+    end
+
+    return frame, textLabel
+end
 
 function createStatusUI()
     local existingUI = player.PlayerGui:FindFirstChild("StatusUI")
@@ -1383,70 +1412,21 @@ function createStatusUI()
 
     local screenGui = Create("ScreenGui", game:GetService("CoreGui"), {Name = "StatusUI"})
 
-    local frame = Create("Frame", screenGui, {
-        Size = UDim2.new(0.14, 0, 0.25, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(0.5, 0, 0.48, 0),
-        BackgroundTransparency = 1,
-        Active = true,
-        Draggable = true
-    })
-
-    local Label = Create("TextLabel", frame, {
-        Size = UDim2.new(1, 0, 0.1, 0),
-        BackgroundTransparency = 1,
-        Text = "Status"
-    })
-
-    local scrollingFrame = Create("ScrollingFrame", frame, {
-        Size = UDim2.new(1, 0, 0.9, 0),
-        CanvasSize = UDim2.new(1, 0, 6, 0),
-        Position = UDim2.new(0, 0, 0.1, 0),
-        BackgroundTransparency = 1,
-        ScrollBarThickness = 0,
-        ScrollingEnabled = true
-    })
-
-    local layout = Create("UIListLayout", scrollingFrame, {
+    local uiListLayout = Create("UIListLayout", screenGui, {
+        SortOrder = Enum.SortOrder.LayoutOrder,
         FillDirection = Enum.FillDirection.Vertical,
-        Padding = UDim.new(0, 5)
+        Padding = UDim.new(0, 10),
     })
 
-    local statusLabel = Create("TextLabel", scrollingFrame, {
-        Size = UDim2.new(1, 0, 0.09, 0),
-        BackgroundTransparency = 1,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextStrokeTransparency = 0.2,
-        Text = "Loading..."
-    })
+    local statusLabelFrame, statusLabel = AddUi(screenGui, "Loading...", Color3.fromRGB(255, 255, 255))
+    local physicsStatusLabelFrame, physicsStatusLabel = AddUi(screenGui, "Not Ragdoll", Color3.fromRGB(255, 0, 0))
+    local swimmingStatusLabelFrame, swimmingStatusLabel = AddUi(screenGui, "Not swimming", Color3.fromRGB(0, 0, 255))
+    local afkLabelFrame, afkLabel = AddUi(screenGui, "AFK: No", Color3.fromRGB(0, 255, 0))
 
-    local physicsStatusLabel = Create("TextLabel", scrollingFrame, {
-        Size = UDim2.new(1, 0, 0.09, 0),
-        BackgroundTransparency = 1,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(255, 0, 0),
-        TextStrokeTransparency = 0.2,
-        Text = "Not Ragdoll"
-    })
-
-    local swimmingStatusLabel = Create("TextLabel", scrollingFrame, {
-        Size = UDim2.new(1, 0, 0.09, 0),
-        BackgroundTransparency = 1,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(0, 0, 255),
-        TextStrokeTransparency = 0.2,
-        Text = "Not swimming"
-    })
-
-    local afkLabel = Create("TextLabel", scrollingFrame, {
-        Size = UDim2.new(1, 0, 0.09, 0),
-        BackgroundTransparency = 1,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(0, 255, 0),
-        TextStrokeTransparency = 0.2,
-        Text = "AFK: No"
-    })
+    statusLabelFrame.LayoutOrder = 1
+    physicsStatusLabelFrame.LayoutOrder = 2
+    swimmingStatusLabelFrame.LayoutOrder = 3
+    afkLabelFrame.LayoutOrder = 4
 
     local jumpCount = 0
     local jumpResetTime = 2
@@ -1457,11 +1437,9 @@ function createStatusUI()
     function updateAfkStatus()
         local timeSinceLastInput = tick() - lastInputTime
         if timeSinceLastInput > afkTimeout then
-            afkLabel.Text = "AFK: Yes 💤"
-            afkLabel.TextColor3 = Color3.fromRGB(98, 37, 209)
+            afkLabel:updateText("AFK: Yes 💤", Color3.fromRGB(98, 37, 209))
         else
-            afkLabel.Text = "AFK: No"
-            afkLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+            afkLabel:updateText("AFK: No", Color3.fromRGB(0, 255, 0))
         end
     end
 
@@ -1509,10 +1487,10 @@ function createStatusUI()
         if humanoid and player.Character:FindFirstChild("HumanoidRootPart") then
             local rootPart = player.Character.HumanoidRootPart
             local status = getPlayerStatus(humanoid, rootPart)
-            statusLabel.Text = status or "Unknown 💫"
+            statusLabel:updateText(status or "Unknown 💫")
 
-            physicsStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Physics and "Ragdoll 🤕" or "Not Ragdoll"
-            swimmingStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Swimming and "Swimming 🏊" or "Not swimming"
+            physicsStatusLabel:updateText(humanoid:GetState() == Enum.HumanoidStateType.Physics and "Ragdoll 🤕" or "Not Ragdoll", Color3.fromRGB(255, 0, 0))
+            swimmingStatusLabel:updateText(humanoid:GetState() == Enum.HumanoidStateType.Swimming and "Swimming 🏊" or "Not swimming", Color3.fromRGB(0, 0, 255))
             updateAfkStatus()
         end
     end
@@ -1535,14 +1513,12 @@ AddToggle(Main5u6, {
     Name = "Character Status",
     Default = false,
     Callback = function(state)
-        if state and not isStatusUICreated then
+        if state then
             createStatusUI()
-            isStatusUICreated = true
-        elseif not state and isStatusUICreated then
-            local screenGui = player.PlayerGui:FindFirstChild("StatusUI")
-            if screenGui then
-                screenGui:Destroy()
-                isStatusUICreated = false
+        else
+            local screenGuiUI = player.PlayerGui:FindFirstChild("StatusUI")
+            if screenGuiUI then
+                screenGuiUI:Destroy()
             end
         end
     end
