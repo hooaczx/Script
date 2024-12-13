@@ -1372,14 +1372,27 @@ AddToggle(Main5u6, {
     end
 })
 
-if game.Players.LocalPlayer.Name == "iskbsbh" then 
+local StatusUi = true
+
+function createTextStrokeRainbow(textLabel)
+    return RunService.Heartbeat:Connect(function()
+        local hue = tick() % 360
+        local rainbowColor = Color3.fromHSV(hue / 360, 1, 1)
+        textLabel.TextStrokeColor3 = rainbowColor
+    end)
+end
+
 function AddUi(parent, labelText, labelColor)
+    if not StatusUi or not parent then
+        return nil
+    end
+
     local frame = Create("Frame", parent, {
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = 0.5,
         BorderSizePixel = 0,
         Size = UDim2.new(0.14, 0, 0.07, 0),
-        Draggable = true, 
+        Draggable = true,
         Active = true
     })
 
@@ -1390,24 +1403,39 @@ function AddUi(parent, labelText, labelColor)
         Text = labelText,
         TextColor3 = labelColor,
         TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextStrokeTransparency = 0 -- ขอบข้อความ
     })
 
     Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
     Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
 
+    local connection = createTextStrokeRainbow(textLabel)
+
+    frame.AncestryChanged:Connect(function()
+        if not frame:IsDescendantOf(game) then
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
+        end
+    end)
+
     return textLabel
 end
 
-
 function createStatusUI()
+    if not StatusUi then
+        return
+    end
+
+    local player = game.Players.LocalPlayer
     local existingUI = player.PlayerGui:FindFirstChild("StatusUI")
     if existingUI then
         return
     end
 
-    local screenGui = Instance.new("ScreenGui", game:GetService("CoreGui")
-    screenGui.Name = "StatusUI"
+    local screenGui = Create("ScreenGui", player.PlayerGui, {Name = "StatusUI"})
 
     local uiListLayout = Create("UIListLayout", screenGui, {
         SortOrder = Enum.SortOrder.LayoutOrder,
@@ -1426,10 +1454,13 @@ function createStatusUI()
     afkLabel.LayoutOrder = 4
 
     local jumpCount = 0
-    local jumpResetTime = 2
+    local jumpResetTime = 0.5
     local lastJumpTime = tick()
     local afkTimeout = 25
     local lastInputTime = tick()
+    local currentStatus = nil
+    local lastStatusUpdateTime = 0
+    local statusDelay = 0.04
 
     function updateAfkStatus()
         local timeSinceLastInput = tick() - lastInputTime
@@ -1455,7 +1486,6 @@ function createStatusUI()
     function getPlayerStatus(humanoid, rootPart)
         local velocity = rootPart.Velocity
         local speed = velocity.Magnitude
-        local walkSpeed = humanoid.WalkSpeed
 
         if tick() - lastJumpTime > jumpResetTime then
             jumpCount = 0
@@ -1464,18 +1494,14 @@ function createStatusUI()
         if humanoid:GetState() == Enum.HumanoidStateType.Jumping then
             jumpCount = jumpCount + 1
             lastJumpTime = tick()
-            if jumpCount == 1 then
-                return "Jumping 🦘"
-            else
-                return "Jumping #" .. jumpCount .. " 🦘"
-            end
+            return jumpCount == 1 and "Jumping 🦘" or "Jumping #" .. jumpCount .. " 🦘"
         elseif humanoid:GetState() == Enum.HumanoidStateType.Freefall then
             if velocity.Y < -150 then
-                return "Low ground 🌑"
+                return "Falling fast ⛰️"
             elseif velocity.Y > 150 then
-                return "High ground or above the clouds 🌌"
+                return "High ground 🌌"
             else
-                return "Falling ⛰️"
+                return "Falling 🌬️"
             end
         elseif humanoid:GetState() == Enum.HumanoidStateType.Seated then
             return "Sitting 🪑"
@@ -1490,25 +1516,29 @@ function createStatusUI()
                 return "Moving slowly 🐢"
             end
         elseif speed <= 0.1 then
-            return "Standing still😪"
+            return "Standing still 😪"
         else
             return "Unknown 💫"
         end
     end
 
     function updateStatus()
-      local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-      if humanoid and player.Character:FindFirstChild("HumanoidRootPart") then
-          local rootPart = player.Character.HumanoidRootPart
-          local status = getPlayerStatus(humanoid, rootPart)
-          statusLabel.Text = status or "Unknown 💫"
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid and player.Character:FindFirstChild("HumanoidRootPart") then
+            local rootPart = player.Character.HumanoidRootPart
+            local newStatus = getPlayerStatus(humanoid, rootPart)
 
-          physicsStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Physics and "Ragdoll 🤕" or "Not Ragdoll"
-          swimmingStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Swimming and "Swimming 🏊" or "Not swimming"
-          updateAfkStatus()
-      end
-  end
+            if newStatus ~= currentStatus and tick() - lastStatusUpdateTime >= statusDelay then
+                currentStatus = newStatus
+                statusLabel.Text = currentStatus
+                lastStatusUpdateTime = tick()
+            end
 
+            physicsStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Physics and "Ragdoll 🤕" or "Not Ragdoll"
+            swimmingStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Swimming and "Swimming 🏊" or "Not swimming"
+            updateAfkStatus()
+        end
+    end
 
     local heartbeatConnection = RunService.Heartbeat:Connect(updateStatus)
 
@@ -1520,25 +1550,26 @@ function createStatusUI()
             end
         end
     end)
-
-    return screenGui
 end
 
 AddToggle(Main5u6, {
     Name = "Character Status",
     Default = false,
-    Callback = function(state)
-        if state then
-            createStatusUI()
+    Callback = function()
+        StatusUi = not StatusUi
+        local player = game.Players.LocalPlayer
+        local existingUI = player.PlayerGui:FindFirstChild("StatusUI")
+        if StatusUi then
+            if not existingUI then
+                createStatusUI()
+            end
         else
-            local screenGuiUI = player.PlayerGui:FindFirstChild("StatusUI")
             if existingUI then
                 existingUI:Destroy()
             end
         end
     end
 })
-end
 
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
