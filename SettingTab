@@ -1528,17 +1528,18 @@ AddToggle(Main5u6, {
     Name = "Character Status",
     Default = false,
     Callback = function(state)
+        local screenGui = player.PlayerGui:FindFirstChild("StatusUI")
         if state then
-            createStatusUI()
+            if not screenGui then
+                createStatusUI()
+            end
         else
-            local screenGuiUI = player.PlayerGui:FindFirstChild("StatusUI")
-            if existingUI then
-                existingUI:Destroy()
+            if screenGui then
+                screenGui:Destroy()
             end
         end
     end
 })
-
 
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
