@@ -1372,13 +1372,15 @@ AddToggle(Main5u6, {
     end
 })
 
+if game.Players.LocalPlayer.Name == "iskbsbh" then 
 function AddUi(parent, labelText, labelColor)
     local frame = Create("Frame", parent, {
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = 0.5,
         BorderSizePixel = 0,
         Size = UDim2.new(0.14, 0, 0.07, 0),
-        Active = true, -- Allows the frame to be interactive
+        Draggable = true, 
+        Active = true
     })
 
     local textLabel = Create("TextLabel", frame, {
@@ -1388,14 +1390,11 @@ function AddUi(parent, labelText, labelColor)
         Text = labelText,
         TextColor3 = labelColor,
         TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
+        TextXAlignment = Enum.TextXAlignment.Left
     })
 
     Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
     Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
-
-    frame.Draggable = true
-    frame.Active = true
 
     return textLabel
 end
@@ -1407,12 +1406,13 @@ function createStatusUI()
         return
     end
 
-    local screenGui = Create("ScreenGui", game:GetService("CoreGui"), {Name = "StatusUI"})
+    local screenGui = Instance.new("ScreenGui", game:GetService("CoreGui")
+    screenGui.Name = "StatusUI"
 
     local uiListLayout = Create("UIListLayout", screenGui, {
         SortOrder = Enum.SortOrder.LayoutOrder,
         FillDirection = Enum.FillDirection.Vertical,
-        Padding = UDim.new(0, 10),
+        Padding = UDim.new(0, 10)
     })
 
     local statusLabel = AddUi(screenGui, "Loading...", Color3.fromRGB(255, 255, 255))
@@ -1528,18 +1528,17 @@ AddToggle(Main5u6, {
     Name = "Character Status",
     Default = false,
     Callback = function(state)
-        local screenGui = player.PlayerGui:FindFirstChild("StatusUI")
         if state then
-            if not screenGui then
-                createStatusUI()
-            end
+            createStatusUI()
         else
-            if screenGui then
-                screenGui:Destroy()
+            local screenGuiUI = player.PlayerGui:FindFirstChild("StatusUI")
+            if existingUI then
+                existingUI:Destroy()
             end
         end
     end
 })
+end
 
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
