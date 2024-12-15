@@ -2566,6 +2566,26 @@ end
 
 functions.updatePlaytime()
 
+functions.formatNumber = function(number)
+    if number >= 1e9 then
+        return string.format("%.1fB", number / 1e9)
+    elseif number >= 1e8 then
+        return string.format("%.0fB", number / 1e8)
+    elseif number >= 1e7 then
+        return string.format("%.0fM", number / 1e7)
+    elseif number >= 1e6 then
+        return string.format("%.1fM", number / 1e6)
+    elseif number >= 1e5 then
+        return string.format("%.0fK", number / 1e5 * 100)
+    elseif number >= 1e4 then
+        return string.format("%.0fK", number / 1e4 * 10)
+    elseif number >= 1e3 then
+        return string.format("%.0fK", number / 1e3)
+    else
+        return tostring(number)
+    end
+end
+
 functions.parseDate = function(dateString)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
     local year, month, day, hour, min, sec = dateString:match(pattern)
@@ -2610,15 +2630,15 @@ functions.updatePlaceInfo = function()
         GameName.Text = string.format("Game Name: %s", placeInfo.Name)
 
         frame79.Text = string.format(
-            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive Players: %d\nPlayers in Server: %d\nTotal Visits: %d",
+            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive Players: %s\nPlayers in Server: %d\nTotal Visits: %s",
             placeInfo.PlaceId,
             game.JobId,
             game.GameId,
             placeInfo.Created,
             placeInfo.Updated,
-            placeInfo.Playing,
+            functions.formatNumber(placeInfo.Playing),
             placeInfo.ServerCount,
-            placeInfo.Visits
+            functions.formatNumber(placeInfo.Visits)
         )
     else
         GameName.Text = "Game Name: Failed to load"
