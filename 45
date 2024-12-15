@@ -2566,20 +2566,6 @@ end
 
 functions.updatePlaytime()
 
-functions.formatNumber = function(number)
-    if number >= 1e10 then
-        return tostring(number / 1e9) .. "B"
-    elseif number >= 1e9 then
-        return tostring(number / 1e9) .. "B"
-    elseif number >= 1e6 then
-        return tostring(number / 1e6) .. "M"
-    elseif number >= 1e3 then
-        return tostring(number / 1e3) .. "K"
-    else
-        return tostring(number)
-    end
-end
-
 functions.parseDate = function(dateString)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
     local year, month, day, hour, min, sec = dateString:match(pattern)
@@ -2621,18 +2607,23 @@ end
 functions.updatePlaceInfo = function()
     local placeInfo = functions.fetchPlaceInfo()
     if placeInfo then
+        local maxPlayers = game:GetService("Players").MaxPlayers
+
+        local playersInServer = placeInfo.ServerCount
+        local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
+
         GameName.Text = string.format("Game Name: %s", placeInfo.Name)
 
         frame79.Text = string.format(
-            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive Players: %s\nPlayers in Server: %d\nTotal Visits: %s",
+            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %d\nVisits: %s",
             placeInfo.PlaceId,
             game.JobId,
             game.GameId,
             placeInfo.Created,
             placeInfo.Updated,
-            functions.formatNumber(placeInfo.Playing),
-            placeInfo.ServerCount,
-            functions.formatNumber(placeInfo.Visits)
+            formattedPlayers,
+            placeInfo.Playing,
+            placeInfo.Visits
         )
     else
         GameName.Text = "Game Name: Failed to load"
