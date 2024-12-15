@@ -2479,10 +2479,14 @@ frame9.BackgroundTransparency = 1
 
 local frame79 = Instance.new("TextLabel", gameinfoframe)
 frame79.Size = UDim2.new(1, 0, 0.89, 0)
-frame79.Text = ""
 frame79.Position = UDim2.new(0, 0, 0.15, 0)
-frame79.BackgroundColor3 = Configs_HUB.Cor_Hub
+frame79.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame79.BackgroundTransparency = 1
+frame79.Font = Enum.Font.SourceSans
+frame79.TextColor3 = Color3.fromRGB(200, 200, 200)
+frame79.TextWrapped = true
+frame79.TextScaled = true
+frame79.Text = "Fetching data..."
 
 local listLayout = Instance.new("UIListLayout", frame79)
 listLayout.FillDirection = Enum.FillDirection.Vertical
@@ -2574,6 +2578,66 @@ end
 
 functions.updatePlaytime()
 
+functions.parseDate = function(dateString)
+    local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
+    local year, month, day, hour, min, sec = dateString:match(pattern)
+    return os.time({
+        year = tonumber(year),
+        month = tonumber(month),
+        day = tonumber(day),
+        hour = tonumber(hour),
+        min = tonumber(min),
+        sec = tonumber(sec)
+    })
+end
+
+functions.fetchPlaceInfo = function()
+    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    local success, response = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(url))
+    end)
+
+    if success and response and response.data and #response.data > 0 then
+        local data = response.data[1]
+        local created = functions.parseDate(data.created)
+        local updated = functions.parseDate(data.updated)
+        return {
+            PlaceId = game.PlaceId,
+            Name = data.name or "Unknown",
+            Created = os.date("%Y-%m-%d %H:%M:%S", created),
+            Updated = os.date("%Y-%m-%d %H:%M:%S", updated),
+            Playing = data.playing or 0,
+            Visits = data.visits or 0,
+            ServerCount = #Players:GetPlayers()
+        }
+    else
+        warn("Failed to fetch place info.")
+        return nil
+    end
+end
+
+functions.updatePlaceInfo = function()
+    local placeInfo = functions.fetchPlaceInfo()
+    if placeInfo then
+        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
+        
+        frame79.Text = string.format(
+            "Place ID: %d\nCreated: %s\nUpdated: %s\nCurrently Playing: %d\nPlayers in Server: %d\nTotal Visits: %d",
+            placeInfo.PlaceId,
+            placeInfo.Created,
+            placeInfo.Updated,
+            placeInfo.Playing,
+            placeInfo.ServerCount,
+            placeInfo.Visits
+        )
+    else
+        GameName.Text = "Game Name: Failed to load"
+        frame79.Text = "Failed to fetch place info."
+    end
+end
+
+functions.updatePlaceInfo()
+
 local DisplayName = Instance.new("TextLabel")
 DisplayName.Size = UDim2.new(1, 0, 0.3, 0)
 DisplayName.Text = "Display Name: " .. player.DisplayName
@@ -2613,83 +2677,6 @@ AccountCreated.BackgroundTransparency = 1
 TextSetColor(AccountCreated)
 AccountCreated.Parent = frame9
 
-local Update = Instance.new("TextLabel")
-Update.Size = UDim2.new(1, 0, 0.1, 0)
-Update.Text = "Update: "..result.Updated
-Update.Position = UDim2.new(0, 0, 0, 0)
-Update.TextScaled = true
-Update.TextColor3 = Configs_HUB.Cor_Text
-Update.TextXAlignment = "Left"
-Update.Font = Configs_HUB.Text_Font
-Update.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Update.BackgroundTransparency = 1
-TextSetColor(Update)
-Update.Parent = frame79
-
-local CreationDate = Instance.new("TextLabel")
-CreationDate.Size = UDim2.new(1, 0, 0.1, 0)
-CreationDate.Text = "Creation Date: "..result.Created
-CreationDate.Position = UDim2.new(0, 0, 0.1, 0)
-CreationDate.TextScaled = true
-CreationDate.TextColor3 = Configs_HUB.Cor_Text
-CreationDate.TextXAlignment = "Left"
-CreationDate.Font = Configs_HUB.Text_Font
-CreationDate.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-CreationDate.BackgroundTransparency = 1
-TextSetColor(CreationDate)
-CreationDate.Parent = frame79
-
-local Gameid = Instance.new("TextLabel")
-Gameid.Size = UDim2.new(1, 0, 0.1, 0)
-Gameid.Text = "Gameid: " .. game.GameId
-Gameid.Position = UDim2.new(0, 0, 0.2, 0)
-Gameid.TextScaled = true
-Gameid.TextColor3 = Configs_HUB.Cor_Text
-Gameid.TextXAlignment = "Left"
-Gameid.Font = Configs_HUB.Text_Font
-Gameid.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Gameid.BackgroundTransparency = 1
-TextSetColor(Gameid)
-Gameid.Parent = frame79
-
-local GamePlaceId = Instance.new("TextLabel")
-GamePlaceId.Size = UDim2.new(1, 0, 0.1, 0)
-GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
-GamePlaceId.Position = UDim2.new(0, 0, 0.3, 0)
-GamePlaceId.TextScaled = true
-GamePlaceId.TextColor3 = Configs_HUB.Cor_Text
-GamePlaceId.TextXAlignment = "Left"
-GamePlaceId.Font = Configs_HUB.Text_Font
-GamePlaceId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-GamePlaceId.BackgroundTransparency = 1
-TextSetColor(GamePlaceId)
-GamePlaceId.Parent = frame79
-
-local GameJobId = Instance.new("TextLabel")
-GameJobId.Size = UDim2.new(1, 0, 0.1, 0)
-GameJobId.Text = "GameJobId: " .. game.JobId
-GameJobId.Position = UDim2.new(0, 0, 0.4, 0)
-GameJobId.TextScaled = true
-GameJobId.TextColor3 = Configs_HUB.Cor_Text
-GameJobId.TextXAlignment = "Left"
-GameJobId.Font = Configs_HUB.Text_Font
-GameJobId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-GameJobId.BackgroundTransparency = 1
-TextSetColor(GameJobId)
-GameJobId.Parent = frame79
-
-local Server = Instance.new("TextLabel")
-Server.Size = UDim2.new(1, 0, 0.1, 0)
-Server.Text = "Server Size: ".. maxPlayers
-Server.Position = UDim2.new(0, 0, 0.5, 0)
-Server.TextScaled = true
-Server.TextColor3 = Configs_HUB.Cor_Text
-Server.TextXAlignment = "Left"
-Server.Font = Configs_HUB.Text_Font
-Server.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Server.BackgroundTransparency = 1
-TextSetColor(Server)
-Server.Parent = frame79
 
 functions.updateTime = function()
     local currentTime = os.date("*t")
@@ -2764,14 +2751,7 @@ end)
         DisplayName.Text = "Display Name: " .. player.DisplayName
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-        Update.Text = "Update: "..result.Updated
-        CreationDate.Text = "Creation Date: "..result.Created
-        Gameid.Text = "Gameid: " .. game.GameId
-        GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
-        GameJobId.Text = "GameJobId: " .. game.JobId
-        Server.Text = "Server Size: "..maxPlayers
-        Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
-        GameName.Text = "Game Name: " .. gameName
+        functions.updatePlaceInfo()
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
