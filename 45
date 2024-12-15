@@ -2607,16 +2607,18 @@ end
 functions.updatePlaceInfo = function()
     local placeInfo = functions.fetchPlaceInfo()
     if placeInfo then
-        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
-        
-        frame79.Text = string.format(
-            "Place ID: %d\nCreated: %s\nUpdated: %s\nCurrently Playing: %d\nPlayers in Server: %d\nTotal Visits: %d",
+        GameNameLabel.Text = string.format("Game Name: %s", placeInfo.Name)
+
+        GameDetailsLabel.Text = string.format(
+            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive Players: %d\nPlayers in Server: %d\nTotal Visits: %d",
             placeInfo.PlaceId,
-            placeInfo.Created,
-            placeInfo.Updated,
-            placeInfo.Playing,
-            placeInfo.ServerCount,
-            placeInfo.Visits
+            game.JobId,
+            game.GameId,
+            placeInfo.CreatedDate,
+            placeInfo.UpdatedDate,
+            placeInfo.ActivePlayers,
+            placeInfo.CurrentPlayers,
+            placeInfo.TotalVisits
         )
     else
         GameName.Text = "Game Name: Failed to load"
