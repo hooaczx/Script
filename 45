@@ -270,7 +270,7 @@ function MakeWindow(Configs)
   
 local Menu = Create("Frame", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    Position = UDim2.new(0.9, -500/2, 0.5, -270/2),
+    Position = UDim2.new(0.11, -500/2, 0.5, -270/2),
     AnchorPoint = Vector2.new(1, 0),
     Active = true,
     Draggable = true
@@ -337,33 +337,6 @@ Corner(Menu)
   TopBar.Visible = true
   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, true)
   Menu.Draggable = true
-
-function ConstrainFramePosition()
-    local parent = Menu.Parent
-    if not parent:IsA("ScreenGui") then return end
-
-    local screenSize = parent.AbsoluteSize
-    local frameSize = Menu.AbsoluteSize
-    local position = Menu.AbsolutePosition
-
-    local minX = 0
-    local maxX = screenSize.X - frameSize.X
-    if position.X < minX then
-        Menu.Position = UDim2.new(0, minX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
-    elseif position.X > maxX then
-        Menu.Position = UDim2.new(0, maxX, Menu.Position.Y.Scale, Menu.Position.Y.Offset)
-    end
-
-    local minY = 0
-    local maxY = screenSize.Y - frameSize.Y
-    if position.Y < minY then
-        Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, minY)
-    elseif position.Y > maxY then
-        Menu.Position = UDim2.new(Menu.Position.X.Scale, Menu.Position.X.Offset, 0, maxY)
-    end
-end
-
-Menu:GetPropertyChangedSignal("Position"):Connect(ConstrainFramePosition)
 
   local line_Containers = Create("Frame", Menu, {
     BackgroundTransparency = 1,
@@ -2786,6 +2759,7 @@ end)
         ScrollBar.Visible = false
         Containers.Visible = false
         line_Containers.Visible = false
+        Menu.Position = UDim2.new(0.11, -500/2, 0.5, -270/2)
     else
         minimize = true
         ScrollBar.Visible = true
