@@ -3338,10 +3338,10 @@ RunService.Heartbeat:Connect(function()
 end)
 end
 
-  local firstVisible = true
-  local FirstTab = true
-  local textsize = 15
-  local textcolor = Configs_HUB.Cor_Text
+local firstVisible = true
+local firstTabSet = false
+local textsize = 15
+local textcolor = Configs_HUB.Cor_Text
 
 function MakeTab(Configs)
     local TabName = Configs.Name or "Tab"
@@ -3402,19 +3402,25 @@ function MakeTab(Configs)
             if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
                 CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
                 frame.TextLabel.TextSize = 14
-             end
+            end
         end
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         CreateTween(TextLabel, "TextSize", 17, 0.2, false)
     end)
     
+    if not firstTabSet then
+        Container.Visible = true
+        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+        CreateTween(TextLabel, "TextSize", 17, 0.2, false)
+        firstTabSet = true
+    end
+
     firstVisible = false
-    FirstTab = false
     textsize = 14
     textcolor = Configs_HUB.Cor_DarkText
     return Container
-   end
+end
   
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
