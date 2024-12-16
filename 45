@@ -371,14 +371,6 @@ Corner(Menu)
     Position = UDim2.new(1, 0, 1, 0),
     BackgroundTransparency = 1
   })Corner(Containers)
-
-local HighlightBar = Create("Frame", ScrollBar, {
-    Size = UDim2.new(0, 0, 0.05, 0),
-    Position = UDim2.new(0, 0, 0.95, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Text,
-    BackgroundTransparency = 0
-})
-Corner(HighlightBar)
   
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
@@ -3401,48 +3393,33 @@ function MakeTab(Configs)
     })
     
     TextButton.MouseButton1Click:Connect(function()
-        for _, container in pairs(Containers:GetChildren()) do
-            if container:IsA("ScrollingFrame") then
-                container.Visible = false
-            end
+    for _, container in pairs(Containers:GetChildren()) do
+        if container:IsA("ScrollingFrame") then
+            container.Visible = false
         end
-        
-        for _, frame in pairs(ScrollBar:GetChildren()) do
-            if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
-                local defaultSize = frame.TextLabel.TextSize - 2
-                frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
-                CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-            end
+    end
+    for _, frame in pairs(ScrollBar:GetChildren()) do
+        if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
+            local defaultSize = frame.TextLabel.TextSize - 2
+            frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
+            CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
         end
-        
-        Container.Visible = true
+    end
+    Container.Visible = true
+    local currentSize = TextLabel.TextSize
+    local newSize = currentSize + 2
+    TextLabel.TextSize = newSize
+    if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
+        TextLabel.TextSize = currentSize
+    end
+    CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+end)
 
-        local currentPosition = HighlightBar.Position
-        local targetPosition = UDim2.new(0, Frame.AbsolutePosition.X - ScrollBar.AbsolutePosition.X, 0.95, 0)
-        local outPosition = UDim2.new(currentPosition.X.Scale, currentPosition.X.Offset, currentPosition.Y.Scale - 0.1, currentPosition.Y.Offset)
-
-        CreateTween(HighlightBar, "Position", outPosition, 0.2, false):Play()
-
-        task.delay(0.2, function()
-            CreateTween(HighlightBar, "Position", targetPosition, 0.3, false):Play()
-            CreateTween(HighlightBar, "Size", UDim2.new(0, Frame.AbsoluteSize.X, 0.05, 0), 0.3, false):Play()
-        end)
-
-        local currentSize = TextLabel.TextSize
-        local newSize = currentSize + 2
-        TextLabel.TextSize = newSize
-        if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
-            TextLabel.TextSize = currentSize
-        end
-        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-    end)
-
+    
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         CreateTween(TextLabel, "TextSize", 17, 0.2, false)
-        CreateTween(HighlightBar, "Position", UDim2.new(0, Frame.AbsolutePosition.X - ScrollBar.AbsolutePosition.X, 0.95, 0), 0.3, false)
-        CreateTween(HighlightBar, "Size", UDim2.new(0, Frame.AbsoluteSize.X, 0.05, 0), 0.3, false)
         firstTabSet = true
     end
 
