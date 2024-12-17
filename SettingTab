@@ -1228,6 +1228,9 @@ AddToggle(Main5u6, {
     Callback = toggleLight
 })
 
+local isRotationStored = false
+local originalRotation = 0
+
 local function Create(instance, parent, props)
     local new = Instance.new(instance, parent)
     if props then
@@ -1236,6 +1239,37 @@ local function Create(instance, parent, props)
         end
     end
     return new
+end
+
+function createTextStrokeRainbow(textLabel)
+    return RunService.Heartbeat:Connect(function()
+        local hue = tick() % 360
+        local rainbowColor = Color3.fromHSV(hue / 360, 1, 1)
+        textLabel.TextStrokeColor3 = rainbowColor
+    end)
+end
+
+function ShakeEffect(instance)
+    instance.MouseEnter:Connect(function()
+        if not isRotationStored then
+            originalRotation = instance.Rotation
+            isRotationStored = true
+        end
+
+        local shakeAmount = 3
+        local shakeDuration = 0.05
+        local shakeCount = 5
+
+        for i = 1, shakeCount do
+            CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
+            CreateTween(instance, "Rotation", originalRotation - shakeAmount, shakeDuration, true)
+        end
+
+        CreateTween(instance, "Rotation", originalRotation, 0.2, false)
+    end)
+
+    instance.MouseLeave:Connect(function()
+    end)
 end
 
 local player = game.Players.LocalPlayer
@@ -1249,7 +1283,7 @@ local currentSpeed, targetSpeed = 0, 0
 local isSpeedLabelVisible, useWalkSpeed, isButtonActive = false, false, true
 local stopupdatespeed
 
-local function CreateTween(instance, prop, value, time, tweenWait)
+function CreateTween(instance, prop, value, time, tweenWait)
     local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
     tween:Play()
     if tweenWait then
@@ -1257,7 +1291,7 @@ local function CreateTween(instance, prop, value, time, tweenWait)
     end
 end
 
-local function CreateButton(parent, size, position, image, transparency, zIndex, visible)
+function CreateButton(parent, size, position, image, transparency, zIndex, visible)
     return Create("ImageButton", parent, {
         Size = size,
         Position = position,
@@ -1268,7 +1302,7 @@ local function CreateButton(parent, size, position, image, transparency, zIndex,
     })
 end
 
-local function ToggleSpeedGui(create)
+function ToggleSpeedGui(create)
     if create then
         screenGui = Create("ScreenGui", game:GetService("CoreGui"))
 
@@ -1374,16 +1408,8 @@ AddToggle(Main5u6, {
 
 local StatusUi = true
 
-function createTextStrokeRainbow(textLabel)
-    return RunService.Heartbeat:Connect(function()
-        local hue = tick() % 360
-        local rainbowColor = Color3.fromHSV(hue / 360, 1, 1)
-        textLabel.TextStrokeColor3 = rainbowColor
-    end)
-end
-
 function AddUi(parent, labelText, labelColor)
-    if not StatusUi or not parent then
+    if not StatusUi then
         return nil
     end
 
@@ -1394,7 +1420,7 @@ function AddUi(parent, labelText, labelColor)
         Size = UDim2.new(0.14, 0, 0.07, 0),
         Draggable = true,
         Active = true
-    })
+    })ShakeEffect(frame)
 
     local textLabel = Create("TextLabel", frame, {
         BackgroundTransparency = 1,
@@ -1403,13 +1429,9 @@ function AddUi(parent, labelText, labelColor)
         Text = labelText,
         TextColor3 = labelColor,
         TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextStrokeTransparency = 0 -- ขอบข้อความ
+        TextXAlignment = Enum.TextXAlignment.Left
     })
-
-    Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
-    Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
-
+    
     local connection = createTextStrokeRainbow(textLabel)
 
     frame.AncestryChanged:Connect(function()
@@ -1421,147 +1443,89 @@ function AddUi(parent, labelText, labelColor)
         end
     end)
 
+    Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
+    Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
+
     return textLabel
 end
 
-function createStatusUI()
+function createFpsAndpinggui()
     if not StatusUi then
         return
     end
 
     local player = game.Players.LocalPlayer
-    local existingUI = player.PlayerGui:FindFirstChild("StatusUI")
+    local existingUI = player.PlayerGui:FindFirstChild("FpsAndping")
     if existingUI then
         return
     end
 
-    local screenGui = Create("ScreenGui", player.PlayerGui, {Name = "StatusUI"})
+    local screenGui = Create("ScreenGui", player.PlayerGui, {Name = "FpsAndping"})
 
-    local uiListLayout = Create("UIListLayout", screenGui, {
+    Create("UIListLayout", screenGui, {
         SortOrder = Enum.SortOrder.LayoutOrder,
         FillDirection = Enum.FillDirection.Vertical,
         Padding = UDim.new(0, 10)
     })
 
-    local statusLabel = AddUi(screenGui, "Loading...", Color3.fromRGB(255, 255, 255))
-    local physicsStatusLabel = AddUi(screenGui, "Not Ragdoll", Color3.fromRGB(255, 0, 0))
-    local swimmingStatusLabel = AddUi(screenGui, "Not swimming", Color3.fromRGB(0, 0, 255))
-    local afkLabel = AddUi(screenGui, "AFK: No", Color3.fromRGB(0, 255, 0))
+    local fpsLabel = AddUi(screenGui, "FPS: Calculating...", Color3.fromRGB(255, 255, 0))
+    local pingLabel = AddUi(screenGui, "Ping: Calculating...", Color3.fromRGB(0, 255, 255))
 
-    statusLabel.LayoutOrder = 1
-    physicsStatusLabel.LayoutOrder = 2
-    swimmingStatusLabel.LayoutOrder = 3
-    afkLabel.LayoutOrder = 4
+    local displayedFPS = 0
+    local displayedPing = 0
 
-    local jumpCount = 0
-    local jumpResetTime = 0.5
-    local lastJumpTime = tick()
-    local afkTimeout = 25
-    local lastInputTime = tick()
-    local currentStatus = nil
-    local lastStatusUpdateTime = 0
-    local statusDelay = 0.04
+    local targetFPS = 0
+    local targetPing = 0
 
-    function updateAfkStatus()
-        local timeSinceLastInput = tick() - lastInputTime
-        if timeSinceLastInput > afkTimeout then
-            afkLabel.Text = "AFK: Yes 💤"
-            afkLabel.TextColor3 = Color3.fromRGB(98, 37, 209)
-        else
-            afkLabel.Text = "AFK: No"
-            afkLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-        end
+    local function updateFPS()
+        targetFPS = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
     end
 
-    function onUserInput()
-        lastInputTime = tick()
+    local function updatePing()
+        local ping = game:GetService("Stats").PerformanceStats.Ping:GetValue() * 1000
+        targetPing = math.floor(ping)
     end
 
-    local inputConnections = {
-        UserInputService.InputBegan:Connect(onUserInput),
-        UserInputService.InputEnded:Connect(onUserInput),
-        UserInputService.InputChanged:Connect(onUserInput)
-    }
-
-    function getPlayerStatus(humanoid, rootPart)
-        local velocity = rootPart.Velocity
-        local speed = velocity.Magnitude
-
-        if tick() - lastJumpTime > jumpResetTime then
-            jumpCount = 0
+    local function smoothUpdate()
+        if displayedFPS < targetFPS then
+            displayedFPS = displayedFPS + 1
+        elseif displayedFPS > targetFPS then
+            displayedFPS = displayedFPS - 1
         end
 
-        if humanoid:GetState() == Enum.HumanoidStateType.Jumping then
-            jumpCount = jumpCount + 1
-            lastJumpTime = tick()
-            return jumpCount == 1 and "Jumping 🦘" or "Jumping #" .. jumpCount .. " 🦘"
-        elseif humanoid:GetState() == Enum.HumanoidStateType.Freefall then
-            if velocity.Y < -150 then
-                return "Falling fast ⛰️"
-            elseif velocity.Y > 150 then
-                return "High ground 🌌"
-            else
-                return "Falling 🌬️"
-            end
-        elseif humanoid:GetState() == Enum.HumanoidStateType.Seated then
-            return "Sitting 🪑"
-        elseif humanoid:GetState() == Enum.HumanoidStateType.Climbing then
-            return "Climbing 🧗"
-        elseif speed > 0.1 then
-            if speed >= 20 then
-                return "Running 🏃"
-            elseif speed >= 15 then
-                return "Walking 🚶"
-            else
-                return "Moving slowly 🐢"
-            end
-        elseif speed <= 0.1 then
-            return "Standing still 😪"
-        else
-            return "Unknown 💫"
+        if displayedPing < targetPing then
+            displayedPing = displayedPing + 1
+        elseif displayedPing > targetPing then
+            displayedPing = displayedPing - 1
         end
+
+        fpsLabel.Text = "FPS: " .. displayedFPS
+        pingLabel.Text = "Ping: " .. displayedPing .. " ms"
     end
 
-    function updateStatus()
-        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid and player.Character:FindFirstChild("HumanoidRootPart") then
-            local rootPart = player.Character.HumanoidRootPart
-            local newStatus = getPlayerStatus(humanoid, rootPart)
-
-            if newStatus ~= currentStatus and tick() - lastStatusUpdateTime >= statusDelay then
-                currentStatus = newStatus
-                statusLabel.Text = currentStatus
-                lastStatusUpdateTime = tick()
-            end
-
-            physicsStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Physics and "Ragdoll 🤕" or "Not Ragdoll"
-            swimmingStatusLabel.Text = humanoid:GetState() == Enum.HumanoidStateType.Swimming and "Swimming 🏊" or "Not swimming"
-            updateAfkStatus()
-        end
-    end
-
-    local heartbeatConnection = RunService.Heartbeat:Connect(updateStatus)
+    local heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        updateFPS()
+        updatePing()
+        smoothUpdate()
+    end)
 
     screenGui.AncestryChanged:Connect(function()
         if not screenGui:IsDescendantOf(game) then
             heartbeatConnection:Disconnect()
-            for _, connection in ipairs(inputConnections) do
-                connection:Disconnect()
-            end
         end
     end)
 end
 
 AddToggle(Main5u6, {
-    Name = "Character Status",
+    Name = "FpsAndPing",
     Default = false,
     Callback = function()
         StatusUi = not StatusUi
         local player = game.Players.LocalPlayer
-        local existingUI = player.PlayerGui:FindFirstChild("StatusUI")
+        local existingUI = player.PlayerGui:FindFirstChild("FpsAndping")
         if StatusUi then
             if not existingUI then
-                createStatusUI()
+                createFpsAndpinggui()
             end
         else
             if existingUI then
