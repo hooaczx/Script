@@ -16,8 +16,6 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local isRotationStored = false
-local originalRotation = 0
 
 local function Create(instance, parent, props)
   local new = Instance.new(instance, parent)
@@ -133,25 +131,26 @@ local function TextSetColor(instance)
 end
 
 function ShakeEffect(instance)
+    isRotationStored = false
+    originalRotation = 0
+
     instance.MouseEnter:Connect(function()
         if not isRotationStored then
             originalRotation = instance.Rotation
             isRotationStored = true
         end
 
-        local shakeAmount = 3
-        local shakeDuration = 0.05
-        local shakeCount = 5
+        shakeAmount = 3
+        shakeDuration = 0.05
+        shakeCount = 5
 
         for i = 1, shakeCount do
             CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
             CreateTween(instance, "Rotation", originalRotation - shakeAmount, shakeDuration, true)
         end
-
-        CreateTween(instance, "Rotation", originalRotation, 0.2, false)
     end)
-
     instance.MouseLeave:Connect(function()
+    CreateTween(instance, "Rotation", originalRotation, 0.2, false)
     end)
 end
 
