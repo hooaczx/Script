@@ -1381,7 +1381,6 @@ AddToggle(Main5u6, {
 })
 
 local StatusUi = true
-local heartbeatConnection = nil
 
 function AddUi(parent, labelText, labelColor)
     if not StatusUi then
@@ -1407,17 +1406,6 @@ function AddUi(parent, labelText, labelColor)
         TextXAlignment = Enum.TextXAlignment.Left
     })
 
-    local connection = createTextStrokeRainbow(textLabel)
-
-    frame.AncestryChanged:Connect(function()
-        if not frame:IsDescendantOf(game) then
-            if connection then
-                connection:Disconnect()
-                connection = nil
-            end
-        end
-    end)
-
     Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
     Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
 
@@ -1435,7 +1423,7 @@ function createFpsAndpinggui()
         return
     end
 
-    local screenGui = Create("ScreenGui", player.PlayerGui, {Name = "FpsAndping"})
+    local screenGui = Create("ScreenGui", game:GetService("CoreGui"), {Name = "FpsAndping"})
 
     Create("UIListLayout", screenGui, {
         SortOrder = Enum.SortOrder.LayoutOrder,
@@ -1464,27 +1452,22 @@ function createFpsAndpinggui()
 
     local function smoothUpdate()
         if displayedFPS < targetFPS then
-            displayedFPS = math.min(displayedFPS + 1, targetFPS)
+            displayedFPS = displayedFPS + 1
         elseif displayedFPS > targetFPS then
-            displayedFPS = math.max(displayedFPS - 1, targetFPS)
+            displayedFPS = displayedFPS - 1
         end
 
         if displayedPing < targetPing then
-            displayedPing = math.min(displayedPing + 1, targetPing)
+            displayedPing = displayedPing + 1
         elseif displayedPing > targetPing then
-            displayedPing = math.max(displayedPing - 1, targetPing)
+            displayedPing = displayedPing - 1
         end
 
         fpsLabel.Text = "FPS: " .. displayedFPS
         pingLabel.Text = "Ping: " .. displayedPing .. " ms"
     end
 
-    if heartbeatConnection then
-        heartbeatConnection:Disconnect()
-        heartbeatConnection = nil
-    end
-
-    heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
+    local heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
         updateFPS()
         updatePing()
         smoothUpdate()
@@ -1492,10 +1475,7 @@ function createFpsAndpinggui()
 
     screenGui.AncestryChanged:Connect(function()
         if not screenGui:IsDescendantOf(game) then
-            if heartbeatConnection then
-                heartbeatConnection:Disconnect()
-                heartbeatConnection = nil
-            end
+            heartbeatConnection:Disconnect()
         end
     end)
 end
