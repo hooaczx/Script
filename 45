@@ -3407,19 +3407,22 @@ function MakeTab(Configs)
             local defaultSize = frame.TextLabel.TextSize - 2
             frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
             CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+            frame.TextLabel:SetAttribute("Clicked", false) -- รีเซ็ตสถานะ
         end
     end
-    Container.Visible = true
-    local currentSize = TextLabel.TextSize
-    local newSize = currentSize + 2
-    TextLabel.TextSize = newSize
-    if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
-        TextLabel.TextSize = currentSize
+    if not TextLabel:GetAttribute("Clicked") then
+        local currentSize = TextLabel.TextSize
+        local newSize = currentSize + 2
+        TextLabel.TextSize = newSize
+        if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
+            TextLabel.TextSize = currentSize
+        end
+        TextLabel:SetAttribute("Clicked", true) -- บันทึกสถานะว่าเพิ่มขนาดแล้ว
     end
-    CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-end)
 
-    
+    Container.Visible = true
+    CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+ end)
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
