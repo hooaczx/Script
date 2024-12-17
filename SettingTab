@@ -1228,9 +1228,6 @@ AddToggle(Main5u6, {
     Callback = toggleLight
 })
 
-local isRotationStored = false
-local originalRotation = 0
-
 local function Create(instance, parent, props)
     local new = Instance.new(instance, parent)
     if props then
@@ -1258,15 +1255,18 @@ function createTextStrokeRainbow(textLabel)
 end
 
 function ShakeEffect(instance)
+    isRotationStored = false
+    originalRotation = 0
+
     instance.MouseEnter:Connect(function()
         if not isRotationStored then
             originalRotation = instance.Rotation
             isRotationStored = true
         end
 
-        local shakeAmount = 3
-        local shakeDuration = 0.05
-        local shakeCount = 5
+        shakeAmount = 3
+        shakeDuration = 0.05
+        shakeCount = 5
 
         for i = 1, shakeCount do
             CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
