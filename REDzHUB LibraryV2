@@ -16,7 +16,8 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local Hooked = {}
+local isRotationStored = false
+local originalRotation = 0
 
 local function Create(instance, parent, props)
   local new = Instance.new(instance, parent)
@@ -131,6 +132,29 @@ local function TextSetColor(instance)
   end)
 end
 
+function ShakeEffect(instance)
+    instance.MouseEnter:Connect(function()
+        if not isRotationStored then
+            originalRotation = instance.Rotation
+            isRotationStored = true
+        end
+
+        local shakeAmount = 3
+        local shakeDuration = 0.05
+        local shakeCount = 5
+
+        for i = 1, shakeCount do
+            CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
+            CreateTween(instance, "Rotation", originalRotation - shakeAmount, shakeDuration, true)
+        end
+
+        CreateTween(instance, "Rotation", originalRotation, 0.2, false)
+    end)
+
+    instance.MouseLeave:Connect(function()
+    end)
+end
+
 local ScreenGui = Create("ScreenGui", CoreGui, {
   Name = "2huigHUB library",
   DisplayOrder = 9999999999999,
@@ -209,7 +233,7 @@ function MakeNotifi(Configs)
   })
   
   local FrameSize = Create("Frame", Frame2, {
-    Size = UDim2.new(1, 0, 0, 2),
+    Size = UDim2.new(1, 0, 0.04, 0),
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     Position = UDim2.new(0, 0, 0.58, 0),
     BorderSizePixel = 0
@@ -220,7 +244,7 @@ function MakeNotifi(Configs)
   })
   
   task.spawn(function()
-    CreateTween(FrameSize, "Size", UDim2.new(0, 0, 0, 2), timewait, true)
+    CreateTween(FrameSize, "Size", UDim2.new(0, 0, 0.04, 0), timewait, true)
   end)
   
   TextButton.MouseButton1Click:Connect(function()
@@ -244,12 +268,14 @@ function MakeWindow(Configs)
   local title = Configs.Hub.Title or "REDz HUB"
   local Anim_Title = Configs.Hub.Animation or "by : redz9999"
   
-  local Menu = Create("Frame", ScreenGui, {
+local Menu = Create("Frame", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    Position = UDim2.new(0.5, -500/2, 0.5, -270/2),
+    Position = UDim2.new(1.05, -500/2, 0.5, -270/2),
+    AnchorPoint = Vector2.new(1, 0),
     Active = true,
     Draggable = true
-  })Corner(Menu)
+})
+Corner(Menu)
   
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
@@ -258,7 +284,7 @@ function MakeWindow(Configs)
   })
 
   local BottomLine = Create("Frame", TopBar, {
-    Size = UDim2.new(1, 0, 0, 1),
+    Size = UDim2.new(1, 0, 0.05, 0),
     Position = UDim2.new(0, 0, 1, -2),
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     BorderSizePixel = 0
@@ -291,11 +317,11 @@ function MakeWindow(Configs)
     TextColor3 = Configs_HUB.Cor_Text,
     Position = UDim2.new(0, 10, 0, 0),
     TextXAlignment = "Left",
-    TextSize = 15
+    TextWrapped = true
   })
   
-  CreateTween(AnimMenu, "Size", UDim2.new(0, 0, 0, 35), 0.5, true)
-  CreateTween(AnimMenu, "Size", UDim2.new(0, 150, 0, 35), 0.5, true)
+  CreateTween(AnimMenu, "Size", UDim2.new(0, 0, 0.073, 0), 0.5, true)
+  CreateTween(AnimMenu, "Size", UDim2.new(0.15, 0, 0.073, 0), 0.5, true)
   Anim_Credits.Visible = true
   task.wait(0.5)
   for i = 1, 0, -0.1 do task.wait()
@@ -311,14 +337,14 @@ function MakeWindow(Configs)
   TopBar.Visible = true
   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, true)
   Menu.Draggable = true
-  
+
   local line_Containers = Create("Frame", Menu, {
     BackgroundTransparency = 1,
     Size = UDim2.new(1, 0, 1, 0)
   })
 
    local ScrollBar = Create("ScrollingFrame", Menu, {
-    Size = UDim2.new(0.23, 0, 0.91, 0),
+    Size = UDim2.new(0.225, 0, 0.91, 0),
     Position = UDim2.new(0, 0, 1, 0),
     AnchorPoint = Vector2.new(0, 1),
     CanvasSize = UDim2.new(),
@@ -329,18 +355,20 @@ function MakeWindow(Configs)
   })Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5),
     SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", ScrollBar, {
+      PaddingLeft = UDim.new(0.028, 0),
   })
 
   local Bottomright = Create("Frame", Menu, {
-    Size = UDim2.new(0, 1, 0.92, 0),
-    Position = UDim2.new(ScrollBar.Position.X.Scale + ScrollBar.Size.X.Scale, ScrollBar.Position.X.Offset + ScrollBar.Size.X.Offset, ScrollBar.Position.Y.Scale, ScrollBar.Position.Y.Offset),
+    Size = UDim2.new(0.002, 0, 0.92, 0),
+    Position = UDim2.new(0.006 + ScrollBar.Position.X.Scale + ScrollBar.Size.X.Scale, ScrollBar.Position.X.Offset + ScrollBar.Size.X.Offset, ScrollBar.Position.Y.Scale, ScrollBar.Position.Y.Offset),
     AnchorPoint = Vector2.new(0, 1),
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     BorderSizePixel = 0
   })
 
   local Containers = Create("Frame", Menu, {
-    Size = UDim2.new(0.765, 0, 0.91, 0),
+    Size = UDim2.new(0.762, 0, 0.91, 0),
     AnchorPoint = Vector2.new(1, 1),
     Position = UDim2.new(1, 0, 1, 0),
     BackgroundTransparency = 1
@@ -739,24 +767,18 @@ notify({
     local minimize1 = false
 
 Button1.MouseButton1Click:Connect(function()
-    minimize1 = not minimize1
-
-    local settings = minimize1 and {
-        UDim2.new(0.5, 0, 0, 0), 
-        UDim2.new(0.5, 0, 1, 0), 
-        false, 
-        "^"
-    } or {
-        UDim2.new(0.5, 0, 0.12, 0), 
-        UDim2.new(0.5, 0, 0.89, 0), 
-        true, 
-        "v"
-    }
-
-    CreateTween1(frame, "Size", settings[1], 0.3, false)
-    CreateTween1(Button1, "Position", settings[2], 0.3, false)
-    frame.Visible = settings[3]
-    Button1.Text = settings[4]
+ minimize1 = not minimize1
+  if minimize1 then
+    Button1.Text = "^"
+    CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, false)
+    CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 1, 0), 0.3, true)
+    frame.Visible = false
+   else
+    frame.Visible = true
+    Button1.Text = "v"
+    CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, false)
+    CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 0.89, 0), 0.3, false)
+   end
 end)
 
 local TimeLabelgui = Instance.new("TextLabel", frame)
@@ -2158,7 +2180,7 @@ Wellcome.TextScaled = true
 TextSetColor(Wellcome)
 Wellcome.Visible = false
 
-local gameinfoframe= Instance.new("Frame", ScreenGui)
+local gameinfoframe = Instance.new("Frame", ScreenGui)
 gameinfoframe.Size = UDim2.new(0.27, 0, 0.3, 0)
 gameinfoframe.Position = UDim2.new(0.032, 0, 0.74, 0)
 gameinfoframe.AnchorPoint = Vector2.new(0.032, 0.51)
@@ -2406,18 +2428,6 @@ game:GetService("TeleportService"):Teleport(]] .. game.PlaceId .. [[, player)
 setclipboard(teleportCode)
 end) 
 
-local gtxgh2 = Instance.new("Frame", frameinfo)
-gtxgh2.Size = UDim2.new(1, 0, 0.17, 0)
-gtxgh2.Position = UDim2.new(0, 0, 0.001, 0)
-gtxgh2.BackgroundColor3 = Configs_HUB.Cor_Hub
-gtxgh2.BackgroundTransparency = 1
-
-local framee356 = Instance.new("Frame", gameinfoframe)
-framee356.Size = UDim2.new(1, 0, 0.11, 0)
-framee356.Position = UDim2.new(0, 0, 0.001, 0)
-framee356.BackgroundColor3 = Configs_HUB.Cor_Hub
-framee356.BackgroundTransparency = 1
-
 local frame23 = Instance.new("Frame", frame100)
 frame23.Size = UDim2.new(1, 0, 0.11, 0)
 frame23.Position = UDim2.new(0, 0, 0.001, 0)
@@ -2425,18 +2435,22 @@ frame23.BackgroundColor3 = Configs_HUB.Cor_Hub
 frame23.BackgroundTransparency = 1
 
 local frame9 = Instance.new("TextLabel", frameinfo)
-frame9.Size = UDim2.new(1, 0, 0.83, 0)
+frame9.Size = UDim2.new(1, 0, 1, 0)
 frame9.Text = ""
-frame9.Position = UDim2.new(0, 0, 0.15, 0)
 frame9.BackgroundColor3 = Configs_HUB.Cor_Hub
 frame9.BackgroundTransparency = 1
 
 local frame79 = Instance.new("TextLabel", gameinfoframe)
-frame79.Size = UDim2.new(1, 0, 0.89, 0)
-frame79.Text = ""
-frame79.Position = UDim2.new(0, 0, 0.15, 0)
-frame79.BackgroundColor3 = Configs_HUB.Cor_Hub
+frame79.Size = UDim2.new(1, 0, 1, 0)
+frame79.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame79.BackgroundTransparency = 1
+frame79.TextColor3 = Configs_HUB.Cor_Text
+frame79.TextXAlignment = "Left"
+frame79.Font = Configs_HUB.Text_Font
+frame79.TextScaled = true
+frame79.Text = "Fetching data..."
+Corner(frame79, {CornerRadius = UDim.new(0.15, 0)})
+TextSetColor(frame79)
 
 local listLayout = Instance.new("UIListLayout", frame79)
 listLayout.FillDirection = Enum.FillDirection.Vertical
@@ -2528,6 +2542,73 @@ end
 
 functions.updatePlaytime()
 
+functions.parseDate = function(dateString)
+    local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
+    local year, month, day, hour, min, sec = dateString:match(pattern)
+    return os.time({
+        year = tonumber(year),
+        month = tonumber(month),
+        day = tonumber(day),
+        hour = tonumber(hour),
+        min = tonumber(min),
+        sec = tonumber(sec)
+    })
+end
+
+functions.fetchPlaceInfo = function()
+    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    local success, response = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(url))
+    end)
+
+    if success and response and response.data and #response.data > 0 then
+        local data = response.data[1]
+        local created = functions.parseDate(data.created)
+        local updated = functions.parseDate(data.updated)
+        return {
+            PlaceId = game.PlaceId,
+            Name = data.name or "Unknown",
+            Created = os.date("%Y-%m-%d %H:%M:%S", created),
+            Updated = os.date("%Y-%m-%d %H:%M:%S", updated),
+            Playing = data.playing or 0,
+            Visits = data.visits or 0,
+            ServerCount = #Players:GetPlayers()
+        }
+    else
+        warn("Failed to fetch place info.")
+        return nil
+    end
+end
+
+functions.updatePlaceInfo = function()
+    local placeInfo = functions.fetchPlaceInfo()
+    if placeInfo then
+        local maxPlayers = game:GetService("Players").MaxPlayers
+
+        local playersInServer = placeInfo.ServerCount
+        local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
+
+        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
+
+        frame79.Text = string.format(
+            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %d\nVisits: %s",
+            placeInfo.PlaceId,
+            game.JobId,
+            game.GameId,
+            placeInfo.Created,
+            placeInfo.Updated,
+            formattedPlayers,
+            placeInfo.Playing,
+            placeInfo.Visits
+        )
+    else
+        GameName.Text = "Game Name: Failed to load"
+        frame79.Text = "Failed to fetch place info."
+    end
+end
+
+functions.updatePlaceInfo()
+
 local DisplayName = Instance.new("TextLabel")
 DisplayName.Size = UDim2.new(1, 0, 0.3, 0)
 DisplayName.Text = "Display Name: " .. player.DisplayName
@@ -2567,83 +2648,6 @@ AccountCreated.BackgroundTransparency = 1
 TextSetColor(AccountCreated)
 AccountCreated.Parent = frame9
 
-local Update = Instance.new("TextLabel")
-Update.Size = UDim2.new(1, 0, 0.1, 0)
-Update.Text = "Update: "..result.Updated
-Update.Position = UDim2.new(0, 0, 0, 0)
-Update.TextScaled = true
-Update.TextColor3 = Configs_HUB.Cor_Text
-Update.TextXAlignment = "Left"
-Update.Font = Configs_HUB.Text_Font
-Update.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Update.BackgroundTransparency = 1
-TextSetColor(Update)
-Update.Parent = frame79
-
-local CreationDate = Instance.new("TextLabel")
-CreationDate.Size = UDim2.new(1, 0, 0.1, 0)
-CreationDate.Text = "Creation Date: "..result.Created
-CreationDate.Position = UDim2.new(0, 0, 0.1, 0)
-CreationDate.TextScaled = true
-CreationDate.TextColor3 = Configs_HUB.Cor_Text
-CreationDate.TextXAlignment = "Left"
-CreationDate.Font = Configs_HUB.Text_Font
-CreationDate.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-CreationDate.BackgroundTransparency = 1
-TextSetColor(CreationDate)
-CreationDate.Parent = frame79
-
-local Gameid = Instance.new("TextLabel")
-Gameid.Size = UDim2.new(1, 0, 0.1, 0)
-Gameid.Text = "Gameid: " .. game.GameId
-Gameid.Position = UDim2.new(0, 0, 0.2, 0)
-Gameid.TextScaled = true
-Gameid.TextColor3 = Configs_HUB.Cor_Text
-Gameid.TextXAlignment = "Left"
-Gameid.Font = Configs_HUB.Text_Font
-Gameid.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Gameid.BackgroundTransparency = 1
-TextSetColor(Gameid)
-Gameid.Parent = frame79
-
-local GamePlaceId = Instance.new("TextLabel")
-GamePlaceId.Size = UDim2.new(1, 0, 0.1, 0)
-GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
-GamePlaceId.Position = UDim2.new(0, 0, 0.3, 0)
-GamePlaceId.TextScaled = true
-GamePlaceId.TextColor3 = Configs_HUB.Cor_Text
-GamePlaceId.TextXAlignment = "Left"
-GamePlaceId.Font = Configs_HUB.Text_Font
-GamePlaceId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-GamePlaceId.BackgroundTransparency = 1
-TextSetColor(GamePlaceId)
-GamePlaceId.Parent = frame79
-
-local GameJobId = Instance.new("TextLabel")
-GameJobId.Size = UDim2.new(1, 0, 0.1, 0)
-GameJobId.Text = "GameJobId: " .. game.JobId
-GameJobId.Position = UDim2.new(0, 0, 0.4, 0)
-GameJobId.TextScaled = true
-GameJobId.TextColor3 = Configs_HUB.Cor_Text
-GameJobId.TextXAlignment = "Left"
-GameJobId.Font = Configs_HUB.Text_Font
-GameJobId.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-GameJobId.BackgroundTransparency = 1
-TextSetColor(GameJobId)
-GameJobId.Parent = frame79
-
-local Server = Instance.new("TextLabel")
-Server.Size = UDim2.new(1, 0, 0.1, 0)
-Server.Text = "Server Size: ".. maxPlayers
-Server.Position = UDim2.new(0, 0, 0.5, 0)
-Server.TextScaled = true
-Server.TextColor3 = Configs_HUB.Cor_Text
-Server.TextXAlignment = "Left"
-Server.Font = Configs_HUB.Text_Font
-Server.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Server.BackgroundTransparency = 1
-TextSetColor(Server)
-Server.Parent = frame79
 
 functions.updateTime = function()
     local currentTime = os.date("*t")
@@ -2703,7 +2707,7 @@ infoToggleButton.MouseButton1Click:Connect(function()
     else
         click2:Play()
         for _, element in ipairs(uiinfoToggle) do
-            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, false)
+            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
             element.instance.Visible = false
         end
     end
@@ -2718,14 +2722,7 @@ end)
         DisplayName.Text = "Display Name: " .. player.DisplayName
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-        Update.Text = "Update: "..result.Updated
-        CreationDate.Text = "Creation Date: "..result.Created
-        Gameid.Text = "Gameid: " .. game.GameId
-        GamePlaceId.Text = "GamePlaceId: " .. game.PlaceId
-        GameJobId.Text = "GameJobId: " .. game.JobId
-        Server.Text = "Server Size: "..maxPlayers
-        Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
-        GameName.Text = "Game Name: " .. gameName
+        functions.updatePlaceInfo()
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
@@ -2759,20 +2756,20 @@ end)
     Button.MouseButton1Click:Connect(function()
     if minimize then
         minimize = false
-        click1:Play()
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
-        ScrollBar.Visible = true
-        Containers.Visible = true
-        line_Containers.Visible = true
-        Menu.Visible = true
-    else
-        minimize = true
-        click2:Play()
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
         Menu.Visible = false
         ScrollBar.Visible = false
         Containers.Visible = false
         line_Containers.Visible = false
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
+        Menu.Position = UDim2.new(1.05, -500/2, 0.5, -270/2)
+    else
+        minimize = true
+        ScrollBar.Visible = true
+        Containers.Visible = true
+        line_Containers.Visible = true
+        Menu.Visible = true
+        click1:Play()
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
     end
 end)
 
@@ -3343,17 +3340,17 @@ RunService.Heartbeat:Connect(function()
 end)
 end
 
-  local firstVisible = true
-  local FirstTab = true
-  local textsize = 15
-  local textcolor = Configs_HUB.Cor_Text
+local firstVisible = true
+local firstTabSet = false
+local textsize = 15
+local textcolor = Configs_HUB.Cor_Text
 
 function MakeTab(Configs)
     local TabName = Configs.Name or "Tab"
     local TabImage = Configs.image
     
     local Frame = Create("Frame", ScrollBar, {
-        Size = UDim2.new(1, 0, 0.09, 0),
+        Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundTransparency = 1
     }) Corner(Frame) Stroke(Frame)
     
@@ -3395,38 +3392,56 @@ function MakeTab(Configs)
     Create("UIListLayout", Container, {
         Padding = UDim.new(0, 5),
         SortOrder = Enum.SortOrder.LayoutOrder,
+    })Create("UIPadding", Container, {
+      PaddingLeft = UDim.new(0.025, 0),
     })
     
     TextButton.MouseButton1Click:Connect(function()
-        for _, container in pairs(Containers:GetChildren()) do
-            if container:IsA("ScrollingFrame") then
-                container.Visible = false
-            end
+    for _, container in pairs(Containers:GetChildren()) do
+        if container:IsA("ScrollingFrame") then
+            container.Visible = false
         end
-        for _, frame in pairs(ScrollBar:GetChildren()) do
-            if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
-                CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-                frame.TextLabel.TextSize = 14
-             end
+    end
+    for _, frame in pairs(ScrollBar:GetChildren()) do
+        if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
+            local defaultSize = frame.TextLabel.TextSize - 2
+            frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
+            CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+            frame.TextLabel:SetAttribute("Clicked", false) -- รีเซ็ตสถานะ
         end
+    end
+    if not TextLabel:GetAttribute("Clicked") then
+        local currentSize = TextLabel.TextSize
+        local newSize = currentSize + 2
+        TextLabel.TextSize = newSize
+        if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
+            TextLabel.TextSize = currentSize
+        end
+        TextLabel:SetAttribute("Clicked", true) -- บันทึกสถานะว่าเพิ่มขนาดแล้ว
+    end
+
+    Container.Visible = true
+    CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+ end)
+    if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         CreateTween(TextLabel, "TextSize", 17, 0.2, false)
-    end)
-    
+        firstTabSet = true
+    end
+
     firstVisible = false
-    FirstTab = false
     textsize = 14
     textcolor = Configs_HUB.Cor_DarkText
     return Container
-   end
+end
   
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0.09, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       Text = "",
@@ -3465,7 +3480,7 @@ function MakeTab(Configs)
     WarningMessage = Configs.WarningMessage
     ImageId = Configs.ImageId
     local WarningFrame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0.18, 0),
+        Size = UDim2.new(0.95, 0, 0.17, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
     })
     local FrameStroke = Create("UIStroke", WarningFrame, {
@@ -3497,7 +3512,7 @@ function AddToggle(parent, Configs)
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-        Size = UDim2.new(1, 0, 0.09, 0),
+        Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame",
         Text = "",
@@ -3586,7 +3601,7 @@ end
     local Callback = Configs.Callback or function() end
     
     local Frame = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0.09, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       Text = ""
@@ -3693,7 +3708,7 @@ end
     local Callback = Configs.Callback or function() end
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0.09, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame"
     })Corner(Frame)Stroke(Frame)
@@ -3724,7 +3739,7 @@ end
     })
     
     local Line = Create("Frame", TextBox, {
-      Size = UDim2.new(1, 0, 0, 1),
+      Size = UDim2.new(1, 0, 0.07, 0),
       Position = UDim2.new(0.5, 0, 1, 0),
       AnchorPoint = Vector2.new(0.5, 0.5),
       BackgroundColor3 = Configs_HUB.Cor_Stroke,
@@ -3732,8 +3747,8 @@ end
     })
     
     TextBox.MouseEnter:Connect(function()
-      CreateTween(Line, "Size", UDim2.new(0, 0, 0, 1), 0.3, true)
-      CreateTween(Line, "Size", UDim2.new(1, 0, 0, 1), 0.3, true)
+      CreateTween(Line, "Size", UDim2.new(0, 0, 0.07, 0), 0.3, true)
+      CreateTween(Line, "Size", UDim2.new(1, 0, 0.07, 0), 0.3, true)
     end)
     
     TextBox.FocusLost:Connect(function()
@@ -3749,7 +3764,7 @@ end
     Callback(Default)
     
     local TextButton = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0.1, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
     })Stroke(TextButton)Corner(TextButton)
     
@@ -3904,10 +3919,10 @@ end)
         TextLabel.Position = UDim2.new(0.07, 0, 0.05, 0)
         A_1.Position = UDim2.new(0, 0, 0.22, 0)
         local tween = TweenService:Create(TextButton, TweenInfo.new(0.2, Enum.EasingStyle.Linear),
-        {Size = UDim2.new(1, 0, 0.75, 0)})tween:play()tween.Completed:Wait()
+        {Size = UDim2.new(0.95, 0, 0.75, 0)})tween:play()tween.Completed:Wait()
       else
         local tween = TweenService:Create(TextButton, TweenInfo.new(0.2, Enum.EasingStyle.Linear),
-        {Size = UDim2.new(1, 0, 0.1, 0)})tween:play()tween.Completed:Wait()
+        {Size = UDim2.new(0.95, 0, 0.1, 0)})tween:play()tween.Completed:Wait()
         picker.Size = UDim2.new(0.05, 0, 0.9, 0)
         TextLabel.Size = UDim2.new(0.89, 0, 1, 0)
         picker.Position = UDim2.new(0.01, 0, 0.05, 0)
@@ -3925,7 +3940,7 @@ end)
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0.1, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       Text = "",
@@ -4031,13 +4046,13 @@ end)
         DefaultText.Size = UDim2.new(0.2, 0, 0.45, 0)
         Line.Position = UDim2.new(0, 0, 0.52, 0)
         ScrollBar.Size = UDim2.new(1, 0, 0.5, 0)
-        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0.45, 0), 0.3, false)
+        CreateTween(TextButton, "Size", UDim2.new(0.95, 0, 0.45, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 180, 0.3, false)
         DropOnOff = true
         Line.Visible = true
         ScrollBar.Visible = true
       else
-        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0.1, 0), 0.3, false)
+        CreateTween(TextButton, "Size", UDim2.new(0.95, 0, 0.1, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 0, 0.3, true)
         DropOnOff = false
         Line.Visible = false
@@ -4056,7 +4071,7 @@ function AddTextTable(parent, Configs)
     local LabelName = Configs.Name or "Label!!"
 
     local TextButton = Create("TextButton", parent, {
-      Size = UDim2.new(1, 0, 0.1, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       Text = "",
@@ -4115,13 +4130,13 @@ function AddTextTable(parent, Configs)
         Arrow.Size = UDim2.new(0.06, 0, 0.5, 0)
         Line.Position = UDim2.new(0, 0, 0.52, 0)
         ScrollBar.Size = UDim2.new(1, 0, 0.5, 0)
-        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0.45, 0), 0.3, false)
+        CreateTween(TextButton, "Size", UDim2.new(0.95, 0, 0.45, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 180, 0.3, false)
         DropOnOff = true
         Line.Visible = true
         ScrollBar.Visible = true
       else
-        CreateTween(TextButton, "Size", UDim2.new(1, 0, 0.1, 0), 0.3, false)
+        CreateTween(TextButton, "Size", UDim2.new(0.95, 0, 0.1, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 0, 0.3, true)
         DropOnOff = false
         Line.Visible = false
@@ -4169,7 +4184,7 @@ function AddTextTable(parent, Configs)
     local LabelName = Configs[1] or Configs.Name or "Text Label!!"
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0.1, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame"
     })Corner(Frame)Stroke(Frame)
@@ -4275,9 +4290,6 @@ function AddTextTable(parent, Configs)
 
         ExitExpandImageButton.MouseButton1Click:Connect(function()
           CreateTween(MenuBackground, "Size", UDim2.new(), 0.3, true)
-          CreateTween(ImageLabel, "Size", UDim2.new(), 0.3, true)
-          CreateTween(TextLabel, "Size", UDim2.new(), 0.3, true)
-          CreateTween(ExitExpandImageButton, "Size", UDim2.new(), 0.3, true)
           MenuBackground:Destroy()
           ImageLabel:Destroy()
           TextLabel:Destroy()
@@ -4301,7 +4313,7 @@ function AddTextTable(parent, Configs)
     local ParagraphName2 = Configs[1] or Configs.Text or "Paragraph!!"
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0.1, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       AutomaticSize = "Y"
@@ -4343,7 +4355,8 @@ function AddTextTable(parent, Configs)
     local SectionName = Configs[1] or Configs.Name or "Section!!"
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(1, 0, 0.1, 0),
+      Size = UDim2.new(0.95, 0, 0.1, 0),
+      Position = UDim2.new(0.05, 0, 0, 0),
       BackgroundColor3 = Configs_HUB.Cor_Hub,
       Name = "Frame",
       Transparency = 1
@@ -4368,7 +4381,7 @@ function AddTextTable(parent, Configs)
     local PlaceholderText = Configs.PlaceholderText or "Enter Music ID"
 
     local Frame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0.7, 0),
+        Size = UDim2.new(0.95, 0, 0.7, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "MusicPlayerFrame",
     })
