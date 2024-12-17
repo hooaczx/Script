@@ -1473,12 +1473,12 @@ function createFpsAndpinggui()
 
     local displayedFPS = 0
     local displayedPing = 0
-
     local targetFPS = 0
     local targetPing = 0
-
+    
     local function updateFPS()
-        targetFPS = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+        local deltaTime = game:GetService("RunService").RenderStepped:Wait()
+        targetFPS = math.floor(1 / deltaTime)
     end
 
     local function updatePing()
@@ -1488,15 +1488,15 @@ function createFpsAndpinggui()
 
     local function smoothUpdate()
         if displayedFPS < targetFPS then
-            displayedFPS = displayedFPS + 1
+            displayedFPS = math.min(displayedFPS + 1, targetFPS)
         elseif displayedFPS > targetFPS then
-            displayedFPS = displayedFPS - 1
+            displayedFPS = math.max(displayedFPS - 1, targetFPS)
         end
 
         if displayedPing < targetPing then
-            displayedPing = displayedPing + 1
+            displayedPing = math.min(displayedPing + 1, targetPing)
         elseif displayedPing > targetPing then
-            displayedPing = displayedPing - 1
+            displayedPing = math.max(displayedPing - 1, targetPing)
         end
 
         fpsLabel.Text = "FPS: " .. displayedFPS
