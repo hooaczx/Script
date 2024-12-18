@@ -690,20 +690,15 @@ function notify(params)
         local oldNotification = table.remove(notificationgui, 1)
         oldNotification:Destroy()
     end
-
-    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {
-        Position = UDim2.new(position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset - (#notificationgui * 60))
-    })
+    
+    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset - (#notificationgui * 60))})
     tween:Play()
-
+    
     if duration then
         delay(duration, function()
-            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {
-                Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100),
-                TextTransparency = 1,
-            })
+            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
             tweenOut:Play()
-
+            
             tweenOut.Completed:Connect(function()
                 NotificationLabelText:Destroy()
             end)
@@ -712,12 +707,9 @@ function notify(params)
 
     OkButton.MouseButton1Click:Connect(function()
         sound1:Play()
-        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {
-            Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100),
-            TextTransparency = 1,
-        })
+        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
         tweenOut:Play()
-
+        
         tweenOut.Completed:Connect(function()
             sound2:Destroy()
             sound1:Destroy()
