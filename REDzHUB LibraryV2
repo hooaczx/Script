@@ -622,7 +622,7 @@ end
 
 local notificationgui = {}
 
-function notify(params)
+local function notify(params)
     local Title = params.Title or "Default Title"
     local Text = params.Text or "Default Message"
     local buttondeleteText = params.buttonText or "OK"
@@ -631,58 +631,46 @@ function notify(params)
     local duration = params.duration
     local position = params.Position or UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
 
-    local NotificationLabelText = functionCreate.Create("Frame", ScreenGui, {
-        Size = UDim2.new(0, guiSize.X, 0, guiSize.Y),
-        BackgroundTransparency = 1,
-        Position = position
-    })
+    local NotificationLabelText = Instance.new("TextLabel", ScreenGui) 
+    NotificationLabelText.Size = UDim2.new(0, guiSize.X, 0, guiSize.Y)
+    NotificationLabelText.BackgroundTransparency = 1
+    NotificationLabelText.Text = Text
+    NotificationLabelText.TextScaled = true
+    NotificationLabelText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotificationLabelText.Position = position
 
-    local NotificationText = functionCreate.Create("TextLabel", NotificationLabelText, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        Text = Text,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextWrapped = true
-    })
-
-    local sound2 = functionCreate.Create("Sound", NotificationLabelText, {
-        SoundId = params.soundId1 or "",
-        Volume = 0.2,
-        PlaybackSpeed = 0.9
-    })
+    local sound2 = Instance.new("Sound", NotificationLabelText)
+    sound2.SoundId = soundId1
+    sound2.Volume = 0.2
+    sound2.PlaybackSpeed = 0.9
     sound2:Play()
 
-    local NotificationImage = functionCreate.Create("ImageLabel", NotificationLabelText, {
-        Size = UDim2.new(0, 70, 0, 70),
-        Position = UDim2.new(-0.2, 0, 0, 0),
-        Image = "rbxassetid://" .. image,
-        BackgroundTransparency = 1
-    })
+    local NotificationImage = Instance.new("ImageLabel", NotificationLabelText)
+    NotificationImage.Size = UDim2.new(0, 70, 0, 70)
+    NotificationImage.Position = UDim2.new(-0.2, 0, 0, 0)
+    NotificationImage.Image = "rbxassetid://" .. image
+    NotificationImage.BackgroundTransparency = 1
+    
+    local NotificationLabelTitle = Instance.new("TextLabel", NotificationLabelText)
+    NotificationLabelTitle.Size = UDim2.new(1, 0, 0.4, 0)
+    NotificationLabelTitle.BackgroundTransparency = 1
+    NotificationLabelTitle.Text = Title
+    NotificationLabelTitle.TextScaled = true
+    NotificationLabelTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NotificationLabelTitle.Position = UDim2.new(0, 0, -0.4, 0)
 
-    local NotificationLabelTitle = functionCreate.Create("TextLabel", NotificationLabelText, {
-        Size = UDim2.new(1, 0, 0.4, 0),
-        BackgroundTransparency = 1,
-        Text = Title,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Position = UDim2.new(0, 0, -0.4, 0)
-    })
+    local OkButton = Instance.new("TextButton", NotificationLabelText) 
+    OkButton.Size = UDim2.new(1, 0, 0.4, 0)
+    OkButton.Position = UDim2.new(0, 0, 1, 0)
+    OkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    OkButton.TextScaled = true
+    OkButton.Text = buttondeleteText
+    OkButton.BackgroundTransparency = 1
 
-    local OkButton = functionCreate.Create("TextButton", NotificationLabelText, {
-        Size = UDim2.new(1, 0, 0.4, 0),
-        Position = UDim2.new(0, 0, 1, 0),
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextScaled = true,
-        Text = buttondeleteText,
-        BackgroundTransparency = 1
-    })
-
-    local sound1 = functionCreate.Create("Sound", OkButton, {
-        SoundId = params.soundId2 or "",
-        Volume = 0.2,
-        PlaybackSpeed = 0.9
-    })
+    local sound1 = Instance.new("Sound", OkButton)
+    sound1.SoundId = soundId2
+    sound1.Volume = 0.2
+    sound1.PlaybackSpeed = 0.9
 
     table.insert(notificationgui, NotificationLabelText)
 
@@ -696,7 +684,7 @@ function notify(params)
     
     if duration then
         delay(duration, function()
-            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100)})
+            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
             tweenOut:Play()
             
             tweenOut.Completed:Connect(function()
@@ -707,7 +695,7 @@ function notify(params)
 
     OkButton.MouseButton1Click:Connect(function()
         sound1:Play()
-        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100)})
+        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
         tweenOut:Play()
         
         tweenOut.Completed:Connect(function()
@@ -720,11 +708,10 @@ end
 
 notify({
       Title = "Hi",
-      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the UI to not work or crash, so please understand",
-      buttonText = "OK",
-      image = "",
+      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
+      buttonText = "ok",
+      imageID = "",
       guiSize = Vector2.new(400, 70),
-      duration = 5,
 })
 
  function MinimizeButton(Configs)
