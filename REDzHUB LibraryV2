@@ -4501,6 +4501,16 @@ function AddTextTable(parent, Configs)
         BackgroundTransparency = 1,
     })
 
+    local CreditLabel = Create("TextLabel", Frame, {
+        Size = UDim2.new(0.35, 0, 0.2, 0),
+        Position = UDim2.new(0.05, 0, 0.34, 0),
+        Text = "Created by: Not found",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true,
+        BackgroundTransparency = 1,
+    })
+
     local TextBoxID = Create("TextBox", Frame, {
         Size = UDim2.new(0.27, 0, 0.2, 0),
         Position = UDim2.new(0.53, 0, 0.34, 0),
@@ -4595,6 +4605,7 @@ Toggle.MouseButton1Click:Connect(function()
         soundsavedTimePosition = sound.TimePosition
         sound:Stop()
         NameSongFrame.Text = "Stopped"
+        CreditLabel.Text = "Created by: Not found"
         Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
         musicPlaying = false
     else
@@ -4604,7 +4615,9 @@ Toggle.MouseButton1Click:Connect(function()
        updateProgressBar()
        NameSongFrame.Text = game:GetService("MarketplaceService"):GetProductInfo(assetId).Name
        Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-        musicPlaying = true
+       creatorName = game:GetService("MarketplaceService"):GetProductInfo(assetId).Creator.Name
+       CreditLabel.Text = "Created by: " .. creatorName
+       musicPlaying = true
        end
    end)
 end
