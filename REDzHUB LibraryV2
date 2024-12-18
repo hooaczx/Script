@@ -2256,7 +2256,6 @@ local GameName = Create("TextLabel", ScreenGui, {
     Visible = false
 })
 TextSetColor(GameName)
-GameName.Visible = false
 
 local frame100 = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.41, 0, 0.48, 0),
@@ -2583,30 +2582,46 @@ end
 
 functions.updatePlaytime()
 
-functions.parseDate = function(dateString)
-    local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
-    local year, month, day, hour, min, sec = dateString:match(pattern)
-    return os.time({
-        year = tonumber(year),
-        month = tonumber(month),
-        day = tonumber(day),
-        hour = tonumber(hour),
-        min = tonumber(min),
-        sec = tonumber(sec)
-    })
+functions.fetchPlaceInfoWithRetry = function(retries, delay)
+    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    
+    for i = 1, retries do
+        local success, response = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet(url))
+        end)
+
+        if success and response and response.data and #response.data > 0 then
+            return response.data[1]
+        else
+            warn("Failed to fetch place info (Attempt " .. i .. " of " .. retries .. ")")
+            wait(delay)
+        end
+    end
+
+    return nil
 end
 
-functions.fetchPlaceInfo = function()
-    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local success, response = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(url))
-    end)
+functions.updatePlaceInfo = function()
+    functions.parseDate = function(dateString)
+        local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
+        local year, month, day, hour, min, sec = dateString:match(pattern)
+        return os.time({
+            year = tonumber(year),
+            month = tonumber(month),
+            day = tonumber(day),
+            hour = tonumber(hour),
+            min = tonumber(min),
+            sec = tonumber(sec)
+        })
+    end
 
-    if success and response and response.data and #response.data > 0 then
-        local data = response.data[1]
+    local data = functions.fetchPlaceInfoWithRetry(3, 2)
+
+    if data then
         local created = functions.parseDate(data.created)
         local updated = functions.parseDate(data.updated)
-        return {
+
+        local placeInfo = {
             PlaceId = game.PlaceId,
             Name = data.name or "Unknown",
             Created = os.date("%Y-%m-%d %H:%M:%S", created),
@@ -2615,17 +2630,8 @@ functions.fetchPlaceInfo = function()
             Visits = data.visits or 0,
             ServerCount = #Players:GetPlayers()
         }
-    else
-        warn("Failed to fetch place info.")
-        return nil
-    end
-end
 
-functions.updatePlaceInfo = function()
-    local placeInfo = functions.fetchPlaceInfo()
-    if placeInfo then
         local maxPlayers = game:GetService("Players").MaxPlayers
-
         local playersInServer = placeInfo.ServerCount
         local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
 
@@ -2649,6 +2655,7 @@ functions.updatePlaceInfo = function()
 end
 
 functions.updatePlaceInfo()
+
 
 local DisplayName = Create("TextLabel", frame9, {
     Size = UDim2.new(1, 0, 0.3, 0),
