@@ -2130,28 +2130,29 @@ for i = 2, #gamePlaces do
     count = count + 1
 end
 
-    local SplitgameToggleButton = Instance.new("ImageButton", frame)
-    SplitgameToggleButton.Size = UDim2.new(0.06, 0, 0.6, 0)
-    SplitgameToggleButton.Position = UDim2.new(0.22 + 0.2, 0, 0.22, 0)
-    SplitgameToggleButton.BackgroundColor3 = Color3.fromRGB(204, 255, 204)
-    SplitgameToggleButton.ZIndex = 10
-    SplitgameToggleButton.BackgroundTransparency = 1
-    SplitgameToggleButton.Image = "rbxthumb://type=Asset&id=82825316875765&w=150&h=150"
+local SplitgameToggleButton = Create("ImageButton", frame, {
+    Size = UDim2.new(0.06, 0, 0.6, 0),
+    Position = UDim2.new(0.22 + 0.2, 0, 0.22, 0),
+    BackgroundColor3 = Color3.fromRGB(204, 255, 204),
+    ZIndex = 10,
+    BackgroundTransparency = 1,
+    Image = "rbxthumb://type=Asset&id=82825316875765&w=150&h=150"
+})
 
-     local minimiz7 = true
-     SplitgameToggleButton.MouseButton1Click:Connect(function()
-        minimiz7 = not minimiz7
+local minimiz7 = true
+SplitgameToggleButton.MouseButton1Click:Connect(function()
+     minimiz7 = not minimiz7
 
-        if minimiz7 then
-            framek.Visible = true
-            click1:Play()
-            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
-        else
-            click2:Play()
-            CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
-            framek.Visible = false
-        end
-    end)
+      if minimiz7 then
+          framek.Visible = true
+          click1:Play()
+          CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true) 
+       else
+          click2:Play()
+          CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
+          framek.Visible = false
+      end
+ end)
 
 local success, result = pcall(function()
     return MarketplaceService:GetProductInfo(PlaceId)
@@ -2160,106 +2161,117 @@ end)
 local Asset = MarketplaceService:GetProductInfo(PlaceId)
 local gameName = success and result.Name or Asset.Name or "Unknown"
 
-local frameinfo = Instance.new("Frame", ScreenGui)
-frameinfo.Size = UDim2.new(0.25, 0, 0.18, 0)
-frameinfo.Position = UDim2.new(0.04, 0, 0.24, 0)
-frameinfo.AnchorPoint = Vector2.new(0.04, 0.21)
-frameinfo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-frameinfo.BackgroundTransparency = 0.5
-frameinfo.Visible = false
+local frameinfo = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.25, 0, 0.18, 0),
+    Position = UDim2.new(0.04, 0, 0.24, 0),
+    AnchorPoint = Vector2.new(0.04, 0.21),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 0.5,
+    Visible = false
+})
 Corner(frameinfo, {CornerRadius = UDim.new(0.15, 0)})
 
-local iconplayers = Instance.new("ImageLabel", ScreenGui)
-iconplayers.Size = UDim2.new(0.06, 0, 0.124, 0)
-iconplayers.Position = UDim2.new(0.05, 0, 0.06, 0)
-iconplayers.AnchorPoint = Vector2.new(0.05, 0.06)
-iconplayers.BackgroundColor3 = Configs_HUB.Cor_Hub
-iconplayers.BackgroundTransparency = 0.5
-iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
-iconplayers.Visible = false
+local iconplayers = Create("ImageLabel", ScreenGui, {
+    Size = UDim2.new(0.06, 0, 0.124, 0),
+    Position = UDim2.new(0.05, 0, 0.06, 0),
+    AnchorPoint = Vector2.new(0.05, 0.06),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5,
+    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png",
+    Visible = false
+})
 Corner(iconplayers, {CornerRadius = UDim.new(1, 0)})
 
-local Wellcome = Instance.new("TextLabel", ScreenGui)
-Wellcome.Size = UDim2.new(0.25, 0, 0.09, 0)
-Wellcome.Text = "Wellcome "..game.Players.LocalPlayer.Name
-Wellcome.Position = UDim2.new(0.14, 0, 0.077, 0)
-Wellcome.AnchorPoint = Vector2.new(0.11, 0.085)
-Wellcome.TextColor3 = Configs_HUB.Cor_Text
-Wellcome.TextXAlignment = "Left"
-Wellcome.Font = Configs_HUB.Text_Font
-Wellcome.BackgroundColor3 = Configs_HUB.Cor_Hub
-Wellcome.BackgroundTransparency = 1
-Wellcome.TextScaled = true
+local Wellcome = Create("TextLabel", ScreenGui, {
+    Size = UDim2.new(0.25, 0, 0.09, 0),
+    Text = "Welcome "..game.Players.LocalPlayer.Name,
+    Position = UDim2.new(0.14, 0, 0.077, 0),
+    AnchorPoint = Vector2.new(0.11, 0.085),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    TextScaled = true,
+    Visible = false
+})
 TextSetColor(Wellcome)
-Wellcome.Visible = false
 
-local gameinfoframe = Instance.new("Frame", ScreenGui)
-gameinfoframe.Size = UDim2.new(0.27, 0, 0.3, 0)
-gameinfoframe.Position = UDim2.new(0.032, 0, 0.74, 0)
-gameinfoframe.AnchorPoint = Vector2.new(0.032, 0.51)
-gameinfoframe.BackgroundColor3 = Configs_HUB.Cor_Hub
-gameinfoframe.BackgroundTransparency = 0.5
-gameinfoframe.Visible = false
+local gameinfoframe = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.27, 0, 0.3, 0),
+    Position = UDim2.new(0.032, 0, 0.74, 0),
+    AnchorPoint = Vector2.new(0.032, 0.51),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5,
+    Visible = false
+})
 Corner(gameinfoframe, {CornerRadius = UDim.new(0.15, 0)})
 
-local iconGame = Instance.new("ImageLabel", ScreenGui)
-iconGame.Size = UDim2.new(0.06, 0, 0.124, 0)
-iconGame.Position = UDim2.new(0.04, 0, 0.47, 0)
-iconGame.AnchorPoint = Vector2.new(0.04, 0.38)
-iconGame.BackgroundColor3 = Configs_HUB.Cor_Hub
-iconGame.BackgroundTransparency = 1
-iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-iconGame.Visible = false
+local iconGame = Create("ImageLabel", ScreenGui, {
+    Size = UDim2.new(0.06, 0, 0.124, 0),
+    Position = UDim2.new(0.04, 0, 0.47, 0),
+    AnchorPoint = Vector2.new(0.04, 0.38),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500",
+    Visible = false
+})
 
-local GameName = Instance.new("TextLabel", ScreenGui)
-GameName.Size = UDim2.new(0.28, 0, 0.09, 0)
-GameName.Text = "Game Name: " .. gameName
-GameName.Position = UDim2.new(0.14, 0, 0.48, 0)
-GameName.AnchorPoint = Vector2.new(0.11, 0.405)
-GameName.TextColor3 = Configs_HUB.Cor_Text
-GameName.TextXAlignment = "Left"
-GameName.Font = Configs_HUB.Text_Font
-GameName.BackgroundColor3 = Configs_HUB.Cor_Hub
-GameName.BackgroundTransparency = 1
-GameName.TextScaled = true
+local GameName = Create("TextLabel", ScreenGui, {
+    Size = UDim2.new(0.28, 0, 0.09, 0),
+    Text = "Game Name: " .. gameName,
+    Position = UDim2.new(0.14, 0, 0.48, 0),
+    AnchorPoint = Vector2.new(0.11, 0.405),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    TextScaled = true,
+    Visible = false
+})
 TextSetColor(GameName)
 GameName.Visible = false
 
-local frame100 = Instance.new("Frame", ScreenGui)
-frame100.Size = UDim2.new(0.41, 0, 0.48, 0)
-frame100.Position = UDim2.new(0.6178, 0, 0.22, 0)
-frame100.AnchorPoint = Vector2.new(0.4178, 0.14)
-frame100.BackgroundColor3 = Configs_HUB.Cor_Hub
-frame100.BackgroundTransparency = 1
-frame100.Visible = false
+local frame100 = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.41, 0, 0.48, 0),
+    Position = UDim2.new(0.6178, 0, 0.22, 0),
+    AnchorPoint = Vector2.new(0.4178, 0.14),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    Visible = false
+})
 
-local FriendList = Instance.new("TextLabel", frame100)
-FriendList.Size = UDim2.new(1, 0, 0.13, 0)
-FriendList.Position = UDim2.new(0, 0, 0.001, 0)
-FriendList.Text = "Friend List"
-FriendList.TextColor3 = Configs_HUB.Cor_Text
-FriendList.Font = Configs_HUB.Text_Font
-FriendList.BackgroundColor3 = Configs_HUB.Cor_Hub
-FriendList.BackgroundTransparency = 0.5
+local FriendList = Create("TextLabel", frame100, {
+    Size = UDim2.new(1, 0, 0.13, 0),
+    Position = UDim2.new(0, 0, 0.001, 0),
+    Text = "Friend List",
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5
+})
 TextSetColor(FriendList)
 Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
 
-local friendsFrame = Instance.new("ScrollingFrame", frame100)
-friendsFrame.Size = UDim2.new(1, 0, 0.87, 0)
-friendsFrame.Position = UDim2.new(0, 0, 0.13, 0)
-friendsFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-friendsFrame.ScrollBarThickness = 3
-friendsFrame.BackgroundColor3 = Configs_HUB.Cor_Hub
-friendsFrame.BackgroundTransparency = 0.5
+local friendsFrame = Create("ScrollingFrame", frame100, {
+    Size = UDim2.new(1, 0, 0.87, 0),
+    Position = UDim2.new(0, 0, 0.13, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    ScrollBarThickness = 3,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5
+})
 
-local iconfriend = Instance.new("ImageLabel", ScreenGui)
-iconfriend.Size = UDim2.new(0.06, 0, 0.124, 0)
-iconfriend.Position = UDim2.new(0.48, 0, 0.006, 0)
-iconfriend.AnchorPoint = Vector2.new(0.43, 0.006)
-iconfriend.BackgroundColor3 = Configs_HUB.Cor_Hub
-iconfriend.BackgroundTransparency = 0.4
-iconfriend.Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420"
-iconfriend.Visible = false
+local iconfriend = Create("ImageLabel", ScreenGui, {
+    Size = UDim2.new(0.06, 0, 0.124, 0),
+    Position = UDim2.new(0.48, 0, 0.006, 0),
+    AnchorPoint = Vector2.new(0.43, 0.006),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.4,
+    Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420",
+    Visible = false
+})
 Corner(iconfriend, {CornerRadius = UDim.new(1, 0)})
 
 local playersFriends = {}
@@ -2283,19 +2295,20 @@ local friendsData = {
     total = friendsInTotal
 }
 
-local friendnumber = Instance.new("TextLabel", ScreenGui)
-friendnumber.Size = UDim2.new(0.28, 0, 0.09, 0)
-friendnumber.Text = "Friend: "..friendsData.total.."/200"
-friendnumber.Position = UDim2.new(0.67, 0, 0.03, 0)
-friendnumber.AnchorPoint = Vector2.new(0.49, 0.029)
-friendnumber.TextColor3 = Configs_HUB.Cor_Text
-friendnumber.TextXAlignment = "Left"
-friendnumber.Font = Configs_HUB.Text_Font
-friendnumber.BackgroundColor3 = Configs_HUB.Cor_Hub
-friendnumber.BackgroundTransparency = 1
-friendnumber.TextScaled = true
+local friendnumber = Create("TextLabel", ScreenGui, {
+    Size = UDim2.new(0.28, 0, 0.09, 0),
+    Text = "Friend: "..friendsData.total.."/200",
+    Position = UDim2.new(0.67, 0, 0.03, 0),
+    AnchorPoint = Vector2.new(0.49, 0.029),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    TextScaled = true,
+    Visible = false
+})
 TextSetColor(friendnumber)
-friendnumber.Visible = false
 
 functions.checkFriends = function()
     if friendsCooldown <= 0 then
