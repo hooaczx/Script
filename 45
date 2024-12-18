@@ -30,7 +30,7 @@ end
 
 Create = functionCreate.Create
 
-local function SetProps(instance, props)
+functionCreate.SetProps = function(instance, props)
   if instance and props then
     table.foreach(props, function(prop, value)
       instance[prop] = value
@@ -39,7 +39,7 @@ local function SetProps(instance, props)
   return instance
 end
 
-local function Corner(parent, props)
+functionCreate.Corner = function(parent, props)
   local new = Create("UICorner", parent)
   new.CornerRadius = Configs_HUB.Corner_Radius
   if props then
@@ -48,7 +48,7 @@ local function Corner(parent, props)
   return new
 end
 
-local function Stroke(parent, props)
+functionCreate.Stroke = function(parent, props)
   local new = Create("UIStroke", parent)
   new.Color = Configs_HUB.Cor_Stroke
   if props and props.Color then
@@ -61,7 +61,7 @@ local function Stroke(parent, props)
   return new
 end
 
-local function CreateGradient(parent, props)
+functionCreate.CreateGradient = function(parent, props)
     local new = Instance.new("UIGradient")
     new.Parent = parent
 
@@ -107,7 +107,7 @@ local function CreateGradient(parent, props)
     return new
 end
 
-local function CreateTween(instance, prop, value, time, tweenWait)
+functionCreate.CreateTween = function(instance, prop, value, time, tweenWait)
   local tween = TweenService:Create(instance,
   TweenInfo.new(time, Enum.EasingStyle.Linear),
   {[prop] = value})
@@ -117,14 +117,14 @@ local function CreateTween(instance, prop, value, time, tweenWait)
   end
 end
 
-local function CreateTween1(instance, property, goal, duration, easingDirection)
+functionCreate.CreateTween1 = function(instance, property, goal, duration, easingDirection)
     local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
     local tween = TweenService:Create(instance, tweenInfo, {[property] = goal})
     tween:Play()
     return tween
 end
 
-local function TextSetColor(instance)
+functionCreate.TextSetColor = function(instance)
   instance.MouseEnter:Connect(function()
     CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
   end)
@@ -133,7 +133,7 @@ local function TextSetColor(instance)
   end)
 end
 
-function ShakeEffect(instance)
+functionCreate.ShakeEffect = function(instance)
     isRotationStored = false
     originalRotation = 0
 
@@ -157,6 +157,14 @@ function ShakeEffect(instance)
     end)
 end
 
+SetProps = functionCreate.SetProps
+Stroke = functionCreate.Stroke
+CreateGradient = functionCreate.CreateGradient
+CreateTween = functionCreate.CreateTween
+CreateTween1 = functionCreate.CreateTween1
+TextSetColor = functionCreate.TextSetColor
+ShakeEffect = functionCreate.ShakeEffect
+
 local ScreenGui = Create("ScreenGui", CoreGui, {
   Name = "2huigHUB library",
   DisplayOrder = 9999999999999,
@@ -167,9 +175,11 @@ if ScreenFind and ScreenFind ~= ScreenGui then
   ScreenFind:Destroy()
 end
 
-function DestroyScript()
+functionCreate.DestroyScript = function()
   ScreenGui:Destroy()
 end
+
+DestroyScript = functionCreate.DestroyScript
 
 local Menu_Notifi = Create("Frame", ScreenGui, {
   Size = UDim2.new(0.287, 0, 0.16, 0),
@@ -178,7 +188,7 @@ local Menu_Notifi = Create("Frame", ScreenGui, {
   BackgroundTransparency = 1
 })
 
-function MakeNotifi(Configs)
+functionCreate.MakeNotifi = function(Configs)
   local Title = Configs.Title or "REDz HUB"
   local text = Configs.Text or "Notificaรงรฃo"
   local timewait = Configs.Time or 5
@@ -265,6 +275,8 @@ function MakeNotifi(Configs)
     end
   end)
 end
+
+MakeNotifi = functionCreate.MakeNotifi
 
 function MakeWindow(Configs)
  local title = Configs.Hub.Title or "REDz HUB"
@@ -527,9 +539,15 @@ local songs = {
 }
 
 local currentSongIndex = 1
-local soundmusic = Instance.new("Sound", ScreenGui) 
-local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
+local soundmusic = Create("Sound", ScreenGui)
+local reverbEffect = Create("ReverbSoundEffect", soundmusic)
+local chorusEffect = Create("ChorusSoundEffect", soundmusic)
+local clicktoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://6042053626", Volume = 0.1})
+local falsetoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://9083627113", Volume = 0.1})
+local click1 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://7475853483", Volume = 0.1})
+local click2 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://8432836186", Volume = 0.1})
+local notifyfriend = Create("Sound", ScreenGui, {SoundId = "rbxassetid://1862045322", Volume = 0.2, PlaybackSpeed = 0.9})
+local notifyfriendleave = Create("Sound", ScreenGui, {SoundId = "rbxassetid://489103549", Volume = 0.2})
 local isPaused = false
 local savedTimePosition = 0
 local musicPlaying = false
@@ -537,25 +555,6 @@ local soundsavedTimePosition = 0
 local progressUpdateConnection
 local soundId1 = "rbxassetid://8486683243"
 local soundId2 = "rbxassetid://4499400560"
-local clicktoggle = Instance.new("Sound", ScreenGui)
-clicktoggle.SoundId = "rbxassetid://6042053626"
-clicktoggle.Volume = 0.1
-local falsetoggle = Instance.new("Sound", ScreenGui)
-falsetoggle.SoundId = "rbxassetid://9083627113"
-falsetoggle.Volume = 0.1
-local click1 = Instance.new("Sound", ScreenGui)
-click1.SoundId = "rbxassetid://7475853483"
-click1.Volume = 0.1
-local click2 = Instance.new("Sound", ScreenGui)
-click2.SoundId = "rbxassetid://8432836186"
-click2.Volume = 0.1
-local notifyfriend = Instance.new("Sound", ScreenGui)
-notifyfriend.SoundId = "rbxassetid://1862045322"
-notifyfriend.Volume = 0.2
-notifyfriend.PlaybackSpeed = 0.9
-local notifyfriendleave = Instance.new("Sound", ScreenGui)
-notifyfriendleave.SoundId = "rbxassetid://489103549"
-notifyfriendleave.Volume = 0.2
 
 local function resetSong()
     soundmusic:Stop()
