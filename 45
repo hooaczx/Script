@@ -557,13 +557,13 @@ local progressUpdateConnection
 local soundId1 = "rbxassetid://8486683243"
 local soundId2 = "rbxassetid://4499400560"
 
-local function resetSong()
+function resetSong()
     soundmusic:Stop()
     savedTimePosition = 0
     isPaused = false
 end
 
-local function pauseSong()
+function pauseSong()
     savedTimePosition = soundmusic.TimePosition
     soundmusic:Pause()
     isPaused = true
@@ -610,7 +610,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
         end
     end)
 end
-            TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
+       TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
@@ -622,7 +622,7 @@ end
 
 local notificationgui = {}
 
-local function notify(params)
+function notify(params)
     local Title = params.Title or "Default Title"
     local Text = params.Text or "Default Message"
     local buttondeleteText = params.buttonText or "OK"
@@ -643,6 +643,7 @@ local function notify(params)
         Text = Text,
         TextScaled = true,
         TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextWrapped = true,  -- Added TextWrapped here
     })
 
     local sound2 = functionCreate.Create("Sound", NotificationLabelText, {
@@ -725,13 +726,13 @@ local function notify(params)
     end)
 end
 
-
 notify({
       Title = "Hi",
-      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
-      buttonText = "ok",
-      imageID = "",
+      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the UI to not work or crash, so please understand",
+      buttonText = "OK",
+      image = "",
       guiSize = Vector2.new(400, 70),
+      duration = 5,
 })
 
  function MinimizeButton(Configs)
