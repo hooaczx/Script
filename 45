@@ -16,8 +16,6 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local isRotationStored = false
-local originalRotation = 0
 
 local function Create(instance, parent, props)
   local new = Instance.new(instance, parent)
@@ -133,25 +131,26 @@ local function TextSetColor(instance)
 end
 
 function ShakeEffect(instance)
+    isRotationStored = false
+    originalRotation = 0
+
     instance.MouseEnter:Connect(function()
         if not isRotationStored then
             originalRotation = instance.Rotation
             isRotationStored = true
         end
 
-        local shakeAmount = 3
-        local shakeDuration = 0.05
-        local shakeCount = 5
+        shakeAmount = 3
+        shakeDuration = 0.05
+        shakeCount = 5
 
         for i = 1, shakeCount do
             CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
             CreateTween(instance, "Rotation", originalRotation - shakeAmount, shakeDuration, true)
         end
-
-        CreateTween(instance, "Rotation", originalRotation, 0.2, false)
     end)
-
     instance.MouseLeave:Connect(function()
+    CreateTween(instance, "Rotation", originalRotation, 0.2, false)
     end)
 end
 
@@ -265,12 +264,12 @@ function MakeNotifi(Configs)
 end
 
 function MakeWindow(Configs)
-  local title = Configs.Hub.Title or "REDz HUB"
-  local Anim_Title = Configs.Hub.Animation or "by : redz9999"
+ local title = Configs.Hub.Title or "REDz HUB"
+ local Anim_Title = Configs.Hub.Animation or "by : redz9999"
   
 local Menu = Create("Frame", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    Position = UDim2.new(1.05, -500/2, 0.5, -270/2),
+    Position = UDim2.new(0.77, 0, 0.1, 0),
     AnchorPoint = Vector2.new(1, 0),
     Active = true,
     Draggable = true
@@ -770,14 +769,14 @@ Button1.MouseButton1Click:Connect(function()
  minimize1 = not minimize1
   if minimize1 then
     Button1.Text = "^"
-    CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, false)
-    CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 1, 0), 0.3, true)
+    CreateTween(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, false)
+    CreateTween(Button1, "Position", UDim2.new(0.5, 0, 1, 0), 0.3, true)
     frame.Visible = false
    else
     frame.Visible = true
     Button1.Text = "v"
-    CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, false)
-    CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 0.89, 0), 0.3, false)
+    CreateTween(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, false)
+    CreateTween(Button1, "Position", UDim2.new(0.5, 0, 0.89, 0), 0.3, false)
    end
 end)
 
@@ -2702,12 +2701,12 @@ infoToggleButton.MouseButton1Click:Connect(function()
         click1:Play()
         for _, element in ipairs(uiinfoToggle) do
             element.instance.Visible = true
-            CreateTween1(element.instance, "Size", element.sizeOpen, 0.3, false)
+            CreateTween(element.instance, "Size", element.sizeOpen, 0.3, false)
         end
     else
         click2:Play()
         for _, element in ipairs(uiinfoToggle) do
-            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
+            CreateTween(element.instance, "Size", element.sizeClosed, 0.3, true)
             element.instance.Visible = false
         end
     end
@@ -2761,7 +2760,7 @@ end)
         ScrollBar.Visible = false
         Containers.Visible = false
         line_Containers.Visible = false
-        Menu.Position = UDim2.new(1.05, -500/2, 0.5, -270/2)
+        Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
     else
         minimize = true
         ScrollBar.Visible = true
