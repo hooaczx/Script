@@ -4589,6 +4589,24 @@ Toggle.MouseButton1Click:Connect(function()
         NameSongFrame.Text = "Invalid ID"
         return
     end
+   if inputText == game.JobId then
+     NameSongFrame.Text = "Invalid Input: Reserved ID (Job ID)"
+     CreditLabel.Text = "The provided ID is reserved for system use as the Job ID and cannot be used"
+     return
+   elseif inputText == game.GameId then
+     NameSongFrame.Text = "Invalid Input: Reserved ID (Game ID)"
+     CreditLabel.Text = "The provided ID is reserved for system use as the Game ID and cannot be used"
+     return
+   elseif inputText == tostring(game.PlaceId) then
+     NameSongFrame.Text = "Invalid Input: Reserved ID (Place ID)"
+     CreditLabel.Text = "The provided ID is reserved for system use as the Place ID and cannot be used"
+     return
+   elseif inputText == tostring(game.Players.LocalPlayer.UserId) then
+     NameSongFrame.Text = "Invalid Input: Reserved ID (User ID)"
+     CreditLabel.Text = "The provided ID is reserved for system use as the User ID and cannot be used"
+     return
+  end
+
     local productInfo
     local success, err = pcall(function()
         productInfo = game:GetService("MarketplaceService"):GetProductInfo(assetId)
