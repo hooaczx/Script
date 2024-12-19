@@ -4491,7 +4491,7 @@ function AddTextTable(parent, Configs)
 
     local CreditLabel = Create("TextLabel", Frame, {
         Size = UDim2.new(0.35, 0, 0.2, 0),
-        Position = UDim2.new(0.05, 0, 0.34, 0),
+        Position = UDim2.new(0.01, 0, 0.34, 0),
         Text = "Created by: Not found",
         TextColor3 = Configs_HUB.Cor_Text,
         Font = Configs_HUB.Text_Font,
@@ -4589,6 +4589,19 @@ Toggle.MouseButton1Click:Connect(function()
         NameSongFrame.Text = "Invalid ID"
         return
     end
+    local productInfo
+    local success, err = pcall(function()
+        productInfo = game:GetService("MarketplaceService"):GetProductInfo(assetId)
+    end)
+    if not success or not productInfo then
+        NameSongFrame.Text = "Failed to fetch asset info"
+        return
+    end
+    if productInfo.AssetTypeId ~= 3 then
+        NameSongFrame.Text = "Not a valid song"
+        return
+    end
+
     if sound.IsPlaying then
         soundsavedTimePosition = sound.TimePosition
         sound:Stop()
@@ -4597,17 +4610,16 @@ Toggle.MouseButton1Click:Connect(function()
         Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
         musicPlaying = false
     else
-       sound.SoundId = "rbxassetid://" .. assetId
-       sound:Play()
-       sound.TimePosition = soundsavedTimePosition
-       updateProgressBar()
-       NameSongFrame.Text = game:GetService("MarketplaceService"):GetProductInfo(assetId).Name
-       Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-       creatorName = game:GetService("MarketplaceService"):GetProductInfo(assetId).Creator.Name
-       CreditLabel.Text = "Created by: " .. creatorName
-       musicPlaying = true
-       end
-   end)
+        sound.SoundId = "rbxassetid://" .. assetId
+        sound:Play()
+        sound.TimePosition = soundsavedTimePosition
+        updateProgressBar()
+        NameSongFrame.Text = productInfo.Name
+        Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
+        CreditLabel.Text = "Created by: " .. productInfo.Creator.Name
+        musicPlaying = true
+    end
+end)
 end
 
   function AddDiscord(parent, Configs)
