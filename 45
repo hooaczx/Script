@@ -4560,6 +4560,7 @@ Toggle.MouseButton1Click:Connect(function()
     local assetId = extractAssetId(inputText)
     if not assetId then
         NameSongFrame.Text = "Invalid ID"
+        CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
     local productInfo
@@ -4569,13 +4570,14 @@ Toggle.MouseButton1Click:Connect(function()
 
     if not success or not productInfo then
         NameSongFrame.Text = "Failed to fetch asset info"
+        CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
     if productInfo.AssetTypeId ~= 3 then
         NameSongFrame.Text = "Not a valid song"
+        CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
-
     if sound.IsPlaying then
         soundsavedTimePosition = sound.TimePosition
         sound:Stop()
@@ -4594,6 +4596,7 @@ Toggle.MouseButton1Click:Connect(function()
         musicPlaying = true
     end
 end)
+
 end
 
   function AddDiscord(parent, Configs)
