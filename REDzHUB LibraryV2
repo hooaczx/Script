@@ -4585,43 +4585,11 @@ end
 Toggle.MouseButton1Click:Connect(function()
     local inputText = TextBoxID.Text
     local assetId = extractAssetId(inputText)
-
     if not assetId then
         NameSongFrame.Text = "Invalid ID"
+        CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
-    local isPlaceId = pcall(function()
-        return game:GetService("MarketplaceService"):GetProductInfo(assetId).AssetTypeId == 9  -- Place
-    end)
-    local isGameId = pcall(function()
-        return game:GetService("MarketplaceService"):GetProductInfo(assetId).AssetTypeId == 32  -- Game Pass
-    end)
-    local isJobId = game.JobId == assetId
-
-    if isPlaceId or isGameId or isJobId then
-        NameSongFrame.Text = "Invalid ID: Place, Game or Job IDs are not supported"
-        return
-    end
-
-    local isUserId = false
-    local userId = tonumber(inputText)
-    if userId then
-        if userId == game.Players.LocalPlayer.UserId then
-            isUserId = true
-        else
-            local player = game.Players:GetPlayerByUserId(userId)
-            if player then
-                isUserId = true
-            end
-        end
-    end
-
-    if isUserId then
-        NameSongFrame.Text = "Invalid User ID: Cannot fetch for your own ID or another player."
-        isUserId = false
-        return
-    end
-
     local productInfo
     local success, err = pcall(function()
         productInfo = game:GetService("MarketplaceService"):GetProductInfo(assetId)
@@ -4632,64 +4600,11 @@ Toggle.MouseButton1Click:Connect(function()
         CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
-
-    local assetTypes = {
-        [1] = "Image",
-        [2] = "T-shirt",
-        [3] = "Audio (Song)",
-        [4] = "Mesh",
-        [5] = "Lua Script",
-        [6] = "HTML",
-        [7] = "Text",
-        [8] = "Hat",
-        [9] = "Place",
-        [10] = "Model",
-        [11] = "Shirt",
-        [12] = "Pants",
-        [13] = "Decal",
-        [17] = "Head",
-        [18] = "Face",
-        [19] = "Gear",
-        [21] = "Animation",
-        [22] = "Arms",
-        [23] = "Legs",
-        [24] = "Torso",
-        [25] = "Right Arm",
-        [26] = "Left Arm",
-        [27] = "Left Leg",
-        [28] = "Right Leg",
-        [29] = "Package",
-        [32] = "Game Pass",
-        [34] = "Plugin",
-        [38] = "MeshPart",
-        [39] = "Hair Accessory",
-        [40] = "Face Accessory",
-        [41] = "Neck Accessory",
-        [42] = "Shoulder Accessory",
-        [43] = "Front Accessory",
-        [44] = "Back Accessory",
-        [45] = "Waist Accessory",
-        [46] = "Climb Animation",
-        [47] = "Death Animation",
-        [48] = "Fall Animation",
-        [49] = "Idle Animation",
-        [50] = "Jump Animation",
-        [51] = "Run Animation",
-        [52] = "Swim Animation",
-        [53] = "Walk Animation",
-        [54] = "Pose Animation",
-        [55] = "Emote Animation",
-        [56] = "Video",
-        [57] = "TexturePack",
-    }
-
-    local assetTypeName = assetTypes[productInfo.AssetTypeId] or "Unknown"
     if productInfo.AssetTypeId ~= 3 then
-        NameSongFrame.Text = "Not a valid song This is a: "..assetTypeName
+        NameSongFrame.Text = "Not a valid song"
         CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
-
     if sound.IsPlaying then
         soundsavedTimePosition = sound.TimePosition
         sound:Stop()
