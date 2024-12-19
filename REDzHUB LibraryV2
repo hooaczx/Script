@@ -4593,12 +4593,67 @@ Toggle.MouseButton1Click:Connect(function()
     local success, err = pcall(function()
         productInfo = game:GetService("MarketplaceService"):GetProductInfo(assetId)
     end)
+
     if not success or not productInfo then
         NameSongFrame.Text = "Failed to fetch asset info"
+        CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
+
+    local assetTypes = {
+        [1] = "Image",
+        [2] = "T-shirt",
+        [3] = "Audio (Song)",
+        [4] = "Mesh",
+        [5] = "Lua Script",
+        [6] = "HTML",
+        [7] = "Text",
+        [8] = "Hat",
+        [9] = "Place",
+        [10] = "Model",
+        [11] = "Shirt",
+        [12] = "Pants",
+        [13] = "Decal",
+        [17] = "Head",
+        [18] = "Face",
+        [19] = "Gear",
+        [21] = "Animation",
+        [22] = "Arms",
+        [23] = "Legs",
+        [24] = "Torso",
+        [25] = "Right Arm",
+        [26] = "Left Arm",
+        [27] = "Left Leg",
+        [28] = "Right Leg",
+        [29] = "Package",
+        [32] = "Game Pass",
+        [34] = "Plugin",
+        [38] = "MeshPart",
+        [39] = "Hair Accessory",
+        [40] = "Face Accessory",
+        [41] = "Neck Accessory",
+        [42] = "Shoulder Accessory",
+        [43] = "Front Accessory",
+        [44] = "Back Accessory",
+        [45] = "Waist Accessory",
+        [46] = "Climb Animation",
+        [47] = "Death Animation",
+        [48] = "Fall Animation",
+        [49] = "Idle Animation",
+        [50] = "Jump Animation",
+        [51] = "Run Animation",
+        [52] = "Swim Animation",
+        [53] = "Walk Animation",
+        [54] = "Pose Animation",
+        [55] = "Emote Animation",
+        [56] = "Video",
+        [57] = "TexturePack",
+    }
+
+    local assetTypeName = assetTypes[productInfo.AssetTypeId] or "Unknown"
     if productInfo.AssetTypeId ~= 3 then
-        NameSongFrame.Text = "Not a valid song"
+        NameSongFrame.Text = "Not a valid song This is a: "..assetTypeName
+        CreditLabel.Text = "Unable to display creator information as this is not a song"
         return
     end
 
