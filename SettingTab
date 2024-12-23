@@ -1381,6 +1381,7 @@ AddToggle(Main5u6, {
 })
 
 local StatusUi = true
+local heartbeatConnection = nil
 
 function AddUi(parent, labelText, labelColor)
     if not StatusUi then
@@ -1440,14 +1441,13 @@ function createFpsAndpinggui()
     local targetFPS = 0
     local targetPing = 0
 
-    function updateFPS()
+    local function updateFPS()
         targetFPS = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
     end
 
-    function updatePing()
-      ping = game:GetService("Stats").PerformanceStats.Ping:GetValue()
-      avoiddecimals = math.floor(ping)
-      targetPing = avoiddecimals
+    local function updatePing()
+        local ping = game:GetService("Stats").PerformanceStats.Ping:GetValue()
+        targetPing = math.floor(ping)
     end
 
     local function smoothUpdate()
@@ -1467,7 +1467,7 @@ function createFpsAndpinggui()
         pingLabel.Text = "Ping: " .. displayedPing .. " ms"
     end
 
-    local heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
+    heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
         updateFPS()
         updatePing()
         smoothUpdate()
@@ -1475,7 +1475,10 @@ function createFpsAndpinggui()
 
     screenGui.AncestryChanged:Connect(function()
         if not screenGui:IsDescendantOf(game) then
-            heartbeatConnection:Disconnect()
+            if heartbeatConnection then
+                heartbeatConnection:Disconnect()
+                heartbeatConnection = nil
+            end
         end
     end)
 end
@@ -1486,7 +1489,8 @@ AddToggle(Main5u6, {
     Callback = function()
         StatusUi = not StatusUi
         local player = game.Players.LocalPlayer
-        local existingUI = player.PlayerGui:FindFirstChild("FpsAndping")
+        local existingUI = game:GetService("CoreGui"):FindFirstChild("FpsAndping")
+        
         if StatusUi then
             if not existingUI then
                 createFpsAndpinggui()
