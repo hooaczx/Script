@@ -540,9 +540,15 @@ local songs = {
 }
 
 local currentSongIndex = 1
-local soundmusic = Instance.new("Sound", ScreenGui) 
-local reverbEffect = Instance.new("ReverbSoundEffect", soundmusic)
-local chorusEffect = Instance.new("ChorusSoundEffect", soundmusic)
+local soundmusic = Create("Sound", ScreenGui)
+local reverbEffect = Create("ReverbSoundEffect", soundmusic)
+local chorusEffect = Create("ChorusSoundEffect", soundmusic)
+local clicktoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://6042053626", Volume = 0.1})
+local falsetoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://9083627113", Volume = 0.1})
+local click1 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://7475853483", Volume = 0.1})
+local click2 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://8432836186", Volume = 0.1})
+local notifyfriend = Create("Sound", ScreenGui, {SoundId = "rbxassetid://1862045322", Volume = 0.2, PlaybackSpeed = 0.9})
+local notifyfriendleave = Create("Sound", ScreenGui, {SoundId = "rbxassetid://489103549", Volume = 0.2})
 local isPaused = false
 local savedTimePosition = 0
 local musicPlaying = false
@@ -550,33 +556,14 @@ local soundsavedTimePosition = 0
 local progressUpdateConnection
 local soundId1 = "rbxassetid://8486683243"
 local soundId2 = "rbxassetid://4499400560"
-local clicktoggle = Instance.new("Sound", ScreenGui)
-clicktoggle.SoundId = "rbxassetid://6042053626"
-clicktoggle.Volume = 0.1
-local falsetoggle = Instance.new("Sound", ScreenGui)
-falsetoggle.SoundId = "rbxassetid://9083627113"
-falsetoggle.Volume = 0.1
-local click1 = Instance.new("Sound", ScreenGui)
-click1.SoundId = "rbxassetid://7475853483"
-click1.Volume = 0.1
-local click2 = Instance.new("Sound", ScreenGui)
-click2.SoundId = "rbxassetid://8432836186"
-click2.Volume = 0.1
-local notifyfriend = Instance.new("Sound", ScreenGui)
-notifyfriend.SoundId = "rbxassetid://1862045322"
-notifyfriend.Volume = 0.2
-notifyfriend.PlaybackSpeed = 0.9
-local notifyfriendleave = Instance.new("Sound", ScreenGui)
-notifyfriendleave.SoundId = "rbxassetid://489103549"
-notifyfriendleave.Volume = 0.2
 
-local function resetSong()
+function resetSong()
     soundmusic:Stop()
     savedTimePosition = 0
     isPaused = false
 end
 
-local function pauseSong()
+function pauseSong()
     savedTimePosition = soundmusic.TimePosition
     soundmusic:Pause()
     isPaused = true
@@ -623,7 +610,7 @@ function StartProgressUpdate(Frame_4, TimeLabel)
         end
     end)
 end
-            TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
+       TimeLabel.Text = FormatTime(soundmusic.TimePosition) .. " / " .. FormatTime(soundmusic.TimeLength)
         else
             if progressUpdateConnection then
                 progressUpdateConnection:Disconnect()
