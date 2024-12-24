@@ -334,20 +334,6 @@ Corner(Menu)
     BackgroundTransparency = 1
   })Corner(Close_Button)
   
-  IsMinimized = true
-  Minimize_BTN.MouseButton1Click:Connect(function()
-    Minimize_BTN.Text = not IsMinimized and "+" or "-"
-    if IsMinimized then
-      IsMinimized = false
-      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
-      CreateTween(TopBar, "Size", UDim2.new(1, 0, 1, 0), 0, false)
-    else
-      IsMinimized = true
-      CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
-      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
-    end
-  end)
-  
   function CreateClose()
     local CloseGui = Create("TextButton", Menu, {
       BackgroundTransparency = 0.5,
@@ -495,7 +481,25 @@ Corner(Menu)
     Position = UDim2.new(1, 0, 1, 0),
     BackgroundTransparency = 1
   })Corner(Containers)
-  
+
+IsMinimized = true
+  Minimize_BTN.MouseButton1Click:Connect(function()
+    Minimize_BTN.Text = not IsMinimized and "+" or "-"
+    if IsMinimized then
+      IsMinimized = false
+      Containers.Visible = false
+      ScrollBar.Visible = false
+      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
+      CreateTween(TopBar, "Size", UDim2.new(1, 0, 1, 0), 0, false)
+    else
+      IsMinimized = true
+      CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
+      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
+      Containers.Visible = true
+      ScrollBar.Visible = true
+    end
+  end)
+
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
