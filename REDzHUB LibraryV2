@@ -405,10 +405,13 @@ Corner(Menu)
   })Corner(Containers)
 
 IsMinimized = true
+IsMinimizedu = false
+
   Minimize_BTN.MouseButton1Click:Connect(function()
     Minimize_BTN.Text = not IsMinimized and "+" or "-"
     if IsMinimized then
       IsMinimized = false
+      IsMinimizedu true
       Containers.Visible = false
       ScrollBar.Visible = false
       BottomLine.Visible = false
@@ -416,26 +419,7 @@ IsMinimized = true
       CreateTween(TopBar, "Size", UDim2.new(1, 0, 1, 0), 0, false)
     else
       IsMinimized = true
-      CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
-      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
-      Containers.Visible = true
-      ScrollBar.Visible = true
-      BottomLine.Visible = true
-    end
-  end)
-
-IsMinimized = true
-  Minimize_BTN.MouseButton1Click:Connect(function()
-    Minimize_BTN.Text = not IsMinimized and "-" or "+"
-    if IsMinimized then
-      IsMinimized = false
-      Containers.Visible = false
-      ScrollBar.Visible = false
-      BottomLine.Visible = false
-      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
-      CreateTween(TopBar, "Size", UDim2.new(1, 0, 1, 0), 0, false)
-    else
-      IsMinimized = true
+      IsMinimizedu = false
       CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
       CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
       Containers.Visible = true
@@ -445,14 +429,13 @@ IsMinimized = true
   end)
 
 function CreateClose()
-if not IsMinimized then
+if IsMinimizedu then
    CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
    CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
    Containers.Visible = true
    ScrollBar.Visible = true
    BottomLine.Visible = true
  end
-
     local CloseGui = Create("TextButton", Menu, {
       BackgroundTransparency = 0.5,
       BackgroundColor3 = Configs_HUB.Cor_Hub,
@@ -2828,7 +2811,7 @@ if stroke then Stroke(Button, {Color = strokecolor}) end
 local minimize = true
 Button.MouseButton1Click:Connect(function()
     if minimize then
-     if IsMinimized then
+     if IsMinimizedu then
          minimize = false
          CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
       else
@@ -2841,7 +2824,7 @@ Button.MouseButton1Click:Connect(function()
         Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
       end
     else
-     if IsMinimized then
+     if IsMinimizedu then
          minimize = true
          CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
       else
