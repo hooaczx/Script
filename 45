@@ -3480,41 +3480,41 @@ function MakeTab(Configs)
     end
 
     TextButton.MouseButton1Down:Connect(function(input)
-        if canDrag() then
-            draggingTab = Frame
-            dragOffset = input.Position - Frame.Position
+     if canDrag() then
+         draggingTab = Frame
+         dragOffset = input.Position - draggingTab.Position
         end
-    end)
+     end)
 
     game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if draggingTab then
-            local newPos = input.Position - dragOffset
-            draggingTab.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
-        end
+      if draggingTab then
+         local newPos = input.Position - dragOffset
+         draggingTab.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
+      end
     end)
 
-    TextButton.MouseButton1Up:Connect(function()
-        if draggingTab then
-            local targetTab = nil
-            for _, frame in pairs(ScrollBar:GetChildren()) do
-                if frame:IsA("Frame") and frame ~= draggingTab then
-                    local framePosition = frame.Position.Y.Offset
-                    if (draggingTab.Position.Y.Offset > framePosition - 20) and (draggingTab.Position.Y.Offset < framePosition + 20) then
-                        targetTab = frame
-                        break
-                    end
+TextButton.MouseButton1Up:Connect(function()
+    if draggingTab then
+        local targetTab = nil
+        for _, frame in pairs(ScrollBar:GetChildren()) do
+            if frame:IsA("Frame") and frame ~= draggingTab then
+                local framePosition = frame.Position.Y.Offset
+                if (draggingTab.Position.Y.Offset > framePosition - 20) and (draggingTab.Position.Y.Offset < framePosition + 20) then
+                    targetTab = frame
+                    break
                 end
             end
-
-            if targetTab then
-                local targetPosition = targetTab.Position
-                targetTab.Position = draggingTab.Position
-                draggingTab.Position = targetPosition
-            end
-
-            draggingTab = nil
         end
-    end)
+
+        if targetTab then
+            local targetPosition = targetTab.Position
+            targetTab.Position = draggingTab.Position
+            draggingTab.Position = targetPosition
+        end
+
+        draggingTab = nil
+      end
+  end)
 
     TextButton.MouseButton1Click:Connect(function()
         for _, container in pairs(Containers:GetChildren()) do
