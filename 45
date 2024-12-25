@@ -3413,30 +3413,64 @@ ScreenGui.AncestryChanged:Connect(function()
 end)
 end
 
+local activeConnection = nil
+
+function createRedWhiteUIStroke(stroke, uiElement)
+    local isRed = true
+    local positionOffset = 0
+    local speed = 10
+    local direction = 1
+    if activeConnection then
+        activeConnection:Disconnect()
+    end
+    activeConnection = RunService.Heartbeat:Connect(function()
+        if isRed then
+            stroke.Color = Color3.fromRGB(255, 0, 0)
+        else
+            stroke.Color = Color3.fromRGB(255, 255, 255)
+        end
+        isRed = not isRed
+        if positionOffset < 200 and direction == 1 then
+            positionOffset = positionOffset + speed
+        elseif positionOffset >= 200 and direction == 1 then
+            direction = -1
+        end
+        if positionOffset > 0 and direction == -1 then
+            positionOffset = positionOffset - speed
+        elseif positionOffset <= 0 and direction == -1 then
+            direction = 1
+        end
+        uiElement.Position = UDim2.new(0, positionOffset, 0, positionOffset)
+    end)
+end
+
+function stopRedWhiteUIStroke()
+    if activeConnection then
+        activeConnection:Disconnect()
+        activeConnection = nil
+    end
+end
+
 local firstVisible = true
 local firstTabSet = false
 local textsize = 15
 local textcolor = Configs_HUB.Cor_Text
-local draggingTab = nil
-local dragOffset = Vector2.new()
 
 function MakeTab(Configs)
     local TabName = Configs.Name or "Tab"
     local TabImage = Configs.image
-
+    
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundTransparency = 1
-    })
-    Corner(Frame)
-    FrameStroke = Stroke(Frame, {Thickness = 1})
-
+    })Corner(Frame)
+    
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         Text = ""
     })
-
+    
     local TextLabel = Create("TextLabel", Frame, {
         Size = TabImage and UDim2.new(0.85, 0, 1, 0) or UDim2.new(1, 0, 1, 0),
         Position = TabImage and UDim2.new(0.15, 0, 0, 0) or UDim2.new(0, 0, 0, 0),
@@ -3447,7 +3481,7 @@ function MakeTab(Configs)
         TextSize = textsize,
         Text = TabName
     })
-
+    
     if TabImage then
         local image = Create("ImageLabel", Frame, {
             Size = UDim2.new(0.15, 0, 0.8, 0),
@@ -3455,10 +3489,9 @@ function MakeTab(Configs)
             BackgroundColor3 = Configs_HUB.Cor_Options,
             BackgroundTransparency = 1,
             Image = TabImage
-        })
-        Corner(image)
+        })Corner(image)
     end
-
+    
     local Container = Create("ScrollingFrame", Containers, {
         Size = UDim2.new(1, 0, 1, 0),
         ScrollingDirection = Enum.ScrollingDirection.Y,
@@ -3470,65 +3503,22 @@ function MakeTab(Configs)
     Create("UIListLayout", Container, {
         Padding = UDim.new(0, 5),
         SortOrder = Enum.SortOrder.LayoutOrder,
+    })Create("UIPadding", Container, {
+      PaddingLeft = UDim.new(0.025, 0),
     })
-    Create("UIPadding", Container, {
-        PaddingLeft = UDim.new(0.025, 0),
-    })
-
-    function canDrag()
-        return #ScrollBar:GetChildren() > 1
-    end
-
-    TextButton.MouseButton1Down:Connect(function(input)
-     if canDrag() then
-         draggingTab = Frame
-         dragOffset = input.Position - draggingTab.Position
-        end
-     end)
-
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-      if draggingTab then
-         local newPos = input.Position - dragOffset
-         draggingTab.Position = UDim2.new(0, newPos.X, 0, newPos.Y)
-      end
-    end)
-
-TextButton.MouseButton1Up:Connect(function()
-    if draggingTab then
-        local targetTab = nil
-        for _, frame in pairs(ScrollBar:GetChildren()) do
-            if frame:IsA("Frame") and frame ~= draggingTab then
-                local framePosition = frame.Position.Y.Offset
-                if (draggingTab.Position.Y.Offset > framePosition - 20) and (draggingTab.Position.Y.Offset < framePosition + 20) then
-                    targetTab = frame
-                    break
-                end
-            end
-        end
-
-        if targetTab then
-            local targetPosition = targetTab.Position
-            targetTab.Position = draggingTab.Position
-            draggingTab.Position = targetPosition
-        end
-
-        draggingTab = nil
-      end
-  end)
-
+    
     TextButton.MouseButton1Click:Connect(function()
         for _, container in pairs(Containers:GetChildren()) do
             if container:IsA("ScrollingFrame") then
                 container.Visible = false
             end
         end
-
         for _, frame in pairs(ScrollBar:GetChildren()) do
             if frame:IsA("Frame") then
                 local frameStroke = frame:FindFirstChildOfClass("UIStroke")
                 local label = frame:FindFirstChild("TextLabel")
                 if label == TextLabel then
-                    CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+                    createRedWhiteUIStroke(frameStroke, Frame)
                     CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
                     if not label:GetAttribute("Clicked") then
                         local percentageIncrease = 0.1
@@ -3541,9 +3531,7 @@ TextButton.MouseButton1Up:Connect(function()
                         label:SetAttribute("Clicked", true)
                     end
                 else
-                    if frameStroke then
-                        CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-                    end
+                    stopRedWhiteUIStroke()
                     if label then
                         local defaultSize = label.TextSize - 2
                         label.TextSize = math.clamp(defaultSize, 14, 20)
@@ -3555,7 +3543,6 @@ TextButton.MouseButton1Up:Connect(function()
         end
         Container.Visible = true
     end)
-
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
