@@ -239,7 +239,6 @@ functionCreate.MakeNotifi = function(Configs)
     TextYAlignment = "Top",
     AutomaticSize = "Y",
     Text = text,
-    Font = Configs_HUB.Text_Font,
     BackgroundTransparency = 1,
     AutomaticSize = Enum.AutomaticSize.Y,
     TextWrapped = true
@@ -306,7 +305,7 @@ Corner(Menu)
   })
 
   local Title = Create("TextLabel", TopBar, {
-    Size = UDim2.new(1, 0, 1, 0),
+    Size = UDim2.new(0.9, 0, 1, 0),
     Position = UDim2.new(0, 0, 0, 0),
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
@@ -315,6 +314,24 @@ Corner(Menu)
     TextScaled = true,
     BackgroundTransparency = 1
   })
+  
+  local Close_Button = Create("TextButton", TopBar, {
+    Size = UDim2.new(0.05, 0, 1, 0),
+    Position = UDim2.new(0.95, 0, 0, 0),
+    TextColor3 = Configs_HUB.Cor_Text,
+    Text = "×",
+    TextScaled = true,
+    BackgroundTransparency = 1
+  })Corner(Close_Button)
+  
+  local Minimize_BTN = Create("TextButton", TopBar, {
+    Size = UDim2.new(0.05, 0, 1, 0),
+    Position = UDim2.new(0.9, 0, 0, 0),
+    TextColor3 = Configs_HUB.Cor_Text,
+    Text = "-",
+    TextScaled = true,
+    BackgroundTransparency = 1
+  })Corner(Close_Button)
   
   local AnimMenu = Create("Frame", ScreenGui, {
     Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -332,7 +349,7 @@ Corner(Menu)
     TextColor3 = Configs_HUB.Cor_Text,
     Position = UDim2.new(0, 10, 0, 0),
     TextXAlignment = "Left",
-    TextWrapped = true
+    TextScaled = true
   })
   
   CreateTween(AnimMenu, "Size", UDim2.new(0, 0, 0.073, 0), 0.5, true)
@@ -388,7 +405,118 @@ Corner(Menu)
     Position = UDim2.new(1, 0, 1, 0),
     BackgroundTransparency = 1
   })Corner(Containers)
+
+IsMinimized = true
+IsMinimizedu = false
+
+  Minimize_BTN.MouseButton1Click:Connect(function()
+    Minimize_BTN.Text = not IsMinimized and "+" or "-"
+    if IsMinimized then
+      IsMinimized = false
+      IsMinimizedu = true
+      Containers.Visible = false
+      Bottomright.Visible = false
+      ScrollBar.Visible = false
+      BottomLine.Visible = false
+      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
+      CreateTween(TopBar, "Size", UDim2.new(1, 0, 1, 0), 0, false)
+    else
+      IsMinimized = true
+      IsMinimizedu = false
+      CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
+      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
+      Containers.Visible = true
+      ScrollBar.Visible = true
+      BottomLine.Visible = true
+      Bottomright.Visible = true
+    end
+  end)
+
+function CreateClose()
+if IsMinimizedu then
+   IsMinimized = true
+   IsMinimizedu = false
+   CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
+   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
+   Containers.Visible = true
+   ScrollBar.Visible = true
+   BottomLine.Visible = true
+   Bottomright.Visible = true
+ end
+    local CloseGui = Create("TextButton", Menu, {
+      BackgroundTransparency = 0.5,
+      BackgroundColor3 = Configs_HUB.Cor_Hub,
+      Size = UDim2.new(1, 0, 1, 0),
+      AutoButtonColor = false,
+      Text = "",
+      BackgroundTransparency = 0.5,
+      Visible = false
+    })Corner(CloseGui)
+    
+    local CloseMenu = Create("Frame", CloseGui, {
+      Size = UDim2.new(),
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      Position = UDim2.new(0.5, 0, 0.5, 0),
+      Transparency = 1,
+      BackgroundColor3 = Configs_HUB.Cor_Hub
+    })Corner(CloseMenu)Stroke(CloseMenu)
+    
+    local Mensage = Create("TextLabel", CloseMenu, {
+      Size = UDim2.new(0.8, 0, 0.25, 0),
+      Text = "are you sure you want to close this script??",
+      Position = UDim2.new(0.1, 0, 0.2),
+      Font = Configs_HUB.Text_Font,
+      TextColor3 = Configs_HUB.Cor_Text,
+      TextScaled = true,
+      BackgroundTransparency = 1
+    })
+    
+    local Confirm = Create("TextButton", CloseMenu, {
+      Size = UDim2.new(0.35, 0, 0.3, 0),
+      Position = UDim2.new(0.1, 0, 0.5, 0),
+      BackgroundColor3 = Configs_HUB.Cor_Hub,
+      Text = "Close Script",
+      Font = Configs_HUB.Text_Font,
+      TextColor3 = Color3.fromRGB(240, 0, 0),
+      TextScaled = true
+    })Corner(Confirm)Stroke(Confirm)
+    
+    local Cancel = Create("TextButton", CloseMenu, {
+      Size = UDim2.new(0.35, 0, 0.3, 0),
+      Position = UDim2.new(0.9, 0, 0.5, 0),
+      AnchorPoint = Vector2.new(1, 0),
+      BackgroundColor3 = Configs_HUB.Cor_Hub,
+      Text = "Cancel",
+      Font = Configs_HUB.Text_Font,
+      TextColor3 = Color3.fromRGB(0, 240, 0),
+      TextScaled = true
+    })Corner(Cancel)Stroke(Cancel)
+    
+    CloseGui.Visible = true
+    CreateTween(CloseMenu, "Transparency", 0, 0.2, false)
+    CreateTween(CloseMenu, "Size", UDim2.new(0.7, 0, 0.7, 0), 0.2, false)
+    
+    Cancel.MouseButton1Click:Connect(function()
+      CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
+      CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
+      CloseGui:Destroy()
+    end)
+    
+    Confirm.MouseButton1Click:Connect(function()
+      CloseGui:Destroy()
+      CreateTween(Menu, "Size", UDim2.new(), 0.3, true)
+      DestroyScript()
+    end)
+    
+    CloseGui.MouseButton1Click:Connect(function()
+      CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
+      CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
+      CloseGui:Destroy()
+    end)
+  end
   
+  Close_Button.MouseButton1Click:Connect(CreateClose)
+
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
     {id = "rbxassetid://7029024726", name = "Throttle : Bloom"},
@@ -541,8 +669,7 @@ local songs = {
 
 local currentSongIndex = 1
 local soundmusic = Create("Sound", ScreenGui)
-local reverbEffect = Create("ReverbSoundEffect", soundmusic)
-local chorusEffect = Create("ChorusSoundEffect", soundmusic)
+local reverbEffect = Create("ReverbSoundEffect", soundmusic, {DecayTime = 0,Density = 0,Enabled = false})
 local clicktoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://6042053626", Volume = 0.1})
 local falsetoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://9083627113", Volume = 0.1})
 local click1 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://7475853483", Volume = 0.1})
@@ -622,7 +749,7 @@ end
 
 local notificationgui = {}
 
-function notify(params)
+local function notify(params)
     local Title = params.Title or "Default Title"
     local Text = params.Text or "Default Message"
     local buttondeleteText = params.buttonText or "OK"
@@ -631,55 +758,49 @@ function notify(params)
     local duration = params.duration
     local position = params.Position or UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
 
-    local NotificationLabelText = functionCreate.Create("Frame", ScreenGui, {
+    local NotificationLabelText = Create("TextLabel", ScreenGui, {
         Size = UDim2.new(0, guiSize.X, 0, guiSize.Y),
-        BackgroundTransparency = 1,
-        Position = position
-    })
-
-    local NotificationText = functionCreate.Create("TextLabel", NotificationLabelText, {
-        Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         Text = Text,
         TextScaled = true,
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextWrapped = true,  -- Added TextWrapped here
+        Position = position
     })
 
-    local sound2 = functionCreate.Create("Sound", NotificationLabelText, {
-        SoundId = params.soundId1 or "",
+    local sound2 = Create("Sound", NotificationLabelText, {
+        SoundId = soundId1,
         Volume = 0.2,
         PlaybackSpeed = 0.9
     })
     sound2:Play()
 
-    local NotificationImage = functionCreate.Create("ImageLabel", NotificationLabelText, {
+    local NotificationImage = Create("ImageLabel", NotificationLabelText, {
         Size = UDim2.new(0, 70, 0, 70),
         Position = UDim2.new(-0.2, 0, 0, 0),
         Image = "rbxassetid://" .. image,
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 1
     })
 
-    local NotificationLabelTitle = functionCreate.Create("TextLabel", NotificationLabelText, {
+    local NotificationLabelTitle = Create("TextLabel", NotificationLabelText, {
         Size = UDim2.new(1, 0, 0.4, 0),
         BackgroundTransparency = 1,
         Text = Title,
         TextScaled = true,
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        Position = UDim2.new(0, 0, -0.4, 0),
+        Position = UDim2.new(0, 0, -0.4, 0)
     })
 
-    local OkButton = functionCreate.Create("TextButton", NotificationLabelText, {
+    local OkButton = Create("TextButton", NotificationLabelText, {
         Size = UDim2.new(1, 0, 0.4, 0),
         Position = UDim2.new(0, 0, 1, 0),
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextScaled = true,
         Text = buttondeleteText,
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 1
     })
 
-    local sound1 = functionCreate.Create("Sound", OkButton, {
-        SoundId = params.soundId2 or "",
+    local sound1 = Create("Sound", OkButton, {
+        SoundId = soundId2,
         Volume = 0.2,
         PlaybackSpeed = 0.9
     })
@@ -691,19 +812,14 @@ function notify(params)
         oldNotification:Destroy()
     end
 
-    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {
-        Position = UDim2.new(position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset - (#notificationgui * 60))
-    })
+    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset - (#notificationgui * 60))})
     tween:Play()
 
     if duration then
         delay(duration, function()
-            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {
-                Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100),
-                TextTransparency = 1,
-            })
+            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
             tweenOut:Play()
-
+            
             tweenOut.Completed:Connect(function()
                 NotificationLabelText:Destroy()
             end)
@@ -712,10 +828,7 @@ function notify(params)
 
     OkButton.MouseButton1Click:Connect(function()
         sound1:Play()
-        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {
-            Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100),
-            TextTransparency = 1,
-        })
+        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
         tweenOut:Play()
 
         tweenOut.Completed:Connect(function()
@@ -728,11 +841,10 @@ end
 
 notify({
       Title = "Hi",
-      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the UI to not work or crash, so please understand",
-      buttonText = "OK",
-      image = "",
+      Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
+      buttonText = "ok",
+      imageID = "",
       guiSize = Vector2.new(400, 70),
-      duration = 5,
 })
 
  function MinimizeButton(Configs)
@@ -760,14 +872,14 @@ notify({
     local HttpService = game:GetService("HttpService")
     local image = Configs.Image or ""
 
-   local frame = Create("Frame", ScreenGui, {
+local frame = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.5, 0, 0.12, 0),
     AnchorPoint = Vector2.new(0.5, 0.5),
     Position = UDim2.new(0.5, 0, 0.95, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub
-    })
+})
 
-    local tweenGradient = CreateGradient(frame, {
+local tweenGradient = CreateGradient(frame, {
     Color = {
         Color3.fromRGB(255, 255, 255),
         Color3.fromRGB(0, 0, 0),
@@ -776,9 +888,9 @@ notify({
     Rotation = 45,
     Tween = true,
     Speed = 3
-    })
+})
 
-   local Button1 = Create("TextButton", ScreenGui, {
+local Button1 = Create("TextButton", ScreenGui, {
     Size = UDim2.new(0.06, 0, 0.07, 0),
     AnchorPoint = Vector2.new(0.5, 1),
     Position = UDim2.new(0.5, 0, 0.89, 0),
@@ -787,23 +899,22 @@ notify({
     ZIndex = 10,
     TextColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1
-    })
+})
 
-    local minimize1 = false
-
+local minimize1 = false
 Button1.MouseButton1Click:Connect(function()
- minimize1 = not minimize1
-  if minimize1 then
-    Button1.Text = "^"
-    CreateTween(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, false)
-    CreateTween(Button1, "Position", UDim2.new(0.5, 0, 1, 0), 0.3, true)
-    frame.Visible = false
-   else
-    frame.Visible = true
-    Button1.Text = "v"
-    CreateTween(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, false)
-    CreateTween(Button1, "Position", UDim2.new(0.5, 0, 0.89, 0), 0.3, false)
-   end
+    minimize1 = not minimize1
+    if minimize1 then
+        Button1.Text = "^"
+        CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, false)
+        CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 1, 0), 0.3, true)
+        frame.Visible = false
+    else
+        frame.Visible = true
+        Button1.Text = "v"
+        CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, false)
+        CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 0.89, 0), 0.3, false)
+    end
 end)
 
 local TimeLabelgui = Create("TextLabel", frame, {
@@ -815,7 +926,8 @@ local TimeLabelgui = Create("TextLabel", frame, {
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     BackgroundTransparency = 1
-})TextSetColor(TimeLabelgui)
+})
+TextSetColor(TimeLabelgui)
 
 local Frame1 = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.4, 0, 0.85, 0),
@@ -836,19 +948,19 @@ local tweenGradient = CreateGradient(Frame1, {
     Rotation = 45,
     Tween = true,
     Speed = 3
-    })
-    Corner(Frame1)
-    Stroke(Frame1)
+})
+Corner(Frame1)
+Stroke(Frame1)
 
-local TitleLabel1 = Create("Frame", ScreenGui, {
-  TextSize = 14,
-  TextWrapped = true,
-  TextColor3 = Configs_HUB.Cor_Text,
-  Font = Configs_HUB.Text_Font,
-  Text = "Song List",
-  Size = UDim2.new(1, 0, 0.05, 0),
-  Position = UDim2.new(0, 0, 0, 0),
-  BackgroundTransparency = 1
+local TitleLabel1 = Create("TextLabel", Frame1, {
+    TextSize = 14,
+    TextWrapped = true,
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    Text = "Song List",
+    Size = UDim2.new(1, 0, 0.05, 0),
+    Position = UDim2.new(0, 0, 0, 0),
+    BackgroundTransparency = 1
 })
 TextSetColor(TitleLabel1)
 
@@ -881,8 +993,8 @@ local TitleLabel = Create("TextLabel", ScreenGui, {
     AnchorPoint = Vector2.new(0.3, 0.02),
     BackgroundTransparency = 1,
     TextXAlignment = Enum.TextXAlignment.Left,
-    Font = Configs_HUB.Text_Font,
-    Visible = false
+    Visible = false,
+    Font = Configs_HUB.Text_Font
 })
 TextSetColor(TitleLabel)
 
@@ -891,8 +1003,8 @@ local Frame_4 = Create("Frame", ScreenGui, {
     Position = UDim2.new(0.01, 0, 0, 0),
     AnchorPoint = Vector2.new(0.23, 0.02),
     BackgroundTransparency = 0.5,
-    BackgroundColor3 = Configs_HUB.Cor_Options,
-    Visible = false
+    Visible = false,
+    BackgroundColor3 = Configs_HUB.Cor_Options
 })
 Corner(Frame_4, {CornerRadius = UDim.new(1, 0)})
 Stroke(Frame_4, {Color = Color3.fromRGB(255, 255, 255)})
@@ -911,8 +1023,8 @@ local TimeLabel = Create("TextLabel", ScreenGui, {
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     Text = "0:00 / 0:00",
-    Size = UDim2.new(0.076, 0, 0.06, 0),
-    Position = UDim2.new(0.02, 0, 0.09, 0),
+    Size = UDim2.new(0.07, 0, 0.06, 0),
+    Position = UDim2.new(0.03, 0, 0.09, 0),
     AnchorPoint = Vector2.new(0.3, 0.02),
     BackgroundTransparency = 1,
     Visible = false
@@ -927,29 +1039,30 @@ local ToggleButton = Create("ImageButton", ScreenGui, {
     Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150",
     Visible = false
 })
+Corner(ToggleButton, {CornerRadius = UDim.new(1, 0)})
 
-   ToggleButton.MouseButton1Click:Connect(function()
+ToggleButton.MouseButton1Click:Connect(function()
     if musicPlaying then
-       notify({
+        notify({
             Title = "Error",
             Text = "You are playing a song in Music Player. Please close it",
             buttonText = "ok",
             imageID = "",
-            guiSize = Vector2.new(400, 70),
-          })
-         pauseSong()
-         ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-       else
-    if soundmusic.IsPlaying then
+            guiSize = Vector2.new(400, 70)
+        })
         pauseSong()
-        TitleLabel.Text = "Stopped"
         ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
-      else
-        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
-       end
+    else
+        if soundmusic.IsPlaying then
+            pauseSong()
+            TitleLabel.Text = "Stopped"
+            ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+        else
+            PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+            ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+        end
     end
-   end)
+end)
 
 local waitForMusicPlayingheartbeatConnection
 
@@ -979,7 +1092,7 @@ local NextButton = Create("ImageButton", ScreenGui, {
     Image = "rbxthumb://type=Asset&id=108701088493396&w=150&h=150",
     Visible = false
 })
-Create("UICorner", NextButton, { CornerRadius = UDim.new(1, 0) })
+Corner(NextButton, {CornerRadius = UDim.new(1, 0)})
 
 local PreviousButton = Create("ImageButton", ScreenGui, {
     Size = UDim2.new(0.036, 0, 0.075, 0),
@@ -989,106 +1102,129 @@ local PreviousButton = Create("ImageButton", ScreenGui, {
     Image = "rbxthumb://type=Asset&id=135009931121404&w=150&h=150",
     Visible = false
 })
-Create("UICorner", PreviousButton, { CornerRadius = UDim.new(1, 0) })
+Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
 
 local songList = Create("ScrollingFrame", Frame1, {
-    BackgroundColor3 = Color3.new(0, 0, 0),
-    BorderColor3 = Color3.new(0.223529, 0.223529, 0.223529),
     Size = UDim2.new(1, 0, 0.8, 0),
     Position = UDim2.new(0, 0, 0.21, 0),
-    ScrollBarThickness = 0,
+    CanvasSize = UDim2.new(),
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
-    ScrollingEnabled = true
+    ScrollBarThickness = 0
+})Create("UIListLayout", songList, {
+    Padding = UDim.new(0, 5),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", songList, {
+      PaddingLeft = UDim.new(0.028, 0),
 })
-Create("UIListLayout", songList, { SortOrder = Enum.SortOrder.LayoutOrder })
-
-functions.updateFrameSize = function()
-    local contentHeight = songListTinniLayout.AbsoluteContentSize.Y
-    songList.CanvasSize = UDim2.new(0, 0, 0, contentHeight)
-end
 
 local isAutoPlayEnabled = false
 local isLooping = false
 
 functions.updateSongButtons = function()
     local searchText = search.Text:lower()
-    local currentScrollPosition = songList.CanvasPosition
-    songList:ClearAllChildren()
-    
-    Create("UIListLayout", songList, {
-        SortOrder = Enum.SortOrder.LayoutOrder
-    })
-
+    for _, child in ipairs(songList:GetChildren()) do
+        if child:IsA("Frame") and child.Name ~= "UIListLayout" then
+            child:Destroy()
+        end
+    end
     for i, song in ipairs(songs) do
         if string.lower(song.name):find(searchText, 1, true) then
             local musiclistFrame = Create("Frame", songList, {
                 BackgroundColor3 = Color3.new(0, 0, 0),
-                Size = UDim2.new(1, 0, 0, 25),
-                BorderSizePixel = 0
-            })
-            
-            Create("ImageLabel", musiclistFrame, {
-                Size = UDim2.new(0.1, 0, 1, 0),
-                Position = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1,
-                Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
+                Size = UDim2.new(0.96, 0, 0.1, 0),
+                BorderSizePixel = 0,
+                BackgroundTransparency = 0
             })
 
-            Create("TextLabel", musiclistFrame, {
-                Name = "NameLabel",
-                Text = ":" .. tostring(i) .. "." .. song.name,
-                Size = UDim2.new(0.61, 0, 1, 0),
-                Position = UDim2.new(0.11, 0, 0, 0),
-                TextScaled = true,
-                TextColor3 = Configs_HUB.Cor_Text,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                Font = Configs_HUB.Text_Font,
-                BackgroundTransparency = 1
-            })
+            if not musiclistFrame:FindFirstChild("NameLabel") then
+                local iconmusic = Create("ImageLabel", musiclistFrame, {
+                    Size = UDim2.new(0.1, 0, 1, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+                    BackgroundTransparency = 1,
+                    Image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
+                })
 
-            local songButton = Create("TextButton", musiclistFrame, {
-                Name = "SongButton",
-                Size = UDim2.new(1, 0, 1, 0),
-                BackgroundTransparency = 1
-            })
+                local nameLabel = Create("TextLabel", musiclistFrame, {
+                    Name = "NameLabel",
+                    Text = ":" .. tostring(i) .. "." .. song.name,
+                    Size = UDim2.new(0.61, 0, 1, 0),
+                    Position = UDim2.new(0.11, 0, 0, 0),
+                    TextScaled = true,
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    TextXAlignment = "Left",
+                    Font = Configs_HUB.Text_Font,
+                    BackgroundTransparency = 1,
+                    BorderSizePixel = 0
+                })
+                TextSetColor(nameLabel)
+            end
 
-            songButton.MouseButton1Click:Connect(function()
-                if musicPlaying then
-                    notify({
-                        Title = "Error",
-                        Text = "You are playing a song in Music Player. Please close it",
-                        buttonText = "OK",
-                        guiSize = Vector2.new(400, 70)
-                    })
-                    return
-                elseif isLooping then
-                    notify({
-                        Title = "Loop Songs is on",
-                        Text = "Please disable it in settings to select a song.",
-                        buttonText = "OK",
-                        guiSize = Vector2.new(400, 70)
-                    })
-                    return
-                end
+            if not musiclistFrame:FindFirstChild("SongButton") then
+                local songbutton = Create("TextButton", musiclistFrame, {
+                    Name = "SongButton",
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    Font = Configs_HUB.Text_Font,
+                    Text = "",
+                    BackgroundTransparency = 1
+                })
+                TextSetColor(songbutton)
 
-                currentSongIndex = i
-                PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
-                functions.updateSongButtons()
-            end)
+                songbutton.MouseButton1Click:Connect(function()
+                    if musicPlaying then
+                        notify({
+                            Title = "Error",
+                            Text = "You are playing a song in Music Player. Please close it",
+                            buttonText = "ok",
+                            imageID = "",
+                            guiSize = Vector2.new(400, 70),
+                        })
+                        pauseSong()
+                        ToggleButton.Image = "rbxthumb://type=Asset&id=98070627958036&w=150&h=150"
+                    else
+                        if isLooping then
+                            notify({
+                                Title = "Loop Songs is on",
+                                Text = "Please go turn it off in settings music. If you want press to select a song",
+                                buttonText = "ok",
+                                imageID = "",
+                                guiSize = Vector2.new(400, 70),
+                            })
+                            return
+                        end
+                        currentSongIndex = i
+                        PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
+                        ToggleButton.Image = "rbxthumb://type=Asset&id=133872094700280&w=150&h=150"
+                        functions.updateSongButtons()
+                    end
+                end)
+            end
 
             if currentSongIndex == i then
-                Create("ImageLabel", musiclistFrame, {
-                    Size = UDim2.new(0, 30, 1, 0),
+                local frameimage = Create("Frame", musiclistFrame, {
+                    Size = UDim2.new(0.1, 0, 1, 0),
                     Position = UDim2.new(0.85, 0, 0, 0),
+                    BackgroundTransparency = 1
+                })
+
+                for _, child in ipairs(frameimage:GetChildren()) do
+                    if child:IsA("ImageLabel") then
+                        child:Destroy()
+                    end
+                end
+
+                local image = Create("ImageLabel", frameimage, {
+                    Size = UDim2.new(1, 0, 1, 0),
                     BackgroundTransparency = 1,
                     Image = "rbxthumb://type=Asset&id=18488884411&w=150&h=150"
                 })
             end
         end
     end
-
-    songList.CanvasPosition = currentScrollPosition
-    functions.updateFrameSize()
 end
 
 functions.updateSongButtons()
@@ -1141,15 +1277,73 @@ if musicPlaying then
    end
 end)
 
+functions.createToggleButton = function(parent, position, callback, initialState)
+    local TextButton = Create("TextButton", parent, {
+        Size = UDim2.new(0.13, 0, 0.17, 0),
+        Position = position,
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame",
+        Text = "",
+        BackgroundTransparency = 1,
+        AutoButtonColor = false
+    })Corner(TextButton)
+
+    local Frame1 = Create("Frame", TextButton, {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+    })
+    Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
+    local Stroke = Stroke(Frame1, {Thickness = 2})
+    
+    local Frame2 = Create("Frame", Frame1, {
+        Size = UDim2.new(0.4, 0, 0.95, 0),
+        Position = UDim2.new(0, 0, 0.49, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = Configs_HUB.Cor_Stroke
+    })
+    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+
+    local OnOff = initialState
+
+    local function setState(state)
+        OnOff = state
+        if OnOff then
+            clicktoggle:Play()
+            CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+            callback(true)
+        else
+            falsetoggle:Play()
+            CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.5, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
+            CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+            callback(false)
+        end
+    end
+
+    TextButton.MouseButton1Click:Connect(function()
+        setState(not OnOff)
+    end)
+
+    TextButton.AncestryChanged:Connect(function(_, parent)
+        if not parent and OnOff then
+            setState(false)
+        end
+    end)
+
+    return setState
+end
+
 functions.createSettingSection = function(parent, title, description, buttonCallback, buttonState)
     local sectionFrame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 100),
+        Size = UDim2.new(0.96, 0, 0.4, 0),
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 0
-    })
+    })local Stroke = Stroke(sectionFrame, {Thickness = 2})
 
     local titleLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 30),
+        Size = UDim2.new(1, 0, 0.2, 0),
         TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundTransparency = 1,
@@ -1159,11 +1353,11 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     TextSetColor(titleLabel)
 
     local descriptionLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 50),
+        Size = UDim2.new(1, 0, 0.5, 0),
         TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.31, 0),
+        Position = UDim2.new(0, 0, 0.2, 0),
         TextColor3 = Configs_HUB.Cor_Text,
         Text = description
     })
@@ -1175,97 +1369,15 @@ functions.createSettingSection = function(parent, title, description, buttonCall
     return toggleButtonState
 end
 
-functions.createSlider = function(parent, title, description, callback)
-    local sectionFrame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 100),
-        BackgroundColor3 = Configs_HUB.Cor_Hub,
-        BackgroundTransparency = 0
-    })
-
-    local titleLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 30),
-        TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        BackgroundTransparency = 1,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = title
-    })
-    TextSetColor(titleLabel)
-
-    local descriptionLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 50),
-        TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.31, 0),
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = description
-    })
-    TextSetColor(descriptionLabel)
-
-    local progressBar = Create("Frame", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 20),
-        Position = UDim2.new(0, 0, 0, 81),
-        BackgroundColor3 = Configs_HUB.Cor_Options
-    })
-
-    local sliderButton = Create("TextButton", progressBar, {
-        Size = UDim2.new(1, 0, 1, 0),
-        Text = "",
-        BackgroundTransparency = 1
-    })
-
-    local percentageLabel = Create("TextLabel", progressBar, {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        TextColor3 = Configs_HUB.Cor_Text,
-        TextScaled = true,
-        Text = "100%",
-        Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(percentageLabel)
-
-    local dragging = false
-
-    local function onUpdateSlider(input)
-        local relativePos = (input.Position.X - progressBar.AbsolutePosition.X) / progressBar.AbsoluteSize.X
-        relativePos = math.clamp(relativePos, 0, 1)
-        local percentage = relativePos * 100
-        percentageLabel.Text = tostring(math.floor(percentage)) .. "%"
-        callback(percentage)
-    end
-
-    sliderButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            onUpdateSlider(input)
-        end
-    end)
-
-    sliderButton.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = false
-        end
-    end)
-
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragging then
-            onUpdateSlider(input)
-        end
-    end)
-
-    return progressBar
-end
-
 functions.createTextboxWithButton = function(parent, title, description, callback)
     local sectionFrame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 100),
+        Size = UDim2.new(0.96, 0, 0.4, 0),
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 0
-    })
+    })local Stroke = Stroke(sectionFrame, {Thickness = 2})
 
     local titleLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 30),
+        Size = UDim2.new(1, 0, 0.2, 0),
         TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundTransparency = 1,
@@ -1275,36 +1387,19 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     TextSetColor(titleLabel)
 
     local descriptionLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 50),
+        Size = UDim2.new(1, 0, 0.6, 0),
         TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.31, 0),
+        Position = UDim2.new(0, 0, 0.2, 0),
         TextColor3 = Configs_HUB.Cor_Text,
         Text = description
     })
     TextSetColor(descriptionLabel)
 
-    local messageTextbox = Create("TextBox", sectionFrame, {
-        Size = UDim2.new(0.75, 0, 0, 20),
-        Position = UDim2.new(0, 0, 0, 81),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        TextColor3 = Configs_HUB.Cor_Text,
-        PlaceholderText = "Enter your message here...",
-        ClearTextOnFocus = true,
-        TextScaled = true,
-        Font = Configs_HUB.Text_Font
-    })
+    local messageTextbox = Create("TextBox", sectionFrame, {Size = UDim2.new(0.75, 0, 0.2, 0), Position = UDim2.new(0, 0, 0.8, 0), BackgroundColor3 = Configs_HUB.Cor_Options, TextColor3 = Configs_HUB.Cor_Text, PlaceholderText = "Enter your message here...", ClearTextOnFocus = true, TextScaled = true, Font = Configs_HUB.Text_Font})
 
-    local sendButton = Create("TextButton", sectionFrame, {
-        Size = UDim2.new(0.25, 0, 0, 20),
-        Position = UDim2.new(0.75, 0, 0, 81),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Send Message",
-        TextScaled = true,
-        Font = Configs_HUB.Text_Font
-    })
+    local sendButton = Create("TextButton", sectionFrame, {Size = UDim2.new(0.25, 0, 0.2, 0), Position = UDim2.new(0.75, 0, 0.8, 0), BackgroundColor3 = Configs_HUB.Cor_Options, TextColor3 = Configs_HUB.Cor_Text, Text = "Send Message", TextScaled = true, Font = Configs_HUB.Text_Font})
 
     sendButton.MouseButton1Click:Connect(function()
         local message = messageTextbox.Text
@@ -1328,15 +1423,16 @@ functions.createTextboxWithButton = function(parent, title, description, callbac
     return sectionFrame
 end
 
-functions.createTextBox = function(parent, title, description, callback, minValue, maxValue)
+functions.createTextBox = function(parent, title, description, buttonText, callback, minValue, maxValue)
     local sectionFrame = Create("Frame", parent, {
-        Size = UDim2.new(1, 0, 0, 100),
+        Size = UDim2.new(0.96, 0, 0.4, 0),
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 0
     })
+    local Stroke = Stroke(sectionFrame, {Thickness = 2})
 
     local titleLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 30),
+        Size = UDim2.new(1, 0, 0.2, 0),
         TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundTransparency = 1,
@@ -1346,19 +1442,19 @@ functions.createTextBox = function(parent, title, description, callback, minValu
     TextSetColor(titleLabel)
 
     local descriptionLabel = Create("TextLabel", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 50),
+        Size = UDim2.new(1, 0, 0.6, 0),
         TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.31, 0),
+        Position = UDim2.new(0, 0, 0.2, 0),
         TextColor3 = Configs_HUB.Cor_Text,
         Text = description
     })
     TextSetColor(descriptionLabel)
 
     local inputBox = Create("TextBox", sectionFrame, {
-        Size = UDim2.new(1, 0, 0, 20),
-        Position = UDim2.new(0, 0, 0, 81),
+        Size = UDim2.new(0.75, 0, 0.2, 0),
+        Position = UDim2.new(0, 0, 0.8, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Text = tostring(minValue or 0),
         TextScaled = true,
@@ -1366,28 +1462,36 @@ functions.createTextBox = function(parent, title, description, callback, minValu
         Font = Configs_HUB.Text_Font
     })
     TextSetColor(inputBox)
+    
+    local sendButton = Create("TextButton", sectionFrame, {
+        Size = UDim2.new(0.25, 0, 0.2, 0),
+        Position = UDim2.new(0.75, 0, 0.8, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = buttonText,
+        TextScaled = true,
+        Font = Configs_HUB.Text_Font
+    })
 
-    inputBox.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            local value = tonumber(inputBox.Text)
-            if value then
-                if minValue then value = math.max(value, minValue) end
-                if maxValue then value = math.min(value, maxValue) end
-                inputBox.Text = tostring(value)
-                callback(value)
-            else
-                inputBox.Text = tostring(minValue or 0)
-            end
+    sendButton.MouseButton1Click:Connect(function()
+        local value = tonumber(inputBox.Text)
+        if value then
+            if minValue then value = math.max(value, minValue) end
+            if maxValue then value = math.min(value, maxValue) end
+            inputBox.Text = tostring(value)
+            callback(value)
+        else
+            inputBox.Text = tostring(minValue or 1)
         end
     end)
 
-    return inputBox
+    return inputBox, sendButton
 end
 
 local framemusic = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.35, 0, 0.8, 0),
     Position = UDim2.new(0.5, 0, 0.4, 0),
-    AnchorPoint = Vector2.new(0.5, 0.5),
+    AnchorPoint = Vector2.new(0.52, 0.4),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     Visible = false
 })
@@ -1404,47 +1508,17 @@ TextSetColor(Text77)
 local scrollingsettingmusicFrame = Create("ScrollingFrame", framemusic, {
     Size = UDim2.new(1, 0, 0.85, 0),
     Position = UDim2.new(0, 0, 0.15, 0),
+    CanvasSize = UDim2.new(),
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
     ScrollBarThickness = 0
-})
-
-local musicTinnLayout = Create("UIListLayout", scrollingsettingmusicFrame, {
+})Create("UIListLayout", scrollingsettingmusicFrame, {
+    Padding = UDim.new(0, 10),
     SortOrder = Enum.SortOrder.LayoutOrder,
-    Padding = UDim.new(0, 5)
-})
-
-functions.SizescrollingsettingmusicFrame = function()
-    local contentHeight = musicTinnLayout.AbsoluteContentSize.Y
-    scrollingsettingmusicFrame.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
-end
-
-local AutoPlayframe = Create("Frame", scrollingsettingmusicFrame, {
-    Size = UDim2.new(1, 0, 0, 100),
-    BackgroundColor3 = Configs_HUB.Cor_Hub
-})
-
-local Text55 = Create("TextLabel", AutoPlayframe, {
-    Size = UDim2.new(1, 0, 0, 30),
-    TextScaled = true,
-    BackgroundTransparency = 1,
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
-    Font = Configs_HUB.Text_Font,
-    Text = "AutoPlay NextSong"
-})
-TextSetColor(Text55)
-
-local Text44 = Create("TextLabel", AutoPlayframe, {
-    Size = UDim2.new(1, 0, 0, 50),
-    TextScaled = true,
-    BackgroundTransparency = 1,
-    Position = UDim2.new(0, 0, 0.31, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
-    Font = Configs_HUB.Text_Font,
-    Text = [[will automatically play the next song when opened. If you don't want to, you can turn it off]]
-})
-TextSetColor(Text44)
+  })Create("UIPadding", scrollingsettingmusicFrame, {
+      PaddingLeft = UDim.new(0.028, 0),
+  })
 
 local isSettingLoopState = false
 local isSettingAutoPlayState = false
@@ -1464,56 +1538,64 @@ functions.ensureAutoPlayState = function()
     end
 end
 
-toggleLoopState = functions.createSettingSection(scrollingsettingmusicFrame, "Loop Songs", 
-[[Make the song playing repeat. Oh, I forgot to tell you. Pressing the next song or pressing the song back, pressing to select a song in the songList. will not be able to press. If you don't want it, you can turn it off]],
-function(forceState)
-    if isSettingLoopState or isSettingAutoPlayState then return end
-    isSettingLoopState = true
+toggleAutoPlayState = functions.createSettingSection(
+    scrollingsettingmusicFrame,
+    "AutoPlay NextSong",
+    [[Will automatically play the next song when opened. If you don't want to, you can turn it off]],
+    function(forceState)
+        if isSettingLoopState or isSettingAutoPlayState then return end
+        isSettingAutoPlayState = true
 
-    isLooping = forceState ~= nil and forceState or not isLooping
-    if isLooping and isAutoPlayEnabled then
-        toggleAutoPlayState(false)
-    end
+        isAutoPlayEnabled = forceState ~= nil and forceState or not isAutoPlayEnabled
+        if isAutoPlayEnabled and isLooping then
+            toggleLoopState(false)
+        end
 
-    functions.ensureLoopState()
+        functions.ensureAutoPlayState()
 
-    isSettingLoopState = false
-end, isLooping)
+        isSettingAutoPlayState = false
+    end,
+    isAutoPlayEnabled)
+    
+toggleLoopState = functions.createSettingSection(
+    scrollingsettingmusicFrame,
+    "Loop Songs",
+    [[Make the song playing repeat. Oh, I forgot to tell you. Pressing the next song or pressing the song back, pressing to select a song in the songList. will not be able to press. If you don't want it, you can turn it off]],
+    function(forceState)
+        if isSettingLoopState or isSettingAutoPlayState then return end
+        isSettingLoopState = true
 
-toggleAutoPlayState = functions.createToggleButton(AutoPlayframe, UDim2.new(0.82, 0, 0.75, 0), function(forceState)
-    if isSettingAutoPlayState or isSettingLoopState then return end
-    isSettingAutoPlayState = true
+        isLooping = forceState ~= nil and forceState or not isLooping
+        if isLooping and isAutoPlayEnabled then
+            toggleAutoPlayState(false)
+        end
 
-    isAutoPlayEnabled = forceState ~= nil and forceState or not isAutoPlayEnabled
-    if isAutoPlayEnabled and isLooping then
-        toggleLoopState(false)
-    end
+        functions.ensureLoopState()
 
-    functions.ensureAutoPlayState()
+        isSettingLoopState = false
+    end,
+    isLooping)
 
-    isSettingAutoPlayState = false
-end, isAutoPlayEnabled)
-
-local speedTextBox = functions.createTextBox(scrollingsettingmusicFrame, "Song Speed Music", "Adjust the speed of the song to a maximum of 2", function(speedMultiplier)
-if soundmusic then
-    soundmusic.Pitch = speedMultiplier
-    soundmusic.PlaybackSpeed = speedMultiplier
- end
- end,
-0, 2)
+local speedTextBox = functions.createTextBox(scrollingsettingmusicFrame, "Song Speed Music", "Adjust the speed of the song to a maximum of 2", "Set Speed", function(speedMultiplier)
+     if soundmusic then
+         soundmusic.Pitch = speedMultiplier
+         soundmusic.PlaybackSpeed = speedMultiplier
+     end
+ end, 0, 2)
 
 local increaseframe = Create("Frame", scrollingsettingmusicFrame, {
-    Size = UDim2.new(1, 0, 0, 100),
+    Size = UDim2.new(0.96, 0, 0.4, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0
-})
+})Stroke(increaseframe, {Thickness = 2})
 
 local increasetext = Create("TextLabel", increaseframe, {
-    Size = UDim2.new(1, 0, 0, 30),
+    Size = UDim2.new(1, 0, 0.2, 0),
     TextScaled = true,
-    TextXAlignment = Enum.TextXAlignment.Left,
     BackgroundTransparency = 1,
-    TextColor3 = Color3.fromRGB(255, 255, 255),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
     Text = "Volume Music"
 })
 
@@ -1524,32 +1606,32 @@ local increasetext1 = Create("TextLabel", increaseframe, {
     BackgroundTransparency = 1,
     Position = UDim2.new(0, 0, 0.31, 0),
     TextColor3 = Color3.fromRGB(255, 255, 255),
-    Text = "Make the music louder Can increase up to 250 only"
+    Text = [[Make the music louder Can increase up to 250 only]]
 })
 
 local volumeLabel = Create("TextLabel", increaseframe, {
-    Size = UDim2.new(0.27, 0, 0, 25),
-    Position = UDim2.new(0.36, 0, 0.73, 0),
-    Text = "Volume: " .. tostring(math.floor(soundmusic.Volume * 100)) .. "/250",
+    Size = UDim2.new(0.31, 0, 0.2, 0),
+    Position = UDim2.new(0.34, 0, 0.8, 0),
+    Text = "Volume:" .. tostring(math.floor(soundmusic.Volume * 100)) .. "/250",
     TextColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1,
     TextScaled = true
 })
 
 local increaseVolumeButton = Create("ImageButton", increaseframe, {
-    Size = UDim2.new(0.1, 0, 0, 30),
-    Position = UDim2.new(0.7, 0, 0.7, 0),
+    Size = UDim2.new(0.08, 0, 0.2, 0),
+    Position = UDim2.new(0.7, 0, 0.8, 0),
     BackgroundTransparency = 1,
     Image = "rbxthumb://type=Asset&id=83302423067688&w=150&h=150"
 })
+Corner(increaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
 
 local decreaseVolumeButton = Create("ImageButton", increaseframe, {
-    Size = UDim2.new(0.1, 0, 0, 25),
-    Position = UDim2.new(0.2, 0, 0.75, 0),
+    Size = UDim2.new(0.08, 0, 0.2, 0),
+    Position = UDim2.new(0.23, 0, 0.8, 0),
     BackgroundTransparency = 1,
     Image = "rbxthumb://type=Asset&id=99444312865147&w=150&h=150"
 })
-Corner(increaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
 Corner(decreaseVolumeButton, {CornerRadius = UDim.new(1, 0)})
 
 local volumeChangeAmount = 0.1
@@ -1565,17 +1647,19 @@ decreaseVolumeButton.MouseButton1Click:Connect(function()
 end)
 
 local ReverbModeframe = Create("Frame", scrollingsettingmusicFrame, {
-    Size = UDim2.new(1, 0, 0, 100),
+    Size = UDim2.new(0.96, 0, 0.4, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0
 })
+Stroke(ReverbModeframe, {Thickness = 2})
 
 local TextReverbMode = Create("TextLabel", ReverbModeframe, {
-    Size = UDim2.new(1, 0, 0, 30),
+    Size = UDim2.new(1, 0, 0.2, 0),
     TextScaled = true,
-    TextXAlignment = Enum.TextXAlignment.Left,
     BackgroundTransparency = 1,
-    TextColor3 = Color3.fromRGB(255, 255, 255),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
     Text = "Reverb Effect"
 })
 
@@ -1586,143 +1670,75 @@ local TextReverbMode1 = Create("TextLabel", ReverbModeframe, {
     BackgroundTransparency = 1,
     Position = UDim2.new(0, 0, 0.31, 0),
     TextColor3 = Color3.fromRGB(255, 255, 255),
-    Text = "Makes sound sound like it echoes in an enclosed space..."
+    Text = [[Makes sound sound like it echoes in an enclosed space, such as a large room or cave. The sound will echo and linger longer after stopping]]
 })
 
 local echoButton = Create("TextButton", ReverbModeframe, {
-    Size = UDim2.new(0, 100, 0, 30),
-    Position = UDim2.new(0.7, 0, 0.7, 0),
+    Size = UDim2.new(0.35, 0, 0.15, 0),
+    Position = UDim2.new(0.62, 0, 0.75, 0),
     Text = "Reverb Mode: off",
-    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    TextColor3 = Color3.fromRGB(255, 255, 255),
-    TextScaled = true,
-    BackgroundTransparency = 0.4
-})
-
-local ChorusModeframe = Create("Frame", scrollingsettingmusicFrame, {
-    Size = UDim2.new(1, 0, 0, 100),
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 0
-})
-
-local TextChorusMode = Create("TextLabel", ChorusModeframe, {
-    Size = UDim2.new(1, 0, 0, 30),
+    BackgroundColor3 = Configs_HUB.Cor_Options,
     TextScaled = true,
     TextXAlignment = Enum.TextXAlignment.Left,
-    BackgroundTransparency = 1,
-    TextColor3 = Color3.fromRGB(255, 255, 255),
-    Text = "Chorus Mode"
-})
-
-local TextChorusMode1 = Create("TextLabel", ChorusModeframe, {
-    Size = UDim2.new(1, 0, 0, 30),
-    TextScaled = true,
-    TextXAlignment = Enum.TextXAlignment.Left,
-    BackgroundTransparency = 1,
-    Position = UDim2.new(0, 0, 0.31, 0),
-    TextColor3 = Color3.fromRGB(255, 255, 255),
-    Text = "Makes the sound sound like there are slightly overlapping sounds..."
-})
-
-local chorusButton = Create("TextButton", ChorusModeframe, {
-    Size = UDim2.new(0, 100, 0, 30),
-    Position = UDim2.new(0.7, 0, 0.7, 0),
-    Text = "Chorus Mode: off",
-    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    TextColor3 = Color3.fromRGB(255, 255, 255),
-    TextScaled = true,
-    BackgroundTransparency = 0.4
-})
+    TextColor3 = Configs_HUB.Cor_Text,
+    BackgroundTransparency = 1
+})Corner(echoButton)
+localStroke = Stroke(echoButton, {Thickness = 2})
 
 local modes = {
-    { name = "Off", decayTime = 0, density = 0 },
-    { name = "Room", decayTime = 0.3, density = 0.5 },
-    { name = "Hall", decayTime = 1.2, density = 0.8 },
-    { name = "Concert Hall", decayTime = 2.5, density = 1.0 },
-    { name = "Forest", decayTime = 0.7, density = 0.4 },
-    { name = "Tunnel", decayTime = 1.5, density = 0.75 },
-    { name = "Mountains", decayTime = 3.5, density = 0.85 },
-    { name = "Cave", decayTime = 3.0, density = 0.7 },
-    { name = "Arena", decayTime = 1.8, density = 0.9 },
-    { name = "Underwater", decayTime = 2.2, density = 0.6 },
-    { name = "Open Field", decayTime = 0.5, density = 0.3 },
-    { name = "City", decayTime = 1.0, density = 0.65 },
-    { name = "Desert", decayTime = 0.9, density = 0.5 },
-    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4 },
-    { name = "Abandoned Building", decayTime = 1.3, density = 0.7 },
-    { name = "Swamp", decayTime = 1.7, density = 0.6 },
-    { name = "Factory", decayTime = 1.6, density = 0.75 },
-    { name = "Waterfall", decayTime = 2.3, density = 0.8 },
-    { name = "Cathedral", decayTime = 3.0, density = 0.9 },
-    { name = "Subway", decayTime = 1.4, density = 0.7 },
-    { name = "Library", decayTime = 1.1, density = 0.5 },
-}
-
-local chorusModes = {
-    { name = "Off", depth = 0, rate = 0 },
-    { name = "Light", depth = 0.5, rate = 1 },
-    { name = "Moderate", depth = 0.8, rate = 1.5 },
-    { name = "Heavy", depth = 1.0, rate = 2 },
-    { name = "Ultra", depth = 1.2, rate = 2.5 },
-    { name = "Extreme", depth = 1.5, rate = 3 },
-    { name = "Super Heavy", depth = 1.8, rate = 4 },
-    { name = "Max", depth = 2.0, rate = 5 },
-    { name = "Phantom", depth = 1.0, rate = 3.5 },
-    { name = "Super Phantom", depth = 2.5, rate = 6 },
-    { name = "Whisper", depth = 0.4, rate = 0.8 },
-    { name = "Echo", depth = 0.7, rate = 1.2 },
-    { name = "Cascading", depth = 1.3, rate = 3.0 },
-    { name = "Wavy", depth = 1.4, rate = 2.2 },
-    { name = "Siren", depth = 1.6, rate = 4.0 },
-    { name = "Ghostly", depth = 1.7, rate = 3.8 },
-    { name = "Dreamy", depth = 1.9, rate = 5.0 },
-    { name = "Vortex", depth = 2.1, rate = 5.5 },
-    { name = "Nebula", depth = 2.3, rate = 6.0 },
-    { name = "Warped", depth = 2.4, rate = 6.5 },
+    { name = "Off", decayTime = 0, density = 0, color = Configs_HUB.Cor_Stroke },
+    { name = "Room", decayTime = 0.3, density = 0.5, color = Color3.fromRGB(0, 255, 0) },
+    { name = "Hall", decayTime = 1.2, density = 0.8, color = Color3.fromRGB(0, 0, 255) },
+    { name = "Concert Hall", decayTime = 2.5, density = 1.0, color = Color3.fromRGB(255, 0, 0) },
+    { name = "Forest", decayTime = 0.7, density = 0.4, color = Color3.fromRGB(0, 255, 0) },
+    { name = "Tunnel", decayTime = 1.5, density = 0.75, color = Color3.fromRGB(128, 128, 128) },
+    { name = "Mountains", decayTime = 3.5, density = 0.85, color = Color3.fromRGB(139, 69, 19) },
+    { name = "Cave", decayTime = 3.0, density = 0.7, color = Color3.fromRGB(169, 169, 169) },
+    { name = "Arena", decayTime = 1.8, density = 0.9, color = Color3.fromRGB(255, 165, 0) },
+    { name = "Underwater", decayTime = 2.2, density = 0.6, color = Color3.fromRGB(0, 191, 255) },
+    { name = "Open Field", decayTime = 0.5, density = 0.3, color = Color3.fromRGB(0, 255, 255) },
+    { name = "City", decayTime = 1.0, density = 0.65, color = Color3.fromRGB(255, 223, 0) },
+    { name = "Desert", decayTime = 0.9, density = 0.5, color = Color3.fromRGB(255, 215, 0) },
+    { name = "Snowy Mountain", decayTime = 2.0, density = 0.4, color = Color3.fromRGB(255, 250, 250) },
+    { name = "Abandoned Building", decayTime = 1.3, density = 0.7, color = Color3.fromRGB(105, 105, 105) },
+    { name = "Swamp", decayTime = 1.7, density = 0.6, color = Color3.fromRGB(34, 139, 34) },
+    { name = "Factory", decayTime = 1.6, density = 0.75, color = Color3.fromRGB(169, 169, 169) },
+    { name = "Waterfall", decayTime = 2.3, density = 0.8, color = Color3.fromRGB(0, 255, 255) },
+    { name = "Cathedral", decayTime = 3.0, density = 0.9, color = Color3.fromRGB(255, 248, 220) },
+    { name = "Subway", decayTime = 1.4, density = 0.7, color = Color3.fromRGB(0, 0, 0) },
+    { name = "Library", decayTime = 1.1, density = 0.5, color = Color3.fromRGB(255, 239, 184) },
 }
 
 local currentMode = 1
-local currentChorusMode = 1
 
 functions.updateReverb = function()
-    local mode = modes[currentMode]
-    echoButton.Text = "Echo Mode: " .. mode.name
-    reverbEffect.DecayTime = mode.decayTime
-    reverbEffect.Density = mode.density
-    reverbEffect.Enabled = mode.name ~= "Off"
+    if currentMode and currentMode >= 1 and currentMode <= #modes then
+        local mode = modes[currentMode]
+        if mode.name == "Off" then
+            reverbEffect.DecayTime = 0
+            reverbEffect.Density = 0
+            reverbEffect.Enabled = false
+        else
+            reverbEffect.DecayTime = mode.decayTime
+            reverbEffect.Density = mode.density
+            reverbEffect.Enabled = true
+        end
+        echoButton.Text = "Reverb Mode: " .. mode.name
+        CreateTween(localStroke, "Color", mode.color, 0.2, false)
+        reverbEffect.DecayTime = mode.decayTime
+        reverbEffect.Density = mode.density
+    else
+        warn("currentMode is out of bounds or nil:", currentMode)
+    end
 end
 
-functions.updateChorus = function()
-    local mode = chorusModes[currentChorusMode]
-    chorusEffect.Depth = mode.depth
-    chorusEffect.Rate = mode.rate
-    chorusEffect.Enabled = mode.name ~= "Off"
-end
+updateReverb = functions.updateReverb
 
 echoButton.MouseButton1Click:Connect(function()
-    if currentMode == 1 then
-        currentChorusMode = 1
-        chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-        functions.updateChorus()
-    end
-    currentMode = currentMode % #modes + 1
-    echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-    functions.updateReverb()
+    currentMode = (currentMode % #modes) + 1  -- Ensures it stays within bounds
+    updateReverb()
 end)
 
-chorusButton.MouseButton1Click:Connect(function()
-    if currentChorusMode == 1 then
-        currentMode = 1
-        echoButton.Text = "Echo Mode: " .. modes[currentMode].name
-        functions.updateReverb()
-    end
-    currentChorusMode = currentChorusMode % #chorusModes + 1
-    chorusButton.Text = "Chorus Mode: " .. chorusModes[currentChorusMode].name
-    functions.updateChorus()
-end)
-
-functions.updateReverb()
-functions.updateChorus()
 soundmusic.Ended:Connect(function()
     if isLooping and not isAutoPlayEnabled then
         PlaySongByIndex(currentSongIndex, TitleLabel, TimeLabel, Frame_4)
@@ -1737,18 +1753,20 @@ soundmusic.Ended:Connect(function()
     end
 end)
 
-local Frame2 = Create("TextButton", ScreenGui, {
-   Size = UDim2.new(0, 174, 0, 50),
-   BackgroundColor3 = Color3.new(0, 0, 0),
-   Position = UDim2.new(0.456, 0, 0.46, 0),
-   AnchorPoint = Vector2.new(0.38, 0.46),
-   Visible = false
-})
+local Frame2 = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.17, 0, 0.1, 0),
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    BackgroundColor3 = Color3.new(0, 0, 0),
+    Position = UDim2.new(0.481, 0, 0.46, 0),
+    AnchorPoint = Vector2.new(0.38, 0.46),
+    Visible = false
+})Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
+Stroke(Frame2, {Thickness = 1})
 
-local musicplayer = Create("TextButton", Frame2, {
-    Size = UDim2.new(0, 30, 0, 30),
-    Position = UDim2.new(0.1, 0, 0.22, 0),
-    BackgroundColor3 = Color3.new(255, 255, 255),
+local musicplayer = Create("ImageButton", Frame2, {
+    Size = UDim2.new(0.15, 0, 0.6, 0),
+    Position = UDim2.new(0.11, 0, 0.22, 0),
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     Image = "rbxthumb://type=Asset&id=83193662937265&w=150&h=150"
 })
 Corner(musicplayer, {CornerRadius = UDim.new(1, 0)})
@@ -1759,7 +1777,7 @@ local uitogglemusicplayer = {
     {instance = TitleLabel, sizeOpen = UDim2.new(0.2, 0, 0.07, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = Frame_4, sizeOpen = UDim2.new(0.038, 0, 0.091, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = ProgressCircle, sizeOpen = UDim2.new(1, 0, 1, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
-    {instance = TimeLabel, sizeOpen = UDim2.new(0.06, 0, 0.06, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
+    {instance = TimeLabel, sizeOpen = UDim2.new(0.07, 0, 0.06, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = ToggleButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = NextButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)},
     {instance = PreviousButton, sizeOpen = UDim2.new(0.036, 0, 0.075, 0), sizeClosed = UDim2.new(0, 0, 0, 0)}
@@ -1767,32 +1785,33 @@ local uitogglemusicplayer = {
 
 musicplayer.MouseButton1Click:Connect(function()
     togglemusicplayer = not togglemusicplayer
-        if togglemusicplayer then
-            click1:Play()
-       for _, elementData in ipairs(uitogglemusicplayer) do
-        local instance = elementData.instance
-            elementData.instance.Visible = true
-            CreateTween1(instance, "Size", elementData.sizeOpen, 0.3, false)
-         end
-        else
-             click2:Play()
+    if togglemusicplayer then
+        click1:Play()
         for _, elementData in ipairs(uitogglemusicplayer) do
-        local instance = elementData.instance
+            local instance = elementData.instance
+            instance.Visible = true
+            CreateTween1(instance, "Size", elementData.sizeOpen, 0.3, false)
+        end
+    else
+        click2:Play()
+        for _, elementData in ipairs(uitogglemusicplayer) do
+            local instance = elementData.instance
             CreateTween1(instance, "Size", elementData.sizeClosed, 0.3, false)
-            elementData.instance.Visible = false
+            instance.Visible = false
         end
     end
-end) 
+end)
 
 local Listofsongs = Create("ImageButton", Frame2, {
-    Size = UDim2.new(0, 30, 0, 30),
-    Position = UDim2.new(0.1 + 0.3, 0, 0.22, 0),
-    BackgroundColor3 = Color3.new(1, 1, 1),
+    Size = UDim2.new(0.15, 0, 0.6, 0),
+    Position = UDim2.new(0.12 + 0.3, 0, 0.22, 0),
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     Image = "rbxthumb://type=Asset&id=78453271880788&w=150&h=150"
 })
 Corner(Listofsongs, {CornerRadius = UDim.new(1, 0)})
 
 local toggleListofsongs = true
+
 Listofsongs.MouseButton1Click:Connect(function()
     toggleListofsongs = not toggleListofsongs
     if toggleListofsongs then
@@ -1803,28 +1822,25 @@ Listofsongs.MouseButton1Click:Connect(function()
         click2:Play()
         CreateTween(Frame1, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
         Frame1.Visible = false
-        Frame1.Position = UDim2.new(0.3, 0, 0, 0)
     end
 end)
 
 local settingmusic = Create("ImageButton", Frame2, {
-    Size = UDim2.new(0, 30, 0, 30),
-    Position = UDim2.new(0.1 + 0.6, 0, 0.22, 0),
-    BackgroundColor3 = Color3.new(1, 1, 1),
+    Size = UDim2.new(0.15, 0, 0.6, 0),
+    Position = UDim2.new(0.12 + 0.6, 0, 0.22, 0),
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     Image = "rbxthumb://type=Asset&id=79452146977559&w=150&h=150"
-})
-Corner(settingmusic, {CornerRadius = UDim.new(1, 0)})
+})Corner(settingmusic, {CornerRadius = UDim.new(1, 0)})
 
 local togglesettingmusic = false
+
 settingmusic.MouseButton1Click:Connect(function()
     togglesettingmusic = not togglesettingmusic
     if togglesettingmusic then
-        functions.SizescrollingsettingmusicFrame()
         click1:Play()
         framemusic.Visible = true
         CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
     else
-        functions.SizescrollingsettingmusicFrame()
         click2:Play()
         CreateTween(framemusic, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
         framemusic.Visible = false
@@ -1846,31 +1862,20 @@ MusicToggleButton.MouseButton1Click:Connect(function()
     if togglemusic then
         Frame2.Visible = true
         click1:Play()
-        CreateTween(Frame2, "Size", UDim2.new(0, 174, 0, 50), 0.3, true)
+        CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0.1, 0), 0.3, true)
     else
         click2:Play()
-        CreateTween(Frame2, "Size", UDim2.new(0, 174, 0, 0), 0.3, true)
+        CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0, 0), 0.3, true)
         Frame2.Visible = false
     end
 end)
 
 local framek = Create("Frame", ScreenGui, {
-    Size = UDim2.new(0.5, 0, 0.7, 0),
-    Position = UDim2.new(0.25, 0, 0.15, 0),
+    Size = UDim2.new(0.4, 0, 0.85, 0),
+    Position = UDim2.new(0.30, 0, 0, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     Visible = false
 })
-
-local tweenGradient = CreateGradient(framek, {
-    Color = {
-        Color3.fromRGB(255, 0, 0),
-        Color3.fromRGB(0, 0, 0),
-        Color3.fromRGB(255, 0, 0)
-    },
-    Rotation = 45,
-    Tween = true,
-    Speed = 3
-    })
 
 local mainText = Create("TextLabel", framek, {
     Size = UDim2.new(1, 0, 0.15, 0),
@@ -1879,18 +1884,19 @@ local mainText = Create("TextLabel", framek, {
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     TextScaled = true
-})TextSetColor(mainText)
+})
+TextSetColor(mainText)
 
 local grnub7t = Create("UIGradient", mainText, {
-    Color = ColorSequence.new({
+    Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
         ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
-    }),
-    Transparency = NumberSequence.new({
+    },
+    Transparency = NumberSequence.new{
         NumberSequenceKeypoint.new(0, 1),
         NumberSequenceKeypoint.new(1, 0)
-    }),
+    },
     Rotation = 90
 })
 
@@ -1901,25 +1907,27 @@ local frameGame = Create("ScrollingFrame", framek, {
     BackgroundTransparency = 1,
     CanvasSize = UDim2.new(0, 0, 5, 0),
     ScrollBarThickness = 0
-})
-
-local uiListLayout = Create("UIListLayout", frameGame, {
-    SortOrder = Enum.SortOrder.LayoutOrder
+})Create("UIListLayout", frameGame, {
+    Padding = UDim.new(0, 1),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", frameGame, {
+      PaddingLeft = UDim.new(0.028, 0),
 })
 
 local mainGameLabel = Create("TextLabel", frameGame, {
-    Size = UDim2.new(1, 0, 0, 40),
+    Size = UDim2.new(0.96, 0, 0.02, 0),
     Text = "MainGame",
     BackgroundTransparency = 0.7,
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     TextScaled = true
-})TextSetColor(mainGameLabel)
+})
+TextSetColor(mainGameLabel)
 
 local place = gamePlaces[1]
 
 local mainGameFrame = Create("Frame", frameGame, {
-    Size = UDim2.new(1, 0, 0, 140),
+    Size = UDim2.new(0.96, 0, 0.08, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub
 })
 
@@ -1942,44 +1950,44 @@ end)
 
 if success and productInfo then
     local mainGameImage = Create("ImageLabel", mainGameFrame, {
-        Size = UDim2.new(0.32, 0, 0, 115),
+        Size = UDim2.new(0.32, 0, 1, 0),
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 0, 0, 0),
-        Image = "rbxthumb://type=Asset&id=".. place.PlaceId .."&w=420&h=420"
+        Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
     })
 end
 
 local mainText = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.05, 0, 0, 20),
+    Size = UDim2.new(0.05, 0, 0.09, 0),
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     BackgroundTransparency = 1,
     Position = UDim2.new(0.324, 0, 0, 0),
-    Text = count.."",
+    Text = tostring(count),
     TextScaled = true
 })
 TextSetColor(mainText)
 
 local mainGameText = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.672, 0, 0, 30),
+    Size = UDim2.new(0.672, 0, 0.23, 0),
     Position = UDim2.new(0.322, 0, 0.16, 0),
     TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
+    TextXAlignment = Enum.TextXAlignment.Left,
     Font = Configs_HUB.Text_Font,
     BackgroundTransparency = 1,
-    Text = "Name:" .. place.Name,
+    Text = "Name: " .. place.Name,
     TextScaled = true
 })
 TextSetColor(mainGameText)
 
 local mainidGame = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.672, 0, 0, 30),
+    Size = UDim2.new(0.672, 0, 0.23, 0),
     Position = UDim2.new(0.322, 0, 0.4, 0),
     TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
+    TextXAlignment = Enum.TextXAlignment.Left,
     Font = Configs_HUB.Text_Font,
     BackgroundTransparency = 1,
-    Text = "Id:"..place.PlaceId,
+    Text = "Id: " .. place.PlaceId,
     TextScaled = true
 })
 TextSetColor(mainidGame)
@@ -2015,128 +2023,148 @@ local grant = Create("UIGradient", TeleportButton, {
 
 count = count + 1
 
-local splitGamesLabel = Create("TextLabel", frameGame, {
-    Size = UDim2.new(1, 0, 0, 40),
-    BackgroundTransparency = 0,
-    Text = "Splitgame",
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    TextScaled = true
-})
-TextSetColor(splitGamesLabel)
-
-local grnubfft = Create("UIGradient", splitGamesLabel, {
-    Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-    },
-    Transparency = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 1),
-        NumberSequenceKeypoint.new(1, 0)
-    },
-    Rotation = 90
-})
-
-for i = 2, #gamePlaces do
-    local place = gamePlaces[i]
-
-    local gameFrame = Create("Frame", frameGame, {
-        Size = UDim2.new(1, 0, 0, 140),
-        BackgroundColor3 = Configs_HUB.Cor_Hub
+if #gamePlaces <= 1 then
+    local noSplitGamesLabel = Create("TextLabel", frameGame, {
+        Size = UDim2.new(0.96, 0, 0.02, 0),
+        BackgroundTransparency = 0.7,
+        Text = "This game does not have a split game",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true
     })
+    TextSetColor(noSplitGamesLabel)
     
-    local grnujbt = Create("UIGradient", gameFrame, {
+    local grnubfft = Create("UIGradient", noSplitGamesLabel, {
         Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
-        },
-        Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 0),
-            NumberSequenceKeypoint.new(1, 0)
-        },
-        Rotation = 40
-    })
-
-    success, productInfo = pcall(function()
-        return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-    end)
-
-    if success and productInfo then
-        local gameImage = Create("ImageLabel", gameFrame, {
-            Size = UDim2.new(0.32, 0, 0, 115),
-            Position = UDim2.new(0, 0, 0, 0),
-            BackgroundTransparency = 1,
-            Image = "rbxthumb://type=Asset&id=".. place.PlaceId .."&w=420&h=420"
-        })
-    end
-
-    local gameText = Create("TextLabel", gameFrame, {
-        Size = UDim2.new(0.05, 0, 0, 20),
-        Position = UDim2.new(0.324, 0, 0, 0),
-        BackgroundTransparency = 1,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
-        Text = count.."",
-        TextScaled = true
-    })
-    TextSetColor(gameText)
-
-    local gameLabelText = Create("TextLabel", gameFrame, {
-        Size = UDim2.new(0.672, 0, 0, 30),
-        Position = UDim2.new(0.322, 0, 0.16, 0),
-        TextColor3 = Configs_HUB.Cor_Text,
-        TextXAlignment = "Left",
-        Font = Configs_HUB.Text_Font,
-        BackgroundTransparency = 1,
-        Text = "Name:" .. place.Name,
-        TextScaled = true
-    })
-    TextSetColor(gameLabelText)
-
-    local gameidLabel = Create("TextLabel", gameFrame, {
-        Size = UDim2.new(0.672, 0, 0, 30),
-        Position = UDim2.new(0.322, 0, 0.4, 0),
-        TextColor3 = Configs_HUB.Cor_Text,
-        TextXAlignment = "Left",
-        Font = Configs_HUB.Text_Font,
-        BackgroundTransparency = 1,
-        Text = "Id:" ..place.PlaceId,
-        TextScaled = true
-    })
-    TextSetColor(gameidLabel)
-
-    local teleportButton = Create("TextButton", gameFrame, {
-        Size = UDim2.new(1, 0, 0.17, 0),
-        Position = UDim2.new(0, 0, 0.83, 0),
-        BackgroundTransparency = 0,
-        BackgroundColor3 = Configs_HUB.Cor_Hub,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
-        Text = "Play",
-        TextScaled = true
-    })
-    TextSetColor(teleportButton)
-
-    teleportButton.MouseButton1Click:Connect(function()
-        TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
-    end)
-
-    local grnt = Create("UIGradient", teleportButton, {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
             ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
         },
         Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0, 1),
             NumberSequenceKeypoint.new(1, 0)
         },
-        Rotation = -60
+        Rotation = 90
+    })
+else
+    local splitGamesLabel = Create("TextLabel", frameGame, {
+        Size = UDim2.new(0.96, 0, 0.02, 0),
+        BackgroundTransparency = 0,
+        Text = "Splitgame",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true
+    })
+    TextSetColor(splitGamesLabel)
+
+    local grnubfft = Create("UIGradient", splitGamesLabel, {
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+        },
+        Transparency = NumberSequence.new{
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(1, 0)
+        },
+        Rotation = 90
     })
 
-    count = count + 1
+    for i = 2, #gamePlaces do
+        local place = gamePlaces[i]
+        local gameFrame = Create("Frame", frameGame, {
+            Size = UDim2.new(0.96, 0, 0.08, 0),
+            BackgroundColor3 = Configs_HUB.Cor_Hub
+        })
+
+        local grnujbt = Create("UIGradient", gameFrame, {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+            },
+            Transparency = NumberSequence.new{
+                NumberSequenceKeypoint.new(0, 0),
+                NumberSequenceKeypoint.new(1, 0)
+            },
+            Rotation = 40
+        })
+
+        local success, productInfo = pcall(function()
+            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+        end)
+
+        if success and productInfo then
+            local gameImage = Create("ImageLabel", gameFrame, {
+                Size = UDim2.new(0.32, 0, 1, 0),
+                Position = UDim2.new(0, 0, 0, 0),
+                BackgroundTransparency = 1,
+                Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+            })
+        end
+
+        local gameText = Create("TextLabel", gameFrame, {
+            Size = UDim2.new(0.05, 0, 0.09, 0),
+            Position = UDim2.new(0.324, 0, 0, 0),
+            BackgroundTransparency = 1,
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            Text = tostring(count),
+            TextScaled = true
+        })
+
+        local gameLabelText = Create("TextLabel", gameFrame, {
+            Size = UDim2.new(0.672, 0, 0.23, 0),
+            Position = UDim2.new(0.322, 0, 0.16, 0),
+            TextColor3 = Configs_HUB.Cor_Text,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            Font = Configs_HUB.Text_Font,
+            BackgroundTransparency = 1,
+            Text = "Name: " .. place.Name,
+            TextScaled = true
+        })
+
+        local gameidLabel = Create("TextLabel", gameFrame, {
+            Size = UDim2.new(0.672, 0, 0.23, 0),
+            Position = UDim2.new(0.322, 0, 0.4, 0),
+            TextColor3 = Configs_HUB.Cor_Text,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            Font = Configs_HUB.Text_Font,
+            BackgroundTransparency = 1,
+            Text = "Id: " .. place.PlaceId,
+            TextScaled = true
+        })
+
+        local teleportButton = Create("TextButton", gameFrame, {
+            Size = UDim2.new(1, 0, 0.17, 0),
+            Position = UDim2.new(0, 0, 0.83, 0),
+            BackgroundTransparency = 0,
+            BackgroundColor3 = Configs_HUB.Cor_Hub,
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            Text = "Play",
+            TextScaled = true
+        })
+
+        teleportButton.MouseButton1Click:Connect(function()
+            TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+        end)
+
+        local grnt = Create("UIGradient", teleportButton, {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+            },
+            Transparency = NumberSequence.new{
+                NumberSequenceKeypoint.new(0, 0),
+                NumberSequenceKeypoint.new(1, 0)
+            },
+            Rotation = -60
+        })
+
+        count = count + 1
+    end
 end
 
 local SplitgameToggleButton = Create("ImageButton", frame, {
@@ -2150,17 +2178,18 @@ local SplitgameToggleButton = Create("ImageButton", frame, {
 
 local minimiz7 = true
 SplitgameToggleButton.MouseButton1Click:Connect(function()
-    minimiz7 = not minimiz7
-    if minimiz7 then
-        framek.Visible = true
-        click1:Play()
-        CreateTween(framek, "Size", UDim2.new(0.5, 0, 0.7, 0), 0.3, true)
-    else
-        click2:Play()
-        CreateTween(framek, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
-        framek.Visible = false
-    end
-end)
+     minimiz7 = not minimiz7
+
+      if minimiz7 then
+          framek.Visible = true
+          click1:Play()
+          CreateTween(framek, "Size", UDim2.new(0.4, 0, 0.85, 0), 0.3, true) 
+       else
+          click2:Play()
+          CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+          framek.Visible = false
+      end
+ end)
 
 local success, result = pcall(function()
     return MarketplaceService:GetProductInfo(PlaceId)
@@ -2192,7 +2221,7 @@ Corner(iconplayers, {CornerRadius = UDim.new(1, 0)})
 
 local Wellcome = Create("TextLabel", ScreenGui, {
     Size = UDim2.new(0.25, 0, 0.09, 0),
-    Text = "Wellcome "..game.Players.LocalPlayer.Name,
+    Text = "Welcome "..game.Players.LocalPlayer.Name,
     Position = UDim2.new(0.14, 0, 0.077, 0),
     AnchorPoint = Vector2.new(0.11, 0.085),
     TextColor3 = Configs_HUB.Cor_Text,
@@ -2355,7 +2384,6 @@ functions.checkFriends = function()
                     BackgroundTransparency = 0.4,
                     Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
                 })
-                Corner(avatarImage, {CornerRadius = UDim.new(1, 0)})
 
                 local friendName = Create("TextLabel", friendFrame, {
                     Size = UDim2.new(0.9, 0, 1, 0),
@@ -2448,46 +2476,35 @@ TextSetColor(Position)
 Corner(Position, {CornerRadius = UDim.new(0.15, 0)})
 
 Position.MouseButton1Click:Connect(function()
-    local player = game.Players.LocalPlayer
-    local position = player.Character.HumanoidRootPart.Position
+local player = game.Players.LocalPlayer
+local position = player.Character.HumanoidRootPart.Position
 
-    local positionString = string.format("Vector3.new(%f, %f, %f)", position.X, position.Y, position.Z)
-    local teleportCode = [[
-    --1hooaczx1: You can take it, paste it into your Executor and press execute. And it will teleport you to where you originally pressed Copy
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(]] .. positionString .. [[)
-    ]]
-    setclipboard(teleportCode)
-end)
-
+local positionString = string.format("Vector3.new(%f, %f, %f)", position.X, position.Y, position.Z)
+local teleportCode = [[
+--1hooaczx1: You can take it, paste it into your Executor and press execute. And it will teleport you to where you originally pressed Copy
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(]] .. positionString .. [[)
+]]
+setclipboard(teleportCode)
+end) 
 Join.MouseButton1Click:Connect(function()
-    local teleportCode = [[
-    -- 1hooaczx1: This script will take you to the game"]]..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name..[["
-    --If it doesn't work then the script isn't working
-    game:GetService("TeleportService"):Teleport(]] .. game.PlaceId .. [[, player)
-    ]]
-    setclipboard(teleportCode)
-end)
+local teleportCode = [[
+-- 1hooaczx1: This script will take you to the game"]]..game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name..[["
+--If it doesn't work then the script isn't working
+game:GetService("TeleportService"):Teleport(]] .. game.PlaceId .. [[, player)
+]]
+setclipboard(teleportCode)
+end) 
 
-local frame23 = Create("Frame", frame100, {
-    Size = UDim2.new(1, 0, 0.11, 0),
-    Position = UDim2.new(0, 0, 0.001, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 1
-})
+local frame23 = Create("Frame", frame100, {Size = UDim2.new(1, 0, 0.11, 0), Position = UDim2.new(0, 0, 0.001, 0), BackgroundColor3 = Configs_HUB.Cor_Hub, BackgroundTransparency = 1})
 
-local frame9 = Create("TextLabel", frameinfo, {
-    Size = UDim2.new(1, 0, 1, 0),
-    Text = "",
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 1
-})
+local frame9 = Create("TextLabel", frameinfo, {Size = UDim2.new(1, 0, 1, 0), Text = "", BackgroundColor3 = Configs_HUB.Cor_Hub, BackgroundTransparency = 1})
 
 local frame79 = Create("TextLabel", gameinfoframe, {
     Size = UDim2.new(1, 0, 1, 0),
     BackgroundColor3 = Color3.fromRGB(20, 20, 20),
     BackgroundTransparency = 1,
     TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
+    TextXAlignment = Enum.TextXAlignment.Left,
     Font = Configs_HUB.Text_Font,
     TextScaled = true,
     Text = "Fetching data..."
@@ -2495,19 +2512,9 @@ local frame79 = Create("TextLabel", gameinfoframe, {
 Corner(frame79, {CornerRadius = UDim.new(0.15, 0)})
 TextSetColor(frame79)
 
-local listLayout = Create("UIListLayout", frame79, {
-    FillDirection = Enum.FillDirection.Vertical,
-    HorizontalAlignment = Enum.HorizontalAlignment.Left,
-    VerticalAlignment = Enum.VerticalAlignment.Top,
-    Padding = UDim.new(0, 5)
-})
+local listLayout1 = Create("UIListLayout", frame79, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 5)})
 
-local listLayout = Create("UIListLayout", frame9, {
-    FillDirection = Enum.FillDirection.Vertical,
-    HorizontalAlignment = Enum.HorizontalAlignment.Left,
-    VerticalAlignment = Enum.VerticalAlignment.Top,
-    Padding = UDim.new(0, 6)
-})
+local listLayout2 = Create("UIListLayout", frame9, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
 
 local players = game:GetService("Players")
 local LocalPlayer = players.LocalPlayer
@@ -2587,20 +2594,39 @@ end
 
 functions.updatePlaytime()
 
-functions.parseDate = function(dateString)
-    local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
-    local year, month, day, hour, min, sec = dateString:match(pattern)
-    return os.time({
-        year = tonumber(year),
-        month = tonumber(month),
-        day = tonumber(day),
-        hour = tonumber(hour),
-        min = tonumber(min),
-        sec = tonumber(sec)
-    })
+functions.fetchPlaceInfoWithRetry = function(retries, delay)
+    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    
+    for i = 1, retries do
+        local success, response = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet(url))
+        end)
+
+        if success and response and response.data and #response.data > 0 then
+            return response.data[1]
+        else
+            warn("Failed to fetch place info (Attempt " .. i .. " of " .. retries .. ")")
+            wait(delay)
+        end
+    end
+
+    return nil
 end
 
-functions.fetchPlaceInfo = function()
+functions.updatePlaceInfo = function()
+   functions.parseDate = function(dateString)
+        local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
+        local year, month, day, hour, min, sec = dateString:match(pattern)
+        return os.time({
+            year = tonumber(year),
+            month = tonumber(month),
+            day = tonumber(day),
+            hour = tonumber(hour),
+            min = tonumber(min),
+            sec = tonumber(sec)
+        })
+    end
+
     local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
     local success, response = pcall(function()
         return HttpService:JSONDecode(game:HttpGet(url))
@@ -2610,7 +2636,8 @@ functions.fetchPlaceInfo = function()
         local data = response.data[1]
         local created = functions.parseDate(data.created)
         local updated = functions.parseDate(data.updated)
-        return {
+
+        local placeInfo = {
             PlaceId = game.PlaceId,
             Name = data.name or "Unknown",
             Created = os.date("%Y-%m-%d %H:%M:%S", created),
@@ -2619,17 +2646,8 @@ functions.fetchPlaceInfo = function()
             Visits = data.visits or 0,
             ServerCount = #Players:GetPlayers()
         }
-    else
-        warn("Failed to fetch place info.")
-        return nil
-    end
-end
 
-functions.updatePlaceInfo = function()
-    local placeInfo = functions.fetchPlaceInfo()
-    if placeInfo then
         local maxPlayers = game:GetService("Players").MaxPlayers
-
         local playersInServer = placeInfo.ServerCount
         local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
 
@@ -2663,7 +2681,7 @@ local DisplayName = Create("TextLabel", frame9, {
     TextXAlignment = "Left",
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 1
+    BackgroundTransparency = 1,
 })
 TextSetColor(DisplayName)
 
@@ -2676,7 +2694,7 @@ local UserIdg = Create("TextLabel", frame9, {
     TextXAlignment = "Left",
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 1
+    BackgroundTransparency = 1,
 })
 TextSetColor(UserIdg)
 
@@ -2689,7 +2707,7 @@ local AccountCreated = Create("TextLabel", frame9, {
     TextXAlignment = "Left",
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 1
+    BackgroundTransparency = 1,
 })
 TextSetColor(AccountCreated)
 
@@ -2719,7 +2737,7 @@ local infoToggleButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(4, 175, 236),
     ZIndex = 10,
     BackgroundTransparency = 1,
-    Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150"
+    Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150",
 })
 
 local minimize3 = true
@@ -2752,19 +2770,20 @@ infoToggleButton.MouseButton1Click:Connect(function()
     else
         click2:Play()
         for _, element in ipairs(uiinfoToggle) do
-            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, false)
+            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
             element.instance.Visible = false
         end
     end
 end)
-
-local lastUpdate = tick()
+   
 local stopupdateall
-stopupdateall = RunService.Heartbeat:Connect(function()
-    local currentTime = tick()
+local stopupdateall1
+local lastUpdate = tick()
+   stopupdateall1 = RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
     if currentTime - lastUpdate >= 1 then
-        local playerCount = #players:GetPlayers()
-        local maxPlayers = players.MaxPlayers
+   local playerCount = #players:GetPlayers()
+   local maxPlayers = players.MaxPlayers
         DisplayName.Text = "Display Name: " .. player.DisplayName
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
@@ -2772,15 +2791,20 @@ stopupdateall = RunService.Heartbeat:Connect(function()
         friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-        
+          lastUpdate = currentTime
+        end
+     end) 
+
+   stopupdateall = RunService.Heartbeat:Connect(function()
+    local currentTime = tick()
+    if currentTime - lastUpdate >= 1 then
         functions.updatePlaytime()
         functions.checkFriends()
         functions.startUpdating()
         functions.updateTime()
-
         lastUpdate = currentTime
-    end
-end)
+      end
+   end)
 
 local Button = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -2794,9 +2818,15 @@ local Button = Create("ImageButton", frame, {
 if corner then Corner(Button) end 
 if stroke then Stroke(Button, {Color = strokecolor}) end
 
-local minimize = false
+local minimize = true
 Button.MouseButton1Click:Connect(function()
     if minimize then
+     if IsMinimizedu then
+         minimize = false
+         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
+         Menu.Visible = false
+         Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+      else
         minimize = false
         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
         Menu.Visible = false
@@ -2804,7 +2834,13 @@ Button.MouseButton1Click:Connect(function()
         Containers.Visible = false
         line_Containers.Visible = false
         Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+      end
     else
+     if IsMinimizedu then
+         minimize = true
+         Menu.Visible = true
+         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
+      else
         minimize = true
         ScrollBar.Visible = true
         Containers.Visible = true
@@ -2812,6 +2848,7 @@ Button.MouseButton1Click:Connect(function()
         Menu.Visible = true
         click1:Play()
         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
+      end
     end
 end)
 
@@ -2834,18 +2871,17 @@ TextSetColor(Text7)
 local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
     Size = UDim2.new(1, 0, 0.85, 0),
     Position = UDim2.new(0, 0, 0.15, 0),
+    CanvasSize = UDim2.new(),
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
     ScrollBarThickness = 0
+})Create("UIListLayout", scrollingSettingFrame, {
+    Padding = UDim.new(0, 10),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", scrollingSettingFrame, {
+      PaddingLeft = UDim.new(0.028, 0),
 })
-
-local SettingTinniLayout = Create("UIListLayout", scrollingSettingFrame, {
-    SortOrder = Enum.SortOrder.LayoutOrder
-})
-
-functions.Size = function()
-    local contentHeight = SettingTinniLayout.AbsoluteContentSize.Y
-    scrollingSettingFrame.CanvasSize = UDim2.new(0, 0, contentHeight, 0)
-end
 
 local isClickEffectEnabled = false
 local ripples = {}
@@ -3257,12 +3293,10 @@ SettingButton.MouseButton1Click:Connect(function()
 
     if minimize9 then
         click1:Play()
-        functions.Size()
         frameSetting.Visible = true
         CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
     else
         click2:Play()
-        functions.Size()
         CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
         frameSetting.Visible = false
     end
@@ -3371,6 +3405,10 @@ ScreenGui.AncestryChanged:Connect(function()
             stopupdateall:Disconnect()
             stopupdateall = nil
         end
+        if stopupdateall1 then
+            stopupdateall1:Disconnect()
+            stopupdateall1 = nil
+        end
     end
 end)
 end
@@ -3387,7 +3425,7 @@ function MakeTab(Configs)
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundTransparency = 1
-    }) Corner(Frame) Stroke(Frame)
+    })Corner(Frame)FrameStroke = Stroke(Frame, {Thickness = 1})
     
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
@@ -3438,30 +3476,42 @@ function MakeTab(Configs)
         end
     end
     for _, frame in pairs(ScrollBar:GetChildren()) do
-        if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
-            local defaultSize = frame.TextLabel.TextSize - 2
-            frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
-            CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-            frame.TextLabel:SetAttribute("Clicked", false) -- รีเซ็ตสถานะ
-        end
-    end
-    if not TextLabel:GetAttribute("Clicked") then
-        local currentSize = TextLabel.TextSize
-        local newSize = currentSize + 2
-        TextLabel.TextSize = newSize
-        if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
-            TextLabel.TextSize = currentSize
-        end
-        TextLabel:SetAttribute("Clicked", true) -- บันทึกสถานะว่าเพิ่มขนาดแล้ว
-    end
-
+        if frame:IsA("Frame") then
+            local frameStroke = frame:FindFirstChildOfClass("UIStroke")
+            local label = frame:FindFirstChild("TextLabel")
+            if label == TextLabel then
+                CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+                CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+                if not label:GetAttribute("Clicked") then
+                    local percentageIncrease = 0.1
+                    local currentSize = label.TextSize
+                    local newSize = currentSize * (1 + percentageIncrease)
+                    label.TextSize = newSize
+                    if label.TextBounds.X > label.AbsoluteSize.X then
+                        label.TextSize = currentSize
+                    end
+                    label:SetAttribute("Clicked", true)
+                end
+            else
+                if frameStroke then
+                    CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+                end
+                if label then
+                    local defaultSize = label.TextSize - 2
+                    label.TextSize = math.clamp(defaultSize, 14, 20)
+                    CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+                    label:SetAttribute("Clicked", false)
+                 end
+             end
+         end
+     end
     Container.Visible = true
-    CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
  end)
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         CreateTween(TextLabel, "TextSize", 17, 0.2, false)
+        CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
         firstTabSet = true
     end
 
@@ -3511,16 +3561,17 @@ end
     TextSetColor(TextLabel)
   end
   
-  function AddWarningMessage(parent, Configs)
-    WarningMessage = Configs.WarningMessage
-    ImageId = Configs.ImageId
+  function AddWarningMessage(parent, Configs, StrokeColor)
+    local WarningMessage = Configs.WarningMessage
+    local ImageId = Configs.ImageId
+
     local WarningFrame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.17, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
     })
     local FrameStroke = Create("UIStroke", WarningFrame, {
         Thickness = 2,
-        Color = Color3.fromRGB(255, 165, 0),
+        Color = Configs_HUB.Cor_Options,
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     })
     local ImageLabel = Create("ImageLabel", WarningFrame, {
@@ -4324,6 +4375,9 @@ function AddTextTable(parent, Configs)
         Stroke(ExitExpandImageButton)
 
         ExitExpandImageButton.MouseButton1Click:Connect(function()
+          CreateTween(ImageLabel, "Size", UDim2.new(), 0.3, false)
+          CreateTween(TextLabel, "Size", UDim2.new(), 0.3, false)
+          CreateTween(ExitExpandImageButton, "Size", UDim2.new(), 0.3, false)
           CreateTween(MenuBackground, "Size", UDim2.new(), 0.3, true)
           MenuBackground:Destroy()
           ImageLabel:Destroy()
@@ -4472,6 +4526,16 @@ function AddTextTable(parent, Configs)
         BackgroundTransparency = 1,
     })
 
+    local CreditLabel = Create("TextLabel", Frame, {
+        Size = UDim2.new(0.35, 0, 0.2, 0),
+        Position = UDim2.new(0.01, 0, 0.34, 0),
+        Text = "Created by: Not found",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true,
+        BackgroundTransparency = 1,
+    })
+
     local TextBoxID = Create("TextBox", Frame, {
         Size = UDim2.new(0.27, 0, 0.2, 0),
         Position = UDim2.new(0.53, 0, 0.34, 0),
@@ -4596,7 +4660,6 @@ Toggle.MouseButton1Click:Connect(function()
         musicPlaying = true
     end
 end)
-
 end
 
   function AddDiscord(parent, Configs)
