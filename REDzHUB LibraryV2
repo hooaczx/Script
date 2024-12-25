@@ -3478,33 +3478,32 @@ function MakeTab(Configs)
     for _, frame in pairs(ScrollBar:GetChildren()) do
         if frame:IsA("Frame") then
             local frameStroke = frame:FindFirstChildOfClass("UIStroke")
-            if frameStroke then
-                CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false) -- เปลี่ยนสีของ FrameStroke กลับเป็นค่าเริ่มต้น
-            end
             local label = frame:FindFirstChild("TextLabel")
-            if label and label ~= TextLabel then
-                local defaultSize = label.TextSize - 2
-                label.TextSize = math.clamp(defaultSize, 14, 20)
-                CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-                label:SetAttribute("Clicked", false)
-            end
-        end
-    end
-    if not TextLabel:GetAttribute("Clicked") then
-        local currentSize = TextLabel.TextSize
-        local newSize = currentSize + 2
-        TextLabel.TextSize = newSize
-        if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
-            TextLabel.TextSize = currentSize
-        end
-        TextLabel:SetAttribute("Clicked", true)
-    end
-    CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
-    CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+            if label == TextLabel then
+                CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+                CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+                local currentSize = label.TextSize
+                local newSize = currentSize + 2
+                label.TextSize = newSize
+                if label.TextBounds.X > label.AbsoluteSize.X then
+                    label.TextSize = currentSize
+                end
+                label:SetAttribute("Clicked", true)
+            else
+                if frameStroke then
+                    CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+                end
+                if label then
+                    local defaultSize = label.TextSize - 2
+                    label.TextSize = math.clamp(defaultSize, 14, 20)
+                    CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+                    label:SetAttribute("Clicked", false)
+                 end
+             end
+         end
+     end
     Container.Visible = true
-end)
-
-
+  end)
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
