@@ -3469,7 +3469,7 @@ function MakeTab(Configs)
       PaddingLeft = UDim.new(0.025, 0),
     })
     
-    TextButton.MouseButton1Click:Connect(function()
+    TextButton.MouseButton1Click:Connect(function()ฃ
     for _, container in pairs(Containers:GetChildren()) do
         if container:IsA("ScrollingFrame") then
             container.Visible = false
@@ -3477,10 +3477,13 @@ function MakeTab(Configs)
     end
     for _, frame in pairs(ScrollBar:GetChildren()) do
         if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
+            local frameStroke = frame:FindFirstChildOfClass("UIStroke") -- หา FrameStroke ของ Frame ปัจจุบัน
+            if frameStroke then
+                CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+            end
             local defaultSize = frame.TextLabel.TextSize - 2
             frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
             CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-            CreateTween(FrameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
             frame.TextLabel:SetAttribute("Clicked", false)
         end
     end
@@ -3497,7 +3500,7 @@ function MakeTab(Configs)
     Container.Visible = true
     CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
     CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
- end)
+  end)
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
