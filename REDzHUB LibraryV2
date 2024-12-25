@@ -3482,13 +3482,16 @@ function MakeTab(Configs)
             if label == TextLabel then
                 CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
                 CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-                local currentSize = label.TextSize
-                local newSize = currentSize + 2
-                label.TextSize = newSize
-                if label.TextBounds.X > label.AbsoluteSize.X then
-                    label.TextSize = currentSize
+                if not label:GetAttribute("Clicked") then
+                    local percentageIncrease = 0.1
+                    local currentSize = label.TextSize
+                    local newSize = currentSize * (1 + percentageIncrease)
+                    label.TextSize = newSize
+                    if label.TextBounds.X > label.AbsoluteSize.X then
+                        label.TextSize = currentSize
+                    end
+                    label:SetAttribute("Clicked", true)
                 end
-                label:SetAttribute("Clicked", true)
             else
                 if frameStroke then
                     CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
@@ -3503,7 +3506,7 @@ function MakeTab(Configs)
          end
      end
     Container.Visible = true
-  end)
+ end)
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
