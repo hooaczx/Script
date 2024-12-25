@@ -3339,16 +3339,29 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             Player.Character.Humanoid.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            local rootPart = Player.Character.HumanoidRootPart
-            local camera = workspace.CurrentCamera
-            local targetPosition = rootPart.Position + (camera.CFrame.LookVector * MaxLength)
-            rootPart.CFrame = CFrame.lookAt(rootPart.Position, Vector3.new(targetPosition.X, rootPart.Position.Y, targetPosition.Z))
-            camera.CFrame = camera.CFrame * EnabledOffset
-            camera.Focus = CFrame.fromMatrix(
-                camera.Focus.Position,
-                camera.CFrame.RightVector,
-                camera.CFrame.UpVector
-            ) * EnabledOffset
+
+            local lookVector = workspace.CurrentCamera.CFrame.LookVector
+            local characterPosition = Player.Character.HumanoidRootPart.Position
+
+            local newCFrame = CFrame.new(characterPosition, characterPosition + Vector3.new(lookVector.X * MaxLength, 0, lookVector.Z * MaxLength))
+            Player.Character.HumanoidRootPart.CFrame = newCFrame
+
+            for _, part in pairs(Player.Character:GetChildren()) do
+                if part:IsA("Motor6D") then
+                    local motor = part
+                    if motor.Part0 and motor.Part1 then
+                        motor.C0 = motor.C0 * CFrame.Angles(0, newCFrame - Player.Character.HumanoidRootPart.CFrame, 0)
+                    end
+                end
+            end
+
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * EnabledOffset
+            workspace.CurrentCamera.Focus =
+                CFrame.fromMatrix(
+                    workspace.CurrentCamera.Focus.Position,
+                    workspace.CurrentCamera.CFrame.RightVector,
+                    workspace.CurrentCamera.CFrame.UpVector
+                ) * EnabledOffset
         end)
     else
         Player.Character.Humanoid.AutoRotate = true
