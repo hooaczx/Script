@@ -3413,44 +3413,6 @@ ScreenGui.AncestryChanged:Connect(function()
 end)
 end
 
-local activeConnection = nil
-
-function createRedWhiteUIStroke(stroke, uiElement)
-    local isRed = true
-    local positionOffset = 0
-    local speed = 10
-    local direction = 1
-    if activeConnection then
-        activeConnection:Disconnect()
-    end
-    activeConnection = RunService.Heartbeat:Connect(function()
-        if isRed then
-            stroke.Color = Color3.fromRGB(255, 0, 0)
-        else
-            stroke.Color = Color3.fromRGB(255, 255, 255)
-        end
-        isRed = not isRed
-        if positionOffset < 200 and direction == 1 then
-            positionOffset = positionOffset + speed
-        elseif positionOffset >= 200 and direction == 1 then
-            direction = -1
-        end
-        if positionOffset > 0 and direction == -1 then
-            positionOffset = positionOffset - speed
-        elseif positionOffset <= 0 and direction == -1 then
-            direction = 1
-        end
-        uiElement.Position = UDim2.new(0, positionOffset, 0, positionOffset)
-    end)
-end
-
-function stopRedWhiteUIStroke()
-    if activeConnection then
-        activeConnection:Disconnect()
-        activeConnection = nil
-    end
-end
-
 local firstVisible = true
 local firstTabSet = false
 local textsize = 15
@@ -3463,7 +3425,7 @@ function MakeTab(Configs)
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundTransparency = 1
-    })Corner(Frame)
+    })Corner(Frame)FrameStroke = Stroke(Frame, {Thickness = 1})
     
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
@@ -3508,41 +3470,43 @@ function MakeTab(Configs)
     })
     
     TextButton.MouseButton1Click:Connect(function()
-        for _, container in pairs(Containers:GetChildren()) do
-            if container:IsA("ScrollingFrame") then
-                container.Visible = false
-            end
+    for _, container in pairs(Containers:GetChildren()) do
+        if container:IsA("ScrollingFrame") then
+            container.Visible = false
         end
-        for _, frame in pairs(ScrollBar:GetChildren()) do
-            if frame:IsA("Frame") then
-                local frameStroke = frame:FindFirstChildOfClass("UIStroke")
-                local label = frame:FindFirstChild("TextLabel")
-                if label == TextLabel then
-                    createRedWhiteUIStroke(frameStroke, Frame)
-                    CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-                    if not label:GetAttribute("Clicked") then
-                        local percentageIncrease = 0.1
-                        local currentSize = label.TextSize
-                        local newSize = currentSize * (1 + percentageIncrease)
-                        label.TextSize = newSize
-                        if label.TextBounds.X > label.AbsoluteSize.X then
-                            label.TextSize = currentSize
-                        end
-                        label:SetAttribute("Clicked", true)
+    end
+    for _, frame in pairs(ScrollBar:GetChildren()) do
+        if frame:IsA("Frame") then
+            local frameStroke = frame:FindFirstChildOfClass("UIStroke")
+            local label = frame:FindFirstChild("TextLabel")
+            if label == TextLabel then
+                CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+                CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+                if not label:GetAttribute("Clicked") then
+                    local percentageIncrease = 0.1
+                    local currentSize = label.TextSize
+                    local newSize = currentSize * (1 + percentageIncrease)
+                    label.TextSize = newSize
+                    if label.TextBounds.X > label.AbsoluteSize.X then
+                        label.TextSize = currentSize
                     end
-                else
-                    stopRedWhiteUIStroke()
-                    if label then
-                        local defaultSize = label.TextSize - 2
-                        label.TextSize = math.clamp(defaultSize, 14, 20)
-                        CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-                        label:SetAttribute("Clicked", false)
-                    end
+                    label:SetAttribute("Clicked", true)
                 end
-            end
-        end
-        Container.Visible = true
-    end)
+            else
+                if frameStroke then
+                    CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+                end
+                if label then
+                    local defaultSize = label.TextSize - 2
+                    label.TextSize = math.clamp(defaultSize, 14, 20)
+                    CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+                    label:SetAttribute("Clicked", false)
+                 end
+             end
+         end
+     end
+    Container.Visible = true
+ end)
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
