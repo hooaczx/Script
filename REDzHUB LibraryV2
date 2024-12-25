@@ -3476,15 +3476,18 @@ function MakeTab(Configs)
         end
     end
     for _, frame in pairs(ScrollBar:GetChildren()) do
-        if frame:IsA("Frame") and frame:FindFirstChild("TextLabel") and frame.TextLabel ~= TextLabel then
+        if frame:IsA("Frame") then
             local frameStroke = frame:FindFirstChildOfClass("UIStroke")
             if frameStroke then
-                CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+                CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false) -- เปลี่ยนสีของ FrameStroke กลับเป็นค่าเริ่มต้น
             end
-            local defaultSize = frame.TextLabel.TextSize - 2
-            frame.TextLabel.TextSize = math.clamp(defaultSize, 14, 20)
-            CreateTween(frame.TextLabel, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-            frame.TextLabel:SetAttribute("Clicked", false)
+            local label = frame:FindFirstChild("TextLabel")
+            if label and label ~= TextLabel then
+                local defaultSize = label.TextSize - 2
+                label.TextSize = math.clamp(defaultSize, 14, 20)
+                CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+                label:SetAttribute("Clicked", false)
+            end
         end
     end
     if not TextLabel:GetAttribute("Clicked") then
@@ -3494,12 +3497,13 @@ function MakeTab(Configs)
         if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
             TextLabel.TextSize = currentSize
         end
-        TextLabel:SetAttribute("Clicked", true)  
-        CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+        TextLabel:SetAttribute("Clicked", true)
     end
-    Container.Visible = true
+    CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
     CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+    Container.Visible = true
 end)
+
 
     if not firstTabSet then
         Container.Visible = true
