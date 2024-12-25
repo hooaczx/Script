@@ -3470,7 +3470,6 @@ function MakeTab(Configs)
     })
     
     TextButton.MouseButton1Click:Connect(function()
-    -- ซ่อนทุก Container
     for _, container in pairs(Containers:GetChildren()) do
         if container:IsA("ScrollingFrame") then
             container.Visible = false
@@ -3495,13 +3494,13 @@ function MakeTab(Configs)
         if TextLabel.TextBounds.X > TextLabel.AbsoluteSize.X then
             TextLabel.TextSize = currentSize
         end
-        TextLabel:SetAttribute("Clicked", true)
+        TextLabel:SetAttribute("Clicked", true)  
+        CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
     end
     Container.Visible = true
     CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-    CreateTween(FrameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
-    FrameStroke.Parent = Frame
-  end)
+end)
+
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
