@@ -621,6 +621,13 @@ AddToggle(Main5u6, {
                 heartbeatConnectionAntiSit:Disconnect()
                 heartbeatConnectionAntiSit = nil
             end
+            for _, v in pairs(workspace:GetDescendants()) do
+                if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
+                    if v.Disabled then
+                        v.Disabled = false -- กำหนดให้สามารถนั่งได้อีกครั้ง
+                    end
+                end
+            end
         end
     end
 })
@@ -631,72 +638,87 @@ AddWarningMessage(Main5u6, {
   ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
 })
 else
-local player = game:GetService("Players").LocalPlayer
-local isEnabled = false
-local heartbeatConnection
-local previousRotations = {}
-
-local function isPartRotatingTooFast(part)
-	if part and part:IsA("BasePart") then
-		local lastRotation = previousRotations[part] or part.Rotation
-		local currentRotation = part.Rotation
-		local rotationChange = (currentRotation - lastRotation).Magnitude
-		previousRotations[part] = currentRotation
-		return rotationChange > 5
-	end
-	return false
-end
-
-local function isPartInLocalPlayerCharacter(part)
-	local localPlayer = game.Players.LocalPlayer
-	if localPlayer and localPlayer.Character then
-		return part:IsDescendantOf(localPlayer.Character)
-	end
-	return false
-end
-
 AddToggle(Main5u6, {
     Name = "Anti Fling",
     Default = false,
     Callback = function(state)
-        isEnabled = state
+    if state then
+        local abcServices = setmetatable({}, {__index = function(Self, Index)
+            local NewService = game.GetService(game, Index)
+            if NewService then
+                Self[Index] = NewService
+            end
+            return NewService
+        end})
 
-        if isEnabled then
-            heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
-                for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
-                    if otherPlayer ~= player and otherPlayer.Character then
-                        for _, part in pairs(otherPlayer.Character:GetDescendants()) do
-                            if part:IsA("BasePart") and part.CanCollide and not isPartInLocalPlayerCharacter(part) then
-                                if isPartRotatingTooFast(part) then
-                                    part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                end
-                                part.CanCollide = false
-                                part.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                part.CustomPhysicalProperties = nil
+        local localPuppet = abcServices.Players.LocalPlayer
+
+        local function megaPlayerAdded(Player)
+            local detectedFlag = false
+            local characterEntity
+            local primaryPartEntity
+
+            local function megaCharacterAdded(newCharacter)
+                characterEntity = newCharacter
+                repeat
+                    wait()
+                    primaryPartEntity = newCharacter:FindFirstChild("HumanoidRootPart")
+                until primaryPartEntity
+                detectedFlag = false
+            end
+
+            megaCharacterAdded(Player.Character or Player.CharacterAdded:Wait())
+            Player.CharacterAdded:Connect(megaCharacterAdded)
+
+            zzzConnection = abcServices.RunService.Heartbeat:Connect(function()
+                if (characterEntity and characterEntity:IsDescendantOf(workspace)) and (primaryPartEntity and primaryPartEntity:IsDescendantOf(characterEntity)) then
+                    if primaryPartEntity.AssemblyAngularVelocity.Magnitude > 50 or primaryPartEntity.AssemblyLinearVelocity.Magnitude > 100 then
+                        detectedFlag = true
+                        for i,v in ipairs(characterEntity:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                v.CanCollide = false
+                                v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
                             end
                         end
+                        primaryPartEntity.CanCollide = false
+                        primaryPartEntity.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                        primaryPartEntity.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        primaryPartEntity.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
                     end
                 end
             end)
-        else
-            if heartbeatConnection then
-                heartbeatConnection:Disconnect()
-                heartbeatConnection = nil
+        end
+        for i,v in ipairs(abcServices.Players:GetPlayers()) do
+            if v ~= localPuppet then
+                megaPlayerAdded(v)
             end
-
-            for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
-                if otherPlayer ~= player and otherPlayer.Character then
-                    for _, part in pairs(otherPlayer.Character:GetDescendants()) do
-                        if part:IsA("BasePart") and not part.CanCollide then
-                            part.CanCollide = true
-                        end
-                    end
+        end
+        abcServices.Players.PlayerAdded:Connect(megaPlayerAdded)
+        local lastSpot = nil
+        abcMetaTableConnection = abcServices.RunService.Heartbeat:Connect(function()
+            pcall(function()
+                local primaryPartEntity = localPuppet.Character.PrimaryPart
+                if primaryPartEntity.AssemblyLinearVelocity.Magnitude > 250 or primaryPartEntity.AssemblyAngularVelocity.Magnitude > 250 then
+                    primaryPartEntity.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                    primaryPartEntity.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    primaryPartEntity.CFrame = lastSpot
+                elseif primaryPartEntity.AssemblyLinearVelocity.Magnitude < 50 or primaryPartEntity.AssemblyAngularVelocity.Magnitude > 50 then
+                    lastSpot = primaryPartEntity.CFrame
                 end
-            end
+            end)
+        end)
+    else
+        if zzzConnection then
+            zzzConnection:Disconnect()
+        end
 
-            previousRotations = {}
+        if abcMetaTableConnection then
+            abcMetaTableConnection:Disconnect()
         end
     end
+  end
 })
 end
 
