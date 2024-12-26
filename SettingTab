@@ -275,7 +275,78 @@ local Toggle = AddToggle(Main5u6, {
 local Speed = 16
 local DefaultGravity = game.Workspace.Gravity
 
-loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/hooaczx/Script/main/Swimming"))(
+if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
+AddWarningMessage(Main5u6, {
+  WarningMessage = "Swim was removed due to safety concerns due to being banned from the game",
+  ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
+})
+else
+AddTextBox(Main5u6, {
+  Name = "Enter Swim Speed",
+  Default = "16",
+  PlaceholderText = "Enter number",
+  ClearText = true,
+  Callback = function(text)
+    local enteredSpeed = tonumber(text)
+    if enteredSpeed then
+      Speed = enteredSpeed
+    end
+  end
+})
+
+AddToggle(Main5u6, {
+  Name = "Swim",
+  Default = false,
+  Callback = function(state)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character and character:FindFirstChild("Humanoid") then
+      local humanoid = character.Humanoid
+    if state then
+      game.Workspace.Gravity = 10
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, true)
+      humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, false)
+      humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+      humanoid.WalkSpeed = Speed or 16
+      else
+      game.Workspace.Gravity = DefaultGravity
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
+      humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+      humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, true)
+      humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
+      humanoid.WalkSpeed = player.Character.Humanoid.WalkSpeed
+      end
+    end
+  end
+})
+end
 
 local Player = game.Players.LocalPlayer
 local originalUserId = Player.UserId
@@ -408,6 +479,7 @@ local ToggleWalk = AddToggle(Main5u6, {
       end
   end
 })
+
 local isAntiKickEnabled = false
 local kickReasons = {}
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
