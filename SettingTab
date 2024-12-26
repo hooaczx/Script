@@ -647,15 +647,25 @@ AddToggle(Main5u6, {
                 local x6, x7, x8, x9 = nil, nil, nil, 0.1
                 x6 = x5.Character
                 x7 = x6 and x6:FindFirstChild("HumanoidRootPart")
-
-                if x7 then
-                    x8 = x7.Velocity
-                    x7.Velocity = x8 * 10000 + Vector3.new(0, 10000, 0)
-                    RunService.RenderStepped:Wait()
-                    x7.Velocity = x8
-                    RunService.Stepped:Wait()
-                    x7.Velocity = x8 + Vector3.new(0, x9, 0)
-                    x9 = -x9
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= x5 then
+                        local otherCharacter = player.Character
+                        if otherCharacter then
+                            local otherHumanoidRootPart = otherCharacter:FindFirstChild("HumanoidRootPart")
+                            if otherHumanoidRootPart then
+                                local distance = (x7.Position - otherHumanoidRootPart.Position).Magnitude
+                                if distance <= 10 then
+                                    local velocity = x7.Velocity
+                                    otherHumanoidRootPart.Velocity = velocity * 10000 + Vector3.new(0, 10000, 0)
+                                    RunService.RenderStepped:Wait()
+                                    otherHumanoidRootPart.Velocity = velocity
+                                    RunService.Stepped:Wait()
+                                    otherHumanoidRootPart.Velocity = velocity + Vector3.new(0, x9, 0)
+                                    x9 = -x9
+                                end
+                            end
+                        end
+                    end
                 end
             end)
         else
