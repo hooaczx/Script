@@ -22,8 +22,11 @@ local players = game:GetService('Players')
 local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
-getgenv().TweenSpeed = 16
+getgenv().TweenSpeed = 0.21
 getgenv().TweenWalk = false
+getgenv().DashSpeed = 0.21
+getgenv().EnableJumpDash = false
+local activeConnection
 
 local function SendDetailedNotification(title, text, duration)
     game.StarterGui:SetCore("SendNotification", {
@@ -267,6 +270,60 @@ local Toggle = AddToggle(Main5u6, {
         else
             if connection then
                 connection:Disconnect()
+            end
+        end
+    end
+})
+
+function initializeDashSystem()
+    local runService = game:GetService("RunService")
+    
+    if activeConnection then
+        activeConnection:Disconnect()
+    end
+    
+    local function onPlayerCharacter(character)
+        local humanoid = character:WaitForChild("Humanoid")
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        activeConnection = humanoid.Jumping:Connect(function(isJumping)
+            if isJumping and getgenv().EnableJumpDash then
+                if humanoid.Health > 0 then
+                    local forwardDash = rootPart.CFrame.LookVector * getgenv().DashSpeed
+                    rootPart.CFrame = rootPart.CFrame + forwardDash
+                end
+            end
+        end)
+    end
+
+    player.CharacterAdded:Connect(onPlayerCharacter)
+    if player.Character then
+        onPlayerCharacter(player.Character)
+    end
+end
+
+AddTextBox(Main5u6, {
+    Name = "Number Jump Dash",
+    Default = "Enter",
+    PlaceholderText = "Enter dash speed",
+    ClearText = true,
+    Callback = function(value)
+        if tonumber(value) then
+            getgenv().DashSpeed = tonumber(value)
+        end
+    end
+})
+
+local Toggle = AddToggle(Main5u6, {
+    Name = "Jump Dash",
+    Default = false,
+    Callback = function(state)
+        getgenv().EnableJumpDash = state
+        if state then
+            initializeDashSystem()
+        else
+            if activeConnection then
+                activeConnection:Disconnect()
             end
         end
     end
