@@ -35,7 +35,7 @@ end
 
 local currentGameId = game.PlaceId
 
-local Toggle = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "Infinite Jump",
   Default = false,
   Callback = function(s)
@@ -58,7 +58,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-local Toggle = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "Camera FieldOfView",
   Default = false,
   Callback = function(state)
@@ -103,7 +103,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-local ZoomToggle = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "Camera Zoom",
   Default = false,
   Callback = function(state)
@@ -151,7 +151,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-local ToggleWalk = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "WalkSpeed",
   Default = false,
   Callback = function(state)
@@ -188,7 +188,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-local ToggleJump = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "JumpPower",
   Default = false,
   Callback = function(state)
@@ -212,34 +212,37 @@ local ToggleJump = AddToggle(Main5u6, {
   end
 })
 
-local function setupTPWalk()
+function setupTPWalk()
     local runService = game:GetService("RunService")
     local connection
+
     if connection then
         connection:Disconnect()
     end
-    local function onCharacterAdded(character)
+
+    function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
         connection = runService.Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
-                if hum.Health > 0 then
-                    if hum.MoveDirection.Magnitude > 0 then
-                        if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                        else
-                            character:TranslateBy(hum.MoveDirection)
-                        end
+                if hum.MoveDirection.Magnitude > 0 then
+                    if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
+                        character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                    else
+                        character:TranslateBy(hum.MoveDirection)
                     end
-                else
-                    connection:Disconnect()
                 end
             else
                 connection:Disconnect()
             end
         end)
+
+        hum.Died:Connect(function()
+            connection:Disconnect()
+        end)
     end
 
     player.CharacterAdded:Connect(onCharacterAdded)
+
     if player.Character then
         onCharacterAdded(player.Character)
     end
@@ -257,7 +260,7 @@ AddTextBox(Main5u6, {
     end
 })
 
-local Toggle = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
     Name = "Tpwalk",
     Default = false,
     Callback = function(s)
@@ -301,7 +304,7 @@ AddTextBox(Main5u6, {
     end
 })
 
-local Toggle = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
     Name = "Custom UserID",
     Default = false,
     Callback = function(state)
@@ -391,7 +394,7 @@ AddTextBox(Main5u6, {
   end
 })
 
-local ToggleWalk = AddToggle(Main5u6, {
+AddToggle(Main5u6, {
   Name = "Name Protection",
   Default = false,
   Callback = function(state)
