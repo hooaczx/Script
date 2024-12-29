@@ -1657,20 +1657,24 @@ end
 AddToggle(Main5u6, {
     Name = "Walk Character Afterimage Effect",
     Default = false,
-    Callback = function()
-    z9o4p3 = not z9o4p3
+    Callback = function(state)
+        z9o4p3 = state
 
-    if z9o4p3 then
-        if player.Character then
-            v2o8f9d3(player.Character)
+        if z9o4p3 then
+            if player.Character then
+                v2o8f9d3(player.Character)
+            end
+            player.CharacterAdded:Connect(function(character)
+                if z9o4p3 then
+                    v2o8f9d3(character)
+                end
+            end)
+        else
+            if r5j7b1v then
+                r5j7b1v:Disconnect()
+                r5j7b1v = nil
+            end
         end
-        player.CharacterAdded:Connect(v2o8f9d3)
-    else
-        if r5j7b1v then
-            r5j7b1v:Disconnect()
-            r5j7b1v = nil
-        end
-      end
     end
 })
 
