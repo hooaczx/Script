@@ -1683,8 +1683,8 @@ AddToggle(Main5u6, {
 
 local DayLength = 14.40
 local InitialTime = 8
-local IsDayCycleEnabled = false
-local dayCycleConnection
+local IsDayCycle = false
+local dayCycle
 local days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
 local CurrentDay = 1
 local start = tick() - (InitialTime / 24 * DayLength)
@@ -1710,9 +1710,9 @@ AddToggle(Main5u6, {
     Name = "Day Cycle",
     Default = true,
     Callback = function(state)
-        IsDayCycleEnabled = state
+        IsDayCycle = state
         if state then
-            dayCycleConnection = game:GetService("RunService").Stepped:Connect(function()
+            dayCycle = game:GetService("RunService").Stepped:Connect(function()
                 local t = (tick() - start) / DayLength * 24
                 if t >= 12 then AM = false end
                 if t >= 24 then
@@ -1723,9 +1723,9 @@ AddToggle(Main5u6, {
                 game.Lighting.ClockTime = math.fmod(t, 24)
             end)
         else
-            if dayCycleConnection then
-                dayCycleConnection:Disconnect()
-                dayCycleConnection = nil
+            if dayCycle then
+                dayCycle:Disconnect()
+                dayCycle = nil
             end
         end
     end
