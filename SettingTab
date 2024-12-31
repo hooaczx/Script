@@ -23,6 +23,8 @@ local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
+local detectionRadius = 50
+local lookAtconnection
 getgenv().TweenSpeed = 0.21
 getgenv().TweenWalk = false
 
@@ -47,6 +49,70 @@ AddToggle(Main5u6, {
         end
     end)
   end
+})
+
+function lookAtClosestPlayer()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    local closestPlayer = nil
+    local closestDistance = detectionRadius
+
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
+            local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
+
+            if distance < closestDistance then
+                closestPlayer = otherPlayer
+                closestDistance = distance
+            end
+        end
+    end
+
+    if closestPlayer then
+        local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
+        local horizontalPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
+        humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalPosition)
+    end
+end
+
+AddTextBox(Main5u6, {
+    Name = "Distance, LookAt Player",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        local newValue = tonumber(value)
+        if newValue and newValue > 0 then
+            detectionRadius = newValue
+        end
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "LookAt Player",
+    Default = false,
+    Callback = function(state)
+        if state then
+            lookAtconnection = RunService.Heartbeat:Connect(function()
+                lookAtClosestPlayer()
+            end)
+            player.CharacterAdded:Connect(function()
+                if lookAtconnection then
+                    lookAtconnection:Disconnect()
+                end
+                lookAtconnection = RunService.Heartbeat:Connect(function()
+                    lookAtClosestPlayer()
+                end)
+            end)
+        else
+            if lookAtconnection then
+                lookAtconnection:Disconnect()
+                lookAtconnection = nil
+            end
+        end
+    end
 })
 
 AddTextBox(Main5u6, {
