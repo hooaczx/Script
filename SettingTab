@@ -559,6 +559,30 @@ AddToggle(Main5u6, {
     end
 })
 
+local ClickTp
+
+AddToggle(Main5u6, {
+    Name = "ClickTp",
+    Default = false,
+    Callback = function(state)
+        if state then
+            ClickTp = mouse.Button1Down:Connect(function()
+                if mouse.Target ~= nil then
+                    local targetPosition = game.Players.LocalPlayer:GetMouse().Hit.p
+                    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+                    humanoidRootPart.CFrame = CFrame.new(targetPosition)
+                end
+            end)
+        else
+            if ClickTp then
+                ClickTp:Disconnect()
+                ClickTp = nil
+            end
+        end
+    end
+})
+
 local x1 = false
 local x2
 local x3
