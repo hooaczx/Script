@@ -1689,19 +1689,20 @@ local days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 local CurrentDay = 1
 local start = tick() - (InitialTime / 24 * DayLength)
 local AM = true
+local savedTime = nil
 
 AddTextBox(Main5u6, {
-    Name = "Day Cycle, Sped",
+    Name = "Day Cycle Speed",
     Default = "Enter",
     PlaceholderText = "Enter number",
     ClearText = true,
     Callback = function(value)
         local number = tonumber(value)
         if number and number > 0 then
-            DayLength = number
+            DayLength = 14.40 / number
             start = tick() - (game.Lighting.ClockTime / 24 * DayLength)
         else
-            warn("Invalid number entered for speed adjustment Day Cycle")
+            warn("Invalid number entered for speed adjustment in Day Cycle")
         end
     end
 })
@@ -1712,6 +1713,9 @@ AddToggle(Main5u6, {
     Callback = function(state)
         IsDayCycle = state
         if state then
+            if savedTime == nil then
+                savedTime = tick() - (game.Lighting.ClockTime / 24 * DayLength)
+            end
             dayCycle = game:GetService("RunService").Stepped:Connect(function()
                 local t = (tick() - start) / DayLength * 24
                 if t >= 12 then AM = false end
@@ -1726,6 +1730,9 @@ AddToggle(Main5u6, {
             if dayCycle then
                 dayCycle:Disconnect()
                 dayCycle = nil
+            end
+            if savedTime then
+                start = savedTime
             end
         end
     end
