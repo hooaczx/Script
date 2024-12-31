@@ -1681,6 +1681,56 @@ AddToggle(Main5u6, {
     end
 })
 
+local DayLength = 14.40
+local InitialTime = 8
+local IsDayCycleEnabled = true 
+local dayCycleConnection
+local days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+local CurrentDay = 1
+local start = tick() - (InitialTime / 24 * DayLength)
+local AM = true
+
+AddTextBox(Main5u6, {
+    Name = "Day Cycle, Sped",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        local number = tonumber(value)
+        if number and number > 0 then
+            DayLength = number
+            start = tick() - (game.Lighting.ClockTime / 24 * DayLength)
+        else
+            warn("Invalid number entered for speed adjustment Day Cycle")
+        end
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Day Cycle",
+    Default = true,
+    Callback = function(state)
+        IsDayCycleEnabled = state
+        if state then
+            dayCycleConnection = game:GetService("RunService").Stepped:Connect(function()
+                local t = (tick() - start) / DayLength * 24
+                if t >= 12 then AM = false end
+                if t >= 24 then
+                    start = tick()
+                    CurrentDay = math.fmod(CurrentDay, 7) + 1
+                    AM = true
+                end
+                game.Lighting.ClockTime = math.fmod(t, 24)
+            end)
+        else
+            if dayCycleConnection then
+                dayCycleConnection:Disconnect()
+                dayCycleConnection = nil
+            end
+        end
+    end
+})
+
 local MusicPlayerTab = MakeTab({
    Name = "Music Player",
    image = "rbxthumb://type=Asset&id=107723524907022&w=420&h=420"
