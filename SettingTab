@@ -22,6 +22,7 @@ local players = game:GetService('Players')
 local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
+local mouse = game.Players.LocalPlayer:GetMouse()
 getgenv().TweenSpeed = 0.21
 getgenv().TweenWalk = false
 
@@ -559,14 +560,14 @@ AddToggle(Main5u6, {
     end
 })
 
-local ClickTp
+local teleportConnection
 
 AddToggle(Main5u6, {
     Name = "ClickTp",
     Default = false,
     Callback = function(state)
         if state then
-            ClickTp = game.Players.LocalPlayer:GetMouse().Button1Down:Connect(function()
+            teleportConnection = mouse.Button1Down:Connect(function()
                 if mouse.Target ~= nil then
                     local targetPosition = game.Players.LocalPlayer:GetMouse().Hit.p
                     local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
@@ -575,9 +576,9 @@ AddToggle(Main5u6, {
                 end
             end)
         else
-            if ClickTp then
-                ClickTp:Disconnect()
-                ClickTp = nil
+            if teleportConnection then
+                teleportConnection:Disconnect()
+                teleportConnection = nil
             end
         end
     end
