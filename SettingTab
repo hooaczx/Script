@@ -23,8 +23,6 @@ local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
-local detectionRadius = 50
-local lookAtconnection
 getgenv().TweenSpeed = 0.21
 getgenv().TweenWalk = false
 
@@ -51,8 +49,11 @@ AddToggle(Main5u6, {
   end
 })
 
+local detectionRadius = 50
+local lookAtconnection
+
 function lookAtClosestPlayer()
-    local character = player.Character or player.CharacterAdded:Wait()
+    local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
     local closestPlayer = nil
@@ -98,7 +99,7 @@ AddToggle(Main5u6, {
             lookAtconnection = RunService.Heartbeat:Connect(function()
                 lookAtClosestPlayer()
             end)
-            player.CharacterAdded:Connect(function()
+            lp.CharacterAdded:Connect(function()
                 if lookAtconnection then
                     lookAtconnection:Disconnect()
                 end
