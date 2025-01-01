@@ -10,6 +10,10 @@ until game:IsLoaded()
 local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 3
 getgenv().TPWalk = false
+local highlightedPlayer = nil
+local highlightObject = nil
+local detectionRadius = 50
+local lookAtconnection
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
@@ -49,32 +53,44 @@ AddToggle(Main5u6, {
   end
 })
 
-local detectionRadius = 50
-local lookAtconnection
-
 function lookAtClosestPlayer()
     local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
     local closestPlayer = nil
     local closestDistance = detectionRadius
-
-    for _, otherPlayer in ipairs(game:GetService("Players"):GetPlayers()) do
-        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
-            local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
-
-            if distance < closestDistance then
-                closestPlayer = otherPlayer
-                closestDistance = distance
+    for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+        if otherPlayer ~= lp and otherPlayer.Character then
+            local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if otherHumanoidRootPart then
+                local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
+                if distance < closestDistance then
+                    closestPlayer = otherPlayer
+                    closestDistance = distance
+                end
             end
         end
     end
-
     if closestPlayer then
+        if closestPlayer ~= highlightedPlayer then
+            if highlightObject then highlightObject:Destroy() end
+            highlightedPlayer = closestPlayer
+            highlightObject = Instance.new("Highlight")
+            highlightObject.Adornee = closestPlayer.Character
+            highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
+            highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
+            highlightObject.FillTransparency = 1
+            highlightObject.OutlineTransparency = 0
+            highlightObject.Parent = closestPlayer.Character
+        end
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
         humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalPosition)
+    else
+        if highlightObject then
+            highlightObject:Destroy()
+            highlightObject = nil
+            highlightedPlayer = nil
+        end
     end
 end
 
@@ -96,16 +112,12 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         if state then
-            lookAtconnection = RunService.Heartbeat:Connect(function()
-                lookAtClosestPlayer()
-            end)
+            lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
             lp.CharacterAdded:Connect(function()
                 if lookAtconnection then
                     lookAtconnection:Disconnect()
                 end
-                lookAtconnection = RunService.Heartbeat:Connect(function()
-                    lookAtClosestPlayer()
-                end)
+                lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
             end)
         else
             if lookAtconnection then
