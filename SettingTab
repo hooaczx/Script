@@ -11,7 +11,7 @@ local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 3
 getgenv().TPWalk = false
 local highlightedPlayer = nil
-local highlightObject = nil
+local eyeGui = nil
 local detectionRadius = 50
 local lookAtconnection
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
@@ -56,8 +56,13 @@ AddToggle(Main5u6, {
 function lookAtClosestPlayer()
     local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local head = character:FindFirstChild("Head")
+
+    if not head then return end
+
     local closestPlayer = nil
     local closestDistance = detectionRadius
+
     for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
         if otherPlayer ~= lp and otherPlayer.Character then
             local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -70,27 +75,34 @@ function lookAtClosestPlayer()
             end
         end
     end
+
     if closestPlayer then
-        if closestPlayer ~= highlightedPlayer then
-            if highlightObject then highlightObject:Destroy() end
+        if closestPlayer ~= highlightedPlayer or (highlightedPlayer and highlightedPlayer.Character and highlightedPlayer.Character:FindFirstChild("Humanoid") and highlightedPlayer.Character.Humanoid.Health <= 0) then
+            if eyeGui then eyeGui:Destroy() end
             highlightedPlayer = closestPlayer
-            highlightObject = Instance.new("Highlight")
-            highlightObject.Adornee = closestPlayer.Character
-            highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
-            highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
-            highlightObject.FillTransparency = 1
-            highlightObject.OutlineTransparency = 0
-            highlightObject.Parent = closestPlayer.Character
+            eyeGui = Instance.new("BillboardGui")
+            eyeGui.Size = UDim2.new(0.5, 0, 0.5, 0)
+            eyeGui.Adornee = closestPlayer.Character:WaitForChild("Head")
+            eyeGui.StudsOffset = Vector3.new(0, 0.5, 0)
+            eyeGui.AlwaysOnTop = true
+            eyeGui.ExtendSize = false
+
+            local eyeImage = Instance.new("ImageLabel")
+            eyeImage.Size = UDim2.new(1, 0, 1, 0)
+            eyeImage.BackgroundTransparency = 1
+            eyeImage.Image = "rbxassetid://122967173860639"
+            eyeImage.Parent = eyeGui
+            eyeGui.Parent = closestPlayer.Character
         end
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
         humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalPosition)
     else
-        if highlightObject then
-            highlightObject:Destroy()
-            highlightObject = nil
-            highlightedPlayer = nil
+        if eyeGui then
+            eyeGui:Destroy()
+            eyeGui = nil
         end
+        highlightedPlayer = nil
     end
 end
 
