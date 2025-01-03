@@ -60,17 +60,18 @@ function lookAtClosestPlayer()
     local closestPlayer = nil
     local closestDistance = detectionRadius
     local closestVerticalDifference = math.huge
-   for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+    for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
         if otherPlayer ~= lp and otherPlayer.Character then
             local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
             if otherHumanoidRootPart then
-                local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
+                local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
+                    Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
                 local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
 
-                if distance < closestDistance or 
-                   (distance == closestDistance and verticalDifference < closestVerticalDifference) then
+                if horizontalDistance < closestDistance or
+                   (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
                     closestPlayer = otherPlayer
-                    closestDistance = distance
+                    closestDistance = horizontalDistance
                     closestVerticalDifference = verticalDifference
                 end
             end
@@ -84,6 +85,7 @@ function lookAtClosestPlayer()
             if characterAddedConnection then
                 characterAddedConnection:Disconnect()
             end
+
             highlightedPlayer = closestPlayer
             highlightObject = Instance.new("Highlight")
             highlightObject.Adornee = closestPlayer.Character
@@ -92,6 +94,7 @@ function lookAtClosestPlayer()
             highlightObject.FillTransparency = 1
             highlightObject.OutlineTransparency = 0
             highlightObject.Parent = closestPlayer.Character
+
             characterAddedConnection = closestPlayer.CharacterAdded:Connect(function()
                 if highlightObject then
                     highlightObject:Destroy()
@@ -106,7 +109,8 @@ function lookAtClosestPlayer()
             end)
         end
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
-        humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, targetPosition)
+        local horizontalPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
+        humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalPosition)
     else
         if highlightObject then
             highlightObject:Destroy()
@@ -118,6 +122,7 @@ function lookAtClosestPlayer()
         end
     end
 end
+
 
 AddTextBox(Main5u6, {
     Name = "Distance, LookAt Player",
