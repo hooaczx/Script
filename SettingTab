@@ -59,21 +59,26 @@ function lookAtClosestPlayer()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local closestPlayer = nil
     local closestDistance = detectionRadius
-    for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+    local closestVerticalDifference = math.huge
+   for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
         if otherPlayer ~= lp and otherPlayer.Character then
             local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
             if otherHumanoidRootPart then
                 local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
-                if distance < closestDistance then
+                local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
+
+                if distance < closestDistance or 
+                   (distance == closestDistance and verticalDifference < closestVerticalDifference) then
                     closestPlayer = otherPlayer
                     closestDistance = distance
+                    closestVerticalDifference = verticalDifference
                 end
             end
         end
     end
     if closestPlayer then
         if closestPlayer ~= highlightedPlayer then
-            if highlightObject then 
+            if highlightObject then
                 highlightObject:Destroy()
             end
             if characterAddedConnection then
@@ -87,7 +92,6 @@ function lookAtClosestPlayer()
             highlightObject.FillTransparency = 1
             highlightObject.OutlineTransparency = 0
             highlightObject.Parent = closestPlayer.Character
-            
             characterAddedConnection = closestPlayer.CharacterAdded:Connect(function()
                 if highlightObject then
                     highlightObject:Destroy()
@@ -102,8 +106,7 @@ function lookAtClosestPlayer()
             end)
         end
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
-        local horizontalPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalPosition)
+        humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, targetPosition)
     else
         if highlightObject then
             highlightObject:Destroy()
@@ -146,14 +149,21 @@ AddToggle(Main5u6, {
                 lookAtconnection:Disconnect()
                 lookAtconnection = nil
             end
-            if highlightObject then
-               highlightObject:Destroy()
-               highlightObject = nil
-               highlightedPlayer = nil
-            end
             if characterAddedConnection then
                 characterAddedConnection:Disconnect()
                 characterAddedConnection = nil
+            end
+            if highlightObject then
+                highlightObject:Destroy()
+                highlightObject = nil
+            end
+            highlightedPlayer = nil
+            local character = lp.Character
+            if character then
+                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart then
+                    humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position)
+                end
             end
         end
     end
