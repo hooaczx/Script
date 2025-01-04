@@ -15,8 +15,8 @@ local highlightObject = nil
 local detectionRadius = 50
 local lookAtconnection
 local characterAddedConnection = nil
-detectionRadius = 3
-avoidanceRadius = 2
+detectionRadius = 1
+avoidanceRadius = 1
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
@@ -119,7 +119,7 @@ function lookAtClosestPlayer()
             local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
             local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
             humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection)
-        else
+        elseif closestDistance <= detectionRadius then
             humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
         end
     else
@@ -133,8 +133,6 @@ function lookAtClosestPlayer()
         end
     end
 end
-
-
 
 AddTextBox(Main5u6, {
     Name = "Distance, LookAt Player",
