@@ -70,6 +70,7 @@ end
 function lookAtClosestPlayer()
     local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
     local closestPlayer = nil
     local closestDistance = detectionRadius
     local closestVerticalDifference = math.huge
@@ -119,18 +120,20 @@ function lookAtClosestPlayer()
 
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        camera = game:GetService("Workspace").CurrentCamera
-        isFirstPerson = camera.CameraType == Enum.CameraType.Scriptable
+        local isWalking = humanoid.MoveDirection.Magnitude > 0
+
         if closestDistance <= avoidanceRadius then
             local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
             local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
-            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
-                CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection), 0.3
-            )
+            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection)
         elseif closestDistance <= detectionRadius then
-            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
-                CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.3
-            )
+            if isWalking then
+                humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
+            else
+                humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
+                    CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.1
+                )
+            end
         end
     else
         resetHighlight()
