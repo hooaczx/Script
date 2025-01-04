@@ -13,10 +13,9 @@ getgenv().TPWalk = false
 local highlightedPlayer = nil
 local highlightObject = nil
 local detectionRadius = 50
+local avoidanceRadius = 2
 local lookAtconnection
 local characterAddedConnection = nil
-detectionRadius = 1
-avoidanceRadius = 1
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
@@ -56,6 +55,18 @@ AddToggle(Main5u6, {
   end
 })
 
+function resetHighlight()
+    if highlightObject then
+        highlightObject:Destroy()
+        highlightObject = nil
+    end
+    if characterAddedConnection then
+        characterAddedConnection:Disconnect()
+        characterAddedConnection = nil
+    end
+    highlightedPlayer = nil
+end
+
 function lookAtClosestPlayer()
     local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -70,7 +81,6 @@ function lookAtClosestPlayer()
                 local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
                     Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
                 local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
-
                 if horizontalDistance < closestDistance or
                    (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
                     closestPlayer = otherPlayer
@@ -83,14 +93,9 @@ function lookAtClosestPlayer()
 
     if closestPlayer then
         if closestPlayer ~= highlightedPlayer then
-            if highlightObject then
-                highlightObject:Destroy()
-            end
-            if characterAddedConnection then
-                characterAddedConnection:Disconnect()
-            end
-
+            resetHighlight()
             highlightedPlayer = closestPlayer
+
             highlightObject = Instance.new("Highlight")
             highlightObject.Adornee = closestPlayer.Character
             highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
@@ -100,9 +105,7 @@ function lookAtClosestPlayer()
             highlightObject.Parent = closestPlayer.Character
 
             characterAddedConnection = closestPlayer.CharacterAdded:Connect(function()
-                if highlightObject then
-                    highlightObject:Destroy()
-                end
+                resetHighlight()
                 highlightObject = Instance.new("Highlight")
                 highlightObject.Adornee = closestPlayer.Character
                 highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
@@ -112,30 +115,36 @@ function lookAtClosestPlayer()
                 highlightObject.Parent = closestPlayer.Character
             end)
         end
+
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
+        local camera = game:GetService("Workspace").CurrentCamera
+        local isFirstPerson = camera.CameraType == Enum.CameraType.Scriptable
 
+        if isFirstPerson then
+            local directionToTarget = (horizontalTargetPosition - humanoidRootPart.Position).Unit
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + directionToTarget), 0.1)
+        else
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.1)
+        end
         if closestDistance <= avoidanceRadius then
             local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
             local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
-            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection)
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
+                CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection), 0.1
+            )
         elseif closestDistance <= detectionRadius then
-            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
+                CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.1
+            )
         end
     else
-        if highlightObject then
-            highlightObject:Destroy()
-            highlightObject = nil
-            highlightedPlayer = nil
-        end
-        if characterAddedConnection then
-            characterAddedConnection:Disconnect()
-        end
+        resetHighlight()
     end
 end
 
 AddTextBox(Main5u6, {
-    Name = "Distance, LookAt Player",
+    Name = "Detection Radius",
     Default = "Enter",
     PlaceholderText = "Enter number",
     ClearText = true,
