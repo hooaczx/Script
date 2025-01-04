@@ -15,6 +15,8 @@ local highlightObject = nil
 local detectionRadius = 50
 local lookAtconnection
 local characterAddedConnection = nil
+detectionRadius = 3
+avoidanceRadius = 2
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
@@ -54,7 +56,7 @@ AddToggle(Main5u6, {
   end
 })
 
-local function lookAtClosestPlayer()
+function lookAtClosestPlayer()
     local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local closestPlayer = nil
@@ -112,9 +114,10 @@ local function lookAtClosestPlayer()
         end
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        if closestDistance <= 0.1 then
-            local direction = (horizontalTargetPosition - humanoidRootPart.Position).Unit
-            local perpendicularDirection = Vector3.new(-direction.Z, 0, direction.X)
+
+        if closestDistance <= avoidanceRadius then
+            local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
+            local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
             humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection)
         else
             humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
