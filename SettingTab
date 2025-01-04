@@ -81,6 +81,7 @@ function lookAtClosestPlayer()
                 local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
                     Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
                 local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
+
                 if horizontalDistance < closestDistance or
                    (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
                     closestPlayer = otherPlayer
@@ -118,21 +119,17 @@ function lookAtClosestPlayer()
 
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        local camera = game:GetService("Workspace").CurrentCamera
-        local cameraDirection = (camera.CFrame.Position - humanoidRootPart.Position).Unit
-        local targetDirection = (horizontalTargetPosition - humanoidRootPart.Position).Unit
-        local finalDirection = cameraDirection:Lerp(targetDirection, 0.5)
-        humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + finalDirection), 0.1)
-
+        camera = game:GetService("Workspace").CurrentCamera
+        isFirstPerson = camera.CameraType == Enum.CameraType.Scriptable
         if closestDistance <= avoidanceRadius then
             local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
             local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
             humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
-                CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection), 0.1
+                CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection), 0.3
             )
         elseif closestDistance <= detectionRadius then
             humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
-                CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.1
+                CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.3
             )
         end
     else
