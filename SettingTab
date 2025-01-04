@@ -54,12 +54,13 @@ AddToggle(Main5u6, {
   end
 })
 
-function lookAtClosestPlayer()
+local function lookAtClosestPlayer()
     local character = lp.Character or lp.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     local closestPlayer = nil
     local closestDistance = detectionRadius
     local closestVerticalDifference = math.huge
+
     for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
         if otherPlayer ~= lp and otherPlayer.Character then
             local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -77,6 +78,7 @@ function lookAtClosestPlayer()
             end
         end
     end
+
     if closestPlayer then
         if closestPlayer ~= highlightedPlayer then
             if highlightObject then
@@ -109,8 +111,14 @@ function lookAtClosestPlayer()
             end)
         end
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
-        local horizontalPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalPosition)
+        local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
+        if closestDistance <= 0.1 then
+            local direction = (horizontalTargetPosition - humanoidRootPart.Position).Unit
+            local perpendicularDirection = Vector3.new(-direction.Z, 0, direction.X)
+            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection)
+        else
+            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
+        end
     else
         if highlightObject then
             highlightObject:Destroy()
@@ -122,6 +130,7 @@ function lookAtClosestPlayer()
         end
     end
 end
+
 
 
 AddTextBox(Main5u6, {
