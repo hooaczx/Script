@@ -119,14 +119,11 @@ function lookAtClosestPlayer()
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
         local camera = game:GetService("Workspace").CurrentCamera
-        local isFirstPerson = camera.CameraType == Enum.CameraType.Scriptable
+        local cameraDirection = (camera.CFrame.Position - humanoidRootPart.Position).Unit
+        local targetDirection = (horizontalTargetPosition - humanoidRootPart.Position).Unit
+        local finalDirection = cameraDirection:Lerp(targetDirection, 0.5)
+        humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + finalDirection), 0.1)
 
-        if isFirstPerson then
-            local directionToTarget = (horizontalTargetPosition - humanoidRootPart.Position).Unit
-            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + directionToTarget), 0.1)
-        else
-            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.1)
-        end
         if closestDistance <= avoidanceRadius then
             local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
             local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
