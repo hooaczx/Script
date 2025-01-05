@@ -13,7 +13,6 @@ getgenv().TPWalk = false
 local highlightedPlayer = nil
 local highlightObject = nil
 local detectionRadius = 50
-local avoidanceRadius = 2
 local lookAtconnection
 local characterAddedConnection = nil
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
@@ -121,12 +120,6 @@ function lookAtClosestPlayer()
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
         local isWalking = humanoid.MoveDirection.Magnitude > 0
-
-        if closestDistance <= avoidanceRadius then
-            local directionToAvoid = (humanoidRootPart.Position - horizontalTargetPosition).Unit
-            local perpendicularDirection = Vector3.new(-directionToAvoid.Z, 0, directionToAvoid.X)
-            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, humanoidRootPart.Position + perpendicularDirection)
-        elseif closestDistance <= detectionRadius then
             if isWalking then
                 humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
             else
