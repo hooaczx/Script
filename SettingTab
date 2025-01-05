@@ -120,13 +120,12 @@ function lookAtClosestPlayer()
         local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
         local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
         local isWalking = humanoid.MoveDirection.Magnitude > 0
-            if isWalking then
-                humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
-            else
-                humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
-                    CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.3
-                )
-            end
+        if isWalking then
+            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
+        else
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
+                CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.3
+            )
         end
     else
         resetHighlight()
