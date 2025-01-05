@@ -2622,7 +2622,7 @@ functions.fetchPlaceInfoWithRetry = function(retries, delay)
 end
 
 functions.updatePlaceInfo = function()
-   functions.parseDate = function(dateString)
+    functions.parseDate = function(dateString)
         local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
         local year, month, day, hour, min, sec = dateString:match(pattern)
         return os.time({
@@ -2652,6 +2652,11 @@ functions.updatePlaceInfo = function()
             Updated = os.date("%Y-%m-%d %H:%M:%S", updated),
             Playing = data.playing or 0,
             Visits = data.visits or 0,
+            Favorited = data.favoritedCount or 0,
+            Genre = data.genre or "Unknown",
+            RootPlaceId = data.rootPlaceId or "N/A",
+            AvatarType = data.universeAvatarType or "Unknown",
+            VipAllowed = data.createVipServersAllowed and "Yes" or "No",
             ServerCount = #Players:GetPlayers()
         }
 
@@ -2662,15 +2667,20 @@ functions.updatePlaceInfo = function()
         GameName.Text = string.format("Game Name: %s", placeInfo.Name)
 
         frame79.Text = string.format(
-            "Place ID: %d\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %d\nVisits: %s",
+            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nGenre: %s\nActive: %s\nFavorited: %d\nVisits: %s\nAvatarType: %s\nCreateVipServersAllowed: %s",
             placeInfo.PlaceId,
+            tostring(placeInfo.RootPlaceId),
             game.JobId,
             game.GameId,
             placeInfo.Created,
             placeInfo.Updated,
             formattedPlayers,
+            placeInfo.Genre,
             placeInfo.Playing,
-            placeInfo.Visits
+            placeInfo.Favorited,
+            placeInfo.Visits,
+            placeInfo.AvatarType,
+            placeInfo.VipAllowed
         )
     else
         GameName.Text = "Game Name: Failed to load"
