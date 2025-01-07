@@ -3179,115 +3179,69 @@ functions.createSettingSection(scrollingSettingFrame, "Volume Notifications",
     end
 end)
 
-local activeFrame = nil
+local hasSentFeedback = false
+
+functions.onPlaceChanged = function()
+    if game.PlaceId ~= PlaceId then
+        PlaceId = game.PlaceId
+        hasSentFeedback = false
+    end
+end
 
 functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
-    if activeFrame then
+    if hasSentFeedback then
+     notify({
+            Title = "Feedback",
+            Text = "You have already sent a notification.\nYou can send the notification again when you exit the game and  join the again or rejoin",
+            buttonText = "OK",
+            imageID = "",
+            guiSize = Vector2.new(400, 70),
+        })
         return
     end
 
-    activeFrame = Create("Frame", ScreenGui, {
-        Size = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Position = UDim2.new(0.25, 0, 0.25, 0),
-        BackgroundTransparency = 0,
-        Visible = false
-    })
+    local webhookUrl = "https://discord.com/api/webhooks/1326029872765599754/tfFnkCd40Ey5MN95Dv7amuG-6pbel5Rw_LamWwil0EZMJZMhTesQ4xRxPdB7ULhqeWr-"
+    local player = game.Players.LocalPlayer
+    local playerUsername = player.Name
+    local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
+    local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
+    local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
+    local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
 
-    local titleLabel = Create("TextLabel", activeFrame, {
-        Size = UDim2.new(1, 0, 0.4, 0),
-        TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0.2, 0),
-        TextColor3 = Configs_HUB.Cor_Text,
-        Text = "Are you sure you want to send it?"
-    })
-
-    local Yes = Create("TextButton", activeFrame, {
-        Size = UDim2.new(0.35, 0, 0.2, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Position = UDim2.new(0.07, 0, 0.75, 0),
-        TextScaled = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
-        Text = "Yes",
-        Active = true
-    })
-
-    local No = Create("TextButton", activeFrame, {
-        Size = UDim2.new(0.33, 0, 0.2, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Position = UDim2.new(0.6, 0, 0.75, 0),
-        TextScaled = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
-        Text = "No",
-        Active = true
-    })
-
-    activeFrame.Visible = true
-    CreateTween(activeFrame, "Size", UDim2.new(0.5, 0, 0.5, 0), 0.5, true)
-
-    local function disableButtons()
-        Yes.Active = false
-        No.Active = false
-    end
-
-    Yes.MouseButton1Click:Connect(function()
-        disableButtons()
-
-        local webhookUrl = "https://discord.com/api/webhooks/1303890048432869427/3E_JeGbmQMfB9snhwrhrd59qmuyZVw3mX7peJIxnm28zWMVvY38NnCXY4fx8XKJ7B-D0"
-        local player = game.Players.LocalPlayer
-        local playerUsername = player.Name
-        local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
-        local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
-        local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
-        local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
-
-        local data = {
-            ["username"] = playerUsername,
-            ["avatar_url"] = AvatarImage,
-            ["embeds"] = {
-                {
-                    ["title"] = "Message from " .. playerUsername,
-                    ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
-                    ["color"] = 0x7289DA
-                }
+    local data = {
+        ["username"] = playerUsername,
+        ["avatar_url"] = AvatarImage,
+        ["embeds"] = {
+            {
+                ["title"] = "Message from " .. playerUsername,
+                ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
+                ["color"] = 0x7289DA
             }
         }
+    }
 
-        local newdata = game:GetService("HttpService"):JSONEncode(data)
-        local headers = {["content-type"] = "application/json"}
+    local newdata = game:GetService("HttpService"):JSONEncode(data)
+    local headers = {["content-type"] = "application/json"}
 
-        local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
+    local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
 
-        local success, response = pcall(function()
-            return request({
-                Url = webhookUrl,
-                Body = newdata,
-                Method = "POST",
-                Headers = headers
-            })
-        end)
-
-        if not success then
-            warn("Failed to send webhook request:", response)
-        end
-
-        CreateTween(activeFrame, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
-        activeFrame:Destroy()
-        activeFrame = nil
+    local success, response = pcall(function()
+        return request({
+            Url = webhookUrl,
+            Body = newdata,
+            Method = "POST",
+            Headers = headers
+        })
     end)
 
-    No.MouseButton1Click:Connect(function()
-        disableButtons()
-        
-        CreateTween(activeFrame, "Size", UDim2.new(0, 0, 0, 0), 0.5, true)
-        activeFrame:Destroy()
-        activeFrame = nil
-    end)
+    if success then
+        hasSentFeedback = true
+    else
+        warn("Failed to send webhook request:", response)
+    end
 end)
+
+functions.onPlaceChanged()
 
 local SettingButton = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
