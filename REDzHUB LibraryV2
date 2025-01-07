@@ -3181,67 +3181,9 @@ end)
 
 local hasSentFeedback = false
 
-functions.onPlaceChanged = function()
-    if game.PlaceId ~= PlaceId then
-        PlaceId = game.PlaceId
-        hasSentFeedback = false
-    end
-end
-
 functions.createTextboxWithButton(scrollingSettingFrame, "Feedback", "You can message me on my discord to report any issues with the script", function(message)
-    if hasSentFeedback then
-     notify({
-            Title = "Feedback",
-            Text = "You have already sent a notification.\nYou can send the notification again when you exit the game and  join the again or rejoin",
-            buttonText = "OK",
-            imageID = "",
-            guiSize = Vector2.new(400, 70),
-        })
-        return
-    end
-
-    local webhookUrl = "https://discord.com/api/webhooks/1326029872765599754/tfFnkCd40Ey5MN95Dv7amuG-6pbel5Rw_LamWwil0EZMJZMhTesQ4xRxPdB7ULhqeWr-"
-    local player = game.Players.LocalPlayer
-    local playerUsername = player.Name
-    local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
-    local avatarResponse = game:HttpGet(string.format("https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true", player.UserId))
-    local avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
-    local AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
-
-    local data = {
-        ["username"] = playerUsername,
-        ["avatar_url"] = AvatarImage,
-        ["embeds"] = {
-            {
-                ["title"] = "Message from " .. playerUsername,
-                ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
-                ["color"] = 0x7289DA
-            }
-        }
-    }
-
-    local newdata = game:GetService("HttpService"):JSONEncode(data)
-    local headers = {["content-type"] = "application/json"}
-
-    local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
-
-    local success, response = pcall(function()
-        return request({
-            Url = webhookUrl,
-            Body = newdata,
-            Method = "POST",
-            Headers = headers
-        })
-    end)
-
-    if success then
-        hasSentFeedback = true
-    else
-        warn("Failed to send webhook request:", response)
-    end
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/feedback"))()
 end)
-
-functions.onPlaceChanged()
 
 local SettingButton = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -3259,8 +3201,7 @@ local minimize9 = false
 SettingButton.MouseButton1Click:Connect(function()
     minimize9 = not minimize9
 
-    if minimize9 then
-        click1:Play()
+    if minimize9 then        click1:Play()
         frameSetting.Visible = true
         CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
     else
