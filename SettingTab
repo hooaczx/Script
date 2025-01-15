@@ -78,15 +78,18 @@ function lookAtClosestPlayer()
         if otherPlayer ~= lp and otherPlayer.Character then
             local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
             if otherHumanoidRootPart then
-                local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
-                    Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
-                local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
+                local otherHumanoid = otherPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if otherHumanoid and otherHumanoid.Health > 0 then
+                    local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
+                        Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
+                    local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
 
-                if horizontalDistance < closestDistance or
-                   (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
-                    closestPlayer = otherPlayer
-                    closestDistance = horizontalDistance
-                    closestVerticalDifference = verticalDifference
+                    if horizontalDistance < closestDistance or
+                       (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
+                        closestPlayer = otherPlayer
+                        closestDistance = horizontalDistance
+                        closestVerticalDifference = verticalDifference
+                    end
                 end
             end
         end
