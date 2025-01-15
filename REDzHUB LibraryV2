@@ -4565,6 +4565,131 @@ Toggle.MouseButton1Click:Connect(function()
 end)
 end
 
+function AddFeedBack(parent, Configs)
+    local WebhookUrl = Configs.WebhookUrl
+    local ClearText = Configs.ClearText or false
+    
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(0.95, 0, 0.7, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "MusicPlayerFrame",
+    })
+    Corner(Frame)
+    Stroke(Frame)
+    
+    local TextLabel = Create("TextLabel", Frame, {
+        Size = UDim2.new(0.9, 0, 0.1, 0),
+        Position = UDim2.new(0.05, 0, 0.03, 0),
+        TextWrapped = true,
+        BackgroundTransparency = 1,
+        Font = Configs_HUB.Text_Font,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = "Feedback"
+    })
+
+    local TextBox = Create("TextBox", Frame, {
+        Size = UDim2.new(0.9, 0, 0.6, 0),
+        Position = UDim2.new(0.05, 0, 0.125, 0),
+        Text = "", 
+        PlaceholderText = "",
+        ClearTextOnFocus = ClearText,
+        Font = Configs_HUB.Text_Font,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top
+    })
+    Corner(TextBox)
+    
+    local SendButton = Create("TextButton", Frame, {
+        Size = UDim2.new(0.4, 0, 0.2, 0),
+        Position = UDim2.new(0.3, 0, 0.75, 0),
+        Text = "Send",
+        BackgroundColor3 = Configs_HUB.Cor_Button,
+        TextColor3 = Color3.new(1, 1, 1),
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 18,
+    })
+    Corner(SendButton)
+    
+    local isfeedbackSent = false
+    
+    SendButton.MouseButton1Click:Connect(function()
+        local message = TextBox.Text
+        if feedbackSent then
+         notify({
+                 Title = "Error",
+                 Text = "You've already sent a message. You can send it again after exiting the game or rejoining",
+                 buttonText = "ok",
+                 imageID = "",
+                 guiSize = Vector2.new(400, 70),
+              })
+            return
+        end
+        
+        if message == "" then
+            return
+        else
+        isfeedbackSent = true
+        local player = game.Players.LocalPlayer
+        local playerUsername = player.Name
+        local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
+
+        local avatarResponse
+        local success, errorMsg = pcall(function()
+            avatarResponse = game:HttpGet(string.format(
+                "https://thumbnails.roblox.com/v1/users/avatar?userIds=%d&size=420x420&format=Png&isCircular=true",
+                player.UserId
+            ))
+        end)
+
+        local avatarData, AvatarImage
+        if success and avatarResponse then
+            avatarData = game:GetService("HttpService"):JSONDecode(avatarResponse).data[1]
+            AvatarImage = avatarData and avatarData.imageUrl or "Unknown"
+        else
+            warn("Failed to fetch avatar image:", errorMsg)
+            AvatarImage = "Unknown"
+        end
+
+        local data = {
+            ["username"] = playerUsername,
+            ["avatar_url"] = AvatarImage,
+            ["embeds"] = {
+                {
+                    ["title"] = "Message from " .. playerUsername,
+                    ["description"] = message.."\n\n[Click here to view profile](" .. playerProfileLink .. ")",
+                    ["color"] = 0x7289DA
+                }
+            }
+        }
+
+        local newdata = game:GetService("HttpService"):JSONEncode(data)
+        local headers = {["content-type"] = "application/json"}
+
+        local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
+
+        if request then
+            local success, response = pcall(function()
+                return request({
+                    Url = WebhookUrl,
+                    Body = newdata,
+                    Method = "POST",
+                    Headers = headers
+                })
+            end)
+
+            if success then
+                warn("success to send webhook request")
+            else
+                warn("Failed to send webhook request:", response)
+            end
+        else
+            warn("HTTP request function is not available.")
+          end
+        end
+    end)
+end
+
   function AddDiscord(parent, Configs)
     local DiscordLink = Configs[1] or Configs.DiscordLink or "https://discord.gg/"
     local DiscordIcon = Configs[2] or Configs.DiscordIcon or "rbxassetid://"
