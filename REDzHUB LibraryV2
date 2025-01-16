@@ -4611,25 +4611,11 @@ function AddFeedBack(parent, Configs)
     })
     Corner(SendButton)
     
-    local isfeedbackSent = false
-    
     SendButton.MouseButton1Click:Connect(function()
         local message = TextBox.Text
-        if isfeedbackSent then
-         notify({
-                 Title = "Error",
-                 Text = "You've already sent a message. You can send it again after exiting the game or rejoining",
-                 buttonText = "ok",
-                 imageID = "",
-                 guiSize = Vector2.new(400, 70),
-              })
-            return
-        end
-        
         if message == "" then
             return
         else
-        isfeedbackSent = true
         local player = game.Players.LocalPlayer
         local playerUsername = player.Name
         local playerProfileLink = string.format("https://www.roblox.com/users/%d/profile", player.UserId)
