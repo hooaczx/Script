@@ -299,7 +299,24 @@ local Menu = Create("Frame", ScreenGui, {
     Speed = 3
 })
 Corner(Menu)
-  
+
+local url = "https://github.com/hooaczx/Music/raw/refs/heads/main/86625-594416691_tiny.mp4"
+
+if isfile("video.mp4") then
+    if readfile("video.mp4") ~= game:HttpGet(url) then
+        writefile("video.mp4", game:HttpGet(url))
+    end
+else
+    writefile("video.mp4", game:HttpGet(url))
+end
+
+local VideoFrame = Create("VideoFrame", Menu, {
+   Size = UDim2.new(1, 0, 1, 0), 
+   Video = getsynasset("video.mp4"), 
+   Looped = true
+})
+VideoFrame:Play()
+
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
     Size = UDim2.new(1, 0, 0.09, 0),
