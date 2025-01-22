@@ -54,6 +54,89 @@ AddToggle(Main5u6, {
   end
 })
 
+local connectionesp = {}
+
+function toggleHighlight(state, color)
+    if not state then
+        for _, connection in pairs(connectionesp) do
+            if connection then
+                connection:Disconnect()
+            end
+        end
+        connectionesp = {}
+        for _, player in pairs(game.Players:GetPlayers()) do
+            local character = player.Character
+            local highlight = character and character:FindFirstChild("Highlight")
+            if highlight then
+                highlight:Destroy()
+            end
+        end
+        return
+    end
+    function updateHighlight(player)
+        local character = player.Character
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            
+            if humanoid and humanoidRootPart then
+                local highlight = character:FindFirstChild("Highlight")
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Parent = character
+                end
+                highlight.FillTransparency = 1
+                highlight.OutlineTransparency = 0
+                highlight.OutlineColor = color or Color3.new(1, 1, 1)
+            end
+        end
+    end
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            connectionesp[player.Name .. "_CharacterAdded"] = player.CharacterAdded:Connect(function()
+                if state then
+                    updateHighlight(player)
+                end
+            end)
+            connectionesp[player.Name .. "_CharacterRemoving"] = player.CharacterRemoving:Connect(function()
+                local character = player.Character
+                local highlight = character and character:FindFirstChild("Highlight")
+                if highlight then
+                    highlight:Destroy()
+                end
+            end)
+            connectionesp[player.Name .. "_AncestryChanged"] = player.AncestryChanged:Connect(function(_, parent)
+                if not parent then
+                    local character = player.Character
+                    local highlight = character and character:FindFirstChild("Highlight")
+                    if highlight then
+                        highlight:Destroy()
+                    end
+                end
+            end)
+            updateHighlight(player)
+        end
+    end
+end
+
+AddToggle(EspTab, {
+    Name = "Esp",
+    Callback = function(bool)
+        _G.ESP = bool
+        toggleHighlight(bool, _G.ESPColor or Color3.new(1, 1, 1))
+    end
+})
+
+AddColorPicker(EspTab, {
+    Name = "Color",
+    Callback = function(color)
+        _G.ESPColor = color
+        if _G.ESP then
+            toggleHighlight(true, color)
+        end
+    end
+})
+
 function resetHighlight()
     if highlightObject then
         highlightObject:Destroy()
