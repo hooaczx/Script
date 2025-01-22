@@ -187,16 +187,25 @@ AddToggle(Main5u6, {
 
 local loopasp
 local asp
+local DefaultSpeeds = {}
 
 function adjustAnimationSpeed()
     local character = game:GetService("Players").LocalPlayer.Character
     if not character then return end
-    controller = character:FindFirstChildOfClass("AnimationController") 
+    local controller = character:FindFirstChildOfClass("AnimationController") 
         or character:FindFirstChildOfClass("Humanoid")
     if not controller then return end
     for _, track in ipairs(controller:GetPlayingAnimationTracks()) do
-        if not track.Speed then return end
-        track:AdjustSpeed(ToggleState and AnimationSpeed or track.Speed)
+        if ToggleState then
+            if not DefaultSpeeds[track] then
+                DefaultSpeeds[track] = track.Speed
+            end
+            track:AdjustSpeed(AnimationSpeed)
+        else
+            local defaultSpeed = DefaultSpeeds[track] or 1
+            track:AdjustSpeed(defaultSpeed)
+            DefaultSpeeds[track] = nil
+        end
     end
 end
 
@@ -204,8 +213,8 @@ function setupCharacterConnection()
     if asp then
         asp:Disconnect()
     end
-
     asp = game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+        DefaultSpeeds = {}
         adjustAnimationSpeed()
     end)
 end
