@@ -381,6 +381,8 @@ AddToggle(Main5u6, {
   end
 })
 
+local
+
 AddTextBox(Main5u6, {
   Name = "Number JumpPower",
   Default = "Enter",
@@ -418,17 +420,27 @@ AddToggle(Main5u6, {
   end
 })
 
+local Tpwk
+local Tpwkchrtr
+local Tpwkdied
+
 function setupTPWalk()
-    local runService = game:GetService("RunService")
-    local connection
-
-    if connection then
-        connection:Disconnect()
+    if Tpwk then
+        Tpwk:Disconnect()
+        Tpwk = nil
     end
-
+    if Tpwkchrtr then
+        Tpwkchrtr:Disconnect()
+        Tpwkchrtrn = nil
+    end
+    if Tpwkdied then
+        Tpwkdied:Disconnect()
+        Tpwkdied = nil
+    end
+    
     function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
-        connection = runService.Stepped:Connect(function()
+        Tpwk = game:GetService("RunService").Stepped:Connect(function()
             if getgenv().TPWalk and hum and hum.Parent then
                 if hum.MoveDirection.Magnitude > 0 then
                     if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
@@ -438,17 +450,17 @@ function setupTPWalk()
                     end
                 end
             else
-                connection:Disconnect()
+                Tpwk:Disconnect()
             end
         end)
-
-        hum.Died:Connect(function()
-            connection:Disconnect()
+        Tpwkdied = hum.Died:Connect(function()
+            if Tpwk then
+                Tpwk:Disconnect()
+                Tpwk = nil
+            end
         end)
     end
-
-    player.CharacterAdded:Connect(onCharacterAdded)
-
+    Tpwkchrtr = player.CharacterAdded:Connect(onCharacterAdded)
     if player.Character then
         onCharacterAdded(player.Character)
     end
@@ -472,10 +484,19 @@ AddToggle(Main5u6, {
     Callback = function(s)
         getgenv().TPWalk = s
         if s then
-            setupTPWalk() 
+            setupTPWalk()
         else
-            if connection then
-                connection:Disconnect()
+            if Tpwk then
+                Tpwk:Disconnect()
+                Tpwk = nil
+           end
+            if Tpwkchrtr then
+                Tpwkchrtr:Disconnect()
+                Tpwkchrtrn = nil
+           end
+           if Tpwkdied then
+                Tpwkdied:Disconnect()
+                Tpwkdied = nil
             end
         end
     end
