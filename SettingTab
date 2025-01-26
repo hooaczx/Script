@@ -87,10 +87,8 @@ function toggleHighlight(state, color)
     function updateHighlight(player)
         local character = player.Character
         if character then
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-            
-            if humanoid and humanoidRootPart then
+            humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
                 local highlight = character:FindFirstChild("Highlight")
                 if not highlight then
                     highlight = Instance.new("Highlight")
@@ -99,17 +97,7 @@ function toggleHighlight(state, color)
                 highlight.FillTransparency = 1
                 highlight.OutlineTransparency = 0
                 highlight.OutlineColor = color or Color3.new(1, 1, 1)
-                distance = (humanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude
-                maxDistance = 50
-                minDistance = 5
-                if distance > maxDistance then
-                    highlight.OutlineTransparency = 1
-                elseif distance < minDistance then
-                    highlight.OutlineTransparency = 0
-                else
-                    local transparency = (distance - minDistance) / (maxDistance - minDistance)
-                    highlight.OutlineTransparency = transparency
-                end
+                highlight.Adornee = humanoidRootPart
             end
         end
     end
@@ -139,7 +127,7 @@ function toggleHighlight(state, color)
             end)
         end
     end
-    updateConnectionesp = RunService.Heartbeat:Connect(function()
+    updateConnectionesp = game:GetService("RunService").Heartbeat:Connect(function()
         for _, player in pairs(game.Players:GetPlayers()) do
             if player ~= game.Players.LocalPlayer then
                 updateHighlight(player)
