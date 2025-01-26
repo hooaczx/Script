@@ -99,6 +99,17 @@ function toggleHighlight(state, color)
                 highlight.FillTransparency = 1
                 highlight.OutlineTransparency = 0
                 highlight.OutlineColor = color or Color3.new(1, 1, 1)
+                distance = (humanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude
+                maxDistance = 50
+                minDistance = 5
+                if distance > maxDistance then
+                    highlight.OutlineTransparency = 1
+                elseif distance < minDistance then
+                    highlight.OutlineTransparency = 0
+                else
+                    local transparency = (distance - minDistance) / (maxDistance - minDistance)
+                    highlight.OutlineTransparency = transparency
+                end
             end
         end
     end
