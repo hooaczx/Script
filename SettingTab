@@ -81,10 +81,16 @@ function toggleHighlight(state, color)
         end
         connectionesp = {}
         for _, player in pairs(game.Players:GetPlayers()) do
-            local character = player.Character
-            local highlight = character and character:FindFirstChild("Highlight")
+            character = player.Character
+            highlight = character and character:FindFirstChild("Highlight")
             if highlight then
-                highlight:Destroy()
+                tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                goal = {FillTransparency = 0, OutlineTransparency = 1}  -- อนิเมชั่นทวีตที่ทำให้หายไป
+                tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
+                tween:Play()
+                tween.Completed:Connect(function()
+                    highlight:Destroy()
+                end)
             end
         end
         highlightedPlayers = {}
@@ -131,26 +137,38 @@ function toggleHighlight(state, color)
                 end
             end)
             connectionesp[player.Name .. "_CharacterRemoving"] = player.CharacterRemoving:Connect(function()
-                local character = player.Character
-                local highlight = character and character:FindFirstChild("Highlight")
+                character = player.Character
+                highlight = character and character:FindFirstChild("Highlight")
                 if highlight then
-                    highlight:Destroy()
-                end
+                        tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                        goal = {FillTransparency = 1, OutlineTransparency = 1}
+                        tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
+                        tween:Play()
+                        tween.Completed:Connect(function()
+                            highlight:Destroy()  -- Destroy the highlight after the tween completes
+                        end)
+                    end
                 highlightedPlayers[player.Name] = nil
             end)
             connectionesp[player.Name .. "_AncestryChanged"] = player.AncestryChanged:Connect(function(_, parent)
                 if not parent then
-                    local character = player.Character
-                    local highlight = character and character:FindFirstChild("Highlight")
-                    if highlight then
-                        highlight:Destroy()
+                    character = player.Character
+                    highlight = character and character:FindFirstChild("Highlight")
+                      if highlight then
+                        tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                        goal = {FillTransparency = 1, OutlineTransparency = 1}
+                        tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
+                        tween:Play()
+                        tween.Completed:Connect(function()
+                            highlight:Destroy()  -- Destroy the highlight after the tween completes
+                        end)
                     end
                     highlightedPlayers[player.Name] = nil
                 end
             end)
         end
     end
-    local allHighlighted = true
+    allHighlighted = true
     for _, player in pairs(game.Players:GetPlayers()) do
         if not highlightedPlayers[player.Name] then
             allHighlighted = false
