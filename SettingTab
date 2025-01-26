@@ -54,10 +54,15 @@ AddToggle(Main5u6, {
   end
 })
 
+local RunService = game:GetService("RunService")
 local connectionesp = {}
+local updateConnectionesp
 
 function toggleHighlight(state, color)
     if not state then
+        if updateConnectionesp then
+            updateConnectionesp:Disconnect()
+        end
         for _, connection in pairs(connectionesp) do
             if connection then
                 connection:Disconnect()
@@ -93,6 +98,7 @@ function toggleHighlight(state, color)
     end
     for _, player in pairs(game.Players:GetPlayers()) do
         if player ~= game.Players.LocalPlayer then
+            updateHighlight(player)
             connectionesp[player.Name .. "_CharacterAdded"] = player.CharacterAdded:Connect(function()
                 if state then
                     updateHighlight(player)
@@ -114,9 +120,15 @@ function toggleHighlight(state, color)
                     end
                 end
             end)
-            updateHighlight(player)
         end
     end
+    updateConnectionesp = RunService.Heartbeat:Connect(function()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer then
+                updateHighlight(player)
+            end
+        end
+    end)
 end
 
 AddToggle(Main5u6, {
@@ -969,72 +981,81 @@ AddToggle(Main5u6, {
     end
 })
 
-local lastCF, stop, heartbeatConnection
-local Enabled = false
-
-local function start()
-    if heartbeatConnection then
-        heartbeatConnection:Disconnect()
+Servicelocktp = setmetatable({}, {
+    __index = function(Self, Index)
+        local NewService = game:GetService(Index)
+        if NewService then
+            Self[Index] = NewService
+        end
+        return NewService
     end
-    heartbeatConnection = game:GetService('RunService').Heartbeat:Connect(function()
-        if stop or not Enabled then
-            return
-        end
-        if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
-            lastCF = lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame
-        end
-    end)
-    lplr.Character:FindFirstChildOfClass('Humanoid').RootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
-        if Enabled then
-            stop = true
-            if lplr.Character and lplr.Character:FindFirstChildOfClass('Humanoid') and lplr.Character:FindFirstChildOfClass('Humanoid').RootPart then
-                lplr.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame = lastCF
+})
+
+localPuppet = Servicelocktp.Players.LocalPlayer
+local stop, lastCF
+local connectionlockCFrame = {
+    heartbeat = nil,
+    propertyChanged = nil,
+    characterAdded = nil
+}
+function start()
+    if not connectionlockCFrame.heartbeat then
+        connectionlockCFrame.heartbeat = Servicelocktp.RunService.Heartbeat:Connect(function()
+            if stop then return end
+            if localPuppet.Character and localPuppet.Character:FindFirstChildOfClass('Humanoid') then
+                local humanoidRootPart = localPuppet.Character:FindFirstChild('HumanoidRootPart')
+                if humanoidRootPart then
+                    lastCF = humanoidRootPart.CFrame
+                end
             end
-            game:GetService('RunService').Heartbeat:Wait()
-            stop = false
+        end)
+    end
+    if not connectionlockCFrame.propertyChanged then
+        character = localPuppet.Character
+        if character and character:FindFirstChild('HumanoidRootPart') then
+            connectionlockCFrame.propertyChanged = character.HumanoidRootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
+                if localPuppet.Character and stop == false then
+                    stop = true
+                    character.HumanoidRootPart.CFrame = lastCF
+                    Servicelocktp.RunService.Heartbeat:Wait()
+                    stop = false
+                end
+            end)
         end
-    end)
-end
-
-local function setupCharacter(character)
-    repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
-    repeat game:GetService('RunService').Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid').RootPart
-    if Enabled then
-        start()
+    end
+    if not connectionlockCFrame.characterAdded then
+        connectionlockCFrame.characterAdded = localPuppet.CharacterAdded:Connect(function(character)
+            repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
+            repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
+            start()
+        end)
     end
 end
-
-lplr.CharacterAdded:Connect(function(character)
-    setupCharacter(character)
-end)
 
 AddToggle(Main5u6, {
     Name = "Character Lock CFrame",
     Default = false,
     Callback = function(state)
-        Enabled = state
-        if Enabled then
-            if lplr.Character then
-                setupCharacter(lplr.Character)
-            end
+        if state then
+            start()
         else
-            if heartbeatConnection then
-                heartbeatConnection:Disconnect()
+            if connectionlockCFrame.heartbeat then
+                connectionlockCFrame.heartbeat:Disconnect()
+                connectionlockCFrame.heartbeat = nil
+            end
+            if connectionlockCFrame.propertyChanged then
+                connectionlockCFrame.propertyChanged:Disconnect()
+                connectionlockCFrame.propertyChanged = nil
+            end
+            if connectionlockCFrame.characterAdded then
+                connectionlockCFrame.characterAdded:Disconnect()
+                connectionlockCFrame.characterAdded = nil
             end
         end
     end
 })
 
-
-local function setCameraOcclusion()
-    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
-end
-
-setCameraOcclusion()
-
-lp.CharacterAdded:Connect(function()
-    setCameraOcclusion()
-end)
+local chtrcmr
 
 AddToggle(Main5u6, {
     Name = "Camera no Occlusion",
@@ -1042,8 +1063,17 @@ AddToggle(Main5u6, {
     Callback = function(value)
         if value then
             lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
+            if not chtrcmr then
+                chtrcmr = lp.CharacterAdded:Connect(function()
+                    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
+                end)
+            end
         else
             lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
+            if chtrcmr then
+                chtrcmr:Disconnect()
+                chtrcmr = nil
+            end
         end
     end
 })
