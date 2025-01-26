@@ -532,7 +532,7 @@ local Player = game.Players.LocalPlayer
 local originalUserId = Player.UserId
 local idInput
 
-local function setPlayerId(newId)
+function setPlayerId(newId)
     if newId then
         Player.UserId = newId
     else
@@ -755,7 +755,7 @@ local toggleAntiSit = false
 local heartbeatConnectionAntiSit = nil
 local firstRun = true
 
-local function preventsitting(enable)
+function preventsitting(enable)
     local seatsLeft = false
     for _, v in pairs(workspace:GetDescendants()) do
         if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
@@ -981,6 +981,14 @@ AddToggle(Main5u6, {
     end
 })
 
+functionlocktp = {
+    heartbeatConnection = nil,
+    propertyChangedConnection = nil,
+    lastCF = nil,
+    stop = false,
+    Enabled = false,
+    characterAddedConnection = nil
+}
 Servicelocktp = setmetatable({}, {
     __index = function(Self, Index)
         local NewService = game:GetService(Index)
@@ -990,66 +998,71 @@ Servicelocktp = setmetatable({}, {
         return NewService
     end
 })
-
 localPuppet = Servicelocktp.Players.LocalPlayer
-local stop, lastCF
-local connectionlockCFrame = {
-    heartbeat = nil,
-    propertyChanged = nil,
-    characterAdded = nil
-}
 function start()
-    if not connectionlockCFrame.heartbeat then
-        connectionlockCFrame.heartbeat = Servicelocktp.RunService.Heartbeat:Connect(function()
-            if stop then return end
-            if localPuppet.Character and localPuppet.Character:FindFirstChildOfClass('Humanoid') then
-                local humanoidRootPart = localPuppet.Character:FindFirstChild('HumanoidRootPart')
-                if humanoidRootPart then
-                    lastCF = humanoidRootPart.CFrame
-                end
-            end
-        end)
+    if functionlocktp.heartbeatConnection then
+        functionlocktp.heartbeatConnection:Disconnect()
+        functionlocktp.heartbeatConnection = nil
     end
-    if not connectionlockCFrame.propertyChanged then
-        character = localPuppet.Character
-        if character and character:FindFirstChild('HumanoidRootPart') then
-            connectionlockCFrame.propertyChanged = character.HumanoidRootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
-                if localPuppet.Character and stop == false then
-                    stop = true
-                    character.HumanoidRootPart.CFrame = lastCF
+    functionlocktp.heartbeatConnection = Servicelocktp.RunService.Heartbeat:Connect(function()
+        if functions.stop or not functions.Enabled then
+            return
+        end
+        local character = localPuppet.Character
+        if character and character:FindFirstChildOfClass('Humanoid') and character:FindFirstChild('HumanoidRootPart') then
+            functionlocktp.lastCF = character:FindFirstChild('HumanoidRootPart').CFrame
+        end
+    end)
+    character = localPuppet.Character
+    if character then
+        local humanoidRootPart = character:FindFirstChild('HumanoidRootPart')
+        if humanoidRootPart then
+            if functionlocktp.propertyChangedConnection then
+                functionlocktp.propertyChangedConnection:Disconnect()
+                functionlocktp.propertyChangedConnection = nil
+            end
+            functionlocktp.propertyChangedConnection = humanoidRootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
+                if functionlocktp.Enabled then
+                    functionlocktp.stop = true
+                    humanoidRootPart.CFrame = functionlocktp.lastCF
                     Servicelocktp.RunService.Heartbeat:Wait()
-                    stop = false
+                    functionlocktp.stop = false
                 end
             end)
         end
     end
-    if not connectionlockCFrame.characterAdded then
-        connectionlockCFrame.characterAdded = localPuppet.CharacterAdded:Connect(function(character)
-            repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
-            repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
-            start()
-        end)
+end
+function setupCharacter(character)
+    if not character then return end
+    repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
+    repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
+    if functionlocktp.Enabled then
+        start()
     end
 end
+functionlocktp.characterAddedConnection = localPuppet.CharacterAdded:Connect(setupCharacter)
 
 AddToggle(Main5u6, {
     Name = "Character Lock CFrame",
     Default = false,
     Callback = function(state)
-        if state then
-            start()
+        functionlocktp.Enabled = state
+        if functionlocktp.Enabled then
+            if localPuppet.Character then
+                setupCharacter(localPuppet.Character)
+            end
         else
-            if connectionlockCFrame.heartbeat then
-                connectionlockCFrame.heartbeat:Disconnect()
-                connectionlockCFrame.heartbeat = nil
+            if functionlocktp.heartbeatConnection then
+                functionlocktp.heartbeatConnection:Disconnect()
+                functionlocktp.heartbeatConnection = nil
             end
-            if connectionlockCFrame.propertyChanged then
-                connectionlockCFrame.propertyChanged:Disconnect()
-                connectionlockCFrame.propertyChanged = nil
+            if functionlocktp.propertyChangedConnection then
+                functionlocktp.propertyChangedConnection:Disconnect()
+                functionlocktp.propertyChangedConnection = nil
             end
-            if connectionlockCFrame.characterAdded then
-                connectionlockCFrame.characterAdded:Disconnect()
-                connectionlockCFrame.characterAdded = nil
+            if functionlocktp.characterAddedConnection then
+                functionlocktp.characterAddedConnection:Disconnect()
+                functionlocktp.characterAddedConnection = nil
             end
         end
     end
