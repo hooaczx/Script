@@ -61,8 +61,8 @@ AddToggle(Main5u6, {
   end
 })
 
-local connectionesp = {}
-local updateConnectionesp
+connectionesp = {}
+highlightedPlayers = {}
 
 function toggleHighlight(state, color)
     if not state then
@@ -85,6 +85,7 @@ function toggleHighlight(state, color)
         return
     end
     function updateHighlight(player)
+        if highlightedPlayers[player.Name] then return end  -- ข้ามผู้เล่นที่ได้รับการไฮไลท์แล้ว
         local character = player.Character
         if character then
             humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -98,14 +99,15 @@ function toggleHighlight(state, color)
                 highlight.FillTransparency = 1
                 highlight.OutlineTransparency = 0
                 highlight.OutlineColor = color or Color3.new(1, 1, 1)
+                highlightedPlayers[player.Name] = true
             end
         end
     end
     for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
+        if player ~= game.Players.LocalPlayer and not highlightedPlayers[player.Name] then
             updateHighlight(player)
             connectionesp[player.Name .. "_CharacterAdded"] = player.CharacterAdded:Connect(function()
-                if state then
+                if state and not highlightedPlayers[player.Name] then
                     updateHighlight(player)
                 end
             end)
@@ -115,6 +117,7 @@ function toggleHighlight(state, color)
                 if highlight then
                     highlight:Destroy()
                 end
+                highlightedPlayers[player.Name] = nil
             end)
             connectionesp[player.Name .. "_AncestryChanged"] = player.AncestryChanged:Connect(function(_, parent)
                 if not parent then
@@ -123,13 +126,14 @@ function toggleHighlight(state, color)
                     if highlight then
                         highlight:Destroy()
                     end
+                    highlightedPlayers[player.Name] = nil
                 end
             end)
         end
     end
     updateConnectionesp = RunService.Heartbeat:Connect(function()
         for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
+            if player ~= game.Players.LocalPlayer and not highlightedPlayers[player.Name] then
                 updateHighlight(player)
             end
         end
