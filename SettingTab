@@ -30,6 +30,16 @@ local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
 getgenv().TweenSpeed = 0.21
 getgenv().TweenWalk = false
+Service = setmetatable({}, {
+    __index = function(Self, Index)
+        local NewService = game:GetService(Index)
+        if NewService then
+            Self[Index] = NewService
+        end
+        return NewService
+    end
+})
+localPuppet = Service.Players.LocalPlayer
 
 function SendDetailedNotification(title, text, duration)
     game.StarterGui:SetCore("SendNotification", {
@@ -989,16 +999,6 @@ functionlocktp = {
     Enabled = false,
     characterAddedConnection = nil
 }
-Servicelocktp = setmetatable({}, {
-    __index = function(Self, Index)
-        local NewService = game:GetService(Index)
-        if NewService then
-            Self[Index] = NewService
-        end
-        return NewService
-    end
-})
-localPuppet = Servicelocktp.Players.LocalPlayer
 function start()
     if functionlocktp.heartbeatConnection then
         functionlocktp.heartbeatConnection:Disconnect()
@@ -1025,7 +1025,7 @@ function start()
                 if functionlocktp.Enabled then
                     functionlocktp.stop = true
                     humanoidRootPart.CFrame = functionlocktp.lastCF
-                    Servicelocktp.RunService.Heartbeat:Wait()
+                    Service.RunService.Heartbeat:Wait()
                     functionlocktp.stop = false
                 end
             end)
@@ -1034,8 +1034,8 @@ function start()
 end
 function setupCharacter(character)
     if not character then return end
-    repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
-    repeat Servicelocktp.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
+    repeat Service.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
+    repeat Service.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
     if functionlocktp.Enabled then
         start()
     end
