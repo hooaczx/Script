@@ -161,28 +161,29 @@ AddColorPicker(Main5u6, {
     end
 })
 
+close = {}
+
 function resetHighlight()
-    if highlightObject then
-        highlightObject:Destroy()
-        highlightObject = nil
+    if close.highlightObject then
+        close.highlightObject:Destroy()
+        close.highlightObject = nil
     end
-    if characterAddedConnection then
-        characterAddedConnection:Disconnect()
-        characterAddedConnection = nil
+    if close.characterAddedConnection then
+        close.characterAddedConnection:Disconnect()
+        close.characterAddedConnection = nil
     end
-    highlightedPlayer = nil
+    close.highlightedPlayer = nil
 end
 
 function lookAtClosestPlayer()
-    local character = lp.Character or lp.CharacterAdded:Wait()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    local humanoid = character:WaitForChild("Humanoid")
-    local closestPlayer = nil
-    local closestDistance = detectionRadius
-    local closestVerticalDifference = math.huge
-
+    character = localPuppet.Character or localPuppet.CharacterAdded:Wait()
+    humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    humanoid = character:WaitForChild("Humanoid")
+    closestPlayer = nil
+    closestDistance = detectionRadius
+    closestVerticalDifference = math.huge
     for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
-        if otherPlayer ~= lp and otherPlayer.Character then
+        if otherPlayer ~= localPuppet and otherPlayer.Character then
             local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
             if otherHumanoidRootPart then
                 local otherHumanoid = otherPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -190,7 +191,6 @@ function lookAtClosestPlayer()
                     local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
                         Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
                     local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
-
                     if horizontalDistance < closestDistance or
                        (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
                         closestPlayer = otherPlayer
@@ -201,35 +201,31 @@ function lookAtClosestPlayer()
             end
         end
     end
-
     if closestPlayer then
-        if closestPlayer ~= highlightedPlayer then
+        if close.highlightedPlayer ~= closestPlayer then
             resetHighlight()
-            highlightedPlayer = closestPlayer
-
-            highlightObject = Instance.new("Highlight")
-            highlightObject.Adornee = closestPlayer.Character
-            highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
-            highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
-            highlightObject.FillTransparency = 1
-            highlightObject.OutlineTransparency = 0
-            highlightObject.Parent = closestPlayer.Character
-
-            characterAddedConnection = closestPlayer.CharacterAdded:Connect(function()
+            close.highlightedPlayer = closestPlayer
+            close.highlightObject = Instance.new("Highlight")
+            close.highlightObject.Adornee = closestPlayer.Character
+            close.highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
+            close.highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
+            close.highlightObject.FillTransparency = 1
+            close.highlightObject.OutlineTransparency = 0
+            close.highlightObject.Parent = closestPlayer.Character
+            close.characterAddedConnection = closestPlayer.CharacterAdded:Connect(function()
                 resetHighlight()
-                highlightObject = Instance.new("Highlight")
-                highlightObject.Adornee = closestPlayer.Character
-                highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
-                highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
-                highlightObject.FillTransparency = 1
-                highlightObject.OutlineTransparency = 0
-                highlightObject.Parent = closestPlayer.Character
+                close.highlightObject = Instance.new("Highlight")
+                close.highlightObject.Adornee = closestPlayer.Character
+                close.highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
+                close.highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
+                close.highlightObject.FillTransparency = 1
+                close.highlightObject.OutlineTransparency = 0
+                close.highlightObject.Parent = closestPlayer.Character
             end)
         end
-
-        local targetPosition = closestPlayer.Character.HumanoidRootPart.Position
-        local horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        local isWalking = humanoid.MoveDirection.Magnitude > 0
+        targetPosition = closestPlayer.Character.HumanoidRootPart.Position
+        horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
+        isWalking = humanoid.MoveDirection.Magnitude > 0
         if isWalking then
             humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
         else
@@ -239,7 +235,7 @@ function lookAtClosestPlayer()
         end
     else
         resetHighlight()
-   end
+    end
 end
 
 AddTextBox(Main5u6, {
@@ -260,28 +256,28 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         if state then
-            lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
-            characterAddedConnection = lp.CharacterAdded:Connect(function()
-                if lookAtconnection then
-                    lookAtconnection:Disconnect()
+            close.lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
+            close.characterAddedConnection = localPuppet.CharacterAdded:Connect(function()
+                if close.lookAtconnection then
+                    close.lookAtconnection:Disconnect()
                 end
-                lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
+                close.lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
             end)
         else
-            if lookAtconnection then
-                lookAtconnection:Disconnect()
-                lookAtconnection = nil
+            if close.lookAtconnection then
+                close.lookAtconnection:Disconnect()
+                close.lookAtconnection = nil
             end
-            if characterAddedConnection then
-                characterAddedConnection:Disconnect()
-                characterAddedConnection = nil
+            if close.characterAddedConnection then
+                close.characterAddedConnection:Disconnect()
+                close.characterAddedConnection = nil
             end
-            if highlightObject then
-                highlightObject:Destroy()
-                highlightObject = nil
+            if close.highlightObject then
+                close.highlightObject:Destroy()
+                close.highlightObject = nil
             end
-            highlightedPlayer = nil
-            local character = lp.Character
+            close.highlightedPlayer = nil
+            local character = localPuppet.Character
             if character then
                 local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                 if humanoidRootPart then
