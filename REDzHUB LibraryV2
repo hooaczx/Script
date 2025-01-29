@@ -417,8 +417,12 @@ Corner(Menu)
 
 IsMinimized = true
 IsMinimizedu = false
+local isLockedMinimize = false
+local isLockedClose = false
 
-  Minimize_BTN.MouseButton1Click:Connect(function()
+Minimize_BTN.MouseButton1Click:Connect(function()
+  if not isLockedMinimize then
+    isLockedMinimize = true
     if IsMinimized then
       IsMinimized = false
       IsMinimizedu = true
@@ -438,19 +442,24 @@ IsMinimizedu = false
       BottomLine.Visible = true
       Bottomright.Visible = true
     end
-  end)
+    isLockedMinimize = false
+  end
+end)
 
 function CreateClose()
-if IsMinimizedu then
-   IsMinimized = true
-   IsMinimizedu = false
-   CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
-   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
-   Containers.Visible = true
-   ScrollBar.Visible = true
-   BottomLine.Visible = true
-   Bottomright.Visible = true
- end
+  if not isLockedClose then
+    isLockedClose = true
+    if IsMinimizedu then
+      IsMinimized = true
+      IsMinimizedu = false
+      CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
+      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
+      Containers.Visible = true
+      ScrollBar.Visible = true
+      BottomLine.Visible = true
+      Bottomright.Visible = true
+    end
+
     local CloseGui = Create("TextButton", Menu, {
       BackgroundTransparency = 0.5,
       BackgroundColor3 = Configs_HUB.Cor_Hub,
@@ -460,7 +469,7 @@ if IsMinimizedu then
       BackgroundTransparency = 0.5,
       Visible = false
     })Corner(CloseGui)
-    
+
     local CloseMenu = Create("Frame", CloseGui, {
       Size = UDim2.new(),
       AnchorPoint = Vector2.new(0.5, 0.5),
@@ -468,17 +477,17 @@ if IsMinimizedu then
       Transparency = 1,
       BackgroundColor3 = Configs_HUB.Cor_Hub
     })Corner(CloseMenu)Stroke(CloseMenu)
-    
+
     local Mensage = Create("TextLabel", CloseMenu, {
       Size = UDim2.new(0.8, 0, 0.25, 0),
-      Text = "are you sure you want to close this script??",
+      Text = "Are you sure you want to close this script?",
       Position = UDim2.new(0.1, 0, 0.2),
       Font = Configs_HUB.Text_Font,
       TextColor3 = Configs_HUB.Cor_Text,
       TextScaled = true,
       BackgroundTransparency = 1
     })
-    
+
     local Confirm = Create("TextButton", CloseMenu, {
       Size = UDim2.new(0.35, 0, 0.3, 0),
       Position = UDim2.new(0.1, 0, 0.5, 0),
@@ -488,7 +497,7 @@ if IsMinimizedu then
       TextColor3 = Color3.fromRGB(240, 0, 0),
       TextScaled = true
     })Corner(Confirm)Stroke(Confirm)
-    
+
     local Cancel = Create("TextButton", CloseMenu, {
       Size = UDim2.new(0.35, 0, 0.3, 0),
       Position = UDim2.new(0.9, 0, 0.5, 0),
@@ -499,31 +508,33 @@ if IsMinimizedu then
       TextColor3 = Color3.fromRGB(0, 240, 0),
       TextScaled = true
     })Corner(Cancel)Stroke(Cancel)
-    
+
     CloseGui.Visible = true
     CreateTween(CloseMenu, "Transparency", 0, 0.2, false)
     CreateTween(CloseMenu, "Size", UDim2.new(0.7, 0, 0.7, 0), 0.2, false)
-    
+
     Cancel.MouseButton1Click:Connect(function()
       CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
       CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
       CloseGui:Destroy()
     end)
-    
+
     Confirm.MouseButton1Click:Connect(function()
       CloseGui:Destroy()
       CreateTween(Menu, "Size", UDim2.new(), 0.3, true)
       DestroyScript()
     end)
-    
+
     CloseGui.MouseButton1Click:Connect(function()
       CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
       CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
       CloseGui:Destroy()
     end)
+    isLockedClose = false
   end
-  
-  Close_Button.MouseButton1Click:Connect(CreateClose)
+end
+
+Close_Button.MouseButton1Click:Connect(CreateClose)
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
