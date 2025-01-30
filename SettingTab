@@ -61,130 +61,76 @@ AddToggle(Main5u6, {
   end
 })
 
-connectionesp = {}
-highlightedPlayers = {}
-local updateConnectionesp, clhkv
-delayTime = 0.5
+Storage = Instance.new("Folder", game:FindService("CoreGui")) 
+Storage.Name = "Highlight_Storage_Player"
+connections = {}
+playerConnections = {}
 
-function toggleHighlight(state, color)
-    if not state then
-        if updateConnectionesp then
-            updateConnectionesp:Disconnect()
-        end
-        if clhkv then
-            clhkv:Disconnect()
-        end
-        for _, connection in pairs(connectionesp) do
-            if connection then
-                connection:Disconnect()
-            end
-        end
-        connectionesp = {}
-        for _, player in pairs(game.Players:GetPlayers()) do
-            character = player.Character
-            highlight = character and character:FindFirstChild("Highlight")
-            if highlight then
-                tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                goal = {FillTransparency = 0, OutlineTransparency = 1}  -- อนิเมชั่นทวีตที่ทำให้หายไป
-                tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
-                tween:Play()
-                tween.Completed:Connect(function()
-                    highlight:Destroy()
+function toggleHighlight(enable, color)
+    if enable then
+        for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
+            if plr ~= game:FindService("Players").LocalPlayer then
+                local highlight = Storage:FindFirstChild(plr.Name) or Instance.new("Highlight")
+                highlight.Name = plr.Name
+                highlight.Parent = Storage
+                highlight.FillColor = color
+                highlight.FillTransparency = 1 -- ทำให้ไม่มีสีเติมตรงกลาง
+                highlight.OutlineColor = color -- ใช้สีเดียวกันกับขอบ
+                highlight.OutlineTransparency = 0 -- ให้ขอบมองเห็นชัด
+                highlight.DepthMode = "AlwaysOnTop"
+
+                local char = plr.Character
+                if char then
+                    highlight.Adornee = char
+                end
+
+                connections[plr] = plr.CharacterAdded:Connect(function(newChar)
+                    highlight.Adornee = newChar
                 end)
             end
         end
-        highlightedPlayers = {}
-        return
-    end
-    function updateHighlight(player)
-        if highlightedPlayers[player.Name] then return end
-        local character = player.Character
-        if character then
-            humanoid = character:FindFirstChildOfClass("Humanoid")
-            humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-            if humanoid and humanoidRootPart then
-                local highlight = character:FindFirstChild("Highlight")
-                if not highlight then
-                    highlight = Instance.new("Highlight")
-                    highlight.Parent = character
-                end
-                highlight.FillTransparency = 1
-                highlight.OutlineTransparency = 1
-                highlight.OutlineColor = color or Color3.new(1, 1, 1)
-                tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                goal = {FillTransparency = 1, OutlineTransparency = 0}
-                tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
-                tween:Play()
-                highlightedPlayers[player.Name] = true
-            end
+    else
+        for _, highlight in ipairs(Storage:GetChildren()) do
+            highlight:Destroy()
         end
-    end
-    function handlePlayerAdded(player)
-        wait(delayTime)
-        updateHighlight(player)
-    end
-    clhkv = game.Players.PlayerAdded:Connect(function(player)
-        if state and not highlightedPlayers[player.Name] then
-            handlePlayerAdded(player)
+        for _, conn in pairs(connections) do
+            conn:Disconnect()
         end
-    end)
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and not highlightedPlayers[player.Name] then
-            updateHighlight(player)
-            connectionesp[player.Name .. "_CharacterAdded"] = player.CharacterAdded:Connect(function()
-                if state and not highlightedPlayers[player.Name] then
-                    handlePlayerAdded(player)
-                end
-            end)
-            connectionesp[player.Name .. "_CharacterRemoving"] = player.CharacterRemoving:Connect(function()
-                character = player.Character
-                highlight = character and character:FindFirstChild("Highlight")
-                if highlight then
-                        tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                        goal = {FillTransparency = 1, OutlineTransparency = 1}
-                        tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
-                        tween:Play()
-                        tween.Completed:Connect(function()
-                            highlight:Destroy()  -- Destroy the highlight after the tween completes
-                        end)
-                    end
-                highlightedPlayers[player.Name] = nil
-            end)
-            connectionesp[player.Name .. "_AncestryChanged"] = player.AncestryChanged:Connect(function(_, parent)
-                if not parent then
-                    character = player.Character
-                    highlight = character and character:FindFirstChild("Highlight")
-                      if highlight then
-                        tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                        goal = {FillTransparency = 1, OutlineTransparency = 1}
-                        tween = game:GetService("TweenService"):Create(highlight, tweenInfo, goal)
-                        tween:Play()
-                        tween.Completed:Connect(function()
-                            highlight:Destroy()  -- Destroy the highlight after the tween completes
-                        end)
-                    end
-                    highlightedPlayers[player.Name] = nil
+        connections = {}
+    end
+end
+
+function toggleConnections(enable)
+    if enable then
+        if not playerConnections.PlayerAdded then
+            playerConnections.PlayerAdded = game:FindService("Players").PlayerAdded:Connect(function(plr)
+                if _G.ESP then
+                    toggleHighlight(true, _G.ESPColor or Color3.fromRGB(0, 0, 255))
                 end
             end)
         end
-    end
-    allHighlighted = true
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if not highlightedPlayers[player.Name] then
-            allHighlighted = false
-            break
+
+        if not playerConnections.PlayerRemoving then
+            playerConnections.PlayerRemoving = game:FindService("Players").PlayerRemoving:Connect(function(plr)
+                if Storage:FindFirstChild(plr.Name) then
+                    Storage[plr.Name]:Destroy()
+                end
+                if connections[plr] then
+                    connections[plr]:Disconnect()
+                    connections[plr] = nil
+                end
+            end)
+        end
+    else
+        if playerConnections.PlayerAdded then
+            playerConnections.PlayerAdded:Disconnect()
+            playerConnections.PlayerAdded = nil
+        end
+        if playerConnections.PlayerRemoving then
+            playerConnections.PlayerRemoving:Disconnect()
+            playerConnections.PlayerRemoving = nil
         end
     end
-    if allHighlighted then
-        return
-    end
-    updateConnectionesp = RunService.Heartbeat:Connect(function()
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer and not highlightedPlayers[player.Name] then
-                handlePlayerAdded(player)
-            end
-        end
-    end)
 end
 
 AddToggle(Main5u6, {
@@ -192,7 +138,8 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(bool)
         _G.ESP = bool
-        toggleHighlight(bool, _G.ESPColor or Color3.new(1, 1, 1))
+        toggleConnections(bool)
+        toggleHighlight(bool, _G.ESPColor or Color3.fromRGB(0, 0, 255))
     end
 })
 
