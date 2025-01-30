@@ -61,35 +61,51 @@ AddToggle(Main5u6, {
   end
 })
 
-Storage = Instance.new("Folder", game:FindService("CoreGui")) 
+Storage = Instance.new("Folder", game:FindService("CoreGui"))
 Storage.Name = "Highlight_Storage_Player"
-connections = {}
-playerConnections = {}
+local connections = {}
+local espLoop
 
-function toggleHighlight(enable, color)
+function toggleESP(enable, color)
     if enable then
-        for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
-            if plr ~= game:FindService("Players").LocalPlayer then
-                local highlight = Storage:FindFirstChild(plr.Name) or Instance.new("Highlight")
-                highlight.Name = plr.Name
-                highlight.Parent = Storage
-                highlight.FillColor = color
-                highlight.FillTransparency = 1
-                highlight.OutlineColor = color
-                highlight.OutlineTransparency = 0
-                highlight.DepthMode = "AlwaysOnTop"
+        if espLoop then return end
+        espLoop = RunService.Heartbeat:Connect(function()
+            for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
+                if plr ~= game:FindService("Players").LocalPlayer and not Storage:FindFirstChild(plr.Name) then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = plr.Name
+                    highlight.Parent = Storage
+                    highlight.FillColor = color or Color3.fromRGB(0, 0, 255)
+                    highlight.FillTransparency = 1
+                    highlight.OutlineColor = color or Color3.fromRGB(0, 0, 255)
+                    highlight.OutlineTransparency = 0
+                    highlight.DepthMode = "AlwaysOnTop"
+                    
+                    if plr.Character then
+                        highlight.Adornee = plr.Character
+                    end
 
-                local char = plr.Character
-                if char then
-                    highlight.Adornee = char
+                    connections[plr] = plr.CharacterAdded:Connect(function(newChar)
+                        highlight.Adornee = newChar
+                    end)
                 end
-
-                connections[plr] = plr.CharacterAdded:Connect(function(newChar)
-                    highlight.Adornee = newChar
-                end)
             end
-        end
+        end)
+
+        connections["PlayerRemoving"] = game:FindService("Players").PlayerRemoving:Connect(function(plr)
+            if Storage:FindFirstChild(plr.Name) then
+                Storage[plr.Name]:Destroy()
+            end
+            if connections[plr] then
+                connections[plr]:Disconnect()
+                connections[plr] = nil
+            end
+        end)
     else
+        if espLoop then
+            espLoop:Disconnect()
+            espLoop = nil
+        end
         for _, highlight in ipairs(Storage:GetChildren()) do
             highlight:Destroy()
         end
@@ -100,57 +116,20 @@ function toggleHighlight(enable, color)
     end
 end
 
-function toggleConnections(enable)
-    if enable then
-        if not playerConnections.PlayerAdded then
-            playerConnections.PlayerAdded = game:FindService("Players").PlayerAdded:Connect(function(plr)
-                if _G.ESP then
-                    toggleHighlight(true, _G.ESPColor or Color3.fromRGB(0, 0, 255))
-                end
-            end)
-        end
-
-        if not playerConnections.PlayerRemoving then
-            playerConnections.PlayerRemoving = game:FindService("Players").PlayerRemoving:Connect(function(plr)
-                if Storage:FindFirstChild(plr.Name) then
-                    Storage[plr.Name]:Destroy()
-                end
-                if connections[plr] then
-                    connections[plr]:Disconnect()
-                    connections[plr] = nil
-                end
-            end)
-        end
-    else
-        if playerConnections.PlayerAdded then
-            playerConnections.PlayerAdded:Disconnect()
-            playerConnections.PlayerAdded = nil
-        end
-        if playerConnections.PlayerRemoving then
-            playerConnections.PlayerRemoving:Disconnect()
-            playerConnections.PlayerRemoving = nil
-        end
-    end
-end
-
 AddToggle(Main5u6, {
     Name = "Esp Player",
     Default = false,
     Callback = function(bool)
         _G.ESP = bool
-        toggleConnections(bool)
-        toggleHighlight(bool, _G.ESPColor or Color3.fromRGB(0, 0, 255))
+        toggleESP(bool, _G.ESPColor or Color3.fromRGB(0, 0, 255))
     end
 })
 
 AddColorPicker(Main5u6, {
     Name = "Esp Player Color",
-    Default = false,
+    Default = Color3.fromRGB(0, 0, 255),
     Callback = function(color)
         _G.ESPColor = color
-        if _G.ESP then
-            toggleHighlight(true, color)
-        end
     end
 })
 
@@ -579,7 +558,7 @@ getgenv().ProtectName = false
 local originalName = game.Players.LocalPlayer.Name
 local connections = {}
 
-local function disconnectAll()
+function disconnectAll()
     for _, conn in ipairs(connections) do
         conn:Disconnect()
     end
@@ -625,7 +604,7 @@ local function updateNameInTextLabels(newName)
     table.insert(connections, conn)
 end
 
-local function revertNameInTextLabels()
+function revertNameInTextLabels()
     disconnectAll()
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
@@ -666,7 +645,7 @@ local kickReasons = {}
 local kickReasonTable = AddTextTable(Main5u6, {Name = "Log of Kick Reasons"})
 local kickAttempts = {}
 
-local ToggleKick = AddToggle(Main5u6, {
+ToggleKick = AddToggle(Main5u6, {
     Name = "Anti Kick",
     Default = false,
     Callback = function(isEnabled)
