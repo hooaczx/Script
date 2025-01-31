@@ -66,46 +66,37 @@ Storage.Name = "Highlight_Storage_Player"
 local connections = {}
 local espLoop
 
-function updateESP(color)
-    local currentESPCount = #Storage:GetChildren()
-    local maxPlayers = game:GetService("Players").MaxPlayers
-    if currentESPCount >= maxPlayers then
-        return
-    end
-    for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
-        if plr ~= game:GetService("Players").LocalPlayer then
-            local existingHighlight = Storage:FindFirstChild(plr.Name)
-            if not existingHighlight then
-                highlight = Instance.new("Highlight")
-                highlight.Name = plr.Name
-                highlight.Parent = Storage
-                highlight.FillColor = color or Color3.fromRGB(0, 0, 255)
-                highlight.FillTransparency = 1
-                highlight.OutlineColor = color or Color3.fromRGB(0, 0, 255)
-                highlight.OutlineTransparency = 0
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                
-                if plr.Character then
-                    highlight.Adornee = plr.Character
-                end
-                connections[plr] = plr.CharacterAdded:Connect(function(newChar)
-                    highlight.Adornee = newChar
-                end)
-            end
-        end
-    end
-end
-
 function toggleESP(enable, color)
     if enable then
         if espLoop then return end
         espLoop = RunService.Heartbeat:Connect(function()
-            updateESP(color)
+            for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
+                if plr ~= game:FindService("Players").LocalPlayer then
+                    highlight = Storage:FindFirstChild(plr.Name)
+                    if not highlight then
+                        highlight = Instance.new("Highlight")
+                        highlight.Name = plr.Name
+                        highlight.Parent = Storage
+                    end
+                    highlight.FillColor = color or Color3.fromRGB(0, 0, 255)
+                    highlight.FillTransparency = 1
+                    highlight.OutlineColor = color or Color3.fromRGB(0, 0, 255)
+                    highlight.OutlineTransparency = 0
+                    highlight.DepthMode = "AlwaysOnTop"
+                    if plr.Character then
+                        highlight.Adornee = plr.Character
+                    end
+                    if not connections[plr] then
+                        connections[plr] = plr.CharacterAdded:Connect(function(newChar)
+                            highlight.Adornee = newChar
+                        end)
+                    end
+                end
+            end
         end)
-        connections["PlayerRemoving"] = game:GetService("Players").PlayerRemoving:Connect(function(plr)
-            local highlight = Storage:FindFirstChild(plr.Name)
-            if highlight then
-                highlight:Destroy()
+        connections["PlayerRemoving"] = game:FindService("Players").PlayerRemoving:Connect(function(plr)
+            if Storage:FindFirstChild(plr.Name) then
+                Storage[plr.Name]:Destroy()
             end
             if connections[plr] then
                 connections[plr]:Disconnect()
@@ -141,10 +132,6 @@ AddColorPicker(Main5u6, {
     Default = Color3.fromRGB(0, 0, 255),
     Callback = function(color)
         _G.ESPColor = color
-        for _, highlight in ipairs(Storage:GetChildren()) do
-            highlight.FillColor = color
-            highlight.OutlineColor = color
-        end
     end
 })
 
