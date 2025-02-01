@@ -25,9 +25,16 @@ functionCreate.Create = function(instance, parent, props)
       new[prop] = value
     end)
   end
-  if new.Parent == nil then
-    new:Destroy()
-  end
+  local clse
+  clse = new.AncestryChanged:Connect(function()
+    if not new.Parent then
+      new:Destroy()
+      if clse then
+        clse:Disconnect()
+        clse = nil
+      end
+    end
+  end)
   return new
 end
 
