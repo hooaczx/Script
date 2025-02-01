@@ -561,42 +561,48 @@ AddToggle(Main5u6, {
     end
 })
 
-getgenv().name = "Protected"
 getgenv().ProtectName = false
-originalName = game.Players.LocalPlayer.Name
 spaghettiWires = {}
+originalName = nil
+currentName = nil
+
+for _, player in ipairs(game.Players:GetPlayers()) do
+    if player == game.Players.LocalPlayer then
+        originalName = player.Name
+        break
+    end
+end
 
 function updateNameInTextLabels(newName)
-    local Plr = game.Players.LocalPlayer
-    if not game:IsLoaded() then game.Loaded:Wait() end
+    if not newName or not originalName then return end
 
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
-            local has = string.find(value.Text, Plr.Name)
+            local has = string.find(value.Text, originalName)
             if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
+                value.Text = value.Text:gsub(originalName, newName)
             end
 
             local pasta = value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(Plr.Name, newName)
+                    value.Text = value.Text:gsub(originalName, newName)
                 end
             end)
 
-            table.insert(spaghettiWires, pasta) -- เก็บการเชื่อมต่อ
+            table.insert(spaghettiWires, pasta)
         end
     end
 
     local noodle = game.DescendantAdded:Connect(function(value)
         if value:IsA("TextLabel") then
-            local has = string.find(value.Text, Plr.Name)
+            local has = string.find(value.Text, originalName)
             value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(Plr.Name, newName)
+                    value.Text = value.Text:gsub(originalName, newName)
                 end
             end)
             if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
+                value.Text = value.Text:gsub(originalName, newName)
             end
         end
     end)
@@ -604,9 +610,11 @@ function updateNameInTextLabels(newName)
 end
 
 function revertNameInTextLabels()
+    if not currentName or not originalName then return end
+
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
-            value.Text = value.Text:gsub(getgenv().name, originalName)
+            value.Text = value.Text:gsub(currentName, originalName)
         end
     end
     for _, pasta in ipairs(spaghettiWires) do
@@ -616,30 +624,31 @@ function revertNameInTextLabels()
 end
 
 AddTextBox(Main5u6, {
-  Name = "Custom Name",
-  Default = "Enter",
-  PlaceholderText = "Enter name to replace",
-  ClearText = true,
-  Callback = function(input)
-      getgenv().name = input
-      if getgenv().ProtectName then
-          revertNameInTextLabels()
-          updateNameInTextLabels(getgenv().name)
-      end
-  end
+    Name = "Custom Name",
+    Default = "Enter",
+    PlaceholderText = "Enter name to replace",
+    ClearText = true,
+    Callback = function(input)
+        if input == "" or input == originalName then return end
+        currentName = input
+        if getgenv().ProtectName then
+            revertNameInTextLabels()
+            updateNameInTextLabels(currentName)
+        end
+    end
 })
 
 AddToggle(Main5u6, {
-  Name = "Name Protection",
-  Default = false,
-  Callback = function(state)
-      getgenv().ProtectName = state
-      if state then
-          updateNameInTextLabels(getgenv().name)
-      else
-          revertNameInTextLabels()
-      end
-  end
+    Name = "Name Protection",
+    Default = false,
+    Callback = function(state)
+        getgenv().ProtectName = state
+        if state and currentName then
+            updateNameInTextLabels(currentName)
+        elseif not state then
+            revertNameInTextLabels()
+        end
+    end
 })
 
 isAntiKickEnabled = false
