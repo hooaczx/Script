@@ -70,29 +70,29 @@ function toggleESP(enable, color)
     if enable then
         if espLoop then return end
         espLoop = RunService.Heartbeat:Connect(function()
-            for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
-                if plr ~= game:FindService("Players").LocalPlayer then
-                    highlight = Storage:FindFirstChild(plr.Name)
-                    if not highlight then
-                        highlight = Instance.new("Highlight")
-                        highlight.Name = plr.Name
-                        highlight.Parent = Storage
-                    end
-                    highlight.FillColor = color or Color3.fromRGB(0, 0, 255)
-                    highlight.FillTransparency = 1
-                    highlight.OutlineColor = color or Color3.fromRGB(0, 0, 255)
-                    highlight.OutlineTransparency = 0
-                    highlight.DepthMode = "AlwaysOnTop"
-                    if plr.Character then
-                        highlight.Adornee = plr.Character
-                    end
-                    if not connections[plr] then
-                        connections[plr] = plr.CharacterAdded:Connect(function(newChar)
-                            highlight.Adornee = newChar
-                        end)
-                    end
-                end
-            end
+         for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
+            if plr ~= game:FindService("Players").LocalPlayer then
+              highlight = Storage:FindFirstChild(plr.Name)
+               if not highlight then
+                  highlight = Instance.new("Highlight")
+                  highlight.Name = plr.Name
+                  highlight.Parent = Storage
+              end
+              highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+              highlight.FillTransparency = 1
+              highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+              highlight.OutlineTransparency = 0
+              highlight.DepthMode = "AlwaysOnTop"
+              if plr.Character then
+                  highlight.Adornee = plr.Character
+              end
+              if not connections[plr] then
+                connections[plr] = plr.CharacterAdded:Connect(function(newChar)
+                    highlight.Adornee = newChar
+                    end)
+                 end
+              end
+           end
         end)
         connections["PlayerRemoving"] = game:FindService("Players").PlayerRemoving:Connect(function(plr)
             if Storage:FindFirstChild(plr.Name) then
@@ -133,7 +133,10 @@ AddColorPicker(Main5u6, {
     Callback = function(color)
         _G.ESPColor = color
         if _G.ESP then
-            toggleESP(true, color)
+            for _, highlight in ipairs(Storage:GetChildren()) do
+                highlight.FillColor = color
+                highlight.OutlineColor = color
+            end
         end
     end
 })
@@ -561,17 +564,9 @@ AddToggle(Main5u6, {
 getgenv().name = "Protected"
 getgenv().ProtectName = false
 local originalName = game.Players.LocalPlayer.Name
-local connections = {}
-
-function disconnectAll()
-    for _, conn in ipairs(connections) do
-        conn:Disconnect()
-    end
-    connections = {}
-end
+local heartbeatConnection
 
 local function updateNameInTextLabels(newName)
-    disconnectAll()
     local Plr = game.Players.LocalPlayer
     if not game:IsLoaded() then game.Loaded:Wait() end
 
@@ -582,39 +577,52 @@ local function updateNameInTextLabels(newName)
                 value.Text = value.Text:gsub(Plr.Name, newName)
             end
 
-            local conn = value:GetPropertyChangedSignal("Text"):Connect(function()
+            value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
                     value.Text = value.Text:gsub(Plr.Name, newName)
                 end
             end)
-            table.insert(connections, conn)
         end
     end
 
-    local conn = game.DescendantAdded:Connect(function(value)
+    game.DescendantAdded:Connect(function(value)
         if value:IsA("TextLabel") then
             local has = string.find(value.Text, Plr.Name)
-            if has then
-                value.Text = value.Text:gsub(Plr.Name, newName)
-            end
-
-            local subConn = value:GetPropertyChangedSignal("Text"):Connect(function()
+            value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
                     value.Text = value.Text:gsub(Plr.Name, newName)
                 end
             end)
-            table.insert(connections, subConn)
+            if has then
+                value.Text = value.Text:gsub(Plr.Name, newName)
+            end
         end
     end)
-    table.insert(connections, conn)
+
+    local leaderboard = game:GetService("CoreGui").PlayerList.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScrollingFrame.OffsetUndoFrame
+    heartbeatConnection = RunService.Heartbeat:Connect(function()
+        if not getgenv().ProtectName then
+            heartbeatConnection:Disconnect()
+            heartbeatConnection = nil
+            return
+        end
+        for _, v in ipairs(leaderboard:GetDescendants()) do
+            if v:IsA("TextLabel") and v.Text == originalName then
+                v.Text = newName
+            end
+        end
+    end)
 end
 
-function revertNameInTextLabels()
-    disconnectAll()
+local function revertNameInTextLabels()
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
             value.Text = value.Text:gsub(getgenv().name, originalName)
         end
+    end
+    if heartbeatConnection then
+        heartbeatConnection:Disconnect()
+        heartbeatConnection = nil
     end
 end
 
