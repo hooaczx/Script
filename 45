@@ -25,6 +25,16 @@ functionCreate.Create = function(instance, parent, props)
       new[prop] = value
     end)
   end
+  local clse
+  clse = new.AncestryChanged:Connect(function()
+    if not new.Parent then
+      new:Destroy()
+      if clse then
+        clse:Disconnect()
+        clse = nil
+      end
+    end
+  end)
   return new
 end
 
@@ -167,7 +177,7 @@ TextSetColor = functionCreate.TextSetColor
 ShakeEffect = functionCreate.ShakeEffect
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
-  Name = "hcx hub lyibrary",
+  Name = "hcx hub library",
   DisplayOrder = 9999999999999,
 })
 
@@ -288,9 +298,17 @@ local Menu = Create("Frame", ScreenGui, {
     AnchorPoint = Vector2.new(1, 0),
     Active = true,
     Draggable = true
+})CreateGradient(Menu, {
+    Color = {
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = 45,
+    Tween = true,
+    Speed = 3
 })
 Corner(Menu)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/VideoBackground"))()
 
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
@@ -409,8 +427,12 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/h
 
 IsMinimized = true
 IsMinimizedu = false
+local isLockedMinimize = false
+local isLockedClose = false
 
-  Minimize_BTN.MouseButton1Click:Connect(function()
+Minimize_BTN.MouseButton1Click:Connect(function()
+  if not isLockedMinimize then
+    isLockedMinimize = true
     if IsMinimized then
       IsMinimized = false
       IsMinimizedu = true
@@ -430,19 +452,24 @@ IsMinimizedu = false
       BottomLine.Visible = true
       Bottomright.Visible = true
     end
-  end)
+    isLockedMinimize = false
+  end
+end)
 
 function CreateClose()
-if IsMinimizedu then
-   IsMinimized = true
-   IsMinimizedu = false
-   CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
-   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
-   Containers.Visible = true
-   ScrollBar.Visible = true
-   BottomLine.Visible = true
-   Bottomright.Visible = true
- end
+  if not isLockedClose then
+    isLockedClose = true
+    if IsMinimizedu then
+      IsMinimized = true
+      IsMinimizedu = false
+      CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
+      CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
+      Containers.Visible = true
+      ScrollBar.Visible = true
+      BottomLine.Visible = true
+      Bottomright.Visible = true
+    end
+
     local CloseGui = Create("TextButton", Menu, {
       BackgroundTransparency = 0.5,
       BackgroundColor3 = Configs_HUB.Cor_Hub,
@@ -452,7 +479,7 @@ if IsMinimizedu then
       BackgroundTransparency = 0.5,
       Visible = false
     })Corner(CloseGui)
-    
+
     local CloseMenu = Create("Frame", CloseGui, {
       Size = UDim2.new(),
       AnchorPoint = Vector2.new(0.5, 0.5),
@@ -460,17 +487,17 @@ if IsMinimizedu then
       Transparency = 1,
       BackgroundColor3 = Configs_HUB.Cor_Hub
     })Corner(CloseMenu)Stroke(CloseMenu)
-    
+
     local Mensage = Create("TextLabel", CloseMenu, {
       Size = UDim2.new(0.8, 0, 0.25, 0),
-      Text = "are you sure you want to close this script??",
+      Text = "Are you sure you want to close this script?",
       Position = UDim2.new(0.1, 0, 0.2),
       Font = Configs_HUB.Text_Font,
       TextColor3 = Configs_HUB.Cor_Text,
       TextScaled = true,
       BackgroundTransparency = 1
     })
-    
+
     local Confirm = Create("TextButton", CloseMenu, {
       Size = UDim2.new(0.35, 0, 0.3, 0),
       Position = UDim2.new(0.1, 0, 0.5, 0),
@@ -480,7 +507,7 @@ if IsMinimizedu then
       TextColor3 = Color3.fromRGB(240, 0, 0),
       TextScaled = true
     })Corner(Confirm)Stroke(Confirm)
-    
+
     local Cancel = Create("TextButton", CloseMenu, {
       Size = UDim2.new(0.35, 0, 0.3, 0),
       Position = UDim2.new(0.9, 0, 0.5, 0),
@@ -491,31 +518,33 @@ if IsMinimizedu then
       TextColor3 = Color3.fromRGB(0, 240, 0),
       TextScaled = true
     })Corner(Cancel)Stroke(Cancel)
-    
+
     CloseGui.Visible = true
     CreateTween(CloseMenu, "Transparency", 0, 0.2, false)
     CreateTween(CloseMenu, "Size", UDim2.new(0.7, 0, 0.7, 0), 0.2, false)
-    
+
     Cancel.MouseButton1Click:Connect(function()
       CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
       CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
       CloseGui:Destroy()
     end)
-    
+
     Confirm.MouseButton1Click:Connect(function()
       CloseGui:Destroy()
       CreateTween(Menu, "Size", UDim2.new(), 0.3, true)
       DestroyScript()
     end)
-    
+
     CloseGui.MouseButton1Click:Connect(function()
       CreateTween(CloseMenu, "Transparency", 1, 0.3, false)
       CreateTween(CloseMenu, "Size", UDim2.new(), 0.2, true)
       CloseGui:Destroy()
     end)
+    isLockedClose = false
   end
-  
-  Close_Button.MouseButton1Click:Connect(CreateClose)
+end
+
+Close_Button.MouseButton1Click:Connect(CreateClose)
 
 local songs = {
     {id = "rbxassetid://5409360995", name = "Dion Timmr"},
@@ -3218,7 +3247,7 @@ local States = {
 local MaxLength = 900000
 local EnabledOffset = CFrame.new(1.7, 0, 0)
 local DisabledOffset = CFrame.new(-1.7, 0, 0)
-local Active
+local ShiftLockmaingui
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
@@ -3241,8 +3270,8 @@ local ShiftlockCursor = Create("ImageLabel", ScreenGui, {
 })
 
 ShiftLockButton.MouseButton1Click:Connect(function()
-    if not Active then
-        Active = RunService.RenderStepped:Connect(function()
+    if not ShiftLockmaingui then
+        ShiftLockmaingui = RunService.RenderStepped:Connect(function()
             Player.Character.Humanoid.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
@@ -3269,8 +3298,8 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
         ShiftlockCursor.Visible = false
         pcall(function()
-            Active:Disconnect()
-            Active = nil
+            ShiftLockmaingui:Disconnect()
+            ShiftLockmaingui = nil
         end)
     end
 end)
@@ -3286,14 +3315,14 @@ ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
-        if Active then
+        if ShiftLockmaingui then
              Player.Character.Humanoid.AutoRotate = true
              ShiftLockButton.Image = States.Off
              workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
              ShiftlockCursor.Visible = false
              pcall(function()
-               Active:Disconnect()
-               Active = nil
+               ShiftLockmaingui:Disconnect()
+               ShiftLockmaingui = nil
              end)
         end
     end
@@ -3437,7 +3466,6 @@ end
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       Text = "",
-      BackgroundTransparency = 1,
       AutoButtonColor = false
     })Corner(TextButton)Stroke(TextButton)
     
@@ -3475,7 +3503,6 @@ end
 
     local WarningFrame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.17, 0),
-        BackgroundTransparency = 1,
         BackgroundColor3 = Configs_HUB.Cor_Options,
     })
     local FrameStroke = Create("UIStroke", WarningFrame, {
@@ -3510,7 +3537,6 @@ function AddToggle(parent, Configs)
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame",
-        BackgroundTransparency = 1,
         Text = "",
         AutoButtonColor = false
     })
@@ -3599,7 +3625,6 @@ end
     local Frame = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = 1,
       Name = "Frame",
       Text = ""
     })Corner(Frame)Stroke(Frame)
@@ -3707,7 +3732,6 @@ end
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = 1,
       Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
@@ -3763,7 +3787,6 @@ end
     
     local TextButton = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
-      BackgroundTransparency = 1,
       BackgroundColor3 = Configs_HUB.Cor_Options,
     })Stroke(TextButton)Corner(TextButton)
     
@@ -3941,7 +3964,6 @@ end)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = 1,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -4074,7 +4096,6 @@ function AddTextTable(parent, Configs)
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
-      BackgroundTransparency = 1,
       Text = "",
       AutoButtonColor = false
     })Corner(Frame)Stroke(Frame)
@@ -4187,8 +4208,7 @@ function AddTextTable(parent, Configs)
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      BackgroundTransparency = 1
+      Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
     local TextButton = Create("TextButton", Frame, {
@@ -4213,7 +4233,6 @@ function AddTextTable(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.3, 0, 0.6, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
-        BackgroundTransparency = 1,
         Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
@@ -4233,7 +4252,7 @@ function AddTextTable(parent, Configs)
         BackgroundColor3 = Configs_HUB.Cor_Options,
         BackgroundTransparency = 1,
         Image = "rbxassetid://74760368115181"
-    })Corner(ExpandImageButton)
+    })Corner(ExpandImageButton)Stroke(ExpandImageButton)
     
     local ImageLabel1 = Create("ImageLabel", Frame, {
         Image = LabelImage,
@@ -4320,7 +4339,6 @@ function AddTextTable(parent, Configs)
     
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
-      BackgroundTransparency = 1,
       BackgroundColor3 = Configs_HUB.Cor_Options,
       Name = "Frame",
       AutomaticSize = "Y"
@@ -4364,7 +4382,6 @@ function AddTextTable(parent, Configs)
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       Position = UDim2.new(0.05, 0, 0, 0),
-      BackgroundTransparency = 1,
       BackgroundColor3 = Configs_HUB.Cor_Hub,
       Name = "Frame",
       Transparency = 1
@@ -4390,7 +4407,6 @@ function AddTextTable(parent, Configs)
 
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.7, 0),
-        BackgroundTransparency = 1,
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "MusicPlayerFrame",
     })
@@ -4507,13 +4523,13 @@ function AddTextTable(parent, Configs)
     local sound = Instance.new("Sound")
     sound.Parent = Frame
 
-    function formatTime(seconds)
+    local function formatTime(seconds)
         local minutes = math.floor(seconds / 60)
         local remainingSeconds = seconds % 60
         return string.format("%d:%02d", minutes, remainingSeconds)
     end
-    
-    function updateProgressBar()
+
+    local function updateProgressBar()
         RunService.RenderStepped:Connect(function()
             if sound.Playing then
                 local progress = sound.TimePosition / sound.TimeLength
@@ -4523,7 +4539,7 @@ function AddTextTable(parent, Configs)
         end)
     end
 
-    function extractAssetId(input)
+    local function extractAssetId(input)
     local assetId = input:match("rbxassetid://(%d+)") 
     if assetId then
         return assetId
@@ -4588,7 +4604,6 @@ function AddFeedBack(parent, Configs)
     
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.7, 0),
-        BackgroundTransparency = 1,
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "MusicPlayerFrame",
     })
