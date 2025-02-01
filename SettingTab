@@ -564,13 +564,11 @@ AddToggle(Main5u6, {
 getgenv().ProtectName = false
 spaghettiWires = {}
 originalName = nil
-currentName = nil
 customName = nil
 
 for _, player in ipairs(game.Players:GetPlayers()) do
     if player == game.Players.LocalPlayer then
         originalName = player.Name
-        currentName = originalName
         break
     end
 end
@@ -579,7 +577,7 @@ function updateNameInTextLabels(newName)
     if not newName or not originalName then return end
 
     for _, value in ipairs(game:GetDescendants()) do
-        if value:IsA("TextLabel") then
+        if value:IsA("TextLabel") and value.Text then
             local has = string.find(value.Text, originalName)
             if has then
                 value.Text = value.Text:gsub(originalName, newName)
@@ -596,7 +594,7 @@ function updateNameInTextLabels(newName)
     end
 
     local noodle = game.DescendantAdded:Connect(function(value)
-        if value:IsA("TextLabel") then
+        if value:IsA("TextLabel") and value.Text then
             local has = string.find(value.Text, originalName)
             value:GetPropertyChangedSignal("Text"):Connect(function()
                 if getgenv().ProtectName then
@@ -612,10 +610,10 @@ function updateNameInTextLabels(newName)
 end
 
 function revertNameInTextLabels()
-    if not currentName or not originalName then return end
+    if not customName or not originalName then return end
 
     for _, value in ipairs(game:GetDescendants()) do
-        if value:IsA("TextLabel") then
+        if value:IsA("TextLabel") and value.Text then
             value.Text = value.Text:gsub(customName, originalName)
         end
     end
