@@ -3098,7 +3098,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
 
                 savedPartsProperties = {}
                 for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+                    if part:IsA("BasePart") or obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
                         savedPartsProperties[obj] = {Reflectance = obj.Reflectance, Material = obj.Material}
                     end
                 end
@@ -3180,7 +3180,8 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.ExposureCompensation = 0.6
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
-                    obj.Reflectance = 0.5
+                    obj.Reflectance = 0.3
+                    obj.Material = Enum.Material.SmoothPlastic
                 end
             end            
         else
@@ -3211,6 +3212,9 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                 if part and part.Parent then
                     part:Destroy()
                 end
+            end
+            for _, rainPart in pairs(rainParts) do
+                rainPart:Destroy()
             end
             rainParts = {}
             if savedPartsProperties then
