@@ -3089,27 +3089,25 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     GeographicLatitude = Lighting.GeographicLatitude,
                     ExposureCompensation = Lighting.ExposureCompensation,
                 }
+
                 savedLightingChildren = {}
                 for _, child in pairs(Lighting:GetChildren()) do
                     table.insert(savedLightingChildren, child:Clone())
                 end
+
                 savedPartsProperties = {}
-                for _, obj in pairs(workspace:GetChildren()) do
+                for _, obj in pairs(workspace:GetDescendants()) do
                     if obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
                         savedPartsProperties[obj] = {Reflectance = obj.Reflectance, Material = obj.Material}
-                    elseif obj:IsA("Model") then
-                        for _, child in pairs(obj:GetChildren()) do
-                            if child:IsA("Part") or child:IsA("MeshPart") or child:IsA("UnionOperation") then
-                                savedPartsProperties[child] = {Reflectance = child.Reflectance, Material = child.Material}
-                            end
-                        end
                     end
                 end
             end
+
             Lighting.ClockTime = 12
             for _, v in pairs(Lighting:GetChildren()) do
                 v:Destroy()
             end
+
             local Bloom = Create("BloomEffect", Lighting, {Intensity = 0.1, Size = 20, Threshold = 0.5})
             local Blur = Create("BlurEffect", Lighting, {Size = 5})
             local ColorCor = Create("ColorCorrectionEffect", Lighting, {
@@ -3136,7 +3134,9 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                 Glare = 0.5,
                 Haze = 1
             })
+
             rainSound:Play()
+            
             local minX, maxX = -2000, 2000
             local minZ, maxZ = -2000, 2000
             local height = 400
@@ -3148,6 +3148,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     Transparency = 1,
                     Anchored = true
                 })
+
                 local particleEmitter = Create("ParticleEmitter", parentPart, {
                     Speed = NumberRange.new(10, 13),
                     Lifetime = NumberRange.new(2, 6),
@@ -3161,8 +3162,10 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     Acceleration = Vector3.new(0, -160, 0),
                     SpreadAngle = Vector2.new(300, 300)
                 })
+
                 table.insert(rainParts, parentPart)
             end
+            
             Lighting.Ambient = Color3.fromRGB(200, 200, 200)
             Lighting.Brightness = 2.5
             Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
@@ -3174,21 +3177,12 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.ShadowSoftness = 0.5
             Lighting.GeographicLatitude = 45
             Lighting.ExposureCompensation = 0.6
-            for _, part in pairs(workspace:GetChildren()) do
-                if part:IsA("Part") or part:IsA("MeshPart") or part:IsA("UnionOperation") then
-                    if part:IsA("Part") or part:IsA("MeshPart") then
-                        part.Reflectance = 1
-                        part.Material = Enum.Material.SmoothPlastic
-                    end
-                elseif part:IsA("Model") then
-                    for _, child in pairs(part:GetChildren()) do
-                        if child:IsA("Part") or child:IsA("MeshPart") or child:IsA("UnionOperation") then
-                            child.Reflectance = 1
-                            child.Material = Enum.Material.SmoothPlastic
-                        end
-                    end
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+                    obj.Reflectance = 1
+                    obj.Material = Enum.Material.SmoothPlastic
                 end
-            end
+            end            
         else
             rainSound:Pause()
             if savedLightingProperties then
@@ -3220,10 +3214,10 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             end
             rainParts = {}
             if savedPartsProperties then
-                for part, properties in pairs(savedPartsProperties) do
-                    if part and part.Parent then
-                        part.Reflectance = properties.Reflectance
-                        part.Material = properties.Material
+                for obj, properties in pairs(savedPartsProperties) do
+                    if obj and obj.Parent then
+                        obj.Reflectance = properties.Reflectance
+                        obj.Material = properties.Material
                     end
                 end
             end
