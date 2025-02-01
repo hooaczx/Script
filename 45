@@ -3059,56 +3059,107 @@ function Create(instance, parent, props)
   return new
 end
 
+local hasSaved = false
+local savedLightingProperties = nil
+local savedLightingChildren = nil
+local savedPartsProperties = nil
+local rainParts = {}
+local rainSound = nil
 local Lighting = game:GetService("Lighting")
-local rainSound = Create("Sound", ScreenGui, {
-    SoundId = "rbxassetid://1516791621",
-    Volume = 0.5,
-    Looped = true
+rainSound = Create("Sound", ScreenGui, {
+   SoundId = "rbxassetid://1516791621",
+   Volume = 0.5,
+   Looped = true
 })
-savedLightingProperties = nil
-savedLightingChildren = nil
-savedPartsProperties = nil
-rainParts = {}
-hasSaved = false
+
+function functions.SaveEnvironment()
+    if not hasSaved then
+        hasSaved = true
+        savedLightingProperties = {
+            ClockTime = Lighting.ClockTime,
+            Ambient = Lighting.Ambient,
+            Brightness = Lighting.Brightness,
+            ColorShift_Bottom = Lighting.ColorShift_Bottom,
+            ColorShift_Top = Lighting.ColorShift_Top,
+            EnvironmentDiffuseScale = Lighting.EnvironmentDiffuseScale,
+            EnvironmentSpecularScale = Lighting.EnvironmentSpecularScale,
+            GlobalShadows = Lighting.GlobalShadows,
+            OutdoorAmbient = Lighting.OutdoorAmbient,
+            ShadowSoftness = Lighting.ShadowSoftness,
+            GeographicLatitude = Lighting.GeographicLatitude,
+            ExposureCompensation = Lighting.ExposureCompensation,
+        }
+
+        savedLightingChildren = {}
+        for _, child in pairs(Lighting:GetChildren()) do
+            table.insert(savedLightingChildren, child:Clone())
+        end
+
+        savedPartsProperties = {}
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") or obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+                savedPartsProperties[obj] = {Reflectance = obj.Reflectance, Material = obj.Material}
+            end
+        end
+    end
+end
+
+function functions.RestoreEnvironment()
+   for _, v in pairs(Lighting:GetChildren()) do
+        v:Destroy()
+    end
+
+    if savedLightingChildren then
+        for _, child in pairs(savedLightingChildren) do
+            child.Parent = Lighting
+        end
+    end
+
+    if savedLightingProperties then
+        Lighting.ClockTime = savedLightingProperties.ClockTime
+        Lighting.Ambient = savedLightingProperties.Ambient
+        Lighting.Brightness = savedLightingProperties.Brightness
+        Lighting.ColorShift_Bottom = savedLightingProperties.ColorShift_Bottom
+        Lighting.ColorShift_Top = savedLightingProperties.ColorShift_Top
+        Lighting.EnvironmentDiffuseScale = savedLightingProperties.EnvironmentDiffuseScale
+        Lighting.EnvironmentSpecularScale = savedLightingProperties.EnvironmentSpecularScale
+        Lighting.GlobalShadows = savedLightingProperties.GlobalShadows
+        Lighting.OutdoorAmbient = savedLightingProperties.OutdoorAmbient
+        Lighting.ShadowSoftness = savedLightingProperties.ShadowSoftness
+        Lighting.GeographicLatitude = savedLightingProperties.GeographicLatitude
+        Lighting.ExposureCompensation = savedLightingProperties.ExposureCompensation
+    end
+
+    if savedPartsProperties then
+        for part, props in pairs(savedPartsProperties) do
+            if part and part.Parent then
+                part.Reflectance = props.Reflectance
+                part.Material = props.Material
+            end
+        end
+    end
+
+    if rainParts then
+        for _, part in pairs(rainParts) do
+            if part and part.Parent then
+                part:Destroy()
+            end
+        end
+        rainParts = {}
+    end
+
+    hasSaved = false
+end
 
 functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
     [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
     function(isLightingEnabled)
         if isLightingEnabled then
-            if not savedLightingProperties then
-                savedLightingProperties = {
-                    ClockTime = Lighting.ClockTime,
-                    Ambient = Lighting.Ambient,
-                    Brightness = Lighting.Brightness,
-                    ColorShift_Bottom = Lighting.ColorShift_Bottom,
-                    ColorShift_Top = Lighting.ColorShift_Top,
-                    EnvironmentDiffuseScale = Lighting.EnvironmentDiffuseScale,
-                    EnvironmentSpecularScale = Lighting.EnvironmentSpecularScale,
-                    GlobalShadows = Lighting.GlobalShadows,
-                    OutdoorAmbient = Lighting.OutdoorAmbient,
-                    ShadowSoftness = Lighting.ShadowSoftness,
-                    GeographicLatitude = Lighting.GeographicLatitude,
-                    ExposureCompensation = Lighting.ExposureCompensation,
-                }
-
-                savedLightingChildren = {}
-                for _, child in pairs(Lighting:GetChildren()) do
-                    table.insert(savedLightingChildren, child:Clone())
-                end
-
-                savedPartsProperties = {}
-                for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj:IsA("BasePart") or obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
-                        savedPartsProperties[obj] = {Reflectance = obj.Reflectance, Material = obj.Material}
-                    end
-                end
-            end
-
+            functions.SaveEnvironment()
             Lighting.ClockTime = 12
             for _, v in pairs(Lighting:GetChildren()) do
                 v:Destroy()
             end
-
             local Bloom = Create("BloomEffect", Lighting, {Intensity = 0.1, Size = 20, Threshold = 0.5})
             local Blur = Create("BlurEffect", Lighting, {Size = 5})
             local ColorCor = Create("ColorCorrectionEffect", Lighting, {
@@ -3135,9 +3186,8 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                 Glare = 0.5,
                 Haze = 1
             })
-
             rainSound:Play()
-            
+
             local minX, maxX = -2000, 2000
             local minZ, maxZ = -2000, 2000
             local height = 400
@@ -3166,7 +3216,6 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
 
                 table.insert(rainParts, parentPart)
             end
-            
             Lighting.Ambient = Color3.fromRGB(200, 200, 200)
             Lighting.Brightness = 2.5
             Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
@@ -3180,50 +3229,12 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.ExposureCompensation = 0.6
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj:IsA("BasePart") or obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
-                    obj.Reflectance = 0.3
+                    obj.Reflectance = 1
                     obj.Material = Enum.Material.SmoothPlastic
                 end
-            end            
+            end
         else
-            rainSound:Pause()
-            if savedLightingProperties then
-                Lighting.ClockTime = savedLightingProperties.ClockTime or Lighting.ClockTime
-                Lighting.Ambient = savedLightingProperties.Ambient or Lighting.Ambient
-                Lighting.Brightness = savedLightingProperties.Brightness or Lighting.Brightness
-                Lighting.ColorShift_Bottom = savedLightingProperties.ColorShift_Bottom or Lighting.ColorShift_Bottom
-                Lighting.ColorShift_Top = savedLightingProperties.ColorShift_Top or Lighting.ColorShift_Top
-                Lighting.EnvironmentDiffuseScale = savedLightingProperties.EnvironmentDiffuseScale or Lighting.EnvironmentDiffuseScale
-                Lighting.EnvironmentSpecularScale = savedLightingProperties.EnvironmentSpecularScale or Lighting.EnvironmentSpecularScale
-                Lighting.GlobalShadows = savedLightingProperties.GlobalShadows or Lighting.GlobalShadows
-                Lighting.OutdoorAmbient = savedLightingProperties.OutdoorAmbient or Lighting.OutdoorAmbient
-                Lighting.ShadowSoftness = savedLightingProperties.ShadowSoftness or Lighting.ShadowSoftness
-                Lighting.GeographicLatitude = savedLightingProperties.GeographicLatitude or Lighting.GeographicLatitude
-                Lighting.ExposureCompensation = savedLightingProperties.ExposureCompensation or Lighting.ExposureCompensation
-            end
-            for _, effect in pairs(Lighting:GetChildren()) do
-                effect:Destroy()
-            end
-            if savedLightingChildren then
-                for _, child in pairs(savedLightingChildren) do
-                    child.Parent = Lighting
-                end
-            end
-            for _, part in pairs(rainParts) do
-                if part and part.Parent then
-                    part:Destroy()
-                end
-            end
-            for _, rainPart in pairs(rainParts) do
-                rainPart:Destroy()
-            end
-            rainParts = {}
-            if savedPartsProperties then
-                for obj, properties in pairs(savedPartsProperties) do
-                    if obj and obj.Parent then
-                        obj.Reflectance = properties.Reflectance
-                    end
-                end
-            end
+            functions.RestoreEnvironment()
         end
     end, 
     isLightingEnabled)
