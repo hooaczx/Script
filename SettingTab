@@ -565,10 +565,12 @@ getgenv().ProtectName = false
 spaghettiWires = {}
 originalName = nil
 currentName = nil
+customName = nil
 
 for _, player in ipairs(game.Players:GetPlayers()) do
     if player == game.Players.LocalPlayer then
         originalName = player.Name
+        currentName = originalName
         break
     end
 end
@@ -614,7 +616,7 @@ function revertNameInTextLabels()
 
     for _, value in ipairs(game:GetDescendants()) do
         if value:IsA("TextLabel") then
-            value.Text = value.Text:gsub(currentName, originalName)
+            value.Text = value.Text:gsub(customName, originalName)
         end
     end
     for _, pasta in ipairs(spaghettiWires) do
@@ -630,10 +632,9 @@ AddTextBox(Main5u6, {
     ClearText = true,
     Callback = function(input)
         if input == "" or input == originalName then return end
-        currentName = input
+        customName = input
         if getgenv().ProtectName then
-            revertNameInTextLabels()
-            updateNameInTextLabels(currentName)
+            updateNameInTextLabels(customName)
         end
     end
 })
@@ -643,8 +644,8 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         getgenv().ProtectName = state
-        if state and currentName then
-            updateNameInTextLabels(currentName)
+        if state and customName then
+            updateNameInTextLabels(customName)
         elseif not state then
             revertNameInTextLabels()
         end
