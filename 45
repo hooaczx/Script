@@ -3039,6 +3039,26 @@ functions.createSettingSection(
     copyEnabled
 )
 
+function Create(instance, parent, props)
+  local new = Instance.new(instance, parent)
+  if props then
+    table.foreach(props, function(prop, value)
+      new[prop] = value
+    end)
+  end
+  local clse
+  clse = new.AncestryChanged:Connect(function()
+    if not new.Parent then
+      new:Destroy()
+      if clse then
+        clse:Disconnect()
+        clse = nil
+      end
+    end
+  end)
+  return new
+end
+
 local Lighting = game:GetService("Lighting")
 local rainSound = Create("Sound", ScreenGui, {
     SoundId = "rbxassetid://1516791621",
@@ -3127,6 +3147,25 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.ShadowSoftness = 0.5
             Lighting.GeographicLatitude = 45
             Lighting.ExposureCompensation = 0.6
+
+            for _, part in pairs(workspace:GetChildren()) do
+               if part:IsA("Part") or part:IsA("MeshPart") or part:IsA("UnionOperation") then
+                 if part:IsA("Part") or part:IsA("MeshPart") then
+                    part.Reflectance = 0.5
+                    part.Material = Enum.Material.SmoothPlastic
+                    part.Shadow = true
+                end
+                 if part:IsA("Model") then
+                    for _, child in pairs(part:GetChildren()) do
+                      if child:IsA("Part") or child:IsA("MeshPart") or child:IsA("UnionOperation") then
+                         child.Reflectance = 0.5
+                         child.Material = Enum.Material.SmoothPlastic
+                         child.Shadow = true
+                     end
+                 end
+              end
+           end
+        end
         else
             for _, v in pairs(Lighting:GetChildren()) do
                 if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
