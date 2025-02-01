@@ -3065,19 +3065,51 @@ local rainSound = Create("Sound", ScreenGui, {
     Volume = 0.5,
     Looped = true
 })
-
+savedLightingProperties = nil
+savedLightingChildren = nil
+savedPartsProperties = nil
 local rainParts = {}
 
 functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
     [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
     function(isLightingEnabled)
         if isLightingEnabled then
+            if not savedLightingProperties then
+                savedLightingProperties = {
+                    ClockTime = Lighting.ClockTime,
+                    Ambient = Lighting.Ambient,
+                    Brightness = Lighting.Brightness,
+                    ColorShift_Bottom = Lighting.ColorShift_Bottom,
+                    ColorShift_Top = Lighting.ColorShift_Top,
+                    EnvironmentDiffuseScale = Lighting.EnvironmentDiffuseScale,
+                    EnvironmentSpecularScale = Lighting.EnvironmentSpecularScale,
+                    GlobalShadows = Lighting.GlobalShadows,
+                    OutdoorAmbient = Lighting.OutdoorAmbient,
+                    ShadowSoftness = Lighting.ShadowSoftness,
+                    GeographicLatitude = Lighting.GeographicLatitude,
+                    ExposureCompensation = Lighting.ExposureCompensation,
+                }
+                savedLightingChildren = {}
+                for _, child in pairs(Lighting:GetChildren()) do
+                    table.insert(savedLightingChildren, child:Clone())
+                end
+                savedPartsProperties = {}
+                for _, obj in pairs(workspace:GetChildren()) do
+                    if obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+                        savedPartsProperties[obj] = {Reflectance = obj.Reflectance, Material = obj.Material}
+                    elseif obj:IsA("Model") then
+                        for _, child in pairs(obj:GetChildren()) do
+                            if child:IsA("Part") or child:IsA("MeshPart") or child:IsA("UnionOperation") then
+                                savedPartsProperties[child] = {Reflectance = child.Reflectance, Material = child.Material}
+                            end
+                        end
+                    end
+                end
+            end
             Lighting.ClockTime = 12
-
             for _, v in pairs(Lighting:GetChildren()) do
                 v:Destroy()
             end
-
             local Bloom = Create("BloomEffect", Lighting, {Intensity = 0.1, Size = 20, Threshold = 0.5})
             local Blur = Create("BlurEffect", Lighting, {Size = 5})
             local ColorCor = Create("ColorCorrectionEffect", Lighting, {
@@ -3104,9 +3136,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                 Glare = 0.5,
                 Haze = 1
             })
-
             rainSound:Play()
-
             local minX, maxX = -2000, 2000
             local minZ, maxZ = -2000, 2000
             local height = 400
@@ -3118,7 +3148,6 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     Transparency = 1,
                     Anchored = true
                 })
-
                 local particleEmitter = Create("ParticleEmitter", parentPart, {
                     Speed = NumberRange.new(10, 13),
                     Lifetime = NumberRange.new(2, 6),
@@ -3132,10 +3161,8 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     Acceleration = Vector3.new(0, -160, 0),
                     SpreadAngle = Vector2.new(300, 300)
                 })
-
                 table.insert(rainParts, parentPart)
             end
-
             Lighting.Ambient = Color3.fromRGB(200, 200, 200)
             Lighting.Brightness = 2.5
             Lighting.ColorShift_Bottom = Color3.fromRGB(150, 150, 150)
@@ -3147,48 +3174,62 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.ShadowSoftness = 0.5
             Lighting.GeographicLatitude = 45
             Lighting.ExposureCompensation = 0.6
-
             for _, part in pairs(workspace:GetChildren()) do
-               if part:IsA("Part") or part:IsA("MeshPart") or part:IsA("UnionOperation") then
-                 if part:IsA("Part") or part:IsA("MeshPart") then
-                    part.Reflectance = 1
-                    part.Material = Enum.Material.SmoothPlastic
-                    part.Shiny = true
-                end
-                 if part:IsA("Model") then
+                if part:IsA("Part") or part:IsA("MeshPart") or part:IsA("UnionOperation") then
+                    if part:IsA("Part") or part:IsA("MeshPart") then
+                        part.Reflectance = 1
+                        part.Material = Enum.Material.SmoothPlastic
+                    end
+                elseif part:IsA("Model") then
                     for _, child in pairs(part:GetChildren()) do
-                      if child:IsA("Part") or child:IsA("MeshPart") or child:IsA("UnionOperation") then
-                         child.Reflectance = 1
-                         child.Material = Enum.Material.SmoothPlastic
-                         child.Shiny = true
-                     end
-                 end
-              end
-           end
-        end
-        else
-            for _, v in pairs(Lighting:GetChildren()) do
-                if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") or v:IsA("Sky") or v:IsA("Atmosphere") then
-                    v:Destroy()
+                        if child:IsA("Part") or child:IsA("MeshPart") or child:IsA("UnionOperation") then
+                            child.Reflectance = 1
+                            child.Material = Enum.Material.SmoothPlastic
+                        end
+                    end
                 end
             end
-
+        else
             rainSound:Pause()
-
-            for _, rainPart in pairs(rainParts) do
-                rainPart:Destroy()
+            if savedLightingProperties then
+                Lighting.ClockTime = savedLightingProperties.ClockTime or Lighting.ClockTime
+                Lighting.Ambient = savedLightingProperties.Ambient or Lighting.Ambient
+                Lighting.Brightness = savedLightingProperties.Brightness or Lighting.Brightness
+                Lighting.ColorShift_Bottom = savedLightingProperties.ColorShift_Bottom or Lighting.ColorShift_Bottom
+                Lighting.ColorShift_Top = savedLightingProperties.ColorShift_Top or Lighting.ColorShift_Top
+                Lighting.EnvironmentDiffuseScale = savedLightingProperties.EnvironmentDiffuseScale or Lighting.EnvironmentDiffuseScale
+                Lighting.EnvironmentSpecularScale = savedLightingProperties.EnvironmentSpecularScale or Lighting.EnvironmentSpecularScale
+                Lighting.GlobalShadows = savedLightingProperties.GlobalShadows or Lighting.GlobalShadows
+                Lighting.OutdoorAmbient = savedLightingProperties.OutdoorAmbient or Lighting.OutdoorAmbient
+                Lighting.ShadowSoftness = savedLightingProperties.ShadowSoftness or Lighting.ShadowSoftness
+                Lighting.GeographicLatitude = savedLightingProperties.GeographicLatitude or Lighting.GeographicLatitude
+                Lighting.ExposureCompensation = savedLightingProperties.ExposureCompensation or Lighting.ExposureCompensation
+            end
+            for _, effect in pairs(Lighting:GetChildren()) do
+                effect:Destroy()
+            end
+            if savedLightingChildren then
+                for _, child in pairs(savedLightingChildren) do
+                    child.Parent = Lighting
+                end
+            end
+            for _, part in pairs(rainParts) do
+                if part and part.Parent then
+                    part:Destroy()
+                end
             end
             rainParts = {}
-
-            Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-            Lighting.Brightness = 2
-            Lighting.ColorShift_Bottom = Color3.fromRGB(255, 255, 255)
-            Lighting.ColorShift_Top = Color3.fromRGB(255, 255, 255)
-            Lighting.GlobalShadows = false
+            if savedPartsProperties then
+                for part, properties in pairs(savedPartsProperties) do
+                    if part and part.Parent then
+                        part.Reflectance = properties.Reflectance
+                        part.Material = properties.Material
+                    end
+                end
+            end
         end
     end, 
     isLightingEnabled)
-
 
 local togglehideName = false
 
