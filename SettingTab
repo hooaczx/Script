@@ -943,25 +943,25 @@ AddToggle(Main5u6, {
 })
 end
 
-local Anti-Idle-connection
+local antiIdle
 
 AddToggle(Main5u6, {
     Name = "Anti-Idle",
     Default = false,
     Callback = function(state)
         if state then
-            if Anti-Idle-connection then
-                Anti-Idle-connection:Disconnect()
-                Anti-Idle-connection = nil
+            if antiIdle then
+                antiIdle:Disconnect()
+                antiIdle = nil
             end
-            Anti-Idle-connection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+            antiIdle = game:GetService("Players").LocalPlayer.Idled:Connect(function()
                 game:GetService("VirtualUser"):CaptureController()
                 game:GetService("VirtualUser"):ClickButton2(Vector2.new())
             end)
         else
-            if Anti-Idle-connection then
-                Anti-Idle-connection:Disconnect()
-                Anti-Idle-connection = nil
+            if antiIdle then
+                antiIdle:Disconnect()
+                antiIdle = nil
             end
         end
     end
