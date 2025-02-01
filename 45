@@ -3068,7 +3068,8 @@ local rainSound = Create("Sound", ScreenGui, {
 savedLightingProperties = nil
 savedLightingChildren = nil
 savedPartsProperties = nil
-local rainParts = {}
+rainParts = {}
+hasSaved = false
 
 functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
     [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
@@ -3180,7 +3181,6 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj:IsA("Part") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
                     obj.Reflectance = 0.5
-                    obj.Material = Enum.Material.SmoothPlastic
                 end
             end            
         else
@@ -3217,7 +3217,6 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                 for obj, properties in pairs(savedPartsProperties) do
                     if obj and obj.Parent then
                         obj.Reflectance = properties.Reflectance
-                        obj.Material = properties.Material
                     end
                 end
             end
