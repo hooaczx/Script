@@ -3197,32 +3197,61 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
     isLightingEnabled)
 
 local togglehideName = false
+local connectionhideName = {}
 
-local function toggleGUIs(character, hide)
-    for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("BillboardGui") or v:IsA("SurfaceGui") then
-            v.Enabled = not hide
+function functions.toggleHideName(state)
+    togglehideName = state
+    if state then
+        player = game.Players.LocalPlayer
+        if player.Character then
+            for _, gui in ipairs(player.Character:GetDescendants()) do
+                if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
+                    gui.Enabled = not togglehideName
+                end
+            end
+           descConn = player.Character.DescendantAdded:Connect(function(gui)
+                if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
+                    gui.Enabled = not togglehideName
+                end
+            end)
+            table.insert(connectionhideName, descConn)
+        end
+        charAddedConn = player.CharacterAdded:Connect(function(character)
+            for _, gui in ipairs(character:GetDescendants()) do
+                if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
+                    gui.Enabled = not togglehideName
+                end
+            end
+            local descConn = character.DescendantAdded:Connect(function(gui)
+                if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
+                    gui.Enabled = not togglehideName
+                end
+            end)
+            table.insert(connectionhideName, descConn)
+        end)
+        table.insert(connectionhideName, charAddedConn)
+    else
+        for _, conn in ipairs(connectionhideName) do
+            conn:Disconnect()
+        end
+        connectionhideName = {}
+        player = game.Players.LocalPlayer
+        if player.Character then
+            for _, gui in ipairs(player.Character:GetDescendants()) do
+                if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
+                    gui.Enabled = not togglehideName
+                end
+            end
         end
     end
 end
 
-local function onCharacterAdded(character)
-    toggleGUIs(character, togglehideName)
-    character.DescendantAdded:Connect(function(descendant)
-        if (descendant:IsA("BillboardGui") or descendant:IsA("SurfaceGui")) and togglehideName then
-            descendant.Enabled = false
-        end
-    end)
-end
-
-game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-
-functions.createSettingSection(scrollingSettingFrame, "Hide Name", 
-[[This script will hide "BillboardGui" and "SurfaceGui" For games that use these 2 to create "NameTag"]],
-    function(state)
-    togglehideName = state
-    toggleGUIs(game.Players.LocalPlayer.Character, togglehideName)
-end, isLightingEnabled)
+functions.createSettingSection(
+    scrollingSettingFrame,
+    "Hide Name",
+    [[This script will hide "BillboardGui" and "SurfaceGui" for games that use these 2 to create "NameTag"]],
+    functions.toggleHideName,
+    false)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local lastKnownVolume = gameSettings.MasterVolume
