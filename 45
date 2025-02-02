@@ -3036,8 +3036,7 @@ functions.createSettingSection(
             getgenv().originalSetClipboard = originalOriginalSetClipboard
         end
     end, 
-    copyEnabled
-)
+    copyEnabled)
 
 local hasSaved = false
 local savedLightingProperties = nil
@@ -3191,6 +3190,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.GeographicLatitude = 45
             Lighting.ExposureCompensation = 0.6
         else
+            rainSound:Pause()
             functions.RestoreEnvironment()
         end
     end, 
@@ -3500,6 +3500,14 @@ function MakeTab(Configs)
                     if label.TextBounds.X > label.AbsoluteSize.X then
                         label.TextSize = currentSize
                     end
+                    clickpaperSound = Create("Sound", ScreenGui, {
+                        SoundId = "rbxassetid://5168055564",
+                        Volume = 0.07
+                    })
+                     clickpaperSound:Play()
+                   clickpaperSound.Ended:Connect(function()
+                     clickpaperSound:Destroy()
+                   end)
                     label:SetAttribute("Clicked", true)
                 end
             else
