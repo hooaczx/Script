@@ -3039,13 +3039,12 @@ functions.createSettingSection(
     copyEnabled
 )
 
-local isLightingEnabled = false
+local hasSaved = false
 local savedLightingProperties = nil
 local savedLightingChildren = nil
 local rainParts = {}
 local rainSound = nil
 local Lighting = game:GetService("Lighting")
-
 rainSound = Create("Sound", ScreenGui, {
    SoundId = "rbxassetid://1516791621",
    Volume = 0.5,
@@ -3053,10 +3052,8 @@ rainSound = Create("Sound", ScreenGui, {
 })
 
 function functions.SaveEnvironment()
-    if isLightingEnabled then
-        return
-    end
-    if not savedLightingProperties then
+    if not hasSaved then
+        hasSaved = true
         savedLightingProperties = {
             ClockTime = Lighting.ClockTime,
             Ambient = Lighting.Ambient,
@@ -3071,6 +3068,7 @@ function functions.SaveEnvironment()
             GeographicLatitude = Lighting.GeographicLatitude,
             ExposureCompensation = Lighting.ExposureCompensation,
         }
+
         savedLightingChildren = {}
         for _, child in pairs(Lighting:GetChildren()) do
             table.insert(savedLightingChildren, child:Clone())
@@ -3079,14 +3077,16 @@ function functions.SaveEnvironment()
 end
 
 function functions.RestoreEnvironment()
-    for _, v in pairs(Lighting:GetChildren()) do
+   for _, v in pairs(Lighting:GetChildren()) do
         v:Destroy()
     end
+
     if savedLightingChildren then
         for _, child in pairs(savedLightingChildren) do
             child.Parent = Lighting
         end
     end
+
     if savedLightingProperties then
         Lighting.ClockTime = savedLightingProperties.ClockTime
         Lighting.Ambient = savedLightingProperties.Ambient
@@ -3101,6 +3101,7 @@ function functions.RestoreEnvironment()
         Lighting.GeographicLatitude = savedLightingProperties.GeographicLatitude
         Lighting.ExposureCompensation = savedLightingProperties.ExposureCompensation
     end
+
     if rainParts then
         for _, part in pairs(rainParts) do
             if part and part.Parent then
@@ -3109,18 +3110,15 @@ function functions.RestoreEnvironment()
         end
         rainParts = {}
     end
-    savedLightingProperties = nil
-    savedLightingChildren = nil
+
+    hasSaved = false
 end
 
 functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
     [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
-    function(enableEffects)
-        if enableEffects then
-            if not isLightingEnabled then
-                functions.SaveEnvironment()
-            end
-            isLightingEnabled = true
+    function(isLightingEnabled)
+        if isLightingEnabled then
+            functions.SaveEnvironment()
             Lighting.ClockTime = 12
             for _, v in pairs(Lighting:GetChildren()) do
                 v:Destroy()
@@ -3152,6 +3150,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                 Haze = 1
             })
             rainSound:Play()
+
             local minX, maxX = -2000, 2000
             local minZ, maxZ = -2000, 2000
             local height = 400
@@ -3163,6 +3162,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     Transparency = 1,
                     Anchored = true
                 })
+
                 local particleEmitter = Create("ParticleEmitter", parentPart, {
                     Speed = NumberRange.new(10, 13),
                     Lifetime = NumberRange.new(2, 6),
@@ -3176,6 +3176,7 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
                     Acceleration = Vector3.new(0, -160, 0),
                     SpreadAngle = Vector2.new(300, 300)
                 })
+
                 table.insert(rainParts, parentPart)
             end
             Lighting.Ambient = Color3.fromRGB(200, 200, 200)
@@ -3190,8 +3191,6 @@ functions.createSettingSection(scrollingSettingFrame, "Rain🌧",
             Lighting.GeographicLatitude = 45
             Lighting.ExposureCompensation = 0.6
         else
-            isLightingEnabled = false
-            rainSound:Stop()
             functions.RestoreEnvironment()
         end
     end, 
