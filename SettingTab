@@ -1161,6 +1161,27 @@ AddToggle(Main5u6, {
     end
 })
 
+AddTextBox(Main5u6, {
+    Name = "Light Range",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        local rangeValue = tonumber(value)
+        if rangeValue then
+            if player.Character then
+                local rootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    local playerLight = rootPart:FindFirstChild("Light")
+                    if playerLight then
+                        playerLight.Range = rangeValue
+                    end
+                end
+            end
+        end
+    end
+})
+
 AddToggle(Main5u6, {
     Name = "Light Around Character",
     Default = false,
@@ -1180,7 +1201,7 @@ AddToggle(Main5u6, {
                     local light = Instance.new("PointLight")
                     light.Name = "Light"
                     light.Parent = rootPart
-                    light.Range = 30
+                    light.Range = 30  -- Default range
                     light.Brightness = 2.3
                 end
 
@@ -1196,7 +1217,7 @@ AddToggle(Main5u6, {
                     frame.Parent = billboardGui
                     frame.Size = UDim2.new(1, 0, 1, 0)
                     frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    frame.BackgroundTransparency = 0.6
+                    frame.BackgroundTransparency = 1
                     frame.BorderSizePixel = 0
                 end
             else
@@ -1222,7 +1243,7 @@ AddToggle(Main5u6, {
                     light.Name = "Light"
                     light.Parent = rootPart
                     light.Range = 30
-                    light.Brightness = 2.3
+                    light.Brightness = 1.5
                 end
 
                 if not highlightGui then
@@ -1237,7 +1258,7 @@ AddToggle(Main5u6, {
                     frame.Parent = billboardGui
                     frame.Size = UDim2.new(1, 0, 1, 0)
                     frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    frame.BackgroundTransparency = 0.6
+                    frame.BackgroundTransparency = 1
                     frame.BorderSizePixel = 0
                 end
             end)
