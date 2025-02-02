@@ -1075,321 +1075,192 @@ AddToggle(Main5u6, {
     end
 })
 
-trailData = {}
+trailData = {
+    enabled = false,
+    trail = nil,
+    a0 = nil,
+    a1 = nil,
+    heartbeatConn = nil,
+    rainbowConn = nil,
+    charAddedConn = nil
+}
+function createTrail(enabled)
+    local plr = game:GetService("Players").LocalPlayer
+    local char = plr.Character or plr.CharacterAdded:Wait()
+
+    if enabled then
+        if trailData.enabled then return end  
+        trailData.enabled = true
+
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        
+        trailData.trail = Instance.new("Trail", hrp)
+        trailData.a0 = Instance.new("Attachment", hrp)
+        trailData.a0.Name = "TrailAttachment"
+        trailData.a1 = Instance.new("Attachment", hrp)
+        trailData.a1.Name = "TrailAttachment1"
+        
+        trailData.trail.Attachment0 = trailData.a0
+        trailData.trail.Attachment1 = trailData.a1
+
+        local hue = 0
+        
+        trailData.heartbeatConn = RunService.Heartbeat:Connect(function()
+            if char and hrp then
+                trailData.a0.Position = Vector3.new(0, 0, 0)
+                trailData.a1.Position = Vector3.new(0, -0.2, 0)
+            end
+        end)
+        
+        trailData.rainbowConn = RunService.Heartbeat:Connect(function()
+            if not trailData.enabled then return end
+            hue = (hue + 1) % 360
+            local keypoints = {}
+            for i = 0, 4 do
+                local segmentHue = (hue + i * 72) % 360
+                local color = Color3.fromHSV(segmentHue / 360, 1, 1)
+                table.insert(keypoints, ColorSequenceKeypoint.new(i / 4, color))
+            end
+            trailData.trail.Color = ColorSequence.new(keypoints)
+        end)
+
+        if not trailData.charAddedConn then
+            trailData.charAddedConn = plr.CharacterAdded:Connect(function(newChar)
+                if trailData.enabled then
+                    createTrail(false)
+                    createTrail(true)
+                end
+            end)
+        end
+    else
+        trailData.enabled = false
+        if trailData.heartbeatConn then
+            trailData.heartbeatConn:Disconnect()
+            trailData.heartbeatConn = nil
+        end
+        if trailData.rainbowConn then
+            trailData.rainbowConn:Disconnect()
+            trailData.rainbowConn = nil
+        end
+        if trailData.trail then
+            trailData.trail:Destroy()
+            trailData.trail = nil
+        end
+        if trailData.charAddedConn then
+            trailData.charAddedConn:Disconnect()
+            trailData.charAddedConn = nil
+        end
+    end
+end
 
 AddToggle(Main5u6, {
     Name = "Trail Rainbow",
     Default = false,
-    Callback = function(value)
-        if not value then
-            if trailData[1] then
-                trailData[1].Enabled = false
-                trailData[1]:Destroy()
-                trailData[1] = nil
-            end
-            if trailData[2] then
-                trailData[2]:Disconnect()
-                trailData[2] = nil
-            end
-            if trailData[3] then
-                trailData[3]:Disconnect()
-                trailData[3] = nil
-            end
-        else
-            function createTrail()
-                local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-                if char and char:FindFirstChild("HumanoidRootPart") then
-                    trailData[1] = Instance.new("Trail")
-                    trailData[1].Parent = char:WaitForChild("HumanoidRootPart")
-                    local a0 = Instance.new("Attachment", char.HumanoidRootPart)
-                    a0.Name = "TrailAttachment"
-                    local a1 = Instance.new("Attachment", char.HumanoidRootPart)
-                    a1.Name = "TrailAttachment1"
-                    trailData[1].Attachment0 = a0
-                    trailData[1].Attachment1 = a1
-
-                    trailData[2] = RunService.Heartbeat:Connect(function()
-                        if char and char:FindFirstChild("HumanoidRootPart") then
-                            a0.Position = Vector3.new(0, 0, 0)
-                            a1.Position = Vector3.new(0, -0.2, 0)
-                            if trailData[1] then
-                                local hue = (tick() * 30) % 360
-                                local colors = {}
-                                for i = 0, 4 do
-                                    local segmentHue = (hue + i * 72) % 360
-                                    local color = Color3.fromHSV(segmentHue / 360, 1, 1)
-                                    table.insert(colors, ColorSequenceKeypoint.new(i / 4, color))
-                                end
-                                trailData[1].Color = ColorSequence.new(colors)
-                            end
-                        end
-                    end)
-                    trailData[1].Enabled = true
-                end
-            end
-
-            createTrail()
-
-            trailData[3] = game.Players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-                if trailData[1] then
-                    trailData[1].Enabled = false
-                    trailData[1]:Destroy()
-                    trailData[1] = nil
-                end
-                createTrail()
-            end)
-        end
-    end
-})
-
-local playerGui = game:GetService("CoreGui")
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-
-local Settings = {
-    ZoomTime = 0.4,
-    ZoomedAmount = 14,
-    FadeTime = 0.4
-}
-
-local oldZoom = game.Workspace.CurrentCamera.FieldOfView
-local originalState = {}
-local stateSaved = false
-
-local function createTween(object, properties, duration)
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-    return game:GetService("TweenService"):Create(object, tweenInfo, properties)
-end
-
-local function checkGuiContent(gui)
-    local hasText = false
-    local hasImage = false
-
-    for _, child in pairs(gui:GetDescendants()) do
-        if child:IsA("TextLabel") or child:IsA("TextButton") then
-            hasText = true
-        elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
-            hasImage = true
-        end
-    end
-
-    return hasText, hasImage
-end
-
-local function saveState()
-    if not stateSaved then
-        for _, v in pairs(character:GetDescendants()) do
-            if v:IsA("BasePart") or v:IsA("Decal") then
-                originalState[v] = v.LocalTransparencyModifier
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("Frame") then
-                originalState[v] = {}
-                for _, child in pairs(v:GetDescendants()) do
-                    if child:IsA("TextLabel") or child:IsA("TextButton") then
-                        originalState[v][child] = {TextTransparency = child.TextTransparency}
-                    elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
-                        originalState[v][child] = {ImageTransparency = child.ImageTransparency}
-                    elseif child:IsA("Frame") then
-                        originalState[v][child] = {BackgroundTransparency = child.BackgroundTransparency}
-                    end
-                end
-            end
-        end
-        stateSaved = true
-    end
-end
-
-local function restoreState(duration)
-    for v, state in pairs(originalState) do
-        if v.Parent then
-            if v:IsA("BasePart") or v:IsA("Decal") then
-                createTween(v, {LocalTransparencyModifier = state}, duration):Play()
-            elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("Frame") then
-                for child, childState in pairs(state) do
-                    if child:IsA("TextLabel") or child:IsA("TextButton") then
-                        createTween(child, {TextTransparency = childState.TextTransparency}, duration):Play()
-                    elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
-                        createTween(child, {ImageTransparency = childState.ImageTransparency}, duration):Play()
-                    elseif child:IsA("Frame") then
-                        createTween(child, {BackgroundTransparency = childState.BackgroundTransparency}, duration):Play()
-                    end
-                end
-            end
-        end
-    end
-end
-
-local function setCharacterTransparency(value, duration)
-    for _, v in pairs(character:GetDescendants()) do
-        if v:IsA("BasePart") or v:IsA("Decal") then
-            createTween(v, {LocalTransparencyModifier = value}, duration):Play()
-        elseif v:IsA("SurfaceGui") or v:IsA("BillboardGui") or v:IsA("Frame") then
-            local hasText, hasImage = checkGuiContent(v)
-
-            for _, child in pairs(v:GetDescendants()) do
-                if hasText and (child:IsA("TextLabel") or child:IsA("TextButton")) and child.TextTransparency ~= nil then
-                    createTween(child, {TextTransparency = value}, duration):Play()
-                end
-                if hasImage and (child:IsA("ImageLabel") or child:IsA("ImageButton")) and child.ImageTransparency ~= nil then
-                    createTween(child, {ImageTransparency = value}, duration):Play()
-                end
-                if child:IsA("Frame") and child.BackgroundTransparency ~= nil then
-                    createTween(child, {BackgroundTransparency = value}, duration):Play()
-                end
-            end
-        end
-    end
-end
-
-local function createZoomGui()
-    local ScreenGui = Instance.new("ScreenGui", playerGui)
-    ScreenGui.Name = "ZoomGui"
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-    ScreenGui.IgnoreGuiInset = true
-
-    local zoomButton = Instance.new("ImageButton", ScreenGui)
-    zoomButton.Name = "ZoomButton"
-    zoomButton.Size = UDim2.new(0.09, 0, 0.16, 0)
-    zoomButton.Position = UDim2.new(0.79, 0, 0.55, 0)
-    zoomButton.AnchorPoint = Vector2.new(0.74, 0.5)
-    zoomButton.BackgroundTransparency = 1
-    zoomButton.ImageTransparency = 1
-    zoomButton.Image = "rbxthumb://type=Asset&id=92429393851260&w=150&h=150"
-
-    local fadeIn = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 0}, Settings.FadeTime)
-    fadeIn:Play()
-
-    local function createZoom(time, amount)
-        local Tween_Info = TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-        return game:GetService("TweenService"):Create(game.Workspace.CurrentCamera, Tween_Info, {FieldOfView = amount})
-    end
-
-    local zoomInTween = createZoom(Settings.ZoomTime, Settings.ZoomedAmount)
-    local zoomOutTween = createZoom(Settings.ZoomTime, oldZoom)
-
-    zoomButton.MouseButton1Down:Connect(function()
-        saveState()
-        setCharacterTransparency(1, Settings.FadeTime)
-        zoomInTween:Play()
-    end)
-
-    zoomButton.MouseButton1Up:Connect(function()
-        restoreState(Settings.FadeTime)
-        zoomOutTween:Play()
-    end)
-
-    zoomButton.MouseLeave:Connect(function()
-        restoreState(Settings.FadeTime)
-        zoomOutTween:Play()
-    end)
-end
-
-local function removeZoomGui()
-    local zoomGui = playerGui:FindFirstChild("ZoomGui")
-    if zoomGui then
-        local zoomButton = zoomGui:FindFirstChild("ZoomButton")
-        if zoomButton then
-            local fadeOut = createTween(zoomButton, {BackgroundTransparency = 1, ImageTransparency = 1}, Settings.FadeTime)
-            fadeOut:Play()
-            fadeOut.Completed:Connect(function()
-                zoomGui:Destroy()
-            end)
-        else
-            zoomGui:Destroy()
-        end
-    end
-end
-
-AddToggle(Main5u6, {
-    Name = "Zoom gui",
-    Default = false,
     Callback = function(state)
-        if state then
-            createZoomGui()
-        else
-            removeZoomGui()
-        end
+        createTrail(state)
     end
 })
-
-local player = game.Players.LocalPlayer
-local lightEnabled = false
-
-local function addLightToCharacter(character)
-    local rootPart = character:WaitForChild("HumanoidRootPart", 5)
-    if rootPart then
-        local playerLight = rootPart:FindFirstChild("Light")
-        if not playerLight then
-            local light = Instance.new("PointLight")
-            light.Name = "Light"
-            light.Parent = rootPart
-            light.Range = 30
-            light.Brightness = 2.3
-        end
-
-        local highlightGui = rootPart:FindFirstChild("HighlightGui")
-        if not highlightGui then
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Name = "HighlightGui"
-            billboardGui.Parent = rootPart
-            billboardGui.Size = UDim2.new(0, 2 * playerLight.Range, 0, 2 * playerLight.Range)
-            billboardGui.Adornee = rootPart
-            billboardGui.StudsOffset = Vector3.new(0, playerLight.Range / 2, 0)
-
-            local frame = Instance.new("Frame")
-            frame.Parent = billboardGui
-            frame.Size = UDim2.new(1, 0, 1, 0)
-            frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            frame.BackgroundTransparency = 0.6
-            frame.BorderSizePixel = 0
-            frame.Shape = Enum.FrameShape.Circle
-        end
-    end
-end
-
-local function removeLightFromCharacter(character)
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    if rootPart then
-        local playerLight = rootPart:FindFirstChild("Light")
-        if playerLight then
-            playerLight:Destroy()
-        end
-
-        local highlightGui = rootPart:FindFirstChild("HighlightGui")
-        if highlightGui then
-            highlightGui:Destroy()
-        end
-    end
-end
-
-local function onCharacterAdded(character)
-    if lightEnabled then
-        addLightToCharacter(character)
-    else
-        removeLightFromCharacter(character)
-    end
-end
-
-player.CharacterAdded:Connect(onCharacterAdded)
-
-local function toggleLight(state)
-    lightEnabled = state
-    local character = player.Character
-    if character then
-        if state then
-            addLightToCharacter(character)
-        else
-            removeLightFromCharacter(character)
-        end
-    end
-end
 
 AddToggle(Main5u6, {
     Name = "Light Around Character",
     Default = false,
-    Callback = toggleLight
+    Callback = function(state)
+        lightEnabled = state
+        lightclose = nil
+
+        if player.Character then
+            rootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") or game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart", 5)
+            if not rootPart then return end
+
+            playerLight = rootPart:FindFirstChild("Light")
+            highlightGui = rootPart:FindFirstChild("HighlightGui")
+
+            if lightEnabled then
+                if not playerLight then
+                    local light = Instance.new("PointLight")
+                    light.Name = "Light"
+                    light.Parent = rootPart
+                    light.Range = 30
+                    light.Brightness = 2.3
+                end
+
+                if not highlightGui then
+                    local billboardGui = Instance.new("BillboardGui")
+                    billboardGui.Name = "HighlightGui"
+                    billboardGui.Parent = rootPart
+                    billboardGui.Size = UDim2.new(0, 60, 0, 60)
+                    billboardGui.Adornee = rootPart
+                    billboardGui.StudsOffset = Vector3.new(0, 15, 0)
+
+                    local frame = Instance.new("Frame")
+                    frame.Parent = billboardGui
+                    frame.Size = UDim2.new(1, 0, 1, 0)
+                    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    frame.BackgroundTransparency = 0.6
+                    frame.BorderSizePixel = 0
+                end
+            else
+                if playerLight then playerLight:Destroy() end
+                if highlightGui then highlightGui:Destroy() end
+            end
+        end
+
+        if lightEnabled then
+            if lightclose then
+                lightclose:Disconnect()
+                lightclose = nil
+            end
+            lightclose = game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
+                local rootPart = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("HumanoidRootPart", 5)
+                if not rootPart then return end
+
+                local playerLight = rootPart:FindFirstChild("Light")
+                local highlightGui = rootPart:FindFirstChild("HighlightGui")
+
+                if not playerLight then
+                    local light = Instance.new("PointLight")
+                    light.Name = "Light"
+                    light.Parent = rootPart
+                    light.Range = 30
+                    light.Brightness = 2.3
+                end
+
+                if not highlightGui then
+                    local billboardGui = Instance.new("BillboardGui")
+                    billboardGui.Name = "HighlightGui"
+                    billboardGui.Parent = rootPart
+                    billboardGui.Size = UDim2.new(0, 60, 0, 60)
+                    billboardGui.Adornee = rootPart
+                    billboardGui.StudsOffset = Vector3.new(0, 15, 0)
+
+                    local frame = Instance.new("Frame")
+                    frame.Parent = billboardGui
+                    frame.Size = UDim2.new(1, 0, 1, 0)
+                    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    frame.BackgroundTransparency = 0.6
+                    frame.BorderSizePixel = 0
+                end
+            end)
+        else
+            if lightclose then
+                lightclose:Disconnect()
+                lightclose = nil
+            end
+            if game.Players.LocalPlayer.Character then
+                local rootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    local playerLight = rootPart:FindFirstChild("Light")
+                    local highlightGui = rootPart:FindFirstChild("HighlightGui")
+
+                    if playerLight then playerLight:Destroy() end
+                    if highlightGui then highlightGui:Destroy() end
+                end
+            end
+        end
+    end
 })
 
-local function Create(instance, parent, props)
+function Create(instance, parent, props)
     local new = Instance.new(instance, parent)
     if props then
         for prop, value in pairs(props) do
@@ -1406,140 +1277,6 @@ function CreateTween(instance, prop, value, time, tweenWait)
         tween.Completed:Wait()
     end
 end
-
-function createTextStrokeRainbow(textLabel)
-    return RunService.Heartbeat:Connect(function()
-        local hue = tick() % 360
-        local rainbowColor = Color3.fromHSV(hue / 360, 1, 1)
-        textLabel.TextStrokeColor3 = rainbowColor
-    end)
-end
-
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-local previousCFrame = humanoidRootPart.CFrame
-local humanoid = character:WaitForChild("Humanoid")
-
-local screenGui, toggle, speedLabel, togglemodLabelButton, modLabel
-local currentSpeed, targetSpeed = 0, 0
-local isSpeedLabelVisible, useWalkSpeed, isButtonActive = false, false, true
-local stopupdatespeed
-
-function CreateButton(parent, size, position, image, transparency, zIndex, visible)
-    return Create("ImageButton", parent, {
-        Size = size,
-        Position = position,
-        Image = image,
-        BackgroundTransparency = transparency,
-        ZIndex = zIndex,
-        Visible = visible
-    })
-end
-
-function ToggleSpeedGui(create)
-    if create then
-        screenGui = Create("ScreenGui", game:GetService("CoreGui"))
-
-        toggle = CreateButton(screenGui, UDim2.new(0.06, 0, 0.124, 0), UDim2.new(0.39, 0, 0.004, 0), "rbxassetid://116250785038242", 1, 2, true)
-
-        speedLabel = Create("TextLabel", toggle, {
-            Size = UDim2.new(1.9, 0, 0.45, 0),
-            Position = UDim2.new(-0.04, 0, 0.5, 0),
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextScaled = true,
-            Text = "Speed: 0",
-            BackgroundTransparency = 1,
-            ZIndex = 1,
-            Visible = false
-        })
-
-        togglemodLabelButton = CreateButton(toggle, UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), "rbxassetid://93917932838439", 1, 1, false)
-
-        modLabel = Create("TextLabel", toggle, {
-            Size = UDim2.new(1.9, 0, 0.45, 0),
-            Position = UDim2.new(0, 0, 0, 0),
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextScaled = true,
-            Text = "CFrame Mode",
-            ZIndex = 1,
-            BackgroundTransparency = 1,
-            Visible = false
-        })
-        
-        toggle.MouseButton1Click:Connect(function()
-            if not isButtonActive then return end
-            isButtonActive = false
-
-            if isSpeedLabelVisible then
-                speedLabel.Visible = true
-                modLabel.Visible = true
-                togglemodLabelButton.Visible = true
-                CreateTween(speedLabel, "Position", UDim2.new(2, 0, 0.75, 0), 1, false)
-                CreateTween(modLabel, "Position", UDim2.new(2, 0, 0.25, 0), 1, false)
-                CreateTween(togglemodLabelButton, "Position", UDim2.new(1 + 2.4, 0, 0, 0), 1, false)
-             else
-                CreateTween(speedLabel, "Position", UDim2.new(0, 0, 0.75, 0), 1, false)
-                CreateTween(modLabel, "Position", UDim2.new(0, 0, 0.25, 0), 1, false)
-                CreateTween(togglemodLabelButton, "Position", UDim2.new(0, 0, 0, 0), 1, true)
-                speedLabel.Visible = false
-                modLabel.Visible = false
-                togglemodLabelButton.Visible = false
-            end
-            isSpeedLabelVisible = not isSpeedLabelVisible
-            isButtonActive = true
-        end)
-
-        togglemodLabelButton.MouseButton1Click:Connect(function()
-            useWalkSpeed = not useWalkSpeed
-            modLabel.Text = useWalkSpeed and "WalkSpeed Mode" or "CFrame Mode"
-        end)
-
-        stopupdatespeed = game:GetService("RunService").RenderStepped:Connect(function()
-            if humanoidRootPart then
-                if useWalkSpeed then
-                    local walkSpeed = humanoid.WalkSpeed
-                    if humanoid.MoveDirection.Magnitude > 0 then
-                        currentSpeed = math.min(currentSpeed + 1, walkSpeed)
-                    else
-                        currentSpeed = math.max(currentSpeed - 1, 0)
-                    end
-                    speedLabel.Text = string.format("Speed: %.0f", currentSpeed)
-                else
-                    local currentCFrame = humanoidRootPart.CFrame
-                    local horizontalMovement = (currentCFrame.Position - previousCFrame.Position)
-                    local movementXZ = Vector3.new(horizontalMovement.X, 0, horizontalMovement.Z)
-                    local distance = movementXZ.Magnitude
-                    targetSpeed = distance / (1 / 60)
-                    currentSpeed = currentSpeed + (targetSpeed - currentSpeed) * 0.1
-                    speedLabel.Text = string.format("Speed: %.0f", currentSpeed)
-                    previousCFrame = currentCFrame
-                end
-            end
-        end)
-    else
-        if screenGui then
-            screenGui:Destroy()
-            screenGui = nil
-        end
-        if stopupdatespeed then
-            stopupdatespeed:Disconnect()
-            stopupdatespeed = nil
-        end
-    end
-end
-
-AddToggle(Main5u6, {
-    Name = "Checker Speed GUI",
-    Default = false,
-    Callback = function(state)
-        ToggleSpeedGui(state)
-    end
-})
 
 local StatusUi = true
 local heartbeatConnection = nil
@@ -1580,7 +1317,7 @@ function createFpsAndpinggui()
     end
 
     local player = game.Players.LocalPlayer
-    local existingUI = player.PlayerGui:FindFirstChild("FpsAndping")
+    local existingUI = game:GetService("CoreGui"):FindFirstChild("FpsAndping")
     if existingUI then
         return
     end
@@ -1597,41 +1334,18 @@ function createFpsAndpinggui()
     local pingLabel = AddUi(screenGui, "Ping: Calculating...", Color3.fromRGB(0, 255, 255))
 
     local displayedFPS = 0
-    local displayedPing = 0
 
-    local targetFPS = 0
-    local targetPing = 0
-
-    local function updateFPS()
-        targetFPS = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
-    end
-
-    local function updatePing()
-        local ping = game:GetService("Stats").PerformanceStats.Ping:GetValue()
-        targetPing = math.floor(ping)
-    end
-
-    local function smoothUpdate()
+    heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        local targetFPS = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
         if displayedFPS < targetFPS then
             displayedFPS = displayedFPS + 1
         elseif displayedFPS > targetFPS then
             displayedFPS = displayedFPS - 1
         end
-
-        if displayedPing < targetPing then
-            displayedPing = displayedPing + 1
-        elseif displayedPing > targetPing then
-            displayedPing = displayedPing - 1
-        end
-
+        local ping = game:GetService("Stats").PerformanceStats.Ping:GetValue()
+        local targetPing = math.floor(ping)
         fpsLabel.Text = "FPS: " .. displayedFPS
-        pingLabel.Text = "Ping: " .. displayedPing .. " ms"
-    end
-
-    heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
-        updateFPS()
-        updatePing()
-        smoothUpdate()
+        pingLabel.Text = "Ping: " .. targetPing .. " ms"
     end)
 
     screenGui.AncestryChanged:Connect(function()
@@ -1649,9 +1363,8 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function()
         StatusUi = not StatusUi
-        local player = game.Players.LocalPlayer
         local existingUI = game:GetService("CoreGui"):FindFirstChild("FpsAndping")
-        
+
         if StatusUi then
             if not existingUI then
                 createFpsAndpinggui()
@@ -1672,6 +1385,7 @@ local m3x2q7 = nil
 local t1w8y6 = 2
 local z9o4p3 = false
 local r5j7b1v = nil
+local y4654hhvc = nil
 
 function g2y5x8v9(b8p3y6)
     local s4l2h9 = Instance.new("Model")
@@ -1719,7 +1433,7 @@ function g2y5x8v9(b8p3y6)
     game:GetService("Debris"):AddItem(s4l2h9, 1)
 end
 
-local function v2o8f9d3(b8k1v4)
+function v2o8f9d3(b8k1v4)
     local z7y5x9 = b8k1v4:WaitForChild("Humanoid")
     m3x2q7 = b8k1v4:WaitForChild("HumanoidRootPart").Position
 
@@ -1755,7 +1469,7 @@ AddToggle(Main5u6, {
             if player.Character then
                 v2o8f9d3(player.Character)
             end
-            player.CharacterAdded:Connect(function(character)
+            y4654hhvc = player.CharacterAdded:Connect(function(character)
                 if z9o4p3 then
                     v2o8f9d3(character)
                 end
@@ -1764,6 +1478,10 @@ AddToggle(Main5u6, {
             if r5j7b1v then
                 r5j7b1v:Disconnect()
                 r5j7b1v = nil
+            end
+            if y4654hhvc then
+                y4654hhvc:Disconnect()
+                y4654hhvc = nil
             end
         end
     end
