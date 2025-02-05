@@ -1340,34 +1340,42 @@ local y4654hhvc = nil
 function g2y5x8v9(b8p3y6)
     local s4l2h9 = Instance.new("Model")
     s4l2h9.Name = "X3z5Q"
-    local character = b8p3y6
-    local characterClone = character:Clone()
-    characterClone.Parent = workspace
-    local humanoid = characterClone:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        local animationController = characterClone:FindFirstChildOfClass("AnimationController") or Instance.new("AnimationController")
-        animationController.Parent = characterClone
-    end
 
-    local d2s9k1 = characterClone:FindFirstChild("HumanoidRootPart")
+    local d2s9k1 = b8p3y6:FindFirstChild("HumanoidRootPart")
     if not d2s9k1 then return end
 
     local j7g2k4 = d2s9k1.CFrame
+    local animationController = b8p3y6:FindFirstChildOfClass("AnimationController")
+    if animationController then
+        local newAnimController = animationController:Clone()
+        newAnimController.Parent = s4l2h9
+    end
 
-    for _, p5s2v3 in pairs(characterClone:GetDescendants()) do
+    for _, p5s2v3 in pairs(b8p3y6:GetDescendants()) do
         if p5s2v3:IsA("BasePart") and p5s2v3.Transparency < 1 then
             local j8u1t7 = p5s2v3:Clone()
-            j8u1t7.CanCollide = false
-            j8u1t7.CanQuery = false
-            j8u1t7.CanTouch = false
+
+            for _, w9o5r3 in pairs(j8u1t7:GetChildren()) do
+                if not w9o5r3:IsA("SpecialMesh") and 
+                   not w9o5r3:IsA("Texture") and 
+                   not w9o5r3:IsA("Decal") then
+                    w9o5r3:Destroy()
+                end
+            end
+
+            j8u1t7.CanCollide = p5s2v3.CanCollide
+            j8u1t7.CanQuery = p5s2v3.CanQuery
+            j8u1t7.CanTouch = p5s2v3.CanTouch
             j8u1t7.Anchored = true
-            j8u1t7.Transparency = 0.7
+
             j8u1t7.CFrame = j7g2k4:ToWorldSpace(d2s9k1.CFrame:ToObjectSpace(p5s2v3.CFrame))
             j8u1t7.Parent = s4l2h9
-            t5w3s2 = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-            n4p3l1 = {Transparency = 1}
-            p7o8l2 = TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
+
+            local t5w3s2 = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+            local n4p3l1 = {Transparency = 1}
+            local p7o8l2 = TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
             p7o8l2:Play()
+
             p7o8l2.Completed:Connect(function()
                 j8u1t7:Destroy()
             end)
