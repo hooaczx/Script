@@ -1331,14 +1331,14 @@ AddToggle(Main5u6, {
     end
 })
 
-local m3x2q7 = nil
-local t1w8y6 = 2
-local z9o4p3 = false
-local r5j7b1v = nil
-local y4654hhvc = nil
+local MIN_DISTANCE = 2
+local effectActive = false
+local heartbeatConn = nil
+local charAddedConn = nil
+local lastPosition = nil
 
-function CloneAnimations(b8p3y6)
-    local animationController = b8p3y6:FindFirstChildOfClass("AnimationController")
+function CloneAnimations(character)
+    local animationController = character:FindFirstChildOfClass("AnimationController")
     if animationController then
         for _, anim in pairs(animationController:GetChildren()) do
             if anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid") then
@@ -1349,67 +1349,66 @@ function CloneAnimations(b8p3y6)
     end
 end
 
-function g2y5x8v9(b8p3y6)
-    local s4l2h9 = Instance.new("Model")
-    s4l2h9.Name = "X3z5Q"
-    local d2s9k1 = b8p3y6:FindFirstChild("HumanoidRootPart")
-    if not d2s9k1 then return end
-    local j7g2k4 = d2s9k1.CFrame
-    CloneAnimations(b8p3y6)
-    for _, p5s2v3 in pairs(b8p3y6:GetDescendants()) do
-        if p5s2v3:IsA("BasePart") and p5s2v3.Transparency < 1 then
-            local j8u1t7 = p5s2v3:Clone()
-            for _, w9o5r3 in pairs(j8u1t7:GetChildren()) do
-                if not w9o5r3:IsA("SpecialMesh") and 
-                   not w9o5r3:IsA("Texture") and 
-                   not w9o5r3:IsA("Decal") then
-                    w9o5r3:Destroy()
+function createAfterImage(character)
+    local cloneModel = Instance.new("Model")
+    cloneModel.Name = "AfterImage"
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+    local rootCFrame = rootPart.CFrame
+    CloneAnimations(character)
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") and part.Transparency < 1 then
+            local partClone = part:Clone()
+            for _, child in pairs(partClone:GetChildren()) do
+                if not child:IsA("SpecialMesh") and not child:IsA("Texture") and not child:IsA("Decal") then
+                    child:Destroy()
                 end
             end
-            j8u1t7.CanCollide = p5s2v3.CanCollide
-            j8u1t7.CanQuery = p5s2v3.CanQuery
-            j8u1t7.CanTouch = p5s2v3.CanTouch
-            j8u1t7.Anchored = true
-            j8u1t7.Material = p5s2v3.Material
-            j8u1t7.CFrame = j7g2k4:ToWorldSpace(d2s9k1.CFrame:ToObjectSpace(p5s2v3.CFrame))
-            j8u1t7.Parent = s4l2h9
-            local t5w3s2 = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-            local n4p3l1 = {Transparency = 1}
-            local p7o8l2 = TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
-            p7o8l2:Play()
-
-            p7o8l2.Completed:Connect(function()
-                j8u1t7:Destroy()
+            partClone.CanCollide = part.CanCollide
+            partClone.CanQuery = part.CanQuery
+            partClone.CanTouch = part.CanTouch
+            partClone.Anchored = true
+            partClone.Material = part.Material
+            partClone.CFrame = rootCFrame:ToWorldSpace(rootPart.CFrame:ToObjectSpace(part.CFrame))
+            partClone.Parent = cloneModel
+            
+            local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+            local tweenGoal = {Transparency = 1}
+            local tween = TweenService:Create(partClone, tweenInfo, tweenGoal)
+            tween:Play()
+            tween.Completed:Connect(function()
+                partClone:Destroy()
             end)
         end
     end
     
-    s4l2h9.Parent = workspace
-    game:GetService("Debris"):AddItem(s4l2h9, 1)
+    cloneModel.Parent = workspace
+    game:GetService("Debris"):AddItem(cloneModel, 1)
 end
 
-function v2o8f9d3(b8k1v4)
-    local z7y5x9 = b8k1v4:WaitForChild("Humanoid")
-    m3x2q7 = b8k1v4:WaitForChild("HumanoidRootPart").Position
+function setupAfterImageEffect(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    local rootPart = character:WaitForChild("HumanoidRootPart")
+    lastPosition = rootPart.Position
 
-    r5j7b1v = RunService.Heartbeat:Connect(function()
-        if not z9o4p3 then
-            if r5j7b1v then
-                r5j7b1v:Disconnect()
-                r5j7b1v = nil
+    heartbeatConn = RunService.Heartbeat:Connect(function()
+        if not effectActive then
+            if heartbeatConn then
+                heartbeatConn:Disconnect()
+                heartbeatConn = nil
             end
             return
         end
 
-        local j4d2n3 = b8k1v4:FindFirstChild("HumanoidRootPart")
-        if not j4d2n3 then return end
+        local currentRoot = character:FindFirstChild("HumanoidRootPart")
+        if not currentRoot then return end
 
-        local p3f2y4 = j4d2n3.Position
-        local t6v3z9 = (m3x2q7 - p3f2y4).Magnitude
+        local currentPosition = currentRoot.Position
+        local distance = (lastPosition - currentPosition).Magnitude
 
-        if z7y5x9.MoveDirection.Magnitude > 0 and t6v3z9 >= t1w8y6 then
-            g2y5x8v9(b8k1v4)
-            m3x2q7 = p3f2y4
+        if humanoid.MoveDirection.Magnitude > 0 and distance >= MIN_DISTANCE then
+            createAfterImage(character)
+            lastPosition = currentPosition
         end
     end)
 end
@@ -1418,25 +1417,28 @@ AddToggle(Main5u6, {
     Name = "Walk Character Afterimage Effect",
     Default = false,
     Callback = function(state)
-        z9o4p3 = state
-
-        if z9o4p3 then
-            if player.Character then
-                v2o8f9d3(player.Character)
+        effectActive = state
+        if effectActive then
+            local playersFolder = workspace:WaitForChild("Players")
+            local character = playersFolder:WaitForChild(game:GetService("Players").LocalPlayer.Name)
+            if character then
+                setupAfterImageEffect(character)
             end
-            y4654hhvc = player.CharacterAdded:Connect(function(character)
-                if z9o4p3 then
-                    v2o8f9d3(character)
+            charAddedConn = LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+                if effectActive then
+                    local playersFolder = workspace:WaitForChild("Players")
+                    local charFromFolder = playersFolder:WaitForChild(LocalPlayer.Name)
+                    setupAfterImageEffect(charFromFolder)
                 end
             end)
         else
-            if r5j7b1v then
-                r5j7b1v:Disconnect()
-                r5j7b1v = nil
+            if heartbeatConn then
+                heartbeatConn:Disconnect()
+                heartbeatConn = nil
             end
-            if y4654hhvc then
-                y4654hhvc:Disconnect()
-                y4654hhvc = nil
+            if charAddedConn then
+                charAddedConn:Disconnect()
+                charAddedConn = nil
             end
         end
     end
