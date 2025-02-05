@@ -1356,7 +1356,6 @@ function g2y5x8v9(b8p3y6)
     if not d2s9k1 then return end
     local j7g2k4 = d2s9k1.CFrame
     CloneAnimations(b8p3y6)
-    local tweens = {}
     for _, p5s2v3 in pairs(b8p3y6:GetDescendants()) do
         if p5s2v3:IsA("BasePart") and p5s2v3.Transparency < 1 then
             local j8u1t7 = p5s2v3:Clone()
@@ -1377,10 +1376,8 @@ function g2y5x8v9(b8p3y6)
             local t5w3s2 = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
             local n4p3l1 = {Transparency = 1}
             local p7o8l2 = TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
-            table.insert(tweens, p7o8l2)
-            for _, tween in pairs(tweens) do
-              tween:Play()
-            end
+            p7o8l2:Play()
+
             p7o8l2.Completed:Connect(function()
                 j8u1t7:Destroy()
             end)
