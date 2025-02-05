@@ -1359,6 +1359,13 @@ function createAfterImage(character)
     for _, part in pairs(character:GetDescendants()) do
         if part:IsA("BasePart") and part.Transparency < 1 then
             local partClone = part:Clone()
+            for _, w9o5r3 in pairs(partClone:GetChildren()) do
+                if not w9o5r3:IsA("SpecialMesh") and 
+                   not w9o5r3:IsA("Texture") and 
+                   not w9o5r3:IsA("Decal") then
+                    w9o5r3:Destroy()
+                end
+            end
             partClone.CanCollide = part.CanCollide
             partClone.CanQuery = part.CanQuery
             partClone.CanTouch = part.CanTouch
