@@ -1268,12 +1268,21 @@ AddToggle(Main5u6, {
     end
 })
 
-function Create(instance, parent, props)
-    local new = Instance.new(instance, parent)
-    for prop, value in pairs(props or {}) do
-        new[prop] = value
+function ApplyLightToCharacter(character)
+    local rootPart = character:WaitForChild("HumanoidRootPart", 5)
+    if not rootPart then return end
+
+    if not rootPart:FindFirstChild("Light") then
+        Create("PointLight", rootPart, {Name = "Light", Range = 30, Brightness = 2.3})
     end
-    return new
+
+    if not rootPart:FindFirstChild("HighlightGui") then
+        local billboardGui = Create("BillboardGui", rootPart, {
+            Name = "HighlightGui", Size = UDim2.new(0, 60, 0, 60), Adornee = rootPart,
+            StudsOffset = Vector3.new(0, 15, 0)
+        })
+        Create("Frame", billboardGui, {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, BorderSizePixel = 0})
+    end
 end
 
 AddToggle(Main5u6, {
@@ -1281,50 +1290,30 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         lightEnabled = state
-        local playerCharacter = game.Players.LocalPlayer.Character
-        local rootPart = playerCharacter and playerCharacter:FindFirstChild("HumanoidRootPart")
-        if not rootPart then return end
 
-        local playerLight = rootPart:FindFirstChild("Light")
-        local highlightGui = rootPart:FindFirstChild("HighlightGui")
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        
+        if lightEnabled then
+            ApplyLightToCharacter(character)
 
-        if lightEnabled then
-            if not playerLight then
-                Create("PointLight", rootPart, {Name = "Light", Range = 30, Brightness = 2.3})
-            end
-            if not highlightGui then
-                local billboardGui = Create("BillboardGui", rootPart, {
-                    Name = "HighlightGui", Size = UDim2.new(0, 60, 0, 60), Adornee = rootPart,
-                    StudsOffset = Vector3.new(0, 15, 0)
-                })
-                Create("Frame", billboardGui, {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, BorderSizePixel = 0})
-            end
+            if lightclose then lightclose:Disconnect() lightclose = nil end
+            lightclose = player.CharacterAdded:Connect(ApplyLightToCharacter)
         else
-            if playerLight then playerLight:Destroy() end
-            if highlightGui then highlightGui:Destroy() end
-        end
-        if lightEnabled then
-            if lightclose then lightclose:Disconnect() end
-            lightclose = game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
-                local rootPart = character:FindFirstChild("HumanoidRootPart")
-                if rootPart then
-                    if not rootPart:FindFirstChild("Light") then
-                        Create("PointLight", rootPart, {Name = "Light", Range = 30, Brightness = 1.5})
-                    end
-                    if not rootPart:FindFirstChild("HighlightGui") then
-                        local billboardGui = Create("BillboardGui", rootPart, {
-                            Name = "HighlightGui", Size = UDim2.new(0, 60, 0, 60), Adornee = rootPart,
-                            StudsOffset = Vector3.new(0, 15, 0)
-                        })
-                        Create("Frame", billboardGui, {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, BorderSizePixel = 0})
-                    end
-                end
-            end)
-        else
-            if lightclose then lightclose:Disconnect() end
+            if lightclose then lightclose:Disconnect() lightclose = nil end
+
+            local rootPart = character:FindFirstChild("HumanoidRootPart")
+            if rootPart then
+                local playerLight = rootPart:FindFirstChild("Light")
+                local highlightGui = rootPart:FindFirstChild("HighlightGui")
+
+                if playerLight then playerLight:Destroy() end
+                if highlightGui then highlightGui:Destroy() end
+            end
         end
     end
 })
+
 
 local StatusUi = true
 local heartbeatConnection = nil
