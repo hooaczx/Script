@@ -1338,18 +1338,20 @@ local y4654hhvc = nil
 
 function CloneAnimations(b8p3y6)
     local animationController = b8p3y6:FindFirstChildOfClass("AnimationController")
-    if animationController then
-        for _, child in pairs(animationController:GetChildren()) do
-            if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
-                child:Destroy()
-            end
+    if not animationController then
+        warn("AnimationController not found in " .. b8p3y6.Name)
+        return
+    end
+    for _, child in pairs(animationController:GetChildren()) do
+        if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
+            child:Destroy()
         end
-        for _, anim in pairs(animationController:GetChildren()) do
-            if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
-                local clonedAnim = anim:Clone()
-                clonedAnim.Parent = animationController
-                clonedAnim:SetAttribute("IsClone", true)
-            end
+    end
+    for _, anim in pairs(animationController:GetChildren()) do
+        if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
+            local clonedAnim = anim:Clone()
+            clonedAnim.Parent = animationController
+            clonedAnim:SetAttribute("IsClone", true)
         end
     end
 end
@@ -1359,6 +1361,7 @@ function g2y5x8v9(b8p3y6)
     s4l2h9.Name = "X3z5Q"
     local d2s9k1 = b8p3y6:FindFirstChild("HumanoidRootPart")
     if not d2s9k1 then
+        warn("HumanoidRootPart not found in " .. b8p3y6.Name)
         return
     end
     local j7g2k4 = d2s9k1.CFrame
@@ -1380,11 +1383,19 @@ function g2y5x8v9(b8p3y6)
             j8u1t7.Parent = s4l2h9
             local t5w3s2 = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
             local n4p3l1 = {Transparency = 1}
-            local p7o8l2 = TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
-            p7o8l2:Play()
-            p7o8l2.Completed:Connect(function()
-                j8u1t7:Destroy()
+            local success, p7o8l2 = pcall(function()
+                return TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
             end)
+            if not success then
+                warn("Failed to create Tween for " .. j8u1t7.Name .. ": " .. tostring(p7o8l2))
+            else
+                p7o8l2:Play()
+                p7o8l2.Completed:Connect(function()
+                    if j8u1t7 and j8u1t7.Parent then
+                        j8u1t7:Destroy()
+                    end
+                end)
+            end
         end
     end
     s4l2h9.Parent = workspace
@@ -1393,7 +1404,12 @@ end
 
 function v2o8f9d3(b8k1v4)
     local z7y5x9 = b8k1v4:WaitForChild("Humanoid")
-    m3x2q7 = b8k1v4:WaitForChild("HumanoidRootPart").Position
+    local humanoidRoot = b8k1v4:WaitForChild("HumanoidRootPart")
+    if not humanoidRoot then
+        warn("HumanoidRootPart not found in " .. b8k1v4.Name)
+        return
+    end
+    local m3x2q7 = humanoidRoot.Position
     r5j7b1v = RunService.Heartbeat:Connect(function()
         if not z9o4p3 then
             if r5j7b1v then
@@ -1404,6 +1420,7 @@ function v2o8f9d3(b8k1v4)
         end
         local j4d2n3 = b8k1v4:FindFirstChild("HumanoidRootPart")
         if not j4d2n3 then
+            warn("HumanoidRootPart has been removed from " .. b8k1v4.Name)
             return
         end
         local p3f2y4 = j4d2n3.Position
@@ -1423,6 +1440,8 @@ AddToggle(Main5u6, {
         if z9o4p3 then
             if player.Character then
                 v2o8f9d3(player.Character)
+            else
+                warn("Player's character not found when enabling the effect")
             end
             y4654hhvc = player.CharacterAdded:Connect(function(character)
                 if z9o4p3 then
