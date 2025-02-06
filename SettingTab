@@ -1337,7 +1337,22 @@ local r5j7b1v = nil
 local y4654hhvc = nil
 
 function debugWarn(message)
-	warn("[DEBUG] " .. message)
+warn(""..message)
+end
+
+function ensureCharacterParts(model)
+local head = model:FindFirstChild("Head")
+if not head then
+  debugWarn("No Head found in " .. model.Name)
+else
+  debugWarn("Head found in " .. model.Name)
+    end
+local blinkingPartsFolder = model:FindFirstChild("BlinkingParts")
+if not blinkingPartsFolder then
+ debugWarn("No BlinkingParts folder found in " .. model.Name)
+else
+ debugWarn("BlinkingParts folder found in " .. model.Name)
+  end
 end
 
 function GetAnimationContainer(model)
@@ -1383,6 +1398,7 @@ function CloneAnimations(model)
 end
 
 function g2y5x8v9(model)
+	ensureCharacterParts(model)
 	local cloneModel = Instance.new("Model")
 	cloneModel.Name = "X3z5Q"
 	local humanoidRoot = model:FindFirstChild("HumanoidRootPart")
@@ -1391,7 +1407,6 @@ function g2y5x8v9(model)
 		return
 	end
 	local rootCFrame = humanoidRoot.CFrame
-	debugWarn("Processing model '" .. model.Name .. "' at position " .. tostring(humanoidRoot.Position))
 	CloneAnimations(model)
 	for _, part in pairs(model:GetDescendants()) do
 		if part:IsA("BasePart") and part.Transparency < 1 then
@@ -1413,15 +1428,11 @@ function g2y5x8v9(model)
 			local success, tween = pcall(function()
 				return TweenService:Create(clonePart, tweenInfo, tweenProps)
 			end)
-			if not success then
-				debugWarn("Failed to create Tween for " .. clonePart.Name .. ": " .. tostring(tween))
-			else
-				debugWarn("Tween created for " .. clonePart.Name)
+			if success then
 				tween:Play()
 				tween.Completed:Connect(function()
 					if clonePart and clonePart.Parent then
 						clonePart:Destroy()
-						debugWarn("Tween completed and destroyed " .. clonePart.Name)
 					end
 				end)
 			end
@@ -1429,7 +1440,6 @@ function g2y5x8v9(model)
 	end
 	cloneModel.Parent = workspace
 	game:GetService("Debris"):AddItem(cloneModel, 1)
-	debugWarn("Clone model added to workspace and will be removed soon")
 end
 
 function v2o8f9d3(model)
@@ -1439,26 +1449,27 @@ function v2o8f9d3(model)
 		debugWarn("HumanoidRootPart not found in " .. model.Name)
 		return
 	end
+	
 	local lastPos = humanoidRoot.Position
-	debugWarn("Started tracking movement for " .. model.Name .. " at " .. tostring(lastPos))
+	
 	r5j7b1v = RunService.Heartbeat:Connect(function()
 		if not z9o4p3 then
 			if r5j7b1v then
 				r5j7b1v:Disconnect()
 				r5j7b1v = nil
-				debugWarn("Heartbeat disconnected for " .. model.Name)
 			end
 			return
 		end
+		
 		local currentRoot = model:FindFirstChild("HumanoidRootPart")
 		if not currentRoot then
 			debugWarn("HumanoidRootPart has been removed from " .. model.Name)
 			return
 		end
+		
 		local currentPos = currentRoot.Position
 		local distance = (lastPos - currentPos).Magnitude
 		if humanoid.MoveDirection.Magnitude > 0 and distance >= t1w8y6 then
-			debugWarn("Movement detected for " .. model.Name .. " (" .. tostring(distance) .. " studs); creating afterimage")
 			g2y5x8v9(model)
 			lastPos = currentPos
 		end
