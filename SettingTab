@@ -1268,20 +1268,34 @@ AddToggle(Main5u6, {
     end
 })
 
-function ApplyLightToCharacter(character)
+function Create(instance, parent, props)
+    local new = Instance.new(instance, parent)
+    for prop, value in pairs(props or {}) do
+        new[prop] = value
+    end
+    return new
+end
+
+local function ApplyLightToCharacter(character)
     local rootPart = character:WaitForChild("HumanoidRootPart", 5)
     if not rootPart then return end
 
     if not rootPart:FindFirstChild("Light") then
-        Create("PointLight", rootPart, {Name = "Light", Range = 30, Brightness = 2.3})
+        Create("PointLight", rootPart, {
+            Name = "Light",
+            Range = 30,
+            Brightness = 2.3,
+            Color = Color3.fromRGB(255, 255, 255) -- แสงสีขาว
+        })
     end
 
-    if not rootPart:FindFirstChild("HighlightGui") then
-        local billboardGui = Create("BillboardGui", rootPart, {
-            Name = "HighlightGui", Size = UDim2.new(0, 60, 0, 60), Adornee = rootPart,
-            StudsOffset = Vector3.new(0, 15, 0)
+    if not character:FindFirstChild("HighlightEffect") then
+        Create("Highlight", character, {
+            Name = "HighlightEffect",
+            FillTransparency = 1,
+            OutlineColor = Color3.fromRGB(0, 150, 255), 
+            OutlineTransparency = 0.2
         })
-        Create("Frame", billboardGui, {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, BorderSizePixel = 0})
     end
 end
 
@@ -1297,23 +1311,22 @@ AddToggle(Main5u6, {
         if lightEnabled then
             ApplyLightToCharacter(character)
 
-            if lightclose then lightclose:Disconnect() lightclose = nil end
+            if lightclose then lightclose:Disconnect() end
             lightclose = player.CharacterAdded:Connect(ApplyLightToCharacter)
         else
-            if lightclose then lightclose:Disconnect() lightclose = nil end
+            if lightclose then lightclose:Disconnect() end
 
             local rootPart = character:FindFirstChild("HumanoidRootPart")
             if rootPart then
                 local playerLight = rootPart:FindFirstChild("Light")
-                local highlightGui = rootPart:FindFirstChild("HighlightGui")
-
+                local highlightEffect = character:FindFirstChild("HighlightEffect")
+  
                 if playerLight then playerLight:Destroy() end
-                if highlightGui then highlightGui:Destroy() end
+                if highlightEffect then highlightEffect:Destroy() end
             end
         end
     end
 })
-
 
 local StatusUi = true
 local heartbeatConnection = nil
