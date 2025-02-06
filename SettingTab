@@ -1268,15 +1268,7 @@ AddToggle(Main5u6, {
     end
 })
 
-function Create(instance, parent, props)
-    local new = Instance.new(instance, parent)
-    for prop, value in pairs(props or {}) do
-        new[prop] = value
-    end
-    return new
-end
-
-local function ApplyLightToCharacter(character)
+function ApplyLightToCharacter(character)
     local rootPart = character:WaitForChild("HumanoidRootPart", 5)
     if not rootPart then return end
 
@@ -1285,16 +1277,7 @@ local function ApplyLightToCharacter(character)
             Name = "Light",
             Range = 30,
             Brightness = 2.3,
-            Color = Color3.fromRGB(255, 255, 255) -- แสงสีขาว
-        })
-    end
-
-    if not character:FindFirstChild("HighlightEffect") then
-        Create("Highlight", character, {
-            Name = "HighlightEffect",
-            FillTransparency = 1,
-            OutlineColor = Color3.fromRGB(0, 150, 255), 
-            OutlineTransparency = 0.2
+            Color = Color3.fromRGB(255, 255, 255)
         })
     end
 end
@@ -1305,24 +1288,19 @@ AddToggle(Main5u6, {
     Callback = function(state)
         lightEnabled = state
 
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+        player = game.Players.LocalPlayer
+        character = player.Character or player.CharacterAdded:Wait()
         
         if lightEnabled then
             ApplyLightToCharacter(character)
-
-            if lightclose then lightclose:Disconnect() end
+            if lightclose then lightclose:Disconnect() lightclose = nil end
             lightclose = player.CharacterAdded:Connect(ApplyLightToCharacter)
         else
-            if lightclose then lightclose:Disconnect() end
-
+            if lightclose then lightclose:Disconnect() lightclose = nil end
             local rootPart = character:FindFirstChild("HumanoidRootPart")
             if rootPart then
                 local playerLight = rootPart:FindFirstChild("Light")
-                local highlightEffect = character:FindFirstChild("HighlightEffect")
-  
                 if playerLight then playerLight:Destroy() end
-                if highlightEffect then highlightEffect:Destroy() end
             end
         end
     end
