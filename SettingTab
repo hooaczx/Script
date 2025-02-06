@@ -1339,10 +1339,16 @@ local y4654hhvc = nil
 function CloneAnimations(b8p3y6)
     local animationController = b8p3y6:FindFirstChildOfClass("AnimationController")
     if animationController then
+        for _, child in pairs(animationController:GetChildren()) do
+            if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
+                child:Destroy()
+            end
+        end
         for _, anim in pairs(animationController:GetChildren()) do
-            if anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid") then
+            if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
                 local clonedAnim = anim:Clone()
                 clonedAnim.Parent = animationController
+                clonedAnim:SetAttribute("IsClone", true)
             end
         end
     end
@@ -1352,16 +1358,16 @@ function g2y5x8v9(b8p3y6)
     local s4l2h9 = Instance.new("Model")
     s4l2h9.Name = "X3z5Q"
     local d2s9k1 = b8p3y6:FindFirstChild("HumanoidRootPart")
-    if not d2s9k1 then return end
+    if not d2s9k1 then
+        return
+    end
     local j7g2k4 = d2s9k1.CFrame
     CloneAnimations(b8p3y6)
     for _, p5s2v3 in pairs(b8p3y6:GetDescendants()) do
         if p5s2v3:IsA("BasePart") and p5s2v3.Transparency < 1 then
             local j8u1t7 = p5s2v3:Clone()
             for _, w9o5r3 in pairs(j8u1t7:GetChildren()) do
-                if not w9o5r3:IsA("SpecialMesh") and 
-                   not w9o5r3:IsA("Texture") and 
-                   not w9o5r3:IsA("Decal") then
+                if not w9o5r3:IsA("SpecialMesh") and not w9o5r3:IsA("Texture") and not w9o5r3:IsA("Decal") then
                     w9o5r3:Destroy()
                 end
             end
@@ -1376,13 +1382,11 @@ function g2y5x8v9(b8p3y6)
             local n4p3l1 = {Transparency = 1}
             local p7o8l2 = TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
             p7o8l2:Play()
-
             p7o8l2.Completed:Connect(function()
                 j8u1t7:Destroy()
             end)
         end
     end
-    
     s4l2h9.Parent = workspace
     game:GetService("Debris"):AddItem(s4l2h9, 1)
 end
@@ -1390,7 +1394,6 @@ end
 function v2o8f9d3(b8k1v4)
     local z7y5x9 = b8k1v4:WaitForChild("Humanoid")
     m3x2q7 = b8k1v4:WaitForChild("HumanoidRootPart").Position
-
     r5j7b1v = RunService.Heartbeat:Connect(function()
         if not z9o4p3 then
             if r5j7b1v then
@@ -1399,13 +1402,12 @@ function v2o8f9d3(b8k1v4)
             end
             return
         end
-
         local j4d2n3 = b8k1v4:FindFirstChild("HumanoidRootPart")
-        if not j4d2n3 then return end
-
+        if not j4d2n3 then
+            return
+        end
         local p3f2y4 = j4d2n3.Position
         local t6v3z9 = (m3x2q7 - p3f2y4).Magnitude
-
         if z7y5x9.MoveDirection.Magnitude > 0 and t6v3z9 >= t1w8y6 then
             g2y5x8v9(b8k1v4)
             m3x2q7 = p3f2y4
@@ -1418,7 +1420,6 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         z9o4p3 = state
-
         if z9o4p3 then
             if player.Character then
                 v2o8f9d3(player.Character)
@@ -1440,6 +1441,7 @@ AddToggle(Main5u6, {
         end
     end
 })
+
 
 local DayLength = 14.40
 local InitialTime = 8
