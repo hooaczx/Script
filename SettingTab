@@ -1337,22 +1337,7 @@ local r5j7b1v = nil
 local y4654hhvc = nil
 
 function debugWarn(message)
-warn(""..message)
-end
-
-function ensureCharacterParts(model)
-local head = model:FindFirstChild("Head")
-if not head then
-  debugWarn("No Head found in " .. model.Name)
-else
-  debugWarn("Head found in " .. model.Name)
-    end
-local blinkingPartsFolder = model:FindFirstChild("BlinkingParts")
-if not blinkingPartsFolder then
- debugWarn("No BlinkingParts folder found in " .. model.Name)
-else
- debugWarn("BlinkingParts folder found in " .. model.Name)
-  end
+  warn(""..message)
 end
 
 function GetAnimationContainer(model)
@@ -1378,33 +1363,32 @@ end
 function CloneAnimations(model)
 	local container = GetAnimationContainer(model)
 	if not container then
-		debugWarn("Animation container not found in " .. model.Name)
-		return
+	  debugWarn("Animation container not found in " .. model.Name)
+	 return
 	end
 	for _, child in pairs(container:GetChildren()) do
-		if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
-			child:Destroy()
-			debugWarn("Destroyed clone " .. child.Name .. " in " .. model.Name)
-		end
+          if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
+	      child:Destroy()
+	      debugWarn("Destroyed clone " .. child.Name .. " in " .. model.Name)
+	   end
 	end
 	for _, anim in pairs(container:GetChildren()) do
-		if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
-			local clonedAnim = anim:Clone()
-			clonedAnim.Parent = container
-			clonedAnim:SetAttribute("IsClone", true)
-			debugWarn("Cloned animation '" .. anim.Name .. "' for '" .. model.Name .. "' using container '" .. container.ClassName .. "'")
-		end
-	end
-end
+           if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
+	       local clonedAnim = anim:Clone()
+	       clonedAnim.Parent = container
+               clonedAnim:SetAttribute("IsClone", true)
+               debugWarn("Cloned animation '" .. anim.Name .. "' for '" .. model.Name .. "' using container '" .. container.ClassName .. "'")
+            end
+        end
+    end
 
 function g2y5x8v9(model)
-	ensureCharacterParts(model)
 	local cloneModel = Instance.new("Model")
 	cloneModel.Name = "X3z5Q"
 	local humanoidRoot = model:FindFirstChild("HumanoidRootPart")
 	if not humanoidRoot then
-		debugWarn("HumanoidRootPart not found in " .. model.Name)
-		return
+	    debugWarn("HumanoidRootPart not found in " .. model.Name)
+	    return
 	end
 	local rootCFrame = humanoidRoot.CFrame
 	CloneAnimations(model)
