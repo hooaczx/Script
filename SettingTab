@@ -9,6 +9,7 @@ repeat
 until game:IsLoaded()
 local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 0
+getgenv().TPJumpBoost = 0
 getgenv().TPWalk = false
 local detectionRadius = 50
 local lookAtconnection
@@ -385,6 +386,19 @@ AddToggle(Main5u6, {
 local originalWalkSpeed, originalJumpPower = 16, 50
 local walkSpeedConnection, jumpPowerConnection 
 
+AddTextBox(Main5u6, {
+  Name = "Number WalkSpeed",
+  Default = "Enter",
+  PlaceholderText = "Enter number",
+  ClearText = true,
+  Callback = function(value)
+    local additionalSpeed = tonumber(value)
+    if additionalSpeed then
+      getgenv().Walkspeed = additionalSpeed
+    end
+  end
+})
+
 AddToggle(Main5u6, {
   Name = "WalkSpeed",
   Default = false,
@@ -409,6 +423,19 @@ AddToggle(Main5u6, {
         end
         humanoid.WalkSpeed = originalWalkSpeed
       end
+    end
+  end
+})
+
+AddTextBox(Main5u6, {
+  Name = "Number JumpPower",
+  Default = "Enter",
+  PlaceholderText = "Enter number",
+  ClearText = true,
+  Callback = function(value)
+    local additionalJump = tonumber(value)
+    if additionalJump then
+      getgenv().Jumppower = additionalJump
     end
   end
 })
@@ -458,7 +485,6 @@ function setupTPWalk()
         Tpwkdied:Disconnect()
         Tpwkdied = nil
     end
-    
     function onCharacterAdded(character)
         local hum = character:WaitForChild("Humanoid")
         Tpwk = game:GetService("RunService").Stepped:Connect(function()
@@ -520,6 +546,60 @@ AddToggle(Main5u6, {
            if Tpwkdied then
                 Tpwkdied:Disconnect()
                 Tpwkdied = nil
+            end
+        end
+    end
+})
+
+local TPJpCntn, TPJp
+
+function setupTPJumpBoost()
+    if TPJp then
+        TPJp:Disconnect()
+        TPJp = nil
+    end
+    if TPJpCntn then
+        TPJpCntn:Disconnect()
+        TPJpCntn = nil
+    end
+    function onCharacterAdded(character)
+        hum = character:WaitForChild("Humanoid")
+        TPJp = hum:GetPropertyChangedSignal("Jump"):Connect(function()
+            if hum.Jump then
+                if hum.MoveDirection.Magnitude > 0 then
+                    local boost = getgenv().TPJumpBoost or 0
+                    if boost > 0 then
+                        character:TranslateBy(hum.MoveDirection * boost)
+                    end
+                end
+            end
+        end)
+    end
+    TPJpCntn = player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+end
+
+AddSlider(Main5u6, {
+    Name = "StrafeJump Slowness",
+    Increase = 0.01,
+    MinValue = 0,
+    MaxValue = 20,
+    Default = 0,
+    Callback = function(value)
+        boostValue = tonumber(value) or 0
+        getgenv().TPJumpBoost = boostValue
+        if boostValue > 0 then
+            setupTPJumpBoost()
+        else
+            if TPJp then
+              TPJp:Disconnect()
+              TPJp = nil
+            end
+            if TPJpCntn then
+              TPJpCntn:Disconnect()
+              TPJpCntn = nil
             end
         end
     end
