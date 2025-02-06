@@ -551,7 +551,7 @@ AddToggle(Main5u6, {
     end
 })
 
-local TPJpCntn, TPJp
+local TPJpCntn, TPJp, tpar
 
 function setupTPJumpBoost()
     if TPJp then
@@ -562,14 +562,27 @@ function setupTPJumpBoost()
         TPJpCntn:Disconnect()
         TPJpCntn = nil
     end
+    if tpar then
+        tpar:Disconnect()
+        tpar = nil
+    end
+
     function onCharacterAdded(character)
-        hum = character:WaitForChild("Humanoid")
+        local hum = character:WaitForChild("Humanoid")
+        local root = character:FindFirstChild("HumanoidRootPart")
         TPJp = hum:GetPropertyChangedSignal("Jump"):Connect(function()
             if hum.Jump then
                 if hum.MoveDirection.Magnitude > 0 then
                     local boost = getgenv().TPJumpBoost or 0
-                    if boost > 0 then
-                        character:TranslateBy(hum.MoveDirection * boost)
+                    if boost > 0 and root then
+                        tpar = RunService.Heartbeat:Connect(function()
+                            if hum.FloorMaterial == Enum.Material.Air then
+                                root.AssemblyLinearVelocity = hum.MoveDirection * boost
+                            else
+                                tpar:Disconnect()
+                                tpar = nil
+                            end
+                        end)
                     end
                 end
             end
@@ -585,7 +598,7 @@ AddSlider(Main5u6, {
     Name = "StrafeJump Slowness",
     Increase = 0.01,
     MinValue = 0,
-    MaxValue = 20,
+    MaxValue = 0.2,
     Default = 0,
     Callback = function(value)
         boostValue = tonumber(value) or 0
@@ -594,12 +607,16 @@ AddSlider(Main5u6, {
             setupTPJumpBoost()
         else
             if TPJp then
-              TPJp:Disconnect()
-              TPJp = nil
+                TPJp:Disconnect()
+                TPJp = nil
             end
             if TPJpCntn then
-              TPJpCntn:Disconnect()
-              TPJpCntn = nil
+                TPJpCntn:Disconnect()
+                TPJpCntn = nil
+            end
+            if tpar then
+                tpar:Disconnect()
+                tpar = nil
             end
         end
     end
