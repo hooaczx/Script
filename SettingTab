@@ -566,20 +566,23 @@ function setupTPJumpBoost()
         tpar:Disconnect()
         tpar = nil
     end
-
     function onCharacterAdded(character)
-        local hum = character:WaitForChild("Humanoid")
+        hum = character:WaitForChild("Humanoid")
         TPJp = hum.StateChanged:Connect(function(oldState, newState)
             if newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall then
                 local boost = getgenv().TPJumpBoost or 0
-                if boost > 0 and hum.MoveDirection.Magnitude > 0 then
-                    local direction = hum.MoveDirection.Unit
+                if boost > 0 then
                     tpar = RunService.Heartbeat:Connect(function()
                         if hum:GetState() == Enum.HumanoidStateType.Freefall then
-                            character:TranslateBy(direction * boost)
+                            if hum.MoveDirection.Magnitude > 0 then
+                                local currentDirection = hum.MoveDirection.Unit
+                                character:TranslateBy(currentDirection * boost)
+                            end
                         else
-                            tpar:Disconnect()
-                            tpar = nil
+                            if tpar then
+                                tpar:Disconnect()
+                                tpar = nil
+                            end
                         end
                     end)
                 end
@@ -618,6 +621,7 @@ AddSlider(Main5u6, {
         end
     end
 })
+
 
 local Player = game.Players.LocalPlayer
 local originalUserId = Player.UserId
