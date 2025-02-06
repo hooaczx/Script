@@ -1336,80 +1336,92 @@ local z9o4p3 = false
 local r5j7b1v = nil
 local y4654hhvc = nil
 
-function CloneAnimations(b8p3y6)
-    local animationController = b8p3y6:FindFirstChildOfClass("AnimationController")
-    if not animationController then
-        warn("AnimationController not found in " .. b8p3y6.Name)
+function GetAnimationContainer(model)
+    local container = model:FindFirstChildOfClass("AnimationController")
+    if not container then
+        local humanoid = model:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            container = humanoid:FindFirstChildOfClass("Animator")
+        end
+    end
+    return container
+end
+
+function CloneAnimations(model)
+    local container = GetAnimationContainer(model)
+    if not container then
+        warn("Animation container not found in " .. model.Name)
         return
     end
-    for _, child in pairs(animationController:GetChildren()) do
+    for _, child in pairs(container:GetChildren()) do
         if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
             child:Destroy()
         end
     end
-    for _, anim in pairs(animationController:GetChildren()) do
+    for _, anim in pairs(container:GetChildren()) do
         if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
             local clonedAnim = anim:Clone()
-            clonedAnim.Parent = animationController
+            clonedAnim.Parent = container
             clonedAnim:SetAttribute("IsClone", true)
+            print("Cloned animation '" .. anim.Name .. "' for '" .. model.Name .. "' using container '" .. container.ClassName .. "'.")
         end
     end
 end
 
-function g2y5x8v9(b8p3y6)
-    local s4l2h9 = Instance.new("Model")
-    s4l2h9.Name = "X3z5Q"
-    local d2s9k1 = b8p3y6:FindFirstChild("HumanoidRootPart")
-    if not d2s9k1 then
-        warn("HumanoidRootPart not found in " .. b8p3y6.Name)
+function g2y5x8v9(model)
+    local cloneModel = Instance.new("Model")
+    cloneModel.Name = "X3z5Q"
+    local humanoidRoot = model:FindFirstChild("HumanoidRootPart")
+    if not humanoidRoot then
+        warn("HumanoidRootPart not found in " .. model.Name)
         return
     end
-    local j7g2k4 = d2s9k1.CFrame
-    CloneAnimations(b8p3y6)
-    for _, p5s2v3 in pairs(b8p3y6:GetDescendants()) do
-        if p5s2v3:IsA("BasePart") and p5s2v3.Transparency < 1 then
-            local j8u1t7 = p5s2v3:Clone()
-            for _, w9o5r3 in pairs(j8u1t7:GetChildren()) do
-                if not w9o5r3:IsA("SpecialMesh") and not w9o5r3:IsA("Texture") and not w9o5r3:IsA("Decal") then
-                    w9o5r3:Destroy()
+    local rootCFrame = humanoidRoot.CFrame
+    CloneAnimations(model)
+    for _, part in pairs(model:GetDescendants()) do
+        if part:IsA("BasePart") and part.Transparency < 1 then
+            local clonePart = part:Clone()
+            for _, child in pairs(clonePart:GetChildren()) do
+                if not child:IsA("SpecialMesh") and not child:IsA("Texture") and not child:IsA("Decal") then
+                    child:Destroy()
                 end
             end
-            j8u1t7.CanCollide = p5s2v3.CanCollide
-            j8u1t7.CanQuery = p5s2v3.CanQuery
-            j8u1t7.CanTouch = p5s2v3.CanTouch
-            j8u1t7.Anchored = true
-            j8u1t7.Material = p5s2v3.Material
-            j8u1t7.CFrame = j7g2k4:ToWorldSpace(d2s9k1.CFrame:ToObjectSpace(p5s2v3.CFrame))
-            j8u1t7.Parent = s4l2h9
-            local t5w3s2 = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-            local n4p3l1 = {Transparency = 1}
-            local success, p7o8l2 = pcall(function()
-                return TweenService:Create(j8u1t7, t5w3s2, n4p3l1)
+            clonePart.CanCollide = part.CanCollide
+            clonePart.CanQuery = part.CanQuery
+            clonePart.CanTouch = part.CanTouch
+            clonePart.Anchored = true
+            clonePart.Material = part.Material
+            clonePart.CFrame = rootCFrame:ToWorldSpace(humanoidRoot.CFrame:ToObjectSpace(part.CFrame))
+            clonePart.Parent = cloneModel
+            local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+            local tweenProps = {Transparency = 1}
+            local success, tween = pcall(function()
+                return TweenService:Create(clonePart, tweenInfo, tweenProps)
             end)
             if not success then
-                warn("Failed to create Tween for " .. j8u1t7.Name .. ": " .. tostring(p7o8l2))
+                warn("Failed to create Tween for " .. clonePart.Name .. ": " .. tostring(tween))
             else
-                p7o8l2:Play()
-                p7o8l2.Completed:Connect(function()
-                    if j8u1t7 and j8u1t7.Parent then
-                        j8u1t7:Destroy()
+                tween:Play()
+                tween.Completed:Connect(function()
+                    if clonePart and clonePart.Parent then
+                        clonePart:Destroy()
                     end
                 end)
             end
         end
     end
-    s4l2h9.Parent = workspace
-    game:GetService("Debris"):AddItem(s4l2h9, 1)
+    cloneModel.Parent = workspace
+    game:GetService("Debris"):AddItem(cloneModel, 1)
 end
 
-function v2o8f9d3(b8k1v4)
-    local z7y5x9 = b8k1v4:WaitForChild("Humanoid")
-    local humanoidRoot = b8k1v4:WaitForChild("HumanoidRootPart")
+function v2o8f9d3(model)
+    local humanoid = model:WaitForChild("Humanoid")
+    local humanoidRoot = model:WaitForChild("HumanoidRootPart")
     if not humanoidRoot then
-        warn("HumanoidRootPart not found in " .. b8k1v4.Name)
+        warn("HumanoidRootPart not found in " .. model.Name)
         return
     end
-    local m3x2q7 = humanoidRoot.Position
+    local lastPos = humanoidRoot.Position
     r5j7b1v = RunService.Heartbeat:Connect(function()
         if not z9o4p3 then
             if r5j7b1v then
@@ -1418,16 +1430,16 @@ function v2o8f9d3(b8k1v4)
             end
             return
         end
-        local j4d2n3 = b8k1v4:FindFirstChild("HumanoidRootPart")
-        if not j4d2n3 then
-            warn("HumanoidRootPart has been removed from " .. b8k1v4.Name)
+        local currentRoot = model:FindFirstChild("HumanoidRootPart")
+        if not currentRoot then
+            warn("HumanoidRootPart has been removed from " .. model.Name)
             return
         end
-        local p3f2y4 = j4d2n3.Position
-        local t6v3z9 = (m3x2q7 - p3f2y4).Magnitude
-        if z7y5x9.MoveDirection.Magnitude > 0 and t6v3z9 >= t1w8y6 then
-            g2y5x8v9(b8k1v4)
-            m3x2q7 = p3f2y4
+        local currentPos = currentRoot.Position
+        local distance = (lastPos - currentPos).Magnitude
+        if humanoid.MoveDirection.Magnitude > 0 and distance >= t1w8y6 then
+            g2y5x8v9(model)
+            lastPos = currentPos
         end
     end)
 end
@@ -1460,7 +1472,6 @@ AddToggle(Main5u6, {
         end
     end
 })
-
 
 local DayLength = 14.40
 local InitialTime = 8
