@@ -3760,14 +3760,14 @@ end
       Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
     })Corner(SliderBar2)
     
-    local currentValue = Default
+    currentValue = Default
 
     function UpdCounter(Value)
         local RoundedValue = math.round(Value * Increase * 100) / 100
         TextLabelNumber.Text = tostring(RoundedValue)
         Callback(RoundedValue)
     end
-    
+   
     local MouseEnterOrLeave = false
     Frame.MouseButton1Down:Connect(function()
         MouseEnterOrLeave = true
@@ -3794,16 +3794,16 @@ end
     SliderSet(Default)
     
     Slider.Changed:Connect(function(prop)
-        if prop == "Position" then
-            local MaxOffset = SliderBar1.AbsoluteSize.X
-            Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
-            SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-            
-            local SliderPos = Slider.Position.X.Offset / MaxOffset
-            local A_1 = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
-            currentValue = A_1  -- Update the value for this slider
-            UpdCounter(currentValue)
-        end
+       if prop == "Position" then
+          local MaxOffset = SliderBar1.AbsoluteSize.X
+          Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
+          SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
+        
+          local SliderPos = Slider.Position.X.Offset / MaxOffset
+          local A_1 = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
+          currentValue = A_1
+          UpdCounter(currentValue)
+       end
     end)
     
     return {Slider, Increase, MaxValue, MinValue}
