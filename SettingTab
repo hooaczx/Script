@@ -11,8 +11,6 @@ local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 0
 getgenv().TPJumpBoost = 0
 getgenv().TPWalk = false
-local detectionRadius = 50
-local lookAtconnection
 getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
 getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
@@ -168,103 +166,8 @@ AddColorPicker(Main5u6, {
     end
 })
 
-local ForcefieldModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
-local module = ForcefieldModule(game.Players.LocalPlayer)
-
-AddToggle(Main5u6, {
-    Name = "Forcefield",
-    Default = false,
-    Callback = function(state)
-        module.ToggleForcefield(state)
-    end
-})
-
-AddColorPicker(Main5u6, {
-    Name = "Forcefield Color",
-    Default = Color3.fromRGB(255, 255, 255),
-    Callback = function(color)
-        if color then
-          module.SetForcefieldColor(color)
-        end
-    end
-})
-
-close = {}
-
-function resetHighlight()
-    if close.highlightObject then
-        close.highlightObject:Destroy()
-        close.highlightObject = nil
-    end
-    if close.characterAddedConnection then
-        close.characterAddedConnection:Disconnect()
-        close.characterAddedConnection = nil
-    end
-    close.highlightedPlayer = nil
-end
-
-function lookAtClosestPlayer()
-    character = localPuppet.Character or localPuppet.CharacterAdded:Wait()
-    humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    humanoid = character:WaitForChild("Humanoid")
-    closestPlayer = nil
-    closestDistance = detectionRadius
-    closestVerticalDifference = math.huge
-    for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
-        if otherPlayer ~= localPuppet and otherPlayer.Character then
-            local otherHumanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if otherHumanoidRootPart then
-                local otherHumanoid = otherPlayer.Character:FindFirstChildOfClass("Humanoid")
-                if otherHumanoid and otherHumanoid.Health > 0 then
-                    local horizontalDistance = (Vector3.new(humanoidRootPart.Position.X, 0, humanoidRootPart.Position.Z) -
-                        Vector3.new(otherHumanoidRootPart.Position.X, 0, otherHumanoidRootPart.Position.Z)).Magnitude
-                    local verticalDifference = math.abs(humanoidRootPart.Position.Y - otherHumanoidRootPart.Position.Y)
-                    if horizontalDistance < closestDistance or
-                       (horizontalDistance == closestDistance and verticalDifference < closestVerticalDifference) then
-                        closestPlayer = otherPlayer
-                        closestDistance = horizontalDistance
-                        closestVerticalDifference = verticalDifference
-                    end
-                end
-            end
-        end
-    end
-    if closestPlayer then
-        if close.highlightedPlayer ~= closestPlayer then
-            resetHighlight()
-            close.highlightedPlayer = closestPlayer
-            close.highlightObject = Instance.new("Highlight")
-            close.highlightObject.Adornee = closestPlayer.Character
-            close.highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
-            close.highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
-            close.highlightObject.FillTransparency = 1
-            close.highlightObject.OutlineTransparency = 0
-            close.highlightObject.Parent = closestPlayer.Character
-            close.characterAddedConnection = closestPlayer.CharacterAdded:Connect(function()
-                resetHighlight()
-                close.highlightObject = Instance.new("Highlight")
-                close.highlightObject.Adornee = closestPlayer.Character
-                close.highlightObject.FillColor = Color3.fromRGB(255, 255, 0)
-                close.highlightObject.OutlineColor = Color3.fromRGB(255, 255, 0)
-                close.highlightObject.FillTransparency = 1
-                close.highlightObject.OutlineTransparency = 0
-                close.highlightObject.Parent = closestPlayer.Character
-            end)
-        end
-        targetPosition = closestPlayer.Character.HumanoidRootPart.Position
-        horizontalTargetPosition = Vector3.new(targetPosition.X, humanoidRootPart.Position.Y, targetPosition.Z)
-        isWalking = humanoid.MoveDirection.Magnitude > 0
-        if isWalking then
-            humanoidRootPart.CFrame = CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition)
-        else
-            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(
-                CFrame.lookAt(humanoidRootPart.Position, horizontalTargetPosition), 0.3
-            )
-        end
-    else
-        resetHighlight()
-    end
-end
+local CreateDetectionModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
+CreateDetectionModule.init(localPuppet)
 
 AddTextBox(Main5u6, {
     Name = "Detection Radius",
@@ -272,48 +175,20 @@ AddTextBox(Main5u6, {
     PlaceholderText = "Enter number",
     ClearText = true,
     Callback = function(value)
-        local newValue = tonumber(value)
-        if newValue and newValue > 0 then
-            detectionRadius = newValue
-        end
+        CreateDetectionModule.setDetectionRadius(value)
     end
+})
+
+AddColorPicker(Main5u6, {
+    Name = "Detection Zone Color",
+    Default = Color3.fromRGB(255, 255, 255),
+    Callback = CreateDetectionModule.setDetectionColor
 })
 
 AddToggle(Main5u6, {
     Name = "LookAt Player",
     Default = false,
-    Callback = function(state)
-        if state then
-            close.lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
-            close.characterAddedConnection = localPuppet.CharacterAdded:Connect(function()
-                if close.lookAtconnection then
-                    close.lookAtconnection:Disconnect()
-                end
-                close.lookAtconnection = RunService.Heartbeat:Connect(lookAtClosestPlayer)
-            end)
-        else
-            if close.lookAtconnection then
-                close.lookAtconnection:Disconnect()
-                close.lookAtconnection = nil
-            end
-            if close.characterAddedConnection then
-                close.characterAddedConnection:Disconnect()
-                close.characterAddedConnection = nil
-            end
-            if close.highlightObject then
-                close.highlightObject:Destroy()
-                close.highlightObject = nil
-            end
-            close.highlightedPlayer = nil
-            local character = localPuppet.Character
-            if character then
-                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                if humanoidRootPart then
-                    humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position)
-                end
-            end
-        end
-    end
+    Callback = CreateDetectionModule.toggleLookAt
 })
 
 AddTextBox(Main5u6, {
