@@ -3788,15 +3788,14 @@ function AddSlider(parent, Configs)
     end)
 
     InputChangedConn = UserInputService.InputChanged:Connect(function(input)
-        if MouseDown and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local MousePos = UserInputService:GetMouseLocation().X - SliderBar1.AbsolutePosition.X
-            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
-            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
-            SliderBar2.Size = UDim2.new(0, ClampedPos, 1, 0)
-
-            local SliderPos = ClampedPos / SliderBar1.AbsoluteSize.X
-            local Value = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
-            UpdCounter(Value)
+      if MouseDown and input.UserInputType == Enum.UserInputType.MouseMovement then
+          local MousePos = UserInputService:GetMouseLocation().X - SliderBar1.AbsolutePosition.X
+          local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
+          Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+          SliderBar2.Size = UDim2.new(0, ClampedPos, 1, 0)
+          local SliderPos = ClampedPos / SliderBar1.AbsoluteSize.X
+          local Value = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
+          UpdCounter(Value)
         end
     end)
 
