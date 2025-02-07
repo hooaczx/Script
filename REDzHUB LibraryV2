@@ -3695,8 +3695,8 @@ function AddToggle(parent, Configs)
     end)
     return {Frame2, Stroke, OnOff, Callback}
 end
-  
-  function AddSlider(parent, Configs)
+
+function AddSlider(parent, Configs)
     local SliderName = Configs.Name or "Slider!!"
     local Increase = Configs.Increase or 1
     local MinValue = Configs.MinValue / Increase or 10 / Increase
@@ -3705,82 +3705,89 @@ end
     local Callback = Configs.Callback or function() end
     
     local Frame = Create("TextButton", parent, {
-      Size = UDim2.new(0.95, 0, 0.1, 0),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      Text = ""
-    })Corner(Frame)Stroke(Frame)
+        Size = UDim2.new(0.95, 0, 0.1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame",
+        Text = ""
+    }) Corner(Frame) Stroke(Frame)
     
     local TextLabel = Create("TextButton", Frame, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      TextWrapped = true,
-      Text = SliderName,
-      Size = UDim2.new(0.65, 0, 1, 0),
-      Position = UDim2.new(0.35, 0, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
-    })TextSetColor(TextLabel)
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextWrapped = true,
+        Text = SliderName,
+        Size = UDim2.new(0.65, 0, 1, 0),
+        Position = UDim2.new(0.35, 0, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
+    }) TextSetColor(TextLabel)
     
     local TextLabelNumber = Create("TextLabel", Frame, {
-      Font = Configs_HUB.Text_Font,
-      Size = UDim2.new(0.06, 0, 1, 0),
-      Text = "0",
-      Position = UDim2.new(0, 5, 0, 2.5),
-      TextScaled = true,
-      TextColor3 = Configs_HUB.Cor_Text,
-      BackgroundTransparency = 1
+        Font = Configs_HUB.Text_Font,
+        Size = UDim2.new(0.06, 0, 1, 0),
+        Text = "0",
+        Position = UDim2.new(0, 5, 0, 2.5),
+        TextScaled = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        BackgroundTransparency = 1
     })
     
     local SliderBar1 = Create("TextLabel", Frame, {
-      Size = UDim2.new(0.25, 0, 0.12, 0),
-      Position = UDim2.new(0.08, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke,
-      Text = ""
-    })Corner(SliderBar1)
-    
-    local SavePos = Create("Frame", SliderBar1, {
-      Size = UDim2.new(0, 1, 0, 0),
-      Visible = false
-    })
+        Size = UDim2.new(0.25, 0, 0.12, 0),
+        Position = UDim2.new(0.08, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = Configs_HUB.Cor_Stroke,
+        Text = ""
+    }) Corner(SliderBar1)
     
     local Slider = Create("Frame", SliderBar1, {
-      BackgroundColor3 = Configs_HUB.Cor_Text,
-      Size = UDim2.new(0.08, 0, 0, 15),
-      Position = UDim2.new(0, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      Active = true,
-      Draggable = true
-    })Corner(Slider)
+        BackgroundColor3 = Configs_HUB.Cor_Text,
+        Size = UDim2.new(0.08, 0, 0, 15),
+        Position = UDim2.new(0, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        Active = true,
+        Draggable = false
+    }) Corner(Slider)
     
     local SliderBar2 = Create("Frame", SliderBar1, {
-      BackgroundColor3 = Color3.fromRGB(30, 140, 200),
-      Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-    })Corner(SliderBar2)
+        BackgroundColor3 = Color3.fromRGB(30, 140, 200),
+        Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
+    }) Corner(SliderBar2)
     
+    local MouseDown = false
+
     function UpdCounter(Value)
         local RoundedValue = math.round(Value * Increase * 100) / 100
         TextLabelNumber.Text = tostring(RoundedValue)
         Callback(RoundedValue)
     end
-    
-    local MouseEnterOrLeave = false
-    Frame.MouseButton1Down:Connect(function()
-        MouseEnterOrLeave = true
-        while MouseEnterOrLeave do 
-            task.wait()
-            local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
-            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
-            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+
+    Slider.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            MouseDown = true
         end
     end)
-    
-    Frame.MouseLeave:Connect(function()
-        MouseEnterOrLeave = false
+
+    UserInputService.InputChanged:Connect(function(input)
+        if MouseDown and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local MousePos = UserInputService:GetMouseLocation().X - SliderBar1.AbsolutePosition.X
+            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
+            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+            SliderBar2.Size = UDim2.new(0, ClampedPos, 1, 0)
+
+            local SliderPos = ClampedPos / SliderBar1.AbsoluteSize.X
+            local Value = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
+            UpdCounter(Value)
+        end
     end)
-    
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            MouseDown = false
+        end
+    end)
+
     function SliderSet(NewValue)
         local max, min = MaxValue * Increase, MinValue * Increase
         local SliderPos = (NewValue - min) / (max - min)
@@ -3788,21 +3795,9 @@ end
         local SliderPosition = UDim2.new(0, X_Offset, 0.5, 0)
         CreateTween(Slider, "Position", SliderPosition, 0.5, false)
     end
-    
+
     SliderSet(Default)
-    
-    Slider.Changed:Connect(function(prop)
-        if prop == "Position" then
-            local MaxOffset = SliderBar1.AbsoluteSize.X
-            Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
-            SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-            
-            local SliderPos = Slider.Position.X.Offset / MaxOffset
-            local A_1 = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
-            UpdCounter(A_1)
-        end
-    end)
-    
+
     return {Slider, Increase, MaxValue, MinValue}
 end
   
