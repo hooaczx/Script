@@ -3657,14 +3657,14 @@ function AddToggle(parent, Configs)
     local OnOff = false
     if Default then
         OnOff = true
-        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
     end
     Callback(OnOff)
 
-    local function ResetToggle()
+    function ResetToggle()
         OnOff = false
         CreateTween(Frame2, "Position", UDim2.new(0.1, 0, 0.5, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
@@ -3672,14 +3672,24 @@ function AddToggle(parent, Configs)
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         Callback(false)
     end
-    
-    parent.AncestryChanged:Connect(function(_, parent)
-        if not parent and OnOff then
+
+    local ancestryConnection, clickConnection
+
+    ancestryConnection = parent.AncestryChanged:Connect(function(_, newParent)
+        if not newParent then
             ResetToggle()
+            if ancestryConnection then
+                ancestryConnection:Disconnect()
+                ancestryConnection = nil
+            end
+            if clickConnection then
+                clickConnection:Disconnect()
+                clickConnection = nil
+            end
         end
     end)
 
-    TextButton.MouseButton1Click:Connect(function()
+    clickConnection = TextButton.MouseButton1Click:Connect(function()
         if not OnOff then
             clicktoggle:Play()
             OnOff = true
@@ -3693,6 +3703,7 @@ function AddToggle(parent, Configs)
             ResetToggle()
         end
     end)
+
     return {Frame2, Stroke, OnOff, Callback}
 end
 
@@ -3703,14 +3714,16 @@ function AddSlider(parent, Configs)
     local MaxValue = Configs.MaxValue / Increase or 100 / Increase
     local Default = Configs.Default or 25
     local Callback = Configs.Callback or function() end
-    
+
     local Frame = Create("TextButton", parent, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame",
         Text = ""
-    }) Corner(Frame) Stroke(Frame)
-    
+    })
+    Corner(Frame)
+    Stroke(Frame)
+
     local TextLabel = Create("TextButton", Frame, {
         TextSize = 12,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -3721,8 +3734,9 @@ function AddSlider(parent, Configs)
         BackgroundTransparency = 1,
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
-    }) TextSetColor(TextLabel)
-    
+    })
+    TextSetColor(TextLabel)
+
     local TextLabelNumber = Create("TextLabel", Frame, {
         Font = Configs_HUB.Text_Font,
         Size = UDim2.new(0.06, 0, 1, 0),
@@ -3732,15 +3746,16 @@ function AddSlider(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         BackgroundTransparency = 1
     })
-    
+
     local SliderBar1 = Create("TextLabel", Frame, {
         Size = UDim2.new(0.25, 0, 0.12, 0),
         Position = UDim2.new(0.08, 0, 0.5, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Configs_HUB.Cor_Stroke,
         Text = ""
-    }) Corner(SliderBar1)
-    
+    })
+    Corner(SliderBar1)
+
     local Slider = Create("Frame", SliderBar1, {
         BackgroundColor3 = Configs_HUB.Cor_Text,
         Size = UDim2.new(0.08, 0, 0, 15),
@@ -3748,14 +3763,17 @@ function AddSlider(parent, Configs)
         AnchorPoint = Vector2.new(0, 0.5),
         Active = true,
         Draggable = false
-    }) Corner(Slider)
-    
+    })
+    Corner(Slider)
+
     local SliderBar2 = Create("Frame", SliderBar1, {
         BackgroundColor3 = Color3.fromRGB(30, 140, 200),
         Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-    }) Corner(SliderBar2)
-    
+    })
+    Corner(SliderBar2)
+
     local MouseDown = false
+    local InputChangedConn, InputBeganConn, InputEndedConn, close
 
     function UpdCounter(Value)
         local RoundedValue = math.round(Value * Increase * 100) / 100
@@ -3763,13 +3781,13 @@ function AddSlider(parent, Configs)
         Callback(RoundedValue)
     end
 
-    Slider.InputBegan:Connect(function(input)
+    InputBeganConn = Slider.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             MouseDown = true
         end
     end)
 
-    UserInputService.InputChanged:Connect(function(input)
+    InputChangedConn = UserInputService.InputChanged:Connect(function(input)
         if MouseDown and input.UserInputType == Enum.UserInputType.MouseMovement then
             local MousePos = UserInputService:GetMouseLocation().X - SliderBar1.AbsolutePosition.X
             local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
@@ -3782,7 +3800,7 @@ function AddSlider(parent, Configs)
         end
     end)
 
-    UserInputService.InputEnded:Connect(function(input)
+    InputEndedConn = UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             MouseDown = false
         end
@@ -3796,9 +3814,22 @@ function AddSlider(parent, Configs)
         CreateTween(Slider, "Position", SliderPosition, 0.5, false)
     end
 
+    function DisconnectEvents()
+        if InputBeganConn then InputBeganConn:Disconnect() InputBeganConn = nil end
+        if InputChangedConn then InputChangedConn:Disconnect() InputChangedConn = nil end
+        if InputEndedConn then InputEndedConn:Disconnect() InputEndedConn = nil end
+        if close then close:Disconnect() close = nil end
+    end
+
+ close = parent.AncestryChanged:Connect(function(_, newParent)
+      if not newParent then
+        DisconnectEvents()
+      end
+   end)
+
     SliderSet(Default)
 
-    return {Slider, Increase, MaxValue, MinValue}
+    return {Slider, Increase, MaxValue, MinValue, DisconnectEvents}
 end
   
   function AddTextBox(parent, Configs)
