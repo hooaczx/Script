@@ -65,90 +65,6 @@ function CreateTween(instance, prop, value, time, tweenWait)
     end
 end
 
-local ForcefieldModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
-
-AddSlider(Main5u6, {
-    Name = "Forcefield",
-    Increase = 0.01,
-    MinValue = 0,
-    MaxValue = 2,
-    Default = 0,
-    Callback = function(number)
-        ForcefieldModule(game.Players.LocalPlayer).UpdateForcefieldSize(number)
-    end
-})
-
-local TPJpCntn, TPJp, tpar
-
-function setupTPJumpBoost()
-    if TPJp then
-        TPJp:Disconnect()
-        TPJp = nil
-    end
-    if TPJpCntn then
-        TPJpCntn:Disconnect()
-        TPJpCntn = nil
-    end
-    if tpar then
-        tpar:Disconnect()
-        tpar = nil
-    end
-    function onCharacterAdded(character)
-        hum = character:WaitForChild("Humanoid")
-        TPJp = hum.StateChanged:Connect(function(oldState, newState)
-            if newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall then
-                local boost = getgenv().TPJumpBoost or 0
-                if boost > 0 then
-                    tpar = RunService.Heartbeat:Connect(function()
-                        if hum:GetState() == Enum.HumanoidStateType.Freefall then
-                            if hum.MoveDirection.Magnitude > 0 then
-                                local currentDirection = hum.MoveDirection.Unit
-                                character:TranslateBy(currentDirection * boost)
-                            end
-                        else
-                            if tpar then
-                                tpar:Disconnect()
-                                tpar = nil
-                            end
-                        end
-                    end)
-                end
-            end
-        end)
-    end
-    TPJpCntn = player.CharacterAdded:Connect(onCharacterAdded)
-    if player.Character then
-        onCharacterAdded(player.Character)
-    end
-end
-
-AddSlider(Main5u6, {
-    Name = "StrafeJump Slowness",
-    Increase = 0.01,
-    MinValue = 0,
-    MaxValue = 0.2,
-    Default = 0,
-    Callback = function(value)
-        getgenv().TPJumpBoost = tonumber(value) or 0
-        if getgenv().TPJumpBoost > 0 then
-            setupTPJumpBoost()
-        else
-            if TPJp then
-                TPJp:Disconnect()
-                TPJp = nil
-            end
-            if TPJpCntn then
-                TPJpCntn:Disconnect()
-                TPJpCntn = nil
-            end
-            if tpar then
-                tpar:Disconnect()
-                tpar = nil
-            end
-        end
-    end
-})
-
 local currentGameId = game.PlaceId
 local jumpConnection
 
@@ -248,6 +164,26 @@ AddColorPicker(Main5u6, {
                 highlight.FillColor = color
                 highlight.OutlineColor = color
             end
+        end
+    end
+})
+
+local ForcefieldModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
+
+AddToggle(Main5u6, {
+    Name = "Forcefield",
+    Default = false,
+    Callback = function(state)
+        ForcefieldModule(game.Players.LocalPlayer).ToggleForcefield(state)
+    end
+})
+
+AddColorPicker(Main5u6, {
+    Name = "Forcefield Color",
+    Default = Color3.fromRGB(255, 255, 255),
+    Callback = function(color)
+        if color then
+          ForcefieldModule(game.Players.LocalPlayer).SetForcefieldColor(color)
         end
     end
 })
@@ -630,6 +566,77 @@ AddToggle(Main5u6, {
            if Tpwkdied then
                 Tpwkdied:Disconnect()
                 Tpwkdied = nil
+            end
+        end
+    end
+})
+
+local TPJpCntn, TPJp, tpar
+
+function setupTPJumpBoost()
+    if TPJp then
+        TPJp:Disconnect()
+        TPJp = nil
+    end
+    if TPJpCntn then
+        TPJpCntn:Disconnect()
+        TPJpCntn = nil
+    end
+    if tpar then
+        tpar:Disconnect()
+        tpar = nil
+    end
+    function onCharacterAdded(character)
+        hum = character:WaitForChild("Humanoid")
+        TPJp = hum.StateChanged:Connect(function(oldState, newState)
+            if newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall then
+                local boost = getgenv().TPJumpBoost or 0
+                if boost > 0 then
+                    tpar = RunService.Heartbeat:Connect(function()
+                        if hum:GetState() == Enum.HumanoidStateType.Freefall then
+                            if hum.MoveDirection.Magnitude > 0 then
+                                local currentDirection = hum.MoveDirection.Unit
+                                character:TranslateBy(currentDirection * boost)
+                            end
+                        else
+                            if tpar then
+                                tpar:Disconnect()
+                                tpar = nil
+                            end
+                        end
+                    end)
+                end
+            end
+        end)
+    end
+    TPJpCntn = player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character then
+        onCharacterAdded(player.Character)
+    end
+end
+
+AddSlider(Main5u6, {
+    Name = "StrafeJump Slowness",
+    Increase = 0.01,
+    MinValue = 0,
+    MaxValue = 0.2,
+    Default = 0,
+    Callback = function(value)
+        getgenv().TPJumpBoost = tonumber(value) or 0
+        if getgenv().TPJumpBoost > 0 then
+            setupTPJumpBoost()
+        else
+            if TPJp then
+                TPJp:Disconnect()
+                TPJp = nil
+            end
+            if TPJpCntn then
+                TPJpCntn:Disconnect()
+                TPJpCntn = nil
+            end
+            if tpar then
+                tpar:Disconnect()
+                tpar = nil
             end
         end
     end
