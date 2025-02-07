@@ -166,8 +166,7 @@ AddColorPicker(Main5u6, {
     end
 })
 
-local CreateDetectionModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
-CreateDetectionModule.init(localPuppet)
+local module = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
 
 AddTextBox(Main5u6, {
     Name = "Detection Radius",
@@ -175,20 +174,24 @@ AddTextBox(Main5u6, {
     PlaceholderText = "Enter number",
     ClearText = true,
     Callback = function(value)
-        CreateDetectionModule.setDetectionRadius(value)
+        module.setDetectionRadius(value)
     end
 })
 
 AddColorPicker(Main5u6, {
     Name = "Detection Zone Color",
     Default = Color3.fromRGB(255, 255, 255),
-    Callback = CreateDetectionModule.setDetectionColor
+    Callback = function(color)
+        module.setDetectionColor(color)
+    end
 })
 
 AddToggle(Main5u6, {
     Name = "LookAt Player",
     Default = false,
-    Callback = CreateDetectionModule.toggleLookAt
+    Callback = function(state)
+        module.toggleLookAt(state)
+    end
 })
 
 AddTextBox(Main5u6, {
