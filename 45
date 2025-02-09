@@ -3328,7 +3328,8 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local head = character:WaitForChild("Head")
 local neck = head:FindFirstChild("Neck") or character:FindFirstChild("Neck", true)
 local originalNeckC0 = neck and neck.C0
-local ShiftLockmaingui
+local shiftLockConnection = nil
+local shiftLockEnabled = false
 
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -3352,39 +3353,39 @@ local ShiftlockCursor = Create("ImageLabel", ScreenGui, {
 })
 
 function functions.updateShiftLock()
-	local cam = workspace.CurrentCamera
-	local camCFrame = cam.CFrame
-	local camLook = camCFrame.LookVector
-	local pos = humanoidRootPart.Position
-	humanoidRootPart.CFrame = CFrame.new(pos, Vector3.new(camLook.X, pos.Y, camLook.Z))
-	if neck and originalNeckC0 then
-		local camYaw = math.atan2(camLook.X, camLook.Z)
-		neck.C0 = originalNeckC0 * CFrame.Angles(0, camYaw, 0)
-	end
+   local cam = workspace.CurrentCamera
+   local camCFrame = cam.CFrame
+   local camLook = camCFrame.LookVector
+   local pos = humanoidRootPart.Position
+   humanoidRootPart.CFrame = CFrame.new(pos, Vector3.new(camLook.X, pos.Y, camLook.Z))
+   if neck and originalNeckC0 then
+       local camYaw = math.atan2(camLook.X, camLook.Z)
+       neck.C0 = originalNeckC0 * CFrame.Angles(0, camYaw, 0)
+   end
 end
 
 function functions.toggleShiftLock()
 	if not shiftLockEnabled then
-		if humanoid then
-			humanoid.AutoRotate = false
-		end
-		ShiftLockButton.Image = States.On
-		ShiftlockCursor.Visible = true
-		shiftLockConnection = RunService.RenderStepped:Connect(functions.updateShiftLock)
-		shiftLockEnabled = true
+	   if humanoid then
+	     humanoid.AutoRotate = false
+           end
+	   ShiftLockButton.Image = States.On
+	   ShiftlockCursor.Visible = true
+	   shiftLockConnection = RunService.RenderStepped:Connect(functions.updateShiftLock)
+	   shiftLockEnabled = true
 	else
-		if humanoid then
-			humanoid.AutoRotate = true
-		end
-		ShiftLockButton.Image = States.Off
-		workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
-		ShiftlockCursor.Visible = false
-		if shiftLockConnection then
-			shiftLockConnection:Disconnect()
-			shiftLockConnection = nil
-	    end
-            shiftLockEnabled = false
-     end
+	   if humanoid then
+             humanoid.AutoRotate = true
+           end
+	   ShiftLockButton.Image = States.Off
+           workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * DisabledOffset
+           ShiftlockCursor.Visible = false
+	   if shiftLockConnection then
+               shiftLockConnection:Disconnect()
+	       shiftLockConnection = nil
+	   end
+     shiftLockEnabled = false
+   end
 end
 
 ShiftLockButton.MouseButton1Click:Connect(toggleShiftLock)
