@@ -3501,7 +3501,7 @@ function MakeTab(Configs)
                         label.TextSize = currentSize
                     end
                     clickpaperSound = Create("Sound", ScreenGui, {
-                        SoundId = "rbxassetid://5168055564",
+                        SoundId = "rbxassetid://9117207262",
                         Volume = 0.07
                     })
                      clickpaperSound:Play()
@@ -3699,8 +3699,8 @@ end
   function AddSlider(parent, Configs)
     local SliderName = Configs.Name or "Slider!!"
     local Increase = Configs.Increase or 1
-    local MinValue = Configs.MinValue or 10
-    local MaxValue = Configs.MaxValue or 100
+    local MinValue = Configs.MinValue / Increase or 10 / Increase
+    local MaxValue = Configs.MaxValue / Increase or 100 / Increase
     local Default = Configs.Default or 25
     local Callback = Configs.Callback or function() end
     
@@ -3717,7 +3717,7 @@ end
       TextWrapped = true,
       Text = SliderName,
       Size = UDim2.new(0.65, 0, 1, 0),
-      Position = UDim2.new(0 + 0.08 + 0.27, 0, 0, 0),
+      Position = UDim2.new(0.35, 0, 0, 0),
       BackgroundTransparency = 1,
       TextXAlignment = "Left",
       Font = Configs_HUB.Text_Font
@@ -3760,50 +3760,55 @@ end
       Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
     })Corner(SliderBar2)
     
-    local function UpdCounter(Value)
-      local String = tostring(Value * Increase)
-      if string.find(String, ".") then
-        String = String:sub(1, 5)
-      end
-      TextLabelNumber.Text = String
-      Callback(Value * Increase)
+    currentValue = Default
+
+    function UpdCounter(Value)
+        local RoundedValue = math.round(Value * Increase * 100) / 100
+        TextLabelNumber.Text = tostring(RoundedValue)
+        Callback(RoundedValue)
     end
-    
+   
     local MouseEnterOrLeave = false
     Frame.MouseButton1Down:Connect(function()
-     MouseEnterOrLeave = true
-      while MouseEnterOrLeave do task.wait()
-          local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
-          local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
-          Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
-       end
-    end)
-    Frame.MouseLeave:Connect(function()
-      MouseEnterOrLeave = false
+        MouseEnterOrLeave = true
+        while MouseEnterOrLeave do 
+            task.wait()
+            local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
+            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
+            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+        end
     end)
     
-    local function SliderSet(NewValue)
-      local max, min = MaxValue * Increase, MinValue * Increase
-      local SliderPos = (NewValue - min) / (max - min)
-      local X_Offset = SliderPos * SliderBar1.AbsoluteSize.X
-      local SliderPosition = UDim2.new(0, X_Offset, 0.5, 0)
-      CreateTween(Slider, "Position", SliderPosition, 0.5, false)
+    Frame.MouseLeave:Connect(function()
+        MouseEnterOrLeave = false
+    end)
+    
+    function SliderSet(NewValue)
+        local max, min = MaxValue * Increase, MinValue * Increase
+        local SliderPos = (NewValue - min) / (max - min)
+        local X_Offset = SliderPos * SliderBar1.AbsoluteSize.X
+        local SliderPosition = UDim2.new(0, X_Offset, 0.5, 0)
+        CreateTween(Slider, "Position", SliderPosition, 0.5, false)
     end
+    
     SliderSet(Default)
     
     Slider.Changed:Connect(function(prop)
-     if prop == "Position" then
-        local MaxOffset = SliderBar1.AbsoluteSize.X
-        Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
-        SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-        local SliderPos = Slider.Position.X.Offset / MaxOffset
-        local A_1 = math.floor(((SliderPos * MaxValue) / MaxValue) * (MaxValue - MinValue) + MinValue)
-        UpdCounter(A_1)
+       if prop == "Position" then
+          local MaxOffset = SliderBar1.AbsoluteSize.X
+          Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
+          SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
+        
+          local SliderPos = Slider.Position.X.Offset / MaxOffset
+          local A_1 = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
+          currentValue = A_1
+          UpdCounter(currentValue)
        end
     end)
+    
     return {Slider, Increase, MaxValue, MinValue}
   end
-  
+
   function AddTextBox(parent, Configs)
     local TextBoxName = Configs.Name or "TextBox!!"
     local Default = Configs.Default or "TextBox"
