@@ -4221,8 +4221,7 @@ function AddTextTable(parent, Configs)
     local Increase = Configs.Increase or 1
     local Default = Configs.Default or 25
     local Callback = Configs.Callback or function() end
-    local MultCallback = {}
-    connectionSlider = {}
+    local connectionSlider = {}
     Min, Max = Min / Increase, Max / Increase
 
     local Frame = Create("Frame", parent, {
@@ -4238,7 +4237,6 @@ function AddTextTable(parent, Configs)
         Size = UDim2.new(0.65, 0, 1, 0),
         Position = UDim2.new(0.35, 0, 0, 0),
         BackgroundTransparency = 1,
-        TextXAlignment = "Left",
         Font = (Configs_HUB and Configs_HUB.Text_Font) or Enum.Font.SourceSans,
         TextColor3 = (Configs_HUB and Configs_HUB.Cor_Text) or Color3.new(1, 1, 1),
         TextSize = 12,
@@ -4255,8 +4253,8 @@ function AddTextTable(parent, Configs)
 
     local Indicator = Create("TextButton", SliderBar, {
         BackgroundColor3 = Configs_HUB.Cor_Text,
-        Size = UDim2.new(0.08, 0, 2.5, 0),
-        Position = UDim2.new(0, 0, 0, 0), 
+        Size = UDim2.new(0.1, 0, 6, 0),
+        Position = UDim2.new(0, 0, 0, 0),
         Text = ""
     })
     Corner(Indicator)
@@ -4279,8 +4277,8 @@ function AddTextTable(parent, Configs)
     })
 
     local UIScale = Create("UIScale", LabelVal)
-
-    function UpdateLabel(NewValue)
+    
+    local function UpdateLabel(NewValue)
         local Number = tonumber(NewValue * Increase)
         Number = math.floor(Number * 100) / 100
         Default = Number
@@ -4288,79 +4286,67 @@ function AddTextTable(parent, Configs)
         task.spawn(Callback, Number)
     end
 
-    function ControlPos()
+    local function ControlPos()
         local MousePos = UserInputService:GetMouseLocation()
         local APos = MousePos.X - SliderBar.AbsolutePosition.X
         local ClampedPos = math.clamp(APos / SliderBar.AbsoluteSize.X, 0, 1)
         SliderIcon.Size = UDim2.new(ClampedPos, 0, 1, 0)
-        Indicator.Position = UDim2.new(ClampedPos, 0, -1.225, 0)
+        Indicator.Position = UDim2.new(ClampedPos, 0, -2.5, 0)
     end
-    
+
     connectionSlider.close1 = Indicator.MouseButton1Down:Connect(function()
         CreateTween(Indicator, "Transparency", 0, 0.3)
-        while UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do 
+        while UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
             task.wait()
             ControlPos()
         end
         CreateTween(Indicator, "Transparency", 0.2, 0.3)
         UpdateLabel(Indicator.Position.X.Scale * (Max - Min) + Min)
     end)
-    
-    connectionSlider.close2 = LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
-        UIScale.Scale = 0.3
-        CreateTween(UIScale, "Scale", 1.2, 0.1)
-        CreateTween(LabelVal, "Rotation", math.random(-1, 1) * 5, 0.15, true)
-        CreateTween(UIScale, "Scale", 1, 0.2)
-        CreateTween(LabelVal, "Rotation", 0, 0.1)
-    end)
-    
+
     connectionSlider.close3 = Indicator:GetPropertyChangedSignal("Position"):Connect(function()
         UpdateLabel((Indicator.Position.X.Scale * (Max - Min) + Min))
     end)
     
-    function SetSlider(NewValue)
+    local function SetSlider(NewValue)
         local MinV, MaxV = Min * Increase, Max * Increase
         local SliderPos = (NewValue - MinV) / (MaxV - MinV)
-        CreateTween(Indicator, "Position", UDim2.new(Indicator.Position.X.Scale, 0, -2.5, 0), 0.3, true)
+        CreateTween(Indicator, "Position", UDim2.new(SliderPos, 0, -2.5, 0), 0.3, true)
         UpdateLabel(NewValue)
     end
     SetSlider(Default)
-    
-    function Clear() 
-      for _, connection in pairs(connectionSlider) do
-         connection:Disconnect()
-      end
-      connectionSlider = {}
-      SetSlider(0)
+
+    local function Clear()
+        for _, connection in pairs(connectionSlider) do
+            connection:Disconnect()
+        end
+        connectionSlider = {}
+        SetSlider(0)
     end
-    
-    connectionSlider.close4 = Frame.AncestryChanged:Connect(Clear) 
-    
+
+    connectionSlider.close4 = Frame.AncestryChanged:Connect(Clear)
+
     local sliderObj = {
-      Set = nil,
-      Callback = nil,
-      Destroy = nil,
-      Visible = nil
-  }
-  sliderObj.Set = function(NewVal)
-      if type(NewVal) == "number" then
-          SetSlider(NewVal)
-      end
-  end
-   sliderObj.Callback = function(func)
-      Callback = func
-   end
-  sliderObj.Destroy = function()
-      Frame:Destroy()
-  end
-  sliderObj.Visible = function(Bool)
-      if Bool == nil then 
-          Frame.Visible = not Frame.Visible 
-       else 
-          Frame.Visible = Bool 
-      end
-  end
-   return sliderObj
+        Set = function(NewVal)
+            if type(NewVal) == "number" then
+                SetSlider(NewVal)
+            end
+        end,
+        Callback = function(func)
+            Callback = func
+        end,
+        Destroy = function()
+            Frame:Destroy()
+        end,
+        Visible = function(Bool)
+            if Bool == nil then
+                Frame.Visible = not Frame.Visible
+            else
+                Frame.Visible = Bool
+            end
+        end
+    }
+    return sliderObj
   end
 
   function TypeTextLabel(TextLabel, Text, Delay)
