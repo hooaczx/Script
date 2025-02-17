@@ -4304,10 +4304,18 @@ function AddTextTable(parent, Configs)
         UpdateLabel(Indicator.Position.X.Scale * (Max - Min) + Min)
     end)
 
-    connectionSlider.close3 = Indicator:GetPropertyChangedSignal("Position"):Connect(function()
+    connectionSlider.close2 = Indicator:GetPropertyChangedSignal("Position"):Connect(function()
         UpdateLabel((Indicator.Position.X.Scale * (Max - Min) + Min))
     end)
-    
+
+    connectionSlider.close3 = LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
+        UIScale.Scale = 0.3
+        CreateTween(UIScale, "Scale", 1.2, 0.1)
+        CreateTween(LabelVal, "Rotation", math.random(-1, 1) * 5, 0.15, true)
+        CreateTween(UIScale, "Scale", 1, 0.2)
+        CreateTween(LabelVal, "Rotation", 0, 0.1)
+    end)
+
     local function SetSlider(NewValue)
         local MinV, MaxV = Min * Increase, Max * Increase
         local SliderPos = (NewValue - MinV) / (MaxV - MinV)
@@ -4325,28 +4333,6 @@ function AddTextTable(parent, Configs)
     end
 
     connectionSlider.close4 = Frame.AncestryChanged:Connect(Clear)
-
-    local sliderObj = {
-        Set = function(NewVal)
-            if type(NewVal) == "number" then
-                SetSlider(NewVal)
-            end
-        end,
-        Callback = function(func)
-            Callback = func
-        end,
-        Destroy = function()
-            Frame:Destroy()
-        end,
-        Visible = function(Bool)
-            if Bool == nil then
-                Frame.Visible = not Frame.Visible
-            else
-                Frame.Visible = Bool
-            end
-        end
-    }
-    return sliderObj
   end
 
   function TypeTextLabel(TextLabel, Text, Delay)
