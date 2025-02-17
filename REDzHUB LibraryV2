@@ -3717,14 +3717,25 @@ function AddToggle(parent, Configs)
     return {Frame2, Stroke, OnOff, Callback}
 end
   
+  local AllSliders = {}
+
   function AddSlider(parent, Configs)
+    local SliderID = Configs.ID
     local SliderName = Configs.Name or "Slider!!"
-    local Increase   = Configs.Increase or 1
-    local MinValue   = (Configs.MinValue or 10) / Increase
-    local MaxValue   = (Configs.MaxValue or 100) / Increase
-    local Default    = Configs.Default or 25
-    local Callback   = Configs.Callback or function() end
+    local Increase = Configs.Increase or 1
+    local MinValue = (Configs.MinValue or 0) / Increase
+    local MaxValue = (Configs.MaxValue or 100) / Increase
+    local Default = Configs.Default or 0
+    local Callback = Configs.Callback or function() end
     local currentValue = Default
+    
+    if not SliderID then
+        error("AddSlider: Please specify Configs.ID")
+    end
+    
+    if AllSliders[SliderID] then
+        error("AddSlider: ID '"..tostring(SliderID).."' has already been used!")
+    end
     
     local Frame = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
@@ -3781,77 +3792,83 @@ end
       BackgroundColor3 = Color3.fromRGB(30, 140, 200),
       Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
     }) Corner(SliderBar2)
-    
-     function UpdCounter(value)
-        local RoundedValue = math.round(value * Increase * 100) / 100
+
+    function UpdateValue(val)
+        local RoundedValue = math.round(val * Increase * 100) / 100
         TextLabelNumber.Text = tostring(RoundedValue)
         pcall(function()
             Callback(RoundedValue)
         end)
-     end
+    end
     
-     local dragging = false
-    
-     Frame.MouseButton1Down:Connect(function()
-         dragging = true
-         while dragging do
-             task.wait()
-             local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
-             local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
-             Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
-         end
-     end)
-    
-     Frame.MouseLeave:Connect(function()
-         dragging = false
-     end)
-    
-      Slider.Changed:Connect(function(prop)
-          if prop == "Position" then
-            local MaxOffset = SliderBar1.AbsoluteSize.X
-            Slider.Position = UDim2.new(
-                0,
-                math.clamp(Slider.Position.X.Offset, 0, MaxOffset),
-                0.5,
-                0
-              )
-              SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-              local SliderPos = Slider.Position.X.Offset / MaxOffset
-              currentValue = (SliderPos * (MaxValue - MinValue) + MinValue)
-              UpdCounter(currentValue)
-          end
-      end)
-    
-      function SetSliderValue(newVal)
-          local max = MaxValue
-          local min = MinValue
-          local final = math.clamp(newVal, min, max)
-        
-          local SliderRatio = (final - min) / (max - min)
-          local X_Offset = SliderRatio * SliderBar1.AbsoluteSize.X
-        
-          Slider.Position = UDim2.new(0, X_Offset, 0.5, 0)
-          SliderBar2.Size = UDim2.new(0, X_Offset, 1, 0)     
-          currentValue = final
-          UpdCounter(final)
-      end
+    local dragging = false
+    Frame.MouseButton1Down:Connect(function()
+        dragging = true
+        while dragging do
+            task.wait()
+            local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
+            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
+            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+        end
+    end)
 
-      Frame:GetPropertyChangedSignal("Parent"):Connect(function()
+    Frame.MouseLeave:Connect(function()
+        dragging = false
+    end)
+
+    Slider.Changed:Connect(function(prop)
+        if prop == "Position" then
+            local MaxOffset = SliderBar1.AbsoluteSize.X
+            Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
+            SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
+
+            local SliderPos = Slider.Position.X.Offset / MaxOffset
+            currentValue = (SliderPos * (MaxValue - MinValue) + MinValue)
+            UpdateValue(currentValue)
+        end
+    end)
+    
+    function SetSliderValue(newVal)
+        local clamped = math.clamp(newVal, MinValue, MaxValue)
+        local ratio   = (clamped - MinValue) / (MaxValue - MinValue)
+        local xOffset = ratio * SliderBar1.AbsoluteSize.X
+
+        Slider.Position = UDim2.new(0, xOffset, 0.5, 0)
+        SliderBar2.Size = UDim2.new(0, xOffset, 1, 0)
+        
+        currentValue = clamped
+        UpdateValue(currentValue)
+    end
+    
+    sliderObj.ID = SliderID
+    sliderObj.Frame = Frame
+    sliderObj.Slider = Slider
+    sliderObj.MinValue = MinValue
+    sliderObj.MaxValue = MaxValue
+    sliderObj.Increase = Increase
+    sliderObj.Default  = Default
+    sliderObj.Callback = Callback
+    
+    function sliderObj.GetValue()
+        return currentValue
+    end
+
+    function sliderObj.SetValue(v)
+        SetSliderValue(v)
+    end
+    
+    local closeing
+    closeing = Frame:GetPropertyChangedSignal("Parent"):Connect(function()
         if not Frame.Parent then
            SetSliderValue(0)
-         end
-      end)
-    
-      return {
-          Frame = Frame,
-          Slider = Slider,
-          GetValue = function()
-              return currentValue
-          end,
-          SetValue = function(v)
-              SetSliderValue(v)
+           if closeing then
+              closeing:Disconnect()
+              closeing = nil
+              end
           end
-      }
+      end)
+      
+    return sliderObj
   end
 
   function AddTextBox(parent, Configs)
