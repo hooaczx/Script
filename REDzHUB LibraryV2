@@ -3712,10 +3712,10 @@ function AddToggle(parent, Configs)
         else
             falsetoggle:Play()
             ResetToggle()
-        end
-    end)
-    return {Frame2, Stroke, OnOff, Callback}
-end
+         end
+     end)
+     return {Frame2, Stroke, OnOff, Callback}
+  end
   
   function AddSlider(parent, Configs)
     local SliderID = Configs.ID
@@ -3728,127 +3728,135 @@ end
     local currentValue = Default
     local sliderObj = {}
     local AllSliders = {}
-    
+
     if not SliderID then
         error("AddSlider: Please specify Configs.ID")
     end
-    
+
     if AllSliders[SliderID] then
         error("AddSlider: ID '"..tostring(SliderID).."' has already been used!")
     end
+
+    SliderObjects["Frame"..SliderID] = Create("TextButton", parent, {
+        Size = UDim2.new(0.95, 0, 0.1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame"..SliderID,
+        Text = ""
+    }) 
+    Corner(Frame) 
+    Stroke(Frame)
+
+    local SliderObjects = {}
     
-    local Frame = Create("TextButton", parent, {
-      Size = UDim2.new(0.95, 0, 0.1, 0),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      Text = ""
-    }) Corner(Frame) Stroke(Frame)
-    
-    local TextLabel = Create("TextButton", Frame, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      TextWrapped = true,
-      Text = SliderName,
-      Size = UDim2.new(0.65, 0, 1, 0),
-      Position = UDim2.new(0.35, 0, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
-    }) TextSetColor(TextLabel)
-    
-    local TextLabelNumber = Create("TextLabel", Frame, {
-      Font = Configs_HUB.Text_Font,
-      Size = UDim2.new(0.06, 0, 1, 0),
-      Text = "0",
-      Position = UDim2.new(0, 5, 0, 2.5),
-      TextScaled = true,
-      TextColor3 = Configs_HUB.Cor_Text,
-      BackgroundTransparency = 1
+    SliderObjects["TextLabel"..SliderID] = Create("TextButton", Frame, {
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextWrapped = true,
+        Text = SliderName,
+        Size = UDim2.new(0.65, 0, 1, 0),
+        Position = UDim2.new(0.35, 0, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
+    }) 
+    TextSetColor(SliderObjects["TextLabel"..SliderID])
+
+    SliderObjects["TextLabelNumber"..SliderID] = Create("TextLabel", Frame, {
+        Font = Configs_HUB.Text_Font,
+        Size = UDim2.new(0.06, 0, 1, 0),
+        Text = "0",
+        Position = UDim2.new(0, 5, 0, 2.5),
+        TextScaled = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        BackgroundTransparency = 1
     })
-    
-    local SliderBar1 = Create("TextLabel", Frame, {
-      Size = UDim2.new(0.25, 0, 0.12, 0),
-      Position = UDim2.new(0.08, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke,
-      Text = ""
-    }) Corner(SliderBar1)
-    
-    local SavePos = Create("Frame", SliderBar1, {
-      Size = UDim2.new(0, 1, 0, 0),
-      Visible = false
+
+    SliderObjects["SliderBar1"..SliderID] = Create("TextLabel", Frame, {
+        Size = UDim2.new(0.25, 0, 0.12, 0),
+        Position = UDim2.new(0.08, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = Configs_HUB.Cor_Stroke,
+        Text = ""
+    }) 
+    Corner(SliderObjects["SliderBar1"..SliderID])
+
+    SliderObjects["SavePos"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
+        Size = UDim2.new(0, 1, 0, 0),
+        Visible = false
     })
-    
-    local Slider = Create("Frame", SliderBar1, {
-      BackgroundColor3 = Configs_HUB.Cor_Text,
-      Size = UDim2.new(0.08, 0, 0, 15),
-      Position = UDim2.new(0, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      Active = true,
-      Draggable = true
-    }) Corner(Slider)
-    
-    local SliderBar2 = Create("Frame", SliderBar1, {
-      BackgroundColor3 = Color3.fromRGB(30, 140, 200),
-      Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-    }) Corner(SliderBar2)
+
+    SliderObjects["Slider"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
+        BackgroundColor3 = Configs_HUB.Cor_Text,
+        Size = UDim2.new(0.08, 0, 0, 15),
+        Position = UDim2.new(0, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        Active = true,
+        Draggable = true
+    }) 
+    Corner(SliderObjects["Slider"..SliderID])
+
+    SliderObjects["SliderBar2"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
+        BackgroundColor3 = Color3.fromRGB(30, 140, 200),
+        Size = UDim2.new(0, SliderObjects["Slider"..SliderID].Position.X.Offset, 1, 0)
+    }) 
+    Corner(SliderObjects["SliderBar2"..SliderID])
 
     function UpdateValue(val)
         local RoundedValue = math.round(val * Increase * 100) / 100
-        TextLabelNumber.Text = tostring(RoundedValue)
+        SliderObjects["TextLabelNumber"..SliderID].Text = tostring(RoundedValue)
         pcall(function()
             Callback(RoundedValue)
         end)
     end
-    
+
     local dragging = false
-    Frame.MouseButton1Down:Connect(function()
+    SliderObjects["Frame"..SliderID].MouseButton1Down:Connect(function()
         dragging = true
         while dragging do
             task.wait()
-            local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
-            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
-            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
+            local MousePos = UserInputService:GetMouseLocation().X - SliderObjects["Frame"..SliderID].AbsolutePosition.X
+            local ClampedPos = math.clamp(MousePos, 0, SliderObjects["SliderBar1"..SliderID].AbsoluteSize.X)
+            SliderObjects["Slider"..SliderID].Position = UDim2.new(0, ClampedPos, 0.5, 0)
         end
     end)
 
-    Frame.MouseLeave:Connect(function()
+    SliderObjects["Frame"..SliderID].MouseLeave:Connect(function()
         dragging = false
     end)
 
-    Slider.Changed:Connect(function(prop)
+    SliderObjects["Slider"..SliderID].Changed:Connect(function(prop)
         if prop == "Position" then
-            local MaxOffset = SliderBar1.AbsoluteSize.X
-            Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
-            SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
+            local MaxOffset = SliderObjects["SliderBar1"..SliderID].AbsoluteSize.X
+            SliderObjects["Slider"..SliderID].Position = UDim2.new(0, math.clamp(SliderObjects["Slider"..SliderID].Position.X.Offset, 0, MaxOffset), 0.5, 0)
+            SliderObjects["SliderBar2"..SliderID].Size = UDim2.new(0, SliderObjects["Slider"..SliderID].Position.X.Offset, 1, 0)
 
-            local SliderPos = Slider.Position.X.Offset / MaxOffset
+            local SliderPos = SliderObjects["Slider"..SliderID].Position.X.Offset / MaxOffset
             currentValue = (SliderPos * (MaxValue - MinValue) + MinValue)
             UpdateValue(currentValue)
         end
     end)
-    
+
     function SetSliderValue(newVal)
         local clamped = math.clamp(newVal, MinValue, MaxValue)
         local ratio   = (clamped - MinValue) / (MaxValue - MinValue)
-        local xOffset = ratio * SliderBar1.AbsoluteSize.X
+        local xOffset = ratio * SliderObjects["SliderBar1"..SliderID].AbsoluteSize.X
 
-        Slider.Position = UDim2.new(0, xOffset, 0.5, 0)
-        SliderBar2.Size = UDim2.new(0, xOffset, 1, 0)
+        SliderObjects["Slider"..SliderID].Position = UDim2.new(0, xOffset, 0.5, 0)
+        SliderObjects["SliderBar2"..SliderID].Size = UDim2.new(0, xOffset, 1, 0)
         
         currentValue = clamped
         UpdateValue(currentValue)
     end
-    
+
     sliderObj.ID = SliderID
     sliderObj.Frame = Frame
-    sliderObj.Slider = Slider
+    sliderObj.Slider = SliderObjects["Slider"..SliderID]
     sliderObj.MinValue = MinValue
     sliderObj.MaxValue = MaxValue
     sliderObj.Increase = Increase
     sliderObj.Default  = Default
     sliderObj.Callback = Callback
-    
+
     function sliderObj.GetValue()
         return currentValue
     end
@@ -3856,18 +3864,18 @@ end
     function sliderObj.SetValue(v)
         SetSliderValue(v)
     end
-    
-    local closeing
-    closeing = Frame:GetPropertyChangedSignal("Parent"):Connect(function()
+
+    local closing
+    closing = Frame:GetPropertyChangedSignal("Parent"):Connect(function()
         if not Frame.Parent then
-           SetSliderValue(0)
-           if closeing then
-              closeing:Disconnect()
-              closeing = nil
-              end
-          end
-      end)
-      
+            SetSliderValue(0)
+            if closing then
+                closing:Disconnect()
+                closing = nil
+            end
+        end
+    end)
+
     return sliderObj
   end
 
