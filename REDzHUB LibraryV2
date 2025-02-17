@@ -3629,96 +3629,10 @@ function MakeTab(Configs)
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
     })TextSetColor(WarningLabel)
-end
-
-function AddToggle(parent, Configs)
-    local ToggleName = Configs.Name or "Toggle!!"
-    local Default = Configs.Default or false
-    local Callback = Configs.Callback or function() end
-    
-    local TextButton = Create("TextButton", parent, {
-        Size = UDim2.new(0.95, 0, 0.1, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        Name = "Frame",
-        Text = "",
-        AutoButtonColor = false
-    })
-    Corner(TextButton)
-    Stroke(TextButton)
-    
-    local TextLabel = Create("TextLabel", TextButton, {
-        TextColor3 = Configs_HUB.Cor_Text,
-        TextWrapped = true,
-        TextSize = 12,
-        TextWrapped = true,
-        Text = ToggleName,
-        Size = UDim2.new(0.93, 0, 1, 0),
-        Position = UDim2.new(0.012 + 0.08, 0, 0, 0),
-        BackgroundTransparency = 1,
-        TextXAlignment = "Left",
-        Font = Configs_HUB.Text_Font
-    })
-    
-    local Frame1 = Create("Frame", TextButton, {
-        Size = UDim2.new(0.07, 0, 0.6, 0),
-        Position = UDim2.new(0.012, 0, 0.22, 0),
-        BackgroundTransparency = 1,
-    })
-    Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
-    local Stroke = Stroke(Frame1, {Thickness = 2})
-    
-    local Frame2 = Create("Frame", Frame1, {
-        Size = UDim2.new(0.4, 0, 0.95, 0),
-        Position = UDim2.new(0, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })
-    Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
-    
-    local OnOff = false
-    if Default then
-        OnOff = true
-        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.5, 0), 0.2, false)
-        CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-        CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-    end
-    Callback(OnOff)
-
-    local function ResetToggle()
-        OnOff = false
-        CreateTween(Frame2, "Position", UDim2.new(0.1, 0, 0.5, 0), 0.2, false)
-        CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-        Callback(false)
-    end
-    
-    parent.AncestryChanged:Connect(function(_, parent)
-        if not parent and OnOff then
-            ResetToggle()
-        end
-    end)
-
-    TextButton.MouseButton1Click:Connect(function()
-        if not OnOff then
-            clicktoggle:Play()
-            OnOff = true
-            CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
-            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-            CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            Callback(true)
-        else
-            falsetoggle:Play()
-            ResetToggle()
-         end
-     end)
-     return {Frame2, Stroke, OnOff, Callback}
   end
-  
+
   function AddSlider(parent, Configs)
-    local SliderID = Configs.ID
+    local SliderID = Configs.ID or "1"
     local SliderName = Configs.Name or "Slider!!"
     local Increase = Configs.Increase or 1
     local MinValue = (Configs.MinValue or 0) / Increase
@@ -3743,10 +3657,10 @@ function AddToggle(parent, Configs)
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame"..SliderID,
         Text = ""
-    }) 
-    Corner(SliderObjects["Frame"..SliderID]) 
+    })
+    Corner(SliderObjects["Frame"..SliderID])
     Stroke(SliderObjects["Frame"..SliderID])
-    
+
     SliderObjects["TextLabel"..SliderID] = Create("TextButton", SliderObjects["Frame"..SliderID], {
         TextSize = 12,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -3757,7 +3671,7 @@ function AddToggle(parent, Configs)
         BackgroundTransparency = 1,
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
-    }) 
+    })
     TextSetColor(SliderObjects["TextLabel"..SliderID])
 
     SliderObjects["TextLabelNumber"..SliderID] = Create("TextLabel", SliderObjects["Frame"..SliderID], {
@@ -3776,7 +3690,7 @@ function AddToggle(parent, Configs)
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Configs_HUB.Cor_Stroke,
         Text = ""
-    }) 
+    })
     Corner(SliderObjects["SliderBar1"..SliderID])
 
     SliderObjects["SavePos"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
@@ -3791,13 +3705,13 @@ function AddToggle(parent, Configs)
         AnchorPoint = Vector2.new(0, 0.5),
         Active = true,
         Draggable = true
-    }) 
+    })
     Corner(SliderObjects["Slider"..SliderID])
 
     SliderObjects["SliderBar2"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
         BackgroundColor3 = Color3.fromRGB(30, 140, 200),
         Size = UDim2.new(0, SliderObjects["Slider"..SliderID].Position.X.Offset, 1, 0)
-    }) 
+    })
     Corner(SliderObjects["SliderBar2"..SliderID])
 
     function UpdateValue(val)
@@ -3865,8 +3779,8 @@ function AddToggle(parent, Configs)
     end
 
     local closing
-    closing = Frame:GetPropertyChangedSignal("Parent"):Connect(function()
-        if not Frame.Parent then
+    closing = SliderObjects["Frame"..SliderID]:GetPropertyChangedSignal("Parent"):Connect(function()
+        if not SliderObjects["Frame"..SliderID].Parent then
             SetSliderValue(0)
             if closing then
                 closing:Disconnect()
@@ -3874,6 +3788,8 @@ function AddToggle(parent, Configs)
             end
         end
     end)
+
+    AllSliders[SliderID] = sliderObj
 
     return sliderObj
   end
