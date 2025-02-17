@@ -3896,7 +3896,7 @@ function AddColorPicker(parent, Configs)
       TextXAlignment = "Left",
       Text = name,
       Font = Configs_HUB.Text_Font,
-      BackgroundTransparency = 0
+      BackgroundTransparency = 1
     })
     
     local picker = Create("Frame", TextButton, {
@@ -4174,13 +4174,16 @@ function AddColorPicker(parent, Configs)
     end
     
     local DropOnOff = false
+    local isProcessing = false
     TextButton.MouseButton1Click:Connect(function()
-      if not DropOnOff then
-        TextLabel.Size = UDim2.new(0.94, 0, 0.5, 0)
-        Arrow.Size = UDim2.new(0.06, 0, 0.5, 0)
-        DefaultText.Size = UDim2.new(0.2, 0, 0.45, 0)
-        Line.Position = UDim2.new(0, 0, 0.52, 0)
-        ScrollBar.Size = UDim2.new(1, 0, 0.5, 0)
+      if isProcessing then return end
+      isProcessing = true
+       if not DropOnOff then
+        TextLabel.Size = UDim2.new(0.94, 0, 0.27, 0)
+        Arrow.Size = UDim2.new(0.06, 0, 0.27, 0)
+        DefaultText.Size = UDim2.new(0.2, 0, 0.22, 0)
+        Line.Position = UDim2.new(0, 0, 0.28, 0)
+        ScrollBar.Size = UDim2.new(1, 0, 0.7, 0)
         CreateTween(TextButton, "Size", UDim2.new(0.95, 0, 0.45, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 180, 0.3, false)
         DropOnOff = true
@@ -4198,6 +4201,7 @@ function AddColorPicker(parent, Configs)
         Line.Position = UDim2.new(0, 0, 0, 0)
         ScrollBar.Size = UDim2.new(1, 0, 0.8, 0)
       end
+      isProcessing = false
     end)
     return {ScrollBar, Default, Callback, DefaultText}
   end
@@ -4242,11 +4246,11 @@ function AddTextTable(parent, Configs)
 
     local ScrollBar = Create("ScrollingFrame", TextButton, {
       Size = UDim2.new(1, 0, 0.8, 0),
-      Position = UDim2.new(0, 0, 0.5, 0),
+      Position = UDim2.new(0, 0, 0.3, 0),
       CanvasSize = UDim2.new(),
       ScrollingDirection = "Y",
       AutomaticCanvasSize = "Y",
-      BackgroundTransparency = 1,
+      BackgroundTransparency = 0,
       ScrollBarThickness = 2,
       Visible = false
     })Create("UIPadding", ScrollBar, {
@@ -4259,12 +4263,15 @@ function AddTextTable(parent, Configs)
     })
 
   local DropOnOff = false
+  local isProcessing = false
     TextButton.MouseButton1Click:Connect(function()
+    if isProcessing then return end
+      isProcessing = true
       if not DropOnOff then
-        TextLabel.Size = UDim2.new(0.94, 0, 0.5, 0)
-        Arrow.Size = UDim2.new(0.06, 0, 0.5, 0)
-        Line.Position = UDim2.new(0, 0, 0.52, 0)
-        ScrollBar.Size = UDim2.new(1, 0, 0.5, 0)
+        TextLabel.Size = UDim2.new(0.94, 0, 0.27, 0)
+        Arrow.Size = UDim2.new(0.06, 0, 0.27, 0)
+        Line.Position = UDim2.new(0, 0, 0.28, 0)
+        ScrollBar.Size = UDim2.new(1, 0, 0.7, 0)
         CreateTween(TextButton, "Size", UDim2.new(0.95, 0, 0.45, 0), 0.3, false)
         CreateTween(Arrow, "Rotation", 180, 0.3, false)
         DropOnOff = true
@@ -4281,9 +4288,10 @@ function AddTextTable(parent, Configs)
         Line.Position = UDim2.new(0, 0, 0, 0)
         ScrollBar.Size = UDim2.new(1, 0, 0.8, 0)
       end
+      isProcessing = false
     end)
 
-    local function AddMessageToTable(message)
+    function AddMessageToTable(message)
          local NewButton = Create("TextButton", ScrollBar, {
          BackgroundColor3 = Configs_HUB.Cor_Hub,
          BackgroundTransparency = 0.1,
