@@ -3727,6 +3727,7 @@ function AddToggle(parent, Configs)
     local Callback = Configs.Callback or function() end
     local currentValue = Default
     local sliderObj = {}
+    local SliderObjects = {}
     local AllSliders = {}
 
     if not SliderID then
@@ -3745,10 +3746,8 @@ function AddToggle(parent, Configs)
     }) 
     Corner(SliderObjects["Frame"..SliderID]) 
     Stroke(SliderObjects["Frame"..SliderID])
-
-    local SliderObjects = {}
     
-    SliderObjects["TextLabel"..SliderID] = Create("TextButton", Frame, {
+    SliderObjects["TextLabel"..SliderID] = Create("TextButton", SliderObjects["Frame"..SliderID], {
         TextSize = 12,
         TextColor3 = Configs_HUB.Cor_Text,
         TextWrapped = true,
@@ -3761,7 +3760,7 @@ function AddToggle(parent, Configs)
     }) 
     TextSetColor(SliderObjects["TextLabel"..SliderID])
 
-    SliderObjects["TextLabelNumber"..SliderID] = Create("TextLabel", Frame, {
+    SliderObjects["TextLabelNumber"..SliderID] = Create("TextLabel", SliderObjects["Frame"..SliderID], {
         Font = Configs_HUB.Text_Font,
         Size = UDim2.new(0.06, 0, 1, 0),
         Text = "0",
@@ -3771,7 +3770,7 @@ function AddToggle(parent, Configs)
         BackgroundTransparency = 1
     })
 
-    SliderObjects["SliderBar1"..SliderID] = Create("TextLabel", Frame, {
+    SliderObjects["SliderBar1"..SliderID] = Create("TextLabel", SliderObjects["Frame"..SliderID], {
         Size = UDim2.new(0.25, 0, 0.12, 0),
         Position = UDim2.new(0.08, 0, 0.5, 0),
         AnchorPoint = Vector2.new(0, 0.5),
