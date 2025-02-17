@@ -3640,7 +3640,6 @@ function MakeTab(Configs)
     local Default = Configs.Default or 0
     local Callback = Configs.Callback or function() end
     local currentValue = Default
-    local sliderObj = {}
     local SliderObjects = {}
     local AllSliders = {}
 
@@ -3657,10 +3656,10 @@ function MakeTab(Configs)
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame"..SliderID,
         Text = ""
-    })
-    Corner(SliderObjects["Frame"..SliderID])
+    }) 
+    Corner(SliderObjects["Frame"..SliderID]) 
     Stroke(SliderObjects["Frame"..SliderID])
-
+    
     SliderObjects["TextLabel"..SliderID] = Create("TextButton", SliderObjects["Frame"..SliderID], {
         TextSize = 12,
         TextColor3 = Configs_HUB.Cor_Text,
@@ -3671,7 +3670,7 @@ function MakeTab(Configs)
         BackgroundTransparency = 1,
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
-    })
+    }) 
     TextSetColor(SliderObjects["TextLabel"..SliderID])
 
     SliderObjects["TextLabelNumber"..SliderID] = Create("TextLabel", SliderObjects["Frame"..SliderID], {
@@ -3690,7 +3689,7 @@ function MakeTab(Configs)
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Configs_HUB.Cor_Stroke,
         Text = ""
-    })
+    }) 
     Corner(SliderObjects["SliderBar1"..SliderID])
 
     SliderObjects["SavePos"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
@@ -3705,13 +3704,13 @@ function MakeTab(Configs)
         AnchorPoint = Vector2.new(0, 0.5),
         Active = true,
         Draggable = true
-    })
+    }) 
     Corner(SliderObjects["Slider"..SliderID])
 
     SliderObjects["SliderBar2"..SliderID] = Create("Frame", SliderObjects["SliderBar1"..SliderID], {
         BackgroundColor3 = Color3.fromRGB(30, 140, 200),
         Size = UDim2.new(0, SliderObjects["Slider"..SliderID].Position.X.Offset, 1, 0)
-    })
+    }) 
     Corner(SliderObjects["SliderBar2"..SliderID])
 
     function UpdateValue(val)
@@ -3761,23 +3760,6 @@ function MakeTab(Configs)
         UpdateValue(currentValue)
     end
 
-    sliderObj.ID = SliderID
-    sliderObj.SliderObjects["Frame"..SliderID] = SliderObjects["Frame"..SliderID]
-    sliderObj.SliderObjects["Slider"..SliderID] = SliderObjects["Slider"..SliderID]
-    sliderObj.MinValue = MinValue
-    sliderObj.MaxValue = MaxValue
-    sliderObj.Increase = Increase
-    sliderObj.Default  = Default
-    sliderObj.Callback = Callback
-
-    function sliderObj.GetValue()
-        return currentValue
-    end
-
-    function sliderObj.SetValue(v)
-        SetSliderValue(v)
-    end
-
     local closing
     closing = SliderObjects["Frame"..SliderID]:GetPropertyChangedSignal("Parent"):Connect(function()
         if not SliderObjects["Frame"..SliderID].Parent then
@@ -3789,9 +3771,7 @@ function MakeTab(Configs)
         end
     end)
 
-    AllSliders[SliderID] = sliderObj
-
-    return sliderObj
+    return SliderObjects
   end
 
   function AddTextBox(parent, Configs)
