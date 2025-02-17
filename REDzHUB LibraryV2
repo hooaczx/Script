@@ -3432,11 +3432,26 @@ local textcolor = Configs_HUB.Cor_Text
 function MakeTab(Configs)
     local TabName = Configs.Name or "Tab"
     local TabImage = Configs.image
-    
+    for _, tab in pairs(ScrollBar:GetChildren()) do
+        if tab:IsA("Frame") then
+            local label = tab:FindFirstChild("TextLabel")
+            if label and label.Text == TabName then
+                tab:Destroy()
+            end
+        end
+    end
+    for _, container in pairs(Containers:GetChildren()) do
+        if container:IsA("ScrollingFrame") and container.Name == TabName then
+            container:Destroy()
+        end
+    end
+
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundTransparency = 1
-    })Corner(Frame)FrameStroke = Stroke(Frame, {Thickness = 1})
+    })
+    Corner(Frame)
+    local FrameStroke = Stroke(Frame, {Thickness = 1})
     
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
@@ -3462,7 +3477,8 @@ function MakeTab(Configs)
             BackgroundColor3 = Configs_HUB.Cor_Options,
             BackgroundTransparency = 1,
             Image = TabImage
-        })Corner(image)
+        })
+        Corner(image)
     end
     
     local Container = Create("ScrollingFrame", Containers, {
@@ -3473,59 +3489,63 @@ function MakeTab(Configs)
         Visible = firstVisible,
         AutomaticCanvasSize = Enum.AutomaticSize.Y
     })
+    Container.Name = TabName
+
     Create("UIListLayout", Container, {
         Padding = UDim.new(0, 5),
         SortOrder = Enum.SortOrder.LayoutOrder,
-    })Create("UIPadding", Container, {
+    })
+    Create("UIPadding", Container, {
       PaddingLeft = UDim.new(0.025, 0),
     })
     
     TextButton.MouseButton1Click:Connect(function()
-    for _, container in pairs(Containers:GetChildren()) do
-        if container:IsA("ScrollingFrame") then
-            container.Visible = false
+        for _, container in pairs(Containers:GetChildren()) do
+            if container:IsA("ScrollingFrame") then
+                container.Visible = false
+            end
         end
-    end
-    for _, frame in pairs(ScrollBar:GetChildren()) do
-        if frame:IsA("Frame") then
-            local frameStroke = frame:FindFirstChildOfClass("UIStroke")
-            local label = frame:FindFirstChild("TextLabel")
-            if label == TextLabel then
-                CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
-                CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-                if not label:GetAttribute("Clicked") then
-                    local percentageIncrease = 0.1
-                    local currentSize = label.TextSize
-                    local newSize = currentSize * (1 + percentageIncrease)
-                    label.TextSize = newSize
-                    if label.TextBounds.X > label.AbsoluteSize.X then
-                        label.TextSize = currentSize
+        for _, frame in pairs(ScrollBar:GetChildren()) do
+            if frame:IsA("Frame") then
+                local frameStroke = frame:FindFirstChildOfClass("UIStroke")
+                local label = frame:FindFirstChild("TextLabel")
+                if label == TextLabel then
+                    CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+                    CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+                    if not label:GetAttribute("Clicked") then
+                        local percentageIncrease = 0.1
+                        local currentSize = label.TextSize
+                        local newSize = currentSize * (1 + percentageIncrease)
+                        label.TextSize = newSize
+                        if label.TextBounds.X > label.AbsoluteSize.X then
+                            label.TextSize = currentSize
+                        end
+                        local clickpaperSound = Create("Sound", ScreenGui, {
+                            SoundId = "rbxassetid://9117207262",
+                            Volume = 0.07
+                        })
+                        clickpaperSound:Play()
+                        clickpaperSound.Ended:Connect(function()
+                            clickpaperSound:Destroy()
+                        end)
+                        label:SetAttribute("Clicked", true)
                     end
-                    clickpaperSound = Create("Sound", ScreenGui, {
-                        SoundId = "rbxassetid://9117207262",
-                        Volume = 0.07
-                    })
-                     clickpaperSound:Play()
-                   clickpaperSound.Ended:Connect(function()
-                     clickpaperSound:Destroy()
-                   end)
-                    label:SetAttribute("Clicked", true)
+                else
+                    if frameStroke then
+                        CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+                    end
+                    if label then
+                        local defaultSize = label.TextSize - 2
+                        label.TextSize = math.clamp(defaultSize, 14, 20)
+                        CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+                        label:SetAttribute("Clicked", false)
+                    end
                 end
-            else
-                if frameStroke then
-                    CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-                end
-                if label then
-                    local defaultSize = label.TextSize - 2
-                    label.TextSize = math.clamp(defaultSize, 14, 20)
-                    CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-                    label:SetAttribute("Clicked", false)
-                 end
-             end
-         end
-     end
-    Container.Visible = true
- end)
+            end
+        end
+        Container.Visible = true
+    end)
+    
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
@@ -3538,7 +3558,7 @@ function MakeTab(Configs)
     textsize = 14
     textcolor = Configs_HUB.Cor_DarkText
     return Container
-end
+  end
   
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
