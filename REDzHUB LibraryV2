@@ -3835,6 +3835,12 @@ end
           currentValue = final
           UpdCounter(final)
       end
+
+      Frame:GetPropertyChangedSignal("Parent"):Connect(function()
+        if not Frame.Parent then
+           SetSliderValue(0)
+         end
+      end)
     
       return {
           Frame = Frame,
