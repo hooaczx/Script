@@ -3391,6 +3391,31 @@ end
 local ShiftLockAction = ContextActionService:BindAction("Shift Lock", functions.ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
+local function onMouseEnter(button)
+        CreateTween(button, "Size", UDim2.new(0.08, 0, 0.7, 0), 0.2, true)
+    end
+
+    local function onMouseLeave(button)
+        CreateTween(button, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, true)
+    end
+
+    -- Apply the effect to all the buttons
+    MusicToggleButton.MouseEnter:Connect(function() onMouseEnter(MusicToggleButton) end)
+    MusicToggleButton.MouseLeave:Connect(function() onMouseLeave(MusicToggleButton) end)
+
+    SplitgameToggleButton.MouseEnter:Connect(function() onMouseEnter(SplitgameToggleButton) end)
+    SplitgameToggleButton.MouseLeave:Connect(function() onMouseLeave(SplitgameToggleButton) end)
+
+    infoToggleButton.MouseEnter:Connect(function() onMouseEnter(infoToggleButton) end)
+    infoToggleButton.MouseLeave:Connect(function() onMouseLeave(infoToggleButton) end)
+
+    Button.MouseEnter:Connect(function() onMouseEnter(Button) end)
+    Button.MouseLeave:Connect(function() onMouseLeave(Button) end)
+
+    SettingButton.MouseEnter:Connect(function() onMouseEnter(SettingButton) end)
+    SettingButton.MouseLeave:Connect(function() onMouseLeave(SettingButton) end)
+
+
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
         if ShiftLockmaingui then
