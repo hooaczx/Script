@@ -18,6 +18,26 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 functionCreate = {}
 
+local function Background()
+    local self = {
+        Transparency = 0,
+        Elements = {}
+    }
+
+    function self:AddElement(element)
+        table.insert(self.Elements, element)
+    end
+
+    function self:SetTransparency(value)
+        self.Transparency = value
+        for _, element in ipairs(self.Elements) do
+            element.BackgroundTransparency = value
+        end
+    end
+    return self
+end
+
+
 functionCreate.Create = function(instance, parent, props)
   local new = Instance.new(instance, parent)
   if props then
@@ -63,7 +83,7 @@ functionCreate.Stroke = function(parent, props)
   new.Color = Configs_HUB.Cor_Stroke
   if props and props.Color then
     new.Color = props.Color
-  end
+  end   
   new.ApplyStrokeMode = "Border"
   if props then
     SetProps(new, props)
@@ -143,30 +163,6 @@ functionCreate.TextSetColor = function(instance)
   end)
 end
 
-functionCreate.ShakeEffect = function(instance)
-    isRotationStored = false
-    originalRotation = 0
-
-    instance.MouseEnter:Connect(function()
-        if not isRotationStored then
-            originalRotation = instance.Rotation
-            isRotationStored = true
-        end
-
-        shakeAmount = 3
-        shakeDuration = 0.05
-        shakeCount = 5
-
-        for i = 1, shakeCount do
-            CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
-            CreateTween(instance, "Rotation", originalRotation - shakeAmount, shakeDuration, true)
-        end
-    end)
-    instance.MouseLeave:Connect(function()
-    CreateTween(instance, "Rotation", originalRotation, 0.2, false)
-    end)
-end
-
 SetProps = functionCreate.SetProps
 Corner = functionCreate.Corner
 Stroke = functionCreate.Stroke
@@ -174,7 +170,6 @@ CreateGradient = functionCreate.CreateGradient
 CreateTween = functionCreate.CreateTween
 CreateTween1 = functionCreate.CreateTween1
 TextSetColor = functionCreate.TextSetColor
-ShakeEffect = functionCreate.ShakeEffect
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
   Name = "hcx hub library",
@@ -292,23 +287,22 @@ function MakeWindow(Configs)
  local title = Configs.Hub.Title or "hcx hub"
  local Anim_Title = Configs.Hub.Animation or "by : 1hooaczx1"
   
-local Menu = Create("Frame", ScreenGui, {
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    Position = UDim2.new(0.77, 0, 0.1, 0),
-    AnchorPoint = Vector2.new(1, 0),
-    Active = true,
-    Draggable = true
-})CreateGradient(Menu, {
-    Color = {
-        Color3.fromRGB(255, 255, 255),
-        Color3.fromRGB(0, 0, 0),
-        Color3.fromRGB(255, 0, 0)
-    },
-    Rotation = 45,
-    Tween = true,
-    Speed = 3
-})
-Corner(Menu)
+  local Menu = Create("Frame", ScreenGui, {
+      BackgroundColor3 = Configs_HUB.Cor_Hub,
+      Position = UDim2.new(0.77, 0, 0.1, 0),
+      AnchorPoint = Vector2.new(1, 0),
+      Active = true,
+      Draggable = true
+   })Background:AddElement(Menu)CreateGradient(Menu, {
+      Color = {
+         Color3.fromRGB(255, 255, 255),
+         Color3.fromRGB(0, 0, 0),
+         Color3.fromRGB(255, 0, 0)
+      },
+      Rotation = 45,
+      Tween = true,
+      Speed = 3
+  })Corner(Menu)
 
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
@@ -321,7 +315,7 @@ Corner(Menu)
     Position = UDim2.new(0, 0, 1, -2),
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     BorderSizePixel = 0
-  })
+  })Background:AddElement(BottomLine)
 
   local Title = Create("TextLabel", TopBar, {
     Size = UDim2.new(0.9, 0, 1, 0),
@@ -396,32 +390,32 @@ Corner(Menu)
 
    local ScrollBar = Create("ScrollingFrame", Menu, {
     Size = UDim2.new(0.225, 0, 0.91, 0),
-    Position = UDim2.new(0, 0, 1, 0),
-    AnchorPoint = Vector2.new(0, 1),
-    CanvasSize = UDim2.new(),
+    Position = UDim2.new(0, 0, 0.085, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
     ScrollBarThickness = 2
-  })Create("UIListLayout", ScrollBar, {
+  })local listLayoutScrollBar = Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5),
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", ScrollBar, {
       PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
   })
 
   local Bottomright = Create("Frame", Menu, {
-    Size = UDim2.new(0.002, 0, 0.92, 0),
-    Position = UDim2.new(0.006 + ScrollBar.Position.X.Scale + ScrollBar.Size.X.Scale, ScrollBar.Position.X.Offset + ScrollBar.Size.X.Offset, ScrollBar.Position.Y.Scale, ScrollBar.Position.Y.Offset),
+    Size = UDim2.new(0.002, 0, 0.913, 0),
+    Position = UDim2.new(0.006 + ScrollBar.Position.X.Scale + ScrollBar.Size.X.Scale, ScrollBar.Position.X.Offset + ScrollBar.Size.X.Offset, 1, ScrollBar.Position.Y.Offset),
     AnchorPoint = Vector2.new(0, 1),
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     BorderSizePixel = 0
-  })
+  })Background:AddElement(Bottomright)
 
   local Containers = Create("Frame", Menu, {
-    Size = UDim2.new(0.762, 0, 0.91, 0),
-    AnchorPoint = Vector2.new(1, 1),
-    Position = UDim2.new(1, 0, 1, 0),
+    Size = UDim2.new(0.762, 0, 0.915, 0),
+    Position = UDim2.new(0.237, 0, 0.085, 0),
     BackgroundTransparency = 1
   })Corner(Containers)
 
@@ -478,7 +472,7 @@ function CreateClose()
       Text = "",
       BackgroundTransparency = 0.5,
       Visible = false
-    })Corner(CloseGui)
+    })Background:AddElement(CloseGui)Corner(CloseGui)
 
     local CloseMenu = Create("Frame", CloseGui, {
       Size = UDim2.new(),
@@ -506,7 +500,7 @@ function CreateClose()
       Font = Configs_HUB.Text_Font,
       TextColor3 = Color3.fromRGB(240, 0, 0),
       TextScaled = true
-    })Corner(Confirm)Stroke(Confirm)
+    })Background:AddElement(Confirm)Corner(Confirm)Stroke(Confirm)
 
     local Cancel = Create("TextButton", CloseMenu, {
       Size = UDim2.new(0.35, 0, 0.3, 0),
@@ -517,7 +511,7 @@ function CreateClose()
       Font = Configs_HUB.Text_Font,
       TextColor3 = Color3.fromRGB(0, 240, 0),
       TextScaled = true
-    })Corner(Cancel)Stroke(Cancel)
+    })Background:AddElement(Cancel)Corner(Cancel)Stroke(Cancel)
 
     CloseGui.Visible = true
     CreateTween(CloseMenu, "Transparency", 0, 0.2, false)
@@ -900,7 +894,6 @@ notify({
     local PlaceId = game.PlaceId
     local friendsCooldown = 0
     local friendsInTotal = 0
-    local cachedFriends = nil
     local MarketplaceService = game:GetService("MarketplaceService")
     local AssetService = game:GetService("AssetService")
     local TeleportService = game:GetService("TeleportService")
@@ -973,9 +966,7 @@ local Frame1 = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.4, 0, 0.85, 0),
     BackgroundColor3 = Configs_HUB.Cor_Options,
     Position = UDim2.new(0.3, 0, 0, 0),
-    BackgroundTransparency = 0,
-    Active = true,
-    Draggable = true,
+    BackgroundTransparency = 0, 
     Visible = false
 })
 
@@ -1146,8 +1137,8 @@ Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
 
 local songList = Create("ScrollingFrame", Frame1, {
     Size = UDim2.new(1, 0, 0.8, 0),
-    Position = UDim2.new(0, 0, 0.21, 0),
-    CanvasSize = UDim2.new(),
+    Position = UDim2.new(0, 0, 0.2, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -1157,7 +1148,9 @@ local songList = Create("ScrollingFrame", Frame1, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", songList, {
       PaddingLeft = UDim.new(0.028, 0),
-})
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local isAutoPlayEnabled = false
 local isLooping = false
@@ -1549,7 +1542,7 @@ TextSetColor(Text77)
 local scrollingsettingmusicFrame = Create("ScrollingFrame", framemusic, {
     Size = UDim2.new(1, 0, 0.85, 0),
     Position = UDim2.new(0, 0, 0.15, 0),
-    CanvasSize = UDim2.new(),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -1559,6 +1552,8 @@ local scrollingsettingmusicFrame = Create("ScrollingFrame", framemusic, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", scrollingsettingmusicFrame, {
       PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
   })
 
 local isSettingLoopState = false
@@ -1953,7 +1948,9 @@ local frameGame = Create("ScrollingFrame", framek, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", frameGame, {
       PaddingLeft = UDim.new(0.028, 0),
-})
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local mainGameLabel = Create("TextLabel", frameGame, {
     Size = UDim2.new(0.96, 0, 0.02, 0),
@@ -2366,9 +2363,15 @@ if success then
     until page.IsFinished
 end
 
+local friendsInTotal = #playersFriends
+
+local friendsData = {
+    total = friendsInTotal
+}
+
 local friendnumber = Create("TextLabel", ScreenGui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
-    Text = "Friend: 0/1,000",
+    Text = "Friend: "..friendsData.total.."/1000",
     Position = UDim2.new(0.67, 0, 0.03, 0),
     AnchorPoint = Vector2.new(0.49, 0.029),
     TextColor3 = Configs_HUB.Cor_Text,
@@ -2381,53 +2384,13 @@ local friendnumber = Create("TextLabel", ScreenGui, {
 })
 TextSetColor(friendnumber)
 
-functions.updateFriendsGUI = function(friends)
-    friendsFrame:ClearAllChildren()
-    local positionY = 0
-    for _, friend in pairs(friends) do
-        local friendFrame = Create("Frame", friendsFrame, {
-            Size = UDim2.new(1, 0, 0, 50),
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 0, 0, positionY)
-        })
-
-        local avatarImage = Create("ImageLabel", friendFrame, {
-            Size = UDim2.new(0.1, 0, 0, 30),
-            Position = UDim2.new(0, 0, 0.07, 0),
-            BackgroundColor3 = Configs_HUB.Cor_Hub,
-            BackgroundTransparency = 0.4,
-            Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
-        })
-
-        local friendName = Create("TextLabel", friendFrame, {
-            Size = UDim2.new(0.9, 0, 1, 0),
-            Position = UDim2.new(0.1, 0, 0, 0),
-            BackgroundTransparency = 1,
-            Text = friend.Username,
-            TextWrapped = true,
-            TextColor3 = Configs_HUB.Cor_Text,
-            TextXAlignment = "Left",
-            Font = Configs_HUB.Text_Font
-        })
-        TextSetColor(friendName)
-        positionY = positionY + 60
-    end
-    friendsFrame.CanvasSize = UDim2.new(0, 0, 0, positionY)
-end
-
 functions.checkFriends = function()
     if friendsCooldown <= 0 then
         friendsCooldown = 5
-        
-        if cachedFriends then
-            functions.updateFriendsGUI(cachedFriends)
-            friendnumber.Text = "Friend: " .. #cachedFriends .. "/1,000"
-            return #cachedFriends
-        end
 
         local playersFriends = {}
         local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
-        
+
         if success then
             repeat
                 local info = page:GetCurrentPage()
@@ -2439,10 +2402,45 @@ functions.checkFriends = function()
             until page.IsFinished
         end
 
-        cachedFriends = playersFriends
         local friendsInTotal = #playersFriends
+
+        functions.updateFriendsGUI = function(friends)
+            friendsFrame:ClearAllChildren()
+
+            local positionY = 0
+            for _, friend in pairs(friends) do
+                local friendFrame = Create("Frame", friendsFrame, {
+                    Size = UDim2.new(1, 0, 0, 50),
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0, 0, 0, positionY)
+                })
+
+                local avatarImage = Create("ImageLabel", friendFrame, {
+                    Size = UDim2.new(0.1, 0, 0, 30),
+                    Position = UDim2.new(0, 0, 0.07, 0),
+                    BackgroundColor3 = Configs_HUB.Cor_Hub,
+                    BackgroundTransparency = 0.4,
+                    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
+                })
+
+                local friendName = Create("TextLabel", friendFrame, {
+                    Size = UDim2.new(0.9, 0, 1, 0),
+                    Position = UDim2.new(0.1, 0, 0, 0),
+                    BackgroundTransparency = 1,
+                    Text = friend.Username,
+                    TextWrapped = true,
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    TextXAlignment = "Left",
+                    Font = Configs_HUB.Text_Font
+                })
+                TextSetColor(friendName)
+                positionY = positionY + 60
+            end
+            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, positionY)
+        end
+
         functions.updateFriendsGUI(playersFriends)
-        friendnumber.Text = "Friend: " .. friendsInTotal .. "/1,000"
+        friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
         return friendsInTotal
     else
         friendsCooldown = friendsCooldown - 1
@@ -2834,6 +2832,7 @@ local lastUpdate = tick()
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
         functions.updatePlaceInfo()
+        friendnumber.Text = "Friend: "..friendsData.total.."/200"
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
           lastUpdate = currentTime
@@ -2916,7 +2915,7 @@ TextSetColor(Text7)
 local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
     Size = UDim2.new(1, 0, 0.85, 0),
     Position = UDim2.new(0, 0, 0.15, 0),
-    CanvasSize = UDim2.new(),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -2926,7 +2925,9 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", scrollingSettingFrame, {
       PaddingLeft = UDim.new(0.028, 0),
-})
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local isClickEffectEnabled = false
 local ripples = {}
@@ -3431,11 +3432,26 @@ local textcolor = Configs_HUB.Cor_Text
 function MakeTab(Configs)
     local TabName = Configs.Name or "Tab"
     local TabImage = Configs.image
-    
+    for _, tab in pairs(ScrollBar:GetChildren()) do
+        if tab:IsA("Frame") then
+            local label = tab:FindFirstChild("TextLabel")
+            if label and label.Text == TabName then
+                tab:Destroy()
+            end
+        end
+    end
+    for _, container in pairs(Containers:GetChildren()) do
+        if container:IsA("ScrollingFrame") and container.Name == TabName then
+            container:Destroy()
+        end
+    end
+
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundTransparency = 1
-    })Corner(Frame)FrameStroke = Stroke(Frame, {Thickness = 1})
+    })
+    Corner(Frame)
+    local FrameStroke = Stroke(Frame, {Thickness = 1})
     
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
@@ -3461,7 +3477,8 @@ function MakeTab(Configs)
             BackgroundColor3 = Configs_HUB.Cor_Options,
             BackgroundTransparency = 1,
             Image = TabImage
-        })Corner(image)
+        })
+        Corner(image)
     end
     
     local Container = Create("ScrollingFrame", Containers, {
@@ -3472,59 +3489,63 @@ function MakeTab(Configs)
         Visible = firstVisible,
         AutomaticCanvasSize = Enum.AutomaticSize.Y
     })
-    Create("UIListLayout", Container, {
+    Container.Name = TabName
+    local listLayoutContainer = Create("UIListLayout", Container, {
         Padding = UDim.new(0, 5),
         SortOrder = Enum.SortOrder.LayoutOrder,
     })Create("UIPadding", Container, {
-      PaddingLeft = UDim.new(0.025, 0),
+      PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
     })
     
     TextButton.MouseButton1Click:Connect(function()
-    for _, container in pairs(Containers:GetChildren()) do
-        if container:IsA("ScrollingFrame") then
-            container.Visible = false
+        for _, container in pairs(Containers:GetChildren()) do
+            if container:IsA("ScrollingFrame") then
+                container.Visible = false
+            end
         end
-    end
-    for _, frame in pairs(ScrollBar:GetChildren()) do
-        if frame:IsA("Frame") then
-            local frameStroke = frame:FindFirstChildOfClass("UIStroke")
-            local label = frame:FindFirstChild("TextLabel")
-            if label == TextLabel then
-                CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
-                CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
-                if not label:GetAttribute("Clicked") then
-                    local percentageIncrease = 0.1
-                    local currentSize = label.TextSize
-                    local newSize = currentSize * (1 + percentageIncrease)
-                    label.TextSize = newSize
-                    if label.TextBounds.X > label.AbsoluteSize.X then
-                        label.TextSize = currentSize
+        for _, frame in pairs(ScrollBar:GetChildren()) do
+            if frame:IsA("Frame") then
+                local frameStroke = frame:FindFirstChildOfClass("UIStroke")
+                local label = frame:FindFirstChild("TextLabel")
+                if label == TextLabel then
+                    CreateTween(frameStroke, "Color", Color3.fromRGB(255, 255, 255), 0.2, false)
+                    CreateTween(label, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
+                    if not label:GetAttribute("Clicked") then
+                        local percentageIncrease = 0.1
+                        local currentSize = label.TextSize
+                        local newSize = currentSize * (1 + percentageIncrease)
+                        label.TextSize = newSize
+                        if label.TextBounds.X > label.AbsoluteSize.X then
+                            label.TextSize = currentSize
+                        end
+                        local clickpaperSound = Create("Sound", ScreenGui, {
+                            SoundId = "rbxassetid://9117207262",
+                            Volume = 0.07
+                        })
+                        clickpaperSound:Play()
+                        clickpaperSound.Ended:Connect(function()
+                            clickpaperSound:Destroy()
+                        end)
+                        label:SetAttribute("Clicked", true)
                     end
-                    clickpaperSound = Create("Sound", ScreenGui, {
-                        SoundId = "rbxassetid://9117207262",
-                        Volume = 0.07
-                    })
-                     clickpaperSound:Play()
-                   clickpaperSound.Ended:Connect(function()
-                     clickpaperSound:Destroy()
-                   end)
-                    label:SetAttribute("Clicked", true)
+                else
+                    if frameStroke then
+                        CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+                    end
+                    if label then
+                        local defaultSize = label.TextSize - 2
+                        label.TextSize = math.clamp(defaultSize, 14, 20)
+                        CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
+                        label:SetAttribute("Clicked", false)
+                    end
                 end
-            else
-                if frameStroke then
-                    CreateTween(frameStroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
-                end
-                if label then
-                    local defaultSize = label.TextSize - 2
-                    label.TextSize = math.clamp(defaultSize, 14, 20)
-                    CreateTween(label, "TextColor3", Configs_HUB.Cor_DarkText, 0.3, false)
-                    label:SetAttribute("Clicked", false)
-                 end
-             end
-         end
-     end
-    Container.Visible = true
- end)
+            end
+        end
+        Container.Visible = true
+    end)
+    
     if not firstTabSet then
         Container.Visible = true
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
@@ -3537,7 +3558,7 @@ function MakeTab(Configs)
     textsize = 14
     textcolor = Configs_HUB.Cor_DarkText
     return Container
-end
+  end
   
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
@@ -3608,15 +3629,15 @@ end
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
     })TextSetColor(WarningLabel)
-end
+  end
 
-function AddToggle(parent, Configs)
+   function AddToggle(parent, Configs)
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-        Size = UDim2.new(0.95, 0, 0.1, 0),
+        Size = UDim2.new(0.95, 0, 0.12, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame",
         Text = "",
@@ -3629,7 +3650,6 @@ function AddToggle(parent, Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         TextWrapped = true,
         TextSize = 12,
-        TextWrapped = true,
         Text = ToggleName,
         Size = UDim2.new(0.93, 0, 1, 0),
         Position = UDim2.new(0.012 + 0.08, 0, 0, 0),
@@ -3644,170 +3664,84 @@ function AddToggle(parent, Configs)
         BackgroundTransparency = 1,
     })
     Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
-    local Stroke = Stroke(Frame1, {Thickness = 2})
+    local Stroke1 = Stroke(Frame1, {Thickness = 2})
     
     local Frame2 = Create("Frame", Frame1, {
-        Size = UDim2.new(0.4, 0, 0.95, 0),
-        Position = UDim2.new(0, 0, 0.5, 0),
+        Size = UDim2.new(0.5, 0, 0.9, 0),
+        Position = UDim2.new(0, 0, 0.47, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })
+    })local Stroke2 = Stroke(Frame2, {Thickness = 1})
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
     
     local OnOff = false
     if Default then
         OnOff = true
-        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.47, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+        CreateTween(Stroke1, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+        CreateTween(Stroke2, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
     end
     Callback(OnOff)
-
     local function ResetToggle()
         OnOff = false
-        CreateTween(Frame2, "Position", UDim2.new(0.1, 0, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.47, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(Stroke1, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(Stroke2, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         Callback(false)
     end
-    
-    parent.AncestryChanged:Connect(function(_, parent)
+    local cleartoggle
+    cleartoggle = parent.AncestryChanged:Connect(function(_, parent)
         if not parent and OnOff then
             ResetToggle()
+           if cleartoggle then
+            cleartoggle:Disconnect()
+            cleartoggle = nil
+           end
         end
     end)
+    
+    local function CreateEffect(text, parent)
+     local EffectLabel = Create("TextLabel", parent, {
+         Text = text,
+         TextColor3 = Configs_HUB.Cor_Text,
+         Font = Configs_HUB.Text_Font,
+         BackgroundTransparency = 1,
+         Size = UDim2.new(0.3, 0, 0.3, 0),
+         Position = UDim2.new(0.35, 0, -0.2, 0)
+     })
+     local UIScale = Create("UIScale", EffectLabel, {Scale = 0.5})
+     CreateTween(UIScale, "Scale", 1, 0.2, false)
+     CreateTween(EffectLabel, "Position", UDim2.new(0.35, 0, -0.2, 0), 0.3, false)
+     CreateTween(EffectLabel, "TextTransparency", 1, 0.5, false)
 
+      task.delay(0.3, function()
+          EffectLabel:Destroy()
+      end)
+    end
+    
     TextButton.MouseButton1Click:Connect(function()
-        if not OnOff then
-            clicktoggle:Play()
-            OnOff = true
-            CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
-            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-            CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            Callback(true)
-        else
-            falsetoggle:Play()
-            ResetToggle()
-        end
-    end)
-    return {Frame2, Stroke, OnOff, Callback}
-end
-  
-  function AddSlider(parent, Configs)
-    local SliderName = Configs.Name or "Slider!!"
-    local Increase = Configs.Increase or 1
-    local MinValue = Configs.MinValue / Increase or 10 / Increase
-    local MaxValue = Configs.MaxValue / Increase or 100 / Increase
-    local Default = Configs.Default or 25
-    local Callback = Configs.Callback or function() end
-    
-    local Frame = Create("TextButton", parent, {
-      Size = UDim2.new(0.95, 0, 0.1, 0),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame",
-      Text = ""
-    })Corner(Frame)Stroke(Frame)
-    
-    local TextLabel = Create("TextButton", Frame, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      TextWrapped = true,
-      Text = SliderName,
-      Size = UDim2.new(0.65, 0, 1, 0),
-      Position = UDim2.new(0.35, 0, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
-    })TextSetColor(TextLabel)
-    
-    local TextLabelNumber = Create("TextLabel", Frame, {
-      Font = Configs_HUB.Text_Font,
-      Size = UDim2.new(0.06, 0, 1, 0),
-      Text = "0",
-      Position = UDim2.new(0, 5, 0, 2.5),
-      TextScaled = true,
-      TextColor3 = Configs_HUB.Cor_Text,
-      BackgroundTransparency = 1
-    })
-    
-    local SliderBar1 = Create("TextLabel", Frame, {
-      Size = UDim2.new(0.25, 0, 0.12, 0),
-      Position = UDim2.new(0.08, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke,
-      Text = ""
-    })Corner(SliderBar1)
-    
-    local SavePos = Create("Frame", SliderBar1, {
-      Size = UDim2.new(0, 1, 0, 0),
-      Visible = false
-    })
-    
-    local Slider = Create("Frame", SliderBar1, {
-      BackgroundColor3 = Configs_HUB.Cor_Text,
-      Size = UDim2.new(0.08, 0, 0, 15),
-      Position = UDim2.new(0, 0, 0.5, 0),
-      AnchorPoint = Vector2.new(0, 0.5),
-      Active = true,
-      Draggable = true
-    })Corner(Slider)
-    
-    local SliderBar2 = Create("Frame", SliderBar1, {
-      BackgroundColor3 = Color3.fromRGB(30, 140, 200),
-      Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-    })Corner(SliderBar2)
-    
-    currentValue = Default
-
-    function UpdCounter(Value)
-        local RoundedValue = math.round(Value * Increase * 100) / 100
-        TextLabelNumber.Text = tostring(RoundedValue)
-        Callback(RoundedValue)
-    end
-   
-    local MouseEnterOrLeave = false
-    Frame.MouseButton1Down:Connect(function()
-        MouseEnterOrLeave = true
-        while MouseEnterOrLeave do 
-            task.wait()
-            local MousePos = UserInputService:GetMouseLocation().X - SavePos.AbsolutePosition.X
-            local ClampedPos = math.clamp(MousePos, 0, SliderBar1.AbsoluteSize.X)
-            Slider.Position = UDim2.new(0, ClampedPos, 0.5, 0)
-        end
-    end)
-    
-    Frame.MouseLeave:Connect(function()
-        MouseEnterOrLeave = false
-    end)
-    
-    function SliderSet(NewValue)
-        local max, min = MaxValue * Increase, MinValue * Increase
-        local SliderPos = (NewValue - min) / (max - min)
-        local X_Offset = SliderPos * SliderBar1.AbsoluteSize.X
-        local SliderPosition = UDim2.new(0, X_Offset, 0.5, 0)
-        CreateTween(Slider, "Position", SliderPosition, 0.5, false)
-    end
-    
-    SliderSet(Default)
-    
-    Slider.Changed:Connect(function(prop)
-       if prop == "Position" then
-          local MaxOffset = SliderBar1.AbsoluteSize.X
-          Slider.Position = UDim2.new(0, math.clamp(Slider.Position.X.Offset, 0, MaxOffset), 0.5, 0)
-          SliderBar2.Size = UDim2.new(0, Slider.Position.X.Offset, 1, 0)
-        
-          local SliderPos = Slider.Position.X.Offset / MaxOffset
-          local A_1 = math.round((SliderPos * (MaxValue - MinValue) + MinValue) / Increase) * Increase
-          currentValue = A_1
-          UpdCounter(currentValue)
-       end
-    end)
-    
-    return {Slider, Increase, MaxValue, MinValue}
-  end
+      if not OnOff then
+          clicktoggle:Play()
+          OnOff = true
+          CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
+          CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateTween(Stroke1, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateTween(Stroke2, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateEffect("ON", Frame1)
+          Callback(true)
+      else
+          falsetoggle:Play()
+          ResetToggle()
+          CreateEffect("OFF", Frame1)
+         end
+      end)
+     return {Frame2, Stroke1, OnOff, Callback}
+   end
 
   function AddTextBox(parent, Configs)
     local TextBoxName = Configs.Name or "TextBox!!"
@@ -4205,7 +4139,7 @@ function AddColorPicker(parent, Configs)
     return {ScrollBar, Default, Callback, DefaultText}
   end
 
-function AddTextTable(parent, Configs)
+  function AddTextTable(parent, Configs)
     local LabelName = Configs.Name or "Label!!"
 
     local TextButton = Create("TextButton", parent, {
@@ -4305,6 +4239,128 @@ function AddTextTable(parent, Configs)
     end
 
     return {TextButton = TextButton, LabelName = LabelName, ScrollBar = ScrollBar, AddMessage = AddMessageToTable}
+  end
+
+  function AddSlider(parent, Configs)
+    local SName = Configs.Name or Configs.Title or "Slider!"
+    local SDesc = Configs.Description or ""
+    local Min = Configs.MinValue or Configs.Min or 10
+    local Max = Configs.MaxValue or Configs.Max or 100
+    local Increase = Configs.Increase or 1
+    local Default = Configs.Default or 25
+    local Callback = Configs.Callback or function() end
+    local connectionSlider = {}
+    Min, Max = Min / Increase, Max / Increase
+
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(0.95, 0, 0.1, 0),
+        BackgroundColor3 = (Configs_HUB and Configs_HUB.Cor_Options) or Color3.new(0.2, 0.2, 0.2),
+        Name = "SliderFrame"
+    })
+    Corner(Frame)
+    Stroke(Frame)
+
+    local TitleLabel = Create("TextLabel", Frame, {
+        Text = SName,
+        Size = UDim2.new(0.615, 0, 1, 0),
+        Position = UDim2.new(0.385, 0, 0, 0),
+        BackgroundTransparency = 1,
+        Font = (Configs_HUB and Configs_HUB.Text_Font) or Enum.Font.SourceSans,
+        TextColor3 = (Configs_HUB and Configs_HUB.Cor_Text) or Color3.new(1, 1, 1),
+        TextSize = 12,
+        TextWrapped = true,
+    })
+    TextSetColor(TitleLabel)
+
+    local SliderBar = Create("Frame", Frame, {
+        Size = UDim2.new(0.27, 0, 0.15, 0),
+        Position = UDim2.new(0.015, 0, 0.45, 0),
+        BackgroundTransparency = 0
+    })
+    Corner(SliderBar)
+
+    local Indicator = Create("TextButton", SliderBar, {
+        BackgroundColor3 = Configs_HUB.Cor_Text,
+        Size = UDim2.new(0.1, 0, 6, 0),
+        Position = UDim2.new(0, 0, 0, 0),
+        Text = ""
+    })
+    Corner(Indicator)
+
+    local SliderIcon = Create("Frame", SliderBar, {
+        BackgroundColor3 = Color3.fromRGB(30, 140, 200),
+        Size = UDim2.new(0.08, 0, 1, 0),
+        Position = UDim2.new(0, 0, 0, 0)
+    })
+    Corner(SliderIcon)
+
+    local LabelVal = Create("TextLabel", Frame, {
+        Font = Configs_HUB.Text_Font,
+        Size = UDim2.new(0.08, 0, 1, 0),
+        Text = "0",
+        Position = UDim2.new(0.305, 0, 0, 0),
+        TextScaled = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        BackgroundTransparency = 1
+    })
+
+    local UIScale = Create("UIScale", LabelVal)
+    
+    local function UpdateLabel(NewValue)
+        local Number = tonumber(NewValue * Increase)
+        Number = math.floor(Number * 100) / 100
+        Default = Number
+        LabelVal.Text = tostring(Number)
+        task.spawn(Callback, Number)
+    end
+
+    local function ControlPos()
+        local MousePos = UserInputService:GetMouseLocation()
+        local APos = MousePos.X - SliderBar.AbsolutePosition.X
+        local ClampedPos = math.clamp(APos / SliderBar.AbsoluteSize.X, 0, 1)
+        SliderIcon.Size = UDim2.new(ClampedPos, 0, 1, 0)
+        Indicator.Position = UDim2.new(ClampedPos, 0, -2.5, 0)
+    end
+
+    connectionSlider.close1 = Indicator.MouseButton1Down:Connect(function()
+        CreateTween(Indicator, "Transparency", 0, 0.3)
+        while UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+            task.wait()
+            ControlPos()
+        end
+        CreateTween(Indicator, "Transparency", 0.2, 0.3)
+        UpdateLabel(Indicator.Position.X.Scale * (Max - Min) + Min)
+    end)
+
+    connectionSlider.close2 = Indicator:GetPropertyChangedSignal("Position"):Connect(function()
+        UpdateLabel((Indicator.Position.X.Scale * (Max - Min) + Min))
+    end)
+
+    connectionSlider.close3 = LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
+        UIScale.Scale = 0.3
+        CreateTween(UIScale, "Scale", 1.2, 0.1)
+        CreateTween(LabelVal, "Rotation", math.random(-1, 1) * 5, 0.15, true)
+        CreateTween(UIScale, "Scale", 1, 0.2)
+        CreateTween(LabelVal, "Rotation", 0, 0.1)
+    end)
+
+    local function SetSlider(NewValue)
+        local MinV, MaxV = Min * Increase, Max * Increase
+        local SliderPos = (NewValue - MinV) / (MaxV - MinV)
+        CreateTween(Indicator, "Position", UDim2.new(SliderPos, 0, -2.5, 0), 0.3, true)
+        UpdateLabel(NewValue)
+    end
+    SetSlider(Default)
+
+    local function Clear()
+        for _, connection in pairs(connectionSlider) do
+            connection:Disconnect()
+        end
+        connectionSlider = {}
+        SetSlider(0)
+    end
+
+    connectionSlider.close4 = Frame.AncestryChanged:Connect(Clear)
   end
 
   function TypeTextLabel(TextLabel, Text, Delay)
