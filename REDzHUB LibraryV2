@@ -135,36 +135,35 @@ functionCreate.CreateTween1 = function(instance, property, goal, duration, easin
 end
 
 functionCreate.TextSetColor = function(instance)
-  instance.MouseEnter:Connect(function()
-    CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
+  if not instance or not instance.Parent then return end
+  local connectionTextSetColor = {}
+  local isMouseHovered = false
+  connectionTextSetColor.MouseEnter = instance.MouseEnter:Connect(function()
+    isMouseHovered = true
   end)
-  instance.MouseLeave:Connect(function()
-    CreateTween(instance, "TextColor3", Configs_HUB.Cor_Text, 0.4, false)
+  connectionTextSetColor.MouseLeave = instance.MouseLeave:Connect(function()
+    isMouseHovered = false
   end)
-end
-
-functionCreate.ShakeEffect = function(instance)
-    isRotationStored = false
-    originalRotation = 0
-
-    instance.MouseEnter:Connect(function()
-        if not isRotationStored then
-            originalRotation = instance.Rotation
-            isRotationStored = true
-        end
-
-        shakeAmount = 3
-        shakeDuration = 0.05
-        shakeCount = 5
-
-        for i = 1, shakeCount do
-            CreateTween(instance, "Rotation", originalRotation + shakeAmount, shakeDuration, true)
-            CreateTween(instance, "Rotation", originalRotation - shakeAmount, shakeDuration, true)
-        end
-    end)
-    instance.MouseLeave:Connect(function()
-    CreateTween(instance, "Rotation", originalRotation, 0.2, false)
-    end)
+  connectionTextSetColor.RenderStepped = RunService.RenderStepped:Connect(function()
+    if isMouseHovered then
+      CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
+    else
+      CreateTween(instance, "TextColor3", Configs_HUB.Cor_Text, 0.4, false)
+    end
+  end)
+  local function cleanup()
+    for _, connection in pairs(connections) do
+      if connection then
+        connection:Disconnect()
+      end
+    end
+    connections = {}
+  end
+  connectionTextSetColor.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
+    if not parent then
+      cleanup()
+    end
+  end)
 end
 
 SetProps = functionCreate.SetProps
@@ -174,7 +173,6 @@ CreateGradient = functionCreate.CreateGradient
 CreateTween = functionCreate.CreateTween
 CreateTween1 = functionCreate.CreateTween1
 TextSetColor = functionCreate.TextSetColor
-ShakeEffect = functionCreate.ShakeEffect
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
   Name = "hcx hub library",
