@@ -401,14 +401,16 @@ function MakeWindow(Configs)
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
     ScrollBarThickness = 2
-  })Create("UIListLayout", ScrollBar, {
+  })local listLayoutScrollBar = Create("UIListLayout", ScrollBar, {
     Padding = UDim.new(0, 5),
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", ScrollBar, {
       PaddingLeft = UDim.new(0.028, 0),
       PaddingTop = UDim.new(0.005, 0),
       PaddingBottom = UDim.new(0.005, 0)
-  })
+  })listLayoutScrollBar:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+      ScrollBar.CanvasSize = UDim2.new(0, 0, listLayoutScrollBar.AbsoluteContentSize.Y, 0)
+  end)
 
   local Bottomright = Create("Frame", Menu, {
     Size = UDim2.new(0.002, 0, 0.913, 0),
@@ -3489,16 +3491,16 @@ function MakeTab(Configs)
         AutomaticCanvasSize = Enum.AutomaticSize.Y
     })
     Container.Name = TabName
-
-    Create("UIListLayout", Container, {
+    local listLayoutContainer = Create("UIListLayout", Container, {
         Padding = UDim.new(0, 5),
         SortOrder = Enum.SortOrder.LayoutOrder,
-    })
-    Create("UIPadding", Container, {
+    })Create("UIPadding", Container, {
       PaddingLeft = UDim.new(0.028, 0),
       PaddingTop = UDim.new(0.005, 0),
       PaddingBottom = UDim.new(0.005, 0)
-    })
+    })listLayoutContainer:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+      Container.CanvasSize = UDim2.new(0, 0, listLayoutContainer.AbsoluteContentSize.Y, 0)
+     end)
     
     TextButton.MouseButton1Click:Connect(function()
         for _, container in pairs(Containers:GetChildren()) do
