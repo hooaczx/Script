@@ -385,7 +385,7 @@ function MakeWindow(Configs)
   AnimMenu:Destroy()
   TopBar.Visible = true
   Menu.Draggable = true
-  
+
   local line_Containers = Create("Frame", Menu, {
     BackgroundTransparency = 1,
     Size = UDim2.new(1, 0, 1, 0)
@@ -394,7 +394,7 @@ function MakeWindow(Configs)
    local ScrollBar = Create("ScrollingFrame", Menu, {
     Size = UDim2.new(0.225, 0, 0.91, 0),
     Position = UDim2.new(0, 0, 0.085, 0),
-    CanvasSize = UDim2.new(),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -404,13 +404,9 @@ function MakeWindow(Configs)
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", ScrollBar, {
       PaddingLeft = UDim.new(0.028, 0),
-      PaddingTop = UDim.new(0.005, 0),
-      PaddingBottom = UDim.new(0.005, 0)
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
   })
-  
-  functionCreate.close = listLayoutScrollBar:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-      ScrollBar.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
-  end)
 
   local Bottomright = Create("Frame", Menu, {
     Size = UDim2.new(0.002, 0, 0.913, 0),
@@ -973,9 +969,7 @@ local Frame1 = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.4, 0, 0.85, 0),
     BackgroundColor3 = Configs_HUB.Cor_Options,
     Position = UDim2.new(0.3, 0, 0, 0),
-    BackgroundTransparency = 0,
-    Active = true,
-    Draggable = true,
+    BackgroundTransparency = 0, 
     Visible = false
 })
 
@@ -1146,8 +1140,8 @@ Corner(PreviousButton, {CornerRadius = UDim.new(1, 0)})
 
 local songList = Create("ScrollingFrame", Frame1, {
     Size = UDim2.new(1, 0, 0.8, 0),
-    Position = UDim2.new(0, 0, 0.21, 0),
-    CanvasSize = UDim2.new(),
+    Position = UDim2.new(0, 0, 0.2, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -1157,7 +1151,9 @@ local songList = Create("ScrollingFrame", Frame1, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", songList, {
       PaddingLeft = UDim.new(0.028, 0),
-})
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local isAutoPlayEnabled = false
 local isLooping = false
@@ -1549,7 +1545,7 @@ TextSetColor(Text77)
 local scrollingsettingmusicFrame = Create("ScrollingFrame", framemusic, {
     Size = UDim2.new(1, 0, 0.85, 0),
     Position = UDim2.new(0, 0, 0.15, 0),
-    CanvasSize = UDim2.new(),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -1559,6 +1555,8 @@ local scrollingsettingmusicFrame = Create("ScrollingFrame", framemusic, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", scrollingsettingmusicFrame, {
       PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
   })
 
 local isSettingLoopState = false
@@ -1953,7 +1951,9 @@ local frameGame = Create("ScrollingFrame", framek, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", frameGame, {
       PaddingLeft = UDim.new(0.028, 0),
-})
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local mainGameLabel = Create("TextLabel", frameGame, {
     Size = UDim2.new(0.96, 0, 0.02, 0),
@@ -2875,7 +2875,7 @@ Button.MouseButton1Click:Connect(function()
          Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
       else
         minimize = false
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, true)
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0.63, 0, 0), 0.3, true)
         Menu.Visible = false
         ScrollBar.Visible = false
         Containers.Visible = false
@@ -2894,7 +2894,7 @@ Button.MouseButton1Click:Connect(function()
         line_Containers.Visible = true
         Menu.Visible = true
         click1:Play()
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, false)
       end
     end
 end)
@@ -2918,7 +2918,7 @@ TextSetColor(Text7)
 local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
     Size = UDim2.new(1, 0, 0.85, 0),
     Position = UDim2.new(0, 0, 0.15, 0),
-    CanvasSize = UDim2.new(),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
@@ -2928,7 +2928,9 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
     SortOrder = Enum.SortOrder.LayoutOrder,
   })Create("UIPadding", scrollingSettingFrame, {
       PaddingLeft = UDim.new(0.028, 0),
-})
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local isClickEffectEnabled = false
 local ripples = {}
@@ -3491,15 +3493,13 @@ function MakeTab(Configs)
         AutomaticCanvasSize = Enum.AutomaticSize.Y
     })
     Container.Name = TabName
-
-    Create("UIListLayout", Container, {
+    local listLayoutContainer = Create("UIListLayout", Container, {
         Padding = UDim.new(0, 5),
         SortOrder = Enum.SortOrder.LayoutOrder,
-    })
-    Create("UIPadding", Container, {
+    })Create("UIPadding", Container, {
       PaddingLeft = UDim.new(0.028, 0),
-      PaddingTop = UDim.new(0, 3),
-      PaddingBottom = UDim.new(10, 0)
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
     })
     
     TextButton.MouseButton1Click:Connect(function()
