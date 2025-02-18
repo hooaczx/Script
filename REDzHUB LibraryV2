@@ -395,7 +395,7 @@ Corner(Menu)
   })
 
    local ScrollBar = Create("ScrollingFrame", Menu, {
-    Size = UDim2.new(0.225, 0, 0.91, 0),
+    Size = UDim2.new(0.225, 0, 0.9, 0),
     Position = UDim2.new(0, 0, 1, 0),
     AnchorPoint = Vector2.new(0, 1),
     CanvasSize = UDim2.new(),
@@ -419,7 +419,7 @@ Corner(Menu)
   })
 
   local Containers = Create("Frame", Menu, {
-    Size = UDim2.new(0.762, 0, 0.91, 0),
+    Size = UDim2.new(0.762, 0, 0.9, 0),
     AnchorPoint = Vector2.new(1, 1),
     Position = UDim2.new(1, 0, 1, 0),
     BackgroundTransparency = 1
@@ -3637,7 +3637,7 @@ function MakeTab(Configs)
     local Callback = Configs.Callback or function() end
     
     local TextButton = Create("TextButton", parent, {
-        Size = UDim2.new(0.95, 0, 0.1, 0),
+        Size = UDim2.new(0.95, 0, 0.12, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
         Name = "Frame",
         Text = "",
@@ -3650,7 +3650,6 @@ function MakeTab(Configs)
         TextColor3 = Configs_HUB.Cor_Text,
         TextWrapped = true,
         TextSize = 12,
-        TextWrapped = true,
         Text = ToggleName,
         Size = UDim2.new(0.93, 0, 1, 0),
         Position = UDim2.new(0.012 + 0.08, 0, 0, 0),
@@ -3665,55 +3664,84 @@ function MakeTab(Configs)
         BackgroundTransparency = 1,
     })
     Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
-    local Stroke = Stroke(Frame1, {Thickness = 2})
+    local Stroke1 = Stroke(Frame1, {Thickness = 2})
     
     local Frame2 = Create("Frame", Frame1, {
-        Size = UDim2.new(0.4, 0, 0.95, 0),
-        Position = UDim2.new(0, 0, 0.5, 0),
+        Size = UDim2.new(0.5, 0, 0.9, 0),
+        Position = UDim2.new(0, 0, 0.47, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })
+    })local Stroke2 = Stroke(Frame2, {Thickness = 1})
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
     
     local OnOff = false
     if Default then
         OnOff = true
-        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.47, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-        CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+        CreateTween(Stroke1, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+        CreateTween(Stroke2, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
     end
     Callback(OnOff)
     local function ResetToggle()
         OnOff = false
-        CreateTween(Frame2, "Position", UDim2.new(0.1, 0, 0.5, 0), 0.2, false)
+        CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.47, 0), 0.2, false)
         CreateTween(Frame2, "BackgroundColor3", Configs_HUB.Cor_Stroke, 0.2, false)
-        CreateTween(Stroke, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(Stroke1, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
+        CreateTween(Stroke2, "Color", Configs_HUB.Cor_Stroke, 0.2, false)
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         Callback(false)
     end
-    
-    parent.AncestryChanged:Connect(function(_, parent)
+    local cleartoggle
+    cleartoggle = parent.AncestryChanged:Connect(function(_, parent)
         if not parent and OnOff then
             ResetToggle()
+           if cleartoggle then
+            cleartoggle:Disconnect()
+            cleartoggle = nil
+           end
         end
     end)
+    
+    local function CreateEffect(text, parent)
+     local EffectLabel = Create("TextLabel", parent, {
+         Text = text,
+         TextColor3 = Configs_HUB.Cor_Text,
+         Font = Configs_HUB.Text_Font,
+         BackgroundTransparency = 1,
+         Size = UDim2.new(0.3, 0, 0.3, 0),
+         Position = UDim2.new(0.35, 0, -0.2, 0)
+     })
+     local UIScale = Create("UIScale", EffectLabel, {Scale = 0.5})
+     CreateTween(UIScale, "Scale", 1, 0.2, false)
+     CreateTween(EffectLabel, "Position", UDim2.new(0.35, 0, -0.2, 0), 0.3, false)
+     CreateTween(EffectLabel, "TextTransparency", 1, 0.5, true)
+
+      task.delay(0.3, function()
+          EffectLabel:Destroy()
+      end)
+    end
+    
     TextButton.MouseButton1Click:Connect(function()
-        if not OnOff then
-            clicktoggle:Play()
-            OnOff = true
-            CreateTween(Frame2, "Position", UDim2.new(0.6, 0, 0.5, 0), 0.2, false)
-            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            CreateTween(Stroke, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-            CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-            Callback(true)
-        else
-            falsetoggle:Play()
-            ResetToggle()
+      if not OnOff then
+          clicktoggle:Play()
+          OnOff = true
+          CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
+          CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateTween(Stroke1, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateTween(Stroke2, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+          CreateEffect("ON", Frame1)
+          Callback(true)
+      else
+          falsetoggle:Play()
+          ResetToggle()
+          CreateEffect("OFF", Frame1)
          end
-     end)
-     return {Frame2, Stroke, OnOff, Callback}
-  end
+      end)
+     return {Frame2, Stroke1, OnOff, Callback}
+   end
 
   function AddTextBox(parent, Configs)
     local TextBoxName = Configs.Name or "TextBox!!"
