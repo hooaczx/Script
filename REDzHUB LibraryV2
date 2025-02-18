@@ -160,11 +160,11 @@ functionCreate.TextSetColor = function(instance)
     connectionTextSetColor = {}
   end
   connectionTextSetColor.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
-    if not parent then
-      cleanup()
-    end
-  end)
-end
+    if parent == nil and instance.Parent == nil then  -- เช็คให้แน่ใจว่า Parent หายไปจริง ๆ
+       cleanup()
+      end
+   end)
+ end
 
 SetProps = functionCreate.SetProps
 Corner = functionCreate.Corner
