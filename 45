@@ -152,12 +152,12 @@ functionCreate.TextSetColor = function(instance)
     end
   end)
   local function cleanup()
-    for _, connection in pairs(connections) do
+    for _, connection in pairs(connectionTextSetColor) do
       if connection then
         connection:Disconnect()
       end
     end
-    connections = {}
+    connectionTextSetColor = {}
   end
   connectionTextSetColor.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
     if not parent then
@@ -3330,9 +3330,8 @@ local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
     Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0),
-    Size = UDim2.new(0.06, 0, 0.06, 0),
+    Size = UDim2.new(0.06, 0, 0.6, 0),
     ZIndex = 10,
-    SizeConstraint = Enum.SizeConstraint.RelativeXX,
     Image = States.Off
 })
 
@@ -3391,30 +3390,61 @@ end
 local ShiftLockAction = ContextActionService:BindAction("Shift Lock", functions.ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
-local function onMouseEnter(button)
-        CreateTween(button, "Size", UDim2.new(0.08, 0, 0.7, 0), 0.2, true)
+  local strokeeffect = Create("Frame", frame, {
+    Size = UDim2.new(0.06, 0, 0.6, 0),
+    Position = UDim2.new(0.22, 0, 0.22, 0),
+    BackgroundTransparency = 1, 
+    ZIndex = 10
+  })
+    
+  local stroke = Create("UIStroke", strokeeffect)
+    stroke.Color = Color3.fromRGB(255, 255, 255),
+    stroke.ApplyStrokeMode = "Border",
+    stroke.Transparency = 1
+  })
+
+
+   function handleButton(button)
+     if not button or not button.Parent then return end
+      local connectionhandleButton = {}
+      local isMouseHovered = false
+      connectionhandleButton.MouseEnter = instance.MouseEnter:Connect(function()
+          isMouseHovered = true
+       end)
+       connectionhandleButton.MouseLeave = instance.MouseLeave:Connect(function()
+           isMouseHovered = false
+       end)
+       connectionhandleButton.RenderStepped = RunService.RenderStepped:Connect(function()
+          if isMouseHovered then
+             CreateTween(button, "Size", UDim2.new(0.08, 0, 0.8, 0), 0.2, true)
+             CreateTween(strokeeffect, "Position", button.Position, 0.2, true)
+             stroke.Transparency = 0
+         else
+             CreateTween(button, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, true)
+             stroke.Transparency = 1
+        end
+      end)
+       local function cleanup()
+          for _, connection in pairs(connectionhandleButton) do
+             if connection then
+                connection:Disconnect()
+           end
+        end
+       connectionhandleButton = {}
+      end
+       connectionhandleButton.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
+          if not parent then
+           cleanup()
+             end
+       end)
     end
-
-    local function onMouseLeave(button)
-        CreateTween(button, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, true)
-    end
-
-    -- Apply the effect to all the buttons
-    MusicToggleButton.MouseEnter:Connect(function() onMouseEnter(MusicToggleButton) end)
-    MusicToggleButton.MouseLeave:Connect(function() onMouseLeave(MusicToggleButton) end)
-
-    SplitgameToggleButton.MouseEnter:Connect(function() onMouseEnter(SplitgameToggleButton) end)
-    SplitgameToggleButton.MouseLeave:Connect(function() onMouseLeave(SplitgameToggleButton) end)
-
-    infoToggleButton.MouseEnter:Connect(function() onMouseEnter(infoToggleButton) end)
-    infoToggleButton.MouseLeave:Connect(function() onMouseLeave(infoToggleButton) end)
-
-    Button.MouseEnter:Connect(function() onMouseEnter(Button) end)
-    Button.MouseLeave:Connect(function() onMouseLeave(Button) end)
-
-    SettingButton.MouseEnter:Connect(function() onMouseEnter(SettingButton) end)
-    SettingButton.MouseLeave:Connect(function() onMouseLeave(SettingButton) end)
-
+    
+    handleButton(MusicToggleButton)
+    handleButton(SplitgameToggleButton)
+    handleButton(infoToggleButton)
+    handleButton(Button)
+    handleButton(SettingButton)
+    handleButton(ShiftLockButton)
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
