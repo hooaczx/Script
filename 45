@@ -3433,16 +3433,20 @@ local toggleGroups = {
         button = MusicToggleButton,
         state = false,
         onClose = function()
-            CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0, 0), 0.3, true)
-            Frame2.Visible = false
+            if Frame2.Visible then
+                CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0, 0), 0.3, true)
+                Frame2.Visible = false
+            end
         end,
     },
     SplitGame = {
         button = SplitgameToggleButton,
         state = false,
         onClose = function()
-            CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
-            framek.Visible = false
+            if framek.Visible then
+                CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+                framek.Visible = false
+            end
         end,
     },
     Info = {
@@ -3450,8 +3454,10 @@ local toggleGroups = {
         state = false,
         onClose = function()
             for _, element in ipairs(uiinfoToggle) do
-                CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
-                element.instance.Visible = false
+                if element.instance.Visible then
+                    CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
+                    element.instance.Visible = false
+                end
             end
         end,
     },
@@ -3459,40 +3465,53 @@ local toggleGroups = {
         button = SettingButton,
         state = false,
         onClose = function()
-            CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
-            frameSetting.Visible = false
+            if frameSetting.Visible then
+                CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
+                frameSetting.Visible = false
+            end
         end,
     },
     Menu = {
         button = Button,
         state = false,
         onClose = function()
-            minimize = false
-            CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
-            Menu.Visible = false
-            ScrollBar.Visible = false
-            Containers.Visible = false
-            line_Containers.Visible = false
-            Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+            if Menu.Visible then
+                minimize = false
+                CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
+                Menu.Visible = false
+                ScrollBar.Visible = false
+                Containers.Visible = false
+                line_Containers.Visible = false
+                Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+            end
         end,
     },
 }
 
--- ฟังก์ชันเปิด-ปิดปุ่ม
+-- ฟังก์ชันเปิด-ปิดปุ่ม (ใช้เงื่อนไข if แทน task.wait())
 local function toggleButton(groupName)
-    for name, group in pairs(toggleGroups) do
-        if name ~= groupName and group.state then
-            group.state = false
-            group.onClose()
+    local group = toggleGroups[groupName]
+
+    if not group then return end
+    
+    -- ถ้าปุ่มที่กดอยู่แล้ว ให้ปิดมันลง
+    if group.state then
+        group.state = false
+        group.onClose()
+        return
+    end
+
+    -- ปิดทุกปุ่มที่ยังเปิดอยู่ก่อน
+    for name, g in pairs(toggleGroups) do
+        if g.state and name ~= groupName then
+            g.state = false
+            g.onClose()
         end
     end
 
-    local group = toggleGroups[groupName]
-    if group then
-        group.state = not group.state
-        if not group.state then
-            group.onClose()
-        end
+    -- เปิดปุ่มใหม่ (ถ้ามันยังไม่เปิด)
+    if not group.state then
+        group.state = true
     end
 end
 
@@ -3500,11 +3519,11 @@ end
 RunService.RenderStepped:Connect(function()
     local activeGroup = nil
 
-    -- หาปุ่มที่ถูกเปิดอยู่
+    -- หาปุ่มที่เปิดอยู่
     for name, group in pairs(toggleGroups) do
         if group.state then
             if activeGroup and activeGroup ~= name then
-                -- ปิดปุ่มก่อนหน้า ถ้าพบว่ามีปุ่มใหม่เปิดขึ้นมา
+                -- ปิดปุ่มก่อนหน้า ถ้ามีปุ่มใหม่เปิด
                 toggleGroups[activeGroup].state = false
                 toggleGroups[activeGroup].onClose()
             end
@@ -3513,13 +3532,12 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- กำหนดให้ปุ่มสามารถถูกกดเพื่อเปิด-ปิดได้
+-- เชื่อมต่อปุ่มให้สามารถกดเปิด-ปิดได้
 for name, group in pairs(toggleGroups) do
     group.button.MouseButton1Click:Connect(function()
         toggleButton(name)
     end)
 end
-
 
 
 ScreenGui.AncestryChanged:Connect(function()
