@@ -422,8 +422,8 @@ function MakeWindow(Configs)
     BackgroundTransparency = 1
   })Corner(Containers)
 
+IsMinimizedu = true
 IsMinimized = true
-IsMinimizedu = false
 local isLockedMinimize = false
 local isLockedClose = false
 
@@ -3540,28 +3540,6 @@ local toggleGroups = {
     },
 }
 
--- เมื่อกดปุ่มแต่ละอันจะทำการเปิด/ปิดกลุ่มนั้น
-for _, group in ipairs(toggleGroups) do
-    group.button.MouseButton1Click:Connect(function()
-        if not group.state then
-            -- เมื่อเปิดกลุ่มใหม่ ให้ปิดกลุ่มอื่นที่เปิดอยู่ทันที
-            for _, other in ipairs(toggleGroups) do
-                if other.state and other ~= group then
-                    other.onClose()
-                    other.state = false
-                end
-            end
-            group.onOpen()
-            group.state = true
-        else
-            group.onClose()
-            group.state = false
-        end
-    end)
-end
-
--- ใช้ RunService.Heartbeat เพื่อตรวจสอบสถานะในทุก ๆ เฟรม
--- หากพบว่ามีกลุ่มที่เปิดอยู่มากกว่าหนึ่งกลุ่ม ให้ปิดกลุ่มที่ไม่ใช่กลุ่มล่าสุดที่เปิด
 RunService.Heartbeat:Connect(function()
     local activeCount = 0
     local lastActive = nil
