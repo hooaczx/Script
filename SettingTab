@@ -194,47 +194,6 @@ AddToggle(Main5u6, {
     end
 })
 
-local settingsAdjust = {
-    ["Brightness"] = "Brightness",
-    ["Exposure"] = "ExposureCompensation",
-    ["Ambient"] = "Ambient"
-}
-local selectedSetting = "Brightness"
-local defaultValuesAdjust = {}
-
-for name, property in pairs(settingsAdjust) do
-    defaultValuesAdjust[name] = game.Lighting[property]
-end
-
-AddDropdown(Main5u6, {
-    Name = "Select Setting",
-    Options = {"Brightness", "Exposure", "Ambient"},
-    Default = "Brightness",
-    Callback = function(option)
-        selectedSetting = option
-    end
-})
-
-AddSlider(Main5u6, {
-    Name = "Adjust brightness",
-    Increase = 0.1,
-    MinValue = 0,
-    MaxValue = 2,
-    Default = 0,
-    Callback = function(value)
-        local property = settingsAdjust[selectedSetting]
-        if value == 0 then
-            game.Lighting[property] = defaultValuesAdjust[selectedSetting]
-        else
-            if selectedSetting == "Ambient" then
-                game.Lighting.Ambient = Color3.fromHSV(value, 1, 1)
-            else
-                game.Lighting[property] = value
-            end
-        end
-    end
-})
-
 AddTextBox(Main5u6, {
   Name = "Number CameraFieldOfView",
   Default = "Enter",
