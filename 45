@@ -160,11 +160,11 @@ functionCreate.TextSetColor = function(instance)
     connectionTextSetColor = {}
   end
   connectionTextSetColor.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
-    if not parent then
-      cleanup()
-    end
-  end)
-end
+    if parent == nil and instance.Parent == nil then  -- เช็คให้แน่ใจว่า Parent หายไปจริง ๆ
+       cleanup()
+      end
+   end)
+ end
 
 SetProps = functionCreate.SetProps
 Corner = functionCreate.Corner
@@ -3416,11 +3416,11 @@ ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
        connectionhandleButton.RenderStepped = RunService.RenderStepped:Connect(function()
           if isMouseHovered then
              CreateTween(button, "Size", UDim2.new(0.08, 0, 0.8, 0), 0.2, false)
-             CreateTween(strokeeffect, "Size", UDim2.new(0.08, 0, 0.8, 0), 0.2, false)
+             CreateTween(strokeeffect, "Size", button.Size, 0.2, false)
              CreateTween(strokeeffect, "Position", button.Position, 0.2, true)
          else
              CreateTween(button, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, false)
-             CreateTween(strokeeffect, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, true)
+             CreateTween(strokeeffect, "Size", button.Size, 0.2, true)
           end
        end)
        local function cleanup()
