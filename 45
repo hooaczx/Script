@@ -422,8 +422,8 @@ function MakeWindow(Configs)
     BackgroundTransparency = 1
   })Corner(Containers)
 
-local minimize = true
-local IsMinimized = true
+IsMinimized = true
+IsMinimizedu = false
 local isLockedMinimize = false
 local isLockedClose = false
 
@@ -432,6 +432,7 @@ Minimize_BTN.MouseButton1Click:Connect(function()
     isLockedMinimize = true
     if IsMinimized then
       IsMinimized = false
+      IsMinimizedu = true
       Containers.Visible = false
       Bottomright.Visible = false
       ScrollBar.Visible = false
@@ -440,6 +441,7 @@ Minimize_BTN.MouseButton1Click:Connect(function()
       CreateTween(TopBar, "Size", UDim2.new(1, 0, 1, 0), 0, false)
     else
       IsMinimized = true
+      IsMinimizedu = false
       CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
       CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
       Containers.Visible = true
@@ -454,8 +456,9 @@ end)
 function CreateClose()
   if not isLockedClose then
     isLockedClose = true
-    if minimize == false then
+    if IsMinimizedu then
       IsMinimized = true
+      IsMinimizedu = false
       CreateTween(TopBar, "Size", UDim2.new(1, 0, 0.09, 0), 0, false)
       CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.15, true)
       Containers.Visible = true
@@ -2862,8 +2865,15 @@ local Button = Create("ImageButton", frame, {
 if corner then Corner(Button) end 
 if stroke then Stroke(Button, {Color = strokecolor}) end
 
+local minimize = true
 Button.MouseButton1Click:Connect(function()
     if minimize then
+     if IsMinimizedu then
+         minimize = false
+         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
+         Menu.Visible = false
+         Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+      else
         minimize = false
         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
         Menu.Visible = false
@@ -2871,7 +2881,13 @@ Button.MouseButton1Click:Connect(function()
         Containers.Visible = false
         line_Containers.Visible = false
         Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+      end
     else
+     if IsMinimizedu then
+         minimize = true
+         Menu.Visible = true
+         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
+      else
         minimize = true
         ScrollBar.Visible = true
         Containers.Visible = true
@@ -2879,6 +2895,7 @@ Button.MouseButton1Click:Connect(function()
         Menu.Visible = true
         click1:Play()
         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
+      end
     end
 end)
 
@@ -3427,118 +3444,6 @@ ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
     handleButton(Button)
     handleButton(SettingButton)
     handleButton(ShiftLockButton)
-
-local toggleGroups = {
-    Music = {
-        button = MusicToggleButton,
-        state = false,
-        onClose = function()
-            if Frame2.Visible then
-                CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0, 0), 0.3, true)
-                Frame2.Visible = false
-            end
-        end,
-    },
-    SplitGame = {
-        button = SplitgameToggleButton,
-        state = false,
-        onClose = function()
-            if framek.Visible then
-                CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
-                framek.Visible = false
-            end
-        end,
-    },
-    Info = {
-        button = infoToggleButton,
-        state = false,
-        onClose = function()
-            for _, element in ipairs(uiinfoToggle) do
-                if element.instance.Visible then
-                    CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
-                    element.instance.Visible = false
-                end
-            end
-        end,
-    },
-    Setting = {
-        button = SettingButton,
-        state = false,
-        onClose = function()
-            if frameSetting.Visible then
-                CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
-                frameSetting.Visible = false
-            end
-        end,
-    },
-    Menu = {
-        button = Button,
-        state = false,
-        onClose = function()
-            if Menu.Visible then
-                minimize = false
-                CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
-                Menu.Visible = false
-                ScrollBar.Visible = false
-                Containers.Visible = false
-                line_Containers.Visible = false
-                Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
-            end
-        end,
-    },
-}
-
--- ฟังก์ชันเปิด-ปิดปุ่ม (ใช้เงื่อนไข if แทน task.wait())
-local function toggleButton(groupName)
-    local group = toggleGroups[groupName]
-
-    if not group then return end
-    
-    -- ถ้าปุ่มที่กดอยู่แล้ว ให้ปิดมันลง
-    if group.state then
-        group.state = false
-        group.onClose()
-        return
-    end
-
-    -- ปิดทุกปุ่มที่ยังเปิดอยู่ก่อน
-    for name, g in pairs(toggleGroups) do
-        if g.state and name ~= groupName then
-            g.state = false
-            g.onClose()
-        end
-    end
-
-    -- เปิดปุ่มใหม่ (ถ้ามันยังไม่เปิด)
-    if not group.state then
-        group.state = true
-    end
-end
-
--- ตรวจสอบซ้ำๆ ทุกเฟรม
-RunService.RenderStepped:Connect(function()
-    local activeGroup = nil
-
-    -- หาปุ่มที่เปิดอยู่
-    for name, group in pairs(toggleGroups) do
-        if group.state then
-            if activeGroup and activeGroup ~= name then
-                -- ปิดปุ่มก่อนหน้า ถ้ามีปุ่มใหม่เปิด
-                toggleGroups[activeGroup].state = false
-                toggleGroups[activeGroup].onClose()
-            end
-            activeGroup = name
-        end
-    end
-end)
-
--- เชื่อมต่อปุ่มให้สามารถกดเปิด-ปิดได้
-for name, group in pairs(toggleGroups) do
-    group.button.MouseButton1Click:Connect(function()
-        toggleButton(name)
-    end)
-end
-
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
