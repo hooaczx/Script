@@ -3445,6 +3445,144 @@ ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
     handleButton(SettingButton)
     handleButton(ShiftLockButton)
 
+local RunService = game:GetService("RunService")
+
+-- ตารางเก็บข้อมูลของแต่ละกลุ่ม (ไม่รวม Close_Button และ Minimize_BTN)
+local toggleGroups = {
+    {
+        name = "Music",
+        button = MusicToggleButton,
+        state = false,
+        onOpen = function()
+            Frame2.Visible = true
+            click1:Play()
+            CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0.1, 0), 0.3, true)
+        end,
+        onClose = function()
+            click2:Play()
+            CreateTween(Frame2, "Size", UDim2.new(0.15, 0, 0, 0), 0.3, true)
+            Frame2.Visible = false
+        end,
+    },
+    {
+        name = "SplitGame",
+        button = SplitgameToggleButton,
+        state = false,
+        onOpen = function()
+            framek.Visible = true
+            click1:Play()
+            CreateTween(framek, "Size", UDim2.new(0.4, 0, 0.85, 0), 0.3, true)
+        end,
+        onClose = function()
+            click2:Play()
+            CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+            framek.Visible = false
+        end,
+    },
+    {
+        name = "Info",
+        button = infoToggleButton,
+        state = false,
+        onOpen = function()
+            click1:Play()
+            for _, element in ipairs(uiinfoToggle) do
+                element.instance.Visible = true
+                CreateTween1(element.instance, "Size", element.sizeOpen, 0.3, false)
+            end
+        end,
+        onClose = function()
+            click2:Play()
+            for _, element in ipairs(uiinfoToggle) do
+                CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
+                element.instance.Visible = false
+            end
+        end,
+    },
+    {
+        name = "Setting",
+        button = SettingButton,
+        state = false,
+        onOpen = function()
+            click1:Play()
+            frameSetting.Visible = true
+            CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
+        end,
+        onClose = function()
+            click2:Play()
+            CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
+            frameSetting.Visible = false
+        end,
+    },
+    {
+        name = "Menu",
+        button = Button,  -- ปุ่มนี้ใช้สำหรับ toggle Menu
+        state = false,
+        onOpen = function()
+            Menu.Visible = true
+            if IsMinimizedu then
+                CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
+            else
+                CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
+            end
+        end,
+        onClose = function()
+            if IsMinimizedu then
+                CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
+            else
+                CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
+                ScrollBar.Visible = false
+                Containers.Visible = false
+                line_Containers.Visible = false
+            end
+            Menu.Visible = false
+            Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+        end,
+    },
+}
+
+-- เมื่อกดปุ่มแต่ละอันจะทำการเปิด/ปิดกลุ่มนั้น
+for _, group in ipairs(toggleGroups) do
+    group.button.MouseButton1Click:Connect(function()
+        if not group.state then
+            -- เมื่อเปิดกลุ่มใหม่ ให้ปิดกลุ่มอื่นที่เปิดอยู่ทันที
+            for _, other in ipairs(toggleGroups) do
+                if other.state and other ~= group then
+                    other.onClose()
+                    other.state = false
+                end
+            end
+            group.onOpen()
+            group.state = true
+        else
+            group.onClose()
+            group.state = false
+        end
+    end)
+end
+
+-- ใช้ RunService.Heartbeat เพื่อตรวจสอบสถานะในทุก ๆ เฟรม
+-- หากพบว่ามีกลุ่มที่เปิดอยู่มากกว่าหนึ่งกลุ่ม ให้ปิดกลุ่มที่ไม่ใช่กลุ่มล่าสุดที่เปิด
+RunService.Heartbeat:Connect(function()
+    local activeCount = 0
+    local lastActive = nil
+    for _, group in ipairs(toggleGroups) do
+        if group.state then
+            activeCount = activeCount + 1
+            lastActive = group
+        end
+    end
+
+    if activeCount > 1 then
+        for _, group in ipairs(toggleGroups) do
+            if group ~= lastActive and group.state then
+                group.onClose()
+                group.state = false
+            end
+        end
+    end
+end)
+
+
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
         if ShiftLockmaingui then
