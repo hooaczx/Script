@@ -868,7 +868,7 @@ AddToggle(Main5u6, {
 
 if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
 AddWarningMessage(Main5u6, {
-  WarningMessage = "Anti Fling was removed due to safety concerns due to being banned from the game",
+  WarningMessage = "Anti Fling, Removed due to security concerns, may be banned from the game",
   ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
 })
 else
@@ -951,6 +951,30 @@ AddToggle(Main5u6, {
         if abcMetaTableConnection then
             abcMetaTableConnection:Disconnect()
         end
+    end
+  end
+})
+end
+
+if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
+AddWarningMessage(Main5u6, {
+  WarningMessage = "Noclip, Removed due to security concerns, may be banned from the game",
+  ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
+})
+else
+local Defaults = {}
+
+AddToggle(Main5u6, {
+  Name = "No-Clip",
+  Default = false,
+  Callback = function(s)
+    for _, part in ipairs(character:GetDescendants()) do
+      if part:IsA("BasePart") then
+        if Defaults[part] == nil then
+          Defaults[part] = part.CanCollide
+        end
+        part.CanCollide = s and false or Defaults[part]
+      end
     end
   end
 })
