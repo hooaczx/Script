@@ -1352,26 +1352,13 @@ local z9o4p3 = false
 local r5j7b1v = nil
 local y4654hhvc = nil
 
-function debugWarn(message)
-  warn(""..message)
-end
-
 function GetAnimationContainer(model)
 	local container = model:FindFirstChildOfClass("AnimationController")
 	if not container then
 		local humanoid = model:FindFirstChildOfClass("Humanoid")
 		if humanoid then
 			container = humanoid:FindFirstChildOfClass("Animator")
-			if container then
-				debugWarn("Found Animator in " .. model.Name)
-			else
-				debugWarn("No Animator found in " .. model.Name)
-			end
-		else
-			debugWarn("No Humanoid found in " .. model.Name)
 		end
-	else
-		debugWarn("Found AnimationController in " .. model.Name)
 	end
 	return container
 end
@@ -1379,13 +1366,11 @@ end
 function CloneAnimations(model)
 	local container = GetAnimationContainer(model)
 	if not container then
-	  debugWarn("Animation container not found in " .. model.Name)
-	 return
+		return
 	end
 	for _, child in pairs(container:GetChildren()) do
           if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
 	      child:Destroy()
-	      debugWarn("Destroyed clone " .. child.Name .. " in " .. model.Name)
 	   end
 	end
 	for _, anim in pairs(container:GetChildren()) do
@@ -1393,7 +1378,6 @@ function CloneAnimations(model)
 	       local clonedAnim = anim:Clone()
 	       clonedAnim.Parent = container
                clonedAnim:SetAttribute("IsClone", true)
-               debugWarn("Cloned animation '" .. anim.Name .. "' for '" .. model.Name .. "' using container '" .. container.ClassName .. "'")
             end
         end
     end
@@ -1403,11 +1387,53 @@ function g2y5x8v9(model)
 	cloneModel.Name = "X3z5Q"
 	local humanoidRoot = model:FindFirstChild("HumanoidRootPart")
 	if not humanoidRoot then
-	    debugWarn("HumanoidRootPart not found in " .. model.Name)
 	    return
 	end
 	local rootCFrame = humanoidRoot.CFrame
 	CloneAnimations(model)
+
+	local humanoid = model:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		for _, accessory in pairs(model:GetChildren()) do
+			if accessory:IsA("Accessory") then
+				local cloneAccessory = accessory:Clone()
+				cloneAccessory.Parent = cloneModel
+			end
+		end
+
+		local shirt = model:FindFirstChildOfClass("Shirt")
+		if shirt then
+			local cloneShirt = shirt:Clone()
+			cloneShirt.Parent = cloneModel
+		end
+
+		local pants = model:FindFirstChildOfClass("Pants")
+		if pants then
+			local clonePants = pants:Clone()
+			clonePants.Parent = cloneModel
+		end
+
+		local tshirt = model:FindFirstChildOfClass("TShirt")
+		if tshirt then
+			local cloneTShirt = tshirt:Clone()
+			cloneTShirt.Parent = cloneModel
+		end
+	end
+
+	for _, part in pairs(model:GetDescendants()) do
+		if part:IsA("Decal") then
+			local cloneDecal = part:Clone()
+			cloneDecal.Parent = cloneModel
+		elseif part:IsA("MeshPart") then
+			for _, child in pairs(part:GetChildren()) do
+				if child:IsA("Decal") then
+					local cloneDecal = child:Clone()
+					cloneDecal.Parent = part
+				end
+			end
+		end
+	end
+
 	for _, part in pairs(model:GetDescendants()) do
 		if part:IsA("BasePart") and part.Transparency < 1 then
 			local clonePart = part:Clone()
@@ -1423,30 +1449,17 @@ function g2y5x8v9(model)
 			clonePart.Material = part.Material
 			clonePart.CFrame = rootCFrame:ToWorldSpace(humanoidRoot.CFrame:ToObjectSpace(part.CFrame))
 			clonePart.Parent = cloneModel
-			local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-			local tweenProps = {Transparency = 1}
-			local success, tween = pcall(function()
-				return TweenService:Create(clonePart, tweenInfo, tweenProps)
-			end)
-			if success then
-				tween:Play()
-				tween.Completed:Connect(function()
-					if clonePart and clonePart.Parent then
-						clonePart:Destroy()
-					end
-				end)
-			end
 		end
 	end
 	cloneModel.Parent = workspace
 	game:GetService("Debris"):AddItem(cloneModel, 1)
 end
 
+
 function v2o8f9d3(model)
 	local humanoid = model:WaitForChild("Humanoid")
 	local humanoidRoot = model:WaitForChild("HumanoidRootPart")
 	if not humanoidRoot then
-		debugWarn("HumanoidRootPart not found in " .. model.Name)
 		return
 	end
 	
@@ -1463,7 +1476,6 @@ function v2o8f9d3(model)
 		
 		local currentRoot = model:FindFirstChild("HumanoidRootPart")
 		if not currentRoot then
-			debugWarn("HumanoidRootPart has been removed from " .. model.Name)
 			return
 		end
 		
@@ -1485,7 +1497,6 @@ AddToggle(Main5u6, {
             if player.Character then
                 v2o8f9d3(player.Character)
             else
-                warn("Player's character not found when enabling the effect")
             end
             y4654hhvc = player.CharacterAdded:Connect(function(character)
                 if z9o4p3 then
