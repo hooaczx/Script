@@ -960,24 +960,37 @@ AddToggle(Main5u6, {
   end
 })
 
-local ncpDflt, ncp = {}, nil
+local ncp, ncpDflt = {}, nil
 
 AddToggle(Main5u6, {
     Name = "No-Clip",
     Default = false,
     Callback = function(state)
         if state then
-            ncp = RunService.Stepped:Connect(function()
-                for _, part in ipairs(game.Players.LocalPlayer.Character:GetDescendants() or {}) do
-                    if part:IsA("BasePart") then
-                        ncpDflt[part] = ncpDflt[part] or part.CanCollide
-                        part.CanCollide = false
+            ncpDflt = game:GetService("RunService").Stepped:Connect(function()
+                local character = game.Players.LocalPlayer.Character
+                if character then
+                    for _, part in ipairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            if not ncp[part] then
+                                ncp[part] = part.CanCollide
+                            end
+                            part.CanCollide = false
+                        end
                     end
                 end
             end)
         else
-            if ncp then ncp:Disconnect() ncp = nil end
-            for part, canCollide in pairs(ncpDflt) do if part then part.CanCollide = canCollide end end
+            if ncpDflt then
+                ncpDflt:Disconnect()
+                ncpDflt = nil
+            end
+            for part, canCollide in pairs(ncp) do
+                if part and part.Parent then
+                    part.CanCollide = canCollide
+                end
+            end
+            table.clear(ncp)
         end
     end
 })
