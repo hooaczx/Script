@@ -222,19 +222,19 @@ AddToggle(Main5u6, {
         if not getgenv().originalFOV then
           getgenv().originalFOV = camera.FieldOfView
         end
-        getgenv().zoomConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        getgenv().zmCn = game:GetService("RunService").Heartbeat:Connect(function()
           if getgenv().loopZoom then
             pcall(function()
-              camera.FieldOfView = getgenv().originalFOV + (getgenv().CameraZoom or 0)
+              camera.FieldOfView = getgenv().FOV + (getgenv().CameraZoom or 0)
             end)
           end
         end)
       else
-        if getgenv().zoomConnection then
-          getgenv().zoomConnection:Disconnect()
-          getgenv().zoomConnection = nil
+        if getgenv().zmCn then
+          getgenv().zmCn:Disconnect()
+          getgenv().zmCn = nil
         end
-        if getgenv().originalFOV then
+        if getgenv().FOV then
           camera.FieldOfView = getgenv().originalFOV
         end
       end
@@ -249,7 +249,7 @@ AddTextBox(Main5u6, {
   ClearText = true,
   Callback = function(value)
     getgenv().CameraZoom = tonumber(value)
-    if getgenv().isZoomActive then
+    if getgenv().Zoom then
       game.Players.LocalPlayer.CameraMaxZoomDistance = getgenv().CameraZoom
     end
   end
@@ -259,15 +259,15 @@ AddToggle(Main5u6, {
   Name = "Camera Zoom",
   Default = false,
   Callback = function(state)
-    getgenv().isZoomActive = state
+    getgenv().Zoom = state
     local camera = game:GetService("Workspace").CurrentCamera
     if camera then
       if state then
         if not getgenv().initialMaxZoom then
           getgenv().initialMaxZoom = player.CameraMaxZoomDistance
         end
-        getgenv().zoomUpdateConnection = game:GetService("RunService").Heartbeat:Connect(function()
-          if getgenv().isZoomActive then
+        getgenv().zmUpdeCn = game:GetService("RunService").Heartbeat:Connect(function()
+          if getgenv().Zoom then
             pcall(function()
               local zoomValue = getgenv().CameraZoom
               player.CameraMaxZoomDistance = zoomValue
@@ -275,9 +275,9 @@ AddToggle(Main5u6, {
           end
         end)
       else
-        if getgenv().zoomUpdateConnection then
-          getgenv().zoomUpdateConnection:Disconnect()
-          getgenv().zoomUpdateConnection = nil
+        if getgenv().zmUpdeCn then
+          getgenv().zmUpdeCn:Disconnect()
+          getgenv().zmUpdeCn = nil
         end
         if getgenv().initialMaxZoom then
           player.CameraMaxZoomDistance = getgenv().initialMaxZoom
@@ -287,8 +287,8 @@ AddToggle(Main5u6, {
   end
 })
 
-local originalWalkSpeed, originalJumpPower = 16, 50
-local walkSpeedConnection, jumpPowerConnection 
+local orglWkSpd, orglJpPwr = 16, 50
+local wkSpdCn, jpPwrCn 
 
 AddTextBox(Main5u6, {
   Name = "Number WalkSpeed",
@@ -311,20 +311,20 @@ AddToggle(Main5u6, {
     local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
     if humanoid then
       if state then
-        originalWalkSpeed = humanoid.WalkSpeed
-        walkSpeedConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        orglWkSpd = humanoid.WalkSpeed
+        wkSpdCn = game:GetService("RunService").Heartbeat:Connect(function()
           if loopW then
             pcall(function()
-              humanoid.WalkSpeed = originalWalkSpeed + (getgenv().Walkspeed or 0)
+              humanoid.WalkSpeed = orglWkSpd + (getgenv().Walkspeed or 0)
             end)
           end
         end)
       else
-        if walkSpeedConnection then
-          walkSpeedConnection:Disconnect()
-          walkSpeedConnection = nil
+        if wkSpdCn then
+          wkSpdCn:Disconnect()
+          wkSpdCn = nil
         end
-        humanoid.WalkSpeed = originalWalkSpeed
+        humanoid.WalkSpeed = orglWkSpd
       end
     end
   end
@@ -336,9 +336,9 @@ AddTextBox(Main5u6, {
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(value)
-    local additionalJump = tonumber(value)
-    if additionalJump then
-      getgenv().Jumppower = additionalJump
+    local Jump = tonumber(value)
+    if Jump then
+      getgenv().Jumppower = Jump
     end
   end
 })
@@ -352,20 +352,20 @@ AddToggle(Main5u6, {
     local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
     if humanoid then
       if state then
-        originalJumpPower = humanoid.JumpPower
-        jumpPowerConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        orglJpPwr = humanoid.JumpPower
+        jpPwrCn = game:GetService("RunService").Heartbeat:Connect(function()
           if loopJ then
             pcall(function()
-              humanoid.JumpPower = originalJumpPower + (getgenv().Jumppower or 0)
+              humanoid.JumpPower = orglJpPwr + (getgenv().Jumppower or 0)
             end)
           end
         end)
       else
-        if jumpPowerConnection then
-          jumpPowerConnection:Disconnect()
-          jumpPowerConnection = nil
+        if jpPwrCn then
+          jpPwrCn:Disconnect()
+          jpPwrCn = nil
         end
-        humanoid.JumpPower = originalJumpPower
+        humanoid.JumpPower = orglJpPwr
       end
     end
   end
