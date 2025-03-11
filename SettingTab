@@ -1,12 +1,11 @@
 local Main5u6 = MakeTab({Name = "Setting"})
+
 local function isNumber(str)
-  if tonumber(str) ~= nil or str == 'inf' then
-    return true
-  end
+    return tonumber(str) ~= nil or str == 'inf'
 end
-repeat
-    wait()
-until game:IsLoaded()
+
+repeat wait() until game:IsLoaded()
+
 local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 0
 getgenv().TPJpBst = 0
@@ -24,6 +23,7 @@ local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
+
 Service = setmetatable({}, {
     __index = function(Self, Index)
         local NewService = game:GetService(Index)
@@ -33,7 +33,8 @@ Service = setmetatable({}, {
         return NewService
     end
 })
-localPuppet = Service.Players.LocalPlayer
+
+local Puppet = Service.Players.LocalPlayer
 
 function SendDetailedNotification(title, text, duration)
     game.StarterGui:SetCore("SendNotification", {
@@ -65,25 +66,25 @@ local currentGameId = game.PlaceId
 local jmpC
 
 AddToggle(Main5u6, {
-  Name = "Infinite Jump",
-  Default = false,
-  Callback = function(s)
-    getgenv().InfJ = s
-    if s then
-     if not jmpC then
-      jmpC = game:GetService("UserInputService").JumpRequest:Connect(function()
-     end
-        if InfJ == true then
-          game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
+    Name = "Infinite Jump",
+    Default = false,
+    Callback = function(s)
+        getgenv().InfJ = s
+        if s then
+            if not jmpC then
+                jmpC = game:GetService("UserInputService").JumpRequest:Connect(function()
+                    if getgenv().InfJ == true then
+                        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
+                    end
+                end)
+            end
+        else
+            if jmpC then
+                jmpC:Disconnect()
+                jmpC = nil
+            end
         end
-      end)
-    else
-      if jmpC then
-        jmpC:Disconnect()
-        jmpC = nil
-      end
     end
-  end
 })
 
 Storage = Instance.new("Folder", game:FindService("CoreGui"))
@@ -94,44 +95,43 @@ local esplp
 function toggleESP(enable, color)
     if enable then
         if esplp then return end
-       if not esplp then
         esplp = RunService.Heartbeat:Connect(function()
-       end
-         for _, plr in ipairs(game:FindService("Players"):GetPlayers()) do
-            if plr ~= game:FindService("Players").LocalPlayer then
-              highlight = Storage:FindFirstChild(plr.Name)
-               if not highlight then
-                  highlight = Instance.new("Highlight")
-                  highlight.Name = plr.Name
-                  highlight.Parent = Storage
-              end
-              highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-              highlight.FillTransparency = 1
-              highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-              highlight.OutlineTransparency = 0
-              highlight.DepthMode = "AlwaysOnTop"
-              if plr.Character then
-                  highlight.Adornee = plr.Character
-              end
-              if not cn[plr] then
-                cn[plr] = plr.CharacterAdded:Connect(function(newChar)
-                    highlight.Adornee = newChar
-                    end)
-                 end
-              end
-           end
-        end)
-       if not cn["PlayerRemoving"] then
-        cn["PlayerRemoving"] = game:FindService("Players").PlayerRemoving:Connect(function(plr)
-       end
-            if Storage:FindFirstChild(plr.Name) then
-                Storage[plr.Name]:Destroy()
-            end
-            if cn[plr] then
-                cn[plr]:Disconnect()
-                cn[plr] = nil
+            for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+                if plr ~= game:GetService("Players").LocalPlayer then
+                    local highlight = Storage:FindFirstChild(plr.Name)
+                    if not highlight then
+                        highlight = Instance.new("Highlight")
+                        highlight.Name = plr.Name
+                        highlight.Parent = Storage
+                    end
+                    highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                    highlight.FillTransparency = 1
+                    highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                    highlight.OutlineTransparency = 0
+                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    if plr.Character then
+                        highlight.Adornee = plr.Character
+                    end
+                    if not cn[plr] then
+                        cn[plr] = plr.CharacterAdded:Connect(function(newChar)
+                            highlight.Adornee = newChar
+                        end)
+                    end
+                end
             end
         end)
+
+        if not cn["PlayerRemoving"] then
+            cn["PlayerRemoving"] = game:GetService("Players").PlayerRemoving:Connect(function(plr)
+                if Storage:FindFirstChild(plr.Name) then
+                    Storage[plr.Name]:Destroy()
+                end
+                if cn[plr] then
+                    cn[plr]:Disconnect()
+                    cn[plr] = nil
+                end
+            end)
+        end
     else
         if esplp then
             esplp:Disconnect()
@@ -163,10 +163,8 @@ AddColorPicker(Main5u6, {
         _G.ESPColor = color
         if _G.ESP then
             for _, highlight in ipairs(Storage:GetChildren()) do
-              if not highlight then
                 highlight.FillColor = color
                 highlight.OutlineColor = color
-               end
             end
         end
     end
@@ -222,19 +220,19 @@ AddToggle(Main5u6, {
         if not getgenv().originalFOV then
           getgenv().originalFOV = camera.FieldOfView
         end
-        getgenv().zmCn = game:GetService("RunService").Heartbeat:Connect(function()
+        getgenv().zoomConnection = game:GetService("RunService").Heartbeat:Connect(function()
           if getgenv().loopZoom then
             pcall(function()
-              camera.FieldOfView = getgenv().FOV + (getgenv().CameraZoom or 0)
+              camera.FieldOfView = getgenv().originalFOV + (getgenv().CameraZoom or 0)
             end)
           end
         end)
       else
-        if getgenv().zmCn then
-          getgenv().zmCn:Disconnect()
-          getgenv().zmCn = nil
+        if getgenv().zoomConnection then
+          getgenv().zoomConnection:Disconnect()
+          getgenv().zoomConnection = nil
         end
-        if getgenv().FOV then
+        if getgenv().originalFOV then
           camera.FieldOfView = getgenv().originalFOV
         end
       end
@@ -249,7 +247,7 @@ AddTextBox(Main5u6, {
   ClearText = true,
   Callback = function(value)
     getgenv().CameraZoom = tonumber(value)
-    if getgenv().Zoom then
+    if getgenv().isZoomActive then
       game.Players.LocalPlayer.CameraMaxZoomDistance = getgenv().CameraZoom
     end
   end
@@ -259,15 +257,15 @@ AddToggle(Main5u6, {
   Name = "Camera Zoom",
   Default = false,
   Callback = function(state)
-    getgenv().Zoom = state
+    getgenv().isZoomActive = state
     local camera = game:GetService("Workspace").CurrentCamera
     if camera then
       if state then
         if not getgenv().initialMaxZoom then
           getgenv().initialMaxZoom = player.CameraMaxZoomDistance
         end
-        getgenv().zmUpdeCn = game:GetService("RunService").Heartbeat:Connect(function()
-          if getgenv().Zoom then
+        getgenv().zoomUpdateConnection = game:GetService("RunService").Heartbeat:Connect(function()
+          if getgenv().isZoomActive then
             pcall(function()
               local zoomValue = getgenv().CameraZoom
               player.CameraMaxZoomDistance = zoomValue
@@ -275,9 +273,9 @@ AddToggle(Main5u6, {
           end
         end)
       else
-        if getgenv().zmUpdeCn then
-          getgenv().zmUpdeCn:Disconnect()
-          getgenv().zmUpdeCn = nil
+        if getgenv().zoomUpdateConnection then
+          getgenv().zoomUpdateConnection:Disconnect()
+          getgenv().zoomUpdateConnection = nil
         end
         if getgenv().initialMaxZoom then
           player.CameraMaxZoomDistance = getgenv().initialMaxZoom
@@ -287,8 +285,8 @@ AddToggle(Main5u6, {
   end
 })
 
-local orglWkSpd, orglJpPwr = 16, 50
-local wkSpdCn, jpPwrCn 
+local originalWalkSpeed, originalJumpPower = 16, 50
+local walkSpeedConnection, jumpPowerConnection 
 
 AddTextBox(Main5u6, {
   Name = "Number WalkSpeed",
@@ -311,20 +309,20 @@ AddToggle(Main5u6, {
     local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
     if humanoid then
       if state then
-        orglWkSpd = humanoid.WalkSpeed
-        wkSpdCn = game:GetService("RunService").Heartbeat:Connect(function()
+        originalWalkSpeed = humanoid.WalkSpeed
+        walkSpeedConnection = game:GetService("RunService").Heartbeat:Connect(function()
           if loopW then
             pcall(function()
-              humanoid.WalkSpeed = orglWkSpd + (getgenv().Walkspeed or 0)
+              humanoid.WalkSpeed = originalWalkSpeed + (getgenv().Walkspeed or 0)
             end)
           end
         end)
       else
-        if wkSpdCn then
-          wkSpdCn:Disconnect()
-          wkSpdCn = nil
+        if walkSpeedConnection then
+          walkSpeedConnection:Disconnect()
+          walkSpeedConnection = nil
         end
-        humanoid.WalkSpeed = orglWkSpd
+        humanoid.WalkSpeed = originalWalkSpeed
       end
     end
   end
@@ -336,9 +334,9 @@ AddTextBox(Main5u6, {
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(value)
-    local Jump = tonumber(value)
-    if Jump then
-      getgenv().Jumppower = Jump
+    local additionalJump = tonumber(value)
+    if additionalJump then
+      getgenv().Jumppower = additionalJump
     end
   end
 })
@@ -352,20 +350,20 @@ AddToggle(Main5u6, {
     local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
     if humanoid then
       if state then
-        orglJpPwr = humanoid.JumpPower
-        jpPwrCn = game:GetService("RunService").Heartbeat:Connect(function()
+        originalJumpPower = humanoid.JumpPower
+        jumpPowerConnection = game:GetService("RunService").Heartbeat:Connect(function()
           if loopJ then
             pcall(function()
-              humanoid.JumpPower = orglJpPwr + (getgenv().Jumppower or 0)
+              humanoid.JumpPower = originalJumpPower + (getgenv().Jumppower or 0)
             end)
           end
         end)
       else
-        if jpPwrCn then
-          jpPwrCn:Disconnect()
-          jpPwrCn = nil
+        if jumpPowerConnection then
+          jumpPowerConnection:Disconnect()
+          jumpPowerConnection = nil
         end
-        humanoid.JumpPower = orglJpPwr
+        humanoid.JumpPower = originalJumpPower
       end
     end
   end
@@ -382,43 +380,47 @@ function setupTPWalk()
     end
     if Tpwkchrtr then
         Tpwkchrtr:Disconnect()
-        Tpwkchrtrn = nil
+        Tpwkchrtr = nil
     end
     if Tpwkdied then
         Tpwkdied:Disconnect()
         Tpwkdied = nil
     end
+
     function settpwk(character)
         local hum = character:WaitForChild("Humanoid")
-      if not Tpwk then
-        Tpwk = game:GetService("RunService").Stepped:Connect(function()
-       end
-            if getgenv().TPWalk and hum and hum.Parent then
-                if hum.MoveDirection.Magnitude > 0 then
-                    if getgenv().TPSpeed and isNumber(getgenv().TPSpeed) then
-                        character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                    else
-                        character:TranslateBy(hum.MoveDirection)
+        if not Tpwk then
+            Tpwk = game:GetService("RunService").Stepped:Connect(function()
+                if getgenv().TPWalk and hum and hum.Parent then
+                    if hum.MoveDirection.Magnitude > 0 then
+                        if getgenv().TPSpeed and tonumber(getgenv().TPSpeed) then
+                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
+                        else
+                            character:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+                else
+                    if Tpwk then
+                        Tpwk:Disconnect()
+                        Tpwk = nil
                     end
                 end
-            else
-               if Tpwk then
-                Tpwk:Disconnect()
-                end
-            end
-        end)
-       if not Tpwkdied then
-        Tpwkdied = hum.Died:Connect(function()
+            end)
         end
-            if Tpwk then
-                Tpwk:Disconnect()
-                Tpwk = nil
-            end
-        end)
+
+        if not Tpwkdied then
+            Tpwkdied = hum.Died:Connect(function()
+                if Tpwk then
+                    Tpwk:Disconnect()
+                    Tpwk = nil
+                end
+            end)
+        end
     end
-  if not Tpwkchrtr then
-    Tpwkchrtr = player.CharacterAdded:Connect(settpwk)
-  end
+
+    if not Tpwkchrtr then
+        Tpwkchrtr = player.CharacterAdded:Connect(settpwk)
+    end
     if player.Character then
         settpwk(player.Character)
     end
@@ -430,7 +432,7 @@ AddTextBox(Main5u6, {
     PlaceholderText = "Enter number",
     ClearText = true,
     Callback = function(value)
-        if isNumber(value) then
+        if tonumber(value) then
             getgenv().TPSpeed = tonumber(value)
         end
     end
@@ -447,19 +449,19 @@ AddToggle(Main5u6, {
             if Tpwk then
                 Tpwk:Disconnect()
                 Tpwk = nil
-           end
+            end
             if Tpwkchrtr then
                 Tpwkchrtr:Disconnect()
-                Tpwkchrtrn = nil
-           end
-           if Tpwkdied then
+                Tpwkchrtr = nil
+            end
+            if Tpwkdied then
                 Tpwkdied:Disconnect()
                 Tpwkdied = nil
             end
         end
     end
 })
- 
+
 local TPJpCntn, TPJp, tpar
 
 function setupTPJpBst()
@@ -475,36 +477,38 @@ function setupTPJpBst()
         tpar:Disconnect()
         tpar = nil
     end
+
     function setupTPJp(character)
-        hum = character:WaitForChild("Humanoid")
-      if not TPJp then
-        TPJp = hum.StateChanged:Connect(function(oldState, newState)
-       end
-            if newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall then
-                local boost = getgenv().TPJpBst or 0
-                if boost > 0 then
-                  if not tpar then
-                    tpar = RunService.Heartbeat:Connect(function()
-                   end
-                        if hum:GetState() == Enum.HumanoidStateType.Freefall then
-                            if hum.MoveDirection.Magnitude > 0 then
-                                local currentDirection = hum.MoveDirection.Unit
-                                character:TranslateBy(currentDirection * boost)
-                            end
-                        else
-                            if tpar then
-                                tpar:Disconnect()
-                                tpar = nil
-                            end
+        local hum = character:WaitForChild("Humanoid")
+        if not TPJp then
+            TPJp = hum.StateChanged:Connect(function(oldState, newState)
+                if newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall then
+                    local boost = getgenv().TPJpBst or 0
+                    if boost > 0 then
+                        if not tpar then
+                            tpar = game:GetService("RunService").Heartbeat:Connect(function()
+                                if hum:GetState() == Enum.HumanoidStateType.Freefall then
+                                    if hum.MoveDirection.Magnitude > 0 then
+                                        local currentDirection = hum.MoveDirection.Unit
+                                        character:TranslateBy(currentDirection * boost)
+                                    end
+                                else
+                                    if tpar then
+                                        tpar:Disconnect()
+                                        tpar = nil
+                                    end
+                                end
+                            end)
                         end
-                    end)
+                    end
                 end
-            end
-        end)
+            end)
+        end
     end
-   if not TPJpCntn then
-    TPJpCntn = player.CharacterAdded:Connect(setupTPJp)
-   end
+
+    if not TPJpCntn then
+        TPJpCntn = player.CharacterAdded:Connect(setupTPJp)
+    end
     if player.Character then
         setupTPJp(player.Character)
     end
@@ -855,7 +859,6 @@ AddToggle(Main5u6, {
         if x1 then
           if not x2 then
             x2 = RunService.Heartbeat:Connect(function()
-           end
                 local x5 = game:GetService("Players").LocalPlayer
                 local x6, x7, x8, x9 = nil, nil, nil, 0.1
                 x6 = x5.Character
@@ -869,8 +872,9 @@ AddToggle(Main5u6, {
                     RunService.Stepped:Wait()
                     x7.Velocity = x8 + Vector3.new(0, x9, 0)
                     x9 = -x9
-                end
-            end)
+                 end
+              end)
+           end
         else
             if x2 then
                 x2:Disconnect()
@@ -881,146 +885,159 @@ AddToggle(Main5u6, {
 })
 
 if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
-AddWarningMessage(Main5u6, {
-  WarningMessage = "Anti Fling, Removed due to security concerns, may be banned from the game",
-  ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
-})
+    AddWarningMessage(Main5u6, {
+        WarningMessage = "Anti Fling, Removed due to security concerns, may be banned from the game",
+        ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
+    })
 
-AddWarningMessage(Main5u6, {
-  WarningMessage = "Noclip, Removed due to security concerns, may be banned from the game",
-  ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
-})
+    AddWarningMessage(Main5u6, {
+        WarningMessage = "Noclip, Removed due to security concerns, may be banned from the game",
+        ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
+    })
 else
-local abcSrvs = setmetatable({}, {__index = function(Self, Index)
- local NewService = game.GetService(game, Index)
-  if NwSrvs then
-     Self[Index] = NwSrvs
-   end
-   return NwSrvs
-end})
-local localPuppet = abcSrvs.Players.LocalPlayer
-local 3, zzz, 2
+    local abcSrvs = setmetatable({}, {__index = function(Self, Index)
+        local NewService = game:GetService(Index)
+        if NewService then
+            Self[Index] = NewService
+        end
+        return NewService
+    end})
+    
+    local localPuppet = abcSrvs.Players.LocalPlayer
+    local three, zzz, two
 
-AddToggle(Main5u6, {
-    Name = "Anti Fling",
-    Default = false,
-    Callback = function(state)
-    if state then
-        local function mgPlyrAded(Player)
-            local detectedFlag = false
-            local chter, pryPt
+    AddToggle(Main5u6, {
+        Name = "Anti Fling",
+        Default = false,
+        Callback = function(state)
+            if state then
+                local function mgPlyrAded(Player)
+                    local detectedFlag = false
+                    local chter, pryPt
 
-            local function mgchterAded(newCharacter)
-                chter = newCharacter
-                repeat
-                    wait()
-                    pryPt = newCharacter:FindFirstChild("HumanoidRootPart")
-                until pryPt
-                detectedFlag = false
-            end
+                    local function mgchterAded(newCharacter)
+                        chter = newCharacter
+                        repeat
+                            wait()
+                            pryPt = newCharacter:FindFirstChild("HumanoidRootPart")
+                        until pryPt
+                        detectedFlag = false
+                    end
 
-            mgchterAded(Player.Character or Player.CharacterAdded:Wait())
-            if not 2 then 2 = Player.CharacterAdded:Connect(mgchterAded) end
+                    mgchterAded(Player.Character or Player.CharacterAdded:Wait())
+                    if not two then 
+                        two = Player.CharacterAdded:Connect(mgchterAded) 
+                    end
 
-           
-           if not zzz then zzz = abcSrvs.RunService.Heartbeat:Connect(function() end
-                if (chter and chter:IsDescendantOf(workspace)) and (pryPt and pryPt:IsDescendantOf(chter)) then
-                    if pryPt.AssemblyAngularVelocity.Magnitude > 50 or pryPt.AssemblyLinearVelocity.Magnitude > 100 then
-                        detectedFlag = true
-                        for i,v in ipairs(chter:GetDescendants()) do
-                            if v:IsA("BasePart") then
-                                v.CanCollide = false
-                                v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                    if not zzz then 
+                        zzz = abcSrvs.RunService.Heartbeat:Connect(function()
+                            if chter and chter:IsDescendantOf(workspace) and pryPt and pryPt:IsDescendantOf(chter) then
+                                if pryPt.AssemblyAngularVelocity.Magnitude > 50 or pryPt.AssemblyLinearVelocity.Magnitude > 100 then
+                                    detectedFlag = true
+                                    for _, v in ipairs(chter:GetDescendants()) do
+                                        if v:IsA("BasePart") then
+                                            v.CanCollide = false
+                                            v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                            v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                            v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                                        end
+                                    end
+                                    pryPt.CanCollide = false
+                                    pryPt.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                    pryPt.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                    pryPt.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                                end
                             end
-                        end
-                        pryPt.CanCollide = false
-                        pryPt.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                        pryPt.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                        pryPt.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                        end)
                     end
                 end
-            end)
-        end
 
-        for i,v in ipairs(abcSrvs.Players:GetPlayers()) do
-            if v ~= localPuppet then
-                mgPlyrAded(v)
-            end
-        end
-
-        if not 3 then 3 = abcSrvs.Players.PlayerAdded:Connect(megaPlayerAdded) end
-
-       local lastSpot = nil
-       if not abcMTbeCn then abcMTbeCn = abcSrvs.RunService.Heartbeat:Connect(function() end
-            pcall(function()
-                local pryPt = localPuppet.Character.PrimaryPart
-                if primaryPartEntity.AssemblyLinearVelocity.Magnitude > 250 or pryPt.AssemblyAngularVelocity.Magnitude > 250 then
-                    pryPt.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                    pryPt.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                    pryPt.CFrame = lastSpot
-                elseif pryPt.AssemblyLinearVelocity.Magnitude < 50 or pryPt.AssemblyAngularVelocity.Magnitude > 50 then
-                    lastSpot = pryPt.CFrame
-                end
-            end)
-        end)
-    else
-        if zzz then
-            zzz:Disconnect()
-            zzz = nil
-        end
-        if 2 then
-            2:Disconnect()
-            2 = nil
-        end
-        if 3 then
-            3:Disconnect()
-            3 = nil
-        end
-        if abcMTbeCn then
-            abcMTbeCn:Disconnect()
-            abcMTbeCn = nil
-        end
-    end
-  end
-})
-
-local ncp, ncpDflt = {}, nil
-
-AddToggle(Main5u6, {
-    Name = "No-Clip",
-    Default = false,
-    Callback = function(state)
-        if state then
-           if not ncpDflt then ncpDflt = game:GetService("RunService").Stepped:Connect(function() end
-                local character = game.Players.LocalPlayer.Character
-                if character then
-                    for _, part in ipairs(character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            if not ncp[part] then
-                                ncp[part] = part.CanCollide
-                            end
-                            part.CanCollide = false
-                        end
+                for _, v in ipairs(abcSrvs.Players:GetPlayers()) do
+                    if v ~= localPuppet then
+                        mgPlyrAded(v)
                     end
                 end
-            end)
-        else
-            if ncpDflt then
-                ncpDflt:Disconnect()
-                ncpDflt = nil
-            end
-            for part, canCollide in pairs(ncp) do
-                if part and part.Parent then
-                    part.CanCollide = canCollide
+
+                if not three then 
+                    three = abcSrvs.Players.PlayerAdded:Connect(mgPlyrAded) 
+                end
+
+                local lastSpot = nil
+                if not abcMTbeCn then 
+                    abcMTbeCn = abcSrvs.RunService.Heartbeat:Connect(function()
+                        pcall(function()
+                            local pryPt = localPuppet.Character and localPuppet.Character.PrimaryPart
+                            if pryPt then
+                                if pryPt.AssemblyLinearVelocity.Magnitude > 250 or pryPt.AssemblyAngularVelocity.Magnitude > 250 then
+                                    pryPt.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                                    pryPt.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                    pryPt.CFrame = lastSpot
+                                elseif pryPt.AssemblyLinearVelocity.Magnitude < 50 or pryPt.AssemblyAngularVelocity.Magnitude > 50 then
+                                    lastSpot = pryPt.CFrame
+                                end
+                            end
+                        end)
+                    end)
+                end
+            else
+                if zzz then
+                    zzz:Disconnect()
+                    zzz = nil
+                end
+                if two then
+                    two:Disconnect()
+                    two = nil
+                end
+                if three then
+                    three:Disconnect()
+                    three = nil
+                end
+                if abcMTbeCn then
+                    abcMTbeCn:Disconnect()
+                    abcMTbeCn = nil
                 end
             end
-            table.clear(ncp)
         end
-    end
-})
+    })
+
+    local ncp, ncpDflt = {}, nil
+
+    AddToggle(Main5u6, {
+        Name = "No-Clip",
+        Default = false,
+        Callback = function(state)
+            if state then
+                if not ncpDflt then 
+                    ncpDflt = game:GetService("RunService").Stepped:Connect(function()
+                        local character = game.Players.LocalPlayer.Character
+                        if character then
+                            for _, part in ipairs(character:GetDescendants()) do
+                                if part:IsA("BasePart") then
+                                    if not ncp[part] then
+                                        ncp[part] = part.CanCollide
+                                    end
+                                    part.CanCollide = false
+                                end
+                            end 
+                        end
+                    end)
+                end
+            else
+                if ncpDflt then
+                    ncpDflt:Disconnect()
+                    ncpDflt = nil
+                end
+                for part, canCollide in pairs(ncp) do
+                    if part and part.Parent then
+                        part.CanCollide = canCollide
+                    end
+                end
+                table.clear(ncp)
+            end
+        end
+    })
 end
+
 
 local antiIdle
 
@@ -1029,10 +1046,11 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         if state then
-            if not antiIdle then antiIdle = game:GetService("Players").LocalPlayer.Idled:Connect(function() end
+            if not antiIdle then antiIdle = game:GetService("Players").LocalPlayer.Idled:Connect(function()
                 game:GetService("VirtualUser"):CaptureController()
                 game:GetService("VirtualUser"):ClickButton2(Vector2.new())
             end)
+         end
         else
             if antiIdle then
                 antiIdle:Disconnect()
@@ -1050,39 +1068,48 @@ locktp = {
     Enabled = false,
     chtrAdedCn = nil
 }
+
 function start()
-   if not locktp.hbtCn then locktp.hbtCn = Service.RunService.Heartbeat:Connect(function() end
-        if locktp.stop or not locktp.Enabled then
-            return
-        end
-        local character = localPuppet.Character
-        if character and character:FindFirstChildOfClass('Humanoid') and character:FindFirstChild('HumanoidRootPart') then
-            locktp.lastCF = character:FindFirstChild('HumanoidRootPart').CFrame
-        end
-    end)
-    character = localPuppet.Character
+    if not locktp.hbtCn then 
+        locktp.hbtCn = Service.RunService.Heartbeat:Connect(function() 
+            if locktp.stop or not locktp.Enabled then
+                return
+            end
+            local character = localPuppet.Character
+            if character and character:FindFirstChildOfClass('Humanoid') and character:FindFirstChild('HumanoidRootPart') then
+                locktp.lastCF = character:FindFirstChild('HumanoidRootPart').CFrame
+            end
+        end)
+    end
+
+    local character = localPuppet.Character
     if character then
         local humanoidRootPart = character:FindFirstChild('HumanoidRootPart')
         if humanoidRootPart then
-           if not locktp.pyChgdCn then locktp.pyChgdCn = humanoidRootPart:GetPropertyChangedSignal('CFrame'):Connect(function() end
-                if locktp.Enabled then
-                    locktp.stop = true
-                    humanoidRootPart.CFrame = locktp.lastCF
-                    Service.RunService.Heartbeat:Wait()
-                    locktp.stop = false
-                end
-            end)
+            if not locktp.pyChgdCn then 
+                locktp.pyChgdCn = humanoidRootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
+                    if locktp.Enabled then
+                        locktp.stop = true
+                        humanoidRootPart.CFrame = locktp.lastCF
+                        Service.RunService.Heartbeat:Wait()
+                        locktp.stop = false
+                    end
+                end)
+            end
         end
     end
 end
+
 function setupCharacter(character)
     if not character then return end
     repeat Service.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
     repeat Service.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
+    
     if locktp.Enabled then
         start()
     end
 end
+
 locktp.chtrAdedCn = localPuppet.CharacterAdded:Connect(setupCharacter)
 
 AddToggle(Main5u6, {
@@ -1143,6 +1170,7 @@ trailData = {
     rainbowConn = nil,
     chtrAdedCn = nil
 }
+
 function createTrail(enabled)
     local plr = game:GetService("Players").LocalPlayer
     local char = plr.Character or plr.CharacterAdded:Wait()
@@ -1165,26 +1193,26 @@ function createTrail(enabled)
         local hue = 0
 
         if not trailData.htbtCn then
-        trailData.htbtCn = RunService.Heartbeat:Connect(function()
-            if char and hrp then
-                trailData.a0.Position = Vector3.new(0, 0, 0)
-                trailData.a1.Position = Vector3.new(0, -0.2, 0)
-              end
-           end)
+            trailData.htbtCn = RunService.Heartbeat:Connect(function()
+                if char and hrp then
+                    trailData.a0.Position = Vector3.new(0, 0, 0)
+                    trailData.a1.Position = Vector3.new(0, -0.2, 0)
+                end
+            end)
         end
 
         if not trailData.rainbowConn then
-        trailData.rainbowConn = RunService.Heartbeat:Connect(function()
-            if not trailData.enabled then return end
-            hue = (hue + 1) % 360
-            local keypoints = {}
-            for i = 0, 4 do
-                local segmentHue = (hue + i * 72) % 360
-                local color = Color3.fromHSV(segmentHue / 360, 1, 1)
-                table.insert(keypoints, ColorSequenceKeypoint.new(i / 4, color))
-            end
-            trailData.trail.Color = ColorSequence.new(keypoints)
-          end)
+            trailData.rainbowConn = RunService.Heartbeat:Connect(function()
+                if not trailData.enabled then return end
+                hue = (hue + 1) % 360
+                local keypoints = {}
+                for i = 0, 4 do
+                    local segmentHue = (hue + i * 72) % 360
+                    local color = Color3.fromHSV(segmentHue / 360, 1, 1)
+                    table.insert(keypoints, ColorSequenceKeypoint.new(i / 4, color))
+                end
+                trailData.trail.Color = ColorSequence.new(keypoints)
+            end)
         end
 
         if not trailData.chtrAdedCn then
@@ -1215,6 +1243,7 @@ function createTrail(enabled)
         end
     end
 end
+
 
 AddToggle(Main5u6, {
     Name = "Trail Rainbow",
