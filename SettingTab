@@ -282,93 +282,52 @@ AddToggle(Main5u6, {
   end
 })
 
-local originalWalkSpeed, originalJumpPower = 16, 50
-local walkSpeedConnection, jumpPowerConnection 
+local dWS, dJP = 16, 50
+local wsCon, jpCon 
 
 AddTextBox(Main5u6, {
-  Name = "Number WalkSpeed",
+  Name = "Walk Speed Number",
   Default = "Enter",
   PlaceholderText = "Enter number",
   ClearText = true,
-  Callback = function(value)
-    local Speed = tonumber(value)
-    if Speed then
-      getgenv().Walkspeed = additionalSpeed
-    end
+  Callback = function(v)
+    local n = tonumber(v)
+    if n then getgenv().WS = n end
   end
 })
 
 AddToggle(Main5u6, {
   Name = "WalkSpeed",
   Default = false,
-  Callback = function(state)
-    getgenv().loopW = state
-    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-      if state then
-        originalWalkSpeed = humanoid.WalkSpeed
-        walkSpeedConnection = game:GetService("RunService").Heartbeat:Connect(function()
-          if loopW then
-            pcall(function()
-              humanoid.WalkSpeed = originalWalkSpeed + (getgenv().Walkspeed or 0)
-            end)
-          end
-        end)
-      else
-        if walkSpeedConnection then
-          walkSpeedConnection:Disconnect()
-          walkSpeedConnection = nil
-        end
-        humanoid.WalkSpeed = originalWalkSpeed
-      end
-    end
+  Callback = function(s)
+    local p = game:GetService("Players").LocalPlayer
+    local h = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
+    if h then h.WalkSpeed = s and (getgenv().WS or dWS) or dWS end
   end
 })
 
 AddTextBox(Main5u6, {
-  Name = "Number JumpPower",
+  Name = "Jump Power Number",
   Default = "Enter",
   PlaceholderText = "Enter number",
   ClearText = true,
-  Callback = function(value)
-    local additionalJump = tonumber(value)
-    if additionalJump then
-      getgenv().Jumppower = additionalJump
-    end
+  Callback = function(v)
+    local n = tonumber(v)
+    if n then getgenv().JP = n end
   end
 })
 
 AddToggle(Main5u6, {
   Name = "JumpPower",
   Default = false,
-  Callback = function(state)
-    getgenv().loopJ = state
-    local player = game:GetService("Players").LocalPlayer
-    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-      if state then
-        originalJumpPower = humanoid.JumpPower
-        jumpPowerConnection = game:GetService("RunService").Heartbeat:Connect(function()
-          if loopJ then
-            pcall(function()
-              humanoid.JumpPower = originalJumpPower + (getgenv().Jumppower or 0)
-            end)
-          end
-        end)
-      else
-        if jumpPowerConnection then
-          jumpPowerConnection:Disconnect()
-          jumpPowerConnection = nil
-        end
-        humanoid.JumpPower = originalJumpPower
-      end
-    end
+  Callback = function(s)
+    local p = game:GetService("Players").LocalPlayer
+    local h = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
+    if h then h.JumpPower = s and (getgenv().JP or dJP) or dJP end
   end
 })
 
-local Tpwk
-local Tpwkchrtr
-local Tpwkdied
+local Tpwk, Tpwkchrtr, Tpwkdied
 
 function setupTPWalk()
     if Tpwk then
