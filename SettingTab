@@ -286,44 +286,66 @@ local dWS, dJP = 16, 50
 local wsCon, jpCon 
 
 AddTextBox(Main5u6, {
-  Name = "Walk Speed Number",
+  Name = "WS Number",
   Default = "Enter",
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(v)
-    local n = tonumber(v)
-    if n then getgenv().WS = n end
+    local s = tonumber(v)
+    if s then
+      getgenv().WS = s
+    end
   end
 })
 
 AddToggle(Main5u6, {
   Name = "WalkSpeed",
   Default = false,
-  Callback = function(s)
-    local p = game:GetService("Players").LocalPlayer
-    local h = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
-    if h then h.WalkSpeed = s and (getgenv().WS or dWS) or dWS end
+  Callback = function(st)
+    local plr = game:GetService("Players").LocalPlayer
+    local hum = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
+    if hum then
+      if st then
+        wsCon = game:GetService("RunService").Heartbeat:Connect(function()
+          hum.WalkSpeed = getgenv().WS or dWS
+        end)
+      else
+        if wsCon then wsCon:Disconnect() wsCon = nil end
+        hum.WalkSpeed = dWS
+      end
+    end
   end
 })
 
 AddTextBox(Main5u6, {
-  Name = "Jump Power Number",
+  Name = "JP Number",
   Default = "Enter",
   PlaceholderText = "Enter number",
   ClearText = true,
   Callback = function(v)
-    local n = tonumber(v)
-    if n then getgenv().JP = n end
+    local j = tonumber(v)
+    if j then
+      getgenv().JP = j
+    end
   end
 })
 
 AddToggle(Main5u6, {
   Name = "JumpPower",
   Default = false,
-  Callback = function(s)
-    local p = game:GetService("Players").LocalPlayer
-    local h = p.Character and p.Character:FindFirstChildOfClass("Humanoid")
-    if h then h.JumpPower = s and (getgenv().JP or dJP) or dJP end
+  Callback = function(st)
+    local plr = game:GetService("Players").LocalPlayer
+    local hum = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
+    if hum then
+      if st then
+        jpCon = game:GetService("RunService").Heartbeat:Connect(function()
+          hum.JumpPower = getgenv().JP or dJP
+        end)
+      else
+        if jpCon then jpCon:Disconnect() jpCon = nil end
+        hum.JumpPower = dJP
+      end
+    end
   end
 })
 
