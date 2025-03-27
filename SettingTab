@@ -1403,18 +1403,18 @@ function CloneAnimations(model)
 		return
 	end
 	for _, child in pairs(container:GetChildren()) do
-          if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
-	      child:Destroy()
-	   end
+		if (child:IsA("Animation") or child:IsA("AnimationTrack") or child:IsA("Animator") or child:IsA("Humanoid")) and child:GetAttribute("IsClone") then
+			child:Destroy()
+		end
 	end
 	for _, anim in pairs(container:GetChildren()) do
-           if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
-	       local clonedAnim = anim:Clone()
-	       clonedAnim.Parent = container
-               clonedAnim:SetAttribute("IsClone", true)
-            end
-        end
-    end
+		if (anim:IsA("Animation") or anim:IsA("AnimationTrack") or anim:IsA("Animator") or anim:IsA("Humanoid")) and not anim:GetAttribute("IsClone") then
+			local clonedAnim = anim:Clone()
+			clonedAnim.Parent = container
+			clonedAnim:SetAttribute("IsClone", true)
+		end
+	end
+end
 
 function g2y5x8v9(model)
 	local cloneModel = Instance.new("Model")
@@ -1425,49 +1425,6 @@ function g2y5x8v9(model)
 	end
 	local rootCFrame = humanoidRoot.CFrame
 	CloneAnimations(model)
-
-	local humanoid = model:FindFirstChildOfClass("Humanoid")
-	if humanoid then
-		for _, accessory in pairs(model:GetChildren()) do
-			if accessory:IsA("Accessory") then
-				local cloneAccessory = accessory:Clone()
-				cloneAccessory.Parent = cloneModel
-			end
-		end
-
-		local shirt = model:FindFirstChildOfClass("Shirt")
-		if shirt then
-			local cloneShirt = shirt:Clone()
-			cloneShirt.Parent = cloneModel
-		end
-
-		local pants = model:FindFirstChildOfClass("Pants")
-		if pants then
-			local clonePants = pants:Clone()
-			clonePants.Parent = cloneModel
-		end
-
-		local tshirt = model:FindFirstChildOfClass("TShirt")
-		if tshirt then
-			local cloneTShirt = tshirt:Clone()
-			cloneTShirt.Parent = cloneModel
-		end
-	end
-
-	for _, part in pairs(model:GetDescendants()) do
-		if part:IsA("Decal") then
-			local cloneDecal = part:Clone()
-			cloneDecal.Parent = cloneModel
-		elseif part:IsA("MeshPart") then
-			for _, child in pairs(part:GetChildren()) do
-				if child:IsA("Decal") then
-					local cloneDecal = child:Clone()
-					cloneDecal.Parent = part
-				end
-			end
-		end
-	end
-
 	for _, part in pairs(model:GetDescendants()) do
 		if part:IsA("BasePart") and part.Transparency < 1 then
 			local clonePart = part:Clone()
@@ -1483,12 +1440,24 @@ function g2y5x8v9(model)
 			clonePart.Material = part.Material
 			clonePart.CFrame = rootCFrame:ToWorldSpace(humanoidRoot.CFrame:ToObjectSpace(part.CFrame))
 			clonePart.Parent = cloneModel
+			local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+			local tweenProps = {Transparency = 1}
+			local success, tween = pcall(function()
+				return TweenService:Create(clonePart, tweenInfo, tweenProps)
+			end)
+			if success then
+				tween:Play()
+				tween.Completed:Connect(function()
+					if clonePart and clonePart.Parent then
+						clonePart:Destroy()
+					end
+				end)
+			end
 		end
 	end
 	cloneModel.Parent = workspace
 	game:GetService("Debris"):AddItem(cloneModel, 1)
 end
-
 
 function v2o8f9d3(model)
 	local humanoid = model:WaitForChild("Humanoid")
