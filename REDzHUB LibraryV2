@@ -1649,9 +1649,6 @@ end
 
 functions.updatePlaytime()
 
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-
 functions.fetchPlaceInfo = function(retries, delay)
     local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
     
@@ -1714,14 +1711,12 @@ functions.updatePlaceInfo = function()
             Visits = data.visits or 0,
             Favorited = data.favoritedCount or 0,
             RootPlaceId = data.rootPlaceId or "N/A",
-            ServerCount = #Players:GetPlayers(),
-            CurrentDate = os.date("%Y-%m-%d %H:%M:%S")
+            ServerCount = #Players:GetPlayers()
         }
 
         local maxPlayers = game:GetService("Players").MaxPlayers
         local playersInServer = placeInfo.ServerCount
         local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
-
         GameName.Text = string.format("Game Name: %s", placeInfo.Name)
 
         frame79.Text = string.format(
@@ -1736,8 +1731,7 @@ functions.updatePlaceInfo = function()
             placeInfo.Likes,
             placeInfo.Playing,
             placeInfo.Favorited,
-            placeInfo.Visits,
-            placeInfo.CurrentDate
+            placeInfo.Visits
         )
     else
         GameName.Text = "Game Name: Failed to load"
