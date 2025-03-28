@@ -1126,14 +1126,13 @@ AddToggle(Main5u6, {
 })
 
 local cm = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Cameranoclip"))()
-local selectedOption, cmr = cm.getcmr()
 
 AddDropdown(Main5u6, {
     Name = "Camera Noclip Mode",
     Default = "Not Faded",
     Options = {"Not Faded", "Faded"},
     Callback = function(option)
-        selectedOption = cmr.Dropdown(option)
+        CameraModule.Dropdown(option)
     end
 })
 
@@ -1141,8 +1140,9 @@ AddToggle(Main5u6, {
     Name = "Camera Noclip",
     Default = false,
     Callback = function(value)
+        local selectedOption = CameraModule.GetSelected()
         if selectedOption then
-            cmr.ToggleMode(value)
+            CameraModule.ToggleMode(value)
         end
     end
 })
