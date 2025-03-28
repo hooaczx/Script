@@ -1714,13 +1714,13 @@ functions.updatePlaceInfo = function()
             ServerCount = #Players:GetPlayers()
         }
 
-        local maxPlayers = game:GetService("Players").MaxPlayers
+        local maxPlayers = Players.MaxPlayers
         local playersInServer = placeInfo.ServerCount
         local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
         GameName.Text = string.format("Game Name: %s", placeInfo.Name)
 
         frame79.Text = string.format(
-            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %s\nFavorited: %d\nVisits: %s\nLikes: %d\nDate: %s",
+            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %d\nFavorited: %d\nVisits: %s\nLikes: %d\nDate: %s",
             placeInfo.PlaceId,
             tostring(placeInfo.RootPlaceId),
             game.JobId,
@@ -1728,10 +1728,11 @@ functions.updatePlaceInfo = function()
             placeInfo.Created,
             placeInfo.Updated,
             formattedPlayers,
-            placeInfo.Likes,
             placeInfo.Playing,
             placeInfo.Favorited,
-            placeInfo.Visits
+            placeInfo.Visits,
+            placeInfo.Likes,
+            os.date("%Y-%m-%d %H:%M:%S")
         )
     else
         GameName.Text = "Game Name: Failed to load"
