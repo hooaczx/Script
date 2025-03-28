@@ -1125,25 +1125,24 @@ AddToggle(Main5u6, {
     end
 })
 
-local chtrcmr
+local cm = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Cameranoclip"))()
+local selectedOption, cmr = cm.getcmr()
+
+AddDropdown(Main5u6, {
+    Name = "Camera Noclip Mode",
+    Default = "Not Faded",
+    Options = {"Not Faded", "Faded"},
+    Callback = function(option)
+        selectedOption = cmr.Dropdown(option)
+    end
+})
 
 AddToggle(Main5u6, {
-    Name = "Camera no Occlusion",
+    Name = "Camera Noclip",
     Default = false,
     Callback = function(value)
-        if value then
-            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Invisicam
-            if not chtrcmr then
-                chtrcmr = lp.CharacterAdded:Connect(function()
-                    lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
-                end)
-            end
-        else
-            lp.DevCameraOcclusionMode = Enum.DevCameraOcclusionMode.Zoom
-            if chtrcmr then
-                chtrcmr:Disconnect()
-                chtrcmr = nil
-            end
+        if selectedOption then
+            cmr.ToggleMode(value)
         end
     end
 })
