@@ -1654,12 +1654,12 @@ functions.fetchPlaceInfo = function(retries, delay)
     
     for i = 1, retries do
         local success, response = pcall(function()
-            return HttpService:GetAsync(url)
+            return HttpService:GetAsync(game:HttpGet(url))
         end)
         if success then
             local decodedResponse
             local successDecode, errorMsg = pcall(function()
-                decodedResponse = HttpService:JSONDecode(response)
+                decodedResponse = HttpService:JSONDecode(game:HttpGet(response))
             end)
             if successDecode and decodedResponse and decodedResponse.data and #decodedResponse.data > 0 then
                 return decodedResponse.data[1]
