@@ -1649,6 +1649,32 @@ end
 
 functions.updatePlaytime()
 
+functions.fetchPlaceInfo = function(retries, delay)
+    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    
+    for i = 1, retries do
+        local success, response = pcall(function()
+            return HttpService:GetAsync(url)
+        end)
+        if success then
+            local decodedResponse
+            local successDecode, errorMsg = pcall(function()
+                decodedResponse = HttpService:JSONDecode(response)
+            end)
+            if successDecode and decodedResponse and decodedResponse.data and #decodedResponse.data > 0 then
+                return decodedResponse.data[1]
+            else
+                warn("Failed to decode place info (Attempt " .. i .. " of " .. retries .. "): " .. (errorMsg or "No data"))
+            end
+        else
+            warn("Failed to fetch place info (Attempt " .. i .. " of " .. retries .. "): " .. response)
+        end
+        task.wait(delay)
+    end
+
+    return nil
+end
+
 functions.fetchLikes = function()
     local url = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
     local success, response = pcall(function()
@@ -1687,58 +1713,43 @@ functions.updatePlaceInfo = function()
         })
     end
 
-    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local success, response = pcall(function()
-        return HttpService:GetAsync(url)
-    end)
+    local data = functions.fetchPlaceInfo(3, 2)
+    if data then
+        local created = functions.parseDate(data.created)
+        local updated = functions.parseDate(data.updated)
 
-    if success then
-        local decodedResponse
-        local successDecode, errorMsg = pcall(function()
-            decodedResponse = HttpService:JSONDecode(response)
-        end)
+        local placeInfo = {
+            PlaceId = game.PlaceId,
+            Name = data.name or "Unknown",
+            Created = os.date("%Y-%m-%d %H:%M:%S", created),
+            Updated = os.date("%Y-%m-%d %H:%M:%S", updated),
+            Playing = data.playing or 0,
+            Likes = functions.fetchLikes(),
+            Visits = data.visits or 0,
+            Favorited = data.favoritedCount or 0,
+            RootPlaceId = data.rootPlaceId or "N/A",
+            ServerCount = #Players:GetPlayers()
+        }
 
-        if successDecode and decodedResponse and decodedResponse.data and #decodedResponse.data > 0 then
-            local data = decodedResponse.data[1]
-            local created = functions.parseDate(data.created)
-            local updated = functions.parseDate(data.updated)
+        local maxPlayers = Players.MaxPlayers
+        local playersInServer = placeInfo.ServerCount
+        local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
+        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
 
-            local placeInfo = {
-                PlaceId = game.PlaceId,
-                Name = data.name or "Unknown",
-                Created = os.date("%Y-%m-%d %H:%M:%S", created),
-                Updated = os.date("%Y-%m-%d %H:%M:%S", updated),
-                Playing = data.playing or 0,
-                Likes = functions.fetchLikes(),
-                Visits = data.visits or 0,
-                Favorited = data.favoritedCount or 0,
-                RootPlaceId = data.rootPlaceId or "N/A",
-                ServerCount = #Players:GetPlayers()
-            }
-
-            local maxPlayers = Players.MaxPlayers
-            local playersInServer = placeInfo.ServerCount
-            local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
-            GameName.Text = string.format("Game Name: %s", placeInfo.Name)
-
-            frame79.Text = string.format(
-                "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %d\nFavorited: %d\nVisits: %s\nLikes: %s",
-                placeInfo.PlaceId,
-                tostring(placeInfo.RootPlaceId),
-                game.JobId,
-                game.GameId,
-                placeInfo.Created,
-                placeInfo.Updated,
-                formattedPlayers,
-                placeInfo.Playing,
-                placeInfo.Favorited,
-                placeInfo.Visits,
-                placeInfo.Likes
-            )
-        else
-            GameName.Text = "Game Name: Failed to load"
-            frame79.Text = "Failed to fetch place info."
-        end
+        frame79.Text = string.format(
+            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %d\nFavorited: %d\nVisits: %s\nLikes: %s",
+            placeInfo.PlaceId,
+            tostring(placeInfo.RootPlaceId),
+            game.JobId,
+            game.GameId,
+            placeInfo.Created,
+            placeInfo.Updated,
+            formattedPlayers,
+            placeInfo.Playing,
+            placeInfo.Favorited,
+            placeInfo.Visits,
+            placeInfo.Likes
+        )
     else
         GameName.Text = "Game Name: Failed to load"
         frame79.Text = "Failed to fetch place info."
@@ -1746,6 +1757,7 @@ functions.updatePlaceInfo = function()
 end
 
 functions.updatePlaceInfo()
+
 
 local DisplayName = Create("TextLabel", frame9, {
     Size = UDim2.new(1, 0, 0.3, 0),
