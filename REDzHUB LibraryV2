@@ -1650,9 +1650,9 @@ end
 functions.updatePlaytime()
 
 functions.fetchLikes = function()
-    local url = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+    local url = string.format("https://games.roproxy.com/v1/games/%d/votes", tostring(game.GameId))
     local success, response = pcall(function()
-        return HttpService:GetAsync(url)
+        return game:HttpGet(url)
     end)
 
     if success then
