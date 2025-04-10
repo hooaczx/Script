@@ -2364,13 +2364,13 @@ local ShiftlockCursor = Create("ImageLabel", ScreenGui, {
 })
 
 ShiftLockButton.MouseButton1Click:Connect(function()
-    local char = Player.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    local hum = char and char:FindFirstChildOfClass("Humanoid")
-    local cam = workspace.CurrentCamera
-
     if not ShiftLockmaingui then
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
+            local char = Player.Character or Player.CharacterAdded:Wait()
+            if not char then return end
+            local root = char:FindFirstChild("HumanoidRootPart")
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            local cam = workspace.CurrentCamera
             if root and hum and cam then
                 hum.AutoRotate = false
                 ShiftLockButton.Image = States.On
@@ -2383,9 +2383,15 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             end
         end)
     else
-        if hum then hum.AutoRotate = true end
+        local char = Player.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum.AutoRotate = true
+            end
+        end
         ShiftLockButton.Image = States.Off
-        cam.CFrame *= DisabledOffset
+        workspace.CurrentCamera.CFrame *= DisabledOffset
         ShiftlockCursor.Visible = false
         if ShiftLockmaingui then
             ShiftLockmaingui:Disconnect()
@@ -2393,6 +2399,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         end
     end
 end)
+
 
 functions.ShiftLock = function(_, state)
     if state == Enum.UserInputState.Begin then
