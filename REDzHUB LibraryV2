@@ -2468,14 +2468,18 @@ ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
         if ShiftLockmaingui then
-         if hum then hum.AutoRotate = true end
-         ShiftLockButton.Image = States.Off
-         cam.CFrame *= DisabledOffset
-         ShiftlockCursor.Visible = false
-         if ShiftLockmaingui then
-             ShiftLockmaingui:Disconnect()
-             ShiftLockmaingui = nil
-           end
+            local char = game.Players.LocalPlayer.Character
+            if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+             if hum then
+                hum.AutoRotate = true
+               end
+            end
+            ShiftLockButton.Image = States.Off
+            workspace.CurrentCamera.CFrame *= DisabledOffset
+            ShiftlockCursor.Visible = false
+            ShiftLockmaingui:Disconnect()
+            ShiftLockmaingui = nil
         end
     end
     if not CoreGui:FindFirstChild(ScreenGui.Name) and ScreenGui:IsDescendantOf(game) then
