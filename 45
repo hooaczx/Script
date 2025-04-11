@@ -25,16 +25,6 @@ functionCreate.Create = function(instance, parent, props)
       new[prop] = value
     end)
   end
-  local clse
-  clse = new.AncestryChanged:Connect(function()
-    if not new.Parent then
-      new:Destroy()
-      if clse then
-        clse:Disconnect()
-        clse = nil
-      end
-    end
-  end)
   return new
 end
 
@@ -290,11 +280,12 @@ MakeNotifi = functionCreate.MakeNotifi
 function MakeWindow(Configs)
  local title = Configs.Hub.Title or "hcx hub"
  local Anim_Title = Configs.Hub.Animation or "by : 1hooaczx1"
-  
+ local BackgroundTransparencygui = 0
   local Menu = Create("Frame", ScreenGui, {
       BackgroundColor3 = Configs_HUB.Cor_Hub,
       Position = UDim2.new(0.77, 0, 0.1, 0),
       AnchorPoint = Vector2.new(1, 0),
+      BackgroundTransparency = BackgroundTransparencygui,
       Active = true,
       Draggable = true
    })CreateGradient(Menu, {
@@ -309,7 +300,7 @@ function MakeWindow(Configs)
   })Corner(Menu)
 
   local TopBar = Create("Frame", Menu, {
-    BackgroundTransparency = 1,
+    BackgroundTransparency = BackgroundTransparencygui,
     Size = UDim2.new(1, 0, 0.09, 0),
     Visible = false
   })
@@ -317,6 +308,7 @@ function MakeWindow(Configs)
   local BottomLine = Create("Frame", TopBar, {
     Size = UDim2.new(1, 0, 0.05, 0),
     Position = UDim2.new(0, 0, 1, -2),
+    BackgroundTransparency = BackgroundTransparencygui,
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     BorderSizePixel = 0
   })
@@ -482,7 +474,7 @@ function CreateClose()
       Size = UDim2.new(),
       AnchorPoint = Vector2.new(0.5, 0.5),
       Position = UDim2.new(0.5, 0, 0.5, 0),
-      Transparency = 1,
+      BackgroundTransparency = BackgroundTransparencygui,,
       BackgroundColor3 = Configs_HUB.Cor_Hub
     })Corner(CloseMenu)Stroke(CloseMenu)
 
@@ -2527,14 +2519,15 @@ function MakeTab(Configs)
 
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
-        BackgroundTransparency = 1
+        BackgroundTransparency = 1,
     })
     Corner(Frame)
     local FrameStroke = Stroke(Frame, {Thickness = 1})
     
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        BackgroundTransparency = BackgroundTransparencygui,
         Text = ""
     })
     
@@ -2638,7 +2631,13 @@ function MakeTab(Configs)
     textcolor = Configs_HUB.Cor_DarkText
     return Container
   end
-  
+
+  function changeBackgroundTransparencygui(value)
+   if value then
+     BackgroundTransparencygui = value
+    end
+  end
+
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
     local Callback = Configs.Callback or function() end
@@ -2646,6 +2645,7 @@ function MakeTab(Configs)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
+      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -2718,6 +2718,7 @@ function MakeTab(Configs)
     local TextButton = Create("TextButton", parent, {
         Size = UDim2.new(0.95, 0, 0.12, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
+        BackgroundTransparency = BackgroundTransparencygui,
         Name = "Frame",
         Text = "",
         AutoButtonColor = false
@@ -2888,6 +2889,7 @@ function AddColorPicker(parent, Configs)
     local TextButton = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
+      BackgroundTransparency = BackgroundTransparencygui,
     })
     Stroke(TextButton)
     Corner(TextButton)
@@ -3089,6 +3091,7 @@ function AddColorPicker(parent, Configs)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
+      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -3224,6 +3227,7 @@ function AddColorPicker(parent, Configs)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
+      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -3334,6 +3338,7 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundColor3 = (Configs_HUB and Configs_HUB.Cor_Options) or Color3.new(0.2, 0.2, 0.2),
+        BackgroundTransparency = BackgroundTransparencygui,
         Name = "SliderFrame"
     })
     Corner(Frame)
@@ -3463,6 +3468,7 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
+      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
@@ -3603,6 +3609,7 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
+      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       AutomaticSize = "Y"
     })Corner(Frame)Stroke(Frame)Create("UIListLayout", Frame)Create("UIPadding", Frame, {
@@ -3646,6 +3653,7 @@ function AddColorPicker(parent, Configs)
       Size = UDim2.new(0.95, 0, 0.1, 0),
       Position = UDim2.new(0.05, 0, 0, 0),
       BackgroundColor3 = Configs_HUB.Cor_Hub,
+      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Transparency = 1
     })Corner(Frame)
@@ -3671,6 +3679,7 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.7, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
+        BackgroundTransparency = BackgroundTransparencygui,
         Name = "MusicPlayerFrame",
     })
     Corner(Frame)
@@ -3868,6 +3877,7 @@ function AddFeedBack(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.7, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
+        BackgroundTransparency = BackgroundTransparencygui,
         Name = "MusicPlayerFrame",
     })
     Corner(Frame)
