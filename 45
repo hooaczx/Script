@@ -25,6 +25,16 @@ functionCreate.Create = function(instance, parent, props)
       new[prop] = value
     end)
   end
+  local clse
+  clse = new.AncestryChanged:Connect(function()
+    if not new.Parent then
+      new:Destroy()
+      if clse then
+        clse:Disconnect()
+        clse = nil
+      end
+    end
+  end)
   return new
 end
 
@@ -280,12 +290,11 @@ MakeNotifi = functionCreate.MakeNotifi
 function MakeWindow(Configs)
  local title = Configs.Hub.Title or "hcx hub"
  local Anim_Title = Configs.Hub.Animation or "by : 1hooaczx1"
- local BackgroundTransparencygui = 0
+  
   local Menu = Create("Frame", ScreenGui, {
       BackgroundColor3 = Configs_HUB.Cor_Hub,
       Position = UDim2.new(0.77, 0, 0.1, 0),
       AnchorPoint = Vector2.new(1, 0),
-      BackgroundTransparency = BackgroundTransparencygui,
       Active = true,
       Draggable = true
    })CreateGradient(Menu, {
@@ -300,7 +309,7 @@ function MakeWindow(Configs)
   })Corner(Menu)
 
   local TopBar = Create("Frame", Menu, {
-    BackgroundTransparency = BackgroundTransparencygui,
+    BackgroundTransparency = 1,
     Size = UDim2.new(1, 0, 0.09, 0),
     Visible = false
   })
@@ -308,7 +317,6 @@ function MakeWindow(Configs)
   local BottomLine = Create("Frame", TopBar, {
     Size = UDim2.new(1, 0, 0.05, 0),
     Position = UDim2.new(0, 0, 1, -2),
-    BackgroundTransparency = BackgroundTransparencygui,
     BackgroundColor3 = Configs_HUB.Cor_Stroke,
     BorderSizePixel = 0
   })
@@ -474,7 +482,7 @@ function CreateClose()
       Size = UDim2.new(),
       AnchorPoint = Vector2.new(0.5, 0.5),
       Position = UDim2.new(0.5, 0, 0.5, 0),
-      BackgroundTransparency = BackgroundTransparencygui,
+      Transparency = 1,
       BackgroundColor3 = Configs_HUB.Cor_Hub
     })Corner(CloseMenu)Stroke(CloseMenu)
 
@@ -1267,28 +1275,33 @@ end)
 local Asset = MarketplaceService:GetProductInfo(PlaceId)
 local gameName = success and result.Name or Asset.Name or "Unknown"
 
-local frameinfo = Create("Frame", ScreenGui, {
+local frameinfogui = Create("Frame", ScreenGui, {
+    Size = UDim2.new(),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 1,
+    Visible = false
+})
+
+local frameinfo = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.25, 0, 0.18, 0),
     Position = UDim2.new(0.04, 0, 0.24, 0),
     AnchorPoint = Vector2.new(0.04, 0.21),
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 0.5,
-    Visible = false
 })
 Corner(frameinfo, {CornerRadius = UDim.new(0.15, 0)})
 
-local iconplayers = Create("ImageLabel", ScreenGui, {
+local iconplayers = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
     Position = UDim2.new(0.05, 0, 0.06, 0),
     AnchorPoint = Vector2.new(0.05, 0.06),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png",
-    Visible = false
+    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
 })
 Corner(iconplayers, {CornerRadius = UDim.new(1, 0)})
 
-local Wellcome = Create("TextLabel", ScreenGui, {
+local Wellcome = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.25, 0, 0.09, 0),
     Text = "Welcome "..game.Players.LocalPlayer.Name,
     Position = UDim2.new(0.14, 0, 0.077, 0),
@@ -1298,32 +1311,29 @@ local Wellcome = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(Wellcome)
 
-local gameinfoframe = Create("Frame", ScreenGui, {
+local gameinfoframe = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.27, 0, 0.3, 0),
     Position = UDim2.new(0.032, 0, 0.74, 0),
     AnchorPoint = Vector2.new(0.032, 0.51),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 0.5,
-    Visible = false
+    BackgroundTransparency = 0.5
 })
 Corner(gameinfoframe, {CornerRadius = UDim.new(0.15, 0)})
 
-local iconGame = Create("ImageLabel", ScreenGui, {
+local iconGame = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
     Position = UDim2.new(0.04, 0, 0.47, 0),
     AnchorPoint = Vector2.new(0.04, 0.38),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500",
-    Visible = false
+    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
 })
 
-local GameName = Create("TextLabel", ScreenGui, {
+local GameName = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
     Text = "Game Name: " .. gameName,
     Position = UDim2.new(0.14, 0, 0.48, 0),
@@ -1334,17 +1344,15 @@ local GameName = Create("TextLabel", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
     TextScaled = true,
-    Visible = false
 })
 TextSetColor(GameName)
 
-local frame100 = Create("Frame", ScreenGui, {
+local frame100 = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.41, 0, 0.48, 0),
     Position = UDim2.new(0.6178, 0, 0.22, 0),
     AnchorPoint = Vector2.new(0.4178, 0.14),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 1,
-    Visible = false
+    BackgroundTransparency = 1
 })
 
 local FriendList = Create("TextLabel", frame100, {
@@ -1368,18 +1376,17 @@ local friendsFrame = Create("ScrollingFrame", frame100, {
     BackgroundTransparency = 0.5
 })
 
-local iconfriend = Create("ImageLabel", ScreenGui, {
+local iconfriend = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
     Position = UDim2.new(0.48, 0, 0.006, 0),
     AnchorPoint = Vector2.new(0.43, 0.006),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.4,
     Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420",
-    Visible = false
 })
 Corner(iconfriend, {CornerRadius = UDim.new(1, 0)})
 
-local friendnumber = Create("TextLabel", ScreenGui, {
+local friendnumber = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
     Text = "Friend: 0/1000",
     Position = UDim2.new(0.67, 0, 0.03, 0),
@@ -1389,8 +1396,7 @@ local friendnumber = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(friendnumber)
 
@@ -1459,7 +1465,7 @@ end
 
 coroutine.wrap(functions.checkFriends)
 
-local TimePlay = Create("TextLabel", ScreenGui, {
+local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
     Text = "TimePlay",
     Position = UDim2.new(0.5294, 0, 0.681, 0),
@@ -1469,13 +1475,12 @@ local TimePlay = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(TimePlay)
 Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
 
-local AccountAge = Create("TextLabel", ScreenGui, {
+local AccountAge = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
     Text = "AccountAge",
     Position = UDim2.new(0.7781, 0, 0.681, 0),
@@ -1485,13 +1490,12 @@ local AccountAge = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(AccountAge)
 Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
 
-local Join = Create("TextButton", ScreenGui, {
+local Join = Create("TextButton", frameinfogui, {
     Size = UDim2.new(0.101, 0, 0.07, 0),
     Text = "Join Game Script\nYou can press Copy",
     Position = UDim2.new(0.4868, 0, 0.762, 0),
@@ -1501,13 +1505,12 @@ local Join = Create("TextButton", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(Join)
 Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
 
-local Position = Create("TextButton", ScreenGui, {
+local Position = Create("TextButton", frameinfogui, {
     Size = UDim2.new(0.101, 0, 0.07, 0),
     Text = "Position\nYou can press Copy",
     Position = UDim2.new(0.6026, 0, 0.762, 0),
@@ -1517,8 +1520,7 @@ local Position = Create("TextButton", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(Position)
 Corner(Position, {CornerRadius = UDim.new(0.15, 0)})
@@ -1799,38 +1801,17 @@ local infoToggleButton = Create("ImageButton", frame, {
 })
 
 local minimize3 = true
-
-local uiinfoToggle = {
-    {instance = frameinfo, sizeOpen = UDim2.new(0.25, 0, 0.18, 0), sizeClosed = UDim2.new(0.25, 0, 0, 0)},
-    {instance = iconplayers, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
-    {instance = Wellcome, sizeOpen = UDim2.new(0.25, 0, 0.09, 0), sizeClosed = UDim2.new(0.25, 0, 0, 0)},
-    {instance = gameinfoframe, sizeOpen = UDim2.new(0.27, 0, 0.3, 0), sizeClosed = UDim2.new(0.27, 0, 0, 0)},
-    {instance = iconGame, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
-    {instance = GameName, sizeOpen = UDim2.new(0.28, 0, 0.09, 0), sizeClosed = UDim2.new(0.28, 0, 0, 0)},
-    {instance = frame100, sizeOpen = UDim2.new(0.41, 0, 0.48, 0), sizeClosed = UDim2.new(0.41, 0, 0, 0)},
-    {instance = iconfriend, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
-    {instance = friendnumber, sizeOpen = UDim2.new(0.28, 0, 0.09, 0), sizeClosed = UDim2.new(0.28, 0, 0, 0)},
-    {instance = TimePlay, sizeOpen = UDim2.new(0.205, 0, 0.07, 0), sizeClosed = UDim2.new(0.205, 0, 0, 0)},
-    {instance = AccountAge, sizeOpen = UDim2.new(0.205, 0, 0.07, 0), sizeClosed = UDim2.new(0.205, 0, 0, 0)},
-    {instance = Join, sizeOpen = UDim2.new(0.101, 0, 0.07, 0), sizeClosed = UDim2.new(0.101, 0, 0, 0)},
-    {instance = Position, sizeOpen = UDim2.new(0.101, 0, 0.07, 0), sizeClosed = UDim2.new(0.101, 0, 0, 0)}
-}
-
 infoToggleButton.MouseButton1Click:Connect(function()
     minimize3 = not minimize3
 
     if minimize3 then
         click1:Play()
-        for _, element in ipairs(uiinfoToggle) do
-            element.instance.Visible = true
-            CreateTween1(element.instance, "Size", element.sizeOpen, 0.3, false)
-        end
+        CreateTween(frameinfogui, "Size", UDim2.new(1, 0, 1, 0), 0.3, true)
+        frameinfogui.Visible = true
     else
         click2:Play()
-        for _, element in ipairs(uiinfoToggle) do
-            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
-            element.instance.Visible = false
-        end
+        CreateTween(frameinfogui, "Size", UDim2.new(0, 0, 0, 0), 0.3, true)
+        frameinfogui.Visible = false
     end
 end)
    
@@ -2519,15 +2500,14 @@ function MakeTab(Configs)
 
     local Frame = Create("Frame", ScrollBar, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 1
     })
     Corner(Frame)
     local FrameStroke = Stroke(Frame, {Thickness = 1})
     
     local TextButton = Create("TextButton", Frame, {
         Size = UDim2.new(1, 0, 1, 0),
-        BackgroundColor3 = Configs_HUB.Cor_Options,
-        BackgroundTransparency = BackgroundTransparencygui,
+        BackgroundTransparency = 1,
         Text = ""
     })
     
@@ -2631,13 +2611,7 @@ function MakeTab(Configs)
     textcolor = Configs_HUB.Cor_DarkText
     return Container
   end
-
-  function changeBackgroundTransparencygui(value)
-   if value then
-     BackgroundTransparencygui = value
-    end
-  end
-
+  
   function AddButton(parent, Configs)
     local ButtonName = Configs.Name or "Button!!"
     local Callback = Configs.Callback or function() end
@@ -2645,7 +2619,6 @@ function MakeTab(Configs)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -2718,7 +2691,6 @@ function MakeTab(Configs)
     local TextButton = Create("TextButton", parent, {
         Size = UDim2.new(0.95, 0, 0.12, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
-        BackgroundTransparency = BackgroundTransparencygui,
         Name = "Frame",
         Text = "",
         AutoButtonColor = false
@@ -2889,7 +2861,6 @@ function AddColorPicker(parent, Configs)
     local TextButton = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = BackgroundTransparencygui,
     })
     Stroke(TextButton)
     Corner(TextButton)
@@ -3091,7 +3062,6 @@ function AddColorPicker(parent, Configs)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -3227,7 +3197,6 @@ function AddColorPicker(parent, Configs)
     local TextButton = Create("TextButton", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Text = "",
       AutoButtonColor = false
@@ -3338,7 +3307,6 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.1, 0),
         BackgroundColor3 = (Configs_HUB and Configs_HUB.Cor_Options) or Color3.new(0.2, 0.2, 0.2),
-        BackgroundTransparency = BackgroundTransparencygui,
         Name = "SliderFrame"
     })
     Corner(Frame)
@@ -3468,7 +3436,6 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
@@ -3609,7 +3576,6 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
       Size = UDim2.new(0.95, 0, 0.1, 0),
       BackgroundColor3 = Configs_HUB.Cor_Options,
-      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       AutomaticSize = "Y"
     })Corner(Frame)Stroke(Frame)Create("UIListLayout", Frame)Create("UIPadding", Frame, {
@@ -3653,7 +3619,6 @@ function AddColorPicker(parent, Configs)
       Size = UDim2.new(0.95, 0, 0.1, 0),
       Position = UDim2.new(0.05, 0, 0, 0),
       BackgroundColor3 = Configs_HUB.Cor_Hub,
-      BackgroundTransparency = BackgroundTransparencygui,
       Name = "Frame",
       Transparency = 1
     })Corner(Frame)
@@ -3679,7 +3644,6 @@ function AddColorPicker(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.7, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
-        BackgroundTransparency = BackgroundTransparencygui,
         Name = "MusicPlayerFrame",
     })
     Corner(Frame)
@@ -3877,7 +3841,6 @@ function AddFeedBack(parent, Configs)
     local Frame = Create("Frame", parent, {
         Size = UDim2.new(0.95, 0, 0.7, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
-        BackgroundTransparency = BackgroundTransparencygui,
         Name = "MusicPlayerFrame",
     })
     Corner(Frame)
