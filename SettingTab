@@ -471,9 +471,7 @@ local function Cframewalkspeed()
             local moveWorld = (right * moveVec.X - forward * moveVec.Z).Unit * tonumber(getgenv().Cframewalk)
 
             if mode == "Tween Mode" then
-                local goal = {CFrame = root.CFrame + moveWorld}
-                local tween = TweenService:Create(root, TweenInfo.new(0.1, Enum.EasingStyle.Linear), goal)
-                tween:Play()
+                CreateTween(root, "CFrame", root.CFrame + moveWorld, 0.5, false)
             else
                 root.CFrame = root.CFrame + moveWorld
             end
