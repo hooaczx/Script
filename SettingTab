@@ -449,29 +449,46 @@ AddToggle(Main5u6, {
 })
 
 getgenv().Cframewalk = 0
-local flightLoop, Cframewalk = nil, false 
+local flightLoop, Cframewalk = nil, false
+local mode = "Nope
 
 local function Cframewalkspeed()
     local LocalPlayer = game.Players.LocalPlayer
     local controlModule = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
     local camera = workspace.CurrentCamera
+
     flightLoop = game:GetService("RunService").RenderStepped:Connect(function()
         local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local root = character:WaitForChild("HumanoidRootPart")
-        if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            return
-        end
+        local root = character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
         if not Cframewalk then return end
+
         local moveVec = controlModule:GetMoveVector()
         if moveVec.Magnitude > 0 then
             local camCF = camera.CFrame
             local forward = Vector3.new(camCF.LookVector.X, 0, camCF.LookVector.Z).Unit
             local right = Vector3.new(camCF.RightVector.X, 0, camCF.RightVector.Z).Unit
             local moveWorld = (right * moveVec.X - forward * moveVec.Z).Unit * tonumber(getgenv().Cframewalk)
-            root.CFrame = root.CFrame + moveWorld
+
+            if mode == "Tween Mode" then
+                local goal = {CFrame = root.CFrame + moveWorld}
+                local tween = TweenService:Create(root, TweenInfo.new(0.1, Enum.EasingStyle.Linear), goal)
+                tween:Play()
+            else
+                root.CFrame = root.CFrame + moveWorld
+            end
         end
     end)
 end
+
+AddDropdown(Main5u6, {
+    Name = "Cframe walk Mode",
+    Default = "Nope",
+    Options = {"Tween Mode", "Nope"},
+    Callback = function(option)
+        mode = option
+    end
+})
 
 AddTextBox(Main5u6, {
     Name = "Number Cframe walk",
