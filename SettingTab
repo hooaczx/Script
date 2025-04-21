@@ -119,14 +119,12 @@ function toggleESP(enable, color)
                             local headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
                             local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
                             local box = boxESPs[plr] or Create("Drawing", nil, {
-                                Visible = false,
                                 Color = _G.ESPColor or Color3.fromRGB(0, 0, 255),
                                 Thickness = 1,
                                 Transparency = 1,
                                 Filled = false
                             })
                             boxESPs[plr] = box
-                            box.Visible = rootPos.Z > 0
                             if rootPos.Z > 0 then
                                 box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
                                 box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
