@@ -90,6 +90,7 @@ local Storage = Create("Folder", game:FindService("CoreGui"), {
 local cn = {}
 local esplp
 local boxESPs = {}
+local ifbox = false
 function CreateDrawing(type, properties)
     local obj = Drawing.new(type)
     for prop, val in pairs(properties) do
@@ -139,11 +140,16 @@ function toggleESP(enable, color)
                                 })
                                 boxESPs[plr] = box
                             end
-                            if rootPos.Z > 0 then
-                                box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
-                                box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
-                                box.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                                box.Visible = true
+
+                            if not ifbox then
+                                if rootPos.Z > 0 then
+                                    box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
+                                    box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
+                                    box.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                                    box.Visible = true
+                                else
+                                    box.Visible = false
+                                end
                             else
                                 box.Visible = false
                             end
@@ -196,23 +202,12 @@ function toggleESP(enable, color)
 end
 
 AddToggle(Main5u6, {
-    Name = "box esp Player",
-    Default = false,
-    Callback = function(bool)
-        for plr, box in pairs(boxESPs) do
-            if bool then
-                if not box.Visible then
-                    box.Visible = true
-                end
-            else
-                if box.Visible then
-                    box.Visible = false
-                end
-            end
-        end
-    end
+   Name = "box esp Player",
+   Default = false,
+   Callback = function(bool)
+       ifbox = bool
+   end
 })
-
 
 AddToggle(Main5u6, {
     Name = "Esp Player",
