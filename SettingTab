@@ -90,6 +90,13 @@ local Storage = Create("Folder", game:FindService("CoreGui"), {
 local cn = {}
 local esplp
 local boxESPs = {}
+function CreateDrawing(type, properties)
+    local obj = Drawing.new(type)
+    for prop, val in pairs(properties) do
+        obj[prop] = val
+    end
+    return obj
+end
 
 function toggleESP(enable, color)
     if enable then
@@ -109,26 +116,36 @@ function toggleESP(enable, color)
                         })
                     end
                     if plr.Character then
-                        local char = plr.Character or plr.CharacterAdded:Wait()
-                        local hrp = char:WaitForChild("HumanoidRootPart")
-                        local head = char:WaitForChild("Head")
+                        local char = plr.Character
+                        local hrp = char:FindFirstChild("HumanoidRootPart")
+                        local head = char:FindFirstChild("Head")
+
                         if hrp and head then
                             highlight.Adornee = char
+
                             local camera = workspace.CurrentCamera
                             local rootPos = camera:WorldToViewportPoint(hrp.Position)
                             local headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
                             local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
-                            local box = boxESPs[plr] or Create("Drawing", nil, {
-                                Color = _G.ESPColor or Color3.fromRGB(0, 0, 255),
-                                Thickness = 1,
-                                Transparency = 1,
-                                Filled = false
-                            })
-                            boxESPs[plr] = box
+
+                            local box = boxESPs[plr]
+                            if not box then
+                                box = CreateDrawing("Square", {
+                                    Color = _G.ESPColor or Color3.fromRGB(0, 0, 255),
+                                    Thickness = 1,
+                                    Transparency = 1,
+                                    Filled = false,
+                                    Visible = true
+                                })
+                                boxESPs[plr] = box
+                            end
                             if rootPos.Z > 0 then
                                 box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
                                 box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
                                 box.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                                box.Visible = true
+                            else
+                                box.Visible = false
                             end
                         end
                     end
