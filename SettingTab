@@ -142,6 +142,11 @@ function toggleESP(enable, color)
                             end
 
                             if not ifbox then
+                                for plr, box in pairs(boxESPs) do
+                                 if not ifbox and not box then
+                                   box.Visible = true
+                                  end
+                                end
                                 if rootPos.Z > 0 then
                                     box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
                                     box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
@@ -151,7 +156,11 @@ function toggleESP(enable, color)
                                     box.Visible = false
                                 end
                             else
-                                box.Visible = false
+                                for plr, box in pairs(boxESPs) do
+                                 if ifbox and box then
+                                   box.Visible = false
+                                  end
+                                end
                             end
                         end
                     end
