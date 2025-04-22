@@ -91,7 +91,6 @@ local cn = {}
 local esplp
 local boxESPs = {}
 local ifbox = false
-
 function CreateDrawing(type, properties)
     local obj = Drawing.new(type)
     for prop, val in pairs(properties) do
@@ -173,19 +172,21 @@ function toggleESP(enable, color)
                     end
                 end
             end
-            for _, child in ipairs(Storage:GetChildren()) do
-                if not game:GetService("Players"):FindFirstChild(child.Name) then
-                    child:Destroy()
-                    if cn[child.Name] then
-                        cn[child.Name]:Disconnect()
-                        cn[child.Name] = nil
-                    end
-                    if boxESPs[child.Name] then
-                        boxESPs[child.Name]:Remove()
-                        boxESPs[child.Name] = nil
-                    end
-                end
-            end
+        for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+           if not plr.Character then
+             if boxESPs[plr] then
+              boxESPs[plr]:Remove()
+              boxESPs[plr] = nil
+           end
+         end
+         local child = Storage:FindFirstChild(plr.Name)
+             if not child then
+               if cn[plr.Name] then
+                 cn[plr.Name]:Disconnect()
+                 cn[plr.Name] = nil
+               end
+             end
+          end
         end)
     else
         if esplp then
