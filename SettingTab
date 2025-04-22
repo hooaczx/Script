@@ -104,8 +104,8 @@ function toggleESP(enable, color)
     if enable then
         if esplp then return end
         esplp = RunService.Heartbeat:Connect(function()
-            for _, plr in ipairs(Players:GetPlayers()) do
-                if plr ~= Players.LocalPlayer then
+            for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+                if plr ~= game:GetService("Players").LocalPlayer then
                     local highlight = Storage:FindFirstChild(plr.Name)
                     if not highlight then
                         highlight = Instance.new("Highlight")
@@ -165,7 +165,7 @@ function toggleESP(enable, color)
 
                     if not cn[plr] then
                         cn[plr] = plr.CharacterAdded:Connect(function(newChar)
-                            local hrp = newChar:WaitForChild("HumanoidRootPart", 5)
+                            local hrp = newChar:WaitForChild("HumanoidRootPart")
                             local head = newChar:FindFirstChild("Head")
                             if hrp then
                                 highlight.Adornee = newChar
@@ -175,7 +175,7 @@ function toggleESP(enable, color)
                 end
             end
             for _, child in ipairs(Storage:GetChildren()) do
-                if not Players:FindFirstChild(child.Name) then
+                if not game:GetService("Players"):FindFirstChild(child.Name) then
                     child:Destroy()
                     if cn[child.Name] then
                         cn[child.Name]:Disconnect()
