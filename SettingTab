@@ -94,135 +94,146 @@ AddToggle(Main5u6, {
     end
 })
 
-local s0 = Create("Folder", game:FindService("CoreGui"), {
+local s0 = Create("Folder", game:GetService("CoreGui"), {
     Name = "Highlight_Storage_Player"
 })
-local c1 = {}
-local e2
-local b3 = {}
-local i4 = false
-function d0(t, p)
-    local o = Drawing.new(t)
-    for k, v in pairs(p) do
-        o[k] = v
+local cn = {}
+local esplp
+local boxESPs = {}
+local ifbox = false
+function CreateDrawing(type, properties)
+    local obj = Drawing.new(type)
+    for prop, val in pairs(properties) do
+        obj[prop] = val
     end
-    return o
+    return obj
 end
 
-function toggleESP(e, clr)
-    if e then
-        e2 = RunService.Heartbeat:Connect(function()
-            local p5 = game:GetService("Players"):GetPlayers()
-            local v6 = {}
+function toggleESP(enable, color)
+    if enable then
+        if esplp then return end
+        esplp = game:GetService("RunService").Heartbeat:Connect(function()
+            for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+                if plr ~= game:GetService("Players").LocalPlayer and plr.UserId then
+                    local char = plr.Character
+                    if char then
+                        local hrp = char:WaitForChild("HumanoidRootPart")
+                        local head = char:WaitForChild("Head")
+                        local humanoid = char:WaitForChild("Humanoid")
 
-            for _, p in ipairs(p5) do
-                if p ~= game:GetService("Players").LocalPlayer and p.UserId > 0 then
-                    v6[p] = true
-                    local h = s0:FindFirstChild(p.Name)
-                    if not h then
-                        h = Instance.new("Highlight")
-                        h.Name = p.Name
-                        h.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                        h.FillTransparency = 1
-                        h.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                        h.OutlineTransparency = 0
-                        h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        h.Parent = s0
-                    end
+                        if hrp and head and humanoid then
+                            local highlight = Storage:FindFirstChild(plr.Name)
+                            if not highlight then
+                                highlight = Instance.new("Highlight")
+                                highlight.Name = plr.Name
+                                highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                                highlight.FillTransparency = 1
+                                highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                                highlight.OutlineTransparency = 0
+                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                                highlight.Parent = Storage
+                            end
 
-                    local ch = p.Character
-                    if ch then
-                        local hrp = ch:WaitForChild("HumanoidRootPart")
-                        local hd = ch:WaitForChild("Head")
-                        local hum = ch:WaitForChild("Humanoid")
+                            if highlight and highlight.Parent == Storage then
+                                highlight.Adornee = char
+                            end
 
-                        if hrp and hum then
-                            h.Adornee = ch
-                            local cam = workspace.CurrentCamera
-                            local rp = cam:WorldToViewportPoint(hrp.Position)
-                            local hp = hd and cam:WorldToViewportPoint(hd.Position + Vector3.new(0, 0.5, 0)) or cam:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
-                            local lp = cam:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+                            local camera = workspace.CurrentCamera
+                            local rootPos = camera:WorldToViewportPoint(hrp.Position)
+                            local headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                            local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
 
-                            local bx = b3[p]
-                            if not bx then
-                                bx = d0("Square", {
+                            local box = boxESPs[plr]
+                            if not box then
+                                box = CreateDrawing("Square", {
                                     Color = _G.ESPColor or Color3.fromRGB(0, 0, 255),
                                     Thickness = 1,
                                     Transparency = 1,
                                     Filled = false,
                                     Visible = true
                                 })
-                                b3[p] = bx
+                                boxESPs[plr] = box
                             end
 
-                            if not i4 and rp.Z > 0 then
-                                bx.Size = Vector2.new(2000 / rp.Z, hp.Y - lp.Y)
-                                bx.Position = Vector2.new(rp.X - bx.Size.X / 2, rp.Y - bx.Size.Y / 2)
-                                bx.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                                bx.Visible = true
+                            if not ifbox then
+                                if rootPos.Z > 0 then
+                                    box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
+                                    box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
+                                    box.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                                    box.Visible = true
+                                else
+                                    box.Visible = false
+                                end
                             else
-                                bx.Visible = false
+                                box.Visible = false
+                            end
+                            if not cn[plr] then
+                                cn[plr] = plr.CharacterAdded:Connect(function(newChar)
+                                    local newHrp = newChar:WaitForChild("HumanoidRootPart")
+                                    if Storage:FindFirstChild(plr.Name) then
+                                        Storage[plr.Name].Adornee = newChar
+                                    end
+                                end)
                             end
                         end
                     end
-
-                    if not c1[p] then
-                        c1[p] = p.CharacterAdded:Connect(function(nc)
-                            local h5 = nc:WaitForChild("HumanoidRootPart", 3)
-                            if h5 then
-                                h.Adornee = nc
-                            end
-                        end)
+                end
+            end
+            for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+                if not plr.Character then
+                    if boxESPs[plr] then
+                        boxESPs[plr]:Destroy() 
+                        boxESPs[plr] = nil
                     end
                 end
-            end
-            for tp, bx in pairs(b3) do
-                if not v6[tp] or not tp.Character then
-                    bx:Remove()
-                    b3[tp] = nil
-                end
-            end
-            for tp, cc in pairs(c1) do
-                if not v6[tp] then
-                    cc:Disconnect()
-                    c1[tp] = nil
-                end
-            end
-            for _, ch in ipairs(s0:GetChildren()) do
-                local ex = false
-                for _, p in ipairs(p5) do
-                    if p.Name == ch.Name then
-                        ex = true
-                        break
+                if not game:GetService("Players"):GetPlayerByUserId(plr.UserId) then
+                    local child = Storage:FindFirstChild(plr.Name)
+                    if child then
+                        child:Destroy()
                     end
-                end
-                if not ex then
-                    ch:Destroy()
-                    ch = nil
+                    if cn[plr] then
+                        cn[plr]:Disconnect()
+                        cn[plr] = nil
+                    end
                 end
             end
         end)
     else
-        if e2 then
-            e2:Disconnect()
-            e2 = nil
+        if esplp then
+            esplp:Disconnect()
+            esplp = nil
         end
-        for _, h in ipairs(s0:GetChildren()) do
-            h:Destroy()
-            h = nil
+        for _, highlight in ipairs(Storage:GetChildren()) do
+            highlight:Destroy()
         end
-        for _, cc in pairs(c1) do
-            cc:Disconnect()
-            cc = nil
+        for _, conn in pairs(cn) do
+            conn:Disconnect()
         end
-        for _, bx in pairs(b3) do
-            bx:Remove()
-            bx = nil
+        for _, box in pairs(boxESPs) do
+            box:Remove()
         end
-        c1 = {}
-        b3 = {}
+        cn = {}
+        boxESPs = {}
     end
 end
+
+-- เพิ่ม event เมื่อผู้เล่นออกจากเกม
+game:GetService("Players").PlayerRemoving:Connect(function(plr)
+    if plr ~= game:GetService("Players").LocalPlayer then
+        if boxESPs[plr] then
+            boxESPs[plr]:Remove()
+            boxESPs[plr] = nil
+        end
+        if cn[plr] then
+            cn[plr]:Disconnect()
+            cn[plr] = nil
+        end
+        local child = Storage:FindFirstChild(plr.Name)
+        if child then
+            child:Destroy()
+        end
+    end
+end)
 
 AddToggle(Main5u6, {
     Name = "box esp Player",
@@ -254,6 +265,7 @@ AddColorPicker(Main5u6, {
         end
     end
 })
+
 
 local module = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
 
