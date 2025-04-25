@@ -94,7 +94,7 @@ AddToggle(Main5u6, {
     end
 })
 
-local s0 = Create("Folder", game:GetService("CoreGui"), {
+local Storage = Create("Folder", game:FindService("CoreGui"), {
     Name = "Highlight_Storage_Player"
 })
 local cn = {}
@@ -111,38 +111,39 @@ end
 
 function toggleESP(enable, color)
     if enable then
-        if esplp then return end
-        esplp = game:GetService("RunService").Heartbeat:Connect(function()
+        if esplp then esplp:Disconnect() esplp = nil end
+        esplp = RunService.Heartbeat:Connect(function()
             for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
-                if plr ~= game:GetService("Players").LocalPlayer and plr.UserId then
-                    local char = plr.Character
-                    if char then
+                if plr ~= game:GetService("Players").LocalPlayer and plr.UserId ~= 0 then
+                    local highlight = Storage:WaitForChild(plr.Name)
+                    if not highlight then
+                        highlight = Instance.new("Highlight")
+                        highlight.Name = plr.Name
+                        highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                        highlight.FillTransparency = 1
+                        highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                        highlight.OutlineTransparency = 0
+                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        highlight.Parent = Storage
+                    end
+                    if plr.Character and plr.UserId ~= 0 then
+                        local char = plr.Character
                         local hrp = char:WaitForChild("HumanoidRootPart")
                         local head = char:WaitForChild("Head")
                         local humanoid = char:WaitForChild("Humanoid")
 
-                        if hrp and head and humanoid then
-                            local highlight = Storage:FindFirstChild(plr.Name)
-                            if not highlight then
-                                highlight = Instance.new("Highlight")
-                                highlight.Name = plr.Name
-                                highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                                highlight.FillTransparency = 1
-                                highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                                highlight.OutlineTransparency = 0
-                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                                highlight.Parent = Storage
-                            end
-
-                            if highlight and highlight.Parent == Storage then
-                                highlight.Adornee = char
-                            end
+                        if hrp and humanoid then
+                            highlight.Adornee = char
 
                             local camera = workspace.CurrentCamera
                             local rootPos = camera:WorldToViewportPoint(hrp.Position)
-                            local headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                            local headPos
+                            if head then
+                                headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                            else 
+                                headPos = camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
+                            end
                             local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
-
                             local box = boxESPs[plr]
                             if not box then
                                 box = CreateDrawing("Square", {
@@ -167,36 +168,34 @@ function toggleESP(enable, color)
                             else
                                 box.Visible = false
                             end
-                            if not cn[plr] then
-                                cn[plr] = plr.CharacterAdded:Connect(function(newChar)
-                                    local newHrp = newChar:WaitForChild("HumanoidRootPart")
-                                    if Storage:FindFirstChild(plr.Name) then
-                                        Storage[plr.Name].Adornee = newChar
-                                    end
-                                end)
-                            end
                         end
                     end
-                end
-            end
-            for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
-                if not plr.Character then
-                    if boxESPs[plr] then
-                        boxESPs[plr]:Destroy() 
-                        boxESPs[plr] = nil
-                    end
-                end
-                if not game:GetService("Players"):GetPlayerByUserId(plr.UserId) then
-                    local child = Storage:FindFirstChild(plr.Name)
-                    if child then
-                        child:Destroy()
-                    end
-                    if cn[plr] then
-                        cn[plr]:Disconnect()
-                        cn[plr] = nil
+                    if not cn[plr] then
+                        cn[plr] = plr.CharacterAdded:Connect(function(newChar)
+                            local hrp = newChar:WaitForChild("HumanoidRootPart")
+                            local head = newChar:WaitForChild("Head")
+                            if hrp then
+                                highlight.Adornee = newChar
+                            end
+                        end)
                     end
                 end
             end
+        for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+           if not plr.Character then
+             if boxESPs[plr] then
+              boxESPs[plr]:Destroy()
+              boxESPs[plr] = nil
+           end
+         end
+         local child = Storage:WaitForChild(plr.Name)
+             if not child then
+               if cn[plr.Name] then
+                 cn[plr.Name]:Disconnect()
+                 cn[plr.Name] = nil
+               end
+             end
+          end
         end)
     else
         if esplp then
@@ -205,35 +204,20 @@ function toggleESP(enable, color)
         end
         for _, highlight in ipairs(Storage:GetChildren()) do
             highlight:Destroy()
+            highlight = nil
         end
         for _, conn in pairs(cn) do
             conn:Disconnect()
+            conn = nil
         end
         for _, box in pairs(boxESPs) do
-            box:Remove()
+            box:Destroy()
+            box = nil
         end
         cn = {}
         boxESPs = {}
     end
 end
-
--- เพิ่ม event เมื่อผู้เล่นออกจากเกม
-game:GetService("Players").PlayerRemoving:Connect(function(plr)
-    if plr ~= game:GetService("Players").LocalPlayer then
-        if boxESPs[plr] then
-            boxESPs[plr]:Remove()
-            boxESPs[plr] = nil
-        end
-        if cn[plr] then
-            cn[plr]:Disconnect()
-            cn[plr] = nil
-        end
-        local child = Storage:FindFirstChild(plr.Name)
-        if child then
-            child:Destroy()
-        end
-    end
-end)
 
 AddToggle(Main5u6, {
     Name = "box esp Player",
@@ -265,7 +249,6 @@ AddColorPicker(Main5u6, {
         end
     end
 })
-
 
 local module = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
 
