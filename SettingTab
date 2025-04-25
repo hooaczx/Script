@@ -101,6 +101,7 @@ local cn = {}
 local esplp
 local boxESPs = {}
 local ifbox = false
+
 function CreateDrawing(type, properties)
     local obj = Drawing.new(type)
     for prop, val in pairs(properties) do
@@ -131,10 +132,8 @@ function toggleESP(enable, color)
                         local hrp = char:WaitForChild("HumanoidRootPart")
                         local head = char:WaitForChild("Head")
                         local humanoid = char:WaitForChild("Humanoid")
-
                         if hrp and humanoid then
                             highlight.Adornee = char
-
                             local camera = workspace.CurrentCamera
                             local rootPos = camera:WorldToViewportPoint(hrp.Position)
                             local headPos
@@ -144,7 +143,7 @@ function toggleESP(enable, color)
                                 headPos = camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
                             end
                             local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
-                            local box = boxESPs[plr]
+                            local box = boxESPs[plr.Name]
                             if not box then
                                 box = CreateDrawing("Square", {
                                     Color = _G.ESPColor or Color3.fromRGB(0, 0, 255),
@@ -153,9 +152,8 @@ function toggleESP(enable, color)
                                     Filled = false,
                                     Visible = true
                                 })
-                                boxESPs[plr] = box
+                                boxESPs[plr.Name] = box
                             end
-
                             if not ifbox then
                                 if rootPos.Z > 0 then
                                     box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
@@ -170,8 +168,8 @@ function toggleESP(enable, color)
                             end
                         end
                     end
-                    if not cn[plr] then
-                        cn[plr] = plr.CharacterAdded:Connect(function(newChar)
+                    if not cn[plr.Name] then
+                        cn[plr.Name] = plr.CharacterAdded:Connect(function(newChar)
                             local hrp = newChar:WaitForChild("HumanoidRootPart")
                             local head = newChar:WaitForChild("Head")
                             if hrp then
@@ -181,7 +179,7 @@ function toggleESP(enable, color)
                     end
                 end
             end
-        for _, child in ipairs(Storage:GetChildren()) do
+            for _, child in ipairs(Storage:GetChildren()) do
                 local plr = game:GetService("Players"):FindFirstChild(child.Name)
                 if not plr then
                     child:Destroy()
@@ -203,15 +201,12 @@ function toggleESP(enable, color)
         end
         for _, highlight in ipairs(Storage:GetChildren()) do
             highlight:Destroy()
-            highlight = nil
         end
         for _, conn in pairs(cn) do
             conn:Disconnect()
-            conn = nil
         end
         for _, box in pairs(boxESPs) do
             box:Destroy()
-            box = nil
         end
         cn = {}
         boxESPs = {}
