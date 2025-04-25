@@ -115,7 +115,7 @@ function toggleESP(enable, color)
         esplp = RunService.Heartbeat:Connect(function()
             for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
                 if plr ~= game:GetService("Players").LocalPlayer and plr.UserId ~= 0 then
-                    local highlight = Storage:WaitForChild(plr.Name)
+                    local highlight = Storage:FindFirstChild(plr.Name)
                     if not highlight then
                         highlight = Instance.new("Highlight")
                         highlight.Name = plr.Name
@@ -126,7 +126,7 @@ function toggleESP(enable, color)
                         highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                         highlight.Parent = Storage
                     end
-                    if plr.Character and plr.UserId ~= 0 then
+                    if plr.Character then
                         local char = plr.Character
                         local hrp = char:WaitForChild("HumanoidRootPart")
                         local head = char:WaitForChild("Head")
@@ -181,21 +181,20 @@ function toggleESP(enable, color)
                     end
                 end
             end
-        for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
-           if not plr.Character then
-             if boxESPs[plr] then
-              boxESPs[plr]:Destroy()
-              boxESPs[plr] = nil
-           end
-         end
-         local child = Storage:WaitForChild(plr.Name)
-             if not child then
-               if cn[plr.Name] then
-                 cn[plr.Name]:Disconnect()
-                 cn[plr.Name] = nil
-               end
-             end
-          end
+        for _, child in ipairs(Storage:GetChildren()) do
+                local plr = game:GetService("Players"):FindFirstChild(child.Name)
+                if not plr then
+                    child:Destroy()
+                    if boxESPs[child.Name] then
+                        boxESPs[child.Name]:Destroy()
+                        boxESPs[child.Name] = nil
+                    end
+                    if cn[child.Name] then
+                        cn[child.Name]:Disconnect()
+                        cn[child.Name] = nil
+                    end
+                end
+            end
         end)
     else
         if esplp then
