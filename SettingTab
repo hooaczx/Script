@@ -94,126 +94,133 @@ AddToggle(Main5u6, {
     end
 })
 
-local Storage = Create("Folder", game:FindService("CoreGui"), {
+local s0 = Create("Folder", game:FindService("CoreGui"), {
     Name = "Highlight_Storage_Player"
 })
-local cn = {}
-local esplp
-local boxESPs = {}
-local ifbox = false
-function CreateDrawing(type, properties)
-    local obj = Drawing.new(type)
-    for prop, val in pairs(properties) do
-        obj[prop] = val
+local c1 = {}
+local e2
+local b3 = {}
+local i4 = false
+function d0(t, p)
+    local o = Drawing.new(t)
+    for k, v in pairs(p) do
+        o[k] = v
     end
-    return obj
+    return o
 end
 
-function toggleESP(enable, color)
-    if enable then
-        if esplp then return end
-        esplp = RunService.Heartbeat:Connect(function()
-            for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
-                if plr ~= game:GetService("Players").LocalPlayer then
-                    local highlight = Storage:FindFirstChild(plr.Name)
-                    if not highlight then
-                        highlight = Instance.new("Highlight")
-                        highlight.Name = plr.Name
-                        highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                        highlight.FillTransparency = 1
-                        highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                        highlight.OutlineTransparency = 0
-                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        highlight.Parent = Storage
+function toggleESP(e, clr)
+    if e then
+        e2 = RunService.Heartbeat:Connect(function()
+            local p5 = Players:GetPlayers()
+            local v6 = {}
+
+            for _, p in ipairs(p5) do
+                if p ~= Players.LocalPlayer and p.UserId > 0 then
+                    v6[p] = true
+                    local h = s0:FindFirstChild(p.Name)
+                    if not h then
+                        h = Instance.new("Highlight")
+                        h.Name = p.Name
+                        h.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                        h.FillTransparency = 1
+                        h.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                        h.OutlineTransparency = 0
+                        h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        h.Parent = s0
                     end
-                    if plr.Character then
-                        local char = plr.Character
-                        local hrp = char:FindFirstChild("HumanoidRootPart")
-                        local head = char:FindFirstChild("Head")
-                        local humanoid = char:FindFirstChildOfClass("Humanoid")
 
-                        if hrp and humanoid then
-                            highlight.Adornee = char
+                    local ch = p.Character
+                    if ch then
+                        local hrp = ch:WaitForChild("HumanoidRootPart")
+                        local hd = ch:WaitForChild("Head")
+                        local hum = ch:WaitForChild("Humanoid")
 
-                            local camera = workspace.CurrentCamera
-                            local rootPos = camera:WorldToViewportPoint(hrp.Position)
-                            local headPos
-                            if head then
-                                headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
-                            else 
-                                headPos = camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
-                            end
-                            local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
-                            local box = boxESPs[plr]
-                            if not box then
-                                box = CreateDrawing("Square", {
+                        if hrp and hum then
+                            h.Adornee = ch
+                            local cam = workspace.CurrentCamera
+                            local rp = cam:WorldToViewportPoint(hrp.Position)
+                            local hp = hd and cam:WorldToViewportPoint(hd.Position + Vector3.new(0, 0.5, 0)) or cam:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
+                            local lp = cam:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+
+                            local bx = b3[p]
+                            if not bx then
+                                bx = d0("Square", {
                                     Color = _G.ESPColor or Color3.fromRGB(0, 0, 255),
                                     Thickness = 1,
                                     Transparency = 1,
                                     Filled = false,
                                     Visible = true
                                 })
-                                boxESPs[plr] = box
+                                b3[p] = bx
                             end
 
-                            if not ifbox then
-                                if rootPos.Z > 0 then
-                                    box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
-                                    box.Position = Vector2.new(rootPos.X - box.Size.X / 2, rootPos.Y - box.Size.Y / 2)
-                                    box.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                                    box.Visible = true
-                                else
-                                    box.Visible = false
-                                end
+                            if not i4 and rp.Z > 0 then
+                                bx.Size = Vector2.new(2000 / rp.Z, hp.Y - lp.Y)
+                                bx.Position = Vector2.new(rp.X - bx.Size.X / 2, rp.Y - bx.Size.Y / 2)
+                                bx.Color = _G.ESPColor or Color3.fromRGB(0, 0, 255)
+                                bx.Visible = true
                             else
-                                box.Visible = false
+                                bx.Visible = false
                             end
                         end
                     end
 
-                    if not cn[plr] then
-                        cn[plr] = plr.CharacterAdded:Connect(function(newChar)
-                            local hrp = newChar:WaitForChild("HumanoidRootPart")
-                            local head = newChar:FindFirstChild("Head")
-                            if hrp then
-                                highlight.Adornee = newChar
+                    if not c1[p] then
+                        c1[p] = p.CharacterAdded:Connect(function(nc)
+                            local h5 = nc:WaitForChild("HumanoidRootPart", 3)
+                            if h5 then
+                                h.Adornee = nc
                             end
                         end)
                     end
                 end
             end
-        for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
-           if not plr.Character then
-             if boxESPs[plr] then
-              boxESPs[plr]:Destroy()
-              boxESPs[plr] = nil
-           end
-         end
-         local child = Storage:FindFirstChild(plr.Name)
-             if not child then
-               if cn[plr.Name] then
-                 cn[plr.Name]:Disconnect()
-                 cn[plr.Name] = nil
-               end
-             end
-          end
+            for tp, bx in pairs(b3) do
+                if not v6[tp] or not tp.Character then
+                    bx:Remove()
+                    b3[tp] = nil
+                end
+            end
+            for tp, cc in pairs(c1) do
+                if not v6[tp] then
+                    cc:Disconnect()
+                    c1[tp] = nil
+                end
+            end
+            for _, ch in ipairs(s0:GetChildren()) do
+                local ex = false
+                for _, p in ipairs(p5) do
+                    if p.Name == ch.Name then
+                        ex = true
+                        break
+                    end
+                end
+                if not ex then
+                    ch:Destroy()
+                    ch = nil
+                end
+            end
         end)
     else
-        if esplp then
-            esplp:Disconnect()
-            esplp = nil
+        if e2 then
+            e2:Disconnect()
+            e2 = nil
         end
-        for _, highlight in ipairs(Storage:GetChildren()) do
-            highlight:Destroy()
+        for _, h in ipairs(s0:GetChildren()) do
+            h:Destroy()
+            h = nil
         end
-        for _, conn in pairs(cn) do
-            conn:Disconnect()
+        for _, cc in pairs(c1) do
+            cc:Disconnect()
+            cc = nil
         end
-        for _, box in pairs(boxESPs) do
-            box:Remove()
+        for _, bx in pairs(b3) do
+            bx:Remove()
+            bx = nil
         end
-        cn = {}
-        boxESPs = {}
+        c1 = {}
+        b3 = {}
     end
 end
 
