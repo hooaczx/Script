@@ -94,14 +94,13 @@ AddToggle(Main5u6, {
     end
 })
 
-local Storage = Create("Folder", game:FindService("CoreGui"), {
+local Storage = Create("Folder", game.CoreGui, {
     Name = "Highlight_Storage_Player"
 })
 local cn = {}
 local esplp
 local boxESPs = {}
 local ifbox = false
-
 function CreateDrawing(type, properties)
     local obj = Drawing.new(type)
     for prop, val in pairs(properties) do
@@ -118,31 +117,30 @@ function toggleESP(enable, color)
                 if plr ~= game:GetService("Players").LocalPlayer and plr.UserId ~= 0 then
                     local highlight = Storage:FindFirstChild(plr.Name)
                     if not highlight then
-                        highlight = Instance.new("Highlight")
-                        highlight.Name = plr.Name
-                        highlight.FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                        highlight.FillTransparency = 1
-                        highlight.OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255)
-                        highlight.OutlineTransparency = 0
-                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        highlight.Parent = Storage
+                        highlight = Create("Highlight", Storage, {
+                            Name = plr.Name,
+                            FillColor = _G.ESPColor or Color3.fromRGB(0, 0, 255),
+                            FillTransparency = 1,
+                            OutlineColor = _G.ESPColor or Color3.fromRGB(0, 0, 255),
+                            OutlineTransparency = 0,
+                            DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        })
                     end
+
                     if plr.Character then
+                        if highlight.Adornee ~= plr.Character then
+                            highlight.Adornee = plr.Character
+                        end
+
                         local char = plr.Character
-                        local hrp = char:WaitForChild("HumanoidRootPart")
-                        local head = char:WaitForChild("Head")
-                        local humanoid = char:WaitForChild("Humanoid")
-                        if hrp and humanoid then
-                            highlight.Adornee = char
+                        local hrp = char:FindFirstChild("HumanoidRootPart")
+                        local head = char:FindFirstChild("Head")
+                        if hrp then
                             local camera = workspace.CurrentCamera
                             local rootPos = camera:WorldToViewportPoint(hrp.Position)
-                            local headPos
-                            if head then
-                                headPos = camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
-                            else 
-                                headPos = camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
-                            end
+                            local headPos = head and camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0)) or camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0))
                             local legPos = camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+
                             local box = boxESPs[plr.Name]
                             if not box then
                                 box = CreateDrawing("Square", {
@@ -154,6 +152,7 @@ function toggleESP(enable, color)
                                 })
                                 boxESPs[plr.Name] = box
                             end
+
                             if not ifbox then
                                 if rootPos.Z > 0 then
                                     box.Size = Vector2.new(2000 / rootPos.Z, headPos.Y - legPos.Y)
@@ -168,17 +167,15 @@ function toggleESP(enable, color)
                             end
                         end
                     end
+
                     if not cn[plr.Name] then
                         cn[plr.Name] = plr.CharacterAdded:Connect(function(newChar)
-                            local hrp = newChar:WaitForChild("HumanoidRootPart")
-                            local head = newChar:WaitForChild("Head")
-                            if hrp then
-                                highlight.Adornee = newChar
-                            end
+                            highlight.Adornee = newChar
                         end)
                     end
                 end
             end
+
             for _, child in ipairs(Storage:GetChildren()) do
                 local plr = game:GetService("Players"):FindFirstChild(child.Name)
                 if not plr then
