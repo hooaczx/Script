@@ -945,11 +945,11 @@ functions.createTextBox = function(parent, title, description, buttonText, callb
     return inputBox, sendButton
 end
 
-local framek = Create("Frame", Flyui, {
+local framek = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.7, 0, 0.64, 0),
     Position = UDim2.new(0.13, 0, 0.2, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    Visible = true
+    Visible = false
 })
 
 local mainText = Create("TextLabel", framek, {
@@ -2385,61 +2385,6 @@ end
 
 local ShiftLockAction = ContextActionService:BindAction("Shift Lock", functions.ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
-
-  local strokeeffect = Create("Frame", frame, {
-    Size = UDim2.new(0.06, 0, 0.6, 0),
-    Position = UDim2.new(0.22, 0, 0.22, 0),
-    BackgroundTransparency = 1, 
-    ZIndex = 10
-  })
-    
-  local stroke = Create("UIStroke", strokeeffect, {
-    Color = Color3.fromRGB(255, 255, 255),
-    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-    Transparency = 0
-   })
-
-   function handleButton(button)
-     if not button or not button.Parent then return end
-      local connectionhandleButton = {}
-      local isMouseHovered = false
-      connectionhandleButton.MouseEnter = button.MouseEnter:Connect(function()
-          isMouseHovered = true
-       end)
-       connectionhandleButton.MouseLeave = button.MouseLeave:Connect(function()
-           isMouseHovered = false
-       end)
-       connectionhandleButton.RenderStepped = RunService.RenderStepped:Connect(function()
-          if isMouseHovered then
-             CreateTween(button, "Size", UDim2.new(0.08, 0, 0.8, 0), 0.2, false)
-             CreateTween(strokeeffect, "Size", button.Size, 0.2, false)
-             CreateTween(strokeeffect, "Position", button.Position, 0.2, true)
-         else
-             CreateTween(button, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, false)
-             CreateTween(strokeeffect, "Size", button.Size, 0.2, true)
-          end
-       end)
-       local function cleanup()
-          for _, connection in pairs(connectionhandleButton) do
-             if connection then
-                connection:Disconnect()
-           end
-        end
-       connectionhandleButton = {}
-      end
-       connectionhandleButton.AncestryChanged = button.AncestryChanged:Connect(function(_, parent)
-          if not parent then
-           cleanup()
-          end
-       end)
-    end
-    
-    handleButton(MusicToggleButton)
-    handleButton(SplitgameToggleButton)
-    handleButton(infoToggleButton)
-    handleButton(Button)
-    handleButton(SettingButton)
-    handleButton(ShiftLockButton)
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
