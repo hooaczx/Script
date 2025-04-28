@@ -3768,7 +3768,7 @@ Toggle.MouseButton1Click:Connect(function()
     local assetId = extractAssetId(inputText)
     if not assetId then
         NameSongFrame.Text = "Invalid ID"
-        CreditLabel.Text = "Unable to display creator information as this is not a song"
+        CreditLabel.Text = "Please enter a valid  ID of asset song"
         return
     end
     local productInfo
@@ -3778,12 +3778,17 @@ Toggle.MouseButton1Click:Connect(function()
 
     if not success or not productInfo then
         NameSongFrame.Text = "Failed to fetch asset info"
-        CreditLabel.Text = "Unable to display creator information as this is not a song"
+        CreditLabel.Text = "Error: " .. tostring(err)
         return
     end
     if productInfo.AssetTypeId ~= 3 then
-        NameSongFrame.Text = "Not a valid song"
-        CreditLabel.Text = "Unable to display creator information as this is not a song"
+        NameSongFrame.Text = "id Asset is not a Song"
+        CreditLabel.Text = "id Not a Song"
+        return
+    end
+    if not productInfo.IsForSale then
+        NameSongFrame.Text = "now Song close Sale"
+        CreditLabel.Text = "Creator: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
         return
     end
     if sound.IsPlaying then
@@ -3800,7 +3805,7 @@ Toggle.MouseButton1Click:Connect(function()
         updateProgressBar()
         NameSongFrame.Text = productInfo.Name
         Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-        CreditLabel.Text = "Created by: " .. productInfo.Creator.Name
+        CreditLabel.Text = "Created by: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
         musicPlaying = true
     end
 end)
