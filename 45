@@ -945,11 +945,11 @@ functions.createTextBox = function(parent, title, description, buttonText, callb
     return inputBox, sendButton
 end
 
-local framek = Create("Frame", ScreenGui, {
-    Size = UDim2.new(0.4, 0, 0.85, 0),
-    Position = UDim2.new(0.30, 0, 0, 0),
+local framek = Create("Frame", Flyui, {
+    Size = UDim2.new(0.7, 0, 0.64, 0),
+    Position = UDim2.new(0.13, 0, 0.2, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    Visible = false
+    Visible = true
 })
 
 local mainText = Create("TextLabel", framek, {
@@ -962,7 +962,7 @@ local mainText = Create("TextLabel", framek, {
 })
 TextSetColor(mainText)
 
-local grnub7t = Create("UIGradient", mainText, {
+Create("UIGradient", mainText, {
     Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
@@ -982,138 +982,44 @@ local frameGame = Create("ScrollingFrame", framek, {
     BackgroundTransparency = 1,
     CanvasSize = UDim2.new(0, 0, 5, 0),
     ScrollBarThickness = 0
-})Create("UIListLayout", frameGame, {
+})
+Create("UIListLayout", frameGame, {
     Padding = UDim.new(0, 1),
     SortOrder = Enum.SortOrder.LayoutOrder,
-  })Create("UIPadding", frameGame, {
-      PaddingLeft = UDim.new(0.028, 0),
-      PaddingTop = UDim.new(0.003, 0),
-      PaddingBottom = UDim.new(0.003, 0)
-  })
-
-local mainGameLabel = Create("TextLabel", frameGame, {
-    Size = UDim2.new(0.96, 0, 0.02, 0),
-    Text = "MainGame",
-    BackgroundTransparency = 0.7,
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    TextScaled = true
 })
-TextSetColor(mainGameLabel)
-
-local place = gamePlaces[1]
-
-local mainGameFrame = Create("Frame", frameGame, {
-    Size = UDim2.new(0.96, 0, 0.08, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Hub
+Create("UIPadding", frameGame, {
+    PaddingLeft = UDim.new(0.028, 0),
+    PaddingTop = UDim.new(0.003, 0),
+    PaddingBottom = UDim.new(0.003, 0)
 })
 
-local grnub55t = Create("UIGradient", mainGameFrame, {
-    Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-    },
-    Transparency = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 1),
-        NumberSequenceKeypoint.new(1, 0)
-    },
-    Rotation = 90
-})
+functions.UpdatePlaces = function()
+    for _, child in ipairs(frameGame:GetChildren()) do
+        if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
+            child:Destroy()
+        end
+    end
+    
+    local count = 1
+    local place = gamePlaces[1]
 
-local success, productInfo = pcall(function()
-    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-end)
-
-if success and productInfo then
-    local mainGameImage = Create("ImageLabel", mainGameFrame, {
-        Size = UDim2.new(0.32, 0, 1, 0),
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0, 0),
-        Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
-    })
-end
-
-local mainText = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.05, 0, 0.09, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1,
-    Position = UDim2.new(0.324, 0, 0, 0),
-    Text = tostring(count),
-    TextScaled = true
-})
-TextSetColor(mainText)
-
-local mainGameText = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.672, 0, 0.23, 0),
-    Position = UDim2.new(0.322, 0, 0.16, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = Enum.TextXAlignment.Left,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1,
-    Text = "Name: " .. place.Name,
-    TextScaled = true
-})
-TextSetColor(mainGameText)
-
-local mainidGame = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.672, 0, 0.23, 0),
-    Position = UDim2.new(0.322, 0, 0.4, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = Enum.TextXAlignment.Left,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1,
-    Text = "Id: " .. place.PlaceId,
-    TextScaled = true
-})
-TextSetColor(mainidGame)
-
-local TeleportButton = Create("TextButton", mainGameFrame, {
-    Size = UDim2.new(1, 0, 0.17, 0),
-    Position = UDim2.new(0, 0, 0.83, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 0,
-    Text = "Play",
-    TextScaled = true
-})
-TextSetColor(TeleportButton)
-
-TeleportButton.MouseButton1Click:Connect(function()
-    TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
-end)
-
-local grant = Create("UIGradient", TeleportButton, {
-    Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-    },
-    Transparency = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 0),
-        NumberSequenceKeypoint.new(1, 0)
-    },
-    Rotation = 90
-})
-
-count = count + 1
-
-if #gamePlaces <= 1 then
-    local noSplitGamesLabel = Create("TextLabel", frameGame, {
+    local mainGameLabel = Create("TextLabel", frameGame, {
         Size = UDim2.new(0.96, 0, 0.02, 0),
         BackgroundTransparency = 0.7,
-        Text = "This game does not have a split game",
+        Text = "MainGame",
         TextColor3 = Configs_HUB.Cor_Text,
         Font = Configs_HUB.Text_Font,
         TextScaled = true
     })
-    TextSetColor(noSplitGamesLabel)
-    
-    local grnubfft = Create("UIGradient", noSplitGamesLabel, {
+    TextSetColor(mainGameLabel)
+
+    local mainGameFrame = Create("Frame", frameGame, {
+        Size = UDim2.new(0.96, 0, 0.12, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Hub
+    })
+    Create("UIGradient", mainGameFrame, {
         Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
             ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
         },
@@ -1123,126 +1029,221 @@ if #gamePlaces <= 1 then
         },
         Rotation = 90
     })
-else
-    local splitGamesLabel = Create("TextLabel", frameGame, {
-        Size = UDim2.new(0.96, 0, 0.02, 0),
+
+    local success, productInfo = pcall(function()
+        return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+    end)
+
+    if success and productInfo then
+        Create("ImageLabel", mainGameFrame, {
+            Size = UDim2.new(0.25, 0, 1, 0),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 0, 0, 0),
+            Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+        })
+    end
+
+    Create("TextLabel", mainGameFrame, {
+        Size = UDim2.new(0.05, 0, 0.09, 0),
+        Position = UDim2.new(0.252, 0, 0, 0),
+        Text = tostring(count),
+        BackgroundTransparency = 1,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true
+    })
+
+    Create("TextLabel", mainGameFrame, {
+        Size = UDim2.new(0.748, 0, 0.23, 0),
+        Position = UDim2.new(0.252, 0, 0.16, 0),
+        Text = "Name: " .. place.Name,
+        BackgroundTransparency = 1,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true
+    })
+
+    Create("TextLabel", mainGameFrame, {
+        Size = UDim2.new(0.748, 0, 0.23, 0),
+        Position = UDim2.new(0.252, 0, 0.4, 0),
+        Text = "Id: " .. place.PlaceId,
+        BackgroundTransparency = 1,
+        TextColor3 = Configs_HUB.Cor_Text,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Configs_HUB.Text_Font,
+        TextScaled = true
+    })
+
+    local TeleportButton = Create("TextButton", mainGameFrame, {
+        Size = UDim2.new(1, 0, 0.17, 0),
+        Position = UDim2.new(0, 0, 0.83, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Hub,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
         BackgroundTransparency = 0,
-        Text = "Splitgame",
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
+        Text = "Play",
         TextScaled = true
     })
-    TextSetColor(splitGamesLabel)
-
-    local grnubfft = Create("UIGradient", splitGamesLabel, {
+    TeleportButton.MouseButton1Click:Connect(function()
+        TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+    end)
+    Create("UIGradient", TeleportButton, {
         Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
             ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
             ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
         },
         Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0, 0),
             NumberSequenceKeypoint.new(1, 0)
         },
         Rotation = 90
     })
 
-    for i = 2, #gamePlaces do
-        local place = gamePlaces[i]
-        local gameFrame = Create("Frame", frameGame, {
-            Size = UDim2.new(0.96, 0, 0.08, 0),
-            BackgroundColor3 = Configs_HUB.Cor_Hub
-        })
+    count = count + 1
 
-        local grnujbt = Create("UIGradient", gameFrame, {
+    if #gamePlaces <= 1 then
+        local noSplitGamesLabel = Create("TextLabel", frameGame, {
+            Size = UDim2.new(0.96, 0, 0.02, 0),
+            BackgroundTransparency = 0.7,
+            Text = "This game does not have a split game",
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            TextScaled = true
+        })
+        TextSetColor(noSplitGamesLabel)
+        Create("UIGradient", noSplitGamesLabel, {
             Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
-            },
-            Transparency = NumberSequence.new{
-                NumberSequenceKeypoint.new(0, 0),
-                NumberSequenceKeypoint.new(1, 0)
-            },
-            Rotation = 40
-        })
-
-        local success, productInfo = pcall(function()
-            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-        end)
-
-        if success and productInfo then
-            local gameImage = Create("ImageLabel", gameFrame, {
-                Size = UDim2.new(0.32, 0, 1, 0),
-                Position = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1,
-                Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
-            })
-        end
-
-        local gameText = Create("TextLabel", gameFrame, {
-            Size = UDim2.new(0.05, 0, 0.09, 0),
-            Position = UDim2.new(0.324, 0, 0, 0),
-            BackgroundTransparency = 1,
-            TextColor3 = Configs_HUB.Cor_Text,
-            Font = Configs_HUB.Text_Font,
-            Text = tostring(count),
-            TextScaled = true
-        })
-
-        local gameLabelText = Create("TextLabel", gameFrame, {
-            Size = UDim2.new(0.672, 0, 0.23, 0),
-            Position = UDim2.new(0.322, 0, 0.16, 0),
-            TextColor3 = Configs_HUB.Cor_Text,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            Font = Configs_HUB.Text_Font,
-            BackgroundTransparency = 1,
-            Text = "Name: " .. place.Name,
-            TextScaled = true
-        })
-
-        local gameidLabel = Create("TextLabel", gameFrame, {
-            Size = UDim2.new(0.672, 0, 0.23, 0),
-            Position = UDim2.new(0.322, 0, 0.4, 0),
-            TextColor3 = Configs_HUB.Cor_Text,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            Font = Configs_HUB.Text_Font,
-            BackgroundTransparency = 1,
-            Text = "Id: " .. place.PlaceId,
-            TextScaled = true
-        })
-
-        local teleportButton = Create("TextButton", gameFrame, {
-            Size = UDim2.new(1, 0, 0.17, 0),
-            Position = UDim2.new(0, 0, 0.83, 0),
-            BackgroundTransparency = 0,
-            BackgroundColor3 = Configs_HUB.Cor_Hub,
-            TextColor3 = Configs_HUB.Cor_Text,
-            Font = Configs_HUB.Text_Font,
-            Text = "Play",
-            TextScaled = true
-        })
-
-        teleportButton.MouseButton1Click:Connect(function()
-            TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
-        end)
-
-        local grnt = Create("UIGradient", teleportButton, {
-            Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
                 ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
                 ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
             },
             Transparency = NumberSequence.new{
-                NumberSequenceKeypoint.new(0, 0),
+                NumberSequenceKeypoint.new(0, 1),
                 NumberSequenceKeypoint.new(1, 0)
             },
-            Rotation = -60
+            Rotation = 90
+        })
+    else
+        local splitGamesLabel = Create("TextLabel", frameGame, {
+            Size = UDim2.new(0.96, 0, 0.02, 0),
+            BackgroundTransparency = 0,
+            Text = "Splitgame",
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            TextScaled = true
+        })
+        TextSetColor(splitGamesLabel)
+        Create("UIGradient", splitGamesLabel, {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+            },
+            Transparency = NumberSequence.new{
+                NumberSequenceKeypoint.new(0, 1),
+                NumberSequenceKeypoint.new(1, 0)
+            },
+            Rotation = 90
         })
 
-        count = count + 1
+        for i = 2, #gamePlaces do
+            local place = gamePlaces[i]
+            local gameFrame = Create("Frame", frameGame, {
+                Size = UDim2.new(0.96, 0, 0.12, 0),
+                BackgroundColor3 = Configs_HUB.Cor_Hub
+            })
+            Create("UIGradient", gameFrame, {
+                Color = ColorSequence.new{
+                    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+                    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+                },
+                Transparency = NumberSequence.new{
+                    NumberSequenceKeypoint.new(0, 0),
+                    NumberSequenceKeypoint.new(1, 0)
+                },
+                Rotation = 40
+            })
+
+            local success, productInfo = pcall(function()
+                return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+            end)
+
+            if success and productInfo then
+                Create("ImageLabel", gameFrame, {
+                    Size = UDim2.new(0.25, 0, 1, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    BackgroundTransparency = 1,
+                    Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+                })
+            end
+
+            Create("TextLabel", gameFrame, {
+                Size = UDim2.new(0.05, 0, 0.09, 0),
+                Position = UDim2.new(0.252, 0, 0, 0),
+                Text = tostring(count),
+                BackgroundTransparency = 1,
+                TextColor3 = Configs_HUB.Cor_Text,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+
+            Create("TextLabel", gameFrame, {
+                Size = UDim2.new(0.748, 0, 0.23, 0),
+                Position = UDim2.new(0.252, 0, 0.16, 0),
+                Text = "Name: " .. place.Name,
+                BackgroundTransparency = 1,
+                TextColor3 = Configs_HUB.Cor_Text,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+
+            Create("TextLabel", gameFrame, {
+                Size = UDim2.new(0.748, 0, 0.23, 0),
+                Position = UDim2.new(0.252, 0, 0.4, 0),
+                Text = "Id: " .. place.PlaceId,
+                BackgroundTransparency = 1,
+                TextColor3 = Configs_HUB.Cor_Text,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+
+            local teleportButton = Create("TextButton", gameFrame, {
+                Size = UDim2.new(1, 0, 0.17, 0),
+                Position = UDim2.new(0, 0, 0.83, 0),
+                BackgroundTransparency = 0,
+                BackgroundColor3 = Configs_HUB.Cor_Hub,
+                TextColor3 = Configs_HUB.Cor_Text,
+                Font = Configs_HUB.Text_Font,
+                Text = "Play",
+                TextScaled = true
+            })
+            teleportButton.MouseButton1Click:Connect(function()
+                TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+            end)
+            Create("UIGradient", teleportButton, {
+                Color = ColorSequence.new{
+                    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+                    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+                },
+                Transparency = NumberSequence.new{
+                    NumberSequenceKeypoint.new(0, 0),
+                    NumberSequenceKeypoint.new(1, 0)
+                },
+                Rotation = -60
+            })
+
+            count = count + 1
+        end
     end
 end
+
+functions.UpdatePlaces()
 
 local SplitgameToggleButton = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -1260,10 +1261,10 @@ SplitgameToggleButton.MouseButton1Click:Connect(function()
       if minimiz7 then
           framek.Visible = true
           click1:Play()
-          CreateTween(framek, "Size", UDim2.new(0.4, 0, 0.85, 0), 0.3, true) 
+          CreateTween(framek, "Size", UDim2.new(0.7, 0, 0.64, 0), 0.3, true) 
        else
           click2:Play()
-          CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+          CreateTween(framek, "Size", UDim2.new(0.7, 0, 0, 0), 0.3, true)
           framek.Visible = false
       end
  end)
@@ -1827,9 +1828,10 @@ local lastUpdate = tick()
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
         functions.updatePlaceInfo()
+        functions.UpdatePlaces()
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-          lastUpdate = currentTime
+        lastUpdate = currentTime
         end
      end) 
 
