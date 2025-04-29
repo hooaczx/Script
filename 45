@@ -1625,6 +1625,7 @@ functions.checkFriends = function()
 
         functions.updateFriendsGUI = function(friends)
             friendsFrame1:ClearAllChildren()
+            local positionY = 0
             for _, friend in pairs(friends) do
                 local frame = Create("Frame", friendsFrame1, {
                     Size = UDim2.new(0.95, 0, 0.18, 0),
@@ -1659,9 +1660,10 @@ functions.checkFriends = function()
                     Font = Configs_HUB.Text_Font,
                     TextScaled = true
                 })TextSetColor(friendUsername)
+                positionY = positionY + 60
             end
+            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, positionY)
         end
-
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
         return friendsInTotal
@@ -1670,7 +1672,7 @@ functions.checkFriends = function()
     end
 end
 
-functions.checkFriends()
+coroutine.wrap(functions.checkFriends)
 
 local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
