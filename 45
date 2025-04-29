@@ -1562,7 +1562,7 @@ local FriendList = Create("TextLabel", frame100, {
      TextScaled = true
 })TextSetColor(FriendList)Corner(FriendList)
 
-local friendsFrame = Create("ScrollingFrame", frame100, {
+local friendsFrame1 = Create("ScrollingFrame", frame100, {
     Size = UDim2.new(1, 0, 0.87, 0),
     Position = UDim2.new(0, 0, 0.08, 0),
     CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -1570,10 +1570,10 @@ local friendsFrame = Create("ScrollingFrame", frame100, {
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     BackgroundTransparency = 1,
     ScrollBarThickness = 0
-  })Create("UIListLayout", friendsFrame, {
+  })Create("UIListLayout", friendsFrame1, {
     Padding = UDim.new(0, 5),
     SortOrder = Enum.SortOrder.LayoutOrder,
-  })Create("UIPadding", friendsFrame, {
+  })Create("UIPadding", friendsFrame1, {
       PaddingLeft = UDim.new(0.028, 0),
       PaddingTop = UDim.new(0.003, 0),
       PaddingBottom = UDim.new(0.003, 0)
@@ -1626,7 +1626,7 @@ functions.checkFriends = function()
         functions.updateFriendsGUI = function(friends)
             friendsFrame:ClearAllChildren()
             for _, friend in pairs(friends) do
-                local frame = Create("Frame", friendsFrame, {
+                local frame = Create("Frame", friendsFrame1, {
                     Size = UDim2.new(0.95, 0, 0.18, 0),
                     BackgroundTransparency = 1,
                 })
@@ -2019,7 +2019,6 @@ end)
 
 local stopupdateall
 local stopupdateall1
-local lastUpdate = tick()
 stopupdateall = RunService.Heartbeat:Connect(function()
    wait()
       DisplayName.Text = "Display Name: " .. player.DisplayName
@@ -2034,14 +2033,12 @@ stopupdateall = RunService.Heartbeat:Connect(function()
 end)
 
 stopupdateall1 = RunService.Heartbeat:Connect(function()
- local currentTime = tick()
- if currentTime - lastUpdate >= 1 then
      functions.updatePlaytime()
      functions.checkFriends()
      functions.UpdatePlaces()
      functions.updatePlaceInfo()
      lastUpdate = currentTime
-   end
+     wait(1)
 end)
 
 local Button = Create("ImageButton", frame, {
