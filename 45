@@ -664,7 +664,6 @@ notify({
     local maxPlayers = players.MaxPlayers
     local ageInDays = player.AccountAge
     local PlaceId = game.PlaceId
-    local UpdatePlacesCooldown = 0
     local friendsCooldown = 0
     local friendsInTotal = 0
     local MarketplaceService = game:GetService("MarketplaceService")
@@ -997,8 +996,6 @@ Create("UIPadding", frameGame, {
 })
 
 functions.UpdatePlaces = function()
-  if UpdatePlacesCooldown <= 0 then
-    UpdatePlacesCooldown = 30
     local existing = {}
     for _, child in ipairs(frameGame:GetChildren()) do
         if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
@@ -1270,9 +1267,6 @@ functions.UpdatePlaces = function()
                 })
             end
         end
-    end
-    else
-        UpdatePlacesCooldown = UpdatePlacesCooldown - 1
     end
 end
 
@@ -1710,7 +1704,7 @@ functions.checkFriends = function()
     end
 end
 
-coroutine.wrap(functions.checkFriends)
+functions.checkFriends()
 
 local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
