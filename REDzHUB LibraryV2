@@ -175,8 +175,9 @@ CreateTween1 = functionCreate.CreateTween1
 TextSetColor = functionCreate.TextSetColor
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
-  Name = "hcx hub library",
-  DisplayOrder = math.huge
+  Name = "hcx hub library1",
+  DisplayOrder = math.huge,
+  IgnoreGuiInset = true
 })
 
 ScreenFind = CoreGui:FindFirstChild(ScreenGui.Name)
@@ -292,7 +293,7 @@ function MakeWindow(Configs)
   
   local Menu = Create("Frame", ScreenGui, {
       BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Position = UDim2.new(0.77, 0, 0.1, 0),
+      Position = UDim2.new(0.77, 0, 0.227, 0),
       AnchorPoint = Vector2.new(1, 0),
       Active = true,
       Draggable = true
@@ -350,7 +351,7 @@ function MakeWindow(Configs)
   })Corner(Close_Button)
   
   local AnimMenu = Create("Frame", ScreenGui, {
-    Position = UDim2.new(0.5, 0, 0.5, 0),
+    Position = UDim2.new(0.5, 0, 0.57, 0),
     AnchorPoint = Vector2.new(0.5, 0.5),
     BackgroundColor3 = Configs_HUB.Cor_Hub
   })Corner(AnimMenu, {CornerRadius = UDim.new(0, 6)})
@@ -368,8 +369,8 @@ function MakeWindow(Configs)
     TextScaled = true
   })
   
-  CreateTween(AnimMenu, "Size", UDim2.new(0, 0, 0.073, 0), 0.5, true)
-  CreateTween(AnimMenu, "Size", UDim2.new(0.15, 0, 0.073, 0), 0.5, true)
+  CreateTween(AnimMenu, "Size", UDim2.new(0, 0, 0.064, 0), 0.5, true)
+  CreateTween(AnimMenu, "Size", UDim2.new(0.15, 0, 0.064, 0), 0.5, true)
   Anim_Credits.Visible = true
   task.wait(0.5)
   for i = 1, 0, -0.1 do task.wait()
@@ -383,7 +384,7 @@ function MakeWindow(Configs)
   AnimMenu:Destroy()
   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.09, 0), 0.5, true)
   TopBar.Visible = true
-  CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, true)
+  CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.3, true)
   Menu.Draggable = true
 
   local line_Containers = Create("Frame", Menu, {
@@ -674,10 +675,12 @@ notify({
     local Player = players.LocalPlayer
     local Mouse = LocalPlayer:GetMouse()
     local HttpService = game:GetService("HttpService")
+    local View = nil
+    local playerFrames = {}
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
-    Size = UDim2.new(0.5, 0, 0.12, 0),
+    Size = UDim2.new(0.5, 0, 0.1, 0),
     AnchorPoint = Vector2.new(0.5, 0.5),
     Position = UDim2.new(0.5, 0, 0.95, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -695,9 +698,9 @@ local tweenGradient = CreateGradient(frame, {
 })
 
 local Button1 = Create("TextButton", ScreenGui, {
-    Size = UDim2.new(0.06, 0, 0.07, 0),
+    Size = UDim2.new(0.06, 0, 0.05, 0),
     AnchorPoint = Vector2.new(0.5, 1),
-    Position = UDim2.new(0.5, 0, 0.89, 0),
+    Position = UDim2.new(0.5, 0, 0.9, 0),
     TextScaled = true,
     Text = "v",
     ZIndex = 10,
@@ -710,14 +713,14 @@ Button1.MouseButton1Click:Connect(function()
     minimize1 = not minimize1
     if minimize1 then
         Button1.Text = "^"
-        CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, false)
-        CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 1, 0), 0.3, true)
+        CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0, 0), 0.3, true)
+        CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 1.017, 0), 0.3, false)
         frame.Visible = false
     else
         frame.Visible = true
         Button1.Text = "v"
-        CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.12, 0), 0.3, false)
-        CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 0.89, 0), 0.3, false)
+        CreateTween1(frame, "Size", UDim2.new(0.5, 0, 0.1, 0), 0.3, true)
+        CreateTween1(Button1, "Position", UDim2.new(0.5, 0, 0.9, 0), 0.3, false)
     end
 end)
 
@@ -945,8 +948,8 @@ functions.createTextBox = function(parent, title, description, buttonText, callb
 end
 
 local framek = Create("Frame", ScreenGui, {
-    Size = UDim2.new(0.4, 0, 0.85, 0),
-    Position = UDim2.new(0.30, 0, 0, 0),
+    Size = UDim2.new(0.7, 0, 0.64, 0),
+    Position = UDim2.new(0.13, 0, 0.2, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     Visible = false
 })
@@ -961,7 +964,7 @@ local mainText = Create("TextLabel", framek, {
 })
 TextSetColor(mainText)
 
-local grnub7t = Create("UIGradient", mainText, {
+Create("UIGradient", mainText, {
     Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
@@ -981,267 +984,293 @@ local frameGame = Create("ScrollingFrame", framek, {
     BackgroundTransparency = 1,
     CanvasSize = UDim2.new(0, 0, 5, 0),
     ScrollBarThickness = 0
-})Create("UIListLayout", frameGame, {
+})
+Create("UIListLayout", frameGame, {
     Padding = UDim.new(0, 1),
     SortOrder = Enum.SortOrder.LayoutOrder,
-  })Create("UIPadding", frameGame, {
-      PaddingLeft = UDim.new(0.028, 0),
-      PaddingTop = UDim.new(0.003, 0),
-      PaddingBottom = UDim.new(0.003, 0)
-  })
-
-local mainGameLabel = Create("TextLabel", frameGame, {
-    Size = UDim2.new(0.96, 0, 0.02, 0),
-    Text = "MainGame",
-    BackgroundTransparency = 0.7,
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    TextScaled = true
 })
-TextSetColor(mainGameLabel)
-
-local place = gamePlaces[1]
-
-local mainGameFrame = Create("Frame", frameGame, {
-    Size = UDim2.new(0.96, 0, 0.08, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Hub
+Create("UIPadding", frameGame, {
+    PaddingLeft = UDim.new(0.028, 0),
+    PaddingTop = UDim.new(0.003, 0),
+    PaddingBottom = UDim.new(0.003, 0)
 })
 
-local grnub55t = Create("UIGradient", mainGameFrame, {
-    Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-    },
-    Transparency = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 1),
-        NumberSequenceKeypoint.new(1, 0)
-    },
-    Rotation = 90
-})
-
-local success, productInfo = pcall(function()
-    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-end)
-
-if success and productInfo then
-    local mainGameImage = Create("ImageLabel", mainGameFrame, {
-        Size = UDim2.new(0.32, 0, 1, 0),
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0, 0),
-        Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
-    })
-end
-
-local mainText = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.05, 0, 0.09, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1,
-    Position = UDim2.new(0.324, 0, 0, 0),
-    Text = tostring(count),
-    TextScaled = true
-})
-TextSetColor(mainText)
-
-local mainGameText = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.672, 0, 0.23, 0),
-    Position = UDim2.new(0.322, 0, 0.16, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = Enum.TextXAlignment.Left,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1,
-    Text = "Name: " .. place.Name,
-    TextScaled = true
-})
-TextSetColor(mainGameText)
-
-local mainidGame = Create("TextLabel", mainGameFrame, {
-    Size = UDim2.new(0.672, 0, 0.23, 0),
-    Position = UDim2.new(0.322, 0, 0.4, 0),
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = Enum.TextXAlignment.Left,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1,
-    Text = "Id: " .. place.PlaceId,
-    TextScaled = true
-})
-TextSetColor(mainidGame)
-
-local TeleportButton = Create("TextButton", mainGameFrame, {
-    Size = UDim2.new(1, 0, 0.17, 0),
-    Position = UDim2.new(0, 0, 0.83, 0),
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 0,
-    Text = "Play",
-    TextScaled = true
-})
-TextSetColor(TeleportButton)
-
-TeleportButton.MouseButton1Click:Connect(function()
-    TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
-end)
-
-local grant = Create("UIGradient", TeleportButton, {
-    Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-    },
-    Transparency = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 0),
-        NumberSequenceKeypoint.new(1, 0)
-    },
-    Rotation = 90
-})
-
-count = count + 1
-
-if #gamePlaces <= 1 then
-    local noSplitGamesLabel = Create("TextLabel", frameGame, {
-        Size = UDim2.new(0.96, 0, 0.02, 0),
-        BackgroundTransparency = 0.7,
-        Text = "This game does not have a split game",
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
-        TextScaled = true
-    })
-    TextSetColor(noSplitGamesLabel)
-    
-    local grnubfft = Create("UIGradient", noSplitGamesLabel, {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-        },
-        Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 1),
-            NumberSequenceKeypoint.new(1, 0)
-        },
-        Rotation = 90
-    })
-else
-    local splitGamesLabel = Create("TextLabel", frameGame, {
-        Size = UDim2.new(0.96, 0, 0.02, 0),
-        BackgroundTransparency = 0,
-        Text = "Splitgame",
-        TextColor3 = Configs_HUB.Cor_Text,
-        Font = Configs_HUB.Text_Font,
-        TextScaled = true
-    })
-    TextSetColor(splitGamesLabel)
-
-    local grnubfft = Create("UIGradient", splitGamesLabel, {
-        Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-        },
-        Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 1),
-            NumberSequenceKeypoint.new(1, 0)
-        },
-        Rotation = 90
-    })
-
-    for i = 2, #gamePlaces do
-        local place = gamePlaces[i]
-        local gameFrame = Create("Frame", frameGame, {
-            Size = UDim2.new(0.96, 0, 0.08, 0),
-            BackgroundColor3 = Configs_HUB.Cor_Hub
+functions.UpdatePlaces = function()
+    local existing = {}
+    for _, child in ipairs(frameGame:GetChildren()) do
+        if not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
+            existing[child.Name] = child
+        end
+    end
+    local desired = {}
+    desired["MainGameLabel"] = true
+    desired["Place_" .. tostring(gamePlaces[1].PlaceId)] = true
+    if #gamePlaces <= 1 then
+        desired["NoSplitLabel"] = true
+    else
+        desired["SplitGamesLabel"] = true
+        for i = 2, #gamePlaces do
+            desired["Place_" .. tostring(gamePlaces[i].PlaceId)] = true
+        end
+    end
+    for name, node in pairs(existing) do
+        if not desired[name] then
+            node:Destroy()
+        end
+    end
+    if not frameGame:FindFirstChild("MainGameLabel") then
+        local lbl = Create("TextLabel", frameGame, {
+            Name = "MainGameLabel",
+            Size = UDim2.new(0.96, 0, 0.02, 0),
+            BackgroundTransparency = 0.7,
+            Text = "MainGame",
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            TextScaled = true
         })
-
-        local grnujbt = Create("UIGradient", gameFrame, {
+        TextSetColor(lbl)
+        Create("UIGradient", lbl, {
             Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(0,   0,   0)),
                 ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+                ColorSequenceKeypoint.new(1,   Color3.fromRGB(255, 255, 255))
             },
             Transparency = NumberSequence.new{
-                NumberSequenceKeypoint.new(0, 0),
+                NumberSequenceKeypoint.new(0, 1),
                 NumberSequenceKeypoint.new(1, 0)
             },
-            Rotation = 40
+            Rotation = 90
         })
-
+    end
+    local mainPlace = gamePlaces[1]
+    local mainName  = "Place_" .. tostring(mainPlace.PlaceId)
+    if not frameGame:FindFirstChild(mainName) then
+        local fr = Create("Frame", frameGame, {
+            Name = mainName,
+            Size = UDim2.new(0.96, 0, 0.12, 0),
+            BackgroundColor3 = Configs_HUB.Cor_Hub
+        })
+        Create("UIGradient", fr, {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0,   Color3.fromRGB(255,   0,   0)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                ColorSequenceKeypoint.new(1,   Color3.fromRGB(0,     0,   0))
+            },
+            Transparency = NumberSequence.new{
+                NumberSequenceKeypoint.new(0, 1),
+                NumberSequenceKeypoint.new(1, 0)
+            },
+            Rotation = 90
+        })
         local success, productInfo = pcall(function()
-            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+            return MarketplaceService:GetProductInfo(mainPlace.PlaceId, Enum.InfoType.Asset)
         end)
-
         if success and productInfo then
-            local gameImage = Create("ImageLabel", gameFrame, {
-                Size = UDim2.new(0.32, 0, 1, 0),
-                Position = UDim2.new(0, 0, 0, 0),
+            Create("ImageLabel", fr, {
+                Size = UDim2.new(0.25, 0, 1, 0),
                 BackgroundTransparency = 1,
-                Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+                Position = UDim2.new(0, 0, 0, 0),
+                Image = "rbxthumb://type=Asset&id=" .. mainPlace.PlaceId .. "&w=420&h=420"
             })
         end
-
-        local gameText = Create("TextLabel", gameFrame, {
+        Create("TextLabel", fr, {
             Size = UDim2.new(0.05, 0, 0.09, 0),
-            Position = UDim2.new(0.324, 0, 0, 0),
+            Position = UDim2.new(0.252, 0, 0, 0),
+            Text = "1",
             BackgroundTransparency = 1,
             TextColor3 = Configs_HUB.Cor_Text,
             Font = Configs_HUB.Text_Font,
-            Text = tostring(count),
             TextScaled = true
         })
-
-        local gameLabelText = Create("TextLabel", gameFrame, {
-            Size = UDim2.new(0.672, 0, 0.23, 0),
-            Position = UDim2.new(0.322, 0, 0.16, 0),
+        Create("TextLabel", fr, {
+            Size = UDim2.new(0.748, 0, 0.23, 0),
+            Position = UDim2.new(0.252, 0, 0.16, 0),
+            Text = "Name: " .. mainPlace.Name,
+            BackgroundTransparency = 1,
             TextColor3 = Configs_HUB.Cor_Text,
             TextXAlignment = Enum.TextXAlignment.Left,
             Font = Configs_HUB.Text_Font,
-            BackgroundTransparency = 1,
-            Text = "Name: " .. place.Name,
             TextScaled = true
         })
-
-        local gameidLabel = Create("TextLabel", gameFrame, {
-            Size = UDim2.new(0.672, 0, 0.23, 0),
-            Position = UDim2.new(0.322, 0, 0.4, 0),
+        Create("TextLabel", fr, {
+            Size = UDim2.new(0.748, 0, 0.23, 0),
+            Position = UDim2.new(0.252, 0, 0.4, 0),
+            Text = "Id: " .. mainPlace.PlaceId,
+            BackgroundTransparency = 1,
             TextColor3 = Configs_HUB.Cor_Text,
             TextXAlignment = Enum.TextXAlignment.Left,
             Font = Configs_HUB.Text_Font,
-            BackgroundTransparency = 1,
-            Text = "Id: " .. place.PlaceId,
             TextScaled = true
         })
-
-        local teleportButton = Create("TextButton", gameFrame, {
+        local tb = Create("TextButton", fr, {
             Size = UDim2.new(1, 0, 0.17, 0),
             Position = UDim2.new(0, 0, 0.83, 0),
-            BackgroundTransparency = 0,
             BackgroundColor3 = Configs_HUB.Cor_Hub,
             TextColor3 = Configs_HUB.Cor_Text,
             Font = Configs_HUB.Text_Font,
+            BackgroundTransparency = 0,
             Text = "Play",
             TextScaled = true
         })
-
-        teleportButton.MouseButton1Click:Connect(function()
-            TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+        tb.MouseButton1Click:Connect(function()
+            TeleportService:Teleport(mainPlace.PlaceId, game.Players.LocalPlayer)
         end)
-
-        local grnt = Create("UIGradient", teleportButton, {
+        Create("UIGradient", tb, {
             Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+                ColorSequenceKeypoint.new(0,   Color3.fromRGB(255,   0,   0)),
                 ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+                ColorSequenceKeypoint.new(1,   Color3.fromRGB(0,     0,   0))
             },
             Transparency = NumberSequence.new{
                 NumberSequenceKeypoint.new(0, 0),
                 NumberSequenceKeypoint.new(1, 0)
             },
-            Rotation = -60
+            Rotation = 90
         })
+    end
 
-        count = count + 1
+    if #gamePlaces <= 1 then
+        if not frameGame:FindFirstChild("NoSplitLabel") then
+            local lbl2 = Create("TextLabel", frameGame, {
+                Name = "NoSplitLabel",
+                Size = UDim2.new(0.96, 0, 0.02, 0),
+                BackgroundTransparency = 0.7,
+                Text = "This game does not have a split game",
+                TextColor3 = Configs_HUB.Cor_Text,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+            TextSetColor(lbl2)
+            Create("UIGradient", lbl2, {
+                Color = ColorSequence.new{
+                    ColorSequenceKeypoint.new(0,   Color3.fromRGB(0,   255, 255)),
+                    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                    ColorSequenceKeypoint.new(1,   Color3.fromRGB(0,     0,   0))
+                },
+                Transparency = NumberSequence.new{
+                    NumberSequenceKeypoint.new(0, 1),
+                    NumberSequenceKeypoint.new(1, 0)
+                },
+                Rotation = 90
+            })
+        end
+    else
+        if not frameGame:FindFirstChild("SplitGamesLabel") then
+            local lbl3 = Create("TextLabel", frameGame, {
+                Name = "SplitGamesLabel",
+                Size = UDim2.new(0.96, 0, 0.02, 0),
+                BackgroundTransparency = 0,
+                Text = "Splitgame",
+                TextColor3 = Configs_HUB.Cor_Text,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+            TextSetColor(lbl3)
+            Create("UIGradient", lbl3, {
+                Color = ColorSequence.new{
+                    ColorSequenceKeypoint.new(0,   Color3.fromRGB(0,   255, 255)),
+                    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                    ColorSequenceKeypoint.new(1,   Color3.fromRGB(0,     0,   0))
+                },
+                Transparency = NumberSequence.new{
+                    NumberSequenceKeypoint.new(0, 1),
+                    NumberSequenceKeypoint.new(1, 0)
+                },
+                Rotation = 90
+            })
+        end
+        for i = 2, #gamePlaces do
+            local place = gamePlaces[i]
+            local name  = "Place_" .. tostring(place.PlaceId)
+            if not frameGame:FindFirstChild(name) then
+                local fr2 = Create("Frame", frameGame, {
+                    Name = name,
+                    Size = UDim2.new(0.96, 0, 0.12, 0),
+                    BackgroundColor3 = Configs_HUB.Cor_Hub
+                })
+                Create("UIGradient", fr2, {
+                    Color = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0,   Color3.fromRGB(0,   0,   0)),
+                        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                        ColorSequenceKeypoint.new(1,   Color3.fromRGB(255,   0,   0))
+                    },
+                    Transparency = NumberSequence.new{
+                        NumberSequenceKeypoint.new(0, 0),
+                        NumberSequenceKeypoint.new(1, 0)
+                    },
+                    Rotation = 40
+                })
+                local success, productInfo = pcall(function()
+                    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+                end)
+                if success and productInfo then
+                    Create("ImageLabel", fr2, {
+                        Size = UDim2.new(0.25, 0, 1, 0),
+                        Position = UDim2.new(0, 0, 0, 0),
+                        BackgroundTransparency = 1,
+                        Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+                    })
+                end
+                Create("TextLabel", fr2, {
+                    Size = UDim2.new(0.05, 0, 0.09, 0),
+                    Position = UDim2.new(0.252, 0, 0, 0),
+                    Text = tostring(i),
+                    BackgroundTransparency = 1,
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    Font = Configs_HUB.Text_Font,
+                    TextScaled = true
+                })
+                Create("TextLabel", fr2, {
+                    Size = UDim2.new(0.748, 0, 0.23, 0),
+                    Position = UDim2.new(0.252, 0, 0.16, 0),
+                    Text = "Name: " .. place.Name,
+                    BackgroundTransparency = 1,
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Font = Configs_HUB.Text_Font,
+                    TextScaled = true
+                })
+                Create("TextLabel", fr2, {
+                    Size = UDim2.new(0.748, 0, 0.23, 0),
+                    Position = UDim2.new(0.252, 0, 0.4, 0),
+                    Text = "Id: " .. place.PlaceId,
+                    BackgroundTransparency = 1,
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Font = Configs_HUB.Text_Font,
+                    TextScaled = true
+                })
+                local tb2 = Create("TextButton", fr2, {
+                    Size = UDim2.new(1, 0, 0.17, 0),
+                    Position = UDim2.new(0, 0, 0.83, 0),
+                    BackgroundTransparency = 0,
+                    BackgroundColor3 = Configs_HUB.Cor_Hub,
+                    TextColor3 = Configs_HUB.Cor_Text,
+                    Font = Configs_HUB.Text_Font,
+                    Text = "Play",
+                    TextScaled = true
+                })
+                tb2.MouseButton1Click:Connect(function()
+                    TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+                end)
+                Create("UIGradient", tb2, {
+                    Color = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0,   Color3.fromRGB(255,   0,   0)),
+                        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+                        ColorSequenceKeypoint.new(1,   Color3.fromRGB(0,     0,   0))
+                    },
+                    Transparency = NumberSequence.new{
+                        NumberSequenceKeypoint.new(0, 0),
+                        NumberSequenceKeypoint.new(1, 0)
+                    },
+                    Rotation = -60
+                })
+            end
+        end
     end
 end
+
+functions.UpdatePlaces()
 
 local SplitgameToggleButton = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -1259,11 +1288,214 @@ SplitgameToggleButton.MouseButton1Click:Connect(function()
       if minimiz7 then
           framek.Visible = true
           click1:Play()
-          CreateTween(framek, "Size", UDim2.new(0.4, 0, 0.85, 0), 0.3, true) 
+          CreateTween(framek, "Size", UDim2.new(0.7, 0, 0.64, 0), 0.3, true) 
        else
           click2:Play()
-          CreateTween(framek, "Size", UDim2.new(0.4, 0, 0, 0), 0.3, true)
+          CreateTween(framek, "Size", UDim2.new(0.7, 0, 0, 0), 0.3, true)
           framek.Visible = false
+      end
+ end)
+
+local framep = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.6, 0, 0.64, 0),
+    Position = UDim2.new(0.2, 0, 0.2, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.8,
+    Visible = false
+})Corner(framep)Stroke(framep)
+
+local frametext = Create("TextLabel", framep, {
+     Size = UDim2.new(1, 0, 0.08, 0),
+     Position = UDim2.new(0, 0, 0, 0),
+     Text = "Players in Server "..string.format("%d/%d", #game.Players:GetPlayers(), game.Players.MaxPlayers),
+     BackgroundTransparency = 1,
+     TextColor3 = Configs_HUB.Cor_Text,
+     Font = Configs_HUB.Text_Font,
+     TextScaled = true
+})
+
+local linep = Create("Frame", framep, {
+    Size = UDim2.new(1, 0, 0.005, 0),
+    Position = UDim2.new(0, 0, 0.07, 0), 
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BorderSizePixel = 0
+})
+
+local ScrollBarPlayers = Create("ScrollingFrame", framep, {
+    Size = UDim2.new(1, 0, 0.82, 0),
+    Position = UDim2.new(0, 0, 0.08, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    BackgroundTransparency = 1,
+    ScrollBarThickness = 0
+  })local listLayoutScrollBar = Create("UIListLayout", ScrollBarPlayers, {
+    Padding = UDim.new(0, 5),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", ScrollBarPlayers, {
+      PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
+
+local unviewallplayerbutton = Create("ImageButton", framep, {
+    Size = UDim2.new(0.07, 0, 0.1, 0),
+    Position = UDim2.new(0.93, 0, 0.9, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Options,
+    BackgroundTransparency = 1,
+    Image = "rbxassetid://137903829820448"
+})
+
+unviewallplayerbutton.MouseButton1Click:Connect(function()
+    local localChar = game:GetService("Players").LocalPlayer.Character
+    if localChar then
+        local hum = localChar:WaitForChild("Humanoid")
+        if hum then
+            workspace.CurrentCamera.CameraSubject = hum
+        end
+    end
+    for _, data in pairs(playerFrames) do
+        if data.UI then
+            local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
+            if viewButton then
+                viewButton.Image = "rbxassetid://96859795672738"
+            end
+        end
+    end
+    View = nil
+end)
+
+functions.UpdatePlayerList = function()
+    frametext.Text = "Players in Server "..string.format("%d/%d", #game.Players:GetPlayers(), game.Players.MaxPlayers)
+    local currentPlayers = {}
+    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+        currentPlayers[player.UserId] = player
+        if not playerFrames[player.UserId] then
+            local frameplayer = Create("Frame", ScrollBarPlayers, {
+                Size = UDim2.new(0.95, 0, 0.18, 0),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundTransparency = 1
+            })
+            Corner(frameplayer)
+            Stroke(frameplayer)
+            local playerdisplayName = Create("TextLabel", frameplayer, {
+                Size = UDim2.new(0.81, 0, 0.5, 0),
+                Position = UDim2.new(0.089, 0, 0, 0),
+                Text = player.DisplayName,
+                TextXAlignment = "Left",
+                BackgroundTransparency = 1,
+                TextColor3 = Configs_HUB.Cor_Text,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+            local playername = Create("TextLabel", frameplayer, {
+                Size = UDim2.new(0.81, 0, 0.5, 0),
+                Position = UDim2.new(0.089, 0, 0.5, 0),
+                Text = "@"..player.Name,
+                TextXAlignment = "Left",
+                BackgroundTransparency = 1,
+                TextColor3 = Color3.fromRGB(114, 117, 130),
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+            local imageplayer = Create("ImageLabel", frameplayer, {
+                Size = UDim2.new(0.078, 0, 0.95, 0),
+                Position = UDim2.new(0.005, 0, 0.015, 0),
+                BackgroundTransparency = 1,
+                Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. player.UserId
+            })
+            Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
+            Stroke(imageplayer, {Color = Color3.fromRGB(255, 255, 255)})
+            if player ~= game:GetService("Players").LocalPlayer then
+                local viewplayerbutton = Create("ImageButton", frameplayer, {
+                    Size = UDim2.new(0.09, 0, 0.95, 0),
+                    Position = UDim2.new(0.905, 0, 0.025, 0),
+                    BackgroundColor3 = Configs_HUB.Cor_Options,
+                    BackgroundTransparency = 1,
+                    Image = "rbxassetid://96859795672738"
+                })
+                viewplayerbutton.MouseButton1Click:Connect(function()
+                    if View and View.button ~= viewplayerbutton then
+                        View.button.Image = "rbxassetid://96859795672738"
+                        local localChar = game:GetService("Players").LocalPlayer.Character
+                        if localChar then
+                            local hum = localChar:WaitForChild("Humanoid")
+                            if hum then
+                                game.Workspace.Camera.CameraSubject = hum
+                            end
+                        end
+                        View = nil
+                    end
+                    if View and View.button == viewplayerbutton then
+                        viewplayerbutton.Image = "rbxassetid://96859795672738"
+                        local localChar = game:GetService("Players").LocalPlayer.Character
+                        if localChar then
+                            local hum = localChar:WaitForChild("Humanoid")
+                            if hum then
+                                game.Workspace.Camera.CameraSubject = hum
+                            end
+                        end
+                        View = nil
+                    else
+                        viewplayerbutton.Image = "rbxassetid://137903829820448"
+                        local char = player.Character
+                        if char then
+                            local root = char:WaitForChild("Humanoid") or char:WaitForChild("HumanoidRootPart")
+                            if root then
+                                game.Workspace.Camera.CameraSubject = root
+                            end
+                        end
+                        View = {button = viewplayerbutton, player = player}
+                    end
+                end)
+            end
+            playerFrames[player.UserId] = {
+                UI = frameplayer,
+            }
+        end
+    end
+    for userId, data in pairs(playerFrames) do
+        if not currentPlayers[userId] then
+            if data.UI and data.UI.Parent then
+                data.UI:Destroy()
+            end
+            playerFrames[userId] = nil
+            if View and View.player.UserId == userId then
+                local localChar = game:GetService("Players").LocalPlayer.Character
+                if localChar then
+                    local hum = localChar:WaitForChild("Humanoid")
+                    if hum then
+                        game.Workspace.Camera.CameraSubject = hum
+                    end
+                end
+                View = nil
+            end
+        end
+    end
+end
+
+functions.UpdatePlayerList()
+
+local PlayerListToggleButton = Create("ImageButton", frame, {
+    Size = UDim2.new(0.06, 0, 0.6, 0),
+    Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0),
+    BackgroundColor3 = Color3.fromRGB(204, 255, 204),
+    ZIndex = 10,
+    BackgroundTransparency = 1,
+    Image = "rbxthumb://type=Asset&id=140380840270815&w=150&h=150"
+})
+
+local PlayerList = true
+PlayerListToggleButton.MouseButton1Click:Connect(function()
+     PlayerList = not PlayerList
+      if PlayerList then
+          framep.Visible = true
+          click1:Play()
+          CreateTween(framep, "Size", UDim2.new(0.6, 0, 0.64, 0), 0.3, true) 
+       else
+          click2:Play()
+          CreateTween(framep, "Size", UDim2.new(0.6, 0, 0, 0), 0.3, true)
+          framep.Visible = false
       end
  end)
 
@@ -1274,28 +1506,33 @@ end)
 local Asset = MarketplaceService:GetProductInfo(PlaceId)
 local gameName = success and result.Name or Asset.Name or "Unknown"
 
-local frameinfo = Create("Frame", ScreenGui, {
+local frameinfogui = Create("Frame", ScreenGui, {
+    Size = UDim2.new(),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 1,
+    Visible = false
+})
+
+local frameinfo = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.25, 0, 0.18, 0),
     Position = UDim2.new(0.04, 0, 0.24, 0),
     AnchorPoint = Vector2.new(0.04, 0.21),
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 0.5,
-    Visible = false
 })
 Corner(frameinfo, {CornerRadius = UDim.new(0.15, 0)})
 
-local iconplayers = Create("ImageLabel", ScreenGui, {
+local iconplayers = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
     Position = UDim2.new(0.05, 0, 0.06, 0),
     AnchorPoint = Vector2.new(0.05, 0.06),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png",
-    Visible = false
+    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
 })
 Corner(iconplayers, {CornerRadius = UDim.new(1, 0)})
 
-local Wellcome = Create("TextLabel", ScreenGui, {
+local Wellcome = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.25, 0, 0.09, 0),
     Text = "Welcome "..game.Players.LocalPlayer.Name,
     Position = UDim2.new(0.14, 0, 0.077, 0),
@@ -1305,32 +1542,29 @@ local Wellcome = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(Wellcome)
 
-local gameinfoframe = Create("Frame", ScreenGui, {
+local gameinfoframe = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.27, 0, 0.3, 0),
     Position = UDim2.new(0.032, 0, 0.74, 0),
     AnchorPoint = Vector2.new(0.032, 0.51),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 0.5,
-    Visible = false
+    BackgroundTransparency = 0.5
 })
 Corner(gameinfoframe, {CornerRadius = UDim.new(0.15, 0)})
 
-local iconGame = Create("ImageLabel", ScreenGui, {
+local iconGame = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
     Position = UDim2.new(0.04, 0, 0.47, 0),
     AnchorPoint = Vector2.new(0.04, 0.38),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500",
-    Visible = false
+    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
 })
 
-local GameName = Create("TextLabel", ScreenGui, {
+local GameName = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
     Text = "Game Name: " .. gameName,
     Position = UDim2.new(0.14, 0, 0.48, 0),
@@ -1341,17 +1575,15 @@ local GameName = Create("TextLabel", ScreenGui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
     TextScaled = true,
-    Visible = false
 })
 TextSetColor(GameName)
 
-local frame100 = Create("Frame", ScreenGui, {
+local frame100 = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.41, 0, 0.48, 0),
     Position = UDim2.new(0.6178, 0, 0.22, 0),
     AnchorPoint = Vector2.new(0.4178, 0.14),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 1,
-    Visible = false
+    BackgroundTransparency = 1
 })
 
 local FriendList = Create("TextLabel", frame100, {
@@ -1375,18 +1607,17 @@ local friendsFrame = Create("ScrollingFrame", frame100, {
     BackgroundTransparency = 0.5
 })
 
-local iconfriend = Create("ImageLabel", ScreenGui, {
+local iconfriend = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
     Position = UDim2.new(0.48, 0, 0.006, 0),
     AnchorPoint = Vector2.new(0.43, 0.006),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.4,
     Image = "rbxthumb://type=Asset&id=98919122646377&w=420&h=420",
-    Visible = false
 })
 Corner(iconfriend, {CornerRadius = UDim.new(1, 0)})
 
-local friendnumber = Create("TextLabel", ScreenGui, {
+local friendnumber = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
     Text = "Friend: 0/1000",
     Position = UDim2.new(0.67, 0, 0.03, 0),
@@ -1396,8 +1627,7 @@ local friendnumber = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(friendnumber)
 
@@ -1466,7 +1696,7 @@ end
 
 coroutine.wrap(functions.checkFriends)
 
-local TimePlay = Create("TextLabel", ScreenGui, {
+local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
     Text = "TimePlay",
     Position = UDim2.new(0.5294, 0, 0.681, 0),
@@ -1476,13 +1706,12 @@ local TimePlay = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(TimePlay)
 Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
 
-local AccountAge = Create("TextLabel", ScreenGui, {
+local AccountAge = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
     Text = "AccountAge",
     Position = UDim2.new(0.7781, 0, 0.681, 0),
@@ -1492,13 +1721,12 @@ local AccountAge = Create("TextLabel", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(AccountAge)
 Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
 
-local Join = Create("TextButton", ScreenGui, {
+local Join = Create("TextButton", frameinfogui, {
     Size = UDim2.new(0.101, 0, 0.07, 0),
     Text = "Join Game Script\nYou can press Copy",
     Position = UDim2.new(0.4868, 0, 0.762, 0),
@@ -1508,13 +1736,12 @@ local Join = Create("TextButton", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(Join)
 Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
 
-local Position = Create("TextButton", ScreenGui, {
+local Position = Create("TextButton", frameinfogui, {
     Size = UDim2.new(0.101, 0, 0.07, 0),
     Text = "Position\nYou can press Copy",
     Position = UDim2.new(0.6026, 0, 0.762, 0),
@@ -1524,8 +1751,7 @@ local Position = Create("TextButton", ScreenGui, {
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    TextScaled = true,
-    Visible = false
+    TextScaled = true
 })
 TextSetColor(Position)
 Corner(Position, {CornerRadius = UDim.new(0.15, 0)})
@@ -1805,70 +2031,38 @@ local infoToggleButton = Create("ImageButton", frame, {
     Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150",
 })
 
-local minimize3 = true
-
-local uiinfoToggle = {
-    {instance = frameinfo, sizeOpen = UDim2.new(0.25, 0, 0.18, 0), sizeClosed = UDim2.new(0.25, 0, 0, 0)},
-    {instance = iconplayers, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
-    {instance = Wellcome, sizeOpen = UDim2.new(0.25, 0, 0.09, 0), sizeClosed = UDim2.new(0.25, 0, 0, 0)},
-    {instance = gameinfoframe, sizeOpen = UDim2.new(0.27, 0, 0.3, 0), sizeClosed = UDim2.new(0.27, 0, 0, 0)},
-    {instance = iconGame, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
-    {instance = GameName, sizeOpen = UDim2.new(0.28, 0, 0.09, 0), sizeClosed = UDim2.new(0.28, 0, 0, 0)},
-    {instance = frame100, sizeOpen = UDim2.new(0.41, 0, 0.48, 0), sizeClosed = UDim2.new(0.41, 0, 0, 0)},
-    {instance = iconfriend, sizeOpen = UDim2.new(0.06, 0, 0.124, 0), sizeClosed = UDim2.new(0.06, 0, 0, 0)},
-    {instance = friendnumber, sizeOpen = UDim2.new(0.28, 0, 0.09, 0), sizeClosed = UDim2.new(0.28, 0, 0, 0)},
-    {instance = TimePlay, sizeOpen = UDim2.new(0.205, 0, 0.07, 0), sizeClosed = UDim2.new(0.205, 0, 0, 0)},
-    {instance = AccountAge, sizeOpen = UDim2.new(0.205, 0, 0.07, 0), sizeClosed = UDim2.new(0.205, 0, 0, 0)},
-    {instance = Join, sizeOpen = UDim2.new(0.101, 0, 0.07, 0), sizeClosed = UDim2.new(0.101, 0, 0, 0)},
-    {instance = Position, sizeOpen = UDim2.new(0.101, 0, 0.07, 0), sizeClosed = UDim2.new(0.101, 0, 0, 0)}
-}
-
+local minimize3 = false
 infoToggleButton.MouseButton1Click:Connect(function()
     minimize3 = not minimize3
 
     if minimize3 then
         click1:Play()
-        for _, element in ipairs(uiinfoToggle) do
-            element.instance.Visible = true
-            CreateTween1(element.instance, "Size", element.sizeOpen, 0.3, false)
-        end
+        frameinfogui.Visible = true
+        CreateTween(frameinfogui, "Size", UDim2.new(1, 0, 1, 0), 0.3, true)
     else
         click2:Play()
-        for _, element in ipairs(uiinfoToggle) do
-            CreateTween1(element.instance, "Size", element.sizeClosed, 0.3, true)
-            element.instance.Visible = false
-        end
+        CreateTween(frameinfogui, "Size", UDim2.new(0, 0, 0, 0), 0.3, true)
+        frameinfogui.Visible = false
     end
 end)
-   
-local stopupdateall
-local stopupdateall1
-local lastUpdate = tick()
-   stopupdateall1 = RunService.Heartbeat:Connect(function()
-   local currentTime = tick()
-    if currentTime - lastUpdate >= 1 then
-   local playerCount = #players:GetPlayers()
-   local maxPlayers = players.MaxPlayers
-        DisplayName.Text = "Display Name: " .. player.DisplayName
-        UserIdg.Text = "UserId: " .. player.UserId
-        AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-        functions.updatePlaceInfo()
-        iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
-        iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-          lastUpdate = currentTime
-        end
-     end) 
 
-   stopupdateall = RunService.Heartbeat:Connect(function()
-    local currentTime = tick()
-    if currentTime - lastUpdate >= 1 then
-        functions.updatePlaytime()
-        functions.checkFriends()
-        functions.startUpdating()
-        functions.updateTime()
-        lastUpdate = currentTime
-      end
-   end)
+local stopupdateall1
+stopupdateall1 = RunService.Heartbeat:Connect(function()
+   wait()
+      DisplayName.Text = "Display Name: " .. player.DisplayName
+      UserIdg.Text = "UserId: " .. player.UserId
+      AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
+      functions.UpdatePlaces()
+      functions.UpdatePlayerList()
+      functions.updatePlaytime()
+      functions.checkFriends()
+      functions.startUpdating()
+      functions.updateTime()
+      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+      functions.updatePlaceInfo()
+    wait()
+end)
 
 local Button = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -1889,7 +2083,7 @@ Button.MouseButton1Click:Connect(function()
          minimize = false
          CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
          Menu.Visible = false
-         Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+         Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
       else
         minimize = false
         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
@@ -1897,13 +2091,13 @@ Button.MouseButton1Click:Connect(function()
         ScrollBar.Visible = false
         Containers.Visible = false
         line_Containers.Visible = false
-        Menu.Position = UDim2.new(0.77, 0, 0.1, 0)
+        Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
       end
     else
      if IsMinimizedu then
          minimize = true
          Menu.Visible = true
-         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.06, 0), 0.15, true)
+         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.051, 0), 0.15, true)
       else
         minimize = true
         ScrollBar.Visible = true
@@ -1911,7 +2105,7 @@ Button.MouseButton1Click:Connect(function()
         line_Containers.Visible = true
         Menu.Visible = true
         click1:Play()
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.63, 0), 0.3, false)
+        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.3, false)
       end
     end
 end)
@@ -2346,7 +2540,7 @@ local ShiftLockmaingui
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
-    Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0),
+    Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0),
     Size = UDim2.new(0.06, 0, 0.6, 0),
     ZIndex = 10,
     Image = States.Off
@@ -2410,61 +2604,6 @@ end
 local ShiftLockAction = ContextActionService:BindAction("Shift Lock", functions.ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
 
-  local strokeeffect = Create("Frame", frame, {
-    Size = UDim2.new(0.06, 0, 0.6, 0),
-    Position = UDim2.new(0.22, 0, 0.22, 0),
-    BackgroundTransparency = 1, 
-    ZIndex = 10
-  })
-    
-  local stroke = Create("UIStroke", strokeeffect, {
-    Color = Color3.fromRGB(255, 255, 255),
-    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-    Transparency = 0
-   })
-
-   function handleButton(button)
-     if not button or not button.Parent then return end
-      local connectionhandleButton = {}
-      local isMouseHovered = false
-      connectionhandleButton.MouseEnter = button.MouseEnter:Connect(function()
-          isMouseHovered = true
-       end)
-       connectionhandleButton.MouseLeave = button.MouseLeave:Connect(function()
-           isMouseHovered = false
-       end)
-       connectionhandleButton.RenderStepped = RunService.RenderStepped:Connect(function()
-          if isMouseHovered then
-             CreateTween(button, "Size", UDim2.new(0.08, 0, 0.8, 0), 0.2, false)
-             CreateTween(strokeeffect, "Size", button.Size, 0.2, false)
-             CreateTween(strokeeffect, "Position", button.Position, 0.2, true)
-         else
-             CreateTween(button, "Size", UDim2.new(0.06, 0, 0.6, 0), 0.2, false)
-             CreateTween(strokeeffect, "Size", button.Size, 0.2, true)
-          end
-       end)
-       local function cleanup()
-          for _, connection in pairs(connectionhandleButton) do
-             if connection then
-                connection:Disconnect()
-           end
-        end
-       connectionhandleButton = {}
-      end
-       connectionhandleButton.AncestryChanged = button.AncestryChanged:Connect(function(_, parent)
-          if not parent then
-           cleanup()
-          end
-       end)
-    end
-    
-    handleButton(MusicToggleButton)
-    handleButton(SplitgameToggleButton)
-    handleButton(infoToggleButton)
-    handleButton(Button)
-    handleButton(SettingButton)
-    handleButton(ShiftLockButton)
-
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
         if ShiftLockmaingui then
@@ -2481,6 +2620,18 @@ ScreenGui.AncestryChanged:Connect(function()
             ShiftLockmaingui:Disconnect()
             ShiftLockmaingui = nil
         end
+       if View then
+        local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+        if hum then
+           workspace.CurrentCamera.CameraSubject = hum
+        end
+        for _, data in pairs(playerFrames) do
+            if data.UI and data.UI.Parent then
+                data.UI:Destroy()
+            end
+        end
+        table.clear(playerFrames)
+      end
     end
     if not CoreGui:FindFirstChild(ScreenGui.Name) and ScreenGui:IsDescendantOf(game) then
         rainSound:Destroy()
@@ -2490,10 +2641,6 @@ ScreenGui.AncestryChanged:Connect(function()
         click2:Destroy()
         falsetoggle:Destroy()
         clicktoggle:Destroy()
-        if stopupdateall then
-            stopupdateall:Disconnect()
-            stopupdateall = nil
-        end
         if stopupdateall1 then
             stopupdateall1:Disconnect()
             stopupdateall1 = nil
@@ -3822,22 +3969,26 @@ Toggle.MouseButton1Click:Connect(function()
     local assetId = extractAssetId(inputText)
     if not assetId then
         NameSongFrame.Text = "Invalid ID"
-        CreditLabel.Text = "Unable to display creator information as this is not a song"
+        CreditLabel.Text = "Please enter a valid  ID of asset song"
         return
     end
     local productInfo
     local success, err = pcall(function()
         productInfo = game:GetService("MarketplaceService"):GetProductInfo(assetId)
     end)
-
     if not success or not productInfo then
         NameSongFrame.Text = "Failed to fetch asset info"
-        CreditLabel.Text = "Unable to display creator information as this is not a song"
+        CreditLabel.Text = "Error: " .. tostring(err)
         return
     end
     if productInfo.AssetTypeId ~= 3 then
-        NameSongFrame.Text = "Not a valid song"
-        CreditLabel.Text = "Unable to display creator information as this is not a song"
+        NameSongFrame.Text = "id Asset is not a Song"
+        CreditLabel.Text = "id Not a Song"
+        return
+    end
+    if not productInfo.IsForSale then
+        NameSongFrame.Text = "Song not for sale, check at" .. " https://www.roblox.com/library/" .. assetId
+        CreditLabel.Text = "Creator by: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
         return
     end
     if sound.IsPlaying then
@@ -3848,13 +3999,21 @@ Toggle.MouseButton1Click:Connect(function()
         Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
         musicPlaying = false
     else
-        sound.SoundId = "rbxassetid://" .. assetId
-        sound:Play()
-        sound.TimePosition = soundsavedTimePosition
+        local successLoad, loadErr = pcall(function()
+            sound.SoundId = "rbxassetid://" .. assetId
+            sound:Play()
+            sound.TimePosition = soundsavedTimePosition
+        end)
+        if not successLoad then
+            NameSongFrame.Text = "Failed to load/play song"
+            CreditLabel.Text = "Asset is private or restricted access or cannot be loaded"
+            Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
+            return
+        end
         updateProgressBar()
         NameSongFrame.Text = productInfo.Name
         Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-        CreditLabel.Text = "Created by: " .. productInfo.Creator.Name
+        CreditLabel.Text = "Created by: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
         musicPlaying = true
     end
 end)
