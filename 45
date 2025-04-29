@@ -677,6 +677,7 @@ notify({
     local HttpService = game:GetService("HttpService")
     local View = nil
     local playerFrames = {}
+    local friendFrames = {}
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
@@ -1583,29 +1584,42 @@ local frame100 = Create("Frame", frameinfogui, {
     Position = UDim2.new(0.6178, 0, 0.22, 0),
     AnchorPoint = Vector2.new(0.4178, 0.14),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 1
+    BackgroundTransparency = 0.8
 })
 
 local FriendList = Create("TextLabel", frame100, {
-    Size = UDim2.new(1, 0, 0.13, 0),
-    Position = UDim2.new(0, 0, 0.001, 0),
-    Text = "Friend List",
-    TextColor3 = Configs_HUB.Cor_Text,
-    Font = Configs_HUB.Text_Font,
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 0.5
-})
-TextSetColor(FriendList)
-Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
+     Size = UDim2.new(1, 0, 0.08, 0),
+     Position = UDim2.new(0, 0, 0, 0),
+     Text = "Players in Server "..string.format("%d/%d", #game.Players:GetPlayers(), game.Players.MaxPlayers),
+     BackgroundTransparency = 1,
+     TextColor3 = Configs_HUB.Cor_Text,
+     Font = Configs_HUB.Text_Font,
+     TextScaled = true
+})TextSetColor(FriendList)Corner(FriendList)Stroke(FriendList)
 
-local friendsFrame = Create("ScrollingFrame", frame100, {
-    Size = UDim2.new(1, 0, 0.87, 0),
-    Position = UDim2.new(0, 0, 0.13, 0),
-    CanvasSize = UDim2.new(0, 0, 0, 0),
-    ScrollBarThickness = 3,
-    BackgroundColor3 = Configs_HUB.Cor_Hub,
-    BackgroundTransparency = 0.5
+local lineF = Create("Frame", frame100, {
+    Size = UDim2.new(1, 0, 0.005, 0),
+    Position = UDim2.new(0, 0, 0.07, 0), 
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BorderSizePixel = 0
 })
+
+local friendsFrame = Create("ScrollingFrame", framep, {
+    Size = UDim2.new(1, 0, 0.82, 0),
+    Position = UDim2.new(0, 0, 0.08, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    BackgroundTransparency = 1,
+    ScrollBarThickness = 0
+  })local listLayoutScrollBar = Create("UIListLayout", ScrollBarPlayers, {
+    Padding = UDim.new(0, 5),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", ScrollBarPlayers, {
+      PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
 
 local iconfriend = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
@@ -1635,62 +1649,65 @@ functions.checkFriends = function()
     if friendsCooldown <= 0 then
         friendsCooldown = 5
 
-        local playersFriends = {}
-        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+        local currentFriends = {}
+        local success, page = pcall(Players.GetFriendsAsync, Players, localPlayer.UserId)
 
         if success then
             repeat
-                local info = page:GetCurrentPage()
-                for _, friendInfo in pairs(info) do
-                    table.insert(playersFriends, friendInfo)
+                for _, friendInfo in pairs(page:GetCurrentPage()) do
+                    currentFriends[friendInfo.Id] = friendInfo
                 end
-                local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
-                if not pageSuccess or page.IsFinished then break end
-            until page.IsFinished
-        end
-
-        local friendsInTotal = #playersFriends
-
-        functions.updateFriendsGUI = function(friends)
-            friendsFrame:ClearAllChildren()
-
-            local positionY = 0
-            for _, friend in pairs(friends) do
-                local friendFrame = Create("Frame", friendsFrame, {
-                    Size = UDim2.new(1, 0, 0, 50),
-                    BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 0, 0, positionY)
-                })
-
-                local avatarImage = Create("ImageLabel", friendFrame, {
-                    Size = UDim2.new(0.1, 0, 0, 30),
-                    Position = UDim2.new(0, 0, 0.07, 0),
-                    BackgroundColor3 = Configs_HUB.Cor_Hub,
-                    BackgroundTransparency = 0.4,
-                    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
-                })
-
-                local friendName = Create("TextLabel", friendFrame, {
-                    Size = UDim2.new(0.9, 0, 1, 0),
-                    Position = UDim2.new(0.1, 0, 0, 0),
-                    BackgroundTransparency = 1,
-                    Text = friend.Username,
-                    TextWrapped = true,
-                    TextColor3 = Configs_HUB.Cor_Text,
-                    TextXAlignment = "Left",
-                    Font = Configs_HUB.Text_Font
-                })
-                TextSetColor(friendName)
-                positionY = positionY + 60
+            until not page.IsFinished and page:AdvanceToNextPage()
+            for userId, data in pairs(friendFrames) do
+                if not currentFriends[userId] then
+                    if data.UI and data.UI.Parent then
+                        data.UI:Destroy()
+                    end
+                    friendFrames[userId] = nil
+                end
             end
-            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, positionY)
-        end
+            for userId, friendInfo in pairs(currentFriends) do
+                if not friendFrames[userId] then
+                    local frame = Create("Frame", friendsFrame, {
+                        Size = UDim2.new(0.95, 0, 0.18, 0),
+                        BackgroundTransparency = 1,
+                    })
+                    Corner(frame)
+                    Stroke(frame)
 
-        functions.updateFriendsGUI(playersFriends)
-        friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
-        return friendsInTotal
-    else
-        friendsCooldown = friendsCooldown - 1
+                    Create("ImageLabel", frame, {
+                        Size = UDim2.new(0.078, 0, 0.95, 0),
+                        Position = UDim2.new(0.005, 0, 0.015, 0),
+                        BackgroundTransparency = 1,
+                        Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. userId
+                    })
+                    Create("TextLabel", frame, {
+                        Size = UDim2.new(0.81, 0, 0.5, 0),
+                        Position = UDim2.new(0.089, 0, 0),
+                        Text = friendInfo.DisplayName,
+                        BackgroundTransparency = 1,
+                        TextColor3 = Configs_HUB.Cor_Text,
+                        Font = Configs_HUB.Text_Font,
+                        TextScaled = true
+                    })
+                    Create("TextLabel", frame, {
+                        Size = UDim2.new(0.81, 0, 0.5, 0),
+                        Position = UDim2.new(0.089, 0, 0.5, 0),
+                        Text = "@" .. friendInfo.Username,
+                        BackgroundTransparency = 1,
+                        TextColor3 = Color3.fromRGB(114, 117, 130),
+                        Font = Configs_HUB.Text_Font,
+                        TextScaled = true
+                    })
+                    friendFrames[userId] = { UI = frame }
+                end
+            end
+            friendnumber.Text = "Friends: " .. tostring(#(function()
+                local count = 0
+                for _ in pairs(friendFrames) do count += 1 end
+                return count
+            end)())
+        end
     end
 end
 
@@ -1883,6 +1900,7 @@ functions.updatePlaceInfo = function()
     if currentTime - lastUpdateTime < updateInterval then
         return
     end
+
     local universeUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
     local votesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
 
@@ -1931,11 +1949,20 @@ functions.updatePlaceInfo = function()
         )
     else
         GameName.Text = "Game Name: Failed to load"
-        frame79.Text = "Failed to fetch place info."
+        local errorMsg = ""
+        if not success1 then
+            errorMsg = "Error fetching universe info:\n" .. tostring(universeResponse)
+        elseif not success2 then
+            errorMsg = "Error fetching votes:\n" .. tostring(votesResponse)
+        elseif not (universeResponse and universeResponse.data and #universeResponse.data > 0) then
+            errorMsg = "Invalid universe data structure"
+        else
+            errorMsg = "Unknown error occurred"
+        end
+        frame79.Text = "Failed to fetch place info:\n" .. errorMsg
     end
     lastUpdateTime = currentTime
 end
-
 functions.updatePlaceInfo()
 
 local DisplayName = Create("TextLabel", frame9, {
@@ -2604,6 +2631,12 @@ ScreenGui.AncestryChanged:Connect(function()
             ShiftLockmaingui:Disconnect()
             ShiftLockmaingui = nil
         end
+        for _, data in pairs(friendFrames) do
+            if data.UI and data.UI.Parent then
+                data.UI:Destroy()
+            end
+        end
+        table.clear(friendFrames)
        if View then
         local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
         if hum then
