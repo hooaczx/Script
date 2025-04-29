@@ -2064,14 +2064,11 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
       DisplayName.Text = "Display Name: " .. player.DisplayName
       UserIdg.Text = "UserId: " .. player.UserId
       AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-      functions.UpdatePlaces()
       functions.UpdatePlayerList()
-      functions.checkFriends()
       functions.startUpdating()
       functions.updateTime()
       iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-      functions.updatePlaceInfo()
     wait()
 end)
 
@@ -2081,6 +2078,9 @@ stopupdateall = RunService.Heartbeat:Connect(function()
  local currentTime = tick()
  if currentTime - lastUpdate >= 1 then
      functions.updatePlaytime()
+     functions.UpdatePlaces()
+     functions.checkFriends()
+     functions.updatePlaceInfo()
      lastUpdate = currentTime
    end
 end)
