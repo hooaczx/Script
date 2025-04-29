@@ -1895,15 +1895,7 @@ end
 
 functions.updatePlaytime()
 
-local lastUpdateTime = 0
-local updateInterval = 6
-
 functions.updatePlaceInfo = function()
-    local currentTime = tick()
-    if currentTime - lastUpdateTime < updateInterval then
-        return
-    end
-
     local universeUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
     local votesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
 
@@ -1954,9 +1946,9 @@ functions.updatePlaceInfo = function()
         GameName.Text = "Game Name: Failed to load"
         local errorMsg = ""
         if not success1 then
-            errorMsg = "Error fetching universe info:\n" .. tostring(universeResponse)
+            errorMsg = "" .. tostring(universeResponse)
         elseif not success2 then
-            errorMsg = "Error fetching votes:\n" .. tostring(votesResponse)
+            errorMsg = "" .. tostring(votesResponse)
         elseif not (universeResponse and universeResponse.data and #universeResponse.data > 0) then
             errorMsg = "Invalid universe data structure"
         else
@@ -1964,8 +1956,8 @@ functions.updatePlaceInfo = function()
         end
         frame79.Text = "Failed to fetch place info:\n" .. errorMsg
     end
-    lastUpdateTime = currentTime
 end
+
 functions.updatePlaceInfo()
 
 local DisplayName = Create("TextLabel", frame9, {
@@ -2077,13 +2069,13 @@ stopupdateall = RunService.Heartbeat:Connect(function()
 end)
 
 local stopupdateall5
-local lastUpdate = tick()
+local Timeu = tick()
 stopupdateall5 = RunService.Heartbeat:Connect(function()
  local currentTime = tick()
- if currentTime - lastUpdate >= 10 then
+ if currentTime - Timeu >= 25 then
      functions.UpdatePlaces()
      functions.updatePlaceInfo()
-     lastUpdate = currentTime
+     Timeu = currentTime
    end
 end)
 
