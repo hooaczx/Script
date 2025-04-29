@@ -675,6 +675,8 @@ notify({
     local Player = players.LocalPlayer
     local Mouse = LocalPlayer:GetMouse()
     local HttpService = game:GetService("HttpService")
+    local View = nil
+    local playerFrames = {}
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
@@ -1294,6 +1296,207 @@ SplitgameToggleButton.MouseButton1Click:Connect(function()
       end
  end)
 
+local framep = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.6, 0, 0.64, 0),
+    Position = UDim2.new(0.2, 0, 0.2, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.8,
+    Visible = false
+})Corner(framep)Stroke(framep)
+
+local frametext = Create("TextLabel", framep, {
+     Size = UDim2.new(1, 0, 0.08, 0),
+     Position = UDim2.new(0, 0, 0, 0),
+     Text = "Players in Server "..string.format("%d/%d", #game.Players:GetPlayers(), game.Players.MaxPlayers),
+     BackgroundTransparency = 1,
+     TextColor3 = Configs_HUB.Cor_Text,
+     Font = Configs_HUB.Text_Font,
+     TextScaled = true
+})
+
+local linep = Create("Frame", framep, {
+    Size = UDim2.new(1, 0, 0.005, 0),
+    Position = UDim2.new(0, 0, 0.07, 0), 
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BorderSizePixel = 0
+})
+
+local ScrollBarPlayers = Create("ScrollingFrame", framep, {
+    Size = UDim2.new(1, 0, 0.82, 0),
+    Position = UDim2.new(0, 0, 0.08, 0),
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    BackgroundTransparency = 1,
+    ScrollBarThickness = 0
+  })local listLayoutScrollBar = Create("UIListLayout", ScrollBarPlayers, {
+    Padding = UDim.new(0, 5),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+  })Create("UIPadding", ScrollBarPlayers, {
+      PaddingLeft = UDim.new(0.028, 0),
+      PaddingTop = UDim.new(0.003, 0),
+      PaddingBottom = UDim.new(0.003, 0)
+  })
+
+local unviewallplayerbutton = Create("ImageButton", framep, {
+    Size = UDim2.new(0.07, 0, 0.1, 0),
+    Position = UDim2.new(0.93, 0, 0.9, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Options,
+    BackgroundTransparency = 1,
+    Image = "rbxassetid://137903829820448"
+})
+
+unviewallplayerbutton.MouseButton1Click:Connect(function()
+    local localChar = game:GetService("Players").LocalPlayer.Character
+    if localChar then
+        local hum = localChar:WaitForChild("Humanoid")
+        if hum then
+            workspace.CurrentCamera.CameraSubject = hum
+        end
+    end
+    for _, data in pairs(playerFrames) do
+        if data.UI then
+            local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
+            if viewButton then
+                viewButton.Image = "rbxassetid://96859795672738"
+            end
+        end
+    end
+    View = nil
+end)
+
+functions.UpdatePlayerList = function()
+    frametext.Text = "Players in Server "..string.format("%d/%d", #game.Players:GetPlayers(), game.Players.MaxPlayers)
+    local currentPlayers = {}
+    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+        currentPlayers[player.UserId] = player
+        if not playerFrames[player.UserId] then
+            local frameplayer = Create("Frame", ScrollBarPlayers, {
+                Size = UDim2.new(0.95, 0, 0.18, 0),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundTransparency = 1
+            })
+            Corner(frameplayer)
+            Stroke(frameplayer)
+            local playerdisplayName = Create("TextLabel", frameplayer, {
+                Size = UDim2.new(0.81, 0, 0.5, 0),
+                Position = UDim2.new(0.089, 0, 0, 0),
+                Text = player.DisplayName,
+                BackgroundTransparency = 1,
+                TextColor3 = Configs_HUB.Cor_Text,
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+            local playername = Create("TextLabel", frameplayer, {
+                Size = UDim2.new(0.81, 0, 0.5, 0),
+                Position = UDim2.new(0.089, 0, 0.5, 0),
+                Text = "@"..player.Name,
+                BackgroundTransparency = 1,
+                TextColor3 = Color3.fromRGB(114, 117, 130),
+                Font = Configs_HUB.Text_Font,
+                TextScaled = true
+            })
+            local imageplayer = Create("ImageLabel", frameplayer, {
+                Size = UDim2.new(0.078, 0, 0.95, 0),
+                Position = UDim2.new(0.005, 0, 0.015, 0),
+                BackgroundTransparency = 1,
+                Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. player.UserId
+            })
+            Corner(imageplayer, {CornerRadius = UDim.new(1, 0)})
+            Stroke(imageplayer, {Color = Color3.fromRGB(255, 255, 255)})
+            if player ~= game:GetService("Players").LocalPlayer then
+                local viewplayerbutton = Create("ImageButton", frameplayer, {
+                    Size = UDim2.new(0.09, 0, 0.95, 0),
+                    Position = UDim2.new(0.905, 0, 0.025, 0),
+                    BackgroundColor3 = Configs_HUB.Cor_Options,
+                    BackgroundTransparency = 1,
+                    Image = "rbxassetid://96859795672738"
+                })
+                viewplayerbutton.MouseButton1Click:Connect(function()
+                    if View and View.button ~= viewplayerbutton then
+                        View.button.Image = "rbxassetid://96859795672738"
+                        local localChar = game:GetService("Players").LocalPlayer.Character
+                        if localChar then
+                            local hum = localChar:WaitForChild("Humanoid")
+                            if hum then
+                                game.Workspace.Camera.CameraSubject = hum
+                            end
+                        end
+                        View = nil
+                    end
+                    if View and View.button == viewplayerbutton then
+                        viewplayerbutton.Image = "rbxassetid://96859795672738"
+                        local localChar = game:GetService("Players").LocalPlayer.Character
+                        if localChar then
+                            local hum = localChar:WaitForChild("Humanoid")
+                            if hum then
+                                game.Workspace.Camera.CameraSubject = hum
+                            end
+                        end
+                        View = nil
+                    else
+                        viewplayerbutton.Image = "rbxassetid://137903829820448"
+                        local char = player.Character
+                        if char then
+                            local root = char:WaitForChild("Humanoid") or char:WaitForChild("HumanoidRootPart")
+                            if root then
+                                game.Workspace.Camera.CameraSubject = root
+                            end
+                        end
+                        View = {button = viewplayerbutton, player = player}
+                    end
+                end)
+            end
+            playerFrames[player.UserId] = {
+                UI = frameplayer,
+            }
+        end
+    end
+    for userId, data in pairs(playerFrames) do
+        if not currentPlayers[userId] then
+            if data.UI and data.UI.Parent then
+                data.UI:Destroy()
+            end
+            playerFrames[userId] = nil
+            if View and View.player.UserId == userId then
+                local localChar = game:GetService("Players").LocalPlayer.Character
+                if localChar then
+                    local hum = localChar:WaitForChild("Humanoid")
+                    if hum then
+                        game.Workspace.Camera.CameraSubject = hum
+                    end
+                end
+                View = nil
+            end
+        end
+    end
+end
+
+functions.UpdatePlayerList()
+
+local PlayerListToggleButton = Create("ImageButton", frame, {
+    Size = UDim2.new(0.06, 0, 0.6, 0),
+    Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0),
+    BackgroundColor3 = Color3.fromRGB(204, 255, 204),
+    ZIndex = 10,
+    BackgroundTransparency = 1,
+    Image = "rbxthumb://type=Asset&id=140380840270815&w=150&h=150"
+})
+
+local PlayerList = true
+PlayerListToggleButton.MouseButton1Click:Connect(function()
+     PlayerList = not PlayerList
+      if PlayerList then
+          framep.Visible = true
+          click1:Play()
+          CreateTween(framep, "Size", UDim2.new(0.6, 0, 0.64, 0), 0.3, true) 
+       else
+          click2:Play()
+          CreateTween(framep, "Size", UDim2.new(0.6, 0, 0, 0), 0.3, true)
+          framep.Visible = false
+      end
+ end)
+
 local success, result = pcall(function()
     return MarketplaceService:GetProductInfo(PlaceId)
 end)
@@ -1852,8 +2055,9 @@ local lastUpdate = tick()
         DisplayName.Text = "Display Name: " .. player.DisplayName
         UserIdg.Text = "UserId: " .. player.UserId
         AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-        functions.updatePlaceInfo()
         functions.UpdatePlaces()
+        functions.UpdatePlayerList()
+        functions.updatePlaceInfo()
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
         iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
         lastUpdate = currentTime
@@ -2347,7 +2551,7 @@ local ShiftLockmaingui
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
-    Position = UDim2.new(0.22 + 0.3, 0, 0.22, 0),
+    Position = UDim2.new(0.22 + 0.4, 0, 0.22, 0),
     Size = UDim2.new(0.06, 0, 0.6, 0),
     ZIndex = 10,
     Image = States.Off
@@ -2427,6 +2631,18 @@ ScreenGui.AncestryChanged:Connect(function()
             ShiftLockmaingui:Disconnect()
             ShiftLockmaingui = nil
         end
+       if View then
+        local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+        if hum then
+           workspace.CurrentCamera.CameraSubject = hum
+        end
+        for _, data in pairs(playerFrames) do
+            if data.UI and data.UI.Parent then
+                data.UI:Destroy()
+            end
+        end
+        table.clear(playerFrames)
+      end
     end
     if not CoreGui:FindFirstChild(ScreenGui.Name) and ScreenGui:IsDescendantOf(game) then
         rainSound:Destroy()
