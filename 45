@@ -677,6 +677,7 @@ notify({
     local HttpService = game:GetService("HttpService")
     local View = nil
     local playerFrames = {}
+    local MarketplaceCache = {}
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
@@ -1016,10 +1017,18 @@ functions.CreatePlaceUI = function(place, index)
         Rotation = 40
     })
 
-    local success, productInfo = pcall(function()
-        return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-    end)
-    if success and productInfo then
+    local productInfo = MarketplaceCache[place.PlaceId]
+    if not productInfo then
+        local success, info = pcall(function()
+            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+        end)
+        if success and info then
+            productInfo = info
+            MarketplaceCache[place.PlaceId] = productInfo
+        end
+    end
+
+    if productInfo then
         Create("ImageLabel", fr, {
             Size = UDim2.new(0.25, 0, 1, 0),
             Position = UDim2.new(0, 0, 0, 0),
