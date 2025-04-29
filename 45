@@ -2017,8 +2017,10 @@ infoToggleButton.MouseButton1Click:Connect(function()
     end
 end)
 
+local stopupdateall
 local stopupdateall1
-stopupdateall1 = RunService.Heartbeat:Connect(function()
+local lastUpdate = tick()
+stopupdateall = RunService.Heartbeat:Connect(function()
    wait()
       DisplayName.Text = "Display Name: " .. player.DisplayName
       UserIdg.Text = "UserId: " .. player.UserId
@@ -2031,9 +2033,7 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
     wait()
 end)
 
-local stopupdateall
-local lastUpdate = tick()
-stopupdateall = RunService.Heartbeat:Connect(function()
+stopupdateall1 = RunService.Heartbeat:Connect(function()
  local currentTime = tick()
  if currentTime - lastUpdate >= 1 then
      functions.updatePlaytime()
