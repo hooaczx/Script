@@ -996,6 +996,31 @@ Create("UIPadding", frameGame, {
     PaddingBottom = UDim.new(0.003, 0)
 })
 
+local CACHE_EXPIRY_TIME = 60 * 5
+
+functions.getProductInfoCache = function(placeId)
+    local currentTime = tick()
+    local cached = MarketplaceCache[placeId]
+    if cached and (currentTime - cached.timestamp >= CACHE_EXPIRY_TIME) then
+        MarketplaceCache[placeId] = nil
+        cached = nil
+    end
+    if cached then
+        return cached.info
+    end
+    local info = getProductInfoWithThrottle(placeId)
+    if info and info.AssetId then
+        MarketplaceCache[placeId] = {
+            info = info,
+            timestamp = currentTime
+        }
+        return info
+    else
+        MarketplaceCache[placeId] = nil
+        return nil
+    end
+end
+
 functions.CreatePlaceUI = function(place, index)
     local name = "Place_" .. tostring(place.PlaceId)
     local fr = Create("Frame", frameGame, {
@@ -1017,17 +1042,7 @@ functions.CreatePlaceUI = function(place, index)
         Rotation = 40
     })
 
-    local productInfo = MarketplaceCache[place.PlaceId]
-    if not productInfo then
-        local success, info = pcall(function()
-            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-        end)
-        if success and info then
-            productInfo = info
-            MarketplaceCache[place.PlaceId] = productInfo
-        end
-    end
-
+    local productInfo = getProductInfoWithCache(place.PlaceId)
     if productInfo then
         Create("ImageLabel", fr, {
             Size = UDim2.new(0.25, 0, 1, 0),
