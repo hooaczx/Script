@@ -1029,7 +1029,6 @@ functions.getProductInfo = function(placeId)
     end
 end
 
-
 functions.CreatePlaceUI = function(place, index)
     local name = "Place_" .. tostring(place.PlaceId)
     local fr = Create("Frame", frameGame, {
@@ -1629,7 +1628,8 @@ functions.checkFriends = function()
             for _, friend in pairs(friends) do
                 local frame = Create("Frame", friendsFrame1, {
                     Size = UDim2.new(0.95, 0, 0.18, 0),
-                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0, 0, 0, positionY),
+                    BackgroundTransparency = 1
                 })
                 Corner(frame)
                 Stroke(frame)
@@ -1648,6 +1648,7 @@ functions.checkFriends = function()
                     BackgroundTransparency = 1,
                     TextColor3 = Configs_HUB.Cor_Text,
                     Font = Configs_HUB.Text_Font,
+                    TextXAlignment = "Left",
                     TextScaled = true
                 })TextSetColor(friendDisplayName)
 
@@ -1658,6 +1659,7 @@ functions.checkFriends = function()
                     BackgroundTransparency = 1,
                     TextColor3 = Color3.fromRGB(114, 117, 130),
                     Font = Configs_HUB.Text_Font,
+                    TextXAlignment = "Left",
                     TextScaled = true
                 })TextSetColor(friendUsername)
                 positionY = positionY + 60
@@ -1666,13 +1668,12 @@ functions.checkFriends = function()
         end
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
-        return friendsInTotal
     else
         friendsCooldown = friendsCooldown - 1
     end
 end
 
-coroutine.wrap(functions.checkFriends)
+coroutine.wrap(functions.checkFriends)()
 
 local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
