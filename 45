@@ -1000,13 +1000,25 @@ local CACHE_EXPIRY_TIME = 60 * 5
 local lastApi = 0
 local apiCooldown = 1
 
-functions.getProductInfoWithThrottle = function()
+functions.getProductInfo = function(placeId)
     local currentTime = tick()
+    local cached = MarketplaceCache[placeId]
+    if cached and (currentTime - cached.timestamp >= CACHE_EXPIRY_TIME) then
+        MarketplaceCache[placeId] = nil
+        cached = nil
+    end
+    if cached then
+        return cached.info
+    end
     if currentTime - lastApi >= apiCooldown then
         local success, info = pcall(function()
             return MarketplaceService:GetProductInfo(placeId, Enum.InfoType.Asset)
         end)
-        if success and info then
+        if success and info and info.AssetId then
+            MarketplaceCache[placeId] = {
+                info = info,
+                timestamp = currentTime
+            }
             lastApi = currentTime
             return info
         else
@@ -1017,28 +1029,6 @@ functions.getProductInfoWithThrottle = function()
     end
 end
 
-functions.getProductInfoCache = function(placeId)
-    local currentTime = tick()
-    local cached = MarketplaceCache[placeId]
-    if cached and (currentTime - cached.timestamp >= CACHE_EXPIRY_TIME) then
-        MarketplaceCache[placeId] = nil
-        cached = nil
-    end
-    if cached then
-        return cached.info
-    end
-    local info = functions.getProductInfoWithThrottle(placeId)
-    if info and info.AssetId then
-        MarketplaceCache[placeId] = {
-            info = info,
-            timestamp = currentTime
-        }
-        return info
-    else
-        MarketplaceCache[placeId] = nil
-        return nil
-    end
-end
 
 functions.CreatePlaceUI = function(place, index)
     local name = "Place_" .. tostring(place.PlaceId)
@@ -1061,7 +1051,7 @@ functions.CreatePlaceUI = function(place, index)
         Rotation = 40
     })
 
-    local productInfo = getProductInfoWithCache(place.PlaceId)
+    local productInfo = functions.getProductInfo(place.PlaceId)
     if productInfo then
         Create("ImageLabel", fr, {
             Size = UDim2.new(0.25, 0, 1, 0),
