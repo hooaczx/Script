@@ -677,7 +677,6 @@ notify({
     local HttpService = game:GetService("HttpService")
     local View = nil
     local playerFrames = {}
-    local friendFrames = {}
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
@@ -1603,7 +1602,7 @@ local friendsFrame = Create("ScrollingFrame", frame100, {
     CanvasSize = UDim2.new(0, 0, 0, 0),
     ScrollingDirection = Enum.ScrollingDirection.Y,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
-    BackgroundTransparency = 0.8,
+    BackgroundTransparency = 1,
     ScrollBarThickness = 0
   })Create("UIListLayout", friendsFrame, {
     Padding = UDim.new(0, 5),
@@ -1640,7 +1639,8 @@ TextSetColor(friendnumber)
 
 functions.checkFriends = function()
     if friendsCooldown <= 0 then
-        friendsCooldown = 30
+        friendsCooldown = 5
+
         local playersFriends = {}
         local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
 
@@ -1654,21 +1654,12 @@ functions.checkFriends = function()
                 if not pageSuccess or page.IsFinished then break end
             until page.IsFinished
         end
-        local currentFriendIds = {}
-        for _, friend in ipairs(playersFriends) do
-            currentFriendIds[friend.Id] = friend
-        end
-        for userId, data in pairs(friendFrames) do
-            if not currentFriendIds[userId] then
-                if data.UI and data.UI.Parent then
-                    data.UI:Destroy()
-                end
-                friendFrames[userId] = nil
-            end
-        end
-        for userId, friend in pairs(currentFriendIds) do
-            if not friendFrames[userId] then
-                local frame = Create("Frame", friendsFrame, {
+
+        local friendsInTotal = #playersFriends
+
+        functions.updateFriendsGUI = function(friends)
+            friendsFrame:ClearAllChildren()
+            for _, friend in pairs(friends) do
                     Size = UDim2.new(0.95, 0, 0.18, 0),
                     BackgroundTransparency = 1,
                 })
@@ -1701,16 +1692,14 @@ functions.checkFriends = function()
                     Font = Configs_HUB.Text_Font,
                     TextScaled = true
                 })TextSetColor(friendUsername)
-
-                friendFrames[userId] = { UI = frame }
             end
         end
 
-        local friendsInTotal = #playersFriends
-        friendnumber.Text = "Friends: " .. friendsInTotal .. "/1000"
+        functions.updateFriendsGUI(playersFriends)
+        friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
         return friendsInTotal
     else
-        friendsCooldown -= 1
+        friendsCooldown = friendsCooldown - 1
     end
 end
 
@@ -2635,12 +2624,6 @@ ScreenGui.AncestryChanged:Connect(function()
             ShiftLockmaingui:Disconnect()
             ShiftLockmaingui = nil
         end
-        for _, data in pairs(friendFrames) do
-            if data.UI and data.UI.Parent then
-                data.UI:Destroy()
-            end
-        end
-        table.clear(friendFrames)
        if View then
         local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
         if hum then
