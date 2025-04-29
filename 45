@@ -997,6 +997,25 @@ Create("UIPadding", frameGame, {
 })
 
 local CACHE_EXPIRY_TIME = 60 * 5
+local lastApi = 0
+local apiCooldown = 1
+
+functions.getProductInfoWithThrottle = function()
+    local currentTime = tick()
+    if currentTime - lastApi >= apiCooldown then
+        local success, info = pcall(function()
+            return MarketplaceService:GetProductInfo(placeId, Enum.InfoType.Asset)
+        end)
+        if success and info then
+            lastApi = currentTime
+            return info
+        else
+            return nil
+        end
+    else
+        return nil
+    end
+end
 
 functions.getProductInfoCache = function(placeId)
     local currentTime = tick()
@@ -1008,7 +1027,7 @@ functions.getProductInfoCache = function(placeId)
     if cached then
         return cached.info
     end
-    local info = getProductInfoWithThrottle(placeId)
+    local info = functions.getProductInfoWithThrottle(placeId)
     if info and info.AssetId then
         MarketplaceCache[placeId] = {
             info = info,
