@@ -1604,7 +1604,7 @@ local lineF = Create("Frame", frame100, {
     BorderSizePixel = 0
 })
 
-local friendsFrame = Create("ScrollingFrame", framep, {
+local friendsFrame = Create("ScrollingFrame", frame100, {
     Size = UDim2.new(1, 0, 0.87, 0),
     Position = UDim2.new(0, 0, 0.13, 0),
     CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -1692,7 +1692,7 @@ functions.checkFriends = function()
                 Create("TextLabel", frame, {
                     Size = UDim2.new(0.81, 0, 0.5, 0),
                     Position = UDim2.new(0.089, 0, 0),
-                    Text = friend.DisplayName or friend.Username,
+                    Text = friend.DisplayName,
                     BackgroundTransparency = 1,
                     TextColor3 = Configs_HUB.Cor_Text,
                     Font = Configs_HUB.Text_Font,
@@ -2078,8 +2078,17 @@ stopupdateall = RunService.Heartbeat:Connect(function()
  local currentTime = tick()
  if currentTime - lastUpdate >= 1 then
      functions.updatePlaytime()
-     functions.UpdatePlaces()
      functions.checkFriends()
+     lastUpdate = currentTime
+   end
+end)
+
+local stopupdateall5
+local lastUpdate = tick()
+stopupdateall5 = RunService.Heartbeat:Connect(function()
+ local currentTime = tick()
+ if currentTime - lastUpdate >= 10 then
+     functions.UpdatePlaces()
      functions.updatePlaceInfo()
      lastUpdate = currentTime
    end
@@ -2675,6 +2684,10 @@ ScreenGui.AncestryChanged:Connect(function()
         if stopupdateall then
             stopupdateall:Disconnect()
             stopupdateall = nil
+        end
+        if stopupdateall5 then
+            stopupdateall5:Disconnect()
+            stopupdateall5 = nil
         end
     end
 end)
