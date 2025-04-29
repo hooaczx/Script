@@ -1875,53 +1875,33 @@ end
 
 functions.updatePlaytime()
 
-functions.fetchLikes = function()
-    local url = string.format("https://games.roproxy.com/v1/games/%d/votes", tostring(game.GameId))
-    local success, response = pcall(function()
-        return game:HttpGet(url)
+local lastUpdateTime = 0
+local updateInterval = 6
+
+functions.updateFullPlaceInfo = function()
+    local currentTime = tick()
+    if currentTime - lastUpdateTime < updateInterval then
+        return
+    end
+    local universeUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    local votesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+
+    local success1, universeResponse = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(universeUrl))
     end)
 
-    if success then
-        local decodedResponse
-        local successDecode, errorMsg = pcall(function()
-            decodedResponse = HttpService:JSONDecode(response)
-        end)
-
-        if successDecode and decodedResponse then
-            return decodedResponse.upVotes or 0
-        else
-            warn("Failed to decode likes: " .. (errorMsg or "No data"))
-        end
-    else
-        warn("Failed to fetch likes")
-    end
-
-    return 0
-end
-
-functions.updatePlaceInfo = function()
-    functions.parseDate = function(dateString)
-        local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)"
-        local year, month, day, hour, min, sec = dateString:match(pattern)
-        return os.time({
-            year = tonumber(year),
-            month = tonumber(month),
-            day = tonumber(day),
-            hour = tonumber(hour),
-            min = tonumber(min),
-            sec = tonumber(sec)
-        })
-    end
-
-    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local success, response = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(url))
+    local success2, votesResponse = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(votesUrl))
     end)
 
-    if success and response and response.data and #response.data > 0 then
-        local data = response.data[1]
-        local created = functions.parseDate(data.created)
-        local updated = functions.parseDate(data.updated)
+    if success1 and success2 and universeResponse and universeResponse.data and #universeResponse.data > 0 and votesResponse then
+        local data = universeResponse.data[1]
+
+        local y1, m1, d1, h1, mi1, s1 = data.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
+        local created = os.time({year = y1, month = m1, day = d1, hour = h1, min = mi1, sec = s1})
+
+        local y2, m2, d2, h2, mi2, s2 = data.updated:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
+        local updated = os.time({year = y2, month = m2, day = d2, hour = h2, min = mi2, sec = s2})
 
         local placeInfo = {
             PlaceId = game.PlaceId,
@@ -1932,33 +1912,28 @@ functions.updatePlaceInfo = function()
             Visits = data.visits or 0,
             Favorited = data.favoritedCount or 0,
             RootPlaceId = data.rootPlaceId or "N/A",
-            ServerCount = #Players:GetPlayers()
+            Likes = votesResponse.upVotes or 0
         }
 
-        local maxPlayers = game:GetService("Players").MaxPlayers
-        local playersInServer = placeInfo.ServerCount
-        local formattedPlayers = string.format("%d/%d", playersInServer, maxPlayers)
-
-        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
-
+        GameName.Text = "Game Name: " .. placeInfo.Name
         frame79.Text = string.format(
-            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nPlayers in Server: %s\nActive: %s\nFavorited: %d\nVisits: %s\nLikes: %d",
+            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive: %s\nFavorited: %d\nVisits: %s\nLikes: %d",
             placeInfo.PlaceId,
             tostring(placeInfo.RootPlaceId),
             game.JobId,
             game.GameId,
             placeInfo.Created,
             placeInfo.Updated,
-            formattedPlayers,
             placeInfo.Playing,
             placeInfo.Favorited,
             placeInfo.Visits,
-            functions.fetchLikes()
+            placeInfo.Likes
         )
     else
         GameName.Text = "Game Name: Failed to load"
         frame79.Text = "Failed to fetch place info."
     end
+    lastUpdateTime = currentTime
 end
 
 functions.updatePlaceInfo()
@@ -2054,7 +2029,6 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
       AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
       functions.UpdatePlaces()
       functions.UpdatePlayerList()
-      functions.updatePlaytime()
       functions.checkFriends()
       functions.startUpdating()
       functions.updateTime()
@@ -2062,6 +2036,16 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
       functions.updatePlaceInfo()
     wait()
+end)
+
+local stopupdateall
+local lastUpdate = tick()
+stopupdateall = RunService.Heartbeat:Connect(function()
+ local currentTime = tick()
+ if currentTime - lastUpdate >= 1 then
+     functions.updatePlaytime()
+     lastUpdate = currentTime
+   end
 end)
 
 local Button = Create("ImageButton", frame, {
@@ -2644,6 +2628,10 @@ ScreenGui.AncestryChanged:Connect(function()
         if stopupdateall1 then
             stopupdateall1:Disconnect()
             stopupdateall1 = nil
+        end
+        if stopupdateall then
+            stopupdateall:Disconnect()
+            stopupdateall = nil
         end
     end
 end)
