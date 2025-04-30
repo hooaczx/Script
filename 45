@@ -1352,7 +1352,7 @@ functions.UpdatePlayerList = function()
                 TextColor3 = Configs_HUB.Cor_Text,
                 Font = Configs_HUB.Text_Font,
                 TextScaled = true
-            })TextSetColor(playerdisplayName)
+            })
             local playername = Create("TextLabel", frameplayer, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
                 Position = UDim2.new(0.089, 0, 0.5, 0),
@@ -1362,7 +1362,7 @@ functions.UpdatePlayerList = function()
                 TextColor3 = Color3.fromRGB(114, 117, 130),
                 Font = Configs_HUB.Text_Font,
                 TextScaled = true
-            })TextSetColor(playername)
+            })
             local imageplayer = Create("ImageLabel", frameplayer, {
                 Size = UDim2.new(0.078, 0, 0.95, 0),
                 Position = UDim2.new(0.005, 0, 0.015, 0),
@@ -1662,7 +1662,7 @@ functions.checkFriends = function()
                     TextXAlignment = "Left",
                     TextScaled = true
                 })TextSetColor(friendUsername)
-                positionY = positionY + 10
+                positionY = positionY + 25
             end
             friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
         end
@@ -2001,21 +2001,17 @@ local stopupdateall
 local stopupdateall1
 local lastUpdate = tick()
 stopupdateall1 = RunService.Heartbeat:Connect(function()
-     local currentTime = tick()
       DisplayName.Text = "Display Name: " .. player.DisplayName
       UserIdg.Text = "UserId: " .. player.UserId
       AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
       iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-    if currentTime - lastUpdate >= 1 then
-      functions.updatePlaceInfo()
-      lastUpdate = currentTime
-      end
-  end) 
+end) 
 
 stopupdateall = RunService.Heartbeat:Connect(function()
    local currentTime = tick()
    if currentTime - lastUpdate >= 1 then
+      functions.updatePlaceInfo()
       functions.updatePlaytime()
       functions.checkFriends()
       functions.startUpdating()
