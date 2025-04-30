@@ -1143,8 +1143,22 @@ else
         },
         Rotation = 90
     })
-    for i = 2, #gamePlaces do
-        local place = gamePlaces[i]
+local productInfoCache = {}
+for i = 2, #gamePlaces do
+    local place = gamePlaces[i]
+    local productInfo = productInfoCache[place.PlaceId]
+    if not productInfo then
+        local success, result = pcall(function()
+            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
+        end)
+        
+        if success and result then
+            productInfo = result -- เก็บข้อมูลลงแคช
+            productInfoCache[place.PlaceId] = productInfo
+        end
+    end
+    
+    if productInfo then
         local gameFrame = Create("Frame", frameGame, {
             Size = UDim2.new(0.96, 0, 0.12, 0),
             BackgroundColor3 = Configs_HUB.Cor_Hub
@@ -1161,18 +1175,12 @@ else
             },
             Rotation = 40
         })
-        local success, productInfo = pcall(function()
-            return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-        end)
-        if success and productInfo then
-            local gameImage = Create("ImageLabel", gameFrame, {
-                Size = UDim2.new(0.25, 0, 1, 0),
-                Position = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1,
-                Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
-            })
-        end
-
+        local gameImage = Create("ImageLabel", gameFrame, {
+            Size = UDim2.new(0.25, 0, 1, 0),
+            Position = UDim2.new(0, 0, 0, 0),
+            BackgroundTransparency = 1,
+            Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+        })
         local gameText = Create("TextLabel", gameFrame, {
             Size = UDim2.new(0.05, 0, 0.09, 0),
             Position = UDim2.new(0.252, 0, 0, 0),
@@ -1181,7 +1189,8 @@ else
             Font = Configs_HUB.Text_Font,
             Text = tostring(count),
             TextScaled = true
-        })TextSetColor(gameText)
+        })
+        TextSetColor(gameText)
 
         local gameLabelText = Create("TextLabel", gameFrame, {
             Size = UDim2.new(0.748, 0, 0.23, 0),
@@ -1192,7 +1201,8 @@ else
             BackgroundTransparency = 1,
             Text = "Name: " .. place.Name,
             TextScaled = true
-        })TextSetColor(gameLabelText)
+        })
+        TextSetColor(gameLabelText)
 
         local gameidLabel = Create("TextLabel", gameFrame, {
             Size = UDim2.new(0.748, 0, 0.23, 0),
@@ -1203,7 +1213,8 @@ else
             BackgroundTransparency = 1,
             Text = "Id: " .. place.PlaceId,
             TextScaled = true
-        })TextSetColor(gameidLabel)
+        })
+        TextSetColor(gameidLabel)
 
         local teleportButton = Create("TextButton", gameFrame, {
             Size = UDim2.new(1, 0, 0.17, 0),
@@ -1215,11 +1226,9 @@ else
             Text = "Play",
             TextScaled = true
         })
-
         teleportButton.MouseButton1Click:Connect(function()
             TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
         end)
-
         Create("UIGradient", teleportButton, {
             Color = ColorSequence.new{
                 ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
@@ -1232,7 +1241,6 @@ else
             },
             Rotation = -60
         })
-
         count = count + 1
     end
 end
