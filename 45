@@ -677,6 +677,7 @@ notify({
     local HttpService = game:GetService("HttpService")
     local View = nil
     local playerFrames = {}
+    local displayedFriends = {}
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
@@ -1591,11 +1592,19 @@ Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
 local friendsFrame1 = Create("ScrollingFrame", frame100, {
     Size = UDim2.new(1, 0, 0.87, 0),
     Position = UDim2.new(0, 0, 0.13, 0),
-    CanvasSize = UDim2.new(0, 0, 0, 0),
-    ScrollBarThickness = 3,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    ScrollBarThickness = 0,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5
-})
+})local friendsFrame1listLayout = Create("UIListLayout", friendsFrame1, {
+    Padding = UDim.new(0, 5),
+    SortOrder = Enum.SortOrder.LayoutOrder
+})local friendsFrame1uiPadding = Create("UIPadding", friendsFrame1, {
+    PaddingLeft = UDim.new(0.028, 0),
+    PaddingTop = UDim.new(0.003, 0),
+    PaddingBottom = UDim.new(0.003, 0)
+})Corner(friendsFrame1)Stroke(friendsFrame1)
 
 local iconfriend = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
@@ -1624,66 +1633,66 @@ TextSetColor(friendnumber)
 functions.checkFriends = function()
     if friendsCooldown <= 0 then
         friendsCooldown = 5
-
         local playersFriends = {}
-        local page = players:GetFriendsAsync(localPlayer.UserId)
-
+        local page = players:GetFriendsAsync(localPlayer.UserId)        
         repeat
-        local info = page:GetCurrentPage()
-        for _, friendInfo in pairs(info) do
-           table.insert(playersFriends, friendInfo)
-        end
-        if not page.IsFinished then
-           page:AdvanceToNextPageAsync()
-        end
-        until page.IsFinished
-
-        local friendsInTotal = #playersFriends
-
-        functions.updateFriendsGUI = function(friends)
-            friendsFrame1:ClearAllChildren()
-            local positionY = 0
-            for _, friend in pairs(friends) do
-                local frame = Create("Frame", friendsFrame1, {
-                    Size = UDim2.new(0.95, 0, 0.18, 0),
-                    Position = UDim2.new(0, 0, 0, positionY),
-                    BackgroundTransparency = 1
-                })
-                Corner(frame)
-                Stroke(frame)
-
-                local avatarImage = Create("ImageLabel", frame, {
-                    Size = UDim2.new(0.078, 0, 0.95, 0),
-                    Position = UDim2.new(0.005, 0, 0.015, 0),
-                    BackgroundTransparency = 1,
-                    Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friend.Id
-                })
-
-                local friendDisplayName = Create("TextLabel", frame, {
-                    Size = UDim2.new(0.81, 0, 0.5, 0),
-                    Position = UDim2.new(0.089, 0, 0),
-                    Text = friend.DisplayName,
-                    BackgroundTransparency = 1,
-                    TextColor3 = Configs_HUB.Cor_Text,
-                    Font = Configs_HUB.Text_Font,
-                    TextXAlignment = "Left",
-                    TextScaled = true
-                }) TextSetColor(friendDisplayName)
-
-                local friendUsername = Create("TextLabel", frame, {
-                    Size = UDim2.new(0.81, 0, 0.5, 0),
-                    Position = UDim2.new(0.089, 0, 0.5, 0),
-                    Text = "@" .. friend.Username,
-                    BackgroundTransparency = 1,
-                    TextColor3 = Color3.fromRGB(114, 117, 130),
-                    Font = Configs_HUB.Text_Font,
-                    TextXAlignment = "Left",
-                    TextScaled = true
-                }) TextSetColor(friendUsername)
-
-                positionY = positionY + 25
+            local info = page:GetCurrentPage()
+            for _, friendInfo in pairs(info) do
+                table.insert(playersFriends, friendInfo)
             end
-            friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
+            if not page.IsFinished then
+                page:AdvanceToNextPageAsync()
+            end
+        until page.IsFinished
+        local friendsInTotal = #playersFriends
+        functions.updateFriendsGUI = function(friends)
+            local existingIds = {}
+            for _, friend in ipairs(friends) do
+                existingIds[friend.Id] = true
+                if not displayedFriends[friend.Id] then
+                    local frame = Create("Frame", friendsFrame1, {
+                        Size = UDim2.new(0.95, 0, 0.18, 0),
+                        BackgroundTransparency = 1,
+                        Name = tostring(friend.Id)
+                    })
+                    Corner(frame)
+                    Stroke(frame)
+                    Create("ImageLabel", frame, {
+                        Size = UDim2.new(0.078, 0, 0.95, 0),
+                        Position = UDim2.new(0.005, 0, 0.015, 0),
+                        BackgroundTransparency = 1,
+                        Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friend.Id
+                    })
+                    local friendDisplayName = Create("TextLabel", frame, {
+                        Size = UDim2.new(0.81, 0, 0.5, 0),
+                        Position = UDim2.new(0.089, 0, 0),
+                        Text = friend.DisplayName,
+                        BackgroundTransparency = 1,
+                        TextColor3 = Configs_HUB.Cor_Text,
+                        Font = Configs_HUB.Text_Font,
+                        TextXAlignment = "Left",
+                        TextScaled = true
+                    })
+
+                    local friendUsername = Create("TextLabel", frame, {
+                        Size = UDim2.new(0.81, 0, 0.5, 0),
+                        Position = UDim2.new(0.089, 0, 0.5, 0),
+                        Text = "@" .. friend.Username,
+                        BackgroundTransparency = 1,
+                        TextColor3 = Color3.fromRGB(114, 117, 130),
+                        Font = Configs_HUB.Text_Font,
+                        TextXAlignment = "Left",
+                        TextScaled = true
+                    })
+                    displayedFriends[friend.Id] = frame
+                end
+            end
+            for friendId, frame in pairs(displayedFriends) do
+                if not existingIds[tonumber(friendId)] then
+                    frame:Destroy()
+                    displayedFriends[friendId] = nil
+                end
+            end
         end
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
@@ -4160,5 +4169,5 @@ end
       end
      end)
    end
-  return Menu
+   return Menu
 end
