@@ -1637,12 +1637,13 @@ functions.checkFriends = function()
            page:AdvanceToNextPageAsync()
         end
         until page.IsFinished
-
+   
         local friendsInTotal = #playersFriends
 
         functions.updateFriendsGUI = function(friends)
             friendsFrame1:ClearAllChildren()
             local positionY = 0
+            local spacing = 2
             for _, friend in pairs(friends) do
                 local frame = Create("Frame", friendsFrame1, {
                     Size = UDim2.new(0.95, 0, 0.18, 0),
@@ -1681,7 +1682,7 @@ functions.checkFriends = function()
                     TextScaled = true
                 }) TextSetColor(friendUsername)
 
-                positionY = positionY + 40
+                positionY = positionY + frame.AbsoluteSize.Y + spacing
             end
             friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
         end
