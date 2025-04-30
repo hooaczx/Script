@@ -1810,31 +1810,29 @@ end
 
 functions.startUpdating()
 
-local functions = {}
+local playtime = 0
 
 functions.updatePlaytime = function()
-    if not _G.playtime then
-        _G.playtime = 0
-    end
-    _G.playtime = _G.playtime + 1
+    playtime = playtime + 1
     local secondsInMinute = 60
     local secondsInHour = 3600
     local secondsInDay = 86400
     local secondsInMonth = 2592000
     local secondsInYear = 31536000
     local formattedTime = ""
-    if _G.playtime < secondsInMinute then
-        formattedTime = string.format("%02d", _G.playtime)
-    elseif _G.playtime < secondsInHour then
-        formattedTime = string.format("%d:%02d", math.floor(_G.playtime / secondsInMinute), _G.playtime % secondsInMinute)
-    elseif _G.playtime < secondsInDay then
-        formattedTime = string.format("%d:%02d:%02d", math.floor(_G.playtime / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
-    elseif _G.playtime < secondsInMonth then
-        formattedTime = string.format("%d:%02d:%02d:%02d", math.floor(_G.playtime / secondsInDay), math.floor((_G.playtime % secondsInDay) / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
-    elseif _G.playtime < secondsInYear then
-        formattedTime = string.format("%d:%02d:%02d:%02d:%02d", math.floor(_G.playtime / secondsInMonth), math.floor((_G.playtime % secondsInMonth) / secondsInDay), math.floor((_G.playtime % secondsInDay) / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
+    
+    if playtime < secondsInMinute then
+        formattedTime = string.format("%02d", playtime)
+    elseif playtime < secondsInHour then
+        formattedTime = string.format("%d:%02d", math.floor(playtime / secondsInMinute), playtime % secondsInMinute)
+    elseif playtime < secondsInDay then
+        formattedTime = string.format("%d:%02d:%02d", math.floor(playtime / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
+    elseif playtime < secondsInMonth then
+        formattedTime = string.format("%d:%02d:%02d:%02d", math.floor(playtime / secondsInDay), math.floor((playtime % secondsInDay) / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
+    elseif playtime < secondsInYear then
+        formattedTime = string.format("%d:%02d:%02d:%02d:%02d", math.floor(playtime / secondsInMonth), math.floor((playtime % secondsInMonth) / secondsInDay), math.floor((playtime % secondsInDay) / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
     else
-        formattedTime = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(_G.playtime / secondsInYear), math.floor((_G.playtime % secondsInYear) / secondsInMonth), math.floor((_G.playtime % secondsInMonth) / secondsInDay), math.floor((_G.playtime % secondsInDay) / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
+        formattedTime = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(playtime / secondsInYear), math.floor((playtime % secondsInYear) / secondsInMonth), math.floor((playtime % secondsInMonth) / secondsInDay), math.floor((playtime % secondsInDay) / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
     end
 
     TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
