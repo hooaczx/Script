@@ -1634,7 +1634,7 @@ functions.checkFriends = function()
                 Corner(frame)
                 Stroke(frame)
 
-                Create("ImageLabel", frame, {
+                local avatarImage = Create("ImageLabel", frame, {
                     Size = UDim2.new(0.078, 0, 0.95, 0),
                     Position = UDim2.new(0.005, 0, 0.015, 0),
                     BackgroundTransparency = 1,
@@ -1662,7 +1662,7 @@ functions.checkFriends = function()
                     TextXAlignment = "Left",
                     TextScaled = true
                 })TextSetColor(friendUsername)
-                positionY = positionY + 60
+                positionY = positionY + 10
             end
             friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
         end
@@ -1673,7 +1673,7 @@ functions.checkFriends = function()
     end
 end
 
-coroutine.wrap(functions.checkFriends)()
+coroutine.wrap(functions.checkFriends)
 
 local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
@@ -1776,42 +1776,19 @@ local listLayout1 = Create("UIListLayout", frame79, {FillDirection = Enum.FillDi
 
 local listLayout2 = Create("UIListLayout", frame9, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
 
-local players = game:GetService("Players")
-local LocalPlayer = players.LocalPlayer
-local accountAgeInDays = LocalPlayer.AccountAge
-local additionalPlayTimeInSeconds = 0
-
-functions.calculateTotalPlayTime = function()
-    local totalSeconds = accountAgeInDays * 86400
-
-    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
-
+functions.startUpdating = function()
+    functions._additionalPlayTime = (functions._additionalPlayTime or 0) + 1
+    local accountAge = game:GetService("Players").LocalPlayer.AccountAge
+    local totalSeconds = accountAge * 86400 + functions._additionalPlayTime
     local years = math.floor(totalSeconds / 31536000)
     totalSeconds = totalSeconds % 31536000
     local months = math.floor(totalSeconds / 2592000)
     totalSeconds = totalSeconds % 2592000
     local days = math.floor(totalSeconds / 86400)
-
-    return string.format("%d years, %d months, %d days", years, months, days)
-end
-
-functions.accountAgeMessage = function(accountAgeInDays)
-    if accountAgeInDays == 0 then
-        return "You just created an account"
-    else
-        return string.format("Your account has been active for %d days", accountAgeInDays)
-    end
-end
-
-functions.updatePlayTimeDisplay = function()
-    local totalPlayTime = functions.calculateTotalPlayTime()
-    local ageMessage = functions.accountAgeMessage(accountAgeInDays)
-    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
-end
-
-functions.startUpdating = function()
-    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
-    functions.updatePlayTimeDisplay()
+    local totalPlayTime = string.format("%d years, %d months, %d days", years, months, days)
+    local ageMessage = accountAge == 0 and "You just created an account"
+        or string.format("Your account has been active for %d days", accountAge)
+    AccountAge.Text = "Total Playtime since account creation: " .. totalPlayTime .. "\n" .. ageMessage
 end
 
 functions.startUpdating()
