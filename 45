@@ -1020,11 +1020,6 @@ Create("UIGradient", mainGameFrame, {
     Rotation = 90
 })
 
-local success, productInfo = pcall(function()
-    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-end)
-
-if success and productInfo then
     local mainGameImage = Create("ImageLabel", mainGameFrame, {
         Size = UDim2.new(0.25, 0, 1, 0),
         BackgroundTransparency = 1,
@@ -1615,18 +1610,15 @@ functions.checkFriends = function()
         friendsCooldown = 5
 
         local playersFriends = {}
-        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+        local page = players:GetFriendsAsync(localPlayer.UserId)
 
-        if success then
-            repeat
-                local info = page:GetCurrentPage()
-                for _, friendInfo in pairs(info) do
-                    table.insert(playersFriends, friendInfo)
-                end
-                local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
-                if not pageSuccess or page.IsFinished then break end
-            until page.IsFinished
-        end
+        repeat
+            local info = page:GetCurrentPage()
+            for _, friendInfo in pairs(info) do
+                table.insert(playersFriends, friendInfo)
+            end
+            page:AdvanceToNextPageAsync()
+        until page.IsFinished
 
         local friendsInTotal = #playersFriends
 
@@ -1658,9 +1650,9 @@ functions.checkFriends = function()
                     Font = Configs_HUB.Text_Font,
                     TextXAlignment = "Left",
                     TextScaled = true
-                })TextSetColor(friendDisplayName)
+                }) TextSetColor(friendDisplayName)
 
-               local friendUsername = Create("TextLabel", frame, {
+                local friendUsername = Create("TextLabel", frame, {
                     Size = UDim2.new(0.81, 0, 0.5, 0),
                     Position = UDim2.new(0.089, 0, 0.5, 0),
                     Text = "@" .. friend.Username,
@@ -1669,7 +1661,8 @@ functions.checkFriends = function()
                     Font = Configs_HUB.Text_Font,
                     TextXAlignment = "Left",
                     TextScaled = true
-                })TextSetColor(friendUsername)
+                }) TextSetColor(friendUsername)
+
                 positionY = positionY + 25
             end
             friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
@@ -1680,7 +1673,6 @@ functions.checkFriends = function()
         friendsCooldown = friendsCooldown - 1
     end
 end
-
 coroutine.wrap(functions.checkFriends)
 
 local TimePlay = Create("TextLabel", frameinfogui, {
@@ -1841,31 +1833,14 @@ functions.updatePlaytime()
 
 functions.updatePlaceInfo = function()
     local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local success, response = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(url))
-    end)
+    local response = HttpService:JSONDecode(game:HttpGet(url))
 
     local likes = 0
-    local likesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", tostring(game.GameId))
-    local likesSuccess, likesResponse = pcall(function()
-        return game:HttpGet(likesUrl)
-    end)
+    local likesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+    local likesResponse = HttpService:JSONDecode(game:HttpGet(likesUrl))
+    likes = likesResponse.upVotes or 0
 
-    if likesSuccess then
-        local decodedLikes
-        local decodeSuccess, decodeError = pcall(function()
-            decodedLikes = HttpService:JSONDecode(likesResponse)
-        end)
-        if decodeSuccess and decodedLikes then
-            likes = decodedLikes.upVotes or 0
-        else
-            warn("Failed to decode likes: " .. (decodeError or "No data"))
-        end
-    else
-        warn("Failed to fetch likes")
-    end
-
-    if success and response and response.data and #response.data > 0 then
+    if response and response.data and #response.data > 0 then
         local data = response.data[1]
 
         local y1, m1, d1, h1, mi1, s1 = data.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
@@ -2009,17 +1984,21 @@ local stopupdateall
 local stopupdateall1
 local lastUpdate = tick()
 stopupdateall1 = RunService.Heartbeat:Connect(function()
+      local currentTime = tick()
       DisplayName.Text = "Display Name: " .. player.DisplayName
       UserIdg.Text = "UserId: " .. player.UserId
       AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
       iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+      functions.UpdatePlayerList()
+     if currentTime - lastUpdate >= 1 then
+      functions.updatePlaceInfo()
+    end
 end) 
 
 stopupdateall = RunService.Heartbeat:Connect(function()
    local currentTime = tick()
    if currentTime - lastUpdate >= 1 then
-      functions.updatePlaceInfo()
       functions.updatePlaytime()
       functions.checkFriends()
       functions.startUpdating()
@@ -4166,4 +4145,3 @@ end
    end
    return Menu
   end
-end
