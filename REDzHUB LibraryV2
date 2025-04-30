@@ -1591,10 +1591,17 @@ Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
 local friendsFrame1 = Create("ScrollingFrame", frame100, {
     Size = UDim2.new(1, 0, 0.87, 0),
     Position = UDim2.new(0, 0, 0.13, 0),
-    CanvasSize = UDim2.new(0, 0, 0, 0),
+    CanvasSize = UDim2.new(),
     ScrollBarThickness = 0,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5
+})Create("UIListLayout", friendsFrame1, {
+    Padding = UDim.new(0, 5),
+    SortOrder = Enum.SortOrder.LayoutOrder
+})Create("UIPadding", friendsFrame1, {
+    PaddingLeft = UDim.new(0.028, 0),
+    PaddingTop = UDim.new(0.003, 0),
+    PaddingBottom = UDim.new(0.003, 0)
 })
 
 local iconfriend = Create("ImageLabel", frameinfogui, {
@@ -1642,12 +1649,9 @@ functions.checkFriends = function()
 
         functions.updateFriendsGUI = function(friends)
             friendsFrame1:ClearAllChildren()
-            local positionY = 0
-            local spacing = 2
             for _, friend in pairs(friends) do
                 local frame = Create("Frame", friendsFrame1, {
                     Size = UDim2.new(0.95, 0, 0.18, 0),
-                    Position = UDim2.new(0.025, 0, 0, positionY),
                     BackgroundTransparency = 1
                 })
                 Corner(frame)
@@ -1681,10 +1685,7 @@ functions.checkFriends = function()
                     TextXAlignment = "Left",
                     TextScaled = true
                 }) TextSetColor(friendUsername)
-
-                positionY = positionY + frame.AbsoluteSize.Y + spacing
             end
-            friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
         end
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
