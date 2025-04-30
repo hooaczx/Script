@@ -1062,17 +1062,12 @@ functions.UpdatePlaces = function()
             },
             Rotation = 90
         })
-        local success, productInfo = pcall(function()
-            return MarketplaceService:GetProductInfo(mainPlace.PlaceId, Enum.InfoType.Asset)
-        end)
-        if success and productInfo then
-            Create("ImageLabel", fr, {
-                Size = UDim2.new(0.25, 0, 1, 0),
-                BackgroundTransparency = 1,
-                Position = UDim2.new(0, 0, 0, 0),
-                Image = "rbxthumb://type=Asset&id=" .. mainPlace.PlaceId .. "&w=420&h=420"
-            })
-        end
+        Create("ImageLabel", fr, {
+           Size = UDim2.new(0.25, 0, 1, 0),
+           BackgroundTransparency = 1,
+           Position = UDim2.new(0, 0, 0, 0),
+           Image = "rbxthumb://type=Asset&id=" .. mainPlace.PlaceId .. "&w=420&h=420"
+        })
         Create("TextLabel", fr, {
             Size = UDim2.new(0.05, 0, 0.09, 0),
             Position = UDim2.new(0.252, 0, 0, 0),
@@ -1200,17 +1195,12 @@ functions.UpdatePlaces = function()
                     },
                     Rotation = 40
                 })
-                local success, productInfo = pcall(function()
-                    return MarketplaceService:GetProductInfo(place.PlaceId, Enum.InfoType.Asset)
-                end)
-                if success and productInfo then
-                    Create("ImageLabel", fr2, {
-                        Size = UDim2.new(0.25, 0, 1, 0),
-                        Position = UDim2.new(0, 0, 0, 0),
-                        BackgroundTransparency = 1,
-                        Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
-                    })
-                end
+                Create("ImageLabel", fr2, {
+                    Size = UDim2.new(0.25, 0, 1, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    BackgroundTransparency = 1,
+                    Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
+                })
                 Create("TextLabel", fr2, {
                     Size = UDim2.new(0.05, 0, 0.09, 0),
                     Position = UDim2.new(0.252, 0, 0, 0),
@@ -1636,59 +1626,65 @@ functions.checkFriends = function()
         friendsCooldown = 5
 
         local playersFriends = {}
-        local success, page = pcall(players.GetFriendsAsync, players, localPlayer.UserId)
+        local page = players:GetFriendsAsync(localPlayer.UserId)
 
-        if success then
-            repeat
-                local info = page:GetCurrentPage()
-                for _, friendInfo in pairs(info) do
-                    table.insert(playersFriends, friendInfo)
-                end
-                local pageSuccess, _ = pcall(function() page:AdvanceToNextPageAsync() end)
-                if not pageSuccess or page.IsFinished then break end
-            until page.IsFinished
-        end
+        repeat
+            local info = page:GetCurrentPage()
+            for _, friendInfo in pairs(info) do
+                table.insert(playersFriends, friendInfo)
+            end
+            page:AdvanceToNextPageAsync()
+        until page.IsFinished
 
         local friendsInTotal = #playersFriends
 
         functions.updateFriendsGUI = function(friends)
-            friendsFrame:ClearAllChildren()
-
+            friendsFrame1:ClearAllChildren()
             local positionY = 0
             for _, friend in pairs(friends) do
-                local friendFrame = Create("Frame", friendsFrame, {
-                    Size = UDim2.new(1, 0, 0, 50),
+                local frame = Create("Frame", friendsFrame1, {
+                    Size = UDim2.new(0.95, 0, 0.18, 0),
+                    Position = UDim2.new(0, 0, 0, positionY),
+                    BackgroundTransparency = 1
+                })
+                Corner(frame)
+                Stroke(frame)
+
+                local avatarImage = Create("ImageLabel", frame, {
+                    Size = UDim2.new(0.078, 0, 0.95, 0),
+                    Position = UDim2.new(0.005, 0, 0.015, 0),
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 0, 0, positionY)
+                    Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friend.Id
                 })
 
-                local avatarImage = Create("ImageLabel", friendFrame, {
-                    Size = UDim2.new(0.1, 0, 0, 30),
-                    Position = UDim2.new(0, 0, 0.07, 0),
-                    BackgroundColor3 = Configs_HUB.Cor_Hub,
-                    BackgroundTransparency = 0.4,
-                    Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. friend.Id .. "&width=420&height=420&format=png"
-                })
-
-                local friendName = Create("TextLabel", friendFrame, {
-                    Size = UDim2.new(0.9, 0, 1, 0),
-                    Position = UDim2.new(0.1, 0, 0, 0),
+                local friendDisplayName = Create("TextLabel", frame, {
+                    Size = UDim2.new(0.81, 0, 0.5, 0),
+                    Position = UDim2.new(0.089, 0, 0),
+                    Text = friend.DisplayName,
                     BackgroundTransparency = 1,
-                    Text = friend.Username,
-                    TextWrapped = true,
                     TextColor3 = Configs_HUB.Cor_Text,
+                    Font = Configs_HUB.Text_Font,
                     TextXAlignment = "Left",
-                    Font = Configs_HUB.Text_Font
-                })
-                TextSetColor(friendName)
-                positionY = positionY + 60
-            end
-            friendsFrame.CanvasSize = UDim2.new(0, 0, 0, positionY)
-        end
+                    TextScaled = true
+                }) TextSetColor(friendDisplayName)
 
+                local friendUsername = Create("TextLabel", frame, {
+                    Size = UDim2.new(0.81, 0, 0.5, 0),
+                    Position = UDim2.new(0.089, 0, 0.5, 0),
+                    Text = "@" .. friend.Username,
+                    BackgroundTransparency = 1,
+                    TextColor3 = Color3.fromRGB(114, 117, 130),
+                    Font = Configs_HUB.Text_Font,
+                    TextXAlignment = "Left",
+                    TextScaled = true
+                }) TextSetColor(friendUsername)
+
+                positionY = positionY + 25
+            end
+            friendsFrame1.CanvasSize = UDim2.new(0, 0, 0, positionY)
+        end
         functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Friend: " .. friendsInTotal .. "/1000"
-        return friendsInTotal
     else
         friendsCooldown = friendsCooldown - 1
     end
@@ -1797,111 +1793,92 @@ local listLayout1 = Create("UIListLayout", frame79, {FillDirection = Enum.FillDi
 
 local listLayout2 = Create("UIListLayout", frame9, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
 
-local players = game:GetService("Players")
-local LocalPlayer = players.LocalPlayer
-local accountAgeInDays = LocalPlayer.AccountAge
-local additionalPlayTimeInSeconds = 0
-
-functions.calculateTotalPlayTime = function()
-    local totalSeconds = accountAgeInDays * 86400
-
-    totalSeconds = totalSeconds + additionalPlayTimeInSeconds
-
+functions.startUpdating = function()
+    functions._additionalPlayTime = (functions._additionalPlayTime or 0) + 1
+    local accountAge = game:GetService("Players").LocalPlayer.AccountAge
+    local totalSeconds = accountAge * 86400 + functions._additionalPlayTime
     local years = math.floor(totalSeconds / 31536000)
     totalSeconds = totalSeconds % 31536000
     local months = math.floor(totalSeconds / 2592000)
     totalSeconds = totalSeconds % 2592000
     local days = math.floor(totalSeconds / 86400)
-
-    return string.format("%d years, %d months, %d days", years, months, days)
-end
-
-functions.accountAgeMessage = function(accountAgeInDays)
-    if accountAgeInDays == 0 then
-        return "You just created an account"
-    else
-        return string.format("Your account has been active for %d days", accountAgeInDays)
-    end
-end
-
-functions.updatePlayTimeDisplay = function()
-    local totalPlayTime = functions.calculateTotalPlayTime()
-    local ageMessage = functions.accountAgeMessage(accountAgeInDays)
-    AccountAge.Text = "Total Playtime since account creation: "..totalPlayTime.."\n"..ageMessage
-end
-
-functions.startUpdating = function()
-    additionalPlayTimeInSeconds = additionalPlayTimeInSeconds + 1
-    functions.updatePlayTimeDisplay()
+    local totalPlayTime = string.format("%d years, %d months, %d days", years, months, days)
+    local ageMessage = accountAge == 0 and "You just created an account"
+        or string.format("Your account has been active for %d days", accountAge)
+    AccountAge.Text = "Total Playtime since account creation: " .. totalPlayTime .. "\n" .. ageMessage
 end
 
 functions.startUpdating()
 
-functions.formatElapsedTime = function(elapsedTime)
+local functions = {}
+
+functions.updatePlaytime = function()
+    if not _G.playtime then
+        _G.playtime = 0
+    end
+    _G.playtime = _G.playtime + 1
     local secondsInMinute = 60
     local secondsInHour = 3600
     local secondsInDay = 86400
     local secondsInMonth = 2592000
     local secondsInYear = 31536000
-
-    if elapsedTime < secondsInMinute then
-        return string.format("%02d", elapsedTime)
-    elseif elapsedTime < secondsInHour then
-        return string.format("%d:%02d", math.floor(elapsedTime / secondsInMinute), elapsedTime % secondsInMinute)
-    elseif elapsedTime < secondsInDay then
-        return string.format("%d:%02d:%02d", math.floor(elapsedTime / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
-    elseif elapsedTime < secondsInMonth then
-        return string.format("%d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
-    elseif elapsedTime < secondsInYear then
-        return string.format("%d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+    local formattedTime = ""
+    if _G.playtime < secondsInMinute then
+        formattedTime = string.format("%02d", _G.playtime)
+    elseif _G.playtime < secondsInHour then
+        formattedTime = string.format("%d:%02d", math.floor(_G.playtime / secondsInMinute), _G.playtime % secondsInMinute)
+    elseif _G.playtime < secondsInDay then
+        formattedTime = string.format("%d:%02d:%02d", math.floor(_G.playtime / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
+    elseif _G.playtime < secondsInMonth then
+        formattedTime = string.format("%d:%02d:%02d:%02d", math.floor(_G.playtime / secondsInDay), math.floor((_G.playtime % secondsInDay) / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
+    elseif _G.playtime < secondsInYear then
+        formattedTime = string.format("%d:%02d:%02d:%02d:%02d", math.floor(_G.playtime / secondsInMonth), math.floor((_G.playtime % secondsInMonth) / secondsInDay), math.floor((_G.playtime % secondsInDay) / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
     else
-        return string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(elapsedTime / secondsInYear), math.floor((elapsedTime % secondsInYear) / secondsInMonth), math.floor((elapsedTime % secondsInMonth) / secondsInDay), math.floor((elapsedTime % secondsInDay) / secondsInHour), math.floor((elapsedTime % secondsInHour) / secondsInMinute), elapsedTime % secondsInMinute)
+        formattedTime = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(_G.playtime / secondsInYear), math.floor((_G.playtime % secondsInYear) / secondsInMonth), math.floor((_G.playtime % secondsInMonth) / secondsInDay), math.floor((_G.playtime % secondsInDay) / secondsInHour), math.floor((_G.playtime % secondsInHour) / secondsInMinute), _G.playtime % secondsInMinute)
     end
-end
 
-local player = game.Players.LocalPlayer
-local playtime = 0
-
-functions.updatePlaytime = function()
-    playtime = playtime + 1
-    local formattedTime = functions.formatElapsedTime(playtime)
     TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
 end
+
+functions.updatePlaytime()
 
 functions.getAccountCreationDate = function(ageInDays)
     local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
-functions.updatePlaytime()
-
-local lastUpdateTime = 0
-local updateInterval = 6
-
 functions.updatePlaceInfo = function()
-    local currentTime = tick()
-    if currentTime - lastUpdateTime < updateInterval then
-        return
-    end
-    local universeUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local votesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    local response = HttpService:JSONDecode(game:HttpGet(url))
 
-    local success1, universeResponse = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(universeUrl))
-    end)
+    local likes = 0
+    local likesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+    local likesResponse = HttpService:JSONDecode(game:HttpGet(likesUrl))
+    likes = likesResponse.upVotes or 0
 
-    local success2, votesResponse = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(votesUrl))
-    end)
-
-    if success1 and success2 and universeResponse and universeResponse.data and #universeResponse.data > 0 and votesResponse then
-        local data = universeResponse.data[1]
+    if response and response.data and #response.data > 0 then
+        local data = response.data[1]
 
         local y1, m1, d1, h1, mi1, s1 = data.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
-        local created = os.time({year = y1, month = m1, day = d1, hour = h1, min = mi1, sec = s1})
-
         local y2, m2, d2, h2, mi2, s2 = data.updated:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
-        local updated = os.time({year = y2, month = m2, day = d2, hour = h2, min = mi2, sec = s2})
+
+        local created = os.time({
+            year = tonumber(y1),
+            month = tonumber(m1),
+            day = tonumber(d1),
+            hour = tonumber(h1),
+            min = tonumber(mi1),
+            sec = tonumber(s1)
+        })
+
+        local updated = os.time({
+            year = tonumber(y2),
+            month = tonumber(m2),
+            day = tonumber(d2),
+            hour = tonumber(h2),
+            min = tonumber(mi2),
+            sec = tonumber(s2)
+        })
 
         local placeInfo = {
             PlaceId = game.PlaceId,
@@ -1911,11 +1888,10 @@ functions.updatePlaceInfo = function()
             Playing = data.playing or 0,
             Visits = data.visits or 0,
             Favorited = data.favoritedCount or 0,
-            RootPlaceId = data.rootPlaceId or "N/A",
-            Likes = votesResponse.upVotes or 0
+            RootPlaceId = data.rootPlaceId or "N/A"
         }
 
-        GameName.Text = "Game Name: " .. placeInfo.Name
+        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
         frame79.Text = string.format(
             "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive: %s\nFavorited: %d\nVisits: %s\nLikes: %d",
             placeInfo.PlaceId,
@@ -1927,20 +1903,19 @@ functions.updatePlaceInfo = function()
             placeInfo.Playing,
             placeInfo.Favorited,
             placeInfo.Visits,
-            placeInfo.Likes
+            likes
         )
     else
         GameName.Text = "Game Name: Failed to load"
         frame79.Text = "Failed to fetch place info."
     end
-    lastUpdateTime = currentTime
 end
 
 functions.updatePlaceInfo()
 
 local DisplayName = Create("TextLabel", frame9, {
     Size = UDim2.new(1, 0, 0.3, 0),
-    Text = "Display Name: " .. player.DisplayName,
+    Text = "Display Name: " .. game.Players.LocalPlayer.DisplayName,
     Position = UDim2.new(0, 0, 0, 0),
     TextScaled = true,
     TextColor3 = Configs_HUB.Cor_Text,
@@ -1953,7 +1928,7 @@ TextSetColor(DisplayName)
 
 local UserIdg = Create("TextLabel", frame9, {
     Size = UDim2.new(1, 0, 0.3, 0),
-    Text = "UserId: " .. player.UserId,
+    Text = "UserId: " .. game.Players.LocalPlayer.UserId,
     Position = UDim2.new(0, 0, 0.3, 0),
     TextScaled = true,
     TextColor3 = Configs_HUB.Cor_Text,
@@ -2021,32 +1996,33 @@ infoToggleButton.MouseButton1Click:Connect(function()
     end
 end)
 
+local stopupdateall
 local stopupdateall1
+local lastUpdate = tick()
 stopupdateall1 = RunService.Heartbeat:Connect(function()
-   wait()
+      local currentTime = tick()
       DisplayName.Text = "Display Name: " .. player.DisplayName
       UserIdg.Text = "UserId: " .. player.UserId
       AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-      functions.UpdatePlaces()
+      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
       functions.UpdatePlayerList()
+     if currentTime - lastUpdate >= 1 then
+      functions.updatePlaceInfo()
+    end
+end) 
+
+stopupdateall = RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
+   if currentTime - lastUpdate >= 1 then
+      functions.updatePlaytime()
       functions.checkFriends()
       functions.startUpdating()
       functions.updateTime()
-      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
-      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-      functions.updatePlaceInfo()
-    wait()
-end)
-
-local stopupdateall
-local lastUpdate = tick()
-stopupdateall = RunService.Heartbeat:Connect(function()
- local currentTime = tick()
- if currentTime - lastUpdate >= 1 then
-     functions.updatePlaytime()
-     lastUpdate = currentTime
-   end
-end)
+      functions.UpdatePlaces()
+      lastUpdate = currentTime
+    end
+ end)
 
 local Button = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
