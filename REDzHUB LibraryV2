@@ -1595,10 +1595,10 @@ local friendsFrame1 = Create("ScrollingFrame", frame100, {
     ScrollBarThickness = 0,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5
-})Create("UIListLayout", friendsFrame1, {
+})local friendsFrame1listLayout = Create("UIListLayout", friendsFrame1, {
     Padding = UDim.new(0, 5),
     SortOrder = Enum.SortOrder.LayoutOrder
-})Create("UIPadding", friendsFrame1, {
+})local friendsFrame1uiPadding = Create("UIPadding", friendsFrame1, {
     PaddingLeft = UDim.new(0.028, 0),
     PaddingTop = UDim.new(0.003, 0),
     PaddingBottom = UDim.new(0.003, 0)
@@ -1648,7 +1648,11 @@ functions.checkFriends = function()
         local friendsInTotal = #playersFriends
 
         functions.updateFriendsGUI = function(friends)
-            friendsFrame1:ClearAllChildren()
+            for _, child in ipairs(friendsFrame1:GetChildren()) do
+              if child ~= friendsFrame1listLayout and child ~= friendsFrame1uiPadding then
+                 child:Destroy()
+              end
+            end
             for _, friend in pairs(friends) do
                 local frame = Create("Frame", friendsFrame1, {
                     Size = UDim2.new(0.95, 0, 0.18, 0),
