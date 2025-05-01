@@ -655,6 +655,12 @@ notify({
 
  function MinimizeButton(Configs)
     local functions = {}
+    local minimize1 = false
+    local minimize = true
+    local minimize3 = false
+    local minimiz7 = true
+    local PlayerList = true
+    local minimize9 = false
     local player = game.Players.LocalPlayer
     local Players = game:GetService("Players")
     local players = game:GetService("Players")
@@ -709,7 +715,6 @@ local Button1 = Create("TextButton", ScreenGui, {
     BackgroundTransparency = 1
 })
 
-local minimize1 = false
 Button1.MouseButton1Click:Connect(function()
     minimize1 = not minimize1
     if minimize1 then
@@ -1272,21 +1277,6 @@ local SplitgameToggleButton = Create("ImageButton", frame, {
     Image = "rbxthumb://type=Asset&id=82825316875765&w=150&h=150"
 })
 
-local minimiz7 = true
-SplitgameToggleButton.MouseButton1Click:Connect(function()
-     minimiz7 = not minimiz7
-
-      if minimiz7 then
-          framek.Visible = true
-          click1:Play()
-          CreateTween(framek, "Size", UDim2.new(0.7, 0, 0.64, 0), 0.3, true) 
-       else
-          click2:Play()
-          CreateTween(framek, "Size", UDim2.new(0.7, 0, 0, 0), 0.3, true)
-          framek.Visible = false
-      end
- end)
-
 local framep = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.6, 0, 0.64, 0),
     Position = UDim2.new(0.2, 0, 0.2, 0),
@@ -1475,20 +1465,6 @@ local PlayerListToggleButton = Create("ImageButton", frame, {
     BackgroundTransparency = 1,
     Image = "rbxthumb://type=Asset&id=140380840270815&w=150&h=150"
 })
-
-local PlayerList = true
-PlayerListToggleButton.MouseButton1Click:Connect(function()
-     PlayerList = not PlayerList
-      if PlayerList then
-          framep.Visible = true
-          click1:Play()
-          CreateTween(framep, "Size", UDim2.new(0.6, 0, 0.64, 0), 0.3, true) 
-       else
-          click2:Play()
-          CreateTween(framep, "Size", UDim2.new(0.6, 0, 0, 0), 0.3, true)
-          framep.Visible = false
-      end
- end)
 
 local success, result = pcall(function()
     return MarketplaceService:GetProductInfo(PlaceId)
@@ -1990,49 +1966,6 @@ local infoToggleButton = Create("ImageButton", frame, {
     Image = "rbxthumb://type=Asset&id=101525904089827&w=150&h=150",
 })
 
-local minimize3 = false
-infoToggleButton.MouseButton1Click:Connect(function()
-    minimize3 = not minimize3
-
-    if minimize3 then
-        click1:Play()
-        frameinfogui.Visible = true
-        CreateTween(frameinfogui, "Size", UDim2.new(1, 0, 1, 0), 0.3, true)
-    else
-        click2:Play()
-        CreateTween(frameinfogui, "Size", UDim2.new(0, 0, 0, 0), 0.3, true)
-        frameinfogui.Visible = false
-    end
-end)
-
-local stopupdateall
-local stopupdateall1
-local lastUpdate = tick()
-stopupdateall1 = RunService.Heartbeat:Connect(function()
-      local currentTime = tick()
-      DisplayName.Text = "Display Name: " .. player.DisplayName
-      UserIdg.Text = "UserId: " .. player.UserId
-      AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
-      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-      functions.UpdatePlayerList()
-     if currentTime - lastUpdate >= 1 then
-      functions.updatePlaceInfo()
-    end
-end) 
-
-stopupdateall = RunService.Heartbeat:Connect(function()
-   local currentTime = tick()
-   if currentTime - lastUpdate >= 1 then
-      functions.updatePlaytime()
-      functions.checkFriends()
-      functions.startUpdating()
-      functions.updateTime()
-      functions.UpdatePlaces()
-      lastUpdate = currentTime
-    end
- end)
-
 local Button = Create("ImageButton", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
     ZIndex = 10,
@@ -2044,40 +1977,6 @@ local Button = Create("ImageButton", frame, {
 
 if corner then Corner(Button) end 
 if stroke then Stroke(Button, {Color = strokecolor}) end
-
-local minimize = true
-Button.MouseButton1Click:Connect(function()
-    if minimize then
-     if IsMinimizedu then
-         minimize = false
-         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
-         Menu.Visible = false
-         Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
-      else
-        minimize = false
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
-        Menu.Visible = false
-        ScrollBar.Visible = false
-        Containers.Visible = false
-        line_Containers.Visible = false
-        Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
-      end
-    else
-     if IsMinimizedu then
-         minimize = true
-         Menu.Visible = true
-         CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.051, 0), 0.15, true)
-      else
-        minimize = true
-        ScrollBar.Visible = true
-        Containers.Visible = true
-        line_Containers.Visible = true
-        Menu.Visible = true
-        click1:Play()
-        CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.3, false)
-      end
-    end
-end)
 
 local frameSetting = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.35, 0, 0.8, 0),
@@ -2480,21 +2379,6 @@ local SettingButton = Create("ImageButton", frame, {
 if corner then Corner(SettingButton) end 
 if stroke then Stroke(SettingButton, {Color = strokecolor}) end
 
-local minimize9 = false
-SettingButton.MouseButton1Click:Connect(function()
-    minimize9 = not minimize9
-
-    if minimize9 then
-        click1:Play()
-        frameSetting.Visible = true
-        CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
-    else
-        click2:Play()
-        CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
-        frameSetting.Visible = false
-    end
-end)
-
 local States = {
     Off = "rbxasset://textures/ui/mouseLock_off@2x.png",
     On = "rbxasset://textures/ui/mouseLock_on@2x.png",
@@ -2572,6 +2456,208 @@ end
 
 local ShiftLockAction = ContextActionService:BindAction("Shift Lock", functions.ShiftLock, false, "On")
 ContextActionService:SetPosition("Shift Lock", UDim2.new(0.8, 0, 0.8, 0))
+
+local uiStates = {
+    framek = {frame = framek, state = false},
+    framep = {frame = framep, state = false},
+    frameinfogui = {frame = frameinfogui, state = false},
+    Menu = {frame = Menu, state = true},
+    frameSetting = {frame = frameSetting, state = false}
+}local activeButton = nil
+local buttonCooldown = 0.5
+local Click = 0
+
+local strokeeffect = Create("Frame", frame, {
+    Size = UDim2.new(0.06, 0, 0.6, 0),
+    Position = UDim2.new(0.22, 0, 0.22, 0),
+    BackgroundTransparency = 1,
+    ZIndex = 10
+})
+
+local stroke = Create("UIStroke", strokeeffect, {
+    Color = Color3.fromRGB(255, 255, 255),
+    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+    Transparency = 0
+})
+
+functions.MoveStrokePosition = function(button)
+    CreateTween(strokeeffect, "Position", button.Position, 0.2, true)
+    activeButton = button.Name
+end
+
+functions.closeOtherUI = function(exceptName)
+    for name, data in pairs(uiStates) do
+        if name ~= exceptName and data.state then
+          if name == "Menu" then
+             if IsMinimizedu then
+                   data.state = false
+                   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
+                   data.frame.Visible = false
+                   Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
+              else
+                   data.state = false
+                   CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
+                   data.frame.Visible = false
+                   Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
+              end
+           else
+                   data.state = false
+                   CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
+                   data.frame.Visible = false
+              end
+          end
+     end
+end
+
+functions.canClick = function()
+    local Time = tick()
+    if Time - Click >= buttonCooldown then
+        Click = Time
+        return true
+    end
+    return false
+end
+
+SplitgameToggleButton.MouseButton1Click:Connect(function()
+    if not functions.canClick() then return end
+    functions.MoveStrokePosition(SplitgameToggleButton)
+    local state = uiStates.framek.state
+    if not state then
+        functions.closeOtherUI("framek")
+        click1:Play()
+        framek.Visible = true
+        CreateTween(framek, "Size", UDim2.new(0.7, 0, 0.64, 0), 0.3, true)
+    else
+        click2:Play()
+        CreateTween(framek, "Size", UDim2.new(0.7, 0, 0, 0), 0.3, true)
+        framek.Visible = false
+    end
+    uiStates.framek.state = not state
+end)
+
+PlayerListToggleButton.MouseButton1Click:Connect(function()
+    if not functions.canClick() then return end
+    functions.MoveStrokePosition(PlayerListToggleButton)
+    local state = uiStates.framep.state
+    if not state then
+        functions.closeOtherUI("framep")
+        click1:Play()
+        framep.Visible = true
+        CreateTween(framep, "Size", UDim2.new(0.6, 0, 0.64, 0), 0.3, true)
+    else
+        click2:Play()
+        CreateTween(framep, "Size", UDim2.new(0.6, 0, 0, 0), 0.3, true)
+        framep.Visible = false
+    end
+    uiStates.framep.state = not state
+end)
+
+infoToggleButton.MouseButton1Click:Connect(function()
+    if not functions.canClick() then return end
+    functions.MoveStrokePosition(infoToggleButton)
+    local state = uiStates.frameinfogui.state
+    if not state then
+        functions.closeOtherUI("frameinfogui")
+        click1:Play()
+        frameinfogui.Visible = true
+        CreateTween(frameinfogui, "Size", UDim2.new(1, 0, 1, 0), 0.3, true)
+    else
+        click2:Play()
+        CreateTween(frameinfogui, "Size", UDim2.new(0, 0, 0, 0), 0.3, true)
+        frameinfogui.Visible = false
+    end
+    uiStates.frameinfogui.state = not state
+end)
+
+Button.MouseButton1Click:Connect(function()
+    if not functions.canClick() then return end
+    functions.MoveStrokePosition(Button)
+    local state = uiStates.Menu.state
+    if not state then
+        functions.closeOtherUI("Menu")
+        if IsMinimizedu then
+            minimize = true
+            Menu.Visible = true
+            CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.051, 0), 0.15, true)
+        else
+            minimize = true
+            ScrollBar.Visible = true
+            Containers.Visible = true
+            line_Containers.Visible = true
+            Menu.Visible = true
+            click1:Play()
+            CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.3, false)
+        end
+    else
+        if IsMinimizedu then
+            minimize = false
+            CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
+            Menu.Visible = false
+            Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
+        else
+            minimize = false
+            CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.3, true)
+            Menu.Visible = false
+            ScrollBar.Visible = false
+            Containers.Visible = false
+            line_Containers.Visible = false
+            Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
+        end
+    end
+    uiStates.Menu.state = not state
+end)
+
+SettingButton.MouseButton1Click:Connect(function()
+    if not functions.canClick() then return end
+    functions.MoveStrokePosition(SettingButton)
+    local state = uiStates.frameSetting.state
+    if not state then
+        functions.closeOtherUI("frameSetting")
+        click1:Play()
+        frameSetting.Visible = true
+        CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0.8, 0), 0.3, false)
+    else
+        click2:Play()
+        CreateTween(frameSetting, "Size", UDim2.new(0.35, 0, 0, 0), 0.3, true)
+        frameSetting.Visible = false
+    end
+    uiStates.frameSetting.state = not state
+end)
+
+local stopupdateall
+local stopupdateall1
+local lastUpdate = tick()
+stopupdateall1 = RunService.Heartbeat:Connect(function()
+      local currentTime = tick()
+      if activeButton then
+        for name, data in pairs(uiStates) do
+            if name ~= activeButton and data.state then
+                functions.closeOtherUI(name)
+             end
+          end
+      end
+      DisplayName.Text = "Display Name: " .. player.DisplayName
+      UserIdg.Text = "UserId: " .. player.UserId
+      AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
+      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+      functions.UpdatePlayerList()
+     if currentTime - lastUpdate >= 1 then
+      functions.updatePlaceInfo()
+    end
+end) 
+
+stopupdateall = RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
+   if currentTime - lastUpdate >= 1 then
+      functions.updatePlaytime()
+      functions.checkFriends()
+      functions.startUpdating()
+      functions.updateTime()
+      functions.UpdatePlaces()
+      lastUpdate = currentTime
+    end
+ end)
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
