@@ -682,6 +682,7 @@ notify({
     local Mouse = LocalPlayer:GetMouse()
     local HttpService = game:GetService("HttpService")
     local View = nil
+    local viewCn = nil
     local playerFrames = {}
     local displayedFriends = {}
     local image = Configs.Image or ""
@@ -1343,11 +1344,12 @@ unviewallplayerbutton.MouseButton1Click:Connect(function()
             end
         end
     end
+    if viewCn then viewCn:Disconnect() viewCn = nil end
     View = nil
 end)
 
 functions.UpdatePlayerList = function()
-    frametext.Text = "Players in Server "..string.format("%d/%d", #game.Players:GetPlayers(), game.Players.MaxPlayers)
+    frametext.Text = "Players in Server " .. string.format("%d/%d", #game:GetService("Players"):GetPlayers(), game:GetService("Players").MaxPlayers)
     local currentPlayers = {}
     for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
         currentPlayers[player.UserId] = player
@@ -1359,7 +1361,7 @@ functions.UpdatePlayerList = function()
             })
             Corner(frameplayer)
             Stroke(frameplayer)
-            local playerdisplayName = Create("TextLabel", frameplayer, {
+            Create("TextLabel", frameplayer, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
                 Position = UDim2.new(0.089, 0, 0, 0),
                 Text = player.DisplayName,
@@ -1369,7 +1371,7 @@ functions.UpdatePlayerList = function()
                 Font = Configs_HUB.Text_Font,
                 TextScaled = true
             })
-            local playername = Create("TextLabel", frameplayer, {
+            Create("TextLabel", frameplayer, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
                 Position = UDim2.new(0.089, 0, 0.5, 0),
                 Text = "@"..player.Name,
@@ -1396,37 +1398,79 @@ functions.UpdatePlayerList = function()
                     Image = "rbxassetid://96859795672738"
                 })
                 viewplayerbutton.MouseButton1Click:Connect(function()
+                    if View and View.button == viewplayerbutton then
+                        if viewCn then viewCn:Disconnect() viewCn = nil end
+                        local char = game:GetService("Players").LocalPlayer.Character
+                        if char then
+                            local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid")
+                            if root then workspace.CurrentCamera.CameraSubject = root end
+                        end
+                        viewplayerbutton.Image = "rbxassetid://96859795672738"
+                        View = nil
+                        return
+                    end
                     if View and View.button ~= viewplayerbutton then
-                        View.button.Image = "rbxassetid://96859795672738"
-                        local localChar = game:GetService("Players").LocalPlayer.Character
-                        if localChar then
-                            local hum = localChar:WaitForChild("Humanoid")
-                            if hum then
-                                game.Workspace.Camera.CameraSubject = hum
-                            end
+                        if View.button then View.button.Image = "rbxassetid://96859795672738" end
+                        if viewCn then viewCn:Disconnect() viewCn = nil end
+                        local char = game:GetService("Players").LocalPlayer.Character
+                        if char then
+                            local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid")
+                            if root then workspace.CurrentCamera.CameraSubject = root end
                         end
                         View = nil
                     end
-                    if View and View.button == viewplayerbutton then
-                        viewplayerbutton.Image = "rbxassetid://96859795672738"
-                        local localChar = game:GetService("Players").LocalPlayer.Character
-                        if localChar then
-                            local hum = localChar:WaitForChild("Humanoid")
-                            if hum then
-                                game.Workspace.Camera.CameraSubject = hum
-                            end
-                        end
-                        View = nil
-                    else
+                    local char = player.Character or player.CharacterAdded:Wait()
+                    local root = char and (char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid"))
+                    if root then
+                        workspace.CurrentCamera.CameraSubject = root
                         viewplayerbutton.Image = "rbxassetid://137903829820448"
-                        local char = player.Character
-                        if char then
-                            local root = char:WaitForChild("Humanoid") or char:WaitForChild("HumanoidRootPart")
-                            if root then
-                                game.Workspace.Camera.CameraSubject = root
-                            end
-                        end
                         View = {button = viewplayerbutton, player = player}
+                        if viewCn then viewCn:Disconnect() viewCn = nil end
+                        viewCn = game:GetService("RunService").RenderStepped:Connect(function()
+                            if not player or not player.Character then
+                                viewplayerbutton.Image = "rbxassetid://96859795672738"
+                                local char = game:GetService("Players").LocalPlayer.Character
+                                if char then
+                                    local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid")
+                                    if root then workspace.CurrentCamera.CameraSubject = root end
+                                end
+                                if viewCn then viewCn:Disconnect() end
+                                viewCn = nil
+                                View = nil
+                                return
+                            end
+                            for _, data in pairs(playerFrames) do
+                                if data.UI then
+                                    local otherButton = data.UI:FindFirstChildOfClass("ImageButton")
+                                    if otherButton and otherButton ~= viewplayerbutton and otherButton.Image == "rbxassetid://137903829820448" then
+                                        otherButton.Image = "rbxassetid://96859795672738"
+                                    end
+                                end
+                            end
+                            local char = game:GetService("Players").LocalPlayer.Character
+                            local currentRoot = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid")
+                            if not currentRoot then
+                                viewplayerbutton.Image = "rbxassetid://96859795672738"
+                                local localChar = game:GetService("Players").LocalPlayer.Character
+                                if localChar then
+                                    local fallback = localChar:FindFirstChild("HumanoidRootPart") or localChar:FindFirstChild("Humanoid")
+                                    if fallback then
+                                        workspace.CurrentCamera.CameraSubject = fallback
+                                    end
+                                end
+                                if viewCn then viewCn:Disconnect() end
+                                viewCn = nil
+                                View = nil
+                            end
+                        end)
+                        else
+                        local char = game:GetService("Players").LocalPlayer.Character
+                        if char then
+                            local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid")
+                            if root then workspace.CurrentCamera.CameraSubject = root end
+                        end
+                        viewplayerbutton.Image = "rbxassetid://96859795672738"
+                        View = nil
                     end
                 end)
             end
@@ -1442,13 +1486,16 @@ functions.UpdatePlayerList = function()
             end
             playerFrames[userId] = nil
             if View and View.player.UserId == userId then
-                local localChar = game:GetService("Players").LocalPlayer.Character
-                if localChar then
-                    local hum = localChar:WaitForChild("Humanoid")
-                    if hum then
-                        game.Workspace.Camera.CameraSubject = hum
+                local char = game:GetService("Players").LocalPlayer.Character
+                if char then
+                    local root = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Humanoid")
+                    if root then
+                        workspace.CurrentCamera.CameraSubject = root
+                        workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
                     end
                 end
+                if viewCn then viewCn:Disconnect() end
+                viewCn = nil
                 View = nil
             end
         end
@@ -2011,113 +2058,20 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
       PaddingBottom = UDim.new(0.003, 0)
   })
 
-local isClickEffectEnabled = false
-local ripples = {}
-local inputBeganConnection
-
-functions.createSettingSection(scrollingSettingFrame, "Click Effect", 
-[[This creates an effect where, when you press the screen, it will create a 5-point star effect that expands and disappears.]], 
-function(isClickEffectEnabled)
-    if isClickEffectEnabled then
-        inputBeganConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if not gameProcessed then
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    local screenSize = workspace.CurrentCamera.ViewportSize
-                    local star = Create("ImageLabel", ScreenGui, {
-                        Size = UDim2.new(0, 0, 0, 0),
-                        Position = UDim2.new(input.Position.X / screenSize.X, 0, input.Position.Y / screenSize.Y, 0),
-                        AnchorPoint = Vector2.new(0.5, 0.5),
-                        Image = "rbxassetid://111774818209101",
-                        BackgroundTransparency = 1,
-                        ImageTransparency = 0.5,
-                        ZIndex = 9e9
-                    })
-                    
-                    local tweenInfo = TweenInfo.new(1.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                    local sizeGoal = {Size = UDim2.new(0.06, 0, 0.124, 0), ImageTransparency = 1}
-                    local tween = TweenService:Create(star, tweenInfo, sizeGoal)
-
-                    tween:Play()
-                    table.insert(ripples, star)
-
-                    local clickSound = Create("Sound", ScreenGui, {
-                        SoundId = "rbxassetid://15675059323",
-                        Volume = 0.07
-                    })
-                    clickSound:Play()
-                    clickSound.Ended:Connect(function()
-                        clickSound:Destroy()
-                    end)
-
-                    tween.Completed:Connect(function()
-                        star:Destroy()
-                        table.remove(ripples, #ripples)
-                    end)
-                end
-            end
-        end)
-    else
-        if inputBeganConnection then
-            inputBeganConnection:Disconnect()
-        end
-
-        for _, star in ipairs(ripples) do
-            star:Destroy()
-        end
-        ripples = {}
-    end
-end,
-isClickEffectEnabled)
-
-local copyEnabled = false
-
-local originalToClipboard = getgenv().toclipboard
-local originalSetClipboard = getgenv().setclipboard
-local originalOriginalSetClipboard = getgenv().originalSetClipboard
-
-functions.createSettingSection(
-    scrollingSettingFrame, 
-    "Anti Copy", 
-    [[This script will prevent you from copying using "toclipboard" and "setclipboard" and "originalSetClipboard" to copy.
-    It will notify you on the screen. If you feel annoyed, you can turn it off]], 
-    function()
-        copyEnabled = not copyEnabled
-        
-        if copyEnabled then
-            getgenv().toclipboard = function(data)
-                notify({
-                    Title = "Attempted to copy",
-                    Text = tostring(data),
-                    buttonText = "ok",
-                    imageID = "",
-                    guiSize = Vector2.new(400, 70),
-                })
-            end
-            getgenv().setclipboard = function(data)
-                notify({
-                    Title = "Attempted to copy",
-                    Text = tostring(data),
-                    buttonText = "ok",
-                    imageID = "",
-                    guiSize = Vector2.new(400, 70),
-                })
-            end
-            getgenv().originalSetClipboard = function(data)
-                notify({
-                    Title = "Attempted to copy",
-                    Text = tostring(data),
-                    buttonText = "ok",
-                    imageID = "",
-                    guiSize = Vector2.new(400, 70),
-                })
-            end
-        else
-            getgenv().toclipboard = originalToClipboard
-            getgenv().setclipboard = originalSetClipboard
-            getgenv().originalSetClipboard = originalOriginalSetClipboard
-        end
-    end, 
-    copyEnabled)
+local Anticopy1 = false
+local funcs = {"setclipboard", "toclipboard", "set_clipboard"}
+local backups, origSet = {}, Clipboard and Clipboard.set
+for _, f in ipairs(funcs) do backups[f] = getgenv()[f] end
+functions.createSettingSection(scrollingSettingFrame,
+"Anti Copy", [[This script will prevent you from copying using "toclipboard" and "setclipboard" to copy. It will notify you on the screen. If you feel annoyed, you can turn it off]],
+function()
+   Anticopy1 = not Anticopy1
+   local handler = Anticopy1 and function(d)
+      notify({Title = "Attempted to copy", Text = tostring(d), buttonText = "ok", imageID = "", guiSize = Vector2.new(400, 70)})
+   end
+   for _, f in ipairs(funcs) do getgenv()[f] = handler or backups[f] end
+   if Clipboard then Clipboard.set = handler or origSet end
+end, copyEnabled)
 
 local hasSaved = false
 local savedLightingProperties = nil
@@ -2333,6 +2287,23 @@ functions.createSettingSection(
     [[This script will hide "BillboardGui" and "SurfaceGui" for games that use these 2 to create "NameTag"]],
     functions.toggleHideName,
     false)
+
+local TopBarclose = false
+functions.createSettingSection(
+    scrollingSettingFrame,
+    "Top Bar Roblox",
+    "It's something you frequently use to exit the game and chat with others in-game",
+    function()
+    local topBarApp = game:GetService("CoreGui"):FindFirstChild("TopBarApp")
+    local topBarInner = topBarApp and topBarApp:FindFirstChild("TopBarApp")
+    local unibar = topBarInner and topBarInner:FindFirstChild("UnibarLeftFrame")
+    local menu = topBarInner and topBarInner:FindFirstChild("MenuIconHolder")
+    if unibar and menu then
+        TopBarclose = not unibar.Visible
+        unibar.Visible = TopBarclose
+        menu.Visible = TopBarclose
+    end
+end, TopBarclose)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
 local lastKnownVolume = gameSettings.MasterVolume
@@ -2679,6 +2650,7 @@ ScreenGui.AncestryChanged:Connect(function()
         local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
         if hum then
            workspace.CurrentCamera.CameraSubject = hum
+           if viewCn then viewCn:Disconnect() viewCn = nil end
         end
         for _, data in pairs(playerFrames) do
             if data.UI and data.UI.Parent then
