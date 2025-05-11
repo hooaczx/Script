@@ -2362,12 +2362,7 @@ local States = {
     Lock = "rbxasset://textures/MouseLockedCursor.png",
     Lock2 = "rbxasset://SystemCursors/Cross"
 }
-local ContextActionService = game:GetService("ContextActionService")
-local MaxLength = 900000
-local EnabledOffset = CFrame.new(1.7, 0, 0)
-local DisabledOffset = CFrame.new(-1.7, 0, 0)
-local ShiftLockmaingui = nil
-local CH = {}
+local ContextActionService, MaxLength, EnabledOffset, DisabledOffset, ShiftLockmaingui, gig, CH = game:GetService("ContextActionService"), 900000, CFrame.new(1.7, 0, 0), CFrame.new(-1.7, 0, 0), nil, nil, {}
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
@@ -2492,7 +2487,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             local nearestP, minDist = nil, math.huge
             for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
                 if plr ~= Player and plr.Character then
-                    for _, pt in pairs(plr.Character:GetDescendants()) do
+                    for _, pt in pairs(plr.Character:GetChildren()) do
                         if pt:IsA("BasePart") and pt:IsDescendantOf(plr.Character) then
                             local screenPos, onScreen = cam:WorldToScreenPoint(pt.Position)
                             if onScreen then
@@ -2810,6 +2805,7 @@ ScreenGui.AncestryChanged:Connect(function()
                  end
             end
             CH = {}
+            th = {}
             ShiftLockButton.Image = States.Off
             workspace.CurrentCamera.CFrame *= DisabledOffset
             ShiftlockCursor.Visible = false
