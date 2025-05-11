@@ -685,6 +685,7 @@ notify({
     local viewCn = nil
     local playerFrames = {}
     local displayedFriends = {}
+    local frameinfopy = false
     local image = Configs.Image or ""
 
 local frame = Create("Frame", ScreenGui, {
@@ -2073,6 +2074,11 @@ function()
    if Clipboard then Clipboard.set = handler or origSet end
 end, copyEnabled)
 
+functions.createSettingSection(scrollingSettingFrame, "Show frame info players", 
+[[Displays a frame with the player's image, username, and User ID when ShiftLock is active. Player info appears when you center the ShiftLock icon over a player or point the Icon to that player]], function(state)
+frameinfopy = state
+end, frameinfopy)
+
 local hasSaved = false
 local savedLightingProperties = nil
 local savedLightingChildren = nil
@@ -2360,7 +2366,8 @@ local ContextActionService = game:GetService("ContextActionService")
 local MaxLength = 900000
 local EnabledOffset = CFrame.new(1.7, 0, 0)
 local DisabledOffset = CFrame.new(-1.7, 0, 0)
-local ShiftLockmaingui
+local ShiftLockmaingui = nil
+local CH = {}
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
@@ -2372,7 +2379,7 @@ local ShiftLockButton = Create("ImageButton", frame, {
 
 local ShiftlockCursor = Create("ImageLabel", ScreenGui, {
     Image = States.Lock,
-    Size = UDim2.new(0.03, 0, 0.03, 0),
+    Size = UDim2.new(0.025, 0, 0.025, 0),
     Position = UDim2.new(0.5, 0, 0.5, 0),
     AnchorPoint = Vector2.new(0.5, 0.5),
     SizeConstraint = Enum.SizeConstraint.RelativeXX,
@@ -2381,33 +2388,173 @@ local ShiftlockCursor = Create("ImageLabel", ScreenGui, {
     Visible = false
 })
 
+local frameinfoplayer = Create("Frame", ScreenGui, {
+    Size = UDim2.new(0.24, 0, 0.1, 0),
+    Position = UDim2.new(0.2, 0, 0.03, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.8,
+    Visible = false
+})Corner(frameinfoplayer)Stroke(frameinfoplayer)
+
+local DisplayNameplayers = Create("TextLabel", frameinfoplayer, {
+    Size = UDim2.new(0.77, 0, 0.35, 0),
+    Position = UDim2.new(0.23, 0, 0, 0),
+    Text = "nil",
+    TextXAlignment = "Left",
+    BackgroundTransparency = 1,
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    TextScaled = true, 
+    Visible = false
+})
+
+local Nameplayers = Create("TextLabel", frameinfoplayer, {
+    Size = UDim2.new(0.77, 0, 0.3, 0),
+    Position = UDim2.new(0.23, 0, 0.35, 0),
+    Text = "@nil",
+    TextXAlignment = "Left",
+    BackgroundTransparency = 1,
+    TextColor3 = Color3.fromRGB(114, 117, 130),
+    Font = Configs_HUB.Text_Font,
+    TextScaled = true, 
+    Visible = false
+})
+
+local useridplayers = Create("TextLabel", frameinfoplayer, {
+    Size = UDim2.new(0.77, 0, 0.3, 0),
+    Position = UDim2.new(0.23, 0, 0.65, 0),
+    Text = "id:nil",
+    TextXAlignment = "Left",
+    BackgroundTransparency = 1,
+    TextColor3 = Color3.fromRGB(152, 194, 219),
+    Font = Configs_HUB.Text_Font,
+    TextScaled = true, 
+    Visible = false
+})
+
+local noplayers = Create("TextLabel", frameinfoplayer, {
+    Size = UDim2.new(0.77, 0, 1, 0),
+    Position = UDim2.new(0.23, 0, 0, 0),
+    Text = "Server No Player😔",
+    TextXAlignment = "Left",
+    BackgroundTransparency = 1,
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    TextScaled = true,
+    Visible = false
+})
+
+local imageplayers = Create("ImageLabel", frameinfoplayer, {
+    Size = UDim2.new(0.195, 0, 0.95, 0),
+    Position = UDim2.new(0.005, 0, 0.015, 0),
+    BackgroundTransparency = 1,
+    Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
+})Corner(imageplayers, {CornerRadius = UDim.new(1, 0)})Stroke(imageplayers, {Color = Color3.fromRGB(255, 255, 255)})
+
 ShiftLockButton.MouseButton1Click:Connect(function()
     if not ShiftLockmaingui then
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
-            local char = Player.Character or Player.CharacterAdded:Wait()
-            if not char then return end
-            local root = char:FindFirstChild("HumanoidRootPart")
-            local hum = char:FindFirstChildOfClass("Humanoid")
+            local c = Player.Character or Player.CharacterAdded:Wait()
+            if not c then return end
+            local r = c:FindFirstChild("HumanoidRootPart")
+            local h = c:FindFirstChildOfClass("Humanoid")
             local cam = workspace.CurrentCamera
-            if root and hum and cam then
-                hum.AutoRotate = false
-                ShiftLockButton.Image = States.On
-                ShiftlockCursor.Visible = true
-                local pos = root.Position
-                local look = cam.CFrame.LookVector
-                root.CFrame = CFrame.new(pos, Vector3.new(pos.X + look.X, pos.Y, pos.Z + look.Z))
-                cam.CFrame *= EnabledOffset
-                cam.Focus = CFrame.fromMatrix(cam.Focus.Position, cam.CFrame.RightVector, cam.CFrame.UpVector) * EnabledOffset
+            if not (r and h and cam) then return end
+            h.AutoRotate = false
+            ShiftLockButton.Image = States.On
+            ShiftlockCursor.Visible = true
+            local p = r.Position
+            local l = cam.CFrame.LookVector
+            r.CFrame = CFrame.new(p, Vector3.new(p.X + l.X, p.Y, p.Z + l.Z))
+            cam.CFrame *= EnabledOffset
+            cam.Focus = CFrame.fromMatrix(cam.Focus.Position, cam.CFrame.RightVector, cam.CFrame.UpVector) * EnabledOffset
+            if #game:GetService("Players"):GetPlayers() == 1 and game:GetService("Players").LocalPlayer.Name == game:GetService("Players"):GetPlayers()[1].Name then
+                DisplayNameplayers.Visible = false
+                Nameplayers.Visible = false
+                useridplayers.Visible = false
+                for _, hi in pairs(CH) do
+                    if hi then
+                        hi:Destroy()
+                    end
+                end
+                CH = {}
+                imageplayers.Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
+                noplayers.Visible = true
+                return
+            else
+                DisplayNameplayers.Visible = true
+                Nameplayers.Visible = true
+                useridplayers.Visible = true
+                noplayers.Visible = false
+            end
+            local ctr = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
+            local sz = ShiftlockCursor.AbsoluteSize
+            local nearestP, minDist = nil, math.huge
+            for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+                if plr ~= Player and plr.Character then
+                    for _, pt in pairs(plr.Character:GetDescendants()) do
+                        if pt:IsA("BasePart") and pt:IsDescendantOf(plr.Character) then
+                            local screenPos, onScreen = cam:WorldToScreenPoint(pt.Position)
+                            if onScreen then
+                                local inX = screenPos.X >= ctr.X - sz.X / 2 and screenPos.X <= ctr.X + sz.X / 2
+                                local inY = screenPos.Y >= ctr.Y - sz.Y / 2 and screenPos.Y <= ctr.Y + sz.Y / 2
+                                if inX and inY then
+                                    local dist = (Vector2.new(screenPos.X, screenPos.Y) - ctr).Magnitude
+                                    local dir = (pt.Position - cam.CFrame.Position).Unit
+                                    local dot = dir:Dot(l)
+                                    if dot > 0 and dist < minDist then
+                                        minDist = dist
+                                        nearestP = plr
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            if frameinfopy then
+               for _, hi in pairs(CH) do
+                  if hi then
+                      hi:Destroy()
+                  end
+               end
+               CH = {}
+            end
+            if nearestP then
+                DisplayNameplayers.Text = nearestP.DisplayName
+                Nameplayers.Text = "@" .. nearestP.Name
+                useridplayers.Text = "id:"..nearestP.UserId
+                imageplayers.Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. nearestP.UserId
+                if not CH[nearestP] and frameinfopy then
+                    local hi = Create("Highlight", nearestP.Character, {
+                        Name = "PlayerHighlight",
+                        Adornee = nearestP.Character or nearestP.Character:FindFirstChild("HumanoidRootPart") or nearestP.Character:FindFirstChildWhichIsA("BasePart"),
+                        FillTransparency = 1,
+                        OutlineTransparency = 0,
+                        DepthMode = Enum.HighlightDepthMode.AlwaysOnTop,
+                        OutlineColor = Color3.fromRGB(0, 0, 255)
+                    })
+                    CH[nearestP] = hi
+                end
+            else
+                DisplayNameplayers.Text = "nil"
+                Nameplayers.Text = "@nil"
+                useridplayers.Text = "id:nil"
+                imageplayers.Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
             end
         end)
     else
-        local char = Player.Character
-        if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if hum then
-                hum.AutoRotate = true
+        local c = Player.Character
+        if c then
+            local h = c:FindFirstChildOfClass("Humanoid")
+            if h then
+                h.AutoRotate = true
             end
         end
+        for _, hi in pairs(CH) do
+            hi:Destroy()
+        end
+        CH = {}
         ShiftLockButton.Image = States.Off
         workspace.CurrentCamera.CFrame *= DisabledOffset
         ShiftlockCursor.Visible = false
@@ -2417,7 +2564,6 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         end
     end
 end)
-
 
 functions.ShiftLock = function(_, state)
     if state == Enum.UserInputState.Begin then
@@ -2607,6 +2753,23 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
              end
           end
       end
+      if ShiftLockmaingui and frameinfopy then
+          frameinfoplayer.Visible = true
+          for _, hi in pairs(CH) do
+                if hi then
+                    hi:Destroy()
+                end
+           end
+           CH = {}
+      else
+          frameinfoplayer.Visible = false
+          for _, hi in pairs(CH) do
+                if hi then
+                    hi:Destroy()
+                end
+           end
+           CH = {}
+      end
       DisplayName.Text = "Display Name: " .. player.DisplayName
       UserIdg.Text = "UserId: " .. player.UserId
       AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
@@ -2640,11 +2803,21 @@ ScreenGui.AncestryChanged:Connect(function()
                 hum.AutoRotate = true
                end
             end
+            for _, highlight in pairs(CH) do
+                 if highlight then
+                      highlight:Destroy()
+                      highlight= nil
+                 end
+            end
+            CH = {}
             ShiftLockButton.Image = States.Off
             workspace.CurrentCamera.CFrame *= DisabledOffset
             ShiftlockCursor.Visible = false
-            ShiftLockmaingui:Disconnect()
-            ShiftLockmaingui = nil
+            frameinfopy = false
+            if ShiftLockmaingui then
+               ShiftLockmaingui:Disconnect()
+               ShiftLockmaingui = nil
+           end
         end
        if View then
         local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
