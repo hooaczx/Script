@@ -2740,49 +2740,50 @@ SettingButton.MouseButton1Click:Connect(function()
     uiStates.frameSetting.state = not state
 end)
 
-local stopupdateall
+local stopupdateall1
 local Update = tick()
-
-stopupdateall = RunService.Heartbeat:Connect(function()
-    local Time = tick()
-    if activeButton then
+stopupdateall1 = RunService.Heartbeat:Connect(function()
+      local Time = tick()
+      if activeButton then
         for name, data in pairs(uiStates) do
             if name ~= activeButton and data.state then
                 functions.closeOtherUI(name)
-            end
-        end
-    end
-    if ShiftLockmaingui and frameinfopy then
-        frameinfoplayer.Visible = true
-        for _, hi in pairs(CH) do
-            if hi then
-                hi:Destroy()
-            end
-        end
-        CH = {}
-    else
-        frameinfoplayer.Visible = false
-        for _, hi in pairs(CH) do
-            if hi then
-                hi:Destroy()
-            end
-        end
-        CH = {}
-    end
-    DisplayName.Text = "Display Name: " .. player.DisplayName
-    UserIdg.Text = "UserId: " .. player.UserId
-    AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
-    iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
-    iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-    functions.UpdatePlayerList()
+             end
+          end
+      end
+      if ShiftLockmaingui and frameinfopy then
+          frameinfoplayer.Visible = true
+          for _, hi in pairs(CH) do
+                if hi then
+                    hi:Destroy()
+                end
+           end
+           CH = {}
+      else
+          frameinfoplayer.Visible = false
+          for _, hi in pairs(CH) do
+                if hi then
+                    hi:Destroy()
+                end
+           end
+           CH = {}
+      end
+      DisplayName.Text = "Display Name: " .. player.DisplayName
+      UserIdg.Text = "UserId: " .. player.UserId
+      AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
+      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+      functions.UpdatePlayerList()
     if Time - Update >= 1 then
-        functions.updatePlaceInfo()
-        functions.updatePlaytime()
-        functions.checkFriends()
-        functions.startUpdating()
-        functions.updateTime()
-        functions.UpdatePlaces()
-        Update = Time
+      functions.updatePlaceInfo()
+    end
+    if Time - Update >= 1 then
+      functions.updatePlaytime()
+      functions.checkFriends()
+      functions.startUpdating()
+      functions.updateTime()
+      functions.UpdatePlaces()
+      Update = Time
     end
 end)
 
@@ -2838,10 +2839,6 @@ ScreenGui.AncestryChanged:Connect(function()
         if stopupdateall1 then
             stopupdateall1:Disconnect()
             stopupdateall1 = nil
-        end
-        if stopupdateall then
-            stopupdateall:Disconnect()
-            stopupdateall = nil
         end
     end
 end)
