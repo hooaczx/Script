@@ -160,7 +160,7 @@ functionCreate.TextSetColor = function(instance)
     connectionTextSetColor = {}
   end
   connectionTextSetColor.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
-    if parent == nil and instance.Parent == nil then  -- เช็คให้แน่ใจว่า Parent หายไปจริง ๆ
+    if parent == nil and instance.Parent == nil then
        cleanup()
       end
    end)
@@ -1845,32 +1845,35 @@ end
 
 functions.startUpdating()
 
-local playtime = 0
+local jt = os.time()
 
-functions.updatePlaytime = function()
-    playtime = playtime + 1
-    local secondsInMinute = 60
-    local secondsInHour = 3600
-    local secondsInDay = 86400
-    local secondsInMonth = 2592000
-    local secondsInYear = 31536000
-    local formattedTime = ""
-    
-    if playtime < secondsInMinute then
-        formattedTime = string.format("%02d", playtime)
-    elseif playtime < secondsInHour then
-        formattedTime = string.format("%d:%02d", math.floor(playtime / secondsInMinute), playtime % secondsInMinute)
-    elseif playtime < secondsInDay then
-        formattedTime = string.format("%d:%02d:%02d", math.floor(playtime / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
-    elseif playtime < secondsInMonth then
-        formattedTime = string.format("%d:%02d:%02d:%02d", math.floor(playtime / secondsInDay), math.floor((playtime % secondsInDay) / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
-    elseif playtime < secondsInYear then
-        formattedTime = string.format("%d:%02d:%02d:%02d:%02d", math.floor(playtime / secondsInMonth), math.floor((playtime % secondsInMonth) / secondsInDay), math.floor((playtime % secondsInDay) / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
+functions.up = function()
+    local now = os.time()
+    local pt = now - jt
+
+    local m = 60
+    local h = 3600
+    local d = 86400
+    local mo = 2592000
+    local y = 31536000
+
+    local ft = ""
+
+    if pt < m then
+        ft = string.format("%02d", pt)
+    elseif pt < h then
+        ft = string.format("%d:%02d", math.floor(pt / m), pt % m)
+    elseif pt < d then
+        ft = string.format("%d:%02d:%02d", math.floor(pt / h), math.floor((pt % h) / m), pt % m)
+    elseif pt < mo then
+        ft = string.format("%d:%02d:%02d:%02d", math.floor(pt / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
+    elseif pt < y then
+        ft = string.format("%d:%02d:%02d:%02d:%02d", math.floor(pt / mo), math.floor((pt % mo) / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
     else
-        formattedTime = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(playtime / secondsInYear), math.floor((playtime % secondsInYear) / secondsInMonth), math.floor((playtime % secondsInMonth) / secondsInDay), math.floor((playtime % secondsInDay) / secondsInHour), math.floor((playtime % secondsInHour) / secondsInMinute), playtime % secondsInMinute)
+        ft = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(pt / y), math.floor((pt % y) / mo), math.floor((pt % mo) / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
     end
 
-    TimePlay.Text = "Time Play: "..formattedTime.."\n".."This will show you how much time you have been playing in the game"
+    TimePlay.Text = "Time Play: " .. ft .. "\nThis shows how long you've been playing"
 end
 
 functions.updatePlaytime()
