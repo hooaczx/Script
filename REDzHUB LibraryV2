@@ -2740,10 +2740,11 @@ SettingButton.MouseButton1Click:Connect(function()
     uiStates.frameSetting.state = not state
 end)
 
+local stopupdateall
 local stopupdateall1
-local Update = tick()
+local lastUpdate = tick()
 stopupdateall1 = RunService.Heartbeat:Connect(function()
-      local Time = tick()
+      local currentTime = tick()
       if activeButton then
         for name, data in pairs(uiStates) do
             if name ~= activeButton and data.state then
@@ -2774,18 +2775,22 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
       iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
       functions.UpdatePlayerList()
-    if Time - Update >= 1 then
+     if currentTime - lastUpdate >= 1 then
       functions.updatePlaceInfo()
     end
-    if Time - Update >= 1 then
+end) 
+
+stopupdateall = RunService.Heartbeat:Connect(function()
+   local currentTime = tick()
+   if currentTime - lastUpdate >= 1 then
       functions.updatePlaytime()
       functions.checkFriends()
       functions.startUpdating()
       functions.updateTime()
       functions.UpdatePlaces()
-      Update = Time
+      lastUpdate = currentTime
     end
-end)
+ end)
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
@@ -2839,6 +2844,10 @@ ScreenGui.AncestryChanged:Connect(function()
         if stopupdateall1 then
             stopupdateall1:Disconnect()
             stopupdateall1 = nil
+        end
+        if stopupdateall then
+            stopupdateall:Disconnect()
+            stopupdateall = nil
         end
     end
 end)
