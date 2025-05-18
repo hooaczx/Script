@@ -1883,6 +1883,45 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
+functions.ripflox = function(zog)
+    local bazzips = {
+        {suffix = "Vg", value = 1e63},
+        {suffix = "Nd", value = 1e60},
+        {suffix = "Od", value = 1e57},
+        {suffix = "Spd", value = 1e54},
+        {suffix = "Sxd", value = 1e51},
+        {suffix = "Qid", value = 1e48},
+        {suffix = "Qad", value = 1e45},
+        {suffix = "Td", value = 1e42},
+        {suffix = "Dd", value = 1e39},
+        {suffix = "Ud", value = 1e36},
+        {suffix = "Dc", value = 1e33},
+        {suffix = "No", value = 1e30},
+        {suffix = "Oc", value = 1e27},
+        {suffix = "Sp", value = 1e24},
+        {suffix = "Sx", value = 1e21},
+        {suffix = "Qi", value = 1e18},
+        {suffix = "Qa", value = 1e15},
+        {suffix = "T",  value = 1e12},
+        {suffix = "B",  value = 1e9},
+        {suffix = "M",  value = 1e6},
+        {suffix = "k",  value = 1e3}
+    }
+    for _, grob in ipairs(bazzips) do
+        if zog >= grob.value then
+            local blap = math.floor(zog / grob.value)
+            local drilp = zog - (blap * grob.value)
+            local splonk = math.floor(drilp / (grob.value / 10))
+            if splonk == 0 then
+                return string.format("%d%s", blap, grob.suffix)
+            else
+                return string.format("%d.%d%s", blap, splonk, grob.suffix)
+            end
+        end
+    end
+    return tostring(zog)
+end
+
 functions.updatePlaceInfo = function()
     local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
     local response = HttpService:JSONDecode(game:HttpGet(url))
@@ -1936,10 +1975,10 @@ functions.updatePlaceInfo = function()
             game.GameId,
             placeInfo.Created,
             placeInfo.Updated,
-            placeInfo.Playing,
-            placeInfo.Favorited,
-            placeInfo.Visits,
-            likes
+            functions.ripflox(placeInfo.Playing),
+            functions.ripflox(placeInfo.Favorited),
+            functions.ripflox(placeInfo.Visits),
+            functions.ripflox(likes)
         )
     else
         GameName.Text = "Game Name: Failed to load"
