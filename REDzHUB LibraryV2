@@ -1850,15 +1850,12 @@ local jt = os.time()
 functions.updatePlaytime = function()
     local now = os.time()
     local pt = now - jt
-
     local m = 60
     local h = 3600
     local d = 86400
     local mo = 2592000
     local y = 31536000
-
     local ft = ""
-
     if pt < m then
         ft = string.format("%02d", pt)
     elseif pt < h then
@@ -1872,7 +1869,6 @@ functions.updatePlaytime = function()
     else
         ft = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(pt / y), math.floor((pt % y) / mo), math.floor((pt % mo) / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
     end
-
     TimePlay.Text = "Time Play: " .. ft .. "\nThis shows how long you've been playing"
 end
 
@@ -1883,43 +1879,42 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
-functions.roundnumber = function(num)
-    local scale = {
-        {suffix = "Vg", value = 1e63},
-        {suffix = "Nd", value = 1e60},
-        {suffix = "Od", value = 1e57},
-        {suffix = "Spd", value = 1e54},
-        {suffix = "Sxd", value = 1e51},
-        {suffix = "Qid", value = 1e48},
-        {suffix = "Qad", value = 1e45},
-        {suffix = "Td", value = 1e42},
-        {suffix = "Dd", value = 1e39},
-        {suffix = "Ud", value = 1e36},
-        {suffix = "Dc", value = 1e33},
-        {suffix = "No", value = 1e30},
-        {suffix = "Oc", value = 1e27},
-        {suffix = "Sp", value = 1e24},
-        {suffix = "Sx", value = 1e21},
-        {suffix = "Qi", value = 1e18},
-        {suffix = "Qa", value = 1e15},
-        {suffix = "T",  value = 1e12},
-        {suffix = "B",  value = 1e9},
-        {suffix = "M",  value = 1e6},
-        {suffix = "k",  value = 1e3}
+functions.roundShort = function(x)
+    local y = {
+        {s = "Vg", v = 1e63},
+        {s = "Nd", v = 1e60},
+        {s = "Od", v = 1e57},
+        {s = "Spd", v = 1e54},
+        {s = "Sxd", v = 1e51},
+        {s = "Qid", v = 1e48},
+        {s = "Qad", v = 1e45},
+        {s = "Td",  v = 1e42},
+        {s = "Dd",  v = 1e39},
+        {s = "Ud",  v = 1e36},
+        {s = "Dc",  v = 1e33},
+        {s = "No",  v = 1e30},
+        {s = "Oc",  v = 1e27},
+        {s = "Sp",  v = 1e24},
+        {s = "Sx",  v = 1e21},
+        {s = "Qi",  v = 1e18},
+        {s = "Qa",  v = 1e15},
+        {s = "T",   v = 1e12},
+        {s = "B",   v = 1e9},
+        {s = "M",   v = 1e6},
+        {s = "k",   v = 1e3}
     }
-    for _, tier in ipairs(scale) do
-        if num >= tier.value then
-            local base = math.floor(num / tier.value)
-            local remain = num - (base * tier.value)
-            local dec = math.floor(remain / (tier.value / 10))
-            if dec == 0 then
-                return string.format("%d%s", base, tier.suffix)
+    for _, z in ipairs(y) do
+        if x >= z.v then
+            local n = x / z.v
+            local r = math.floor(n * 10 + 0.5) / 10
+            if r == math.floor(r) then
+                return string.format("%d%s", r, z.s)
             else
-                return string.format("%d.%d%s", base, dec, tier.suffix)
+                return string.format("%.1f%s", r, z.s)
             end
         end
     end
-    return tostring(num)
+    return tostring(x)
 end
 
 functions.updatePlaceInfo = function()
@@ -1968,10 +1963,10 @@ functions.updatePlaceInfo = function()
             game.GameId,
             brief.Created,
             brief.Updated,
-            functions.roundnumber(brief.Online),
-            functions.roundnumber(brief.Faves),
-            functions.roundnumber(brief.Hits),
-            functions.roundnumber(like)
+            functions.roundShort(brief.Online),
+            functions.roundShort(brief.Faves),
+            functions.roundShort(brief.Hits),
+            functions.roundShort(like)
         )
     else
         GameName.Text = "Game Name: Failed to load"
