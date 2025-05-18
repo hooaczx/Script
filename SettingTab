@@ -7,8 +7,6 @@ local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 0
 getgenv().TPJpBst = 0
 getgenv().TPWalk = false
-getgenv().Walkspeed = game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed
-getgenv().Jumppower = game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower
 local player = game:GetService("Players").LocalPlayer
 local controlModule = require(player.PlayerScripts:WaitForChild('PlayerModule'):WaitForChild("ControlModule"))
 local UserInputService = game:GetService("UserInputService")
@@ -365,7 +363,7 @@ AddToggle(Main5u6, {
 })
 
 local dWS, dJP = 16, 50
-local wsCon, jpCon 
+local wsCon, jpCon
 
 AddTextBox(Main5u6, {
   Name = "WS Number",
@@ -385,14 +383,19 @@ AddToggle(Main5u6, {
   Default = false,
   Callback = function(st)
     local plr = game:GetService("Players").LocalPlayer
-    local hum = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
-    if hum then
-      if st then
-        wsCon = game:GetService("RunService").Heartbeat:Connect(function()
+    if st then
+      wsCon = game:GetService("RunService").Heartbeat:Connect(function()
+        local char = plr.Character or plr.CharacterAdded:Wait()
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
           hum.WalkSpeed = getgenv().WS or dWS
-        end)
-      else
-        if wsCon then wsCon:Disconnect() wsCon = nil end
+        end
+      end)
+    else
+      if wsCon then wsCon:Disconnect() wsCon = nil end
+      local char = plr.Character
+      local hum = char and char:FindFirstChildOfClass("Humanoid")
+      if hum then
         hum.WalkSpeed = dWS
       end
     end
@@ -417,14 +420,19 @@ AddToggle(Main5u6, {
   Default = false,
   Callback = function(st)
     local plr = game:GetService("Players").LocalPlayer
-    local hum = plr.Character and plr.Character:FindFirstChildOfClass("Humanoid")
-    if hum then
-      if st then
-        jpCon = game:GetService("RunService").Heartbeat:Connect(function()
+    if st then
+      jpCon = game:GetService("RunService").Heartbeat:Connect(function()
+        local char = plr.Character or plr.CharacterAdded:Wait()
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
           hum.JumpPower = getgenv().JP or dJP
-        end)
-      else
-        if jpCon then jpCon:Disconnect() jpCon = nil end
+        end
+      end)
+    else
+      if jpCon then jpCon:Disconnect() jpCon = nil end
+      local char = plr.Character
+      local hum = char and char:FindFirstChildOfClass("Humanoid")
+      if hum then
         hum.JumpPower = dJP
       end
     end
