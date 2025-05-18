@@ -1883,8 +1883,8 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
-functions.ripflox = function(zog)
-    local bazzips = {
+functions.ripflox = function(num)
+    local scale = {
         {suffix = "Vg", value = 1e63},
         {suffix = "Nd", value = 1e60},
         {suffix = "Od", value = 1e57},
@@ -1907,37 +1907,33 @@ functions.ripflox = function(zog)
         {suffix = "M",  value = 1e6},
         {suffix = "k",  value = 1e3}
     }
-    for _, grob in ipairs(bazzips) do
-        if zog >= grob.value then
-            local blap = math.floor(zog / grob.value)
-            local drilp = zog - (blap * grob.value)
-            local splonk = math.floor(drilp / (grob.value / 10))
-            if splonk == 0 then
-                return string.format("%d%s", blap, grob.suffix)
+    for _, tier in ipairs(scale) do
+        if num >= tier.value then
+            local base = math.floor(num / tier.value)
+            local remain = num - (base * tier.value)
+            local dec = math.floor(remain / (tier.value / 10))
+            if dec == 0 then
+                return string.format("%d%s", base, tier.suffix)
             else
-                return string.format("%d.%d%s", blap, splonk, grob.suffix)
+                return string.format("%d.%d%s", base, dec, tier.suffix)
             end
         end
     end
-    return tostring(zog)
+    return tostring(num)
 end
 
 functions.updatePlaceInfo = function()
-    local url = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local response = HttpService:JSONDecode(game:HttpGet(url))
-
-    local likes = 0
-    local likesUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
-    local likesResponse = HttpService:JSONDecode(game:HttpGet(likesUrl))
-    likes = likesResponse.upVotes or 0
-
-    if response and response.data and #response.data > 0 then
-        local data = response.data[1]
-
-        local y1, m1, d1, h1, mi1, s1 = data.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
-        local y2, m2, d2, h2, mi2, s2 = data.updated:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
-
-        local created = os.time({
+    local infoUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
+    local infoData = HttpService:JSONDecode(game:HttpGet(infoUrl))
+    local fallbackLikes = 0
+    local voteUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+    local voteData = HttpService:JSONDecode(game:HttpGet(voteUrl))
+    fallbackLikes = voteData.upVotes or 0
+    if infoData and infoData.data and #infoData.data > 0 then
+        local entry = infoData.data[1]
+        local y1, m1, d1, h1, mi1, s1 = entry.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
+        local y2, m2, d2, h2, mi2, s2 = entry.updated:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
+        local tsCreated = os.time({
             year = tonumber(y1),
             month = tonumber(m1),
             day = tonumber(d1),
@@ -1945,8 +1941,7 @@ functions.updatePlaceInfo = function()
             min = tonumber(mi1),
             sec = tonumber(s1)
         })
-
-        local updated = os.time({
+        local tsUpdated = os.time({
             year = tonumber(y2),
             month = tonumber(m2),
             day = tonumber(d2),
@@ -1954,31 +1949,29 @@ functions.updatePlaceInfo = function()
             min = tonumber(mi2),
             sec = tonumber(s2)
         })
-
-        local placeInfo = {
+        local brief = {
             PlaceId = game.PlaceId,
-            Name = data.name or "Unknown",
-            Created = os.date("%Y-%m-%d %H:%M:%S", created),
-            Updated = os.date("%Y-%m-%d %H:%M:%S", updated),
-            Playing = data.playing or 0,
-            Visits = data.visits or 0,
-            Favorited = data.favoritedCount or 0,
-            RootPlaceId = data.rootPlaceId or "N/A"
+            Name = entry.name or "Unknown",
+            Created = os.date("%Y-%m-%d %H:%M:%S", tsCreated),
+            Updated = os.date("%Y-%m-%d %H:%M:%S", tsUpdated),
+            Online = entry.playing or 0,
+            Hits = entry.visits or 0,
+            Faves = entry.favoritedCount or 0,
+            RootId = entry.rootPlaceId or "N/A"
         }
-
-        GameName.Text = string.format("Game Name: %s", placeInfo.Name)
+        GameName.Text = string.format("Game Name: %s", brief.Name)
         frame79.Text = string.format(
-            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive: %s\nFavorited: %d\nVisits: %s\nLikes: %d",
-            placeInfo.PlaceId,
-            tostring(placeInfo.RootPlaceId),
+            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive: %s\nFavorited: %s\nVisits: %s\nLikes: %s",
+            brief.PlaceId,
+            tostring(brief.RootId),
             game.JobId,
             game.GameId,
-            placeInfo.Created,
-            placeInfo.Updated,
-            functions.ripflox(placeInfo.Playing),
-            functions.ripflox(placeInfo.Favorited),
-            functions.ripflox(placeInfo.Visits),
-            functions.ripflox(likes)
+            brief.Created,
+            brief.Updated,
+            functions.ripflox(brief.Online),
+            functions.ripflox(brief.Faves),
+            functions.ripflox(brief.Hits),
+            functions.ripflox(fallbackLikes)
         )
     else
         GameName.Text = "Game Name: Failed to load"
