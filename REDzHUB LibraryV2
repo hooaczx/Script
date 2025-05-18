@@ -1883,7 +1883,7 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
 end
 
-functions.ripflox = function(num)
+functions.roundnumber = function(num)
     local scale = {
         {suffix = "Vg", value = 1e63},
         {suffix = "Nd", value = 1e60},
@@ -1925,10 +1925,10 @@ end
 functions.updatePlaceInfo = function()
     local infoUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
     local infoData = HttpService:JSONDecode(game:HttpGet(infoUrl))
-    local fallbackLikes = 0
-    local voteUrl = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
-    local voteData = HttpService:JSONDecode(game:HttpGet(voteUrl))
-    fallbackLikes = voteData.upVotes or 0
+    local like = 0
+    local geturlLike = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
+    local getLikeData = HttpService:JSONDecode(game:HttpGet(geturlLike))
+    like = getLikeData.upVotes or 0
     if infoData and infoData.data and #infoData.data > 0 then
         local entry = infoData.data[1]
         local y1, m1, d1, h1, mi1, s1 = entry.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
@@ -1968,10 +1968,10 @@ functions.updatePlaceInfo = function()
             game.GameId,
             brief.Created,
             brief.Updated,
-            functions.ripflox(brief.Online),
-            functions.ripflox(brief.Faves),
-            functions.ripflox(brief.Hits),
-            functions.ripflox(fallbackLikes)
+            functions.roundnumber(brief.Online),
+            functions.roundnumber(brief.Faves),
+            functions.roundnumber(brief.Hits),
+            functions.roundnumber(fallbackLikes)
         )
     else
         GameName.Text = "Game Name: Failed to load"
