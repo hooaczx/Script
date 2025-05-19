@@ -2490,38 +2490,40 @@ functions.Look = function()
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
-if not functions.canClick() then return end
-    if Tweening then return end
-    Tweening = true
+    if not functions.canClick() or Tweening then return end
+    Tweening = true    
     if not ShiftLockmaingui then
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
-            local c = Player.Character or Player.CharacterAdded:Wait()
-            if not c then return end
-            local r = c:FindFirstChild("HumanoidRootPart")
-            local h = c:FindFirstChildOfClass("Humanoid")
-            local cam = workspace.CurrentCamera
-            if not (r and h and cam) then return end
-            h.AutoRotate = false
+            local zx_char = Player.Character or Player.CharacterAdded:Wait()
+            if not zx_char then return end
+            local zx_root = zx_char:FindFirstChild("HumanoidRootPart")
+            local zx_hum = zx_char:FindFirstChildOfClass("Humanoid")
+            local zx_cam = workspace.CurrentCamera
+            if not (zx_root and zx_hum and zx_cam) then return end
+            zx_hum.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            local lookAt = functions.Look()
-            local rootPos = r.Position
-            lookAt = Vector3.new(lookAt.X, rootPos.Y, lookAt.Z)
-            r.CFrame = CFrame.new(rootPos, lookAt)
-            cam.CFrame *= ENABLED_OFFSET
-            cam.Focus = CFrame.fromMatrix(cam.Focus.Position, cam.CFrame.RightVector, cam.CFrame.UpVector) * ENABLED_OFFSET
-            if #game:GetService("Players"):GetPlayers() == 1 and game:GetService("Players").LocalPlayer.Name == game:GetService("Players"):GetPlayers()[1].Name then
+            local zx_look = functions.Look()
+            local zx_pos = zx_root.Position
+            zx_look = Vector3.new(zx_look.X, zx_pos.Y, zx_look.Z)
+            zx_root.CFrame = CFrame.new(zx_pos, zx_look)
+            zx_cam.CFrame *= ENABLED_OFFSET
+            zx_cam.Focus = CFrame.fromMatrix(zx_cam.Focus.Position, zx_cam.CFrame.RightVector, zx_cam.CFrame.UpVector) * ENABLED_OFFSET            
+            local zx_players = game:GetService("Players")
+            local zx_local = zx_players.LocalPlayer
+            local zx_all = zx_players:GetPlayers()
+            local zx_cam_pos = zx_cam.CFrame.Position
+            if #zx_all == 1 and zx_local.Name == zx_all[1].Name then
                 DisplayNameplayers.Visible = false
                 Nameplayers.Visible = false
                 useridplayers.Visible = false
-                for _, hi in pairs(CH) do
-                    if hi then
-                        hi:Destroy()
-                    end
+                for _, zx_hi in pairs(CH) do
+                    if zx_hi then zx_hi:Destroy() end
                 end
                 CH = {}
                 imageplayers.Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
                 noplayers.Visible = true
+                Tweening = false
                 return
             else
                 DisplayNameplayers.Visible = true
@@ -2529,55 +2531,64 @@ if not functions.canClick() then return end
                 useridplayers.Visible = true
                 noplayers.Visible = false
             end
-            local ctr = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
-            local sz = ShiftlockCursor.AbsoluteSize
-            local nearestP, minDist = nil, math.huge
-            for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-                if plr ~= Player and plr.Character then
-                    for _, pt in pairs(plr.Character:GetChildren()) do
-                        if pt:IsA("BasePart") and pt:IsDescendantOf(plr.Character) then
-                            local screenPos, onScreen = cam:WorldToScreenPoint(pt.Position)
-                            if onScreen then
-                                local inX = screenPos.X >= ctr.X - sz.X / 2 and screenPos.X <= ctr.X + sz.X / 2
-                                local inY = screenPos.Y >= ctr.Y - sz.Y / 2 and screenPos.Y <= ctr.Y + sz.Y / 2
-                                if inX and inY then
-                                    local dist = (Vector2.new(screenPos.X, screenPos.Y) - ctr).Magnitude
-                                    local dir = (pt.Position - cam.CFrame.Position).Unit
-                                    local dot = dir:Dot(l)
-                                    if dot > 0 and dist < minDist then
-                                        minDist = dist
-                                        nearestP = plr
-                                        break
-                                    end
+            local zx_ctr = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
+            local zx_sz = ShiftlockCursor.AbsoluteSize
+            local zx_near, zx_dist = nil, math.huge
+            local zx_dir = zx_cam.CFrame.LookVector
+            local zx_cyu = {}
+            for _, zx_plr in pairs(zx_all) do
+                if zx_plr ~= zx_local and zx_plr.Character then
+                    local zx_root_other = zx_plr.Character:FindFirstChild("HumanoidRootPart")
+                    if zx_root_other then
+                        local zx_scrPos, zx_onScr = zx_cam:WorldToScreenPoint(zx_root_other.Position)
+                        if zx_onScr then
+                            local zx_inX = zx_scrPos.X >= zx_ctr.X - zx_sz.X/2 and zx_scrPos.X <= zx_ctr.X + zx_sz.X/2
+                            local zx_inY = zx_scrPos.Y >= zx_ctr.Y - zx_sz.Y/2 and zx_scrPos.Y <= zx_ctr.Y + zx_sz.Y/2
+                            if zx_inX and zx_inY then
+                                local to_target = zx_root_other.Position - zx_cam_pos
+                                local forward_dist = to_target:Dot(zx_dir)
+                                if forward_dist > 0 then
+                                    local dist2d = (Vector2.new(zx_scrPos.X, zx_scrPos.Y) - zx_ctr).Magnitude
+                                    table.insert(zx_cyu, {
+                                        player = zx_plr,
+                                        dist2d = dist2d,
+                                        forward_dist = forward_dist
+                                    })
                                 end
                             end
                         end
                     end
                 end
             end
+            table.sort(zx_cyu, function(a, b)
+                if math.abs(a.forward_dist - b.forward_dist) > 0.1 then
+                    return a.forward_dist < b.forward_dist
+                else
+                    return a.dist2d < b.dist2d
+                end
+            end)
+            local zx_near = zx_cyu[1] and zx_cyu[1].player or nil
             if frameinfopy then
-               for _, hi in pairs(CH) do
-                  if hi then
-                      hi:Destroy()
-                  end
-               end
-               CH = {}
+                for _, zx_hi in pairs(CH) do
+                    if zx_hi then zx_hi:Destroy() end
+                end
+                CH = {}
             end
-            if nearestP then
-                DisplayNameplayers.Text = nearestP.DisplayName
-                Nameplayers.Text = "@" .. nearestP.Name
-                useridplayers.Text = "id:"..nearestP.UserId
-                imageplayers.Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. nearestP.UserId
-                if not CH[nearestP] and frameinfopy then
-                    local hi = Create("Highlight", nearestP.Character, {
+            if zx_near then
+                DisplayNameplayers.Text = zx_near.DisplayName
+                Nameplayers.Text = "@" .. zx_near.Name
+                useridplayers.Text = "id:" .. zx_near.UserId
+                imageplayers.Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. zx_near.UserId
+                if not CH[zx_near] and frameinfopy then
+                    local zx_hi = Create("Highlight", zx_near.Character, {
                         Name = "PlayerHighlight",
-                        Adornee = nearestP.Character or nearestP.Character:FindFirstChild("HumanoidRootPart") or nearestP.Character:FindFirstChildWhichIsA("BasePart"),
+                        Adornee = zx_near.Character or zx_near.Character:FindFirstChild("HumanoidRootPart") or zx_near.Character:FindFirstChildWhichIsA("BasePart"),
                         FillTransparency = 1,
                         OutlineTransparency = 0,
                         DepthMode = Enum.HighlightDepthMode.AlwaysOnTop,
                         OutlineColor = Color3.fromRGB(0, 0, 255)
                     })
-                    CH[nearestP] = hi
+                    CH[zx_near] = zx_hi
                 end
             else
                 DisplayNameplayers.Text = "nil"
@@ -2586,17 +2597,15 @@ if not functions.canClick() then return end
                 imageplayers.Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
             end
             Tweening = false
-         end)
+        end)
     else
-        local c = Player.Character
-        if c then
-            local h = c:FindFirstChildOfClass("Humanoid")
-            if h then
-                h.AutoRotate = true
-            end
+        local zx_char = Player.Character
+        if zx_char then
+            local zx_hum = zx_char:FindFirstChildOfClass("Humanoid")
+            if zx_hum then zx_hum.AutoRotate = true end
         end
-        for _, hi in pairs(CH) do
-            hi:Destroy()
+        for _, zx_hi in pairs(CH) do
+            if zx_hi then zx_hi:Destroy() end
         end
         CH = {}
         ShiftLockButton.Image = States.Off
