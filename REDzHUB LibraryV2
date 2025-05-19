@@ -2321,8 +2321,7 @@ functions.createSettingSection(
     scrollingSettingFrame,
     "Hide Name",
     [[This script will hide "BillboardGui" and "SurfaceGui" for games that use these 2 to create "NameTag"]],
-    functions.toggleHideName,
-    false)
+functions.toggleHideName, false)
 
 local TopBarclose = false
 functions.createSettingSection(
@@ -2392,7 +2391,7 @@ local States = {
     Lock = "rbxasset://textures/MouseLockedCursor.png",
     Lock2 = "rbxasset://SystemCursors/Cross"
 }
-local ContextActionService, MaxLength, EnabledOffset, DisabledOffset, ShiftLockmaingui, gig, CH = game:GetService("ContextActionService"), 900000, CFrame.new(1.7, 0, 0), CFrame.new(-1.7, 0, 0), nil, nil, {}
+local ContextActionService, MaxLength, ENABLED_OFFSET, DISABLED_OFFSET, ShiftLockmaingui, gig, CH, Tweening = game:GetService("ContextActionService"), 900000, CFrame.new(1.9, 0, 0), CFrame.new(-1.9, 0, 0), nil, nil, {}, false
 local ShiftLockButton = Create("ImageButton", frame, {
     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
     BackgroundTransparency = 1.000,
@@ -2475,8 +2474,25 @@ local imageplayers = Create("ImageLabel", frameinfoplayer, {
     BackgroundTransparency = 1,
     Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
 })Corner(imageplayers, {CornerRadius = UDim.new(1, 0)})Stroke(imageplayers, {Color = Color3.fromRGB(255, 255, 255)})
+local buttonCooldown, Click = 0.5, 0
+functions.canClick = function()
+    local Time = tick()
+    if Time - Click >= buttonCooldown then
+        Click = Time
+        return true
+    end
+    return false
+end
+functions.Look = function()
+    local mousePos = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
+    local unitRay = workspace.CurrentCamera:ViewportPointToRay(mousePos.X, mousePos.Y)
+    return unitRay.Origin + unitRay.Direction * 100
+end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
+if not functions.canClick() then return end
+    if Tweening then return end
+    Tweening = true
     if not ShiftLockmaingui then
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
             local c = Player.Character or Player.CharacterAdded:Wait()
@@ -2488,11 +2504,12 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             h.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
-            local p = r.Position
-            local l = cam.CFrame.LookVector
-            r.CFrame = CFrame.new(p, Vector3.new(p.X + l.X, p.Y, p.Z + l.Z))
-            cam.CFrame *= EnabledOffset
-            cam.Focus = CFrame.fromMatrix(cam.Focus.Position, cam.CFrame.RightVector, cam.CFrame.UpVector) * EnabledOffset
+            local lookAt = functions.Look()
+            local rootPos = r.Position
+            lookAt = Vector3.new(lookAt.X, rootPos.Y, lookAt.Z)
+            r.CFrame = CFrame.new(rootPos, lookAt)
+            cam.CFrame *= ENABLED_OFFSET
+            cam.Focus = CFrame.fromMatrix(cam.Focus.Position, cam.CFrame.RightVector, cam.CFrame.UpVector) * ENABLED_OFFSET
             if #game:GetService("Players"):GetPlayers() == 1 and game:GetService("Players").LocalPlayer.Name == game:GetService("Players"):GetPlayers()[1].Name then
                 DisplayNameplayers.Visible = false
                 Nameplayers.Visible = false
@@ -2568,7 +2585,8 @@ ShiftLockButton.MouseButton1Click:Connect(function()
                 useridplayers.Text = "id:nil"
                 imageplayers.Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
             end
-        end)
+            Tweening = false
+         end)
     else
         local c = Player.Character
         if c then
@@ -2582,12 +2600,13 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         end
         CH = {}
         ShiftLockButton.Image = States.Off
-        workspace.CurrentCamera.CFrame *= DisabledOffset
+        workspace.CurrentCamera.CFrame *= DISABLED_OFFSET
         ShiftlockCursor.Visible = false
         if ShiftLockmaingui then
             ShiftLockmaingui:Disconnect()
             ShiftLockmaingui = nil
         end
+        Tweening = false
     end
 end)
 
@@ -2607,8 +2626,6 @@ local uiStates = {
     Menu = {frame = Menu, state = true},
     frameSetting = {frame = frameSetting, state = false}
 }local activeButton = nil
-local buttonCooldown = 0.5
-local Click = 0
 
 local strokeeffect = Create("Frame", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -2650,15 +2667,6 @@ functions.closeOtherUI = function(exceptName)
               end
           end
      end
-end
-
-functions.canClick = function()
-    local Time = tick()
-    if Time - Click >= buttonCooldown then
-        Click = Time
-        return true
-    end
-    return false
 end
 
 SplitgameToggleButton.MouseButton1Click:Connect(function()
@@ -2838,13 +2846,14 @@ ScreenGui.AncestryChanged:Connect(function()
             CH = {}
             th = {}
             ShiftLockButton.Image = States.Off
-            workspace.CurrentCamera.CFrame *= DisabledOffset
+            workspace.CurrentCamera.CFrame *= DISABLED_OFFSET
             ShiftlockCursor.Visible = false
             frameinfopy = false
             if ShiftLockmaingui then
                ShiftLockmaingui:Disconnect()
                ShiftLockmaingui = nil
            end
+           Tweening = false
         end
        if View then
         local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
