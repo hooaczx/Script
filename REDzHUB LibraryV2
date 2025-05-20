@@ -666,9 +666,7 @@ notify({
     local players = game:GetService("Players")
     local localPlayer = players.LocalPlayer
     local LocalPlayer = players.LocalPlayer
-    local accountAgeInDays = LocalPlayer.AccountAge
     local maxPlayers = players.MaxPlayers
-    local ageInDays = player.AccountAge
     local PlaceId = game.PlaceId
     local friendsCooldown = 0
     local friendsInTotal = 0
@@ -1467,8 +1465,8 @@ local frameinfogui = Create("Frame", ScreenGui, {
 })
 
 local frameinfo = Create("Frame", frameinfogui, {
-    Size = UDim2.new(0.25, 0, 0.18, 0),
-    Position = UDim2.new(0.04, 0, 0.24, 0),
+    Size = UDim2.new(0.2, 0, 0.18, 0),
+    Position = UDim2.new(0.01, 0, 0.23, 0),
     AnchorPoint = Vector2.new(0.04, 0.21),
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 0.5,
@@ -1501,16 +1499,70 @@ TextSetColor(Wellcome)
 
 local gameinfoframe = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.27, 0, 0.3, 0),
-    Position = UDim2.new(0.032, 0, 0.74, 0),
+    Position = UDim2.new(0.032, 0, 0.785, 0),
     AnchorPoint = Vector2.new(0.032, 0.51),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5
 })
 Corner(gameinfoframe, {CornerRadius = UDim.new(0.15, 0)})
 
+local iconGamecreator = Create("ImageLabel", frameinfogui, {
+    Size = UDim2.new(0.04, 0, 0.08, 0),
+    Position = UDim2.new(0.21, 0, 0.162, 0),
+    AnchorPoint = Vector2.new(0.05, 0.06),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5,
+    Image = ""
+})
+Corner(iconGamecreator, {CornerRadius = UDim.new(1, 0)})
+
+local icongroupicon = Create("ImageLabel", frameinfogui, {
+    Size = UDim2.new(0.04, 0, 0.08, 0),
+    Position = UDim2.new(0.21, 0, 0.252, 0),
+    AnchorPoint = Vector2.new(0.05, 0.06),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5,
+    Image = ""
+})
+
+local grouptext = Create("TextLabel", frameinfogui, {
+    Size = UDim2.new(0.16, 0, 0.065, 0),
+    Text = "Name_Group: ",
+    Position = UDim2.new(0.275, 0, 0.26, 0),
+    AnchorPoint = Vector2.new(0.11, 0.085),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    TextScaled = true
+})TextSetColor(Gamecreatortext)
+
+local Gamecreatortext = Create("TextLabel", frameinfogui, {
+    Size = UDim2.new(0.16, 0, 0.065, 0),
+    Text = "Creator_Game",
+    Position = UDim2.new(0.275, 0, 0.17, 0),
+    AnchorPoint = Vector2.new(0.11, 0.085),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    TextScaled = true
+})TextSetColor(Gamecreatortext)
+
+local framecreatorinfo = Create("Frame", frameinfogui, {
+    Size = UDim2.new(0.2, 0, 0.18, 0),
+    Position = UDim2.new(0.215, 0, 0.371, 0),
+    AnchorPoint = Vector2.new(0.04, 0.21),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 0.5,
+})
+Corner(framecreatorinfo, {CornerRadius = UDim.new(0.15, 0)})
+
 local iconGame = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
-    Position = UDim2.new(0.04, 0, 0.47, 0),
+    Position = UDim2.new(0.04, 0, 0.551, 0),
     AnchorPoint = Vector2.new(0.04, 0.38),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
@@ -1520,7 +1572,7 @@ local iconGame = Create("ImageLabel", frameinfogui, {
 local GameName = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
     Text = "Game Name: " .. gameName,
-    Position = UDim2.new(0.14, 0, 0.48, 0),
+    Position = UDim2.new(0.14, 0, 0.561, 0),
     AnchorPoint = Vector2.new(0.11, 0.405),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1747,7 +1799,11 @@ end)
 
 local frame23 = Create("Frame", frame100, {Size = UDim2.new(1, 0, 0.11, 0), Position = UDim2.new(0, 0, 0.001, 0), BackgroundColor3 = Configs_HUB.Cor_Hub, BackgroundTransparency = 1})
 
-local frame9 = Create("TextLabel", frameinfo, {Size = UDim2.new(1, 0, 1, 0), Text = "", BackgroundColor3 = Configs_HUB.Cor_Hub, BackgroundTransparency = 1})
+local frame9 = Create("TextLabel", frameinfo, {Size = UDim2.new(1, 0, 1, 0), Text = "hi", BackgroundColor3 = Configs_HUB.Cor_Hub, BackgroundTransparency = 1, Font = Configs_HUB.Text_Font, TextColor3 = Configs_HUB.Cor_Text, TextXAlignment = Enum.TextXAlignment.Left, TextScaled = true})
+TextSetColor(frame9)
+
+local frame199 = Create("TextLabel", framecreatorinfo, {Size = UDim2.new(1, 0, 1, 0), Text = "hi", BackgroundColor3 = Configs_HUB.Cor_Hub, BackgroundTransparency = 1, Font = Configs_HUB.Text_Font, TextColor3 = Configs_HUB.Cor_Text, TextXAlignment = Enum.TextXAlignment.Left, TextScaled = true})
+TextSetColor(frame199)
 
 local frame79 = Create("TextLabel", gameinfoframe, {
     Size = UDim2.new(1, 0, 1, 0),
@@ -1763,8 +1819,8 @@ Corner(frame79, {CornerRadius = UDim.new(0.15, 0)})
 TextSetColor(frame79)
 
 local listLayout1 = Create("UIListLayout", frame79, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 5)})
-
 local listLayout2 = Create("UIListLayout", frame9, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
+local listLayout3 = Create("UIListLayout", frame199, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
 
 functions.startUpdating = function()
     functions._additionalPlayTime = (functions._additionalPlayTime or 0) + 1
@@ -1814,7 +1870,7 @@ functions.updatePlaytime()
 
 functions.getAccountCreationDate = function(ageInDays)
     local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
-    return string.format("%d-%02d-%02d", creationDate.year, creationDate.month, creationDate.day)
+    return string.format("%02d/%02d/%d", creationDate.month, creationDate.day, creationDate.year)
 end
 
 functions.roundShort = function(x)
@@ -1913,45 +1969,6 @@ functions.updatePlaceInfo = function()
 end
 
 functions.updatePlaceInfo()
-
-local DisplayName = Create("TextLabel", frame9, {
-    Size = UDim2.new(1, 0, 0.3, 0),
-    Text = "Display Name: " .. game.Players.LocalPlayer.DisplayName,
-    Position = UDim2.new(0, 0, 0, 0),
-    TextScaled = true,
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
-    Font = Configs_HUB.Text_Font,
-    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 1,
-})
-TextSetColor(DisplayName)
-
-local UserIdg = Create("TextLabel", frame9, {
-    Size = UDim2.new(1, 0, 0.3, 0),
-    Text = "UserId: " .. game.Players.LocalPlayer.UserId,
-    Position = UDim2.new(0, 0, 0.3, 0),
-    TextScaled = true,
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
-    Font = Configs_HUB.Text_Font,
-    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 1,
-})
-TextSetColor(UserIdg)
-
-local AccountCreated = Create("TextLabel", frame9, {
-    Size = UDim2.new(1, 0, 0.3, 0),
-    Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays),
-    Position = UDim2.new(0, 0, 0.6, 0),
-    TextScaled = true,
-    TextColor3 = Configs_HUB.Cor_Text,
-    TextXAlignment = "Left",
-    Font = Configs_HUB.Text_Font,
-    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 1,
-})
-TextSetColor(AccountCreated)
 
 functions.updateTime = function()
     local currentTime = os.date("*t")
@@ -2075,8 +2092,7 @@ function functions.SaveEnvironment()
             ShadowSoftness = Lighting.ShadowSoftness,
             GeographicLatitude = Lighting.GeographicLatitude,
             ExposureCompensation = Lighting.ExposureCompensation,
-        }
-
+        }        
         savedLightingChildren = {}
         for _, child in pairs(Lighting:GetChildren()) do
             table.insert(savedLightingChildren, child:Clone())
@@ -2725,6 +2741,8 @@ end)
 local stopupdateall
 local stopupdateall1
 local lastUpdate = tick()
+local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
+local creatorInfo = getCreatorGameandGroupinfo()
 stopupdateall1 = RunService.Heartbeat:Connect(function()
       local currentTime = tick()
       for _, data in pairs(playerFrames) do
@@ -2732,7 +2750,7 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
             local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
             if viewButton then
                 if not View or (View and View.button ~= viewButton) then
-                    viewButton.Image = "rbxassetid://96859795672738" -- ปิดไอคอน
+                    viewButton.Image = "rbxassetid://96859795672738"
                 end
             end
         end
@@ -2776,9 +2794,23 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
            end
            CH = {}
       end
-      DisplayName.Text = "Display Name: " .. player.DisplayName
-      UserIdg.Text = "UserId: " .. player.UserId
-      AccountCreated.Text = "Account Created: " .. functions.getAccountCreationDate(ageInDays)
+     frame9.Text = string.format(
+         "DisplayName: %s\nUserId: %s\nAccount⚒️: %s",
+         game.Players.LocalPlayer.DisplayName,
+         game.Players.LocalPlayer.UserId,
+         functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
+      )
+      frame199.Text = string.format(
+         "Name: %s\nDisplayName: %s\nUserId: %s\nAccount⚒️: %s",
+         creatorInfo.Username,
+         creatorInfo.DisplayName,
+         tostring(creatorInfo.UserId),
+         creatorInfo.CreationDate
+      )
+      Gamecreatortext.Text = "Creator_Game"
+      grouptext.Text = creatorInfo.GroupName
+      iconGamecreator.Image = creatorInfo.headUrl
+      icongroupicon.Image = creatorInfo.GroupIcon
       iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
       functions.UpdatePlayerList()
@@ -3951,7 +3983,7 @@ function AddColorPicker(parent, Configs)
   end
 
   local AddVideoFrame = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AddVideo"))()
-
+  
   function AddParagraph(parent, Configs)
     local ParagraphName1 = Configs[1] or Configs.Title or "Paragraph!!"
     local ParagraphName2 = Configs[1] or Configs.Text or "Paragraph!!"
