@@ -655,6 +655,7 @@ notify({
 
  function MinimizeButton(Configs)
     local functions = {}
+    local stopupdateall = {}
     local minimize1 = false
     local minimize = true
     local minimize3 = false
@@ -683,7 +684,25 @@ notify({
     local playerFrames = {}
     local displayedFriends = {}
     local frameinfopy = false
+    local Avatar = false
     local image = Configs.Image or ""
+    functions.RunServerlock = function(lockName, Time, callback)
+        if stopupdateall[lockName] then
+           stopupdateall[lockName]:Disconnect()
+       end
+        if Time == "no" or Time == 0 then
+           stopupdateall[lockName] = RunService.Heartbeat:Connect(callback)
+        else
+           local Updates = tick()
+           stopupdateall[lockName] = RunService.Heartbeat:Connect(function()
+               if tick() - Updates >= Time then
+                  Updates = tick()
+                  callback()
+              end
+           end)
+       end
+   end
+   RunServerlock = functions.RunServerlock
 
 local frame = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.5, 0, 0.1, 0),
@@ -1465,8 +1484,8 @@ local frameinfogui = Create("Frame", ScreenGui, {
 })
 
 local frameinfo = Create("Frame", frameinfogui, {
-    Size = UDim2.new(0.2, 0, 0.18, 0),
-    Position = UDim2.new(0.01, 0, 0.23, 0),
+    Size = UDim2.new(0.27, 0, 0.21, 0),
+    Position = UDim2.new(0.04, 0, 0.24, 0),
     AnchorPoint = Vector2.new(0.04, 0.21),
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 0.5,
@@ -1507,7 +1526,10 @@ local stroke_2 = Create("UIStroke", iconplayers, {
 })
 
 local gradient_2 = Create("UIGradient", stroke_2, {
-    Color = gradient_1.Color,
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    },
     Rotation = 0
 })
 
@@ -1525,9 +1547,35 @@ local Wellcome = Create("TextLabel", frameinfogui, {
 })
 TextSetColor(Wellcome)
 
+local AvaterToHead = Create("ImageButton", frameinfogui, {
+    Size = UDim2.new(0.036, 0, 0.07, 0),
+    Position = UDim2.new(0.37, 0, 0.0765, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5,
+    Image = "rbxthumb://type=Asset&id=93917932838439&w=150&h=150"
+})
+local stroke_2_1 = Create("UIStroke", AvaterToHead, {
+    Color = Color3.fromRGB(255, 255, 255),
+    Thickness = 1,
+    Transparency = 0.1,
+})
+
+local gradient_2_1 = Create("UIGradient", stroke_2_1, {
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0.0, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(1.0, Color3.fromRGB(255, 0, 0))
+    }),
+    Rotation = 0
+})
+
+AvaterToHead.MouseButton1Click:Connect(function()
+    Avatar = not Avatar
+end)
+
 local gameinfoframe = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.27, 0, 0.3, 0),
-    Position = UDim2.new(0.032, 0, 0.785, 0),
+    Position = UDim2.new(0.032, 0, 0.74, 0),
     AnchorPoint = Vector2.new(0.032, 0.51),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5
@@ -1540,13 +1588,21 @@ local stroke_3 = Create("UIStroke", gameinfoframe, {
 })
 
 local gradient_3 = Create("UIGradient", stroke_3, {
-    Color = gradient_1.Color,
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 165, 0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 127, 255)),
+        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(139, 0, 255)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 255))
+    },
     Rotation = 0
 })
 
 local iconGamecreator = Create("ImageLabel", frameinfogui, {
-    Size = UDim2.new(0.04, 0, 0.08, 0),
-    Position = UDim2.new(0.21, 0, 0.162, 0),
+    Size = UDim2.new(0.05, 0, 0.104, 0),
+    Position = UDim2.new(0.315, 0, 0.162, 0),
     AnchorPoint = Vector2.new(0.05, 0.06),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
@@ -1560,13 +1616,40 @@ local stroke_4 = Create("UIStroke", iconGamecreator, {
 })
 
 local gradient_4 = Create("UIGradient", stroke_4, {
-    Color = gradient_1.Color,
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    },
+    Rotation = 0
+})
+
+local iconAvaterGamecreator = Create("ImageLabel", frameinfogui, {
+    Size = UDim2.new(0.05, 0, 0.104, 0),
+    Position = UDim2.new(0.315, 0, 0.162, 0),
+    AnchorPoint = Vector2.new(0.05, 0.06),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5,
+    Image = "",
+    Visible = false
+})
+Corner(iconAvaterGamecreator, {CornerRadius = UDim.new(1, 0)})
+local stroke_4_1 = Create("UIStroke", iconAvaterGamecreator, {
+    Color = Color3.fromRGB(255, 255, 255),
+    Thickness = 1,
+    Transparency = 0.1,
+})
+
+local gradient_4_1 = Create("UIGradient", stroke_4_1, {
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    },
     Rotation = 0
 })
 
 local icongroupicon = Create("ImageLabel", frameinfogui, {
-    Size = UDim2.new(0.04, 0, 0.08, 0),
-    Position = UDim2.new(0.21, 0, 0.252, 0),
+    Size = UDim2.new(0.05, 0, 0.104, 0),
+    Position = UDim2.new(0.315, 0, 0.278, 0),
     AnchorPoint = Vector2.new(0.05, 0.06),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
@@ -1574,9 +1657,9 @@ local icongroupicon = Create("ImageLabel", frameinfogui, {
 })
 
 local grouptext = Create("TextLabel", frameinfogui, {
-    Size = UDim2.new(0.16, 0, 0.065, 0),
+    Size = UDim2.new(0.18, 0, 0.065, 0),
     Text = "Name_Group: ",
-    Position = UDim2.new(0.275, 0, 0.26, 0),
+    Position = UDim2.new(0.39, 0, 0.3, 0),
     AnchorPoint = Vector2.new(0.11, 0.085),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1587,9 +1670,9 @@ local grouptext = Create("TextLabel", frameinfogui, {
 })TextSetColor(grouptext)
 
 local Gamecreatortext = Create("TextLabel", frameinfogui, {
-    Size = UDim2.new(0.16, 0, 0.065, 0),
+    Size = UDim2.new(0.18, 0, 0.065, 0),
     Text = "Creator_Game",
-    Position = UDim2.new(0.275, 0, 0.17, 0),
+    Position = UDim2.new(0.39, 0, 0.18, 0),
     AnchorPoint = Vector2.new(0.11, 0.085),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1600,8 +1683,8 @@ local Gamecreatortext = Create("TextLabel", frameinfogui, {
 })TextSetColor(Gamecreatortext)
 
 local framecreatorinfo = Create("Frame", frameinfogui, {
-    Size = UDim2.new(0.2, 0, 0.18, 0),
-    Position = UDim2.new(0.215, 0, 0.371, 0),
+    Size = UDim2.new(0.23, 0, 0.19, 0),
+    Position = UDim2.new(0.31, 0, 0.45, 0),
     AnchorPoint = Vector2.new(0.04, 0.21),
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 0.5,
@@ -1614,13 +1697,21 @@ local stroke_5 = Create("UIStroke", framecreatorinfo, {
 })
 
 local gradient_5 = Create("UIGradient", stroke_5, {
-    Color = gradient_1.Color,
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 165, 0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 127, 255)),
+        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(139, 0, 255)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 255))
+    },
     Rotation = 0
 })
 
 local iconGame = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
-    Position = UDim2.new(0.04, 0, 0.551, 0),
+    Position = UDim2.new(0.01, 0, 0.47, 0),
     AnchorPoint = Vector2.new(0.04, 0.38),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
@@ -1628,9 +1719,9 @@ local iconGame = Create("ImageLabel", frameinfogui, {
 })
 
 local GameName = Create("TextLabel", frameinfogui, {
-    Size = UDim2.new(0.28, 0, 0.09, 0),
+    Size = UDim2.new(0.215, 0, 0.08, 0),
     Text = "Game Name: " .. gameName,
-    Position = UDim2.new(0.14, 0, 0.561, 0),
+    Position = UDim2.new(0.1, 0, 0.48, 0),
     AnchorPoint = Vector2.new(0.11, 0.405),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1643,7 +1734,7 @@ TextSetColor(GameName)
 
 local frame100 = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.41, 0, 0.48, 0),
-    Position = UDim2.new(0.6178, 0, 0.22, 0),
+    Position = UDim2.new(0.6178 + 0.11, 0, 0.22, 0),
     AnchorPoint = Vector2.new(0.4178, 0.14),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1
@@ -1680,7 +1771,7 @@ local friendsFrame1 = Create("ScrollingFrame", frame100, {
 
 local iconfriend = Create("ImageLabel", frameinfogui, {
     Size = UDim2.new(0.06, 0, 0.124, 0),
-    Position = UDim2.new(0.48, 0, 0.006, 0),
+    Position = UDim2.new(0.48 + 0.11, 0, 0.006, 0),
     AnchorPoint = Vector2.new(0.43, 0.006),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.4,
@@ -1694,14 +1785,17 @@ local stroke_6 = Create("UIStroke", iconfriend, {
 })
 
 local gradient_6 = Create("UIGradient", stroke_6, {
-    Color = gradient_1.Color,
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    },
     Rotation = 0
 })
 
 local friendnumber = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.28, 0, 0.09, 0),
     Text = "Friend: 0/1000",
-    Position = UDim2.new(0.67, 0, 0.03, 0),
+    Position = UDim2.new(0.67 + 0.11, 0, 0.03, 0),
     AnchorPoint = Vector2.new(0.49, 0.029),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1788,7 +1882,7 @@ coroutine.wrap(functions.checkFriends)
 local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
     Text = "TimePlay",
-    Position = UDim2.new(0.5294, 0, 0.681, 0),
+    Position = UDim2.new(0.5294 + 0.11, 0, 0.681, 0),
     AnchorPoint = Vector2.new(0.41, 0.623),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1803,7 +1897,7 @@ Corner(TimePlay, {CornerRadius = UDim.new(0.15, 0)})
 local AccountAge = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
     Text = "AccountAge",
-    Position = UDim2.new(0.7781, 0, 0.681, 0),
+    Position = UDim2.new(0.7781 + 0.11, 0, 0.681, 0),
     AnchorPoint = Vector2.new(0.62, 0.623),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1818,7 +1912,7 @@ Corner(AccountAge, {CornerRadius = UDim.new(0.15, 0)})
 local Join = Create("TextButton", frameinfogui, {
     Size = UDim2.new(0.101, 0, 0.07, 0),
     Text = "Join Game Script\nYou can press Copy",
-    Position = UDim2.new(0.4868, 0, 0.762, 0),
+    Position = UDim2.new(0.4868 + 0.11, 0, 0.762, 0),
     AnchorPoint = Vector2.new(0.41, 0.699),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1833,7 +1927,7 @@ Corner(Join, {CornerRadius = UDim.new(0.15, 0)})
 local Position = Create("TextButton", frameinfogui, {
     Size = UDim2.new(0.101, 0, 0.07, 0),
     Text = "Position\nYou can press Copy",
-    Position = UDim2.new(0.6026, 0, 0.762, 0),
+    Position = UDim2.new(0.6026 + 0.11, 0, 0.762, 0),
     AnchorPoint = Vector2.new(0.528, 0.699),
     TextColor3 = Configs_HUB.Cor_Text,
     TextXAlignment = "Left",
@@ -1941,108 +2035,10 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%02d/%02d/%d", creationDate.month, creationDate.day, creationDate.year)
 end
 
-functions.roundShort = function(x)
-    local y = {
-        {s = "Vg", v = 1e63},
-        {s = "Nd", v = 1e60},
-        {s = "Od", v = 1e57},
-        {s = "Spd", v = 1e54},
-        {s = "Sxd", v = 1e51},
-        {s = "Qid", v = 1e48},
-        {s = "Qad", v = 1e45},
-        {s = "Td",  v = 1e42},
-        {s = "Dd",  v = 1e39},
-        {s = "Ud",  v = 1e36},
-        {s = "Dc",  v = 1e33},
-        {s = "No",  v = 1e30},
-        {s = "Oc",  v = 1e27},
-        {s = "Sp",  v = 1e24},
-        {s = "Sx",  v = 1e21},
-        {s = "Qi",  v = 1e18},
-        {s = "Qa",  v = 1e15},
-        {s = "T",   v = 1e12},
-        {s = "B",   v = 1e9},
-        {s = "M",   v = 1e6},
-        {s = "k",   v = 1e3}
-    }
-    for _, z in ipairs(y) do
-        if x >= z.v then
-            local n = x / z.v
-            local r = math.floor(n * 10 + 0.5) / 10
-            if r == math.floor(r) then
-                return string.format("%d%s", r, z.s)
-            else
-                return string.format("%.1f%s", r, z.s)
-            end
-        end
-    end
-    return tostring(x)
-end
-
-functions.updatePlaceInfo = function()
-    local infoUrl = "https://games.roblox.com/v1/games?universeIds=" .. tostring(game.GameId)
-    local infoData = HttpService:JSONDecode(game:HttpGet(infoUrl))
-    local like = 0
-    local geturlLike = string.format("https://games.roproxy.com/v1/games/%d/votes", game.GameId)
-    local getLikeData = HttpService:JSONDecode(game:HttpGet(geturlLike))
-    like = getLikeData.upVotes or 0
-    if infoData and infoData.data and #infoData.data > 0 then
-        local entry = infoData.data[1]
-        local y1, m1, d1, h1, mi1, s1 = entry.created:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
-        local y2, m2, d2, h2, mi2, s2 = entry.updated:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)")
-        local tsCreated = os.time({
-            year = tonumber(y1),
-            month = tonumber(m1),
-            day = tonumber(d1),
-            hour = tonumber(h1),
-            min = tonumber(mi1),
-            sec = tonumber(s1)
-        })
-        local tsUpdated = os.time({
-            year = tonumber(y2),
-            month = tonumber(m2),
-            day = tonumber(d2),
-            hour = tonumber(h2),
-            min = tonumber(mi2),
-            sec = tonumber(s2)
-        })
-        local brief = {
-            PlaceId = game.PlaceId,
-            Name = entry.name or "Unknown",
-            Created = os.date("%Y-%m-%d %H:%M:%S", tsCreated),
-            Updated = os.date("%Y-%m-%d %H:%M:%S", tsUpdated),
-            Online = entry.playing or 0,
-            Hits = entry.visits or 0,
-            Faves = entry.favoritedCount or 0,
-            RootId = entry.rootPlaceId or "N/A"
-        }
-        GameName.Text = string.format("Game Name: %s", brief.Name)
-        frame79.Text = string.format(
-            "Place ID: %s\nRootPlaceID: %s\nJob ID: %s\nGame ID: %d\nCreated: %s\nUpdated: %s\nActive: %s\nFavorited: %s\nVisits: %s\nLikes: %s",
-            brief.PlaceId,
-            tostring(brief.RootId),
-            game.JobId,
-            game.GameId,
-            brief.Created,
-            brief.Updated,
-            functions.roundShort(brief.Online),
-            functions.roundShort(brief.Faves),
-            functions.roundShort(brief.Hits),
-            functions.roundShort(like)
-        )
-    else
-        GameName.Text = "Game Name: Failed to load"
-        frame79.Text = "Failed to fetch place info."
-    end
-end
-
-functions.updatePlaceInfo()
-
 functions.updateTime = function()
     local currentTime = os.date("*t")
     local hour = currentTime.hour
     local amPm = "AM"
-
     if hour >= 12 then
         amPm = "PM"
         if hour > 12 then
@@ -2051,7 +2047,6 @@ functions.updateTime = function()
     elseif hour == 0 then
         hour = 12
     end
-
     local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
     TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
 end
@@ -2806,17 +2801,13 @@ SettingButton.MouseButton1Click:Connect(function()
     uiStates.frameSetting.state = not state
 end)
 
-local stopupdateall
-local stopupdateall1
-local lastUpdate = tick()
-local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
-local creatorInfo = getCreatorGameandGroupinfo()
-stopupdateall1 = RunService.Heartbeat:Connect(function()
-      local currentTime = tick()
+RunServerlock("Lock1", "no", function()
       gradient_1.Rotation += 1
       gradient_2.Rotation += 1
+      gradient_2_1.Rotation += 1
       gradient_3.Rotation += 1
       gradient_4.Rotation += 1
+      gradient_4_1.Rotation += 1
       gradient_5.Rotation += 1
       gradient_6.Rotation += 1
       for _, data in pairs(playerFrames) do
@@ -2874,36 +2865,45 @@ stopupdateall1 = RunService.Heartbeat:Connect(function()
          game.Players.LocalPlayer.UserId,
          functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
       )
-      frame199.Text = string.format(
-         "Name: %s\nDisplayName: %s\nUserId: %s\nAccount⚒️: %s",
-         creatorInfo.Username,
-         creatorInfo.DisplayName,
-         tostring(creatorInfo.UserId),
-         creatorInfo.CreationDate
-      )
-      Gamecreatortext.Text = "Creator_Game"
-      grouptext.Text = creatorInfo.GroupName
-      iconGamecreator.Image = creatorInfo.headUrl
-      icongroupicon.Image = creatorInfo.GroupIcon
-      iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=420&height=420&format=png"
+      if Avatar then
+          iconAvaterGamecreator.Visible = true
+          iconGamecreator.Visible = false
+          iconplayers.Image = "https://www.roblox.com/avatar-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
+      else
+          iconAvaterGamecreator.Visible = false
+          iconGamecreator.Visible = true
+          iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
+      end
       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
       functions.UpdatePlayerList()
-     if currentTime - lastUpdate >= 1 then
-      functions.updatePlaceInfo()
-    end
+      functions.updatePlaytime()
 end)
 
-stopupdateall = RunService.Heartbeat:Connect(function()
-   local currentTime = tick()
-   if currentTime - lastUpdate >= 1 then
-      functions.updatePlaytime()
+RunServerlock("Lock2", 5, function()
+      local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
+      funcs.updatePlaceInfo(GameName, frame79)
       functions.checkFriends()
       functions.startUpdating()
       functions.updateTime()
       functions.UpdatePlaces()
-      lastUpdate = currentTime
-    end
  end)
+
+RunServerlock("Lock3", 5, function()
+		local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
+		local creatorInfo = getCreatorGameandGroupinfo()
+		frame199.Text = string.format(
+			"Name: %s\nDisplayName: %s\nUserId: %s\nAccount⚒️: %s",
+			creatorInfo.Username,
+			creatorInfo.DisplayName,
+			tostring(creatorInfo.UserId),
+			creatorInfo.CreationDate
+		)
+		Gamecreatortext.Text = "Creator_Game"
+		grouptext.Text = creatorInfo.GroupName
+		iconGamecreator.Image = creatorInfo.headUrl
+		iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
+		icongroupicon.Image = creatorInfo.GroupIcon
+end)
 
 ScreenGui.AncestryChanged:Connect(function()
     if not ScreenGui:IsDescendantOf(game) then
@@ -2953,16 +2953,12 @@ ScreenGui.AncestryChanged:Connect(function()
         click2:Destroy()
         falsetoggle:Destroy()
         clicktoggle:Destroy()
-        if stopupdateall1 then
-            stopupdateall1:Disconnect()
-            stopupdateall1 = nil
+         for name, conn in pairs(stopupdateall) do
+                conn:Disconnect()
+                stopupdateall[name] = nil
+            end
         end
-        if stopupdateall then
-            stopupdateall:Disconnect()
-            stopupdateall = nil
-        end
-    end
-end)
+    end)
 end
 
 local firstVisible = true
