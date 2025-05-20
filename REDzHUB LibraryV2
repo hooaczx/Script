@@ -2501,9 +2501,9 @@ functions.canClick = function()
     return false
 end
 functions.Look = function()
-    local mousePos = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
-    local unitRay = workspace.CurrentCamera:ViewportPointToRay(mousePos.X, mousePos.Y)
-    return unitRay.Origin + unitRay.Direction * 100
+    local zx_1 = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
+    local zx_2 = workspace.CurrentCamera:ViewportPointToRay(zx_1.X, zx_1.Y)
+    return zx_2.Origin + zx_2.Direction * 100
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
@@ -2802,21 +2802,19 @@ SettingButton.MouseButton1Click:Connect(function()
 end)
 
 RunServerlock("Lock1", "no", function()
-      gradient_1.Rotation += 1
-      gradient_2.Rotation += 1
-      gradient_2_1.Rotation += 1
-      gradient_3.Rotation += 1
-      gradient_4.Rotation += 1
-      gradient_4_1.Rotation += 1
-      gradient_5.Rotation += 1
-      gradient_6.Rotation += 1
-      for _, data in pairs(playerFrames) do
+    gradient_1.Rotation += 1
+    gradient_2.Rotation += 1
+    gradient_2_1.Rotation += 1
+    gradient_3.Rotation += 1
+    gradient_4.Rotation += 1
+    gradient_4_1.Rotation += 1
+    gradient_5.Rotation += 1
+    gradient_6.Rotation += 1
+    for _, data in pairs(playerFrames) do
         if data.UI then
             local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
-            if viewButton then
-                if not View or (View and View.button ~= viewButton) then
-                    viewButton.Image = "rbxassetid://96859795672738"
-                end
+            if viewButton and (not View or (View and View.button ~= viewButton)) then
+                viewButton.Image = "rbxassetid://96859795672738"
             end
         end
     end
@@ -2835,74 +2833,66 @@ RunServerlock("Lock1", "no", function()
             end
         end
     end
-      if activeButton then
+    if activeButton then
         for name, data in pairs(uiStates) do
             if name ~= activeButton and data.state then
                 functions.closeOtherUI(name)
-             end
-          end
-      end
-      if ShiftLockmaingui and frameinfopy then
-          frameinfoplayer.Visible = true
-          for _, hi in pairs(CH) do
-                if hi then
-                    hi:Destroy()
-                end
-           end
-           CH = {}
-      else
-          frameinfoplayer.Visible = false
-          for _, hi in pairs(CH) do
-                if hi then
-                    hi:Destroy()
-                end
-           end
-           CH = {}
-      end
-     frame9.Text = string.format(
-         "DisplayName: %s\nUserId: %s\nAccount⚒️: %s",
-         game.Players.LocalPlayer.DisplayName,
-         game.Players.LocalPlayer.UserId,
-         functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
-      )
-      if Avatar then
-          iconAvaterGamecreator.Visible = true
-          iconGamecreator.Visible = false
-          iconplayers.Image = "https://www.roblox.com/avatar-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
-      else
-          iconAvaterGamecreator.Visible = false
-          iconGamecreator.Visible = true
-          iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
-      end
-      iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
-      functions.UpdatePlayerList()
-      functions.updatePlaytime()
+            end
+        end
+    end
+    if ShiftLockmaingui and frameinfopy then
+        frameinfoplayer.Visible = true
+    else
+        frameinfoplayer.Visible = false
+    end
+    for _, hi in pairs(CH) do
+        if hi then hi:Destroy() end
+    end
+    CH = {}
+    frame9.Text = string.format(
+        "DisplayName: %s\nUserId: %s\nAccount⚒️: %s",
+        game.Players.LocalPlayer.DisplayName,
+        game.Players.LocalPlayer.UserId,
+        functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
+    )
+    if Avatar then
+        iconAvaterGamecreator.Visible = true
+        iconGamecreator.Visible = false
+        iconplayers.Image = "https://www.roblox.com/avatar-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
+    else
+        iconAvaterGamecreator.Visible = false
+        iconGamecreator.Visible = true
+        iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
+    end
+    iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid=" .. result.IconImageAssetId .. "&fmt=png&wd=500&ht=500"
+    functions.UpdatePlayerList()
+    functions.updatePlaytime()
 end)
 
 RunServerlock("Lock2", 5, function()
-      local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
-      funcs.updatePlaceInfo(GameName, frame79)
-      functions.checkFriends()
-      functions.startUpdating()
-      functions.updateTime()
-      functions.UpdatePlaces()
- end)
+    local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
+    funcs.updatePlaceInfo(GameName, frame79)
+    functions.checkFriends()
+    functions.startUpdating()
+    functions.updateTime()
+    functions.UpdatePlaces()
+end)
 
 RunServerlock("Lock3", 5, function()
-		local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
-		local creatorInfo = getCreatorGameandGroupinfo()
-		frame199.Text = string.format(
-			"Name: %s\nDisplayName: %s\nUserId: %s\nAccount⚒️: %s",
-			creatorInfo.Username,
-			creatorInfo.DisplayName,
-			tostring(creatorInfo.UserId),
-			creatorInfo.CreationDate
-		)
-		Gamecreatortext.Text = "Creator_Game"
-		grouptext.Text = creatorInfo.GroupName
-		iconGamecreator.Image = creatorInfo.headUrl
-		iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
-		icongroupicon.Image = creatorInfo.GroupIcon
+    local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
+    local creatorInfo = getCreatorGameandGroupinfo()
+    frame199.Text = string.format(
+        "Name: %s\nDisplayName: %s\nUserId: %s\nAccount⚒️: %s",
+        creatorInfo.Username,
+        creatorInfo.DisplayName,
+        tostring(creatorInfo.UserId),
+        creatorInfo.CreationDate
+    )
+    Gamecreatortext.Text = "Creator_Game"
+    grouptext.Text = creatorInfo.GroupName
+    iconGamecreator.Image = creatorInfo.headUrl
+    iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
+    icongroupicon.Image = creatorInfo.GroupIcon
 end)
 
 ScreenGui.AncestryChanged:Connect(function()
