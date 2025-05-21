@@ -2085,7 +2085,31 @@ local descriptionframe = Create("ScrollingFrame", description, {
     SortOrder = Enum.SortOrder.LayoutOrder
 })
 
-functions.UpdateDescription = function(fromFrame, Text, description, image)
+functions.UpdateDescription = function(params)
+    local fromFrame = params.fromFrame
+    local Text = params.Text
+    local description = params.description
+    local image = params.image
+    local textwrapped = params.textwrapped or false
+    local textscaled = params.textscaled or false
+    local size = params.size or 8
+    local len = #description
+    if textwrapped == nil then
+        if len > 100 or description == "" then
+            textwrapped = true
+        else
+            textwrapped = false
+        end
+    end
+    if size == nil then
+        if textwrapped then
+            size = 7
+        elseif len <= 20 then
+            size = math.min(18, 8 + (20 - len))
+        else
+            size = 10
+        end
+    end
     local oldFrame = frameRefs[fromFrame]
     local oldMeta = metaRefs[fromFrame]
     if oldMeta and oldMeta.Text == Text and oldMeta.Description == description and oldMeta.Image == image then
@@ -2116,7 +2140,9 @@ functions.UpdateDescription = function(fromFrame, Text, description, image)
         Font = Configs_HUB.Text_Font,
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 1,
-        TextWrapped = true,
+        TextWrapped = textwrapped or false,
+        TextScaled = textscaled or false,
+        TextSize = size or 8,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Top
     }) TextSetColor(text1)
@@ -3076,7 +3102,7 @@ RunServerlock("Lock1", "no", function()
     end
     if switchtodescription then
 	if not description.Visible then
-		CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
+	CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
         CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762 - 1, 0), 1, false)
         CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681 - 1, 0), 1, false)
         CreateTween(Join, "Position", UDim2.new(0.4868 + 0.11, 0, 0.762 - 1, 0), 1, false)
@@ -3099,9 +3125,9 @@ RunServerlock("Lock1", "no", function()
         switchpage.Text = "Switch To Page 1"
         description.Visible = true
 	end
-else
-	if description.Visible then
-		CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681, 0), 1, false)
+    else
+	if description.Visible then 
+        CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681, 0), 1, false)
         CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762, 0), 1, false)
         CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681, 0), 1, false)
         CreateTween(Join, "Position", UDim2.new(0.4868 + 0.11, 0, 0.762, 0), 1, false)
@@ -3123,7 +3149,7 @@ else
         CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06, 0), 1, true)
         switchpage.Text = "Switch To Page 2"
         description.Visible = false
-	   end
+      end
     end
     iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid=" .. result.IconImageAssetId .. "&fmt=png&wd=500&ht=500"
     functions.UpdatePlayerList()
@@ -3154,10 +3180,12 @@ RunServerlock("Lock3", 5, function()
     iconGamecreator.Image = creatorInfo.headUrl
     iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
     icongroupicon.Image = creatorInfo.GroupIcon
-    functions.UpdateDescription(1, "Your Description Account", functions.getplayerdescription(game.Players.LocalPlayer.UserId), "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png")
-    functions.UpdateDescription(2, "Creator Game Description", functions.getplayerdescription(tostring(creatorInfo.UserId)), "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png")
-    functions.UpdateDescription(3, "Game Description", functions.getGameDesc(PlaceId), "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500")
-    functions.UpdateDescription(4, "Group Description", creatorInfo.GroupDescription, creatorInfo.GroupIcon)
+    if description.Visible then
+       functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game.Players.LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png"})
+       functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png"})
+       functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"})
+       functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon})
+    end
 end)
 
 ScreenGui.AncestryChanged:Connect(function()
