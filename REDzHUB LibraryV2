@@ -654,8 +654,8 @@ notify({
 })
 
  function MinimizeButton(Configs)
-    local functions = {}
-    local stopupdateall = {}
+    local functions = {} 
+    local frameRefs, metaRefs, ddesug, stopupdateall, _XyZ, _cvZ = {}, {}, {}, {}, {}, {}
     local minimize1 = false
     local minimize = true
     local minimize3 = false
@@ -685,6 +685,8 @@ notify({
     local displayedFriends = {}
     local frameinfopy = false
     local Avatar = false
+    local switchtodescription = false
+    local waitswitchpage = false
     local image = Configs.Image or ""
     functions.RunServerlock = function(lockName, Time, callback)
         if stopupdateall[lockName] then
@@ -1741,7 +1743,7 @@ local frame100 = Create("Frame", frameinfogui, {
 })
 
 local FriendList = Create("TextLabel", frame100, {
-    Size = UDim2.new(1, 0, 0.13, 0),
+    Size = UDim2.new(1, 0, 0.1, 0),
     Position = UDim2.new(0, 0, 0.001, 0),
     Text = "Friend List",
     TextColor3 = Configs_HUB.Cor_Text,
@@ -1983,6 +1985,207 @@ TextSetColor(frame79)
 local listLayout1 = Create("UIListLayout", frame79, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 5)})
 local listLayout2 = Create("UIListLayout", frame9, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
 local listLayout3 = Create("UIListLayout", frame199, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6)})
+
+local frameswitchpage = Create("Frame", frameinfogui, {
+    Size = UDim2.new(0.14, 0, 0.08, 0),
+    Position = UDim2.new(0.32, 0, 0.8, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5
+})Corner(frameswitchpage, {CornerRadius = UDim.new(0.15, 0)})local stroke_6_1 = Create("UIStroke", frameswitchpage, {
+    Color = Color3.fromRGB(255, 255, 255),
+    Thickness = 1,
+    Transparency = 0.1,
+})
+
+local gradient_6_1 = Create("UIGradient", stroke_6_1, {
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 165, 0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 127, 255)),
+        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(139, 0, 255)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 255))
+    },
+    Rotation = 0
+})
+
+local switchpage = Create("TextButton", frameswitchpage, {
+    Size = UDim2.new(1, 0, 1, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    Font = Configs_HUB.Text_Font,
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextScaled = true, 
+    Text = "Switch To Page 2",
+})TextSetColor(switchpage)Corner(switchpage, {CornerRadius = UDim.new(0.15, 0)})
+local stroke_6_2 = Create("UIStroke", switchpage, {
+    Color = Color3.fromRGB(255, 255, 255),
+    Thickness = 1,
+    Transparency = 0.1,
+})
+
+local gradient_6_2 = Create("UIGradient", stroke_6_1, {
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 0))
+    },
+    Rotation = 0
+})
+
+switchpage.MouseButton1Click:Connect(function()
+    if not waitswitchpage then
+        waitswitchpage = true
+        switchtodescription = not switchtodescription
+        wait(1.1)
+        waitswitchpage = false
+    end
+end)
+
+local description = Create("Frame", frameinfogui, {
+    Size = UDim2.new(0.45, 0, 0.6, 0),
+    Position = UDim2.new(0.02, 0, 0.37, 0),
+    AnchorPoint = Vector2.new(0.032, 0.51),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 0.5, 
+    Visible = false
+})Corner(description)Stroke(description)
+
+local Textdescpn = Create("TextLabel", description, {
+    Size = UDim2.new(1, 0, 0.1, 0),
+    Position = UDim2.new(0, 0, 0, 0),
+    Text = "Menu Description",
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1
+})TextSetColor(Textdescpn)
+
+local lined = Create("Frame", description, {
+    Size = UDim2.new(1, 0, 0.005, 0),
+    Position = UDim2.new(0, 0, 0.1, 0), 
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BorderSizePixel = 0
+})
+
+local descriptionframe = Create("ScrollingFrame", description, {
+    Size = UDim2.new(0.87, 0, 0.87, 0),
+    Position = UDim2.new(0.07, 0, 0.115, 0),
+    AutomaticCanvasSize = Enum.AutomaticSize.X,
+    ScrollingDirection = Enum.ScrollingDirection.X,
+    ScrollBarThickness = 0,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1
+})local descriptionframelistLayout = Create("UIListLayout", descriptionframe, {
+    Padding = UDim.new(0, 5),
+    FillDirection = Enum.FillDirection.Horizontal,
+    SortOrder = Enum.SortOrder.LayoutOrder
+})
+
+functions.UpdateDescription = function(fromFrame, Text, description, image)
+    local oldFrame = frameRefs[fromFrame]
+    local oldMeta = metaRefs[fromFrame]
+    if oldMeta and oldMeta.Text == Text and oldMeta.Description == description and oldMeta.Image == image then
+        return
+    end
+    if oldFrame and oldFrame.Parent then
+        oldFrame:Destroy()
+    end
+    local newFrame = Create("Frame", descriptionframe, {
+        Size = UDim2.new(0.8, 0, 0.4, 0),
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0.5
+    })
+    local text = Create("TextLabel", newFrame, {
+        Size = UDim2.new(0.88, 0, 0.1, 0),
+        Position = UDim2.new(0.12, 0, 0.03, 0),
+        Text = Text or "",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        BackgroundColor3 = Configs_HUB.Cor_Hub,
+        BackgroundTransparency = 1
+    })TextSetColor(text)
+    local text1 = Create("TextLabel", newFrame, {
+        Size = UDim2.new(1, 0, 0.84, 0),
+        Position = UDim2.new(0, 0, 0.16, 0),
+        Text = description or "",
+        TextColor3 = Configs_HUB.Cor_Text,
+        Font = Configs_HUB.Text_Font,
+        BackgroundColor3 = Configs_HUB.Cor_Hub,
+        BackgroundTransparency = 1,
+        TextWrapped = true,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top
+    }) TextSetColor(text1)
+    Create("Frame", newFrame, {
+        Size = UDim2.new(1, 0, 0.005, 0),
+        Position = UDim2.new(0, 0, 0.16, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BorderSizePixel = 0
+    })
+    Create("ImageLabel", newFrame, {
+        Size = UDim2.new(0.11, 0, 0.16, 0),
+        Position = UDim2.new(0, 0, 0, 0),
+        AnchorPoint = Vector2.new(0.05, 0.06),
+        BackgroundColor3 = Configs_HUB.Cor_Hub,
+        BackgroundTransparency = 1,
+        Image = image or ""
+    })
+    frameRefs[fromFrame] = newFrame
+    metaRefs[fromFrame] = {
+        Text = Text,
+        Description = description,
+        Image = image
+    }
+end
+
+functions.getplayerdescription = function(userId)
+    local zx_Desc = ddesug[userId]
+    local desc = ""
+    local success, response = pcall(function()
+        return game:HttpGet("https://users.roblox.com/v1/users/" .. userId)
+    end)
+    if success then
+        local data = HttpService:JSONDecode(response)
+        desc = data.description or ""
+        if desc == "" then
+            if userId == game.Players.LocalPlayer.UserId then
+                desc = "No description set for your account."
+            else
+                desc = "User has no description."
+            end
+        end
+        if zx_Desc == desc then
+            return zx_Desc
+        else
+            ddesug[userId] = desc
+            return desc
+        end
+    else
+        return zx_Desc or "Failed to load description" 
+    end
+end
+
+functions.getGameDesc = function(_id)
+    local cachedDesc = _XyZ[_id]
+    local success, productInfo = pcall(function()
+        return game:GetService("MarketplaceService"):GetProductInfo(_id)
+    end)
+    if success and productInfo then
+        local desc = productInfo.Description or "This game has no description"
+        if cachedDesc == desc then
+            return cachedDesc
+        else
+            _XyZ[_id] = desc
+            return desc
+        end
+    else
+        return cachedDesc or "Failed to load game description"
+    end
+end
 
 functions.startUpdating = function()
     functions._additionalPlayTime = (functions._additionalPlayTime or 0) + 1
@@ -2501,9 +2704,9 @@ functions.canClick = function()
     return false
 end
 functions.Look = function()
-    local zx_1 = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
-    local zx_2 = workspace.CurrentCamera:ViewportPointToRay(zx_1.X, zx_1.Y)
-    return zx_2.Origin + zx_2.Direction * 100
+    local mousePos = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
+    local unitRay = workspace.CurrentCamera:ViewportPointToRay(mousePos.X, mousePos.Y)
+    return unitRay.Origin + unitRay.Direction * 100
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
@@ -2696,6 +2899,7 @@ functions.closeOtherUI = function(exceptName)
 end
 
 SplitgameToggleButton.MouseButton1Click:Connect(function()
+    if switchtodescription then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(SplitgameToggleButton)
     local state = uiStates.framek.state
@@ -2713,6 +2917,7 @@ SplitgameToggleButton.MouseButton1Click:Connect(function()
 end)
 
 PlayerListToggleButton.MouseButton1Click:Connect(function()
+    if switchtodescription then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(PlayerListToggleButton)
     local state = uiStates.framep.state
@@ -2730,6 +2935,7 @@ PlayerListToggleButton.MouseButton1Click:Connect(function()
 end)
 
 infoToggleButton.MouseButton1Click:Connect(function()
+    if switchtodescription then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(infoToggleButton)
     local state = uiStates.frameinfogui.state
@@ -2747,6 +2953,7 @@ infoToggleButton.MouseButton1Click:Connect(function()
 end)
 
 Button.MouseButton1Click:Connect(function()
+    if switchtodescription then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(Button)
     local state = uiStates.Menu.state
@@ -2785,6 +2992,7 @@ Button.MouseButton1Click:Connect(function()
 end)
 
 SettingButton.MouseButton1Click:Connect(function()
+    if switchtodescription then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(SettingButton)
     local state = uiStates.frameSetting.state
@@ -2810,6 +3018,8 @@ RunServerlock("Lock1", "no", function()
     gradient_4_1.Rotation += 1
     gradient_5.Rotation += 1
     gradient_6.Rotation += 1
+    gradient_6_1.Rotation += 1
+    gradient_6_2.Rotation += 1
     for _, data in pairs(playerFrames) do
         if data.UI then
             local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
@@ -2864,6 +3074,57 @@ RunServerlock("Lock1", "no", function()
         iconGamecreator.Visible = true
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=720&height=720&format=png"
     end
+    if switchtodescription then
+	if not description.Visible then
+		CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
+        CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762 - 1, 0), 1, false)
+        CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681 - 1, 0), 1, false)
+        CreateTween(Join, "Position", UDim2.new(0.4868 + 0.11, 0, 0.762 - 1, 0), 1, false)
+        CreateTween(friendnumber, "Position", UDim2.new(0.67 + 0.11, 0, 0.03 - 1, 0), 1, false)
+        CreateTween(iconfriend, "Position", UDim2.new(0.48 + 0.11, 0, 0.006 - 1, 0), 1, false)
+        CreateTween(frame100, "Position", UDim2.new(0.6178 + 0.11, 0, 0.22 - 1, 0), 1, false)
+        CreateTween(frameinfo, "Position", UDim2.new(0.04, 0, 0.24 - 1, 0), 1, false)
+        CreateTween(GameName, "Position", UDim2.new(0.1, 0, 0.48 - 1, 0), 1, false)
+        CreateTween(iconGame, "Position", UDim2.new(0.01, 0, 0.47 - 1, 0), 1, false)
+        CreateTween(framecreatorinfo, "Position", UDim2.new(0.31, 0, 0.45 - 1, 0), 1, false)
+        CreateTween(Gamecreatortext, "Position", UDim2.new(0.39, 0, 0.18 - 1, 0), 1, false)
+        CreateTween(grouptext, "Position", UDim2.new(0.39, 0, 0.3 - 1, 0), 1, false)
+        CreateTween(icongroupicon, "Position", UDim2.new(0.315, 0, 0.278 - 1, 0), 1, false)
+        CreateTween(iconAvaterGamecreator, "Position", UDim2.new(0.315, 0, 0.162 - 1, 0), 1, false)
+        CreateTween(iconGamecreator, "Position", UDim2.new(0.315, 0, 0.162 - 1, 0), 1, false)
+        CreateTween(gameinfoframe, "Position", UDim2.new(0.032, 0, 0.74 - 1, 0), 1, false)
+        CreateTween(AvaterToHead, "Position", UDim2.new(0.37, 0, 0.0765 - 1, 0), 1, false)
+        CreateTween(Wellcome, "Position", UDim2.new(0.14, 0, 0.077 - 1, 0), 1, false)
+        CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06 - 1, 0), 1, true)
+        switchpage.Text = "Switch To Page 1"
+        description.Visible = true
+	end
+else
+	if description.Visible then
+		CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681, 0), 1, false)
+        CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762, 0), 1, false)
+        CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681, 0), 1, false)
+        CreateTween(Join, "Position", UDim2.new(0.4868 + 0.11, 0, 0.762, 0), 1, false)
+        CreateTween(friendnumber, "Position", UDim2.new(0.67 + 0.11, 0, 0.03, 0), 1, false)
+        CreateTween(iconfriend, "Position", UDim2.new(0.48 + 0.11, 0, 0.006, 0), 1, false)
+        CreateTween(frame100, "Position", UDim2.new(0.6178 + 0.11, 0, 0.22, 0), 1, false)
+        CreateTween(frameinfo, "Position", UDim2.new(0.04, 0, 0.24, 0), 1, false)
+        CreateTween(GameName, "Position", UDim2.new(0.1, 0, 0.48, 0), 1, false)
+        CreateTween(iconGame, "Position", UDim2.new(0.01, 0, 0.47, 0), 1, false)
+        CreateTween(framecreatorinfo, "Position", UDim2.new(0.31, 0, 0.45, 0), 1, false)
+        CreateTween(Gamecreatortext, "Position", UDim2.new(0.39, 0, 0.18, 0), 1, false)
+        CreateTween(grouptext, "Position", UDim2.new(0.39, 0, 0.3, 0), 1, false)
+        CreateTween(icongroupicon, "Position", UDim2.new(0.315, 0, 0.278, 0), 1, false)
+        CreateTween(iconAvaterGamecreator, "Position", UDim2.new(0.315, 0, 0.162, 0), 1, false)
+        CreateTween(iconGamecreator, "Position", UDim2.new(0.315, 0, 0.162, 0), 1, false)
+        CreateTween(gameinfoframe, "Position", UDim2.new(0.032, 0, 0.74, 0), 1, false)
+        CreateTween(AvaterToHead, "Position", UDim2.new(0.37, 0, 0.0765, 0), 1, false)
+        CreateTween(Wellcome, "Position", UDim2.new(0.14, 0, 0.077, 0), 1, false)
+        CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06, 0), 1, true)
+        switchpage.Text = "Switch To Page 2"
+        description.Visible = false
+	   end
+    end
     iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid=" .. result.IconImageAssetId .. "&fmt=png&wd=500&ht=500"
     functions.UpdatePlayerList()
     functions.updatePlaytime()
@@ -2880,7 +3141,7 @@ end)
 
 RunServerlock("Lock3", 5, function()
     local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
-    local creatorInfo = getCreatorGameandGroupinfo()
+    local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
     frame199.Text = string.format(
         "Name: %s\nDisplayName: %s\nUserId: %s\nAccount⚒️: %s",
         creatorInfo.Username,
@@ -2893,6 +3154,10 @@ RunServerlock("Lock3", 5, function()
     iconGamecreator.Image = creatorInfo.headUrl
     iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
     icongroupicon.Image = creatorInfo.GroupIcon
+    functions.UpdateDescription(1, "Your Description Account", functions.getplayerdescription(game.Players.LocalPlayer.UserId), "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png")
+    functions.UpdateDescription(2, "Creator Game Description", functions.getplayerdescription(tostring(creatorInfo.UserId)), "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png")
+    functions.UpdateDescription(3, "Game Description", functions.getGameDesc(PlaceId), "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500")
+    functions.UpdateDescription(4, "Group Description", creatorInfo.GroupDescription, creatorInfo.GroupIcon)
 end)
 
 ScreenGui.AncestryChanged:Connect(function()
@@ -4500,3 +4765,34 @@ end
    end
    return Menu
 end
+
+MakeWindow({
+  Hub = {
+    Title = "test",
+    Animation = "Hi!"
+  },
+  Key = {
+    KeySystem = false,
+    Title = "Key System",
+    Description = "",
+    KeyLink = "",
+    Keys = {"1234"},
+    Notifi = {
+      Notifications = true,
+      CorrectKey = "Running the Script...",
+      Incorrectkey = "The key is incorrect",
+      CopyKeyLink = "Copied to Clipboard"
+    }
+  }
+})
+
+
+MinimizeButton({
+    Image = "rbxthumb://type=Asset&id=78948366103903&w=150&h=150",
+})
+MakeNotifi({
+  Title = "Hi",
+  Text = "I want to say that I hope you Enjoy My script",
+  Time = 5
+})
+local Main3 = MakeTab({Name = "test"})
