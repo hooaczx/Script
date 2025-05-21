@@ -2093,23 +2093,6 @@ functions.UpdateDescription = function(params)
     local textwrapped = params.textwrapped or false
     local textscaled = params.textscaled or false
     local size = params.size or 8
-    local len = #description
-    if textwrapped == nil then
-        if len > 100 or description == "" then
-            textwrapped = true
-        else
-            textwrapped = false
-        end
-    end
-    if size == nil then
-        if textwrapped then
-            size = 7
-        elseif len <= 20 then
-            size = math.min(18, 8 + (20 - len))
-        else
-            size = 10
-        end
-    end
     local oldFrame = frameRefs[fromFrame]
     local oldMeta = metaRefs[fromFrame]
     if oldMeta and oldMeta.Text == Text and oldMeta.Description == description and oldMeta.Image == image then
@@ -3181,10 +3164,10 @@ RunServerlock("Lock3", 5, function()
     iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
     icongroupicon.Image = creatorInfo.GroupIcon
     if description.Visible then
-       functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game.Players.LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png"})
-       functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png"})
-       functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"})
-       functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon})
+       functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game.Players.LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png", textwrapped = true})
+       functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png", textwrapped = true})
+       functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
+       functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon, textwrapped = true})
     end
 end)
 
