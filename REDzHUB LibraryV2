@@ -1364,101 +1364,160 @@ unviewallplayerbutton.MouseButton1Click:Connect(function()
 end)
 
 functions.UpdatePlayerList = function()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    frametext.Text = "Players in Server " .. string.format("%d/%d", #Players:GetPlayers(), Players.MaxPlayers)    
-    local cg = {}
-    for _, player in ipairs(Players:GetPlayers()) do
-        cg[player.UserId] = player
-        if not playerFrames[player.UserId] then
-            local isCreator = (
-                (game.CreatorType == Enum.CreatorType.User and player.UserId == game.CreatorId)
-                or (game.CreatorType == Enum.CreatorType.Group and player:GetRankInGroup(game.CreatorId) == 255)
-            )local MeCreator = isCreator and player == LocalPlayer
-            local isFriend = player:IsFriendsWith(LocalPlayer.UserId)
-            local frame = Create("Frame", ScrollBarPlayers, {
+    local _ps = game:GetService("Players")
+    local _lp = _ps.LocalPlayer
+    local _plrs = _ps:GetPlayers()
+    frametext.Text = "Players in Server " .. string.format("%d/%d", #_plrs, _ps.MaxPlayers)
+    local _ids = {}    
+    for _, _p in ipairs(_plrs) do
+        _ids[_p.UserId] = true
+        local _isC = false
+        if game.CreatorType == Enum.CreatorType.User then
+            _isC = (_p.UserId == game.CreatorId)
+        elseif game.CreatorType == Enum.CreatorType.Group then
+            local success, rank = pcall(function()
+                return _p:GetRankInGroup(game.CreatorId)
+            end)
+            if success and rank == 255 then
+                _isC = true
+            end
+        end
+        local _meC = _isC and _p == _lp
+        local _isF = false
+        if _p ~= _lp then
+            local success, isFriend = pcall(function()
+                return _p:IsFriendsWith(_lp.UserId)
+            end)
+            if success and isFriend then
+                _isF = true
+            end
+        end
+        if not playerFrames[_p.UserId] then
+            local _f = Create("Frame", ScrollBarPlayers, {
                 Size = UDim2.new(0.95, 0, 0.18, 0),
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                 BackgroundTransparency = 1
             })
-            Corner(frame)
-            Stroke(frame)
-            Create("TextLabel", frame, {
+            Corner(_f)
+            Stroke(_f)
+            local _lbl = Create("TextLabel", _f, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
                 Position = UDim2.new(0.089, 0, 0, 0),
-                Text = player.DisplayName,
+                Text = _p.DisplayName,
                 TextXAlignment = "Left",
                 BackgroundTransparency = 1,
                 TextColor3 = Configs_HUB.Cor_Text,
                 Font = Configs_HUB.Text_Font,
-                TextScaled = true
+                TextScaled = true,
+                Name = "DisplayName"
             })
-            local infoText = "@" .. player.Name
-            if MeCreator then
-                 infoText = infoText .. " • You are the game creator"
-            elseif isCreator then
-                 infoText = infoText .. " • You met the game creator!"
-            elseif isFriend then
-                 infoText = infoText .. " • Your Friend"
+            local _info = "@" .. _p.Name
+            if _meC then
+                _info = _info .. " • You are the game creator"
+            elseif _isC then
+                _info = _info .. " • You met the game creator!"
+            elseif _isF then
+                _info = _info .. " • Your Friend"
             end
-            Create("TextLabel", frame, {
+            local _il = Create("TextLabel", _f, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
                 Position = UDim2.new(0.089, 0, 0.5, 0),
-                Text = infoText,
+                Text = _info,
                 TextXAlignment = "Left",
                 BackgroundTransparency = 1,
                 TextColor3 = Color3.fromRGB(114, 117, 130),
                 Font = Configs_HUB.Text_Font,
-                TextScaled = true
+                TextScaled = true,
+                Name = "Info"
             })
-            local avatar = Create("ImageLabel", frame, {
+            local _avt = Create("ImageLabel", _f, {
                 Size = UDim2.new(0.078, 0, 0.95, 0),
                 Position = UDim2.new(0.005, 0, 0.015, 0),
                 BackgroundTransparency = 1,
-                Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. player.UserId
+                Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. _p.UserId
             })
-            Corner(avatar, {CornerRadius = UDim.new(1, 0)})
-            Stroke(avatar, {Color = Color3.fromRGB(255, 255, 255)})
-            if player ~= LocalPlayer then
-                local viewButton = Create("ImageButton", frame, {
+            Corner(_avt, {CornerRadius = UDim.new(1, 0)})
+            Stroke(_avt, {Color = Color3.fromRGB(255, 255, 255)})
+            if _p ~= _lp then
+                local _btn = Create("ImageButton", _f, {
                     Size = UDim2.new(0.09, 0, 0.95, 0),
                     Position = UDim2.new(0.905, 0, 0.025, 0),
                     BackgroundColor3 = Configs_HUB.Cor_Options,
                     BackgroundTransparency = 1,
                     Image = "rbxassetid://96859795672738"
                 })
-                viewButton.MouseButton1Click:Connect(function()
-                    if View and View.button == viewButton then
-                        viewButton.Image = "rbxassetid://96859795672738"
+                _btn.MouseButton1Click:Connect(function()
+                    if View and View.button == _btn then
+                        _btn.Image = "rbxassetid://96859795672738"
                         View = nil
                     else
-                        View = {
-                            player = player,
-                            button = viewButton
-                        }
-                        viewButton.Image = "rbxassetid://137903829820448"
+                        if View and View.button then
+                            View.button.Image = "rbxassetid://96859795672738"
+                        end
+                        if _p and _p.Parent then
+                            View = {
+                                player = _p,
+                                button = _btn
+                            }
+                            _btn.Image = "rbxassetid://137903829820448"
+                        else
+                            View = nil
+                            _btn.Image = "rbxassetid://96859795672738"
+                        end
                     end
                 end)
             end
-            playerFrames[player.UserId] = { UI = frame }
+            playerFrames[_p.UserId] = {
+                UI = _f,
+                DisplayName = _p.DisplayName,
+                Username = _p.Name
+            }
+        else
+            if playerFrames[_p.UserId].DisplayName ~= _p.DisplayName then
+                local _lbl = playerFrames[_p.UserId].UI:FindFirstChild("DisplayName")
+                if _lbl then
+                    _lbl.Text = _p.DisplayName
+                end
+                playerFrames[_p.UserId].DisplayName = _p.DisplayName
+            end
+            if playerFrames[_p.UserId].Username ~= _p.Name then
+                local _il = playerFrames[_p.UserId].UI:FindFirstChild("Info")
+                if _il then
+                    local _info = "@" .. _p.Name
+                    if _meC then
+                        _info = _info .. " • You are the game creator"
+                    elseif _isC then
+                        _info = _info .. " • You met the game creator!"
+                    elseif _isF then
+                        _info = _info .. " • Your Friend"
+                    end
+                    _il.Text = _info
+                end
+                playerFrames[_p.UserId].Username = _p.Name
+            end
         end
     end
-    for userId, data in pairs(playerFrames) do
-        if not cg[userId] then
-            if data.UI and data.UI.Parent then data.UI:Destroy() end
-            playerFrames[userId] = nil
-            if View and View.player and View.player.UserId == userId then
-                local localChar = Players.LocalPlayer.Character
-                if localChar then
-                    local humanoid = localChar:FindFirstChild("Humanoid")
-                    if humanoid then
-                        workspace.CurrentCamera.CameraSubject = humanoid
+    for _id, _data in pairs(playerFrames) do
+        if not _ids[_id] then
+            if _data.UI and _data.UI.Parent then
+                _data.UI:Destroy()
+            end
+            playerFrames[_id] = nil            
+            if View and View.player and View.player.UserId == _id then
+                local _char = _lp.Character
+                if _char then
+                    local _hum = _char:FindFirstChild("Humanoid")
+                    if _hum then
+                        workspace.CurrentCamera.CameraSubject = _hum
                         workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
                     end
                 end
                 View = nil
             end
         end
+    end
+    if View and (not View.player or not View.player.Parent) then
+        View = nil
     end
 end
 
