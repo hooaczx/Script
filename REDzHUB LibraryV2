@@ -1364,11 +1364,18 @@ unviewallplayerbutton.MouseButton1Click:Connect(function()
 end)
 
 functions.UpdatePlayerList = function()
-    frametext.Text = "Players in Server " .. string.format("%d/%d", #game:GetService("Players"):GetPlayers(), game:GetService("Players").MaxPlayers)
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    frametext.Text = "Players in Server " .. string.format("%d/%d", #Players:GetPlayers(), Players.MaxPlayers)    
     local cg = {}
-    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    for _, player in ipairs(Players:GetPlayers()) do
         cg[player.UserId] = player
         if not playerFrames[player.UserId] then
+            local isCreator = (
+                (game.CreatorType == Enum.CreatorType.User and player.UserId == game.CreatorId)
+                or (game.CreatorType == Enum.CreatorType.Group and player:GetRankInGroup(game.CreatorId) == 255)
+            )local MeCreator = isCreator and player == LocalPlayer
+            local isFriend = player:IsFriendsWith(LocalPlayer.UserId)
             local frame = Create("Frame", ScrollBarPlayers, {
                 Size = UDim2.new(0.95, 0, 0.18, 0),
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -1386,10 +1393,18 @@ functions.UpdatePlayerList = function()
                 Font = Configs_HUB.Text_Font,
                 TextScaled = true
             })
+            local infoText = "@" .. player.Name
+            if MeCreator then
+                 infoText = infoText .. " • You are the game creator"
+            elseif isCreator then
+                 infoText = infoText .. " • You met the game creator!"
+            elseif isFriend then
+                 infoText = infoText .. " • Your Friend"
+            end
             Create("TextLabel", frame, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
                 Position = UDim2.new(0.089, 0, 0.5, 0),
-                Text = "@" .. player.Name,
+                Text = infoText,
                 TextXAlignment = "Left",
                 BackgroundTransparency = 1,
                 TextColor3 = Color3.fromRGB(114, 117, 130),
@@ -1404,7 +1419,7 @@ functions.UpdatePlayerList = function()
             })
             Corner(avatar, {CornerRadius = UDim.new(1, 0)})
             Stroke(avatar, {Color = Color3.fromRGB(255, 255, 255)})
-            if player ~= game:GetService("Players").LocalPlayer then
+            if player ~= LocalPlayer then
                 local viewButton = Create("ImageButton", frame, {
                     Size = UDim2.new(0.09, 0, 0.95, 0),
                     Position = UDim2.new(0.905, 0, 0.025, 0),
@@ -1414,20 +1429,9 @@ functions.UpdatePlayerList = function()
                 })
                 viewButton.MouseButton1Click:Connect(function()
                     if View and View.button == viewButton then
-                        local localChar = game:GetService("Players").LocalPlayer.Character
-                        if localChar then
-                            local humanoid = localChar:FindFirstChild("Humanoid")
-                            if humanoid then
-                                workspace.CurrentCamera.CameraSubject = humanoid
-                                workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-                            end
-                        end
                         viewButton.Image = "rbxassetid://96859795672738"
                         View = nil
                     else
-                        if View and View.button then
-                            View.button.Image = "rbxassetid://96859795672738"
-                        end
                         View = {
                             player = player,
                             button = viewButton
@@ -1444,7 +1448,7 @@ functions.UpdatePlayerList = function()
             if data.UI and data.UI.Parent then data.UI:Destroy() end
             playerFrames[userId] = nil
             if View and View.player and View.player.UserId == userId then
-                local localChar = game:GetService("Players").LocalPlayer.Character
+                local localChar = Players.LocalPlayer.Character
                 if localChar then
                     local humanoid = localChar:FindFirstChild("Humanoid")
                     if humanoid then
@@ -1729,8 +1733,31 @@ local GameName = Create("TextLabel", frameinfogui, {
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
     TextScaled = true,
-})
-TextSetColor(GameName)
+})TextSetColor(GameName)
+
+local iconvideo = Create("VideoFrame", frameinfogui, {
+    Size = UDim2.new(0.05, 0, 0.104, 0),
+    Position = UDim2.new(0.315, 0, 0.638, 0),
+    AnchorPoint = Vector2.new(0.05, 0.06),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    Looped = true
+})local iconvideourl = "https://github.com/hooaczx/Video/raw/refs/heads/main/vintage-poppy.mp4"
+local iveo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetVideo"))()
+iveo(iconvideo, iconvideourl)
+
+local welcometext = Create("TextLabel", frameinfogui, {
+    Size = UDim2.new(0.18, 0, 0.065, 0),
+    Text = "Hope you Enjoy The My Script",
+    Position = UDim2.new(0.39, 0, 0.66, 0),
+    AnchorPoint = Vector2.new(0.11, 0.085),
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = "Left",
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    TextScaled = true
+})TextSetColor(welcometext)
 
 local frame100 = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.41, 0, 0.48, 0),
@@ -1740,17 +1767,24 @@ local frame100 = Create("Frame", frameinfogui, {
     BackgroundTransparency = 1
 })
 
+local backgroundvideo = Create("VideoFrame", frame100, {
+    Size = UDim2.new(1, 0, 1, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1,
+    Looped = true
+})local backgroundvideourl = "https://github.com/hooaczx/Video/raw/refs/heads/main/star.mp4"
+local bveo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetVideo"))()
+bveo(backgroundvideo, backgroundvideourl)
+
 local FriendList = Create("TextLabel", frame100, {
-    Size = UDim2.new(1, 0, 0.1, 0),
+    Size = UDim2.new(1, 0, 0.13, 0),
     Position = UDim2.new(0, 0, 0.001, 0),
     Text = "Friend List",
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5
-})
-TextSetColor(FriendList)
-Corner(FriendList, {CornerRadius = UDim.new(1, 0)})
+})TextSetColor(FriendList)
 
 local friendsFrame1 = Create("ScrollingFrame", frame100, {
     Size = UDim2.new(1, 0, 0.87, 0),
@@ -3100,7 +3134,9 @@ RunServerlock("Lock1", "no", function()
         CreateTween(gameinfoframe, "Position", UDim2.new(0.032, 0, 0.74 - 1, 0), 1, false)
         CreateTween(AvaterToHead, "Position", UDim2.new(0.37, 0, 0.0765 - 1, 0), 1, false)
         CreateTween(Wellcome, "Position", UDim2.new(0.14, 0, 0.077 - 1, 0), 1, false)
-        CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06 - 1, 0), 1, true)
+        CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06 - 1, 0), 1, false)
+        CreateTween(welcometext, "Position", UDim2.new(0.39, 0, 0.66 - 1, 0), 1, false)
+        CreateTween(iconvideo, "Position", UDim2.new(0.315, 0, 0.638 - 1, 0), 1, true)
         switchpage.Text = "Switch To Page 1"
         description.Visible = true
 	end
@@ -3125,7 +3161,9 @@ RunServerlock("Lock1", "no", function()
         CreateTween(gameinfoframe, "Position", UDim2.new(0.032, 0, 0.74, 0), 1, false)
         CreateTween(AvaterToHead, "Position", UDim2.new(0.37, 0, 0.0765, 0), 1, false)
         CreateTween(Wellcome, "Position", UDim2.new(0.14, 0, 0.077, 0), 1, false)
-        CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06, 0), 1, true)
+        CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06, 0), 1, false)
+        CreateTween(welcometext, "Position", UDim2.new(0.39, 0, 0.66, 0), 1, false)
+        CreateTween(iconvideo, "Position", UDim2.new(0.315, 0, 0.638, 0), 1, true)
         switchpage.Text = "Switch To Page 2"
         description.Visible = false
       end
