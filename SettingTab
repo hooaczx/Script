@@ -6,6 +6,7 @@ local camera = workspace.CurrentCamera
 getgenv().TPSpeed = 0
 getgenv().TPJpBst = 0
 getgenv().TPWalk = false
+getgenv().NV_Brightness = 0
 local player = game:GetService("Players").LocalPlayer
 local controlModule = require(player.PlayerScripts:WaitForChild('PlayerModule'):WaitForChild("ControlModule"))
 local UserInputService = game:GetService("UserInputService")
@@ -271,6 +272,45 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         module.toggleLookAt(state)
+    end
+})
+
+AddSlider(Main3, {
+    Name = "NV_Brightness",
+    Increase = 0.1,
+    MinValue = 0,
+    MaxValue = 1.5,
+    Default = NV_Brightness,
+    Callback = function(value)
+        getgenv().NV_Brightness = value
+        local nv = game:GetService("Lighting"):FindFirstChild("NV_1hooaczx1")
+        if nv and nv:IsA("ColorCorrectionEffect") then
+            nv.Brightness = getgenv().NV_Brightness
+        end
+    end
+})
+
+AddToggle(Main3, {
+    Name = "Night Vision",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+           local nv = game:GetService("Lighting"):FindFirstChild("NV_1hooaczx1")
+            if not nv then
+               local NVEffect = Create("ColorCorrectionEffect", game:GetService("Lighting"), {
+                    Name = "NV_1hooaczx1",
+                    Brightness = getgenv().NV_Brightness,
+                    Contrast = 1,
+                    Saturation = -0.8,
+                    TintColor = Color3.fromRGB(0, 255, 0)
+                 })
+            end
+        else
+           local nv = game:GetService("Lighting"):FindFirstChild("NV_1hooaczx1")
+            if nv then
+                nv:Destroy()
+            end
+        end
     end
 })
 
