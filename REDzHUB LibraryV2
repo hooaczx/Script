@@ -3591,7 +3591,7 @@ function MakeTab(Configs)
     local cleartoggle
     cleartoggle = parent.AncestryChanged:Connect(function(_, parent)
         if not parent and OnOff then
-            ResetToggle()
+           ResetToggle()
            if cleartoggle then
             cleartoggle:Disconnect()
             cleartoggle = nil
@@ -3826,8 +3826,9 @@ function MakeTab(Configs)
         CreateTween(sel2, "Position", UDim2.new(x / gs.X, 0, y / gs.Y, 0), 0.5, false)
         updateColor()
     end
+    local pickers = {}
 
-    grade.InputBegan:Connect(function(input)
+    pickers["gr"] = grade.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag1 = true
             moveSel1(input.Position)
@@ -3835,7 +3836,7 @@ function MakeTab(Configs)
         end
     end)
 
-    UI_Grade.InputBegan:Connect(function(input)
+    pickers["hr"] = UI_Grade.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag2 = true
             moveSel2(input.Position)
@@ -3843,7 +3844,7 @@ function MakeTab(Configs)
         end
     end)
 
-    UserInputService.InputChanged:Connect(function(input)
+    pickers["fr"] = UserInputService.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             if drag1 then moveSel1(input.Position) updateColor()
             elseif drag2 then moveSel2(input.Position) updateColor()
@@ -3851,11 +3852,27 @@ function MakeTab(Configs)
         end
     end)
 
-    UserInputService.InputEnded:Connect(function(input)
+    pickers["ji"] = UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag1 = false
             drag2 = false
             updateColor()
+        end
+    end)
+
+    local clearcolorpicker
+    clearcolorpicker = parent.AncestryChanged:Connect(function(_, parent)
+        if not parent then
+           if clearcolorpicker then
+            clearcolorpicker:Disconnect()
+            clearcolorpicker = nil
+           end
+           for name in pairs(pickers) do
+              if name then
+                stopupdateall:Disconnect()
+                stopupdateall[name] = nil
+              end
+           end
         end
     end)
 
