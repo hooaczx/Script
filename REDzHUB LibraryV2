@@ -3815,7 +3815,7 @@ function MakeTab(Configs)
         local gp, gs = grade.AbsolutePosition, grade.AbsoluteSize
         local x = math.clamp(pos.X - gp.X - sel1.AbsoluteSize.X / 2, 0, gs.X - sel1.AbsoluteSize.X)
         local y = math.clamp(pos.Y - gp.Y - sel1.AbsoluteSize.Y / 2, 0, gs.Y - sel1.AbsoluteSize.Y)
-        CreateTween(sel1, "Position", UDim2.new(x / gs.X, 0, y / gs.Y, 0), 0.5, false)
+        CreateTween(sel1, "Position", UDim2.new(x / gs.X, 0, y / gs.Y, 0), 0.25, true)
         updateColor()
     end
 
@@ -3823,7 +3823,7 @@ function MakeTab(Configs)
         local gp, gs = UI_Grade.AbsolutePosition, UI_Grade.AbsoluteSize
         local x = math.clamp(pos.X - gp.X - sel2.AbsoluteSize.X / 2, 0, gs.X - sel2.AbsoluteSize.X)
         local y = math.clamp(pos.Y - gp.Y - sel2.AbsoluteSize.Y / 2, 0, gs.Y - sel2.AbsoluteSize.Y)
-        CreateTween(sel2, "Position", UDim2.new(x / gs.X, 0, y / gs.Y, 0), 0.5, false)
+        CreateTween(sel2, "Position", UDim2.new(x / gs.X, 0, y / gs.Y, 0), 0.25, true)
         updateColor()
     end
     local pickers = {}
@@ -3832,7 +3832,6 @@ function MakeTab(Configs)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag1 = true
             moveSel1(input.Position)
-            updateColor()
         end
     end)
 
@@ -3840,15 +3839,12 @@ function MakeTab(Configs)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag2 = true
             moveSel2(input.Position)
-            updateColor()
         end
     end)
 
     pickers["fr"] = UserInputService.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            if drag1 then moveSel1(input.Position) updateColor()
-            elseif drag2 then moveSel2(input.Position) updateColor()
-            end
+            if drag1 then moveSel1(input.Position) elseif drag2 then moveSel2(input.Position) end
         end
     end)
 
@@ -3856,7 +3852,6 @@ function MakeTab(Configs)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag1 = false
             drag2 = false
-            updateColor()
         end
     end)
 
