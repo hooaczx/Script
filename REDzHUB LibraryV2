@@ -172,16 +172,17 @@ CreateTween = functionCreate.CreateTween
 CreateTween1 = functionCreate.CreateTween1
 TextSetColor = functionCreate.TextSetColor
 
-local ScreenGui = Create("ScreenGui", CoreGui, {
+local parentgui = (gethui and gethui()) or game:GetService("CoreGui")
+local ScreenFind = parentgui:FindFirstChild("hcx hub library1")
+if ScreenFind then
+    ScreenFind:Destroy()
+end
+
+local ScreenGui = Create("ScreenGui", parentgui, {
   Name = "hcx hub library1",
   DisplayOrder = math.huge,
   IgnoreGuiInset = true
 })
-
-ScreenFind = CoreGui:FindFirstChild(ScreenGui.Name)
-if ScreenFind and ScreenFind ~= ScreenGui then
-  ScreenFind:Destroy()
-end
 
 functionCreate.DestroyScript = function()
   ScreenGui:Destroy()
@@ -669,6 +670,7 @@ notify({
     local PlaceId = game.PlaceId
     local friendsCooldown = 0
     local friendsInTotal = 0
+    local TimeThai = false
     local MarketplaceService = game:GetService("MarketplaceService")
     local AssetService = game:GetService("AssetService")
     local TeleportService = game:GetService("TeleportService")
@@ -749,16 +751,26 @@ Button1.MouseButton1Click:Connect(function()
 end)
 
 local TimeLabelgui = Create("TextLabel", frame, {
-    Size = UDim2.new(0.3, 0, 0.5, 0),
+    Size = UDim2.new(0.215, 0, 0.5, 0),
+    Position = UDim2.new(0.005, 0, 0.235, 0),
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    BackgroundTransparency = 1,
+    TextScaled = true,
+    Text = ""
+})TextSetColor(TimeLabelgui)
+
+local RobloxVersion = Create("TextLabel", frame, {
+    Size = UDim2.new(0.2, 0, 0.35, 0),
     TextSize = 20,
     TextWrapped = true,
     TextScaled = true,
-    Position = UDim2.new(-0.05, 0, 0.22, 0),
+    Position = UDim2.new(0.2 + 0.5, 0, 0.31, 0),
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
-    BackgroundTransparency = 1
-})
-TextSetColor(TimeLabelgui)
+    BackgroundTransparency = 1,
+    Text = ""
+})TextSetColor(RobloxVersion)
 
 functions.createToggleButton = function(parent, position, callback, initialState)
     local TextButton = Create("TextButton", parent, {
@@ -1371,18 +1383,6 @@ functions.UpdatePlayerList = function()
     local _ids = {}    
     for _, _p in ipairs(_plrs) do
         _ids[_p.UserId] = true
-        local _isC = false
-        if game.CreatorType == Enum.CreatorType.User then
-            _isC = (_p.UserId == game.CreatorId)
-        elseif game.CreatorType == Enum.CreatorType.Group then
-            local success, rank = pcall(function()
-                return _p:GetRankInGroup(game.CreatorId)
-            end)
-            if success and rank == 255 then
-                _isC = true
-            end
-        end
-        local _meC = _isC and _p == _lp
         local _isF = false
         if _p ~= _lp then
             local success, isFriend = pcall(function()
@@ -1412,11 +1412,7 @@ functions.UpdatePlayerList = function()
                 Name = "DisplayName"
             })
             local _info = "@" .. _p.Name
-            if _meC then
-                _info = _info .. " • You are the game creator"
-            elseif _isC then
-                _info = _info .. " • You met the game creator!"
-            elseif _isF then
+            if _isF then
                 _info = _info .. " • Your Friend"
             end
             local _il = Create("TextLabel", _f, {
@@ -1484,11 +1480,7 @@ functions.UpdatePlayerList = function()
                 local _il = playerFrames[_p.UserId].UI:FindFirstChild("Info")
                 if _il then
                     local _info = "@" .. _p.Name
-                    if _meC then
-                        _info = _info .. " • You are the game creator"
-                    elseif _isC then
-                        _info = _info .. " • You met the game creator!"
-                    elseif _isF then
+                    if _isF then
                         _info = _info .. " • Your Friend"
                     end
                     _il.Text = _info
@@ -1543,6 +1535,13 @@ local frameinfogui = Create("Frame", ScreenGui, {
     Size = UDim2.new(),
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 1,
+    Visible = false
+})
+
+local blur = Create("Frame", frameinfogui, {
+    Size = UDim2.new(1, 0, 1, 0),
+    BackgroundColor3 = Color3.fromRGB(17, 17, 17),
+    BackgroundTransparency = 0,
     Visible = false
 })
 
@@ -2089,12 +2088,11 @@ local frameswitchpage = Create("Frame", frameinfogui, {
 local gradient_6_1 = Create("UIGradient", stroke_6_1, {
     Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 165, 0)),
-        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255, 255, 0)),
-        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 0)),
-        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 127, 255)),
-        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(139, 0, 255)),
-        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 255))
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.45, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.65, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
     },
     Rotation = 0
 })
@@ -2116,9 +2114,12 @@ local stroke_6_2 = Create("UIStroke", switchpage, {
 
 local gradient_6_2 = Create("UIGradient", stroke_6_2, {
     Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0.0, Color3.fromRGB(0, 255, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 0, 255)),
-        ColorSequenceKeypoint.new(1.0, Color3.fromRGB(255, 0, 0))
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.45, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.65, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
     },
     Rotation = 0
 })
@@ -2134,12 +2135,111 @@ end)
 
 local description = Create("Frame", frameinfogui, {
     Size = UDim2.new(0.45, 0, 0.6, 0),
-    Position = UDim2.new(0.02, 0, 0.37, 0),
+    Position = UDim2.new(0.02, 0, 0.37 - 1, 0),
     AnchorPoint = Vector2.new(0.032, 0.51),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5, 
     Visible = false
 })Corner(description)Stroke(description)
+
+local info_d = Create("Frame", frameinfogui, {
+    Size = UDim2.new(0.24, 0, 0.75, 0),
+    Position = UDim2.new(0.48, 0, 0.24 - 1, 0),
+    AnchorPoint = Vector2.new(0.04, 0.21),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 0.5,
+})Corner(info_d, {CornerRadius = UDim.new(0.05, 0)})
+local stroke_7 = Create("UIStroke", info_d, {
+    Color = Color3.fromRGB(255, 255, 255),
+    Thickness = 1,
+    Transparency = 0.1,
+})
+
+local gradient_7 = Create("UIGradient", stroke_7, {
+    Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 165, 0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 127, 255)),
+        ColorSequenceKeypoint.new(0.83, Color3.fromRGB(139, 0, 255)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 255))
+    },
+    Rotation = 0
+})
+
+local info_T = Create("TextLabel", info_d, {
+    Size = UDim2.new(1, 0, 0.93, 0),
+    Position = UDim2.new(0, 0, 0.07, 0),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 1,
+    Font = Configs_HUB.Text_Font,
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    TextScaled = true, 
+    Text = "Finding info..."
+})TextSetColor(info_T)Corner(info_T, {CornerRadius = UDim.new(0.05, 0)})
+local listLayout4 = Create("UIListLayout", info_T, {FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Left, VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 5)})
+
+local info_TC = Create("TextLabel", info_d, {
+    Size = UDim2.new(1, 0, 0.93, 0),
+    Position = UDim2.new(0, 0, 0.07, 0),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 1,
+    Font = Configs_HUB.Text_Font,
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextScaled = true, 
+    Text = "If you don't want it shown, just turn it off",
+    TextTransparency = 1,
+    Visible = false
+})TextSetColor(info_TC)Corner(info_TC, {CornerRadius = UDim.new(0.05, 0)})
+
+local info_C = Create("TextButton", info_d, {
+    Size = UDim2.new(0.1, 0, 0.065, 0),
+    Position = UDim2.new(0.89, 0, 0.005, 0),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 1,
+    Font = Configs_HUB.Text_Font,
+    TextColor3 = Configs_HUB.Cor_Text,
+    TextScaled = true, 
+    Text = "-"
+})
+
+local show, isBusy = true, false
+ 
+info_C.MouseButton1Click:Connect(function()
+	if isBusy then return end
+	isBusy = true
+	if show then
+		local c1 = TweenService:Create(info_T, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			TextTransparency = 1
+		})
+		c1:Play()
+		c1.Completed:Wait()
+		info_T.Visible = false
+		info_TC.Visible = true
+		local c_1 = TweenService:Create(info_TC, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			TextTransparency = 0
+		})
+		c_1:Play()
+		info_C.Text = "×"
+	else
+		local c2 = TweenService:Create(info_TC, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			TextTransparency = 1
+		})
+		c2:Play()
+		c2.Completed:Wait()
+		info_TC.Visible = false
+		info_T.Visible = true
+		local c_2 = TweenService:Create(info_T, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			TextTransparency = 0
+		})
+		c_2:Play()
+		info_C.Text = "-"
+	end
+	show = not show
+	isBusy = false
+end)
 
 local Textdescpn = Create("TextLabel", description, {
     Size = UDim2.new(1, 0, 0.1, 0),
@@ -2172,69 +2272,109 @@ local descriptionframe = Create("ScrollingFrame", description, {
     SortOrder = Enum.SortOrder.LayoutOrder
 })
 
+local info_group = Create("Frame", frameinfogui, {
+    Size = UDim2.new(0.28, 0, 0.37, 0),
+    Position = UDim2.new(0.725, 0, 0.2 - 1, 0),
+    AnchorPoint = Vector2.new(0.04, 0.21),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 0.5,
+    Visible = false
+})Corner(info_group)Stroke(info_group)
+
+local info_group_T = Create("TextLabel", info_group, {
+    Size = UDim2.new(1, 0, 0.1, 0),
+    Position = UDim2.new(0, 0, 0, 0),
+    Text = "List All Groups that you joiner",
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1
+})TextSetColor(info_group_T)
+
+local line_g = Create("Frame", info_group, {
+    Size = UDim2.new(1, 0, 0.005, 0),
+    Position = UDim2.new(0, 0, 0.1, 0), 
+    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+    BorderSizePixel = 0
+})
+
+local List_group = Create("ScrollingFrame", info_group, {
+    Size = UDim2.new(1, 0, 0.89, 0),
+    Position = UDim2.new(0, 0, 0.11, 0),
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    ScrollBarThickness = 0,
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    BackgroundTransparency = 1
+})local List_grouplistLayout = Create("UIListLayout", List_group, {
+    Padding = UDim.new(0, 5),
+    FillDirection = Enum.FillDirection.Vertical,
+    SortOrder = Enum.SortOrder.LayoutOrder
+})
+
 functions.UpdateDescription = function(params)
-    local fromFrame = params.fromFrame
-    local Text = params.Text
-    local description = params.description
-    local image = params.image
-    local textwrapped = params.textwrapped or false
-    local textscaled = params.textscaled or false
-    local size = params.size or 8
-    local oldFrame = frameRefs[fromFrame]
-    local oldMeta = metaRefs[fromFrame]
-    if oldMeta and oldMeta.Text == Text and oldMeta.Description == description and oldMeta.Image == image then
+    local c_1 = params.fromFrame
+    local c_2 = params.Text
+    local c_3 = params.description
+    local c_4 = params.image
+    local c_5 = params.textwrapped or false
+    local c_6 = params.textscaled or false
+    local c_7 = params.size or 8    
+    local c_8 = frameRefs[c_1]
+    local c_9 = metaRefs[c_1]
+    if c_9 and c_9.Text == c_2 and c_9.Description == c_3 and c_9.Image == c_4 then
         return
     end
-    if oldFrame and oldFrame.Parent then
-        oldFrame:Destroy()
+    if c_8 and c_8.Parent then
+        c_8:Destroy()
     end
-    local newFrame = Create("Frame", descriptionframe, {
+    local c_10 = Create("Frame", descriptionframe, {
         Size = UDim2.new(0.8, 0, 0.4, 0),
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = 0.5
     })
-    local text = Create("TextLabel", newFrame, {
+    local c_11 = Create("TextLabel", c_10, {
         Size = UDim2.new(0.88, 0, 0.1, 0),
         Position = UDim2.new(0.12, 0, 0.03, 0),
-        Text = Text or "",
+        Text = c_2 or "",
         TextColor3 = Configs_HUB.Cor_Text,
         Font = Configs_HUB.Text_Font,
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 1
-    })TextSetColor(text)
-    local text1 = Create("TextLabel", newFrame, {
+    })TextSetColor(c_11)
+    local c_12 = Create("TextLabel", c_10, {
         Size = UDim2.new(1, 0, 0.84, 0),
         Position = UDim2.new(0, 0, 0.16, 0),
-        Text = description or "",
+        Text = c_3 or "",
         TextColor3 = Configs_HUB.Cor_Text,
         Font = Configs_HUB.Text_Font,
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 1,
-        TextWrapped = textwrapped or false,
-        TextScaled = textscaled or false,
-        TextSize = size or 8,
+        TextWrapped = c_5,
+        TextScaled = c_6,
+        TextSize = c_7,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Top
-    }) TextSetColor(text1)
-    Create("Frame", newFrame, {
+    })TextSetColor(c_12)
+    Create("Frame", c_10, {
         Size = UDim2.new(1, 0, 0.005, 0),
         Position = UDim2.new(0, 0, 0.16, 0),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BorderSizePixel = 0
     })
-    Create("ImageLabel", newFrame, {
+    Create("ImageLabel", c_10, {
         Size = UDim2.new(0.11, 0, 0.16, 0),
         Position = UDim2.new(0, 0, 0, 0),
         AnchorPoint = Vector2.new(0.05, 0.06),
         BackgroundColor3 = Configs_HUB.Cor_Hub,
         BackgroundTransparency = 1,
-        Image = image or ""
+        Image = c_4 or ""
     })
-    frameRefs[fromFrame] = newFrame
-    metaRefs[fromFrame] = {
-        Text = Text,
-        Description = description,
-        Image = image
+    frameRefs[c_1] = c_10
+    metaRefs[c_1] = {
+        Text = c_2,
+        Description = c_3,
+        Image = c_4
     }
 end
 
@@ -2284,18 +2424,18 @@ functions.getGameDesc = function(_id)
 end
 
 functions.startUpdating = function()
-    functions._additionalPlayTime = (functions._additionalPlayTime or 0) + 1
-    local accountAge = game:GetService("Players").LocalPlayer.AccountAge
-    local totalSeconds = accountAge * 86400 + functions._additionalPlayTime
-    local years = math.floor(totalSeconds / 31536000)
-    totalSeconds = totalSeconds % 31536000
-    local months = math.floor(totalSeconds / 2592000)
-    totalSeconds = totalSeconds % 2592000
-    local days = math.floor(totalSeconds / 86400)
-    local totalPlayTime = string.format("%d years, %d months, %d days", years, months, days)
-    local ageMessage = accountAge == 0 and "You just created an account"
-        or string.format("Your account has been active for %d days", accountAge)
-    AccountAge.Text = "Total Playtime since account creation: " .. totalPlayTime .. "\n" .. ageMessage
+    functions.__ = (functions.__ or 0) + 1
+    local _a = game:GetService("Players").LocalPlayer.AccountAge
+    local _b = _a * 86400 + functions.__
+    local _c = math.floor(_b / 31536000)
+    _b = _b % 31536000
+    local _d = math.floor(_b / 2592000)
+    _b = _b % 2592000
+    local _e = math.floor(_b / 86400)
+    local _f = string.format("%d years, %d months, %d days", _c, _d, _e)
+    local _g = _a == 0 and "You just created an account"
+        or string.format("Your account has been active for %d days", _a)
+    AccountAge.Text = "Total Playtime since account creation: " .. _f .. "\n" .. _g
 end
 
 functions.startUpdating()
@@ -2330,24 +2470,58 @@ end
 functions.updatePlaytime()
 
 functions.getAccountCreationDate = function(ageInDays)
-    local creationDate = os.date("*t", os.time() - (ageInDays * 86400))
-    return string.format("%02d/%02d/%d", creationDate.month, creationDate.day, creationDate.year)
+    local age = os.date("*t", os.time() - (ageInDays * 86400))
+    return string.format("%02d/%02d/%d", age.month, age.day, age.year)
 end
 
-functions.updateTime = function()
+local thaiDays = {
+    "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"
+}local thaiMonths = {
+    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+}functions.updateTime = function()
     local currentTime = os.date("*t")
     local hour = currentTime.hour
-    local amPm = "AM"
-    if hour >= 12 then
-        amPm = "PM"
-        if hour > 12 then
-            hour = hour - 12
+    local min = currentTime.min
+    local sec = currentTime.sec
+    local formattedTime, formattedDate
+    if TimeThai then
+        local period = ""
+        local displayHour = hour
+        if hour >= 7 and hour <= 11 then
+            period = "เช้า"
+        elseif hour == 12 then
+            period = "เที่ยง"
+        elseif hour >= 13 and hour <= 18 then
+            period = "บ่ายโมง"
+            displayHour = hour - 12
+        elseif hour >= 19 and hour <= 23 then
+            period = "กลางคืน"
+            displayHour = hour - 18
+        elseif hour >= 0 and hour < 7 then
+            period = "ตี"
+            displayHour = (hour == 0) and 12 or hour
         end
-    elseif hour == 0 then
-        hour = 12
+        formattedTime = string.format("%s %d:%02d:%02d", period, displayHour, min, sec)
+        local thaiDay = thaiDays[currentTime.wday] or ""
+        local thaiMonth = thaiMonths[currentTime.month]
+        local buddhistYear = currentTime.year + 543
+        formattedDate = string.format("วัน%sที่%d เดือน %s ปี %d", thaiDay, currentTime.day, thaiMonth, buddhistYear)
+    else
+        local amPm = "AM"
+        local displayHour = hour
+        if hour >= 12 then
+            amPm = "PM"
+            if hour > 12 then
+                displayHour = hour - 12
+            end
+        elseif hour == 0 then
+            displayHour = 12
+        end
+        formattedTime = string.format("%02d:%02d:%02d %s", displayHour, min, sec, amPm)
+        formattedDate = os.date("%b:%d:%Y")
     end
-    local formattedTime = string.format("%02d:%02d:%02d %s", hour, currentTime.min, currentTime.sec, amPm)
-    TimeLabelgui.Text = formattedTime .. "\n" .. os.date("%b:%d:%Y")
+    TimeLabelgui.Text = formattedTime .. "\n" .. formattedDate
 end
 
 functions.updateTime()
@@ -2405,6 +2579,13 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
       PaddingTop = UDim.new(0.003, 0),
       PaddingBottom = UDim.new(0.003, 0)
   })
+
+functions.createSettingSection(scrollingSettingFrame, "Time Thailand", 
+[[click this bar to switch the time display between Thai and server format
+(กดเพื่อสลับการแสดงเวลาระหว่างแบบไทยกับแบบเซิร์ฟเวอร์)
+]], function(state)
+    TimeThai = state
+end, frameinfopy)
 
 local Anticopy1 = false
 local funcs = {"setclipboard", "toclipboard", "set_clipboard"}
@@ -2790,14 +2971,26 @@ local imageplayers = Create("ImageLabel", frameinfoplayer, {
     BackgroundTransparency = 1,
     Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
 })Corner(imageplayers, {CornerRadius = UDim.new(1, 0)})Stroke(imageplayers, {Color = Color3.fromRGB(255, 255, 255)})
-local buttonCooldown, Click = 0.5, 0
-functions.canClick = function()
+local buttonCooldown, Click, ifClick, specialClicks = 0.5, 0, false, {}
+functions.canClick = function(buttonName)
     local Time = tick()
-    if Time - Click >= buttonCooldown then
-        Click = Time
-        return true
+    if buttonName then
+        if not specialClicks[buttonName] or Time - specialClicks[buttonName] >= buttonCooldown then
+            specialClicks[buttonName] = Time
+            return true
+        end
+        return false
+    else
+        if Time - Click >= buttonCooldown and not ifClick then
+            Click = Time
+            ifClick = true
+            delay(buttonCooldown, function()
+                ifClick = false
+            end)
+            return true
+        end
+        return false
     end
-    return false
 end
 functions.Look = function()
     local mousePos = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
@@ -2806,7 +2999,7 @@ functions.Look = function()
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
-    if not functions.canClick() or Tweening then return end
+    if not functions.canClick("Free ShiftLock😌") or Tweening then return end
     Tweening = true    
     if not ShiftLockmaingui then
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
@@ -2950,7 +3143,7 @@ local uiStates = {
     frameinfogui = {frame = frameinfogui, state = false},
     Menu = {frame = Menu, state = true},
     frameSetting = {frame = frameSetting, state = false}
-}local activeButton = nil
+}local activeButton, cameraback = nil, true
 
 local strokeeffect = Create("Frame", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
@@ -2970,32 +3163,57 @@ functions.MoveStrokePosition = function(button)
     activeButton = button.Name
 end
 
+functions.bouncefov = function(action, string)
+   CreateTween(workspace.CurrentCamera, "FieldOfView", 75, 0.07, true)
+    task.wait(0.1)
+   CreateTween(workspace.CurrentCamera, "FieldOfView", 30, 0.07, true)
+end
+functions.Backfov = function(action, string)
+   CreateTween(workspace.CurrentCamera, "FieldOfView", 70, 0.07, true)
+end
+
 functions.closeOtherUI = function(exceptName)
     for name, data in pairs(uiStates) do
         if name ~= exceptName and data.state then
-          if name == "Menu" then
-             if IsMinimizedu then
-                   data.state = false
-                   CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
-                   data.frame.Visible = false
-                   Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
-              else
-                   data.state = false
-                   CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
-                   data.frame.Visible = false
-                   Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
-              end
-           else
-                   data.state = false
-                   CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
-                   data.frame.Visible = false
-              end
-          end
-     end
+            if name == "Menu" then
+                if IsMinimizedu then
+                    data.state = false
+                    CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
+                    data.frame.Visible = false
+                    Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
+                else
+                    data.state = false
+                    CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
+                    data.frame.Visible = false
+                    Menu.Position = UDim2.new(0.77, 0, 0.227, 0)
+                end
+            elseif name == "frameinfogui" then
+               if not cameraback then
+                 data.state = false
+                 if blur.Visible then
+                    CreateTween(blur, "BackgroundTransparency", 1, 0.05, true)
+                    task.delay(0.05, function()
+                        blur.Visible = false
+                      end)
+                 end
+                 functions.Backfov()
+                 CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
+                 task.delay(0.3, function()
+                    data.frame.Visible = false
+                 end)
+                 cameraback = true
+                end
+            else
+                data.state = false
+                CreateTween(data.frame, "Size", UDim2.new(data.frame.Size.X.Scale, 0, 0, 0), 0.3, true)
+                data.frame.Visible = false
+            end
+        end
+    end
 end
 
 SplitgameToggleButton.MouseButton1Click:Connect(function()
-    if switchtodescription then return end
+    if switchtodescription or ifClick or (switchtodescription and ifClick) then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(SplitgameToggleButton)
     local state = uiStates.framek.state
@@ -3013,7 +3231,7 @@ SplitgameToggleButton.MouseButton1Click:Connect(function()
 end)
 
 PlayerListToggleButton.MouseButton1Click:Connect(function()
-    if switchtodescription then return end
+    if switchtodescription or ifClick or (switchtodescription and ifClick) then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(PlayerListToggleButton)
     local state = uiStates.framep.state
@@ -3031,7 +3249,7 @@ PlayerListToggleButton.MouseButton1Click:Connect(function()
 end)
 
 infoToggleButton.MouseButton1Click:Connect(function()
-    if switchtodescription then return end
+    if switchtodescription or ifClick or (switchtodescription and ifClick) then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(infoToggleButton)
     local state = uiStates.frameinfogui.state
@@ -3039,17 +3257,28 @@ infoToggleButton.MouseButton1Click:Connect(function()
         functions.closeOtherUI("frameinfogui")
         click1:Play()
         frameinfogui.Visible = true
+        blur.Visible = true
+        blur.BackgroundTransparency = 0.3
+        CreateTween(blur, "BackgroundTransparency", 0.7, 0.05, true)
+        functions.bouncefov()
         CreateTween(frameinfogui, "Size", UDim2.new(1, 0, 1, 0), 0.3, true)
+        cameraback = false
     else
         click2:Play()
+        CreateTween(blur, "BackgroundTransparency", 1, 0.05, true)
+        functions.Backfov()
         CreateTween(frameinfogui, "Size", UDim2.new(0, 0, 0, 0), 0.3, true)
+        task.delay(0.3, function()
+            blur.Visible = false
+        end)
+        cameraback = true
         frameinfogui.Visible = false
     end
     uiStates.frameinfogui.state = not state
 end)
 
 Button.MouseButton1Click:Connect(function()
-    if switchtodescription then return end
+    if switchtodescription or ifClick or (switchtodescription and ifClick) then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(Button)
     local state = uiStates.Menu.state
@@ -3088,7 +3317,7 @@ Button.MouseButton1Click:Connect(function()
 end)
 
 SettingButton.MouseButton1Click:Connect(function()
-    if switchtodescription then return end
+    if switchtodescription or ifClick or (switchtodescription and ifClick) then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(SettingButton)
     local state = uiStates.frameSetting.state
@@ -3116,6 +3345,7 @@ RunServerlock("Lock1", "no", function()
     gradient_6.Rotation += 1
     gradient_6_1.Rotation += 1
     gradient_6_2.Rotation += 2
+    gradient_7.Rotation += 1
     for _, data in pairs(playerFrames) do
         if data.UI then
             local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
@@ -3172,7 +3402,7 @@ RunServerlock("Lock1", "no", function()
     end
     if switchtodescription then
 	if not description.Visible then
-	CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
+    	CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
         CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762 - 1, 0), 1, false)
         CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681 - 1, 0), 1, false)
         CreateTween(Join, "Position", UDim2.new(0.4868 + 0.11, 0, 0.762 - 1, 0), 1, false)
@@ -3194,8 +3424,13 @@ RunServerlock("Lock1", "no", function()
         CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06 - 1, 0), 1, false)
         CreateTween(welcometext, "Position", UDim2.new(0.39, 0, 0.66 - 1, 0), 1, false)
         CreateTween(iconvideo, "Position", UDim2.new(0.315, 0, 0.638 - 1, 0), 1, true)
-        switchpage.Text = "Switch To Page 1"
         description.Visible = true
+        info_d.Visible = true
+        info_group.Visible = true
+        CreateTween(info_d, "Position", UDim2.new(0.48, 0, 0.24, 0), 1, false)
+        CreateTween(info_group, "Position", UDim2.new(0.725, 0, 0.2, 0), 1, false)
+        CreateTween(description, "Position", UDim2.new(0.02, 0, 0.37, 0), 1, true)
+        switchpage.Text = "Switch To Page 1"
 	end
     else
 	if description.Visible then 
@@ -3221,25 +3456,42 @@ RunServerlock("Lock1", "no", function()
         CreateTween(iconplayers, "Position", UDim2.new(0.05, 0, 0.06, 0), 1, false)
         CreateTween(welcometext, "Position", UDim2.new(0.39, 0, 0.66, 0), 1, false)
         CreateTween(iconvideo, "Position", UDim2.new(0.315, 0, 0.638, 0), 1, true)
-        switchpage.Text = "Switch To Page 2"
-        description.Visible = false
+        CreateTween(description, "Position", UDim2.new(0.02, 0, 0.37 - 1, 0), 1, false)
+        CreateTween(info_group, "Position", UDim2.new(0.725, 0, 0.2 - 1, 0), 1, false)
+        CreateTween(info_d, "Position", UDim2.new(0.48, 0, 0.24 - 1, 0), 1, true)
+        task.delay(1, function()
+            info_group.Visible = false
+            description.Visible = false
+            info_d.Visible = false
+            switchpage.Text = "Switch To Page 2"
+        end) 
       end
     end
     iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid=" .. result.IconImageAssetId .. "&fmt=png&wd=500&ht=500"
     functions.UpdatePlayerList()
     functions.updatePlaytime()
+    functions.updateTime()
 end)
 
 RunServerlock("Lock2", 5, function()
     local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
     funcs.updatePlaceInfo(GameName, frame79)
+    local c_f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/List_group"))()
+    c_f.UpdateGroups(List_group, ScreenGui, Corner, Stroke, TextSetColor)
     functions.checkFriends()
     functions.startUpdating()
-    functions.updateTime()
     functions.UpdatePlaces()
 end)
 
 RunServerlock("Lock3", 5, function()
+     local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
+     local info = nti.GetInfo()
+     info_T.Text = string.format(
+    "Network: \n%s\n%s\n\nDevice: \n%s\n%s\n%s\n%s\n\nLocation: \n%s\n%s\n%s\n%s\n%s",
+    info.ip, info.isp,
+    info.device, info.resolution, info.viewport1, info.viewport2,
+    info.country, info.region, info.city, info.capital, info.currency
+    )RobloxVersion.Text = info.version
     local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
     local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
     frame199.Text = string.format(
@@ -3251,7 +3503,7 @@ RunServerlock("Lock3", 5, function()
         creatorInfo.CreationDate
     )
     Gamecreatortext.Text = "Creator_Game"
-    grouptext.Text = creatorInfo.GroupName
+    grouptext.Text = creatorInfo.GroupName.."\n"..creatorInfo.MemberCount
     iconGamecreator.Image = creatorInfo.headUrl
     iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
     icongroupicon.Image = creatorInfo.GroupIcon
@@ -3264,20 +3516,34 @@ RunServerlock("Lock3", 5, function()
 end)
 
 ScreenGui.AncestryChanged:Connect(function()
+    if not cameraback then
+        functions.Backfov()
+    end    
     if not ScreenGui:IsDescendantOf(game) then
+        if rainSound then rainSound:Destroy() end
+        if notifyfriend then notifyfriend:Destroy() end
+        if notifyfriendleave then notifyfriendleave:Destroy() end
+        if click1 then click1:Destroy() end
+        if click2 then click2:Destroy() end
+        if falsetoggle then falsetoggle:Destroy() end
+        if clicktoggle then clicktoggle:Destroy() end
+        for name, conn in pairs(stopupdateall) do
+           print(name)
+           conn:Disconnect()
+           stopupdateall[name] = nil
+        end
         if ShiftLockmaingui then
             local char = game.Players.LocalPlayer.Character
             if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-             if hum then
-                hum.AutoRotate = true
-               end
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    hum.AutoRotate = true
+                end
             end
             for _, highlight in pairs(CH) do
-                 if highlight then
-                      highlight:Destroy()
-                      highlight= nil
-                 end
+                if highlight then
+                    highlight:Destroy()
+                end
             end
             CH = {}
             ShiftLockButton.Image = States.Off
@@ -3285,38 +3551,25 @@ ScreenGui.AncestryChanged:Connect(function()
             ShiftlockCursor.Visible = false
             frameinfopy = false
             if ShiftLockmaingui then
-               ShiftLockmaingui:Disconnect()
-               ShiftLockmaingui = nil
-           end
-           Tweening = false
-        end
-       if View then
-        local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-        if hum then
-           workspace.CurrentCamera.CameraSubject = hum
-        end
-        for _, data in pairs(playerFrames) do
-            if data.UI and data.UI.Parent then
-                data.UI:Destroy()
+                ShiftLockmaingui:Disconnect()
+                ShiftLockmaingui = nil
             end
+            Tweening = false
         end
-        table.clear(playerFrames)
-      end
+        if View then
+            local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+            if hum then
+                workspace.CurrentCamera.CameraSubject = hum
+            end
+            for _, data in pairs(playerFrames) do
+                if data.UI and data.UI.Parent then
+                    data.UI:Destroy()
+                end
+            end
+            table.clear(playerFrames)
+        end
     end
-    if not CoreGui:FindFirstChild(ScreenGui.Name) and ScreenGui:IsDescendantOf(game) then
-        rainSound:Destroy()
-        notifyfriend:Destroy()
-        notifyfriendleave:Destroy()
-        click1:Destroy()
-        click2:Destroy()
-        falsetoggle:Destroy()
-        clicktoggle:Destroy()
-         for name, conn in pairs(stopupdateall) do
-                conn:Disconnect()
-                stopupdateall[name] = nil
-            end
-        end
-    end)
+  end)
 end
 
 local firstVisible = true
@@ -4272,19 +4525,25 @@ function MakeTab(Configs)
   end
 
   function TypeTextLabel(TextLabel, Text, Delay)
-           local index = 1
-           local startTime = tick()
+    local index = 1
+    local startTime = tick()
 
-           RunService.Heartbeat:Connect(function()
-                if index <= #Text then
-                   if tick() - startTime >= Delay then
-                       TextLabel.Text = string.sub(Text, 1, index)
-                        index = index + 1
-                        startTime = tick()
-                      end
-                  end
-             end)
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        if index <= #Text then
+            if tick() - startTime >= Delay then
+                TextLabel.Text = string.sub(Text, 1, index)
+                index = index + 1
+                startTime = tick()
+            end
+        else
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
          end
+     end)
+  end
 
   function AddTextLabel(parent, Configs)
     local LabelName = Configs[1] or Configs.Name or "Text Label!!"
@@ -4334,7 +4593,7 @@ function MakeTab(Configs)
         Size = UDim2.new(0.76, 0, 0.2, 0),
         BackgroundTransparency = 1,
         Font = Configs_HUB.Text_Font
-    })
+    })TextSetColor(TextButton)
     
     local ExpandImageButton = Create("ImageButton", Frame, {
         Size = UDim2.new(0.2, 0, 0.2, 0),
@@ -4349,7 +4608,7 @@ function MakeTab(Configs)
         Size = UDim2.new(1, 0, 0.78, 0),
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 0, 0.22, 0)
-    })TextSetColor(TextButton)
+    })
 
     local isExpanded = false
     
@@ -4367,7 +4626,6 @@ function MakeTab(Configs)
             Text = "",
             BackgroundTransparency = 0.2,
         })
-        Corner(Frame)
 
         local ImageLabel = Create("ImageLabel", Menu, {
             Image = LabelImage,
@@ -4375,7 +4633,7 @@ function MakeTab(Configs)
             AnchorPoint = Vector2.new(1, 0),
             BackgroundTransparency = 1,
             Position = UDim2.new(0.35, 0, 0.2, 0)
-        })TextSetColor(TextButton)
+        })
 
         local TextLabel = Create("TextLabel", Menu, {
             TextSize = 12,
@@ -4387,7 +4645,7 @@ function MakeTab(Configs)
             Position = UDim2.new(0.95, 0, 0.43, 0), 
             BackgroundTransparency = 1,
             Font = Configs_HUB.Text_Font
-        })
+        })TextSetColor(TextLabel)
 
         local ExitExpandImageButton = Create("ImageButton", Menu, {
             Size = UDim2.new(),
@@ -4621,31 +4879,42 @@ function MakeTab(Configs)
         return string.format("%d:%02d", minutes, remainingSeconds)
     end
 
+    local pv
+
     local function updateProgressBar()
-        RunService.RenderStepped:Connect(function()
-            if sound.Playing then
+        if pv then
+           pv:Disconnect()
+           pv = nil
+        end
+        pv = RunService.RenderStepped:Connect(function()
+            if sound and sound.IsPlaying then
                 local progress = sound.TimePosition / sound.TimeLength
                 Progress.Size = UDim2.new(progress, 0, 1, 0)
                 TimeSongText.Text = formatTime(math.floor(sound.TimePosition)) .. " / " .. formatTime(math.floor(sound.TimeLength))
+            else
+                 if pv then
+                     pv:Disconnect()
+                     pv = nil
+                 end
             end
-        end)
-    end
+       end)
+   end
 
     local function extractAssetId(input)
-    local assetId = input:match("rbxassetid://(%d+)") 
-    if assetId then
-        return assetId
-    end
-    assetId = input:match("https://www.roblox.com/asset/%?id=(%d+)")
-    if assetId then
-        return assetId
-    end
-    assetId = input:match("^(%d+)$")
-    if assetId then
-        return assetId
-    end
-    return nil
-end
+       local assetId = input:match("rbxassetid://(%d+)") 
+       if assetId then
+           return assetId
+       end
+       assetId = input:match("https://www.roblox.com/asset/%?id=(%d+)")
+        if assetId then
+            return assetId
+        end
+        assetId = input:match("^(%d+)$")
+        if assetId then
+            return assetId
+        end
+        return nil
+      end
 
 Toggle.MouseButton1Click:Connect(function()
     local inputText = TextBoxID.Text
@@ -4677,6 +4946,7 @@ Toggle.MouseButton1Click:Connect(function()
     if sound.IsPlaying then
         soundsavedTimePosition = sound.TimePosition
         sound:Stop()
+        updateProgressBar()
         NameSongFrame.Text = "Stopped"
         CreditLabel.Text = "Created by: Not found"
         Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
@@ -4693,7 +4963,6 @@ Toggle.MouseButton1Click:Connect(function()
             Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
             return
         end
-        updateProgressBar()
         NameSongFrame.Text = productInfo.Name
         Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
         CreditLabel.Text = "Created by: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
@@ -4788,7 +5057,6 @@ function AddFeedBack(parent, Configs)
 
         local newdata = game:GetService("HttpService"):JSONEncode(data)
         local headers = {["content-type"] = "application/json"}
-
         local request = http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request)
 
         if request then
