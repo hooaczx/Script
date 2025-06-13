@@ -2484,24 +2484,54 @@ local thaiDays = {
     local min = currentTime.min
     local sec = currentTime.sec
     local formattedTime, formattedDate
+
     if TimeThai then
-        local period = ""
-        local displayHour = hour
-        if hour >= 7 and hour <= 11 then
-            period = "เช้า"
-        elseif hour == 12 then
-            period = "เที่ยง"
-        elseif hour >= 13 and hour <= 18 then
-            period = "บ่ายโมง"
-            displayHour = hour - 12
-        elseif hour >= 19 and hour <= 23 then
+        local displayHour, period, position
+
+        if hour == 0 then
+            displayHour = 12
             period = "เที่ยงคืน"
-            displayHour = hour - 18
-        elseif hour >= 0 and hour < 7 then
+            position = "front"
+        elseif hour >= 1 and hour <= 5 then
+            displayHour = hour
             period = "ตี"
-            displayHour = (hour == 0) and 12 or hour
+            position = "front"
+        elseif hour == 6 then
+            displayHour = 6
+            period = "โมงเช้า"
+            position = "back"
+        elseif hour >= 7 and hour <= 10 then
+            displayHour = hour
+            period = "โมงเช้า"
+            position = "back"
+        elseif hour == 11 then
+            displayHour = 11
+            period = "โมง"
+            position = "back"
+        elseif hour == 12 then
+            displayHour = 12
+            period = "เที่ยง"
+            position = "front"
+        elseif hour >= 13 and hour <= 15 then
+            displayHour = hour - 12
+            period = "บ่าย"
+            position = "front"
+        elseif hour >= 16 and hour <= 18 then
+            displayHour = hour - 12
+            period = "โมงเย็น"
+            position = "back"
+        elseif hour >= 19 and hour <= 23 then
+            displayHour = hour - 18
+            period = "ทุ่ม"
+            position = "back"
         end
-        formattedTime = string.format("%s %d:%02d:%02d", period, displayHour, min, sec)
+        if position == "front" then
+            formattedTime = string.format("%s %d:%02d:%02d", period, displayHour, min, sec)
+        elseif position == "back" then
+            formattedTime = string.format("%d:%02d:%02d %s", displayHour, min, sec, period)
+        else
+            formattedTime = string.format("%d:%02d:%02d", displayHour, min, sec)
+        end
         local thaiDay = thaiDays[currentTime.wday] or ""
         local thaiMonth = thaiMonths[currentTime.month]
         local buddhistYear = currentTime.year + 543
