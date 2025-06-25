@@ -146,6 +146,7 @@ funcs["A1"] = function(enable)
 		funcs["D4"] = RunService.RenderStepped:Connect(function()
 			local camera = workspace.CurrentCamera
 			local vs = camera.ViewportSize
+			local Color = _G.ESPColor or funcs["C4"].color
 			for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
 				if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 					local hrp = player.Character.HumanoidRootPart
@@ -157,19 +158,19 @@ funcs["A1"] = function(enable)
 								Box = CreateDrawing("Square", {
 									Thickness = 1,
 									Filled = false,
-									Color = funcs["C4"].color,
+									Color = Color,
 									Visible = false,
 								}),
 								Name = CreateDrawing("Text", {
 									Size = 14,
 									Center = true,
 									Outline = true,
-									Color = funcs["C4"].color,
+									Color = Color,
 									Visible = false,
 								}),
 								Tracer = CreateDrawing("Line", {
 									Thickness = 1,
-									Color = funcs["C4"].color,
+									Color = Color,
 									Visible = false,
 								}),
 							}
@@ -180,23 +181,23 @@ funcs["A1"] = function(enable)
 						d.Box.Size = Vector2.new(w, h)
 						d.Box.Position = Vector2.new(pos.X - w / 2, pos.Y - h / 2)
 						d.Box.Visible = funcs["C4"].box
-						d.Box.Color = funcs["C4"].color
+						d.Box.Color = Color
 						d.Name.Position = Vector2.new(pos.X, pos.Y - h / 2 - 18)
 						d.Name.Text = player.Name
 						d.Name.Visible = funcs["C4"].box
-						d.Name.Color = funcs["C4"].color
+						d.Name.Color = Color
 						d.Tracer.From = Vector2.new(vs.X / 2, vs.Y)
 						d.Tracer.To = Vector2.new(pos.X, pos.Y)
 						d.Tracer.Visible = funcs["C4"].tracer
-						d.Tracer.Color = funcs["C4"].color
+						d.Tracer.Color = Color
 						local highlight = Storage:FindFirstChild(player.Name)
 						if not highlight then
 							CreateHighlight(player)
 							highlight = Storage:FindFirstChild(player.Name)
 						end
 						if highlight then
-							highlight.FillColor = _G.ESPColor or funcs["C4"].color
-							highlight.OutlineColor = _G.ESPColor or funcs["C4"].color
+							highlight.FillColor = Color
+							highlight.OutlineColor = Color
 							highlight.Enabled = funcs["C4"].highlight
 						end
 					else
@@ -324,6 +325,7 @@ AddColorPicker(Main5u6, {
 	Default = Color3.fromRGB(0, 255, 0),
 	Callback = function(colorNew)
 		_G.ESPColor = colorNew
+                funcs["C4"].color = colorNew
 		if _G.ESP then
 			if funcs["hF"] then
 				for _, highlight in pairs(funcs["hF"]:GetChildren()) do
