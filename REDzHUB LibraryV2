@@ -2475,83 +2475,73 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%02d/%02d/%d", age.month, age.day, age.year)
 end
 
-local thaiDays = {
-    "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"
-}local thaiMonths = {
-    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+local thaiTime = {
+	days = { "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์" },
+	months = {
+		"มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+		"กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+	}
 }functions.updateTime = function()
-    local currentTime = os.date("*t")
-    local hour = currentTime.hour
-    local min = currentTime.min
-    local sec = currentTime.sec
-    local formattedTime, formattedDate
-
-    if TimeThai then
-        local displayHour, period, position        
-        if hour == 0 then
-            displayHour = 12
-            period = "เที่ยงคืน"
-            position = "front"
-        elseif hour >= 1 and hour <= 5 then
-            displayHour = hour
-            period = "ตี"
-            position = "front"
-        elseif hour == 6 then
-            displayHour = 6
-            period = "โมงเช้า"
-            position = "back"
-        elseif hour >= 7 and hour <= 10 then
-            displayHour = hour
-            period = "โมงเช้า"
-            position = "back"
-        elseif hour == 11 then
-            displayHour = 11
-            period = "โมง"
-            position = "back"
-        elseif hour == 12 then
-            displayHour = 12
-            period = "เที่ยง"
-            position = "front"
-        elseif hour >= 13 and hour <= 15 then
-            displayHour = hour - 12
-            period = "บ่าย"
-            position = "front"
-        elseif hour >= 16 and hour <= 18 then
-            displayHour = hour - 12
-            period = "โมงเย็น"
-            position = "back"
-        elseif hour >= 19 and hour <= 23 then
-            displayHour = hour - 18
-            period = "ทุ่ม"
-            position = "back"
-        end
-        if position == "front" then
-            formattedTime = string.format("%s %d:%02d:%02d", period, displayHour, min, sec)
-        elseif position == "back" then
-            formattedTime = string.format("%d:%02d:%02d %s", displayHour, min, sec, period)
-        else
-            formattedTime = string.format("%d:%02d:%02d", displayHour, min, sec)
-        end
-        local thaiDay = thaiDays[currentTime.wday] or ""
-        local thaiMonth = thaiMonths[currentTime.month]
-        local buddhistYear = currentTime.year + 543
-        formattedDate = string.format("วัน%sที่%d เดือน %s ปี %d", thaiDay, currentTime.day, thaiMonth, buddhistYear)
-    else
-        local amPm = "AM"
-        local displayHour = hour
-        if hour >= 12 then
-            amPm = "PM"
-            if hour > 12 then
-                displayHour = hour - 12
-            end
-        elseif hour == 0 then
-            displayHour = 12
-        end
-        formattedTime = string.format("%02d:%02d:%02d %s", displayHour, min, sec, amPm)
-        formattedDate = os.date("%b:%d:%Y")
-    end
-    TimeLabelgui.Text = formattedTime .. "\n" .. formattedDate
+	local _t = os.date("*t")
+	local _u = os.date("!*t")
+	local _s = os.time()
+	local d_ = _t.hour - _u.hour
+	local _z = (d_ == 7 or d_ == 6)
+	local x_
+	if _z then
+		x_ = _t
+	else
+		x_ = os.date("*t", _s + (7 * 60 * 60))
+	end
+	local h_, m_, s_ = x_.hour, x_.min, x_.sec
+	local _f, _d
+	if TimeThai then
+		local hh, pp, pos
+		if h_ == 0 then
+			hh, pp, pos = 12, "เที่ยงคืน", "front"
+		elseif h_ <= 5 then
+			hh, pp, pos = h_, "ตี", "front"
+		elseif h_ == 6 then
+			hh, pp, pos = 6, "โมงเช้า", "back"
+		elseif h_ <= 10 then
+			hh, pp, pos = h_, "โมงเช้า", "back"
+		elseif h_ == 11 then
+			hh, pp, pos = 11, "โมง", "back"
+		elseif h_ == 12 then
+			hh, pp, pos = 12, "เที่ยง", "front"
+		elseif h_ <= 15 then
+			hh, pp, pos = h_ - 12, "บ่าย", "front"
+		elseif h_ <= 18 then
+			hh, pp, pos = h_ - 12, "โมงเย็น", "back"
+		elseif h_ <= 23 then
+			hh, pp, pos = h_ - 18, "ทุ่ม", "back"
+		end
+		if pos == "front" then
+			_f = string.format("%s %d:%02d:%02d", pp, hh, m_, s_)
+		elseif pos == "back" then
+			_f = string.format("%d:%02d:%02d %s", hh, m_, s_, pp)
+		else
+			_f = string.format("%d:%02d:%02d", hh, m_, s_)
+		end
+		local d__ = thaiTime.days[x_.wday] or ""
+		local m__ = thaiTime.months[x_.month]
+		local y_ = x_.year + 543
+		_d = string.format("วัน%sที่ %d เดือน%s ปี %d", d__, x_.day, m__, y_)
+	else
+		local ap = "AM"
+		local hh = h_
+		if h_ >= 12 then
+			ap = "PM"
+			if h_ > 12 then
+				hh = h_ - 12
+			end
+		elseif h_ == 0 then
+			hh = 12
+		end
+		_f = string.format("%02d:%02d:%02d %s", hh, m_, s_, ap)
+		_d = os.date("%b:%d:%Y", _s + (7 * 60 * 60))
+	end	
+	TimeLabelgui.Text = _f .. "\n" .. _d
 end
 
 functions.updateTime()
@@ -3506,53 +3496,56 @@ end)
 RunServerlock("Lock2", 5, function()
     local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
     funcs.updatePlaceInfo(GameName, frame79)
-    local c_f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/List_group"))()
-    c_f.UpdateGroups(List_group, ScreenGui, Corner, Stroke, TextSetColor)
+    if description.Visible then
+        local c_f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/List_group"))()
+        c_f.UpdateGroups(List_group, ScreenGui, Corner, Stroke, TextSetColor)
+    end
     functions.checkFriends()
     functions.startUpdating()
     functions.UpdatePlaces()
 end)
 
 RunServerlock("Lock3", 5, function()
-     local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
-     local info = nti.GetInfo()
-     info_T.Text = string.format(
- 	"Network:\nIP Address: %s\nNumeric: %s\nType: %s\n\n" ..
- 	"Device:\nDevice Model: %s\nPlatform: %s\nScreen Resolution: %s\nViewport1: %s\nViewport2: %s\nBrowser: %s\n\n" ..
- 	"Location:\n%s\n\n" ..
- 	"ISP:\n%s",
- 	info["IP Address"], info["IP Numeric"], info["IP Type"], 
-     info["Device Model"], info["Platform"], info["Screen Resolution"], info["Viewport1"], info["Viewport2"], info["Browser"],
- 	info["Location"],
- 	info["ISP Info"]
-    )RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
-    local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
-    local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
-    frame199.Text = string.format(
-        "Name: %s\nDisplayName: %s\nUserId: %s\nGroup Status: %s\nAccount⚒️: %s",
-        creatorInfo.Username,
-        creatorInfo.DisplayName,
-        tostring(creatorInfo.UserId),
-        creatorInfo.JoinGroupStatus,
-        creatorInfo.CreationDate
-    )
-    Gamecreatortext.Text = "Creator_Game"
-    grouptext.Text = creatorInfo.GroupName.."\n"..creatorInfo.MemberCount
-    iconGamecreator.Image = creatorInfo.headUrl
-    iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
-    icongroupicon.Image = creatorInfo.GroupIcon
-    if description.Visible then
-       functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game.Players.LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png", textscaled = true})
-       functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Account Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png", textscaled = true})
-       functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
-       functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon, textscaled = true})
+      local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
+      local info = nti.GetInfo()
+      if description.Visible then
+          info_T.Text = string.format(
+      	"Network:\nIP Address: %s\nNumeric: %s\nType: %s\n\n" ..
+      	"Device:\nDevice Model: %s\nPlatform: %s\nScreen Resolution: %s\nViewport1: %s\nViewport2: %s\nBrowser: %s\n\n" ..
+      	"Location:\n%s\n\n" ..
+      	"ISP:\n%s",
+      	info["IP Address"], info["IP Numeric"], info["IP Type"], 
+          info["Device Model"], info["Platform"], info["Screen Resolution"], info["Viewport1"], info["Viewport2"], info["Browser"],
+      	info["Location"],
+      	info["ISP Info"]
+         )
+      end
+      RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
+      local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
+      local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
+      frame199.Text = string.format(
+          "Name: %s\nDisplayName: %s\nUserId: %s\nGroup Status: %s\nAccount⚒️: %s",
+          creatorInfo.Username,
+          creatorInfo.DisplayName,
+          tostring(creatorInfo.UserId),
+          creatorInfo.JoinGroupStatus,
+          creatorInfo.CreationDate
+        )
+       Gamecreatortext.Text = "Creator_Game"
+       grouptext.Text = creatorInfo.GroupName.."\n"..creatorInfo.MemberCount
+       iconGamecreator.Image = creatorInfo.headUrl
+       iconAvaterGamecreator.Image = creatorInfo.AvaterUrl
+       icongroupicon.Image = creatorInfo.GroupIcon
+       if description.Visible then
+          functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game.Players.LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png", textscaled = true})
+          functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Account Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png", textscaled = true})
+          functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
+          functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon, textscaled = true})
     end
 end)
 
 ScreenGui.AncestryChanged:Connect(function()
-    if not cameraback then
-        functions.Backfov()
-    end    
+    if not cameraback then functions.Backfov() end    
     if not ScreenGui:IsDescendantOf(game) then
         if rainSound then rainSound:Destroy() end
         if notifyfriend then notifyfriend:Destroy() end
