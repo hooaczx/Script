@@ -672,7 +672,6 @@ notify({
     local PlaceId = game.PlaceId
     local friendsCooldown = 0
     local friendsInTotal = 0
-    local TimeThai = false
     local MarketplaceService = game:GetService("MarketplaceService")
     local AssetService = game:GetService("AssetService")
     local TeleportService = game:GetService("TeleportService")
@@ -2475,73 +2474,23 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%02d/%02d/%d", age.month, age.day, age.year)
 end
 
-local thaiTime = {
-	days = { "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์" },
-	months = {
-		"มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-		"กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-	}
-}functions.updateTime = function()
-	local _t = os.date("*t")
-	local _u = os.date("!*t")
-	local _s = os.time()
-	local d_ = _t.hour - _u.hour
-	local _z = (d_ == 7 or d_ == 6)
-	local x_
-	if _z then
-		x_ = _t
-	else
-		x_ = os.date("*t", _s + (7 * 60 * 60))
+functions.updateTime = function()
+	local nw = os.time()
+	local x = os.date("*t", nw)
+	local h, m, s = x.hour, x.min, x.sec
+	local ap = "AM"
+	local hh = h
+	if h >= 12 then
+		ap = "PM"
+		if h > 12 then
+			hh = h - 12
+		end
+	elseif h == 0 then
+		hh = 12
 	end
-	local h_, m_, s_ = x_.hour, x_.min, x_.sec
-	local _f, _d
-	if TimeThai then
-		local hh, pp, pos
-		if h_ == 0 then
-			hh, pp, pos = 12, "เที่ยงคืน", "front"
-		elseif h_ <= 5 then
-			hh, pp, pos = h_, "ตี", "front"
-		elseif h_ == 6 then
-			hh, pp, pos = 6, "โมงเช้า", "back"
-		elseif h_ <= 10 then
-			hh, pp, pos = h_, "โมงเช้า", "back"
-		elseif h_ == 11 then
-			hh, pp, pos = 11, "โมง", "back"
-		elseif h_ == 12 then
-			hh, pp, pos = 12, "เที่ยง", "front"
-		elseif h_ <= 15 then
-			hh, pp, pos = h_ - 12, "บ่าย", "front"
-		elseif h_ <= 18 then
-			hh, pp, pos = h_ - 12, "โมงเย็น", "back"
-		elseif h_ <= 23 then
-			hh, pp, pos = h_ - 18, "ทุ่ม", "back"
-		end
-		if pos == "front" then
-			_f = string.format("%s %d:%02d:%02d", pp, hh, m_, s_)
-		elseif pos == "back" then
-			_f = string.format("%d:%02d:%02d %s", hh, m_, s_, pp)
-		else
-			_f = string.format("%d:%02d:%02d", hh, m_, s_)
-		end
-		local d__ = thaiTime.days[x_.wday] or ""
-		local m__ = thaiTime.months[x_.month]
-		local y_ = x_.year + 543
-		_d = string.format("วัน%sที่ %d เดือน%s ปี %d", d__, x_.day, m__, y_)
-	else
-		local ap = "AM"
-		local hh = h_
-		if h_ >= 12 then
-			ap = "PM"
-			if h_ > 12 then
-				hh = h_ - 12
-			end
-		elseif h_ == 0 then
-			hh = 12
-		end
-		_f = string.format("%02d:%02d:%02d %s", hh, m_, s_, ap)
-		_d = os.date("%b:%d:%Y", _s + (7 * 60 * 60))
-	end	
-	TimeLabelgui.Text = _f .. "\n" .. _d
+	local timeStr = string.format("%02d:%02d:%02d %s", hh, m, s, ap)
+	local dateStr = os.date("%b:%d:%Y", nw)
+	TimeLabelgui.Text = timeStr .. "\n" .. dateStr
 end
 
 functions.updateTime()
