@@ -18,6 +18,7 @@ local lplr = players.LocalPlayer
 local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
+local gui, con, isOn, fpsV = nil, nil, false, 0
 
 Service = setmetatable({}, {
     __index = function(Self, Index)
@@ -1582,107 +1583,105 @@ AddToggle(Main5u6, {
     end
 })
 
-local StatusUi = true
-local heartbeatConnection = nil
-
-function AddUi(parent, labelText, labelColor)
-    if not StatusUi then
-        return nil
-    end
-
-    local frame = Create("Frame", parent, {
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0,
-        Size = UDim2.new(0.14, 0, 0.07, 0),
-        Draggable = true,
-        Active = true
-    })
-
-    local textLabel = Create("TextLabel", frame, {
-        BackgroundTransparency = 1,
-        Size = UDim2.new(1, 0, 1, 0),
-        Font = Enum.Font.Gotham,
-        Text = labelText,
-        TextColor3 = labelColor,
-        TextScaled = true,
-        TextXAlignment = Enum.TextXAlignment.Left
-    })
-
-    Create("UIPadding", textLabel, {PaddingLeft = UDim.new(0, 5)})
-    Create("UICorner", frame, {CornerRadius = UDim.new(0, 3)})
-
-    return textLabel
-end
-
-function createFpsAndpinggui()
-    if not StatusUi then
-        return
-    end
-
-    local player = game.Players.LocalPlayer
-    local existingUI = game:GetService("CoreGui"):FindFirstChild("FpsAndping")
-    if existingUI then
-        return
-    end
-
-    local screenGui = Create("ScreenGui", game:GetService("CoreGui"), {Name = "FpsAndping"})
-
-    Create("UIListLayout", screenGui, {
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        FillDirection = Enum.FillDirection.Vertical,
-        Padding = UDim.new(0, 10)
-    })
-
-    local fpsLabel = AddUi(screenGui, "FPS: Calculating...", Color3.fromRGB(255, 255, 0))
-    local pingLabel = AddUi(screenGui, "Ping: Calculating...", Color3.fromRGB(0, 255, 255))
-
-    local displayedFPS = 0
-
-    heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
-        local targetFPS = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
-        if displayedFPS < targetFPS then
-            displayedFPS = displayedFPS + 1
-        elseif displayedFPS > targetFPS then
-            displayedFPS = displayedFPS - 1
-        end
-        local ping = game:GetService("Stats").PerformanceStats.Ping:GetValue()
-        local targetPing = math.floor(ping)
-        fpsLabel.Text = "FPS: " .. displayedFPS
-        pingLabel.Text = "Ping: " .. targetPing .. " ms"
-    end)
-
-    screenGui.AncestryChanged:Connect(function()
-        if not screenGui:IsDescendantOf(game) then
-            if heartbeatConnection then
-                heartbeatConnection:Disconnect()
-                heartbeatConnection = nil
-            end
-        end
-    end)
+function addui(on)
+	if on then
+		if isOn then return end
+		isOn = true
+		gui = Create("ScreenGui", (gethui and gethui()) or game:GetService("CoreGui"), {
+			Name = "fap_1hooaczx1", ResetOnSpawn = false, DisplayOrder = math.huge
+		})
+		Create("UIListLayout", gui, {SortOrder=Enum.SortOrder.LayoutOrder, FillDirection=Enum.FillDirection.Vertical, Padding=UDim.new(0,4)})
+		local function mkframe(txt,col)
+			local f=Create("Frame",gui,{
+				Size=UDim2.new(0,160,0,24),
+				BackgroundColor3=Color3.new(0,0,0),
+				BackgroundTransparency=0.6,
+				BorderSizePixel=0,
+				Active=true,
+				Draggable=true
+			})
+			local l=Create("TextLabel",f,{
+				Size=UDim2.new(1,0,1,0),
+				BackgroundTransparency=1,
+				TextColor3=col,
+				Text=txt,
+				Font=Enum.Font.Gotham,
+				TextScaled=true,
+				TextXAlignment=Enum.TextXAlignment.Left
+			})
+			Create("UIPadding",l,{PaddingLeft=UDim.new(0,5)})
+			Create("UICorner",f,{CornerRadius=UDim.new(0,4)})
+			return f,l
+		end
+		local _,fpsLabel=mkframe("fps: ...",Color3.fromRGB(255,255,0))
+		local _,pingLabel=mkframe("ping: ...",Color3.fromRGB(0,255,255))
+		local posBtn = Create("TextButton", gui, {
+			Size=UDim2.new(0,160,0,24),
+			BackgroundColor3=Color3.new(0,0,0),
+			BackgroundTransparency=0.6,
+			BorderSizePixel=0,
+			AutoButtonColor=true,
+			TextColor3=Color3.new(1,1,1),
+			Text="X: ? Y: ? Z: ?",
+			Font=Enum.Font.Gotham,
+			TextScaled=true,
+			TextXAlignment=Enum.TextXAlignment.Left,
+			Active=true,
+			Draggable=true
+		})
+		Create("UIPadding",posBtn,{PaddingLeft=UDim.new(0,5)})
+		Create("UICorner",posBtn,{CornerRadius=UDim.new(0,4)})
+		posBtn.MouseButton1Click:Connect(function()
+			local plr = game.Players.LocalPlayer
+			local hrp = plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+			local hrp = plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+        	if hrp then
+	       	local p = hrp.Position
+	       	local x, y, z = string.format("%.2f", p.X), string.format("%.2f", p.Y), string.format("%.2f", p.Z)
+	       	local code = string.format([[local c = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+               local h = c:WaitForChild("HumanoidRootPart")
+               h.CFrame = CFrame.new(%s, %s, %s)
+               ]], x, y, z)
+		       setclipboard(code)
+		   	game.StarterGui:SetCore("SendNotification", {
+					Title="Copy", Text="Copied position!", Duration=3
+		   	})
+			end
+		end)
+		con = game:GetService("RunService").RenderStepped:Connect(function()
+			local fpsTarget = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+			if fpsV < fpsTarget then fpsV+=1 elseif fpsV > fpsTarget then fpsV-=1 end
+			local pstat = game:GetService("Stats"):FindFirstChild("PerformanceStats")
+			local pingVal = pstat and pstat:FindFirstChild("Ping") and math.floor(pstat.Ping:GetValue()) or 0
+			fpsLabel.Text = "fps: "..fpsV
+			pingLabel.Text = "ping: "..pingVal.."ms"
+			local plr = game.Players.LocalPlayer
+			local hrp = plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+			if hrp then
+				local p=hrp.Position
+				posBtn.Text=string.format("X: %s Y: %s Z: %s", string.format("%.0f", p.X), string.format("%.0f", p.Y), string.format("%.0f", p.Z))
+			else
+				posBtn.Text="X: ? Y: ? Z: ?"
+			end
+		end)
+		gui.AncestryChanged:Connect(function()
+			if not gui:IsDescendantOf(game) then
+				if con then con:Disconnect() con=nil end
+				isOn=false
+			end
+		end)
+	else
+		if not isOn then return end
+		isOn=false
+		if con then con:Disconnect() con=nil end
+		if gui then gui:Destroy() gui=nil end
+	end
 end
 
 AddToggle(Main5u6, {
-    Name = "FpsAndPing",
-    Default = false,
-    Callback = function()
-        StatusUi = not StatusUi
-        local existingUI = game:GetService("CoreGui"):FindFirstChild("FpsAndping")
-
-        if StatusUi then
-            if not existingUI then
-                createFpsAndpinggui()
-            end
-        else
-            if existingUI then
-                existingUI:Destroy()
-            end
-            if heartbeatConnection then
-                heartbeatConnection:Disconnect()
-                heartbeatConnection = nil
-            end
-        end
-    end
+	Name="FpsAndPingAndPos",
+	Default=false,
+	Callback=addui
 })
 
 local t1w8y6 = 2
