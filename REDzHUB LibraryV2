@@ -2978,7 +2978,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             local zx_pos = zx_root.Position
             zx_look = Vector3.new(zx_look.X, zx_pos.Y, zx_look.Z)
             zx_root.CFrame = CFrame.new(zx_pos, zx_look)
-            CreateTween(zx_hum, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)
+            CreateTween(zx_hum, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)            
             local zx_players = game:GetService("Players")
             local zx_local = zx_players.LocalPlayer
             local zx_all = zx_players:GetPlayers()
@@ -3316,12 +3316,28 @@ RunServerlock("Lock1", "no", function()
             end
         end
     end
-    if View and View.player and View.player.Character then
-        local hrp = View.player.Character:FindFirstChild("HumanoidRootPart")
-        if hrp and workspace.CurrentCamera.CameraSubject ~= hrp then
-            workspace.CurrentCamera.CameraSubject = hrp
-        end
-    end
+    local cam = workspace.CurrentCamera
+	local watching = false	
+	for id, data in pairs(playerFrames) do
+		local btn = data.UI and data.UI:FindFirstChildOfClass("ImageButton")
+		if btn and btn.Image == "rbxassetid://137903829820448" then
+			local plr = game.Players:GetPlayerByUserId(id)
+			local hrp = plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+			if hrp and cam.CameraSubject ~= hrp then
+				cam.CameraSubject = hrp
+			end
+			watching = true
+			break
+		end
+	end
+	if not watching then
+		local char = game.Players.LocalPlayer.Character
+		local hum = char and char:FindFirstChild("Humanoid")
+		if hum and cam.CameraSubject ~= hum then
+			cam.CameraSubject = hum
+			cam.CameraType = Enum.CameraType.Custom
+		end
+	end
     if activeButton then
         for name, data in pairs(uiStates) do
             if name ~= activeButton and data.state then
@@ -3426,7 +3442,7 @@ RunServerlock("Lock1", "no", function()
     functions.updateTime()
 end)
 
-RunServerlock("Lock2", 5, function()
+RunServerlock("Lock2", 7, function()
     local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
     funcs.updatePlaceInfo(GameName, frame79)
     if description.Visible then
@@ -3438,7 +3454,7 @@ RunServerlock("Lock2", 5, function()
     functions.UpdatePlaces()
 end)
 
-RunServerlock("Lock3", 5, function()
+RunServerlock("Lock3", 7, function()
       local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
       local info = nti.GetInfo()
       if description.Visible then
@@ -3477,78 +3493,75 @@ RunServerlock("Lock3", 5, function()
     end
 end)
 
-local check_1
 check_1 = RunService.RenderStepped:Connect(function()
-	local parentgui = (gethui and gethui()) or game:GetService("CoreGui")
-	local foundUI = parentgui:FindFirstChild("hcx hub library1")
-	local f_ = not foundUI
-		and not ShiftLockmaingui
-		and not rainSound
-		and not notifyfriend
-		and not notifyfriendleave
-		and not click1
-		and not click2
-		and not falsetoggle
-		and not clicktoggle
-		and (not CH or next(CH) == nil)
-		and (not playerFrames or next(playerFrames) == nil)
-	if not foundUI then
-		if not cameraback then
-			functions.Backfov()
-		end
-		if rainSound then rainSound:Destroy() rainSound = nil end
-		if notifyfriend then notifyfriend:Destroy() notifyfriend = nil end
-		if notifyfriendleave then notifyfriendleave:Destroy() notifyfriendleave = nil end
-		if click1 then click1:Destroy() click1 = nil end
-		if click2 then click2:Destroy() click2 = nil end
-		if falsetoggle then falsetoggle:Destroy() falsetoggle = nil end
-		if clicktoggle then clicktoggle:Destroy() clicktoggle = nil end
-		for name, conn in pairs(stopupdateall) do
-			if conn then conn:Disconnect() end
-			stopupdateall[name] = nil
-		end
-		if ShiftLockmaingui then
-			local char = game.Players.LocalPlayer.Character
-			if char then
-				local hum = char:FindFirstChildOfClass("Humanoid")
-				if hum then
-					hum.AutoRotate = true
-					CreateTween(hum, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
-				end
-			end
-			for _, highlight in pairs(CH) do
-				if highlight then
-					highlight:Destroy()
-				end
-			end
-			CH = {}
-			ShiftLockButton.Image = States.Off
-			ShiftlockCursor.Visible = false
-			frameinfopy = false
-			if ShiftLockmaingui then
-		 	   ShiftLockmaingui:Disconnect()
-		    	ShiftLockmaingui = nil
-		    end
-			Tweening = false
-		end
-		if View then
-			local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-			if hum then
-				workspace.CurrentCamera.CameraSubject = hum
-			end
-			for _, data in pairs(playerFrames) do
-				if data.UI and data.UI.Parent then
-					data.UI:Destroy()
-				end
-			end
-			table.clear(playerFrames)
-		end
-	end
-	if f_ then
-		  check_1:Disconnect()
-	  	check_1 = nil
-      end
-   end)
+    local parentgui = (gethui and gethui()) or game:GetService("CoreGui")
+    local foundUI = parentgui:FindFirstChild("hcx hub library1")
+    local f_ = not foundUI
+        and not rainSound
+        and not notifyfriend
+        and not notifyfriendleave
+        and not click1
+        and not click2
+        and not falsetoggle
+        and not clicktoggle
+        and (not CH or next(CH) == nil)
+        and (not playerFrames or next(playerFrames) == nil)
+    if not foundUI and ShiftLockmaingui then
+        for _, highlight in pairs(CH) do
+            if highlight then
+                highlight:Destroy()
+            end
+        end
+        table.clear(CH)
+        ShiftLockButton.Image = States.Off
+        ShiftlockCursor.Visible = false
+        frameinfopy = false
+        ShiftLockmaingui:Disconnect()
+        ShiftLockmaingui = nil
+        local char = game.Players.LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum.AutoRotate = true
+                CreateTween(hum, "CameraOffset", Vector3.new(0, 0, 0), 0.5, false)
+            end
+        end
+        Tweening = false
+    end
+    if not foundUI then
+        if not cameraback then
+            functions.Backfov()
+        end
+        if rainSound then rainSound:Destroy() rainSound = nil end
+        if notifyfriend then notifyfriend:Destroy() notifyfriend = nil end
+        if notifyfriendleave then notifyfriendleave:Destroy() notifyfriendleave = nil end
+        if click1 then click1:Destroy() click1 = nil end
+        if click2 then click2:Destroy() click2 = nil end
+        if falsetoggle then falsetoggle:Destroy() falsetoggle = nil end
+        if clicktoggle then clicktoggle:Destroy() clicktoggle = nil end
+        for name, conn in pairs(stopupdateall) do
+            if conn then conn:Disconnect() end
+            stopupdateall[name] = nil
+        end
+        if View then
+            local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+            if hum then
+                workspace.CurrentCamera.CameraSubject = hum
+            end
+            for _, data in pairs(playerFrames) do
+                if data.UI and data.UI.Parent then
+                    data.UI:Destroy()
+                end
+            end
+            table.clear(CH)
+            table.clear(playerFrames)
+        end
+    end
+    if f_ then
+        check_1:Disconnect()
+        check_1 = nil
+    end
+end)
 end
 
 local firstVisible = true
