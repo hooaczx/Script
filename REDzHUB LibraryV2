@@ -2955,9 +2955,13 @@ functions.canClick = function(buttonName)
     end
 end
 functions.Look = function()
-    local mousePos = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
-    local unitRay = workspace.CurrentCamera:ViewportPointToRay(mousePos.X, mousePos.Y)
-    return unitRay.Origin + unitRay.Direction * 100
+  local c = workspace.CurrentCamera
+  local d = c.CFrame.LookVector
+  local lp = game.Players.LocalPlayer
+  local r = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+  if not r then return c.CFrame.Position + d * 100 end
+  local v = Vector3.new(d.X, 0, d.Z).Unit
+  return r.Position + v
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
