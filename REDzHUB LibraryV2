@@ -3317,25 +3317,42 @@ RunServerlock("Lock1", "no", function()
         end
     end
     local cam = workspace.CurrentCamera
-	local watching = false	
+	local watching = false
+	local watchingHRP = nil
 	for id, data in pairs(playerFrames) do
 		local btn = data.UI and data.UI:FindFirstChildOfClass("ImageButton")
 		if btn and btn.Image == "rbxassetid://137903829820448" then
 			local plr = game.Players:GetPlayerByUserId(id)
 			local hrp = plr and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
-			if hrp and cam.CameraSubject ~= hrp then
-				cam.CameraSubject = hrp
+			if hrp then
+				watching = true
+				watchingHRP = hrp
 			end
-			watching = true
 			break
 		end
 	end
-	if not watching then
-		local char = game.Players.LocalPlayer.Character
-		local hum = char and char:FindFirstChild("Humanoid")
-		if hum and cam.CameraSubject ~= hum then
-			cam.CameraSubject = hum
-			cam.CameraType = Enum.CameraType.Custom
+	if watching then
+		if watchingHRP and cam.CameraSubject ~= watchingHRP then
+			cam.CameraSubject = watchingHRP
+		end
+	else
+		local subject = cam.CameraSubject
+		local WatchingPlayer = false
+		for id, data in pairs(playerFrames) do
+			local plr = game.Players:GetPlayerByUserId(id)
+			local hum = plr and plr.Character and plr.Character:FindFirstChild("Humanoid")
+			if hum and subject == hum then
+				WatchingPlayer = true
+				break
+			end
+		end
+		if WatchingPlayer then
+			local char = game.Players.LocalPlayer.Character
+			local hum = char and char:FindFirstChild("Humanoid")
+			if hum and cam.CameraSubject ~= hum then
+				cam.CameraSubject = hum
+				cam.CameraType = Enum.CameraType.Custom
+			end
 		end
 	end
     if activeButton then
