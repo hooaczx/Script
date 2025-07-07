@@ -3444,10 +3444,7 @@ end)
 
 RunServerlock("Lock3", 7, function()
       local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
-      nti.GetInfo()
-      local gui = (gethui and gethui()) or game:GetService("CoreGui")
-      local data = gui:FindFirstChild("f_f_1hooaczx1") and gui.f_f_1hooaczx1:FindFirstChild("f_s_1hooaczx1")
-      local info = data and game:GetService("HttpService"):JSONDecode(data.Value)
+      local info = nti.GetInfo()
       if description.Visible then
         info_T.Text = string.format(
       	"Network:\nIP Address: %s\nNumeric: %s\nType: %s\n\n" ..
@@ -3455,10 +3452,10 @@ RunServerlock("Lock3", 7, function()
       	"Location:\n%s\n\n" ..
       	"ISP:\n%s",
       	info["IP Address"], info["IP Numeric"], info["IP Type"], 
-          info["Device Model"], info["Platform"], info["Screen Resolution"], info["Viewport1"], info["Viewport2"], info["Browser"],
+        info["Device Model"], info["Platform"], info["Screen Resolution"], info["Viewport1"], info["Viewport2"], info["Browser"],
       	info["Location"],
       	info["ISP Info"]
-         )
+      )
       end
       RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
       local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
