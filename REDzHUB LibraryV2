@@ -3444,7 +3444,10 @@ end)
 
 RunServerlock("Lock3", 7, function()
       local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
-      local info = nti.GetInfo()
+      nti.GetInfo()
+      local gui = (gethui and gethui()) or game:GetService("CoreGui")
+      local data = gui:FindFirstChild("f_f_1hooaczx1") and gui.f_f_1hooaczx1:FindFirstChild("f_s_1hooaczx1")
+      local info = data and game:GetService("HttpService"):JSONDecode(data.Value)
       if description.Visible then
         info_T.Text = string.format(
       	"Network:\nIP Address: %s\nNumeric: %s\nType: %s\n\n" ..
