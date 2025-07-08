@@ -855,136 +855,87 @@ AddSlider(Main5u6, {
     end
 })
 
-local Player = game.Players.LocalPlayer
-local originalUserId = Player.UserId
-local id
-
-function setPlayerId(newId)
-    if newId then
-        Player.UserId = newId
-    else
-        if game.CreatorType == Enum.CreatorType.User then
-            Player.UserId = game.CreatorId
-        elseif game.CreatorType == Enum.CreatorType.Group then
-            Player.UserId = game:GetService("GroupService"):GetGroupInfoAsync(game.CreatorId).Owner.Id
-        end
-    end
-end
+local _P, _ori, _id = game.Players.LocalPlayer, game.Players.LocalPlayer.UserId
 
 AddTextBox(Main5u6, {
-    Name = "Custom Profile in leaderboard",
-    Default = "Enter ID",
-    PlaceholderText = "Enter UserID",
-    ClearText = true,
-    Callback = function(value)
-        id = tonumber(value)
-        if id then
-            setPlayerId(id)
-        end
-    end
+	Name = "Custom Profile in leaderboard",
+	Default = "Enter ID",
+	PlaceholderText = "Enter UserID",
+	ClearText = true,
+	Callback = function(v)
+		_id = tonumber(v)
+		if _id then _P.UserId = _id end
+	end
 })
 
 AddToggle(Main5u6, {
-    Name = "Custom UserID",
-    Default = false,
-    Callback = function(state)
-        if state then
-            if id then
-                setPlayerId(id)
-            end
-        else
-            setPlayerId(originalUserId)
-        end
-    end
+	Name = "Custom UserID",
+	Default = false,
+	Callback = function(s)
+		_P.UserId = s and _id or (_ori or (game.CreatorType == Enum.CreatorType.User and game.CreatorId) or game:GetService("GroupService"):GetGroupInfoAsync(game.CreatorId).Owner.Id)
+	end
 })
 
-getgenv().ProtectName = false
-spaghettiWires = {}
-originalName = nil
-customName = nil
+getgenv()._pN = false
+local _w, _oN, _cN
+for _,p in ipairs(game.Players:GetPlayers()) do if p==game.Players.LocalPlayer then _oN=p.Name break end end
 
-for _, player in ipairs(game.Players:GetPlayers()) do
-    if player == game.Players.LocalPlayer then
-        originalName = player.Name
-        break
-    end
-end
-
-function updateNameInTextLabels(newName)
-    if not newName or not originalName then return end
-
-    for _, value in ipairs(game:GetDescendants()) do
-        if value:IsA("TextLabel") and value.Text then
-            local has = string.find(value.Text, originalName)
-            if has then
-                value.Text = value.Text:gsub(originalName, newName)
-            end
-
-            local pasta = value:GetPropertyChangedSignal("Text"):Connect(function()
-                if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(originalName, newName)
-                end
-            end)
-
-            table.insert(spaghettiWires, pasta)
-        end
-    end
-
-    local noodle = game.DescendantAdded:Connect(function(value)
-        if value:IsA("TextLabel") and value.Text then
-            local has = string.find(value.Text, originalName)
-            value:GetPropertyChangedSignal("Text"):Connect(function()
-                if getgenv().ProtectName then
-                    value.Text = value.Text:gsub(originalName, newName)
-                end
-            end)
-            if has then
-                value.Text = value.Text:gsub(originalName, newName)
-            end
-        end
-    end)
-    table.insert(spaghettiWires, noodle)
-end
-
-function revertNameInTextLabels()
-    if not customName or not originalName then return end
-
-    for _, value in ipairs(game:GetDescendants()) do
-        if value:IsA("TextLabel") and value.Text then
-            value.Text = value.Text:gsub(customName, originalName)
-        end
-    end
-    for _, pasta in ipairs(spaghettiWires) do
-        pasta:Disconnect()
-    end
-    spaghettiWires = {}
+local function _m(n,r,s)
+	s = s or getgenv()._pN
+	if r then
+		for _,x in ipairs(_w or {}) do x:Disconnect() end
+		_w = {}
+		if not (_cN and _oN) then return end
+		for _,v in ipairs(game:GetDescendants()) do
+			if v:IsA("TextLabel") and v.Text then
+				v.Text = v.Text:gsub(_cN,_oN)
+			end
+		end
+		return
+	end
+	if not (n and _oN) or not s then return end
+	_cN = n
+	for _,v in ipairs(game:GetDescendants()) do
+		if v:IsA("TextLabel") and v.Text then
+			if v.Text:find(_oN) then v.Text = v.Text:gsub(_oN,n) end
+			table.insert(_w,v:GetPropertyChangedSignal("Text"):Connect(function()
+				if getgenv()._pN then v.Text = v.Text:gsub(_oN,n) end
+			end))
+		end
+	end
+	table.insert(_w,game.DescendantAdded:Connect(function(v)
+		if v:IsA("TextLabel") and v.Text then
+			if v.Text:find(_oN) then v.Text = v.Text:gsub(_oN,n) end
+			v:GetPropertyChangedSignal("Text"):Connect(function()
+				if getgenv()._pN then v.Text = v.Text:gsub(_oN,n) end
+			end)
+		end
+	end))
 end
 
 AddTextBox(Main5u6, {
-    Name = "Custom Name",
-    Default = "Enter",
-    PlaceholderText = "Enter name to replace",
-    ClearText = true,
-    Callback = function(input)
-        if input == "" or input == originalName then return end
-        customName = input
-        if getgenv().ProtectName then
-            updateNameInTextLabels(customName)
-        end
-    end
+	Name = "Custom Name",
+	Default = "Enter",
+	PlaceholderText = "Enter name to replace",
+	ClearText = true,
+	Callback = function(i)
+		if i ~= "" and i ~= _oN then
+			_m(i, false, getgenv()._pN)
+		end
+	end
 })
 
 AddToggle(Main5u6, {
-    Name = "Name Protection",
-    Default = false,
-    Callback = function(state)
-        getgenv().ProtectName = state
-        if state and customName then
-            updateNameInTextLabels(customName)
-        elseif not state then
-            revertNameInTextLabels()
-        end
-    end
+	Name = "Name Protection",
+	Default = false,
+	Callback = function(s)
+		getgenv()._pN = s
+		if s and _cN then
+			_m(_cN, false, true)
+		else
+			_m(nil, true)
+		end
+	end
 })
 
 local C = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()
