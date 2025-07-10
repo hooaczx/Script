@@ -8,7 +8,6 @@ getgenv().TPJpBst = 0
 getgenv().TPWalk = false
 getgenv().NV_Brightness = 0
 local player = game:GetService("Players").LocalPlayer
-local controlModule = require(player.PlayerScripts:WaitForChild('PlayerModule'):WaitForChild("ControlModule"))
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -714,20 +713,17 @@ local function Cframewalkspeed()
     local LocalPlayer = game.Players.LocalPlayer
     local controlModule = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
     local camera = workspace.CurrentCamera
-
     flightLoop = game:GetService("RunService").RenderStepped:Connect(function()
         local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local root = character:FindFirstChild("HumanoidRootPart")
         if not root then return end
         if not Cframewalk then return end
-
         local moveVec = controlModule:GetMoveVector()
         if moveVec.Magnitude > 0 then
             local camCF = camera.CFrame
             local forward = Vector3.new(camCF.LookVector.X, 0, camCF.LookVector.Z).Unit
             local right = Vector3.new(camCF.RightVector.X, 0, camCF.RightVector.Z).Unit
             local moveWorld = (right * moveVec.X - forward * moveVec.Z).Unit * tonumber(getgenv().Cframewalk)
-
             if mode == "Tween Mode" then
                 CreateTween(root, "CFrame", root.CFrame + moveWorld, 0.1, false)
             else
