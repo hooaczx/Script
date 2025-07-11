@@ -680,7 +680,7 @@ notify({
     local count = 1
     local Player = players.LocalPlayer
     local Mouse = LocalPlayer:GetMouse()
-    local HttpService = game:GetService("HttpService")
+    local HttpService, HttpGet = game:GetService("HttpService"), game.HttpGet
     local View = nil
     local playerFrames = {}
     local displayedFriends = {}
@@ -689,6 +689,8 @@ notify({
     local switchtodescription = false
     local waitswitchpage = false
     local image = Configs.Image or ""
+    text1_1 = ""
+    text1_2 = "\nFollowers🔔:Loading...\nFollowings👥:Loading..."
     functions.RunServerlock = function(lockName, Time, callback)
         if stopupdateall[lockName] then
            stopupdateall[lockName]:Disconnect()
@@ -2474,6 +2476,23 @@ functions.getAccountCreationDate = function(ageInDays)
     return string.format("%02d/%02d/%d", age.month, age.day, age.year)
 end
 
+function gf(u)
+    local f, fl, c1, c2 = {}, {}, "", ""
+    repeat
+        local r = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://friends.roblox.com/v1/users/"..u.."/followers?limit=100&cursor="..c1))
+        if not r or not r.data then return "Error_Followers", "Error_Followings" end
+        for _, v in pairs(r.data) do f[#f+1] = v end
+        c1 = r.nextPageCursor or ""
+    until c1 == ""
+    repeat
+        local r = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://friends.roblox.com/v1/users/"..u.."/followings?limit=100&cursor="..c2))
+        if not r or not r.data then return "Error_Followers", "Error_Followings" end
+        for _, v in pairs(r.data) do fl[#fl+1] = v end
+        c2 = r.nextPageCursor or ""
+    until c2 == ""
+    return f, fl
+end
+
 functions.updateTime = function()
 	local nw = os.time()
 	local x = os.date("*t", nw)
@@ -3319,7 +3338,7 @@ RunServerlock("Lock1", "no", function()
                 viewButton.Image = "rbxassetid://96859795672738"
             end
         end
-    end
+    end 
     if View and View.player and View.player.Character and View.player.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = View.player.Character:FindFirstChild("Humanoid")
         if workspace.CurrentCamera.CameraSubject ~= hrp then
@@ -3342,12 +3361,12 @@ RunServerlock("Lock1", "no", function()
         if hi then hi:Destroy() end
     end
     CH = {}
-    frame9.Text = string.format(
+    text1_1 = string.format(
         "DisplayName: %s\nUserId: %s\nAccount⚒️: %s",
         game.Players.LocalPlayer.DisplayName,
         game.Players.LocalPlayer.UserId,
         functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
-    )
+    )frame9.Text = text1_1 .. text1_2
     if Avatar then
         iconAvaterGamecreator.Visible = true
         iconGamecreator.Visible = false
@@ -3452,12 +3471,15 @@ RunServerlock("Lock3", 7, function()
       	"Location:\n%s\n\n" ..
       	"ISP:\n%s",
       	info["IP Address"], info["IP Numeric"], info["IP Type"], 
-        info["Device Model"], info["Platform"], info["Screen Resolution"], info["Viewport1"], info["Viewport2"], info["Browser"],
+          info["Device Model"], info["Platform"], info["Screen Resolution"], info["Viewport1"], info["Viewport2"], info["Browser"],
       	info["Location"],
       	info["ISP Info"]
-      )
+         )
       end
       RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
+      local fol, folw = gf(game.Players.LocalPlayer.UserId)
+      text1_2 = string.format("\nFollowers🔔:%d\nFollowings👥:%d", #folw, #fol)
+      frame9.Text = text1_1..text1_2
       local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
       local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
       frame199.Text = string.format(
