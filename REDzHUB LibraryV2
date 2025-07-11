@@ -383,9 +383,9 @@ function MakeWindow(Configs)
   end
   Anim_Credits:Destroy()
   AnimMenu:Destroy()
-  CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.09, 0), 0.5, true)
+  CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.09, 0), 0.3, true)
   TopBar.Visible = true
-  CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.3, true)
+  CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.15, true)
   Menu.Draggable = true
 
   local line_Containers = Create("Frame", Menu, {
@@ -708,6 +708,26 @@ notify({
        end
    end
    RunServerlock = functions.RunServerlock
+   functions.formatNumber = function(n)
+     local suffixes = {
+        {s = "Vg", v = 1e63}, {s = "Nd", v = 1e60}, {s = "Od", v = 1e57},
+        {s = "Spd", v = 1e54}, {s = "Sxd", v = 1e51}, {s = "Qid", v = 1e48},
+        {s = "Qad", v = 1e45}, {s = "Td",  v = 1e42}, {s = "Dd",  v = 1e39},
+        {s = "Ud",  v = 1e36}, {s = "Dc",  v = 1e33}, {s = "No",  v = 1e30},
+        {s = "Oc",  v = 1e27}, {s = "Sp",  v = 1e24}, {s = "Sx",  v = 1e21},
+        {s = "Qi",  v = 1e18}, {s = "Qa",  v = 1e15}, {s = "T",   v = 1e12},
+        {s = "B",   v = 1e9},  {s = "M",   v = 1e6},  {s = "k",   v = 1e3}
+    }
+    for _, e in ipairs(suffixes) do
+        if n >= e.v then
+            local val = n / e.v
+            local rounded = math.floor(val * 10 + 0.5) / 10
+            return (rounded == math.floor(rounded)) and (string.format("%d%s", rounded, e.s)) or (string.format("%.1f%s", rounded, e.s))
+        end
+    end
+    return tostring(n)
+  end
+ formatNumber = functions.formatNumber
 
 local frame = Create("Frame", ScreenGui, {
     Size = UDim2.new(0.5, 0, 0.1, 0),
@@ -3478,7 +3498,7 @@ RunServerlock("Lock3", 7, function()
       end
       RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
       local fol, folw = gf(game.Players.LocalPlayer.UserId)
-      text1_2 = string.format("\nFollowers🔔:%d\nFollowings👥:%d", #folw, #fol)
+      text1_2 = string.format("\nFollowers🔔:%s\nFollowings👥:%s", formatNumber(#folw), formatNumber(#fol))
       frame9.Text = text1_1..text1_2
       local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
       local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
