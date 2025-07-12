@@ -1785,54 +1785,48 @@ AddToggle(Main5u6, {
     end
 })
 
-local DayLength = 14.40
-local InitialTime = 8
-local IsDayCycle = false
-local dayCycle
-local days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
-local CurrentDay = 1
-local start = tick() - (InitialTime / 24 * DayLength)
-local AM = true
+local _d, _i, _e, _c, _x = 14.4, 8, false, nil, 1
+local _s = tick() - (_i / 24 * _d)
+local _a = true
+local _w = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
 
 AddTextBox(Main5u6, {
-    Name = "Day Cycle Speed",
-    Default = "Enter",
-    PlaceholderText = "Enter number",
-    ClearText = true,
-    Callback = function(value)
-        local number = tonumber(value)
-        if number and number > 0 then
-            DayLength = 14.40 / number
-            start = tick() - (game.Lighting.ClockTime / 24 * DayLength)
-        else
-            warn("Invalid number entered for speed adjustment in Day Cycle")
-        end
-    end
+	Name = "Day Cycle Speed",
+	Default = "Enter",
+	PlaceholderText = "Enter number",
+	ClearText = true,
+	Callback = function(_v)
+		local _n = tonumber(_v)
+		if _n and _n > 0 then
+			_d = 14.4 / _n
+			_s = tick() - (game.Lighting.ClockTime / 24 * _d)
+		else
+			warn("Invalid number entered")
+		end
+	end
 })
 
 AddToggle(Main5u6, {
-    Name = "Day Cycle",
-    Default = false,
-    Callback = function(state)
-        IsDayCycle = state
-        if state then
-            dayCycle = game:GetService("RunService").Stepped:Connect(function()
-                local t = (tick() - start) / DayLength * 24
-                if t >= 12 then AM = false end
-                if t >= 24 then
-                    start = tick()
-                    CurrentDay = math.fmod(CurrentDay, 7) + 1
-                    AM = true
-                end
-                game.Lighting.ClockTime = math.fmod(t, 24)
-            end)
-        else
-            if dayCycle then
-                dayCycle:Disconnect()
-                dayCycle = nil
-            end
-        end
-    end
+	Name = "Day Cycle",
+	Default = false,
+	Callback = function(_z)
+		_e = _z
+		if _z then
+			_c = game:GetService("RunService").Stepped:Connect(function()
+				local _t = (tick() - _s) / _d * 24
+				if _t >= 12 then _a = false end
+				if _t >= 24 then
+					_s = tick()
+					_x = (_x % 7) + 1
+					_a = true
+				end
+				game.Lighting.ClockTime = _t % 24
+			end)
+		elseif _c then
+			_c:Disconnect()
+			_c = nil
+		end
+	end
 })
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/feedback"))()
