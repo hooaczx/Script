@@ -605,60 +605,71 @@ AddToggle(Main5u6, {
   end
 })
 
-local Tpwk
+local tpCon, cfCon = nil, nil
+local cfMode = "Nope"
+getgenv().TPSpeed = 1
+getgenv().Cframewalk = 0
+getgenv().TPWalk = false
 
 AddTextBox(Main5u6, {
 	Name = "Number Tpwalk",
 	Default = "Enter",
 	PlaceholderText = "Enter number",
 	ClearText = true,
-	Callback = function(value)
-		if tonumber(value) then
-			getgenv().TPSpeed = tonumber(value)
-		end
+	Callback = function(v)
+		local n = tonumber(v)
+		if n then getgenv().TPSpeed = n end
 	end
 })
 
 AddToggle(Main5u6, {
 	Name = "Tpwalk",
 	Default = false,
-	Callback = function(s)
-		getgenv().TPWalk = s		
-		if s then
-			if not Tpwk then
-				Tpwk = game:GetService("RunService").Heartbeat:Connect(function()
-					local char = game.Players.LocalPlayer.Character
-					if char then
-						local hum = char:FindFirstChildOfClass("Humanoid")
-						if hum and hum.Parent and getgenv().TPWalk then
-							if hum.MoveDirection.Magnitude > 0 then
-								local speed = tonumber(getgenv().TPSpeed) or 1
-								char:TranslateBy(hum.MoveDirection * speed)
+	Callback = function(state)
+		getgenv().TPWalk = state
+		if state then
+			if not tpCon then
+				local rs = game:GetService("RunService")
+				local plr = game.Players.LocalPlayer
+				tpCon = rs.Heartbeat:Connect(function()
+					local ch = plr.Character
+					local hum = ch and ch:FindFirstChildOfClass("Humanoid")
+					if not ch or not hum or not hum.Parent or not getgenv().TPWalk then return end
+					local ctrl = require(plr:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+					local ct = ctrl.activeController
+					local spd = tonumber(getgenv().TPSpeed) or 1
+					if ct and ct.Name == "ClickToMoveController" then
+						local hrp = ch:FindFirstChild("HumanoidRootPart")
+						local tgt = ct.targetPoint
+						if hrp and tgt then
+							local dir = (tgt - hrp.Position)
+							if dir.Magnitude > 0.1 then
+								ch:TranslateBy(dir.Unit * spd)
 							end
 						end
+						return
+					end
+					if hum.MoveDirection.Magnitude > 0 then
+						ch:TranslateBy(hum.MoveDirection * spd)
 					end
 				end)
 			end
 		else
-			if Tpwk then
-				Tpwk:Disconnect()
-				Tpwk = nil
+			if tpCon then
+				tpCon:Disconnect()
+				tpCon = nil
 			end
 		end
 	end
 })
 
-getgenv().Cframewalk = 0
-local flightLoop, Cframewalk = nil, false
-local mode = "Nope"
-
 AddDropdown(Main5u6, {
-    Name = "Cframe walk Mode",
-    Default = "Nope",
-    Options = {"Tween Mode", "Nope"},
-    Callback = function(option)
-        mode = option
-    end
+	Name = "Cframe walk Mode",
+	Default = "Nope",
+	Options = {"Tween Mode", "Nope"},
+	Callback = function(opt)
+		cfMode = opt
+	end
 })
 
 AddTextBox(Main5u6, {
@@ -666,44 +677,59 @@ AddTextBox(Main5u6, {
 	Default = "Enter",
 	PlaceholderText = "Enter speed",
 	ClearText = true,
-	Callback = function(value)
-		if tonumber(value) then
-			getgenv().Cframewalk = tonumber(value)
-		end
+	Callback = function(v)
+		local n = tonumber(v)
+		if n then getgenv().Cframewalk = n end
 	end
 })
 
 AddToggle(Main5u6, {
 	Name = "Cframe walk",
 	Default = false,
-	Callback = function(s)
-		Cframewalk = s
-		if s then
-			if not flightLoop then
-				flightLoop = game:GetService("RunService").RenderStepped:Connect(function()
-					local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-					local root = character:FindFirstChild("HumanoidRootPart")
-					if not root then return end
-					if not Cframewalk then return end
-					local controlModule = require(game.Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
-					local moveVec = controlModule:GetMoveVector()
-					if moveVec.Magnitude > 0 then
-						local camCF = workspace.CurrentCamera.CFrame
-						local forward = Vector3.new(camCF.LookVector.X, 0, camCF.LookVector.Z).Unit
-						local right = Vector3.new(camCF.RightVector.X, 0, camCF.RightVector.Z).Unit
-						local moveWorld = (right * moveVec.X - forward * moveVec.Z).Unit * tonumber(getgenv().Cframewalk)
-						if mode == "Tween Mode" then
-							CreateTween(root, "CFrame", root.CFrame + moveWorld, 0.1, false)
+	Callback = function(state)
+		if state then
+			if not cfCon then
+				local plr = game.Players.LocalPlayer
+				local rs = game:GetService("RunService")
+				local cam = workspace.CurrentCamera
+				cfCon = rs.RenderStepped:Connect(function()
+					local ch = plr.Character or plr.CharacterAdded:Wait()
+					local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
+					if not hrp or not getgenv().Cframewalk then return end
+					local ctrl = require(plr:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+					local ct = ctrl.activeController
+					local mv = Vector3.zero
+					local spd = tonumber(getgenv().Cframewalk) or 1
+					if ct and ct.Name == "ClickToMoveController" then
+						local tgt = ct.targetPoint
+						if tgt then
+							local dir = (tgt - hrp.Position)
+							if dir.Magnitude > 0.1 then
+								mv = dir.Unit
+							end
+						end
+					else
+						mv = ctrl:GetMoveVector()
+						if mv.Magnitude > 0 then
+							local fwd = Vector3.new(cam.CFrame.LookVector.X, 0, cam.CFrame.LookVector.Z).Unit
+							local rgt = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z).Unit
+							mv = (rgt * mv.X - fwd * mv.Z).Unit
+						end
+					end
+					if mv.Magnitude > 0 then
+						local tgt = hrp.CFrame + mv * spd
+						if cfMode == "Tween Mode" then
+							CreateTween(hrp, "CFrame", tgt, 0.1, false)
 						else
-							root.CFrame = root.CFrame + moveWorld
+							hrp.CFrame = tgt
 						end
 					end
 				end)
 			end
 		else
-			if flightLoop then
-				flightLoop:Disconnect()
-				flightLoop = nil
+			if cfCon then
+				cfCon:Disconnect()
+				cfCon = nil
 			end
 		end
 	end
