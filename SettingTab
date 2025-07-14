@@ -1028,26 +1028,51 @@ AddToggle(Main5u6, {
     end
 })
 
-local tlptCn
+local _c___, _p___
 
 AddToggle(Main5u6, {
     Name = "ClickTp",
     Default = false,
-    Callback = function(state)
-        if state then
-            tlptCn = mouse.Button1Down:Connect(function()
-                if mouse.Target ~= nil then
-                    local targetPosition = game.Players.LocalPlayer:GetMouse().Hit.p
-                    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-                    humanoidRootPart.CFrame = CFrame.new(targetPosition)
+    Callback = function(_s___)
+        if _s___ then
+            game:GetService("UserInputService").InputBegan:Connect(function(_i___)
+                if _i___.UserInputType == Enum.UserInputType.Touch or _i___.UserInputType == Enum.UserInputType.MouseButton1 then
+                    _p___ = _i___.Position
                 end
             end)
-        else
-            if tlptCn then
-                tlptCn:Disconnect()
-                tlptCn = nil
-            end
+            _c___ = game:GetService("UserInputService").InputEnded:Connect(function(_i___, _g___)
+                if _g___ or not _p___ or (_i___.Position - _p___).Magnitude > 5 then return end
+                if _i___.UserInputType ~= Enum.UserInputType.Touch and _i___.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+                local _m___ = game.Players.LocalPlayer:GetMouse()
+                local _b___ = false
+                if _i___.UserInputType == Enum.UserInputType.MouseButton1 then
+                    _b___ = game:GetService("GuiService"):IsMouseOverGui()
+                    local _h___ = (gethui and gethui()) or game:GetService("CoreGui")
+                    if _m___.Target and (_m___.Target:IsDescendantOf(_h___) or _m___.Target:IsDescendantOf(game:GetService("CoreGui"))) then
+                        _b___ = true
+                    end
+                end
+                if _m___.Target then
+                    local parent = _m___.Target
+                    while parent do
+                        if parent:IsA("GuiObject") then
+                            _b___ = true
+                            break
+                        end
+                        parent = parent.Parent
+                    end
+                end
+                if game:GetService("UserInputService"):GetFocusedTextBox() or _b___ then return end
+                if _m___.Target and _m___.Target.Transparency < 1 then
+                    local _p2___ = _m___.Hit.p
+                    local _c2___ = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+                    local _h2___ = _c2___:WaitForChild("HumanoidRootPart")
+                    _h2___.CFrame = CFrame.new(_p2___)
+                end
+            end)
+        elseif _c___ then
+            _c___:Disconnect()
+            _c___ = nil
         end
     end
 })
