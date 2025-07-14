@@ -605,241 +605,159 @@ AddToggle(Main5u6, {
   end
 })
 
-local Tpwk, Tpwkchrtr, Tpwkdied
-
-function setupTPWalk()
-    if Tpwk then
-        Tpwk:Disconnect()
-        Tpwk = nil
-    end
-    if Tpwkchrtr then
-        Tpwkchrtr:Disconnect()
-        Tpwkchrtr = nil
-    end
-    if Tpwkdied then
-        Tpwkdied:Disconnect()
-        Tpwkdied = nil
-    end
-
-    function settpwk(character)
-        local hum = character:WaitForChild("Humanoid")
-        if not Tpwk then
-            Tpwk = game:GetService("RunService").Stepped:Connect(function()
-                if getgenv().TPWalk and hum and hum.Parent then
-                    if hum.MoveDirection.Magnitude > 0 then
-                        if getgenv().TPSpeed and tonumber(getgenv().TPSpeed) then
-                            character:TranslateBy(hum.MoveDirection * tonumber(getgenv().TPSpeed))
-                        else
-                            character:TranslateBy(hum.MoveDirection)
-                        end
-                    end
-                else
-                    if Tpwk then
-                        Tpwk:Disconnect()
-                        Tpwk = nil
-                    end
-                end
-            end)
-        end
-
-        if not Tpwkdied then
-            Tpwkdied = hum.Died:Connect(function()
-                if Tpwk then
-                    Tpwk:Disconnect()
-                    Tpwk = nil
-                end
-            end)
-        end
-    end
-
-    if not Tpwkchrtr then
-        Tpwkchrtr = player.CharacterAdded:Connect(settpwk)
-    end
-    if player.Character then
-        settpwk(player.Character)
-    end
-end
+local Tpwk
 
 AddTextBox(Main5u6, {
-    Name = "Number Tpwalk",
-    Default = "Enter",
-    PlaceholderText = "Enter number",
-    ClearText = true,
-    Callback = function(value)
-        if tonumber(value) then
-            getgenv().TPSpeed = tonumber(value)
-        end
-    end
+	Name = "Number Tpwalk",
+	Default = "Enter",
+	PlaceholderText = "Enter number",
+	ClearText = true,
+	Callback = function(value)
+		if tonumber(value) then
+			getgenv().TPSpeed = tonumber(value)
+		end
+	end
 })
 
 AddToggle(Main5u6, {
-    Name = "Tpwalk",
-    Default = false,
-    Callback = function(s)
-        getgenv().TPWalk = s
-        if s then
-            setupTPWalk()
-        else
-            if Tpwk then
-                Tpwk:Disconnect()
-                Tpwk = nil
-            end
-            if Tpwkchrtr then
-                Tpwkchrtr:Disconnect()
-                Tpwkchrtr = nil
-            end
-            if Tpwkdied then
-                Tpwkdied:Disconnect()
-                Tpwkdied = nil
-            end
-        end
-    end
+	Name = "Tpwalk",
+	Default = false,
+	Callback = function(s)
+		getgenv().TPWalk = s		
+		if s then
+			if not Tpwk then
+				Tpwk = game:GetService("RunService").Heartbeat:Connect(function()
+					local char = game.Players.LocalPlayer.Character
+					if char then
+						local hum = char:FindFirstChildOfClass("Humanoid")
+						if hum and hum.Parent and getgenv().TPWalk then
+							if hum.MoveDirection.Magnitude > 0 then
+								local speed = tonumber(getgenv().TPSpeed) or 1
+								char:TranslateBy(hum.MoveDirection * speed)
+							end
+						end
+					end
+				end)
+			end
+		else
+			if Tpwk then
+				Tpwk:Disconnect()
+				Tpwk = nil
+			end
+		end
+	end
 })
 
 getgenv().Cframewalk = 0
 local flightLoop, Cframewalk = nil, false
 local mode = "Nope"
 
-local function Cframewalkspeed()
-    local LocalPlayer = game.Players.LocalPlayer
-    local controlModule = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
-    local camera = workspace.CurrentCamera
-    flightLoop = game:GetService("RunService").RenderStepped:Connect(function()
-        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local root = character:FindFirstChild("HumanoidRootPart")
-        if not root then return end
-        if not Cframewalk then return end
-        local moveVec = controlModule:GetMoveVector()
-        if moveVec.Magnitude > 0 then
-            local camCF = camera.CFrame
-            local forward = Vector3.new(camCF.LookVector.X, 0, camCF.LookVector.Z).Unit
-            local right = Vector3.new(camCF.RightVector.X, 0, camCF.RightVector.Z).Unit
-            local moveWorld = (right * moveVec.X - forward * moveVec.Z).Unit * tonumber(getgenv().Cframewalk)
-            if mode == "Tween Mode" then
-                CreateTween(root, "CFrame", root.CFrame + moveWorld, 0.1, false)
-            else
-                root.CFrame = root.CFrame + moveWorld
-            end
-        end
-    end)
-end
-
 AddDropdown(Main5u6, {
     Name = "Cframe walk Mode",
     Default = "Nope",
     Options = {"Tween Mode", "Nope"},
     Callback = function(option)
-      if option then
         mode = option
-      end
     end
 })
 
 AddTextBox(Main5u6, {
-    Name = "Number Cframe walk",
-    Default = "Enter",
-    PlaceholderText = "Enter speed",
-    ClearText = true,
-    Callback = function(value)
-        if tonumber(value) then
-            getgenv().Cframewalk = tonumber(value)
-        end
-    end
+	Name = "Number Cframe walk",
+	Default = "Enter",
+	PlaceholderText = "Enter speed",
+	ClearText = true,
+	Callback = function(value)
+		if tonumber(value) then
+			getgenv().Cframewalk = tonumber(value)
+		end
+	end
 })
 
 AddToggle(Main5u6, {
-    Name = "Cframe walk",
-    Default = false,
-    Callback = function(s)
-        Cframewalk = s
-        if Cframewalk then
-            Cframewalkspeed()
-        else
-            if flightLoop then
-                flightLoop:Disconnect()
-                flightLoop = nil
-            end
-        end
-    end
+	Name = "Cframe walk",
+	Default = false,
+	Callback = function(s)
+		Cframewalk = s
+		if s then
+			if not flightLoop then
+				flightLoop = game:GetService("RunService").RenderStepped:Connect(function()
+					local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+					local root = character:FindFirstChild("HumanoidRootPart")
+					if not root then return end
+					if not Cframewalk then return end
+					local controlModule = require(game.Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+					local moveVec = controlModule:GetMoveVector()
+					if moveVec.Magnitude > 0 then
+						local camCF = workspace.CurrentCamera.CFrame
+						local forward = Vector3.new(camCF.LookVector.X, 0, camCF.LookVector.Z).Unit
+						local right = Vector3.new(camCF.RightVector.X, 0, camCF.RightVector.Z).Unit
+						local moveWorld = (right * moveVec.X - forward * moveVec.Z).Unit * tonumber(getgenv().Cframewalk)
+						if mode == "Tween Mode" then
+							CreateTween(root, "CFrame", root.CFrame + moveWorld, 0.1, false)
+						else
+							root.CFrame = root.CFrame + moveWorld
+						end
+					end
+				end)
+			end
+		else
+			if flightLoop then
+				flightLoop:Disconnect()
+				flightLoop = nil
+			end
+		end
+	end
 })
 
-local TPJpCntn, TPJp, tpar
-
-function setupTPJpBst()
-    if TPJp then
-        TPJp:Disconnect()
-        TPJp = nil
-    end
-    if TPJpCntn then
-        TPJpCntn:Disconnect()
-        TPJpCntn = nil
-    end
-    if tpar then
-        tpar:Disconnect()
-        tpar = nil
-    end
-
-    function setupTPJp(character)
-        local hum = character:WaitForChild("Humanoid")
-        if not TPJp then
-            TPJp = hum.StateChanged:Connect(function(oldState, newState)
-                if newState == Enum.HumanoidStateType.Jumping or newState == Enum.HumanoidStateType.Freefall then
-                    local boost = getgenv().TPJpBst or 0
-                    if boost > 0 then
-                        if not tpar then
-                            tpar = game:GetService("RunService").Heartbeat:Connect(function()
-                                if hum:GetState() == Enum.HumanoidStateType.Freefall then
-                                    if hum.MoveDirection.Magnitude > 0 then
-                                        local currentDirection = hum.MoveDirection.Unit
-                                        character:TranslateBy(currentDirection * boost)
-                                    end
-                                else
-                                    if tpar then
-                                        tpar:Disconnect()
-                                        tpar = nil
-                                    end
-                                end
-                            end)
-                        end
-                    end
-                end
-            end)
-        end
-    end
-
-    if not TPJpCntn then
-        TPJpCntn = player.CharacterAdded:Connect(setupTPJp)
-    end
-    if player.Character then
-        setupTPJp(player.Character)
-    end
-end
+local _c_, _s_, _h_
+local _H_
 
 AddSlider(Main5u6, {
-    Name = "StrafeJump Slowness",
-    Increase = 0.01,
-    MinValue = 0,
-    MaxValue = 0.2,
-    Default = 0,
-    Callback = function(value)
-        getgenv().TPJpBst = tonumber(value) or 0
-        if getgenv().TPJpBst > 0 then
-            setupTPJpBst()
-        else
-            if TPJp then
-                TPJp:Disconnect()
-                TPJp = nil
-            end
-            if TPJpCntn then
-                TPJpCntn:Disconnect()
-                TPJpCntn = nil
-            end
-            if tpar then
-                tpar:Disconnect()
-                tpar = nil
-            end
-        end
-    end
+	Name = "StrafeJump Slowness",
+	Increase = 0.01,
+	MinValue = 0,
+	MaxValue = 1,
+	Default = 0,
+	Callback = function(v)
+		getgenv().TPJpBst = tonumber(v) or 0
+		if getgenv().TPJpBst > 0 then
+			if _s_ then _s_:Disconnect() _s_ = nil end
+			if _c_ then _c_:Disconnect() _c_ = nil end
+			if _h_ then _h_:Disconnect() _h_ = nil end
+			_H_ = nil
+			_c_ = game:GetService("RunService").Heartbeat:Connect(function()
+				local _ch_ = game.Players.LocalPlayer.Character
+				if _ch_ then
+					local _hum_ = _ch_:FindFirstChildOfClass("Humanoid")
+					if _hum_ and _hum_ ~= _H_ then
+						if _s_ then _s_:Disconnect() _s_ = nil end
+						if _h_ then _h_:Disconnect() _h_ = nil end
+						_H_ = _hum_
+						_s_ = _hum_.StateChanged:Connect(function(_, _st_)
+							if (_st_ == Enum.HumanoidStateType.Jumping or _st_ == Enum.HumanoidStateType.Freefall) and getgenv().TPJpBst > 0 and not _h_ then
+								_h_ = game:GetService("RunService").Heartbeat:Connect(function()
+									if _hum_:GetState() == Enum.HumanoidStateType.Freefall and _hum_.MoveDirection.Magnitude > 0 then
+										_ch_:TranslateBy(_hum_.MoveDirection.Unit * getgenv().TPJpBst)
+									else
+										if _h_ then _h_:Disconnect() _h_ = nil end
+									end
+								end)
+							end
+						end)
+					elseif _hum_ and _hum_.Health <= 0 then
+						if _s_ then _s_:Disconnect() _s_ = nil end
+						if _h_ then _h_:Disconnect() _h_ = nil end
+						_H_ = nil
+					end
+				end
+			end)
+		else
+			if _s_ then _s_:Disconnect() _s_ = nil end
+			if _c_ then _c_:Disconnect() _c_ = nil end
+			if _h_ then _h_:Disconnect() _h_ = nil end
+			_H_ = nil
+		end
+	end
 })
 
 local _P, _ori, _id = game.Players.LocalPlayer, game.Players.LocalPlayer.UserId
