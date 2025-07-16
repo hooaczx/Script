@@ -169,13 +169,13 @@ end function CreateHighlight(player)
 	end
 	local Storage = funcs["hF"]
 	if char then
-		local highlight = Storage:FindFirstChild(player.Name)
+		local highlight = Storage:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 		if highlight then
 			highlight:Destroy()
 		end
 		if funcs["C4"].highlight then
 			Create("Highlight", Storage, {
-				Name = player.Name,
+				Name = player.Name.."Highlight_1hooaczx1",
 				Adornee = char,
 				FillColor = _G.ESPColor or funcs["C4"].color,
 				FillTransparency = 1,
@@ -244,10 +244,10 @@ funcs["A1"] = function(enable)
 						d.Tracer.To = Vector2.new(pos.X, pos.Y)
 						d.Tracer.Visible = funcs["C4"].tracer
 						d.Tracer.Color = Color
-						local highlight = Storage:FindFirstChild(player.Name)
+						local highlight = Storage:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 						if not highlight then
 							CreateHighlight(player)
-							highlight = Storage:FindFirstChild(player.Name)
+							highlight = Storage:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 						end
 						if highlight then
 							highlight.FillColor = Color
@@ -293,7 +293,7 @@ funcs["A1"] = function(enable)
 						funcs["B1"][player]:Disconnect()
 						funcs["B1"][player] = nil
 					end
-					local h = Storage:FindFirstChild(player.Name)
+					local h = Storage:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 					if h then
 						h:Destroy()
 					end
@@ -420,22 +420,109 @@ AddSlider(Main5u6, {
 AddToggle(Main5u6, {
     Name = "Night Vision",
     Default = false,
-    Callback = function(Value)
-        if Value then
-           local nv = game:GetService("Lighting"):FindFirstChild("NV_1hooaczx1")
-            if not nv then
-               local NVEffect = Create("ColorCorrectionEffect", game:GetService("Lighting"), {
-                    Name = "NV_1hooaczx1",
-                    Brightness = getgenv().NV_Brightness,
-                    Contrast = 1,
-                    Saturation = -0.8,
-                    TintColor = Color3.fromRGB(0, 255, 0)
-                 })
+    Callback = function(v)
+        local l,r,w=game:GetService("Lighting"),game:GetService("RunService"),workspace
+        if v then
+            if getgenv().__c then getgenv().__c:Disconnect() end
+            local s={
+                GS=l.GlobalShadows,
+                T=l.Technology,
+                FS=l.FogStart,
+                FE=l.FogEnd,
+                E={},
+                L={}
+            }
+            getgenv().__saved={
+                GS=s.GS,
+                T=s.T,
+                A=l.Ambient,
+                OA=l.OutdoorAmbient,
+                EDS=l.EnvironmentDiffuseScale,
+                ESS=l.EnvironmentSpecularScale,
+                E={},
+                L={},
+                FS=s.FS,
+                FE=s.FE
+            }
+            local effects = {}
+            for _, e in ipairs(l:GetChildren()) do
+                local cn = e.ClassName
+                if cn=="ShadowMapEffect" or cn=="SunRaysEffect" or cn=="BloomEffect" then
+                    effects[#effects+1] = e
+                    getgenv().__saved.E[e] = e.Enabled
+                end
             end
+            local lights = {}
+            for _, lt in ipairs(w:GetDescendants()) do
+                local cn = lt.ClassName
+                if cn=="PointLight" or cn=="SpotLight" or cn=="SurfaceLight" then
+                    lights[#lights+1] = lt
+                    getgenv().__saved.L[lt] = lt.Shadows
+                end
+            end
+            local cGS,cT,cFS,cFE = l.GlobalShadows,l.Technology,l.FogStart,l.FogEnd
+            local cE,cL = {},{}
+            getgenv().__c = r.Heartbeat:Connect(function()
+                if not l:FindFirstChild("NV_1hooaczx1") then
+                    Create("ColorCorrectionEffect",l,{
+                        Name="NV_1hooaczx1",
+                        Brightness=getgenv().NV_Brightness or 1,
+                        Contrast=1,
+                        Saturation=-0.8,
+                        TintColor=Color3.fromRGB(0,255,0)
+                    })
+                end
+                if l.GlobalShadows ~= false then
+                    l.GlobalShadows = false
+                    cGS = false
+                end
+                if l.Technology ~= Enum.Technology.Compatibility then
+                    l.Technology = Enum.Technology.Compatibility
+                    cT = Enum.Technology.Compatibility
+                end
+                if l.FogStart ~= 0 then
+                    l.FogStart = 0
+                    cFS = 0
+                end
+                if l.FogEnd ~= 100000 then
+                    l.FogEnd = 100000
+                    cFE = 100000
+                end
+                for _, e in ipairs(effects) do
+                    local en = e.Enabled
+                    if cE[e] ~= false and en == true then
+                        e.Enabled = false
+                        cE[e] = false
+                    elseif cE[e] == nil then
+                        cE[e] = en
+                    end
+                end
+                for _, lt in ipairs(lights) do
+                    local sh = lt.Shadows
+                    if cL[lt] ~= false and sh == true then
+                        lt.Shadows = false
+                        cL[lt] = false
+                    elseif cL[lt] == nil then
+                        cL[lt] = sh
+                    end
+                end
+            end)
         else
-           local nv = game:GetService("Lighting"):FindFirstChild("NV_1hooaczx1")
-            if nv then
-                nv:Destroy()
+            local nv=l:FindFirstChild("NV_1hooaczx1")
+            if nv then nv:Destroy() end
+            if getgenv().__c then getgenv().__c:Disconnect() getgenv().__c=nil end
+            local s=getgenv().__saved
+            if s then
+                l.GlobalShadows = s.GS
+                l.Technology = s.T
+                l.Ambient = s.A
+                l.OutdoorAmbient = s.OA
+                l.EnvironmentDiffuseScale = s.EDS
+                l.EnvironmentSpecularScale = s.ESS
+                for e,en in pairs(s.E) do if e and e.Parent then e.Enabled = en end end
+                for lt,sh in pairs(s.L) do if lt and lt.Parent then lt.Shadows = sh end end
+                l.FogStart = s.FS
+                l.FogEnd = s.FE
             end
         end
     end
