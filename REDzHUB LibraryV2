@@ -4891,37 +4891,9 @@ function MakeTab(Configs)
         BackgroundColor3 = Configs_HUB.Cor_Text,
         BorderSizePixel = 0,
     })
-
-    local sound = Instance.new("Sound")
-    sound.Parent = Frame
-
-    local function formatTime(seconds)
-        local minutes = math.floor(seconds / 60)
-        local remainingSeconds = seconds % 60
-        return string.format("%d:%02d", minutes, remainingSeconds)
-    end
-
-    local pv
-
-    local function updateProgressBar()
-        if pv then
-           pv:Disconnect()
-           pv = nil
-        end
-        pv = RunService.RenderStepped:Connect(function()
-            if sound and sound.IsPlaying then
-                local progress = sound.TimePosition / sound.TimeLength
-                Progress.Size = UDim2.new(progress, 0, 1, 0)
-                TimeSongText.Text = formatTime(math.floor(sound.TimePosition)) .. " / " .. formatTime(math.floor(sound.TimeLength))
-            else
-                 if pv then
-                     pv:Disconnect()
-                     pv = nil
-                 end
-            end
-       end)
-   end
-
+    
+    local pv, TimeSong
+    
     local function extractAssetId(input)
        local assetId = input:match("rbxassetid://(%d+)") 
        if assetId then
@@ -4936,61 +4908,87 @@ function MakeTab(Configs)
             return assetId
         end
         return nil
-      end
+   end
 
-Toggle.MouseButton1Click:Connect(function()
-    local inputText = TextBoxID.Text
-    local assetId = extractAssetId(inputText)
-    if not assetId then
-        NameSongFrame.Text = "Invalid ID"
-        CreditLabel.Text = "Please enter a valid  ID of asset song"
-        return
-    end
-    local productInfo
-    local success, err = pcall(function()
-        productInfo = game:GetService("MarketplaceService"):GetProductInfo(assetId)
-    end)
-    if not success or not productInfo then
-        NameSongFrame.Text = "Failed to fetch asset info"
-        CreditLabel.Text = "Error: " .. tostring(err)
-        return
-    end
-    if productInfo.AssetTypeId ~= 3 then
-        NameSongFrame.Text = "id Asset is not a Song"
-        CreditLabel.Text = "id Not a Song"
-        return
-    end
-    if not productInfo.IsForSale then
-        NameSongFrame.Text = "Song not for sale, check at" .. " https://www.roblox.com/library/" .. assetId
-        CreditLabel.Text = "Creator by: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
-        return
-    end
-    if sound.IsPlaying then
-        soundsavedTimePosition = sound.TimePosition
-        sound:Stop()
-        updateProgressBar()
-        NameSongFrame.Text = "Stopped"
-        CreditLabel.Text = "Created by: Not found"
-        Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
-        musicPlaying = false
-    else
-        local successLoad, loadErr = pcall(function()
-            sound.SoundId = "rbxassetid://" .. assetId
-            sound:Play()
-            sound.TimePosition = soundsavedTimePosition
-        end)
-        if not successLoad then
-            NameSongFrame.Text = "Failed to load/play song"
-            CreditLabel.Text = "Asset is private or restricted access or cannot be loaded"
-            Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
-            return
-        end
-        NameSongFrame.Text = productInfo.Name
-        Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
-        CreditLabel.Text = "Created by: " .. (productInfo.Creator and productInfo.Creator.Name or "Unknown")
-        musicPlaying = true
-    end
-end)
+   Toggle.MouseButton1Click:Connect(function()
+       local t = TextBoxID.Text
+       local i = extractAssetId(t)
+       if not i then
+           NameSongFrame.Text = "Invalid ID"
+           CreditLabel.Text = "Please enter a valid ID of asset song"
+           return
+       end    
+       local p
+       local s, e = pcall(function()
+           p = game:GetService("MarketplaceService"):GetProductInfo(i)
+       end)
+       if not s or not p then
+           NameSongFrame.Text = "Failed to fetch asset info"
+           CreditLabel.Text = "Error: " .. tostring(e)
+           return
+       end
+       if p.AssetTypeId ~= 3 then
+           NameSongFrame.Text = "id Asset is not a Song"
+           CreditLabel.Text = "id Not a Song"
+           return
+       end
+       local m = Frame:FindFirstChild("___MusicSound")
+       if not m then
+           m = Instance.new("Sound")
+           m.Name = "___MusicSound"
+           m.Looped = false
+           m.Volume = 1
+           m.Parent = Frame
+       end
+       if pv then
+           pv:Disconnect()
+           pv = nil
+       end
+       if m.IsPlaying then
+           TimeSong = m.TimePosition
+           m:Stop()
+           NameSongFrame.Text = "Stopped"
+           CreditLabel.Text = "Created by: Not found"
+           Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
+           Progress.Size = UDim2.new(0, 0, 1, 0)
+           local mm = math.floor(TimeSong / 60)
+           local ss = math.floor(TimeSong % 60)
+           TimeSongText.Text = string.format("%d:%02d", mm, ss)
+       else
+           local sl, le = pcall(function()
+               m.SoundId = "rbxassetid://" .. i
+               m.TimePosition = TimeSong
+               m:Play()
+           end)
+           if not sl then
+               NameSongFrame.Text = "Failed to load/play song"
+               CreditLabel.Text = "Asset is private or restricted access or cannot be loaded"
+               Toggle.Image = "rbxthumb://type=Asset&id=98070627958036&w=420&h=420"
+               return
+           end
+           NameSongFrame.Text = p.Name
+           Toggle.Image = "rbxthumb://type=Asset&id=133872094700280&w=420&h=420"
+           CreditLabel.Text = "Created by: " .. (p.Creator and p.Creator.Name or "Unknown")
+           pv = RunService.RenderStepped:Connect(function()
+               if m and m.IsPlaying then
+                   local tp = math.floor(m.TimePosition)
+                   local tl = math.floor(m.TimeLength)
+                   local mm = math.floor(tp / 60)
+                   local ss = tp % 60
+                   local ml = math.floor(tl / 60)
+                   local sl = tl % 60
+                   TimeSongText.Text = string.format("%d:%02d / %d:%02d", mm, ss, ml, sl)
+                   local prog = tl > 0 and tp / tl or 0
+                   Progress.Size = UDim2.new(prog, 0, 1, 0)
+               else
+                   if pv then
+                       pv:Disconnect()
+                       pv = nil
+                   end
+               end
+           end)
+       end
+   end)
 end
 
 function AddFeedBack(parent, Configs)
