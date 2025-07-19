@@ -2838,11 +2838,9 @@ functions.createSettingSection(
     end
 end, TopBarclose)
 
-local gameSettings = UserSettings():GetService("UserGameSettings")
-local Volume = gameSettings.MasterVolume
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
-    gameSettings.MasterVolume = (Volume > 0) and 0 or 1
+    UserSettings():GetService("UserGameSettings").MasterVolume = (UserSettings():GetService("UserGameSettings").MasterVolume > 0) and 0 or 1
 end)
 
 local SettingButton = Create("ImageButton", frame, {
