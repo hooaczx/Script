@@ -2839,36 +2839,10 @@ functions.createSettingSection(
 end, TopBarclose)
 
 local gameSettings = UserSettings():GetService("UserGameSettings")
-local lastKnownVolume = gameSettings.MasterVolume
-local changeConnection
+local Volume = gameSettings.MasterVolume
 functions.createSettingSection(scrollingSettingFrame, "Volume", 
 [[Turn off your main game sound]], function()
-    local currentVolume = gameSettings.MasterVolume
-    gameSettings.MasterVolume = (currentVolume > 0) and 0 or 1
-end)
-functions.createSettingSection(scrollingSettingFrame, "Volume Notifications", 
-[[Notification for changes in MasterVolume from other sources. If you feel annoyed, you can turn it off.]], function(state)
-    if state then
-        if not changeConnection then
-            changeConnection = RunService.Heartbeat:Connect(function()
-                local currentVolume = gameSettings.MasterVolume
-                if currentVolume ~= lastKnownVolume then
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "Volume Changed",
-                        Text = "Volume has been changed to: " .. tostring(currentVolume),
-                        Icon = "rbxthumb://type=Asset&id=92416463477961&w=150&h=150",
-                        Duration = 3,
-                    })
-                    lastKnownVolume = currentVolume
-                end
-            end)
-        end
-    else
-        if changeConnection then
-            changeConnection:Disconnect()
-            changeConnection = nil
-        end
-    end
+    gameSettings.MasterVolume = (Volume > 0) and 0 or 1
 end)
 
 local SettingButton = Create("ImageButton", frame, {
@@ -4954,6 +4928,7 @@ function MakeTab(Configs)
            local mm = math.floor(TimeSong / 60)
            local ss = math.floor(TimeSong % 60)
            TimeSongText.Text = string.format("%d:%02d", mm, ss)
+           Progress.Size = UDim2.new(TimeSong / m.TimeLength > 0 and m.TimeLength or 1, 0, 1, 0)
        else
            local sl, le = pcall(function()
                m.SoundId = "rbxassetid://" .. i
