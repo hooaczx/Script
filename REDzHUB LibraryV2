@@ -708,7 +708,7 @@ local d = {
 		{"Peace out", "Night night", "Rest well", "Stay cozy", "Good night", "See ya", "Take care", "Sleep tight", "Catch you later", "Be safe"}
 	},
 	new1 = {
-		{"Happy New Year", "Cheers", "New beginnings", "Fresh start", "Celebrate", "Make it count", "Joy ahead", "Bright future", "New chapter", "New vibe"},
+		{"Happy New Year", "Cheers", "New beginnings", "Fresh start", "Celebrate", "Welcome 2025", "Make it count", "Joy ahead", "Bright future", "New chapter"},
 		{"Wishing you luck", "Hope it’s your year", "Stay solid", "Good vibes only", "Smiles all around", "Keep shining", "Dream big", "Stay happy", "Be awesome", "Make moves"},
 		{"Take care, alright", "Keep it cool", "Look after yourself", "Enjoy every moment", "Stay strong", "Be kind", "Stay positive", "Keep going", "Live well", "Stay safe"}
 	},
@@ -725,11 +725,33 @@ local d = {
 	}
 }
 local function r(t) return t[math.random(#t)] end
-local now = os.time()
-local time = os.date("*t", now)
-local nextYear = time.year + 1
-local newYearTime = os.time{year=nextYear, month=1, day=1}
-local isNewYear = now >= newYearTime
+local greetTxt = r(d.greet)
+local emoTxt = r(d.emo)
+function getTitleText()
+	local now = os.time()
+	local t = os.date("*t", now)
+	local y = t.year
+	local s = os.time{year = y, month = 1, day = 1, hour = 0, min = 0, sec = 0}
+	local e = os.time{year = y, month = 1, day = 1, hour = 6, min = 0, sec = 0}
+	local n = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
+	if now >= s and now < e then
+		local elapsed = now - s
+		local h = math.floor(elapsed / 3600)
+		local m = math.floor((elapsed % 3600) / 60)
+		local sec = elapsed % 60
+		return string.format("%s🎉 Happy New Year! Time: %02d:%02d:%02d 🎆", greetTxt, h, m, sec)
+	else
+		local diff = n - now
+		if diff < 0 then diff = 0 end
+		local d = math.floor(diff / 86400)
+		local h = math.floor((diff % 86400) / 3600)
+		local m = math.floor((diff % 3600) / 60)
+		local sec = diff % 60
+		return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
+	end
+end
+local time = os.date("*t")
+local ny = (time.month == 1 and time.day <= 2)
 local hour = time.hour
 local period = "n"
 if hour >= 5 and hour < 12 then
@@ -740,7 +762,7 @@ elseif hour >= 17 and hour < 21 then
 	period = "eve"
 end
 local greetings
-if isNewYear then
+if ny then
 	greetings = (math.random(2) == 1) and d.new1 or d.new2
 else
 	if period == "morn" then
@@ -753,41 +775,15 @@ else
 		greetings = d.n
 	end
 end
-local greetTxt = r(d.greet)
-local emoTxt = r(d.emo)
 local msg = r(greetings[1]) .. " " .. r(greetings[2]) .. ". " .. r(greetings[3]) .. " " .. emoTxt
-local diff = newYearTime - now
-if diff < 0 then diff = 0 end
-local titleText
-if diff == 0 then
-	titleText = greetTxt .. "🎉 Happy New Year " .. nextYear .. "! 🎆"
-else
-	local daysLeft = math.floor(diff / 86400)
-	titleText = string.format("%s %d %s Countdown to New Year!⏰", greetTxt, daysLeft, (daysLeft == 1 and "day" or "days"))
-end
 notify({
-	Title = titleText,
+	Title = getTitleText(),
 	Text = msg,
 	buttonText = "Ok",
 	imageID = "18488884411",
 	guiSize = Vector2.new(400, 80),
 	updates = {
-		Title = function()
-			local now = os.time()
-			local Year = os.date("*t").year + 1
-			local newYearTime = os.time{year = Year, month = 1, day = 1}
-			local diff = newYearTime - now
-			if diff < 0 then diff = 0 end
-			if diff == 0 then
-				return greetTxt .. "🎉 Happy New Year " ..Year .. "! 🎆"
-			end
-			local d = math.floor(diff / 86400)
-			local h = math.floor((diff % 86400) / 3600)
-			local m = math.floor((diff % 3600) / 60)
-			local s = diff % 60
-			return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, s)
-		end
-	}
+		Title = getTitleText}
 })
 
 function MinimizeButton(Configs)
@@ -1209,6 +1205,7 @@ local SplitGameToGamepass = Create("ImageButton", framek, {
     Size = UDim2.new(0.07, 0, 0.15, 0),
     Position = UDim2.new(0.93, 0, 0, 0),
     BackgroundTransparency = 1,
+    ImageTransparency = 0.75,
     Image = "rbxthumb://type=Asset&id=93917932838439&w=420&h=420"
 })
 local s_t = false
