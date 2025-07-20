@@ -721,19 +721,26 @@ local d = {
 		"Hey, ", "Yo, ", "Sup! ", "What’s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
 	},
 	emo = {
-		"🎉", "✨", "🔥", "🌟", "🌈", "💪", "😊", "😎", "🌙", "🌞", "🍀", "🌺", "🍀", "🌸", "☀️", "🌛"
+		"🎉", "✨", "🔥", "🌟", "🎆", "🌈", "💪", "😊", "😎", "🌙", "🌞", "🍀", "🌺", "🌸", "☀️", "🌛"
 	}
 }
 local function r(t) return t[math.random(#t)] end
-local time = os.date("*t")
-local ny = (time.month == 1 and time.day <= 2)
+local now = os.time()
+local time = os.date("*t", now)
+local nextYear = time.year + 1
+local newYearTime = os.time{year=nextYear, month=1, day=1}
+local isNewYear = now >= newYearTime
 local hour = time.hour
 local period = "n"
-if hour >= 5 and hour < 12 then period = "morn"
-elseif hour >= 12 and hour < 17 then period = "noon"
-elseif hour >= 17 and hour < 21 then period = "eve" end
-local greetings, msgs
-if ny then
+if hour >= 5 and hour < 12 then
+	period = "morn"
+elseif hour >= 12 and hour < 17 then
+	period = "noon"
+elseif hour >= 17 and hour < 21 then
+	period = "eve"
+end
+local greetings
+if isNewYear then
 	greetings = (math.random(2) == 1) and d.new1 or d.new2
 else
 	if period == "morn" then
@@ -746,29 +753,38 @@ else
 		greetings = d.n
 	end
 end
-local daysLeft = math.floor((os.time{year=time.year+1,month=1,day=1} - os.time()) / 86400)
-if daysLeft < 0 then daysLeft = 0 end
 local greetTxt = r(d.greet)
 local emoTxt = r(d.emo)
-local msg = r(greetings[1]).." "..r(greetings[2])..". "..r(greetings[3]).." "..emoTxt
-local titleText = greetTxt .. daysLeft .. (daysLeft == 1 and " day" or " days") .. " til New Year! 🎆"
+local msg = r(greetings[1]) .. " " .. r(greetings[2]) .. ". " .. r(greetings[3]) .. " " .. emoTxt
+local diff = newYearTime - now
+local titleText
+if diff <= 0 then
+	titleText = greetTxt .. "🎉 Happy New Year! 🎆"
+else
+	local daysLeft = math.floor(diff / 86400)
+	titleText = string.format("%s %d %s until New Year! 🎆", greetTxt, daysLeft, (daysLeft == 1 and "day" or "days"))
+end
 notify({
 	Title = titleText,
 	Text = msg,
 	buttonText = "Ok",
 	imageID = "18488884411",
-	guiSize = Vector2.new(400,80),
+	guiSize = Vector2.new(400, 80),
 	updates = {
 		Title = function()
-			local diff = os.time{year=os.date("*t").year+1, month=1, day=1} - os.time()
-			if diff < 0 then diff = 0 end
+			local now = os.time()
+			local currentYear = os.date("*t").year
+			local newYearTime = os.time{year = currentYear + 1, month = 1, day = 1}
+			local diff = newYearTime - now
+			if diff <= 0 then
+				return greetTxt .. "🎉 Happy New Year! 🎆"
+			end
 			local d = math.floor(diff / 86400)
 			local h = math.floor((diff % 86400) / 3600)
 			local m = math.floor((diff % 3600) / 60)
 			local s = diff % 60
-			return string.format("%s %d:%02d:%02d:%02d til New Year! %s", greetTxt, d, h, m, s, "🎆")
-		end
-	}
+			return string.format("%s %d:%02d:%02d:%02d until New Year! 🎆", greetTxt, d, h, m, s)
+		end}
 })
 
  function MinimizeButton(Configs)
