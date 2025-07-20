@@ -675,8 +675,8 @@ notify({
     local MarketplaceService = game:GetService("MarketplaceService")
     local AssetService = game:GetService("AssetService")
     local TeleportService = game:GetService("TeleportService")
-    local pages = AssetService:GetGamePlacesAsync()
-    local gamePlaces = pages:GetCurrentPage()
+    local GetGamepass = MarketplaceService:GetDeveloperProductsAsync():GetCurrentPage()
+    local GetSplitGame = AssetService:GetGamePlacesAsync():GetCurrentPage()
     local count = 1
     local Player = players.LocalPlayer
     local Mouse = LocalPlayer:GetMouse()
@@ -684,6 +684,7 @@ notify({
     local View = nil
     local playerFrames = {}
     local displayedFriends = {}
+    local infogamepass = {}
     local frameinfopy = false
     local Avatar = false
     local switchtodescription = false
@@ -1013,16 +1014,17 @@ local framek = Create("Frame", ScreenGui, {
     Visible = false
 })
 
+
+
 local mainText = Create("TextLabel", framek, {
     Size = UDim2.new(1, 0, 0.15, 0),
     BackgroundTransparency = 0.7,
-    Text = "Universal Viewer",
+    Text = "Universal Viewer Split Game",
     TextColor3 = Configs_HUB.Cor_Text,
     Font = Configs_HUB.Text_Font,
     TextScaled = true
 })
 TextSetColor(mainText)
-
 Create("UIGradient", mainText, {
     Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
@@ -1043,16 +1045,64 @@ local frameGame = Create("ScrollingFrame", framek, {
     BackgroundTransparency = 1,
     CanvasSize = UDim2.new(0, 0, 5, 0),
     ScrollBarThickness = 0
-})
-Create("UIListLayout", frameGame, {
+})Create("UIListLayout", frameGame, {
     Padding = UDim.new(0, 1),
     SortOrder = Enum.SortOrder.LayoutOrder,
-})
-Create("UIPadding", frameGame, {
+})Create("UIPadding", frameGame, {
+    PaddingLeft = UDim.new(0.028, 0),
+    PaddingTop = UDim.new(0.003, 0),
+    PaddingBottom = UDim.new(0.003, 0)
+})local frameGamepass = Create("ScrollingFrame", framek, {
+    Size = UDim2.new(1, 0, 0.85, 0),
+    Position = UDim2.new(0, 0, 0.15, 0),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+    BackgroundTransparency = 1,
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    ScrollBarThickness = 0,
+    ScrollingDirection = Enum.ScrollingDirection.Y,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y, 
+    Visible = false
+})Create("UIListLayout", frameGamepass, {
+    Padding = UDim.new(0, 1),
+    SortOrder = Enum.SortOrder.LayoutOrder,
+})Create("UIPadding", frameGamepass, {
     PaddingLeft = UDim.new(0.028, 0),
     PaddingTop = UDim.new(0.003, 0),
     PaddingBottom = UDim.new(0.003, 0)
 })
+
+local SplitGameToGamepass = Create("ImageButton", framek, {
+    Size = UDim2.new(0.07, 0, 0.15, 0),
+    Position = UDim2.new(0.93, 0, 0, 0),
+    BackgroundTransparency = 1,
+    Image = "rbxthumb://type=Asset&id=93917932838439&w=420&h=420"
+})
+local s_t = false
+
+SplitGameToGamepass.MouseButton1Click:Connect(function()
+    if s_t then return end
+    s_t = true
+    local o = game:GetService("TweenService"):Create(mainText, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        TextTransparency = 1
+    })
+    o:Play()
+    o.Completed:Wait()
+    if frameGame.Visible then
+        mainText.Text = "Universal Viewer Gamepass"
+        frameGame.Visible = false
+        frameGamepass.Visible = true
+    else
+        mainText.Text = "Universal Viewer Split Game"
+        frameGame.Visible = true
+        frameGamepass.Visible = false
+    end
+    local i = game:GetService("TweenService"):Create(mainText, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        TextTransparency = 0
+    })
+    i:Play()
+    i.Completed:Wait()
+    s_t = false
+end)
 
 functions.UpdatePlaces = function()
     local existing = {}
@@ -1063,13 +1113,13 @@ functions.UpdatePlaces = function()
     end
     local desired = {}
     desired["MainGameLabel"] = true
-    desired["Place_" .. tostring(gamePlaces[1].PlaceId)] = true
-    if #gamePlaces <= 1 then
+    desired["Place_" .. tostring(GetSplitGame[1].PlaceId)] = true
+    if #GetSplitGame <= 1 then
         desired["NoSplitLabel"] = true
     else
         desired["SplitGamesLabel"] = true
-        for i = 2, #gamePlaces do
-            desired["Place_" .. tostring(gamePlaces[i].PlaceId)] = true
+        for i = 2, #GetSplitGame do
+            desired["Place_" .. tostring(GetSplitGame[i].PlaceId)] = true
         end
     end
     for name, node in pairs(existing) do
@@ -1101,7 +1151,7 @@ functions.UpdatePlaces = function()
             Rotation = 90
         })
     end
-    local mainPlace = gamePlaces[1]
+    local mainPlace = GetSplitGame[1]
     local mainName  = "Place_" .. tostring(mainPlace.PlaceId)
     if not frameGame:FindFirstChild(mainName) then
         local fr = Create("Frame", frameGame, {
@@ -1122,7 +1172,7 @@ functions.UpdatePlaces = function()
             Rotation = 90
         })
         Create("ImageLabel", fr, {
-           Size = UDim2.new(0.25, 0, 1, 0),
+           Size = UDim2.new(0.25, 0, 0.83, 0),
            BackgroundTransparency = 1,
            Position = UDim2.new(0, 0, 0, 0),
            Image = "rbxthumb://type=Asset&id=" .. mainPlace.PlaceId .. "&w=420&h=420"
@@ -1182,7 +1232,7 @@ functions.UpdatePlaces = function()
             Rotation = 90
         })
     end    
-    if #gamePlaces <= 1 then
+    if #GetSplitGame <= 1 then
         if not frameGame:FindFirstChild("NoSplitLabel") then
             local lbl2 = Create("TextLabel", frameGame, {
                 Name = "NoSplitLabel",
@@ -1232,8 +1282,8 @@ functions.UpdatePlaces = function()
                 Rotation = 90
             })
         end
-        for i = 2, #gamePlaces do
-            local place = gamePlaces[i]
+        for i = 2, #GetSplitGame do
+            local place = GetSplitGame[i]
             local name  = "Place_" .. tostring(place.PlaceId)
             if not frameGame:FindFirstChild(name) then
                 local fr2 = Create("Frame", frameGame, {
@@ -1254,7 +1304,7 @@ functions.UpdatePlaces = function()
                     Rotation = 40
                 })
                 Create("ImageLabel", fr2, {
-                    Size = UDim2.new(0.25, 0, 1, 0),
+                    Size = UDim2.new(0.25, 0, 0.83, 0),
                     Position = UDim2.new(0, 0, 0, 0),
                     BackgroundTransparency = 1,
                     Image = "rbxthumb://type=Asset&id=" .. place.PlaceId .. "&w=420&h=420"
@@ -1318,6 +1368,8 @@ functions.UpdatePlaces = function()
     end
 end
 
+local UpdateGamepassd = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/List_Gamepass"))()
+UpdateGamepassd(Configs_HUB, MarketplaceService, GetGamepass, infogamepass, Create, TextSetColor, frameGamepass)
 functions.UpdatePlaces()
 
 local SplitgameToggleButton = Create("ImageButton", frame, {
@@ -1637,7 +1689,7 @@ local AvaterToHead = Create("ImageButton", frameinfogui, {
     Position = UDim2.new(0.37, 0, 0.0765, 0),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 0.5,
-    Image = "rbxthumb://type=Asset&id=93917932838439&w=150&h=150"
+    Image = "rbxthumb://type=Asset&id=93917932838439&w=420&h=420"
 })
 local stroke_2_1 = Create("UIStroke", AvaterToHead, {
     Color = Color3.fromRGB(255, 255, 255),
@@ -3451,6 +3503,8 @@ RunServerlock("Lock2", 7, function()
     functions.checkFriends()
     functions.startUpdating()
     functions.UpdatePlaces()
+    local UpdateGamepass = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/List_Gamepass"))()
+    UpdateGamepass(Configs_HUB, MarketplaceService, GetGamepass, infogamepass, Create, TextSetColor, frameGamepass)
 end)
 
 RunServerlock("Lock3", 7, function()
