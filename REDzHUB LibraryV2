@@ -708,7 +708,7 @@ local d = {
 		{"Peace out", "Night night", "Rest well", "Stay cozy", "Good night", "See ya", "Take care", "Sleep tight", "Catch you later", "Be safe"}
 	},
 	new1 = {
-		{"Happy New Year", "Cheers", "New beginnings", "Fresh start", "Celebrate", "Welcome 2025", "Make it count", "Joy ahead", "Bright future", "New chapter"},
+		{"Happy New Year", "Cheers", "New beginnings", "Fresh start", "Celebrate", "Make it count", "Joy ahead", "Bright future", "New chapter", "New vibe"},
 		{"Wishing you luck", "Hope it’s your year", "Stay solid", "Good vibes only", "Smiles all around", "Keep shining", "Dream big", "Stay happy", "Be awesome", "Make moves"},
 		{"Take care, alright", "Keep it cool", "Look after yourself", "Enjoy every moment", "Stay strong", "Be kind", "Stay positive", "Keep going", "Live well", "Stay safe"}
 	},
@@ -757,12 +757,13 @@ local greetTxt = r(d.greet)
 local emoTxt = r(d.emo)
 local msg = r(greetings[1]) .. " " .. r(greetings[2]) .. ". " .. r(greetings[3]) .. " " .. emoTxt
 local diff = newYearTime - now
+if diff < 0 then diff = 0 end
 local titleText
-if diff <= 0 then
-	titleText = greetTxt .. "🎉 Happy New Year! 🎆"
+if diff == 0 then
+	titleText = greetTxt .. "🎉 Happy New Year " .. nextYear .. "! 🎆"
 else
 	local daysLeft = math.floor(diff / 86400)
-	titleText = string.format("%s %d %s until New Year! 🎆", greetTxt, daysLeft, (daysLeft == 1 and "day" or "days"))
+	titleText = string.format("%s %d %s Countdown to New Year!⏰", greetTxt, daysLeft, (daysLeft == 1 and "day" or "days"))
 end
 notify({
 	Title = titleText,
@@ -773,21 +774,23 @@ notify({
 	updates = {
 		Title = function()
 			local now = os.time()
-			local currentYear = os.date("*t").year
-			local newYearTime = os.time{year = currentYear + 1, month = 1, day = 1}
+			local Year = os.date("*t").year + 1
+			local newYearTime = os.time{year = Year, month = 1, day = 1}
 			local diff = newYearTime - now
-			if diff <= 0 then
-				return greetTxt .. "🎉 Happy New Year! 🎆"
+			if diff < 0 then diff = 0 end
+			if diff == 0 then
+				return greetTxt .. "🎉 Happy New Year " ..Year .. "! 🎆"
 			end
 			local d = math.floor(diff / 86400)
 			local h = math.floor((diff % 86400) / 3600)
 			local m = math.floor((diff % 3600) / 60)
 			local s = diff % 60
-			return string.format("%s %d:%02d:%02d:%02d until New Year! 🎆", greetTxt, d, h, m, s)
-		end}
+			return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, s)
+		end
+	}
 })
 
- function MinimizeButton(Configs)
+function MinimizeButton(Configs)
     local functions = {} 
     local frameRefs, metaRefs, ddesug, stopupdateall, _XyZ, _cvZ = {}, {}, {}, {}, {}, {}
     local minimize1 = false
