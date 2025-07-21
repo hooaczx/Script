@@ -1429,56 +1429,95 @@ AddToggle(Main5u6, {
     end
 })
 
-local _t_t = {
-	_e_e = false,
-	_t_r = nil,
-	_a0_ = nil,
-	_a1_ = nil,
-	hbt = nil,
-	hue = 0
+local _x_x = {
+	h = nil,
+	p = nil,
+	c = nil,
+	e = false,
+	s = false,
+	l = nil,
+	h2 = nil
 }
 
 AddToggle(Main5u6, {
-	Name = "Trail Rainbow",
+	Name = "Character Lock CFrame",
 	Default = false,
-	Callback = function(state)
-		_t_t._e_e = state
-		if _t_t._e_e then
-			if not _t_t.hbt then
-				_t_t.hbt = game:GetService("RunService").Heartbeat:Connect(function()
-					local Plr = game:GetService("Players").LocalPlayer
-					local char = Plr.Character
-					local hrp = char and char:FindFirstChild("HumanoidRootPart")
-					if not char or not hrp then
-						if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
-						if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
-						if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
-					else
-						if not _t_t._t_r then _t_t._t_r = Create("Trail", hrp)
-						elseif _t_t._t_r.Parent ~= hrp then _t_t._t_r.Parent = hrp end
-						if not _t_t._a0_ then _t_t._a0_ = Create("Attachment", hrp)
-						elseif _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end
-						if not _t_t._a1_ then _t_t._a1_ = Create("Attachment", hrp)
-						elseif _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end
-						_t_t._t_r.Attachment0 = _t_t._a0_
-						_t_t._t_r.Attachment1 = _t_t._a1_
-						_t_t._a0_.Position = Vector3.new(0,0,0)
-						_t_t._a1_.Position = Vector3.new(0,-0.2,0)
-						_t_t.hue = (_t_t.hue + 1) % 360
-						local keys = {}
-						for i=0,4 do
-							local sh = (_t_t.hue + i*72) % 360
-							table.insert(keys, ColorSequenceKeypoint.new(i/4, Color3.fromHSV(sh/360,1,1)))
+	Callback = function(v)
+		_x_x.e = v
+		if _x_x.e then
+			if not _x_x.h then
+				_x_x.h = game:GetService("RunService").Heartbeat:Connect(function()
+					if _x_x.s or not _x_x.e then return end
+					local c = localPuppet.Character
+					if c and c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("HumanoidRootPart") then
+						_x_x.l = c.HumanoidRootPart.CFrame
+					end
+				end)
+			end
+			local c = localPuppet.Character
+			if c then
+				repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
+				repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
+				if not _x_x.p then
+					local hrp = c.HumanoidRootPart
+					_x_x.p = hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
+						if _x_x.e then
+							_x_x.s = true
+							hrp.CFrame = _x_x.l
+							game:GetService("RunService").Heartbeat:Wait()
+							_x_x.s = false
 						end
-						_t_t._t_r.Color = ColorSequence.new(keys)
+					end)
+				end
+			end
+			if not _x_x.c then
+				_x_x.c = localPuppet.CharacterAdded:Connect(function(c)
+					repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
+					repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
+					if _x_x.e then
+						if not _x_x.h then
+							_x_x.h = game:GetService("RunService").Heartbeat:Connect(function()
+								if _x_x.s or not _x_x.e then return end
+								local c2 = localPuppet.Character
+								if c2 and c2:FindFirstChildOfClass("Humanoid") and c2:FindFirstChild("HumanoidRootPart") then
+									_x_x.l = c2.HumanoidRootPart.CFrame
+								end
+							end)
+						end
+						if not _x_x.p then
+							local hrp2 = c.HumanoidRootPart
+							_x_x.p = hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
+								if _x_x.e then
+									_x_x.s = true
+									hrp2.CFrame = _x_x.l
+									game:GetService("RunService").Heartbeat:Wait()
+									_x_x.s = false
+								end
+							end)
+						end
+					end
+				end)
+			end
+			if not _x_x.h2 then
+				_x_x.h2 = game:GetService("RunService").Heartbeat:Connect(function()
+					if _x_x.s or not _x_x.e then return end
+					local c = localPuppet.Character
+					if c and c:FindFirstChild("HumanoidRootPart") and _x_x.l then
+						local hrp = c.HumanoidRootPart
+						if hrp.Position ~= _x_x.l.Position then
+							_x_x.s = true
+							hrp.CFrame = _x_x.l
+							game:GetService("RunService").Heartbeat:Wait()
+							_x_x.s = false
+						end
 					end
 				end)
 			end
 		else
-			if _t_t.hbt then _t_t.hbt:Disconnect() _t_t.hbt = nil end
-			if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
-			if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
-			if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+			if _x_x.h then _x_x.h:Disconnect() _x_x.h = nil end
+			if _x_x.p then _x_x.p:Disconnect() _x_x.p = nil end
+			if _x_x.c then _x_x.c:Disconnect() _x_x.c = nil end
+			if _x_x.h2 then _x_x.h2:Disconnect() _x_x.h2 = nil end
 		end
 	end
 })
