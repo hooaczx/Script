@@ -731,15 +731,11 @@ function getTitleText()
 	local now = os.time()
 	local t = os.date("*t", now)
 	local y = t.year
-	local s = os.time{year = y, month = 1, day = 1, hour = 0, min = 0, sec = 0}
-	local e = os.time{year = y, month = 1, day = 1, hour = 6, min = 0, sec = 0}
+	local s = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
+	local e = os.time{year = y + 1, month = 1, day = 1, hour = 6, min = 0, sec = 0}
 	local n = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
 	if now >= s and now < e then
-		local elapsed = now - s
-		local h = math.floor(elapsed / 3600)
-		local m = math.floor((elapsed % 3600) / 60)
-		local sec = elapsed % 60
-		return string.format("%s🎉 Happy New Year! Time: %02d:%02d:%02d 🎆", greetTxt, h, m, sec)
+		return string.format("🎉 Happy New Year %d! 🎆", y + 1)
 	else
 		local diff = n - now
 		if diff < 0 then diff = 0 end
@@ -747,7 +743,7 @@ function getTitleText()
 		local h = math.floor((diff % 86400) / 3600)
 		local m = math.floor((diff % 3600) / 60)
 		local sec = diff % 60
-		return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
+		return string.format("%d:%02d:%02d:%02d Countdown to New Year!⏰", d, h, m, sec)
 	end
 end
 local time = os.date("*t")
