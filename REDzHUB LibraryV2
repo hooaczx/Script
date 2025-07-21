@@ -786,7 +786,7 @@ notify({
 		Title = getTitleText}
 })
 
-function MinimizeButton(Configs)
+ function MinimizeButton(Configs)
     local functions = {} 
     local frameRefs, metaRefs, ddesug, stopupdateall, _XyZ, _cvZ = {}, {}, {}, {}, {}, {}
     local minimize1 = false
@@ -1219,7 +1219,7 @@ SplitGameToGamepass.MouseButton1Click:Connect(function()
     o:Play()
     o.Completed:Wait()
     if frameGame.Visible then
-        mainText.Text = "Universal Viewer Developer Product"
+        mainText.Text = "Universal Viewer DeveloperProduct"
         frameGame.Visible = false
         frameGamepass.Visible = true
     else
@@ -1727,13 +1727,8 @@ local PlayerListToggleButton = Create("ImageButton", frame, {
     BackgroundTransparency = 1,
     Image = "rbxthumb://type=Asset&id=140380840270815&w=150&h=150"
 })
-
-local success, result = pcall(function()
-    return MarketplaceService:GetProductInfo(PlaceId)
-end)
-
-local Asset = MarketplaceService:GetProductInfo(PlaceId)
-local gameName = success and result.Name or Asset.Name or "Unknown"
+ 
+local gameName = game:GetService("MarketplaceService"):GetProductInfo(PlaceId).Name or game:GetService("MarketplaceService"):GetProductInfo(PlaceId).Name or "Unknown"
 
 local frameinfogui = Create("Frame", ScreenGui, {
     Size = UDim2.new(),
@@ -1981,7 +1976,7 @@ local iconGame = Create("ImageLabel", frameinfogui, {
     AnchorPoint = Vector2.new(0.04, 0.38),
     BackgroundColor3 = Configs_HUB.Cor_Hub,
     BackgroundTransparency = 1,
-    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500"
+    Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..game:GetService("MarketplaceService"):GetProductInfo(PlaceId).IconImageAssetId.."&fmt=png&wd=500&ht=500"
 })
 
 local GameName = Create("TextLabel", frameinfogui, {
@@ -3607,7 +3602,8 @@ RunServerlock("Lock1", "no", function()
         end) 
       end
     end
-    iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid=" .. result.IconImageAssetId .. "&fmt=png&wd=500&ht=500"
+    iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..game:GetService("MarketplaceService"):GetProductInfo(PlaceId).IconImageAssetId.."&fmt=png&wd=500&ht=500"
+    GameName.Text = "Game Name: " ..gameName
     functions.UpdatePlayerList()
     functions.updatePlaytime()
     functions.updateTime()
@@ -3664,7 +3660,7 @@ RunServerlock("Lock3", 7, function()
        if description.Visible then
           functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game.Players.LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game.Players.LocalPlayer.UserId.."&width=720&height=720&format=png", textscaled = true})
           functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Account Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png", textscaled = true})
-          functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..result.IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
+          functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..game:GetService("MarketplaceService"):GetProductInfo(PlaceId).IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
           functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon, textscaled = true})
     end
 end)
