@@ -1429,78 +1429,52 @@ AddToggle(Main5u6, {
     end
 })
 
-local _x_x={
-	h=nil,
-	p=nil,
-	c=nil,
-	e=false,
-	s=false,
-	l=nil
+local __7Z = {
+	Q9 = nil,
+	Ra = nil,
+	Lk = nil,
+	Vv = false,
+	Tt = false,
+	Yy = nil,
+	Mm = nil
 }
 
-AddToggle(Main5u6,{
-	Name="Character Lock CFrame",
-	Default=false,
-	Callback=function(v)
-		_x_x.e=v
-		if _x_x.e then
-			if not _x_x.h then
-				_x_x.h=game:GetService("RunService").Heartbeat:Connect(function()
-					if _x_x.s or not _x_x.e then return end
-					local c=localPuppet.Character
-					if c and c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("HumanoidRootPart") then
-						_x_x.l=c.HumanoidRootPart.CFrame
-					end
-				end)
-			end
-			local c=localPuppet.Character
-			if c then
-				repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
-				repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
-				if not _x_x.p then
-					local hrp=c.HumanoidRootPart
-					_x_x.p=hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
-						if _x_x.e then
-							_x_x.s=true
-							hrp.CFrame=_x_x.l
+AddToggle(Main5u6, {
+	Name = "Character Lock CFrame",
+	Default = false,
+	Callback = function(Uu)
+		__7Z.Vv = Uu
+		if not Uu then
+			if __7Z.Q9 then __7Z.Q9:Disconnect() __7Z.Q9 = nil end
+			if __7Z.Mm then __7Z.Mm:Disconnect() __7Z.Mm = nil end
+			__7Z.Ra = nil
+			__7Z.Lk = nil
+			return
+		end
+		if not __7Z.Q9 then
+			__7Z.Q9 = game:GetService("RunService").Heartbeat:Connect(function()
+				if not __7Z.Vv then return end
+				local Dq = localPuppet.Character
+				local We = Dq and Dq:FindFirstChildOfClass("Humanoid")
+				local Xx = Dq and Dq:FindFirstChild("HumanoidRootPart")
+				if Dq and We and Xx and Xx ~= __7Z.Lk then
+					__7Z.Ra = Dq
+					if __7Z.Mm then __7Z.Mm:Disconnect() end
+					__7Z.Lk = Xx
+					__7Z.Yy = Xx.CFrame
+					__7Z.Mm = Xx:GetPropertyChangedSignal("CFrame"):Connect(function()
+						if __7Z.Vv and __7Z.Yy then
+							__7Z.Tt = true
+							Xx.CFrame = __7Z.Yy
 							game:GetService("RunService").Heartbeat:Wait()
-							_x_x.s=false
+							__7Z.Tt = false
 						end
 					end)
 				end
-			end
-			if not _x_x.c then
-				_x_x.c=localPuppet.CharacterAdded:Connect(function(c)
-					repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
-					repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
-					if _x_x.e then
-						if not _x_x.h then
-							_x_x.h=game:GetService("RunService").Heartbeat:Connect(function()
-								if _x_x.s or not _x_x.e then return end
-								local c2=localPuppet.Character
-								if c2 and c2:FindFirstChildOfClass("Humanoid") and c2:FindFirstChild("HumanoidRootPart") then
-									_x_x.l=c2.HumanoidRootPart.CFrame
-								end
-							end)
-						end
-						if not _x_x.p then
-							local hrp2=c.HumanoidRootPart
-							_x_x.p=hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
-								if _x_x.e then
-									_x_x.s=true
-									hrp2.CFrame=_x_x.l
-									game:GetService("RunService").Heartbeat:Wait()
-									_x_x.s=false
-								end
-							end)
-						end
-					end
-				end)
-			end
-		else
-			if _x_x.h then _x_x.h:Disconnect() _x_x.h=nil end
-			if _x_x.p then _x_x.p:Disconnect() _x_x.p=nil end
-			if _x_x.c then _x_x.c:Disconnect() _x_x.c=nil end
+				if Xx and not __7Z.Tt then
+					__7Z.Yy = Xx.CFrame
+				end
+			end)
 		end
 	end
 })
