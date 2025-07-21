@@ -1203,124 +1203,73 @@ AddToggle(Main5u6, {
     end
 })
 
-if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
-    AddWarningMessage(Main5u6, {
-        WarningMessage = "Anti Fling, Removed due to security concerns, may be banned from the game",
-        ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
-    })
+local _ct_
+local _st_ = {}
 
+AddToggle(Main5u6, {
+  Name = "No Collision Player",
+  Default = false,
+  Callback = function(state)
+    if state then
+      if not _ct_ then
+        _ct_ = RunService.RenderStepped:Connect(function()
+          if #game:GetService("Players"):GetPlayers() <= 1 then return end
+          for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
+            if pl ~= game:GetService("Players").LocalPlayer then 
+              if pl.Character and pl.Character.Parent == workspace then
+                for _, part in ipairs(pl.Character:GetDescendants()) do
+                  if part:IsA("BasePart") then
+                    local partsCheck = {}
+                    partsCheck[1] = part
+                    local Parts = part:GetConnectedParts()
+                    for i = 1, #Parts do
+                      partsCheck[i + 1] = Parts[i]
+                    end
+                    for i = 1, #partsCheck do
+                      local p = partsCheck[i]
+                      local old = _st_[p]
+                      local cur = p.CanCollide
+                      if old == nil then
+                        _st_[p] = cur
+                        if cur then
+                          p.CanCollide = false
+                        end
+                      elseif old ~= cur then
+                        if cur then
+                          p.CanCollide = false
+                        end
+                        _st_[p] = p.CanCollide
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end)
+      end
+    else
+      if _ct_ then
+        _ct_:Disconnect()
+        _ct_ = nil
+      end
+      for p, o in pairs(_st_) do
+        if p and p:IsA("BasePart") then
+          p.CanCollide = o
+        end
+      end
+      table.clear(_st_)
+    end
+  end
+})
+
+if currentGameId == 16116270224 or currentGameId == 16552821455 or currentGameId == 18984416148 then
     AddWarningMessage(Main5u6, {
         WarningMessage = "Noclip, Removed due to security concerns, may be banned from the game",
         ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
     })
 else
-    local abcSrvs = setmetatable({}, {__index = function(Self, Index)
-        local NewService = game:GetService(Index)
-        if NewService then
-            Self[Index] = NewService
-        end
-        return NewService
-    end})
-    
-    local localPuppet = abcSrvs.Players.LocalPlayer
-    local three, zzz, two
-
-    AddToggle(Main5u6, {
-        Name = "Anti Fling",
-        Default = false,
-        Callback = function(state)
-            if state then
-                local function mgPlyrAded(Player)
-                    local detectedFlag = false
-                    local chter, pryPt
-
-                    local function mgchterAded(newCharacter)
-                        chter = newCharacter
-                        repeat
-                            wait()
-                            pryPt = newCharacter:FindFirstChild("HumanoidRootPart")
-                        until pryPt
-                        detectedFlag = false
-                    end
-
-                    mgchterAded(Player.Character or Player.CharacterAdded:Wait())
-                    if not two then 
-                        two = Player.CharacterAdded:Connect(mgchterAded) 
-                    end
-
-                    if not zzz then 
-                        zzz = abcSrvs.RunService.Heartbeat:Connect(function()
-                            if chter and chter:IsDescendantOf(workspace) and pryPt and pryPt:IsDescendantOf(chter) then
-                                if pryPt.AssemblyAngularVelocity.Magnitude > 50 or pryPt.AssemblyLinearVelocity.Magnitude > 100 then
-                                    detectedFlag = true
-                                    for _, v in ipairs(chter:GetDescendants()) do
-                                        if v:IsA("BasePart") then
-                                            v.CanCollide = false
-                                            v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                            v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                            v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
-                                        end
-                                    end
-                                    pryPt.CanCollide = false
-                                    pryPt.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                    pryPt.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                    pryPt.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
-                                end
-                            end
-                        end)
-                    end
-                end
-
-                for _, v in ipairs(abcSrvs.Players:GetPlayers()) do
-                    if v ~= localPuppet then
-                        mgPlyrAded(v)
-                    end
-                end
-
-                if not three then 
-                    three = abcSrvs.Players.PlayerAdded:Connect(mgPlyrAded) 
-                end
-
-                local lastSpot = nil
-                if not abcMTbeCn then 
-                    abcMTbeCn = abcSrvs.RunService.Heartbeat:Connect(function()
-                        pcall(function()
-                            local pryPt = localPuppet.Character and localPuppet.Character.PrimaryPart
-                            if pryPt then
-                                if pryPt.AssemblyLinearVelocity.Magnitude > 250 or pryPt.AssemblyAngularVelocity.Magnitude > 250 then
-                                    pryPt.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                                    pryPt.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                    pryPt.CFrame = lastSpot
-                                elseif pryPt.AssemblyLinearVelocity.Magnitude < 50 or pryPt.AssemblyAngularVelocity.Magnitude > 50 then
-                                    lastSpot = pryPt.CFrame
-                                end
-                            end
-                        end)
-                    end)
-                end
-            else
-                if zzz then
-                    zzz:Disconnect()
-                    zzz = nil
-                end
-                if two then
-                    two:Disconnect()
-                    two = nil
-                end
-                if three then
-                    three:Disconnect()
-                    three = nil
-                end
-                if abcMTbeCn then
-                    abcMTbeCn:Disconnect()
-                    abcMTbeCn = nil
-                end
-            end
-        end
-    })
-
     local ncp, ncpDflt = {}, nil
-
     AddToggle(Main5u6, {
         Name = "No-Clip",
         Default = false,
