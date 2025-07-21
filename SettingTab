@@ -1056,65 +1056,55 @@ AddToggle(Main5u6, {
 	end
 })
 
-AntiSit = false
-hbCnAntiSit = nil
-Run = true
-
-function preventsitting(enable)
-    local seatsLeft = false
-    for _, v in pairs(workspace:GetDescendants()) do
-        if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
-            if v.Disabled ~= enable then
-                v.Disabled = enable
-            end
-            if not v.Disabled then
-                seatsLeft = true
-            end
-        end
-    end
-    return seatsLeft
-end
-
+local _b_t,_t_t,_a_t= nil, {}, false
+ 
 AddToggle(Main5u6, {
-    Name = "Anti Sit",
-    Default = false,
-    Callback = function(value)
-        if Run then
-            Run = false
-            return
-        end
-
-        AntiSit = value
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Anti Sit",
-            Text = tostring(value),
-            Duration = 3
-        })
-        
-        if AntiSit then
-            if not hbCnAntiSit then
-                hbCnAntiSit = RunService.Heartbeat:Connect(function()
-                    local seatsLeft = preventsitting(toggleAntiSit)
-                    if not seatsLeft then
-                        hbCnAntiSit:Disconnect()
-                        hbCnAntiSit = nil
-                    end
-                end)
-            end
-        else
-            if hbCnAntiSit then
-                hbCnAntiSit:Disconnect()
-                hbCnAntiSit = nil
-            end
-            for _, v in pairs(workspace:GetDescendants()) do
-                if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
-                    if v.Disabled then
-                        v.Disabled = false
-                    end
-                end
-            end
-        end
-    end
+	Name = "Anti Sit",
+	Default = false,
+	Callback = function(_x_t)
+		_a_t = _x_t
+		if _a_t then
+			if not _b_t then
+				_b_t = game:GetService("RunService").Heartbeat:Connect(function()
+					local _f_t = false
+					local _c_t = false
+					for _, v in pairs(workspace:GetDescendants()) do
+						if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
+							local _id_t = v:GetDebugId()
+							if _t_t[_id_t] == nil then _t_t[_id_t] = v.Disabled end
+							if v.Disabled ~= true then
+								v.Disabled = true
+								_c_t = true
+							end
+							if not v.Disabled then
+								_f_t = true
+							end
+							if _t_t[_id_t] ~= v.Disabled then
+								_t_t[_id_t] = v.Disabled
+								_c_t = true
+							end
+						end
+					end
+					if not _f_t and not _c_t then
+						_b_t:Disconnect()
+						_b_t = nil
+						_t_t = {}
+					end
+				end)
+			end
+		else
+			if _b_t then
+				_b_t:Disconnect()
+				_b_t = nil
+			end
+			_t_t = {}
+			for _, v in pairs(workspace:GetDescendants()) do
+				if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
+					if v.Disabled then v.Disabled = false end
+				end
+			end
+		end
+	end
 })
 
 local _c___, _p___
@@ -1182,7 +1172,6 @@ AddToggle(Main5u6, {
                 local x6, x7, x8, x9 = nil, nil, nil, 0.1
                 x6 = x5.Character
                 x7 = x6 and x6:FindFirstChild("HumanoidRootPart")
-
                 if x7 then
                     x8 = x7.Velocity
                     x7.Velocity = x8 * 10000 + Vector3.new(0, 10000, 0)
@@ -1203,8 +1192,7 @@ AddToggle(Main5u6, {
     end
 })
 
-local _ct_
-local _st_ = {}
+local _ct_, _st_ = nil, {}
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
@@ -1327,81 +1315,79 @@ AddToggle(Main5u6, {
     end
 })
 
-locktp = {
-    hbtCn = nil,
-    pyChgdCn = nil,
-    lastCF = nil,
-    stop = false,
-    Enabled = false,
-    chtrAdedCn = nil
+local _x_x={
+	h=nil,
+	p=nil,
+	c=nil,
+	e=false,
+	s=false,
+	l=nil
 }
-
-function start()
-    if not locktp.hbtCn then 
-        locktp.hbtCn = Service.RunService.Heartbeat:Connect(function() 
-            if locktp.stop or not locktp.Enabled then
-                return
-            end
-            local character = localPuppet.Character
-            if character and character:FindFirstChildOfClass('Humanoid') and character:FindFirstChild('HumanoidRootPart') then
-                locktp.lastCF = character:FindFirstChild('HumanoidRootPart').CFrame
-            end
-        end)
-    end
-
-    local character = localPuppet.Character
-    if character then
-        local humanoidRootPart = character:FindFirstChild('HumanoidRootPart')
-        if humanoidRootPart then
-            if not locktp.pyChgdCn then 
-                locktp.pyChgdCn = humanoidRootPart:GetPropertyChangedSignal('CFrame'):Connect(function()
-                    if locktp.Enabled then
-                        locktp.stop = true
-                        humanoidRootPart.CFrame = locktp.lastCF
-                        Service.RunService.Heartbeat:Wait()
-                        locktp.stop = false
-                    end
-                end)
-            end
-        end
-    end
-end
-
-function setupCharacter(character)
-    if not character then return end
-    repeat Service.RunService.Heartbeat:Wait() until character:FindFirstChildOfClass('Humanoid')
-    repeat Service.RunService.Heartbeat:Wait() until character:FindFirstChild('HumanoidRootPart')
-    
-    if locktp.Enabled then
-        start()
-    end
-end
-
-AddToggle(Main5u6, {
-    Name = "Character Lock CFrame",
-    Default = false,
-    Callback = function(state)
-        locktp.Enabled = state
-        if locktp.Enabled then
-            if localPuppet.Character then
-                setupCharacter(localPuppet.Character)
-                locktp.chtrAdedCn = localPuppet.CharacterAdded:Connect(setupCharacter)
-            end
-        else
-            if locktp.hbtCn then
-                locktp.hbtCn:Disconnect()
-                locktp.hbtCn = nil
-            end
-            if locktp.pyChgdCn then
-                locktp.pyChgdCn:Disconnect()
-                locktp.pyChgdCn = nil
-            end
-            if locktp.chtrAdedCn then
-                locktp.chtrAdedCn:Disconnect()
-                locktp.chtrAdedCn = nil
-            end
-        end
-    end
+AddToggle(Main5u6,{
+	Name="Character Lock CFrame",
+	Default=false,
+	Callback=function(v)
+		_x_x.e=v
+		if _x_x.e then
+			if not _x_x.h then
+				_x_x.h=game:GetService("RunService").Heartbeat:Connect(function()
+					if _x_x.s or not _x_x.e then return end
+					local c=localPuppet.Character
+					if c and c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("HumanoidRootPart") then
+						_x_x.l=c.HumanoidRootPart.CFrame
+					end
+				end)
+			end
+			local c=localPuppet.Character
+			if c then
+				repeat S.Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
+				repeat S.Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
+				if not _x_x.p then
+					local hrp=c.HumanoidRootPart
+					_x_x.p=hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
+						if _x_x.e then
+							_x_x.s=true
+							hrp.CFrame=_x_x.l
+							S.Heartbeat:Wait()
+							_x_x.s=false
+						end
+					end)
+				end
+			end
+			if not _x_x.c then
+				_x_x.c=localPuppet.CharacterAdded:Connect(function(c)
+					repeat S.Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
+					repeat S.Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
+					if _x_x.e then
+						if not _x_x.h then
+							_x_x.h=S.Heartbeat:Connect(function()
+								if _x_x.s or not _x_x.e then return end
+								local c2=localPuppet.Character
+								if c2 and c2:FindFirstChildOfClass("Humanoid") and c2:FindFirstChild("HumanoidRootPart") then
+									_x_x.l=c2.HumanoidRootPart.CFrame
+								end
+							end)
+						end
+						if not _x_x.p then
+							local hrp2=c.HumanoidRootPart
+							_x_x.p=hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
+								if _x_x.e then
+									_x_x.s=true
+									hrp2.CFrame=_x_x.l
+									S.Heartbeat:Wait()
+									_x_x.s=false
+								end
+							end)
+						end
+					end
+				end)
+			end
+		else
+			if _x_x.h then _x_x.h:Disconnect() _x_x.h=nil end
+			if _x_x.p then _x_x.p:Disconnect() _x_x.p=nil end
+			if _x_x.c then _x_x.c:Disconnect() _x_x.c=nil end
+		end
+	end
 })
 
 local cm = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Cameranoclip"))()
@@ -1414,134 +1400,107 @@ AddToggle(Main5u6, {
     end
 })
 
-trailData = {
-    enabled = false,
-    trail = nil,
-    a0 = nil,
-    a1 = nil,
-    htbtCn = nil,
-    rainbowConn = nil,
-    chtrAdedCn = nil
+local _t_t = {
+	_e_e = false,
+	_t_r = nil,
+	_a0_ = nil,
+	_a1_ = nil,
+	hbt = nil,
+	hue = 0
 }
 
-function createTrail(enabled)
-    local plr = game:GetService("Players").LocalPlayer
-    local char = plr.Character or plr.CharacterAdded:Wait()
-
-    if enabled then
-        if trailData.enabled then return end  
-        trailData.enabled = true
-
-        local hrp = char:WaitForChild("HumanoidRootPart")
-        
-        trailData.trail = Instance.new("Trail", hrp)
-        trailData.a0 = Instance.new("Attachment", hrp)
-        trailData.a0.Name = "TrailAttachment"
-        trailData.a1 = Instance.new("Attachment", hrp)
-        trailData.a1.Name = "TrailAttachment1"
-        
-        trailData.trail.Attachment0 = trailData.a0
-        trailData.trail.Attachment1 = trailData.a1
-
-        local hue = 0
-
-        if not trailData.htbtCn then
-            trailData.htbtCn = RunService.Heartbeat:Connect(function()
-                if char and hrp then
-                    trailData.a0.Position = Vector3.new(0, 0, 0)
-                    trailData.a1.Position = Vector3.new(0, -0.2, 0)
-                end
-            end)
-        end
-
-        if not trailData.rainbowConn then
-            trailData.rainbowConn = RunService.Heartbeat:Connect(function()
-                if not trailData.enabled then return end
-                hue = (hue + 1) % 360
-                local keypoints = {}
-                for i = 0, 4 do
-                    local segmentHue = (hue + i * 72) % 360
-                    local color = Color3.fromHSV(segmentHue / 360, 1, 1)
-                    table.insert(keypoints, ColorSequenceKeypoint.new(i / 4, color))
-                end
-                trailData.trail.Color = ColorSequence.new(keypoints)
-            end)
-        end
-
-        if not trailData.chtrAdedCn then
-            trailData.chtrAdedCn = plr.CharacterAdded:Connect(function(newChar)
-                if trailData.enabled then
-                    createTrail(false)
-                    createTrail(true)
-                end
-            end)
-        end
-    else
-        trailData.enabled = false
-        if trailData.htbtCn then
-            trailData.htbtCn:Disconnect()
-            trailData.htbtCn = nil
-        end
-        if trailData.rainbowConn then
-            trailData.rainbowConn:Disconnect()
-            trailData.rainbowConn = nil
-        end
-        if trailData.trail then
-            trailData.trail:Destroy()
-            trailData.trail = nil
-        end
-        if trailData.chtrAdedCn then
-            trailData.chtrAdedCn:Disconnect()
-            trailData.chtrAdedCn = nil
-        end
-    end
-end
-
-
 AddToggle(Main5u6, {
-    Name = "Trail Rainbow",
-    Default = false,
-    Callback = function(state)
-        createTrail(state)
-    end
+	Name = "Trail Rainbow",
+	Default = false,
+	Callback = function(state)
+		_t_t._e_e = state
+		if _t_t._e_e then
+			if not _t_t.hbt then
+				_t_t.hbt = game:GetService("RunService").Heartbeat:Connect(function()
+					local Plr = game:GetService("Players").LocalPlayer
+					local char = Plr.Character
+					local hrp = char and char:FindFirstChild("HumanoidRootPart")
+					if not char or not hrp then
+						if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
+						if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
+						if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+					else
+						if not _t_t._t_r then _t_t._t_r = Create("Trail", hrp)
+						elseif _t_t._t_r.Parent ~= hrp then _t_t._t_r.Parent = hrp end
+						if not _t_t._a0_ then _t_t._a0_ = Create("Attachment", hrp)
+						elseif _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end
+						if not _t_t._a1_ then _t_t._a1_ = Create("Attachment", hrp)
+						elseif _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end
+						_t_t._t_r.Attachment0 = _t_t._a0_
+						_t_t._t_r.Attachment1 = _t_t._a1_
+						_t_t._a0_.Position = Vector3.new(0,0,0)
+						_t_t._a1_.Position = Vector3.new(0,-0.2,0)
+						_t_t.hue = (_t_t.hue + 1) % 360
+						local keys = {}
+						for i=0,4 do
+							local sh = (_t_t.hue + i*72) % 360
+							table.insert(keys, ColorSequenceKeypoint.new(i/4, Color3.fromHSV(sh/360,1,1)))
+						end
+						_t_t._t_r.Color = ColorSequence.new(keys)
+					end
+				end)
+			end
+		else
+			if _t_t.hbt then _t_t.hbt:Disconnect() _t_t.hbt = nil end
+			if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
+			if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
+			if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+		end
+	end
 })
 
-function ApplyLightToCharacter(character)
-    local rootPart = character:WaitForChild("HumanoidRootPart", 5)
-    if not rootPart then return end
-
-    if not rootPart:FindFirstChild("Light") then
-        Create("PointLight", rootPart, {
-            Name = "Light",
-            Range = 30,
-            Brightness = 2.3,
-            Color = Color3.fromRGB(255, 255, 255)
-        })
-    end
-end
+local _l_t = {
+	_on = false,
+	_lt = nil,
+	_hbt = nil
+}
 
 AddToggle(Main5u6, {
-    Name = "Light Around Character",
-    Default = false,
-    Callback = function(state)
-        lightEnabled = state
-
-        player = game.Players.LocalPlayer
-        character = player.Character or player.CharacterAdded:Wait()
-        
-        if lightEnabled then
-            ApplyLightToCharacter(character)
-            if lightclose then lightclose:Disconnect() lightclose = nil end
-            lightclose = player.CharacterAdded:Connect(ApplyLightToCharacter)
-        else
-            if lightclose then lightclose:Disconnect() lightclose = nil end
-            local rootPart = character:FindFirstChild("HumanoidRootPart")
-            if rootPart then
-                local playerLight = rootPart:FindFirstChild("Light")
-                if playerLight then playerLight:Destroy() end
-            end
-        end
-    end
+	Name = "Light Around Character",
+	Default = false,
+	Callback = function(s)
+		_l_t._on = s
+		if _l_t._on then
+			if not _l_t._hbt then
+				_l_t._hbt = game:GetService("RunService").Heartbeat:Connect(function()
+					local c = game.Players.LocalPlayer.Character
+					local hrp = c and c:FindFirstChild("HumanoidRootPart")
+					if hrp then
+						if not _l_t._lt then
+	                       local l=Create("PointLight",gui,{
+			                     Name = "Character_Light_1hooaczx1",
+				                 Range = 30,
+						     	Brightness = 2.3,
+							     Color = Color3.new(1,1,1)
+		                	})
+							_l_t._lt = l
+						elseif _l_t._lt.Parent ~= hrp then
+							_l_t._lt.Parent = hrp
+						end
+					else
+						if _l_t._lt then
+							_l_t._lt:Destroy()
+							_l_t._lt = nil
+						end
+					end
+				end)
+			end
+		else
+			if _l_t._hbt then
+				_l_t._hbt:Disconnect()
+				_l_t._hbt = nil
+			end
+			if _l_t._lt then
+				_l_t._lt:Destroy()
+				_l_t._lt = nil
+			end
+		end
+	end
 })
 
 function addui(on)
