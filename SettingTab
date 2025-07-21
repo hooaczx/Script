@@ -1429,95 +1429,78 @@ AddToggle(Main5u6, {
     end
 })
 
-local _x_x = {
-	h = nil,
-	p = nil,
-	c = nil,
-	e = false,
-	s = false,
-	l = nil,
-	h2 = nil
+local _x_x={
+	h=nil,
+	p=nil,
+	c=nil,
+	e=false,
+	s=false,
+	l=nil
 }
 
-AddToggle(Main5u6, {
-	Name = "Character Lock CFrame",
-	Default = false,
-	Callback = function(v)
-		_x_x.e = v
+AddToggle(Main5u6,{
+	Name="Character Lock CFrame",
+	Default=false,
+	Callback=function(v)
+		_x_x.e=v
 		if _x_x.e then
 			if not _x_x.h then
-				_x_x.h = game:GetService("RunService").Heartbeat:Connect(function()
+				_x_x.h=game:GetService("RunService").Heartbeat:Connect(function()
 					if _x_x.s or not _x_x.e then return end
-					local c = localPuppet.Character
+					local c=localPuppet.Character
 					if c and c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("HumanoidRootPart") then
-						_x_x.l = c.HumanoidRootPart.CFrame
+						_x_x.l=c.HumanoidRootPart.CFrame
 					end
 				end)
 			end
-			local c = localPuppet.Character
+			local c=localPuppet.Character
 			if c then
 				repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
 				repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
 				if not _x_x.p then
-					local hrp = c.HumanoidRootPart
-					_x_x.p = hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
+					local hrp=c.HumanoidRootPart
+					_x_x.p=hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
 						if _x_x.e then
-							_x_x.s = true
-							hrp.CFrame = _x_x.l
+							_x_x.s=true
+							hrp.CFrame=_x_x.l
 							game:GetService("RunService").Heartbeat:Wait()
-							_x_x.s = false
+							_x_x.s=false
 						end
 					end)
 				end
 			end
 			if not _x_x.c then
-				_x_x.c = localPuppet.CharacterAdded:Connect(function(c)
+				_x_x.c=localPuppet.CharacterAdded:Connect(function(c)
 					repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
 					repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
 					if _x_x.e then
 						if not _x_x.h then
-							_x_x.h = game:GetService("RunService").Heartbeat:Connect(function()
+							_x_x.h=game:GetService("RunService").Heartbeat:Connect(function()
 								if _x_x.s or not _x_x.e then return end
-								local c2 = localPuppet.Character
+								local c2=localPuppet.Character
 								if c2 and c2:FindFirstChildOfClass("Humanoid") and c2:FindFirstChild("HumanoidRootPart") then
-									_x_x.l = c2.HumanoidRootPart.CFrame
+									_x_x.l=c2.HumanoidRootPart.CFrame
 								end
 							end)
 						end
 						if not _x_x.p then
-							local hrp2 = c.HumanoidRootPart
-							_x_x.p = hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
+							local hrp2=c.HumanoidRootPart
+							_x_x.p=hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
 								if _x_x.e then
-									_x_x.s = true
-									hrp2.CFrame = _x_x.l
+									_x_x.s=true
+									hrp2.CFrame=_x_x.l
 									game:GetService("RunService").Heartbeat:Wait()
-									_x_x.s = false
+									_x_x.s=false
 								end
 							end)
-						end
-					end
-				end)
-			end
-			if not _x_x.h2 then
-				_x_x.h2 = game:GetService("RunService").Heartbeat:Connect(function()
-					if _x_x.s or not _x_x.e then return end
-					local c = localPuppet.Character
-					if c and c:FindFirstChild("HumanoidRootPart") and _x_x.l then
-						local hrp = c.HumanoidRootPart
-						if hrp.Position ~= _x_x.l.Position then
-							_x_x.s = true
-							hrp.CFrame = _x_x.l
-							game:GetService("RunService").Heartbeat:Wait()
-							_x_x.s = false
 						end
 					end
 				end)
 			end
 		else
-			if _x_x.h then _x_x.h:Disconnect() _x_x.h = nil end
-			if _x_x.p then _x_x.p:Disconnect() _x_x.p = nil end
-			if _x_x.c then _x_x.c:Disconnect() _x_x.c = nil end
-			if _x_x.h2 then _x_x.h2:Disconnect() _x_x.h2 = nil end
+			if _x_x.h then _x_x.h:Disconnect() _x_x.h=nil end
+			if _x_x.p then _x_x.p:Disconnect() _x_x.p=nil end
+			if _x_x.c then _x_x.c:Disconnect() _x_x.c=nil end
 		end
 	end
 })
