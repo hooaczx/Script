@@ -1049,62 +1049,66 @@ AddSlider(Main5u6, {
 local M = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Dodgeplayers"))()
 
 AddToggle(Main5u6, {
-	Name = "Dodge players on touch",
-	Default = false,
-	Callback = function(state)
-		M.toggle(state)
-	end
+  Name = "Dodge players on touch",
+  Default = false,
+  Callback = function(state)
+     M.toggle(state)
+  end
 })
 
 local _b_t,_t_t,_a_t= nil, {}, false
  
 AddToggle(Main5u6, {
-	Name = "Anti Sit",
-	Default = false,
-	Callback = function(_x_t)
-		_a_t = _x_t
-		if _a_t then
-			if not _b_t then
-				_b_t = game:GetService("RunService").Heartbeat:Connect(function()
-					local _f_t = false
-					local _c_t = false
-					for _, v in pairs(workspace:GetDescendants()) do
-						if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
-							local _id_t = v:GetDebugId()
-							if _t_t[_id_t] == nil then _t_t[_id_t] = v.Disabled end
-							if v.Disabled ~= true then
-								v.Disabled = true
-								_c_t = true
-							end
-							if not v.Disabled then
-								_f_t = true
-							end
-							if _t_t[_id_t] ~= v.Disabled then
-								_t_t[_id_t] = v.Disabled
-								_c_t = true
-							end
-						end
-					end
-					if not _f_t and not _c_t then
-						_b_t:Disconnect()
-						_b_t = nil
-						_t_t = {}
-					end
-				end)
-			end
-		else
-			if _b_t then
-				_b_t:Disconnect()
-				_b_t = nil
-			end
-			_t_t = {}
-			for _, v in pairs(workspace:GetDescendants()) do
-				if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
-					if v.Disabled then v.Disabled = false end
-				end
-			end
-		end
-	end
+    Name = "Anti Sit",
+    Default = false,
+    Callback = function(_x_t)
+        _a_t = _x_t
+        if _a_t then
+            if not _b_t then
+                _b_t = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _f_t = false
+                    local _c_t = false
+                    for _, v in pairs(workspace:GetDescendants()) do
+                        if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
+                            local _id_t = v:GetDebugId()
+                            if _t_t[_id_t] == nil then
+                                _t_t[_id_t] = v.Disabled
+                            end
+                            if v.Disabled ~= true then
+                                v.Disabled = true
+                                _c_t = true
+                            end
+                            if not v.Disabled then
+                                _f_t = true
+                            end
+                            if _t_t[_id_t] ~= v.Disabled then
+                                _t_t[_id_t] = v.Disabled
+                                _c_t = true
+                            end
+                        end
+                    end
+                    if not _f_t and not _c_t then
+                        _b_t:Disconnect()
+                        _b_t = nil
+                        _t_t = {}
+                    end
+                end)
+            end
+        else
+            if _b_t then
+                _b_t:Disconnect()
+                _b_t = nil
+            end
+            _t_t = {}
+            for _, v in pairs(workspace:GetDescendants()) do
+                if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
+                    if v.Disabled then
+                        v.Disabled = false
+                    end
+                end
+            end
+        end
+    end
 })
 
 local _c___, _p___
@@ -1315,79 +1319,104 @@ AddToggle(Main5u6, {
     end
 })
 
-local _x_x={
-	h=nil,
-	p=nil,
-	c=nil,
-	e=false,
-	s=false,
-	l=nil
+local _x_x = {
+   h = nil,
+   p = nil,
+   c = nil,
+   e = false,
+   s = false,
+   l = nil,
+   extra = nil
 }
-AddToggle(Main5u6,{
-	Name="Character Lock CFrame",
-	Default=false,
-	Callback=function(v)
-		_x_x.e=v
-		if _x_x.e then
-			if not _x_x.h then
-				_x_x.h=game:GetService("RunService").Heartbeat:Connect(function()
-					if _x_x.s or not _x_x.e then return end
-					local c=localPuppet.Character
-					if c and c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("HumanoidRootPart") then
-						_x_x.l=c.HumanoidRootPart.CFrame
-					end
-				end)
-			end
-			local c=localPuppet.Character
-			if c then
-				repeat S.Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
-				repeat S.Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
-				if not _x_x.p then
-					local hrp=c.HumanoidRootPart
-					_x_x.p=hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
-						if _x_x.e then
-							_x_x.s=true
-							hrp.CFrame=_x_x.l
-							S.Heartbeat:Wait()
-							_x_x.s=false
-						end
-					end)
-				end
-			end
-			if not _x_x.c then
-				_x_x.c=localPuppet.CharacterAdded:Connect(function(c)
-					repeat S.Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
-					repeat S.Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
-					if _x_x.e then
-						if not _x_x.h then
-							_x_x.h=S.Heartbeat:Connect(function()
-								if _x_x.s or not _x_x.e then return end
-								local c2=localPuppet.Character
-								if c2 and c2:FindFirstChildOfClass("Humanoid") and c2:FindFirstChild("HumanoidRootPart") then
-									_x_x.l=c2.HumanoidRootPart.CFrame
-								end
-							end)
-						end
-						if not _x_x.p then
-							local hrp2=c.HumanoidRootPart
-							_x_x.p=hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
-								if _x_x.e then
-									_x_x.s=true
-									hrp2.CFrame=_x_x.l
-									S.Heartbeat:Wait()
-									_x_x.s=false
-								end
-							end)
-						end
-					end
-				end)
-			end
-		else
-			if _x_x.h then _x_x.h:Disconnect() _x_x.h=nil end
-			if _x_x.p then _x_x.p:Disconnect() _x_x.p=nil end
-			if _x_x.c then _x_x.c:Disconnect() _x_x.c=nil end
-		end
-	end
+
+AddToggle(Main5u6, {
+    Name = "Character Lock CFrame",
+    Default = false,
+    Callback = function(v)
+        _x_x.e = v
+        if _x_x.e then
+            if not _x_x.h then
+                _x_x.h = game:GetService("RunService").Heartbeat:Connect(function()
+                    if _x_x.s or not _x_x.e then return end
+                    local c = localPuppet.Character
+                    if c and c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("HumanoidRootPart") then
+                        _x_x.l = c.HumanoidRootPart.CFrame
+                    end
+                end)
+            end
+            local c = localPuppet.Character
+            if c then
+                repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
+                repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
+                local hrp = c.HumanoidRootPart
+                if not _x_x.p then
+                    _x_x.p = hrp:GetPropertyChangedSignal("CFrame"):Connect(function()
+                        if _x_x.e then
+                            _x_x.s = true
+                            hrp.CFrame = _x_x.l
+                            game:GetService("RunService").Heartbeat:Wait()
+                            _x_x.s = false
+                        end
+                    end)
+                end
+                if not _x_x.extra then
+                    _x_x.extra = game:GetService("RunService").Heartbeat:Connect(function()
+                        if not _x_x.e then return end
+                        if hrp and (hrp.Position - _x_x.l.Position).Magnitude > 1 then
+                            _x_x.s = true
+                            hrp.CFrame = _x_x.l
+                            game:GetService("RunService").Heartbeat:Wait()
+                            _x_x.s = false
+                        end
+                    end)
+                end
+            end
+            if not _x_x.c then
+                _x_x.c = localPuppet.CharacterAdded:Connect(function(c)
+                    repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChildOfClass("Humanoid")
+                    repeat game:GetService("RunService").Heartbeat:Wait() until c:FindFirstChild("HumanoidRootPart")
+                    local hrp2 = c.HumanoidRootPart
+                    if _x_x.e then
+                        if not _x_x.h then
+                            _x_x.h = game:GetService("RunService").Heartbeat:Connect(function()
+                                if _x_x.s or not _x_x.e then return end
+                                local c2 = localPuppet.Character
+                                if c2 and c2:FindFirstChildOfClass("Humanoid") and c2:FindFirstChild("HumanoidRootPart") then
+                                    _x_x.l = c2.HumanoidRootPart.CFrame
+                                end
+                            end)
+                        end
+                        if not _x_x.p then
+                            _x_x.p = hrp2:GetPropertyChangedSignal("CFrame"):Connect(function()
+                                if _x_x.e then
+                                    _x_x.s = true
+                                    hrp2.CFrame = _x_x.l
+                                    game:GetService("RunService").Heartbeat:Wait()
+                                    _x_x.s = false
+                                end
+                            end)
+                        end
+                        if not _x_x.extra then
+                            _x_x.extra = game:GetService("RunService").Heartbeat:Connect(function()
+                                if not _x_x.e then return end
+                                if hrp2 and (hrp2.Position - _x_x.l.Position).Magnitude > 1 then
+                                    _x_x.s = true
+                                    hrp2.CFrame = _x_x.l
+                                    game:GetService("RunService").Heartbeat:Wait()
+                                    _x_x.s = false
+                                end
+                            end)
+                        end
+                    end
+                end)
+            end
+        else
+            if _x_x.h then _x_x.h:Disconnect(); _x_x.h = nil end
+            if _x_x.p then _x_x.p:Disconnect(); _x_x.p = nil end
+            if _x_x.c then _x_x.c:Disconnect(); _x_x.c = nil end
+            if _x_x.extra then _x_x.extra:Disconnect(); _x_x.extra = nil end
+        end
+    end
 })
 
 local cm = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Cameranoclip"))()
