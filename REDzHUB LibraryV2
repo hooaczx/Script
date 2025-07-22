@@ -3523,7 +3523,7 @@ RunServerlock("Lock1", "no", function()
     functions.updateTime()
 end)
 
-RunServerlock("Lock2", 7, function()
+RunServerlock("Lock2", 10, function()
     local funcs = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetPlace"))()
     funcs.updatePlaceInfo(GameName, frame79)
     if description.Visible then
@@ -3537,7 +3537,7 @@ RunServerlock("Lock2", 7, function()
     UpdateGamepass(Configs_HUB, MarketplaceService, GetGamepass, infogamepass, Create, TextSetColor, frameGamepass)
 end)
 
-RunServerlock("Lock3", 7, function()
+RunServerlock("Lock3", 10, function()
       local nti = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/GetRobloxVersion"))()
       local info = nti.GetInfo()
       if description.Visible then
@@ -3582,21 +3582,9 @@ end)
 check_1 = RunService.RenderStepped:Connect(function()
     local parentgui = (gethui and gethui()) or game:GetService("CoreGui")
     local foundUI = parentgui:FindFirstChild("hcx hub library1")
-    local f_ = not foundUI
-        and not rainSound
-        and not notifyfriend
-        and not notifyfriendleave
-        and not click1
-        and not click2
-        and not falsetoggle
-        and not clicktoggle
-        and (not CH or next(CH) == nil)
-        and (not playerFrames or next(playerFrames) == nil)
     if not foundUI and ShiftLockmaingui then
         for _, highlight in pairs(CH) do
-            if highlight then
-                highlight:Destroy()
-            end
+            if highlight then highlight:Destroy() end
         end
         table.clear(CH)
         ShiftLockButton.Image = States.Off
@@ -3629,8 +3617,14 @@ check_1 = RunService.RenderStepped:Connect(function()
             if conn then conn:Disconnect() end
             stopupdateall[name] = nil
         end
+        if notificationgui then
+            for _, v in pairs(notificationgui) do
+                if v and v.Destroy then v:Destroy() end
+            end
+            table.clear(notificationgui)
+        end
         if View then
-            local hum = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+            local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
             if hum then
                 workspace.CurrentCamera.CameraSubject = hum
             end
@@ -3641,9 +3635,20 @@ check_1 = RunService.RenderStepped:Connect(function()
             end
             table.clear(CH)
             table.clear(playerFrames)
+            View = nil
         end
     end
-    if f_ then
+    if not foundUI
+        and not rainSound
+        and not notifyfriend
+        and not notifyfriendleave
+        and not click1
+        and not click2
+        and not falsetoggle
+        and not clicktoggle
+        and (not CH or next(CH) == nil)
+        and (not playerFrames or next(playerFrames) == nil)
+        and (not notificationgui or #notificationgui == 0) then
         check_1:Disconnect()
         check_1 = nil
     end
