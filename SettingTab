@@ -167,7 +167,7 @@ funcs["C4"] = funcs["C4"] or {
 end function CreateHighlight(player)
 	local char = player.Character
 	if not funcs["hF"] or not funcs["hF"].Parent then
-		funcs["hF"] = Create("Folder", (gethui and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
+		funcs["hF"] = Create("Folder", ((not is_sirhurt_closure and not (syn and DrawingImmediate)) and syn and syn.protect_gui and game:GetService("CoreGui")) or (typeof(get_hidden_gui) == "function" and get_hidden_gui()) or (typeof(gethui) == "function" and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
 	end
 	local Storage = funcs["hF"]
 	if char then
@@ -1486,7 +1486,7 @@ function addui(on)
 	if on then
 		if isOn then return end
 		isOn = true
-		gui = Create("ScreenGui", (gethui and gethui()) or game:GetService("CoreGui"), {
+		gui = Create("ScreenGui", ((not is_sirhurt_closure and not (syn and DrawingImmediate)) and syn and syn.protect_gui and game:GetService("CoreGui")) or (typeof(get_hidden_gui) == "function" and get_hidden_gui()) or (typeof(gethui) == "function" and gethui()) or game:GetService("CoreGui"), {
 			Name = "fap_1hooaczx1", ResetOnSpawn = false, DisplayOrder = math.huge
 		})
 		Create("UIListLayout", gui, {SortOrder=Enum.SortOrder.LayoutOrder, FillDirection=Enum.FillDirection.Vertical, Padding=UDim.new(0,4)})
