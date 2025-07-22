@@ -660,63 +660,7 @@ local function notify(params)
     end)
 end
 
-local z = os.date("*t")
-local x = z.year + 1
-local w = os.time{year=x,month=1,day=1}
-local q = os.time()
-local y = math.floor((w - q)/86400)
-local ny = (z.month == 1 and z.day <= 2)
-local h = z.hour
-local t = "n"
-if h >= 5 and h < 12 then t = "morn"
-elseif h >= 12 and h < 17 then t = "noon"
-elseif h >= 17 and h < 21 then t = "eve" end
 local d = {
-	morn1 = {
-		{"Mornin'", "Yo", "Hey", "What's good", "Top of the mornin'", "Wassup", "Rise and shine", "Hello there", "Good day", "Look alive"},
-		{"Make today count", "Don't slack off", "Keep your head up", "Do your thing", "Stay motivated", "Get stuff done", "Push through", "Own the day", "No slacking", "You got this"},
-		{"Take it easy", "Stay fresh", "Watch yourself", "Keep chillin'", "Have a good one", "Keep smiling", "Stay cool", "Make it yours", "Stay strong", "Rock on"}
-	},
-	morn2 = {
-		{"Sup, sunshine", "Bright day, huh", "Top of the mornin'", "Hello, early bird", "Good vibes", "Morning glory", "Early riser", "Hey sunshine", "Bright eyes", "Wakey wakey"},
-		{"Breathe deep", "Keep it real", "Stay solid", "Enjoy the moment", "Fresh start", "Stay sharp", "Stay on point", "Make it happen", "Keep grinding", "Move forward"},
-		{"Look after yourself", "Stay safe", "Catch some rays", "Smile more", "Be kind", "Stay humble", "Take breaks", "Keep it light", "Have fun", "Be happy"}
-	},
-	noon1 = {
-		{"Afternoon", "Hey hey", "What’s up", "Lookin' good", "Hope you're well", "Yo", "How’s it going", "Hello", "Good to see ya", "All good?"},
-		{"Keep pushin'", "Almost there", "Don’t give up", "Grab some food", "Stay focused", "Keep at it", "Hold tight", "Keep strong", "Stay steady", "You’re doing great"},
-		{"Stay cool", "Take a break", "Keep it goin'", "Stay loose", "Enjoy your day", "Keep smiling", "Stay chill", "Relax a bit", "Keep grinding", "Hang in there"}
-	},
-	noon2 = {
-		{"Midday vibes", "Lunch time", "Time to refuel", "Keep moving", "Fresh energy", "Halfway there", "Fuel up", "Stay hydrated", "Keep working", "Don’t stop"},
-		{"Stay hydrated", "Keep on grindin'", "Almost done", "Stay energized", "Keep calm", "Push harder", "Stay alert", "Keep sharp", "Stay on track", "Keep focused"},
-		{"Relax a bit", "Keep calm", "You got this", "Stay positive", "Be proud", "Take it easy", "Feel good", "Stay motivated", "Enjoy this", "Make it count"}
-	},
-	eve1 = {
-		{"Evenin'", "What’s poppin’", "Hope you had a good one", "Time to unwind", "Hey", "How was your day", "Good evening", "Chill time", "Relax now", "Take a breath"},
-		{"Slow down now", "Chillax time", "Unwind a little", "Reflect a bit", "Time to relax", "Take it easy", "Rest up", "Don’t stress", "Have some peace", "Enjoy the night"},
-		{"Rest up", "Don’t stress", "See ya later", "Take it easy", "Stay calm", "Get some rest", "Recharge", "Night’s yours", "Stay safe", "Sleep well"}
-	},
-	eve2 = {
-		{"Night’s coming", "Take it easy now", "Time to relax", "Peaceful night", "Quiet moments", "Moon’s out", "Wind down", "Cool night", "Chill vibes", "Stars out"},
-		{"Look back a bit", "Enjoy the night", "Catch some zzz's", "Sweet dreams", "Dream big", "Sleep tight", "Stay safe", "Recharge now", "Good vibes", "Relax and rest"},
-		{"Sleep tight", "Dream big", "Stay safe", "Recharge now", "Peace out", "Night night", "Rest easy", "Calm down", "Be well", "Catch you tomorrow"}
-	},
-	n = {
-		{"Late night, huh", "Time to crash", "Lights out", "Quiet time", "Bedtime", "Night owl", "Long day", "Tuck in", "Wrap it up", "Call it a night"},
-		{"Sweet dreams", "Recharge now", "Sleep well", "See you tomorrow", "Peace out", "Night night", "Rest well", "Stay cozy", "Get some sleep", "Calm night"},
-		{"Peace out", "Night night", "Rest well", "Stay cozy", "Good night", "See ya", "Take care", "Sleep tight", "Catch you later", "Be safe"}
-	},
-	new1 = {
-		{"Happy New Year", "Cheers", "New beginnings", "Fresh start", "Celebrate", "Welcome 2025", "Make it count", "Joy ahead", "Bright future", "New chapter"},
-		{"Wishing you luck", "Hope it’s your year", "Stay solid", "Good vibes only", "Smiles all around", "Keep shining", "Dream big", "Stay happy", "Be awesome", "Make moves"},
-		{"Take care, alright", "Keep it cool", "Look after yourself", "Enjoy every moment", "Stay strong", "Be kind", "Stay positive", "Keep going", "Live well", "Stay safe"}
-	},
-	new2 = {
-		{"Yo, New Year", "Fresh start", "Keep rollin'", "Make it count", "Here we go", "New hopes", "Bright days", "Keep it up", "Stay real", "All in"},
-		{"Stay positive", "Good vibes only", "You got this", "Be your best", "Keep smiling", "Don’t burn out", "Chill and enjoy", "Be cool", "Go for it", "Have fun"},
-		{"Don’t burn out", "Chill and enjoy", "Be cool", "Keep smiling", "Make waves", "Own the day", "Live free", "Stay humble", "Be yourself", "Shine on"}
-	},
 	greet = {
 		"Hey, ", "Yo, ", "Sup! ", "What’s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
 	},
@@ -733,7 +677,7 @@ function getTitleText()
 	local y = t.year
 	local s = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
 	local e = os.time{year = y + 1, month = 1, day = 1, hour = 6, min = 0, sec = 0}
-	local n = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
+	local n = s
 	if now >= s and now < e then
 		return string.format("🎉 Happy New Year %d! 🎆", y + 1)
 	else
@@ -743,43 +687,18 @@ function getTitleText()
 		local h = math.floor((diff % 86400) / 3600)
 		local m = math.floor((diff % 3600) / 60)
 		local sec = diff % 60
-		return string.format("%d:%02d:%02d:%02d Countdown to New Year!⏰", d, h, m, sec)
+		return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
 	end
 end
-local time = os.date("*t")
-local ny = (time.month == 1 and time.day <= 2)
-local hour = time.hour
-local period = "n"
-if hour >= 5 and hour < 12 then
-	period = "morn"
-elseif hour >= 12 and hour < 17 then
-	period = "noon"
-elseif hour >= 17 and hour < 21 then
-	period = "eve"
-end
-local greetings
-if ny then
-	greetings = (math.random(2) == 1) and d.new1 or d.new2
-else
-	if period == "morn" then
-		greetings = (math.random(2) == 1) and d.morn1 or d.morn2
-	elseif period == "noon" then
-		greetings = (math.random(2) == 1) and d.noon1 or d.noon2
-	elseif period == "eve" then
-		greetings = (math.random(2) == 1) and d.eve1 or d.eve2
-	else
-		greetings = d.n
-	end
-end
-local msg = r(greetings[1]) .. " " .. r(greetings[2]) .. ". " .. r(greetings[3]) .. " " .. emoTxt
 notify({
 	Title = getTitleText(),
-	Text = msg,
+	Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
 	buttonText = "Ok",
 	imageID = "18488884411",
 	guiSize = Vector2.new(400, 80),
 	updates = {
-		Title = getTitleText}
+		Title = getTitleText
+	}
 })
 
  function MinimizeButton(Configs)
