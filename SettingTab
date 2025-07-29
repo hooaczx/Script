@@ -1111,43 +1111,6 @@ AddToggle(Main5u6, {
     end
 })
 
-AddToggle(Main5u6,{
-    Name="Anti Adonis Bypass",
-    Default=false,
-    Callback=function(s)
-        pcall(function()
-            local st,gc,hf=setthreadidentity,getgc,hookfunction
-            local gi=getinfo or (debug and debug.getinfo)
-            if type(st)~="function"or type(gc)~="function"or type(hf)~="function"or type(gi)~="function"then return end
-            if not _G.i then
-                _G.i=true
-                pcall(function()st(2)end)
-                for _,v in gc(true)do
-                    if type(v)=="table"then
-                        local d,k=rawget(v,"Detected"),rawget(v,"Kill")
-                        if type(d)=="function"and not _G.d then
-                            _G.d=d
-                            _G.od=hf(d,function(...)return true end)
-                        end
-                        if rawget(v,"Variables")and rawget(v,"Process")and type(k)=="function"and not _G.k then
-                            _G.k=k
-                            _G.ok=hf(k,function(...)end)
-                        end
-                    end
-                end
-                _G.oi=hf(getrenv().debug.info or gi,newcclosure(function(a,...)if a==_G.d then return coroutine.yield(coroutine.running())end return _G.oi(a,...)end))
-                pcall(function()st(7)end)
-            end
-            if not s then
-                if _G.d and _G.od then hf(_G.d,_G.od)end
-                if _G.k and _G.ok then hf(_G.k,_G.ok)end
-                if _G.oi then hf(getrenv().debug.info or gi,_G.oi)end
-                pcall(function()st(2)end)
-            end
-        end)
-    end
-})
-
 local _c___, _p___
 
 AddToggle(Main5u6, {
