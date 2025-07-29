@@ -1111,39 +1111,37 @@ AddToggle(Main5u6, {
     end
 })
 
-AddToggle(Main5u6, {
+AddToggle(m,{
     Name = "Anti Adonis Bypass",
     Default = false,
     Callback = function(s)
-        if type(setthreadidentity) ~= "function" or type(getgc) ~= "function" or type(hookfunction) ~= "function" or not debug or type(debug.info) ~= "function" then
-            return
-        end
-        if not _G.x then
-            pcall(function() setthreadidentity(2) end)
-            for _, v in getgc(true) do
-                if type(v) == "table" then
-                    local d, k = rawget(v,"Detected"), rawget(v,"Kill")
-                    if type(d)=="function" and not _G.d then _G.d,_G.od=d,d end
-                    if rawget(v,"Variables") and rawget(v,"Process") and type(k)=="function" and not _G.k then _G.k,_G.ok=k,k end
+        local st,gg,hf=db.setthreadidentity,getgc,hookfunction
+        local di=(debug and type(debug.info)=="function"and debug.info)or(debug and type(debug.getinfo)=="function"and debug.getinfo)
+        if type(st)~="function"or type(gg)~="function"or type(hf)~="function"or not di then return end
+        if not _G.i then
+            _G.i=true
+            pcall(function()st(2)end)
+            for _,v in gg(true)do
+                if type(v)=="table"then
+                    local d,k=rawget(v,"Detected"),rawget(v,"Kill")
+                    if type(d)=="function"and not _G.od then _G.d,_G.od=d,d end
+                    if rawget(v,"Variables")and rawget(v,"Process")and type(k)=="function"and not _G.ok then _G.k,_G.ok=k,k end
                 end
             end
-            _G.oi = debug.info
-            _G.x = true
-            pcall(function() setthreadidentity(7) end)
+            _G.oi=di
+            pcall(function()st(7)end)
         end
         if s then
-            if type(_G.d)=="function" then hookfunction(_G.d,function(...) return true end) end
-            if type(_G.k)=="function" then hookfunction(_G.k,function(...) end) end
-            if type(_G.oi)=="function" then
-                hookfunction(debug.info,newcclosure(function(a,...)
-                    if a==_G.d then return coroutine.yield(coroutine.running()) end
-                    return _G.oi(a,...)
-                end))
+            if _G.d then _G.hd=hf(_G.d,function(...)return true end)end
+            if _G.k then _G.hk=hf(_G.k,function(...)end)end
+            if _G.oi then
+                _G.hi=hf(di,newcclosure(function(a,...)if a==_G.d then return coroutine.yield(coroutine.running())end return _G.oi(a,...)end))
             end
         else
-            if type(_G.d)=="function" and _G.od then hookfunction(_G.d,_G.od) end
-            if type(_G.k)=="function" and _G.ok then hookfunction(_G.k,_G.ok) end
-            if type(_G.oi)=="function" then hookfunction(debug.info,_G.oi) end
+            if _G.d and _G.hd then hf(_G.d,_G.od)end
+            if _G.k and _G.hk then hf(_G.k,_G.ok)end
+            if _G.oi and _G.hi then hf(di,_G.oi)end
+            pcall(function()st(2)end)
         end
     end
 })
