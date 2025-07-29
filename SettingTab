@@ -1111,6 +1111,43 @@ AddToggle(Main5u6, {
     end
 })
 
+AddToggle(Main5u6, {
+    Name = "Anti Adonis Bypass",
+    Default = false,
+    Callback = function(s)
+        if type(setthreadidentity) ~= "function" or type(getgc) ~= "function" or type(hookfunction) ~= "function" or not debug or type(debug.info) ~= "function" then
+            return
+        end
+        if not _G.x then
+            pcall(function() setthreadidentity(2) end)
+            for _, v in getgc(true) do
+                if type(v) == "table" then
+                    local d, k = rawget(v,"Detected"), rawget(v,"Kill")
+                    if type(d)=="function" and not _G.d then _G.d,_G.od=d,d end
+                    if rawget(v,"Variables") and rawget(v,"Process") and type(k)=="function" and not _G.k then _G.k,_G.ok=k,k end
+                end
+            end
+            _G.oi = debug.info
+            _G.x = true
+            pcall(function() setthreadidentity(7) end)
+        end
+        if s then
+            if type(_G.d)=="function" then hookfunction(_G.d,function(...) return true end) end
+            if type(_G.k)=="function" then hookfunction(_G.k,function(...) end) end
+            if type(_G.oi)=="function" then
+                hookfunction(debug.info,newcclosure(function(a,...)
+                    if a==_G.d then return coroutine.yield(coroutine.running()) end
+                    return _G.oi(a,...)
+                end))
+            end
+        else
+            if type(_G.d)=="function" and _G.od then hookfunction(_G.d,_G.od) end
+            if type(_G.k)=="function" and _G.ok then hookfunction(_G.k,_G.ok) end
+            if type(_G.oi)=="function" then hookfunction(debug.info,_G.oi) end
+        end
+    end
+})
+
 local _c___, _p___
 
 AddToggle(Main5u6, {
