@@ -3,10 +3,12 @@ local function isNumber(str)
     return tonumber(str) ~= nil or str == 'inf'
 end
 local camera = workspace.CurrentCamera
-local ifGameId = game.PlaceId
+local _zx_dWS, _zx_dJP = 16, 50
+local _zx_ws, _zx_jp
 getgenv().TPSpeed = 0
 getgenv().TPJpBst = 0
 getgenv().TPWalk = false
+getgenv().Cframewalk = 0
 getgenv().NV_Brightness = 0
 local player = game:GetService("Players").LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -19,6 +21,8 @@ local ps = game:GetService("Players")
 local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
 local gui, con, isOn, fpsV = nil, nil, false, 0
+local tpc, cfc = nil, nil
+local cfMode = "Nope"
 
 Service = setmetatable({}, {
     __index = function(Self, Index)
@@ -617,88 +621,65 @@ AddToggle(Main5u6, {
   end
 })
 
-local dWS, dJP = 16, 50
-local wsCon, jpCon
+function _zx_set(p, v)
+	local _zx_c = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+	local _zx_h = _zx_c and _zx_c:FindFirstChildOfClass("Humanoid")
+	if _zx_h and _zx_h[p] ~= v then
+		_zx_h[p] = v
+	end
+end
 
 AddTextBox(Main5u6, {
-  Name = "WS Number",
-  Default = "Enter",
-  PlaceholderText = "Enter number",
-  ClearText = true,
-  Callback = function(v)
-    local s = tonumber(v)
-    if s then
-      getgenv().WS = s
-    end
-  end
+	Name = "WS Number",
+	Default = "Enter",
+	PlaceholderText = "Enter number",
+	ClearText = true,
+	Callback = function(v)
+		local _zx_n = tonumber(v)
+		if _zx_n then getgenv().WS = _zx_n end
+	end
 })
 
 AddToggle(Main5u6, {
-  Name = "WalkSpeed",
-  Default = false,
-  Callback = function(st)
-    local plr = game:GetService("Players").LocalPlayer
-    if st then
-      wsCon = game:GetService("RunService").Heartbeat:Connect(function()
-        local char = plr.Character or plr.CharacterAdded:Wait()
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-          hum.WalkSpeed = getgenv().WS or dWS
-        end
-      end)
-    else
-      if wsCon then wsCon:Disconnect() wsCon = nil end
-      local char = plr.Character
-      local hum = char and char:FindFirstChildOfClass("Humanoid")
-      if hum then
-        hum.WalkSpeed = dWS
-      end
-    end
-  end
+	Name = "WalkSpeed",
+	Default = false,
+	Callback = function(_zx_st)
+		if _zx_st then
+			_zx_ws = game:GetService("RunService").Heartbeat:Connect(function()
+				_zx_set("WalkSpeed", getgenv().WS or _zx_dWS)
+			end)
+		else
+			if _zx_ws then _zx_ws:Disconnect() _zx_ws = nil end
+			_zx_set("WalkSpeed", _zx_dWS)
+		end
+	end
 })
 
 AddTextBox(Main5u6, {
-  Name = "JP Number",
-  Default = "Enter",
-  PlaceholderText = "Enter number",
-  ClearText = true,
-  Callback = function(v)
-    local j = tonumber(v)
-    if j then
-      getgenv().JP = j
-    end
-  end
+	Name = "JP Number",
+	Default = "Enter",
+	PlaceholderText = "Enter number",
+	ClearText = true,
+	Callback = function(v)
+		local _zx_n = tonumber(v)
+		if _zx_n then getgenv().JP = _zx_n end
+	end
 })
 
 AddToggle(Main5u6, {
-  Name = "JumpPower",
-  Default = false,
-  Callback = function(st)
-    local plr = game:GetService("Players").LocalPlayer
-    if st then
-      jpCon = game:GetService("RunService").Heartbeat:Connect(function()
-        local char = plr.Character or plr.CharacterAdded:Wait()
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-          hum.JumpPower = getgenv().JP or dJP
-        end
-      end)
-    else
-      if jpCon then jpCon:Disconnect() jpCon = nil end
-      local char = plr.Character
-      local hum = char and char:FindFirstChildOfClass("Humanoid")
-      if hum then
-        hum.JumpPower = dJP
-      end
-    end
-  end
+	Name = "JumpPower",
+	Default = false,
+	Callback = function(_zx_st)
+		if _zx_st then
+			_zx_jp = game:GetService("RunService").Heartbeat:Connect(function()
+				_zx_set("JumpPower", getgenv().JP or _zx_dJP)
+			end)
+		else
+			if _zx_jp then _zx_jp:Disconnect() _zx_jp = nil end
+			_zx_set("JumpPower", _zx_dJP)
+		end
+	end
 })
-
-local tpCon, cfCon = nil, nil
-local cfMode = "Nope"
-getgenv().TPSpeed = 1
-getgenv().Cframewalk = 0
-getgenv().TPWalk = false
 
 AddTextBox(Main5u6, {
 	Name = "Number Tpwalk",
@@ -717,36 +698,23 @@ AddToggle(Main5u6, {
 	Callback = function(state)
 		getgenv().TPWalk = state
 		if state then
-			if not tpCon then
+			if not tpc then
 				local rs = game:GetService("RunService")
 				local plr = game.Players.LocalPlayer
-				tpCon = rs.Heartbeat:Connect(function()
+				tpc = rs.Heartbeat:Connect(function()
 					local ch = plr.Character
 					local hum = ch and ch:FindFirstChildOfClass("Humanoid")
-					if not ch or not hum or not hum.Parent or not getgenv().TPWalk then return end
-					local ctrl = require(plr:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
-					local ct = ctrl.activeController
+					if not ch or not hum or not ch.Parent or not getgenv().TPWalk then return end
 					local spd = tonumber(getgenv().TPSpeed) or 1
-					if ct and ct.Name == "ClickToMoveController" then
-						local hrp = ch:FindFirstChild("HumanoidRootPart")
-						local tgt = ct.targetPoint
-						if hrp and tgt then
-							local dir = (tgt - hrp.Position)
-							if dir.Magnitude > 0.1 then
-								ch:TranslateBy(dir.Unit * spd)
-							end
-						end
-						return
-					end
 					if hum.MoveDirection.Magnitude > 0 then
 						ch:TranslateBy(hum.MoveDirection * spd)
 					end
 				end)
 			end
 		else
-			if tpCon then
-				tpCon:Disconnect()
-				tpCon = nil
+			if tpc then
+				tpc:Disconnect()
+				tpc = nil
 			end
 		end
 	end
@@ -755,7 +723,7 @@ AddToggle(Main5u6, {
 AddDropdown(Main5u6, {
 	Name = "Cframe walk Mode",
 	Default = "Nope",
-	Options = {"Tween Mode", "Nope"},
+	Options = {"Smooth Mode", "Nope"},
 	Callback = function(opt)
 		cfMode = opt
 	end
@@ -777,38 +745,24 @@ AddToggle(Main5u6, {
 	Default = false,
 	Callback = function(state)
 		if state then
-			if not cfCon then
+			if not cfc then
 				local plr = game.Players.LocalPlayer
 				local rs = game:GetService("RunService")
 				local cam = workspace.CurrentCamera
-				cfCon = rs.RenderStepped:Connect(function()
+				cfc = rs.RenderStepped:Connect(function()
 					local ch = plr.Character or plr.CharacterAdded:Wait()
 					local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
 					if not hrp or not getgenv().Cframewalk then return end
 					local ctrl = require(plr:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
-					local ct = ctrl.activeController
-					local mv = Vector3.zero
-					local spd = tonumber(getgenv().Cframewalk) or 1
-					if ct and ct.Name == "ClickToMoveController" then
-						local tgt = ct.targetPoint
-						if tgt then
-							local dir = (tgt - hrp.Position)
-							if dir.Magnitude > 0.1 then
-								mv = dir.Unit
-							end
-						end
-					else
-						mv = ctrl:GetMoveVector()
-						if mv.Magnitude > 0 then
-							local fwd = Vector3.new(cam.CFrame.LookVector.X, 0, cam.CFrame.LookVector.Z).Unit
-							local rgt = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z).Unit
-							mv = (rgt * mv.X - fwd * mv.Z).Unit
-						end
-					end
+					local mv = ctrl:GetMoveVector()
 					if mv.Magnitude > 0 then
-						local tgt = hrp.CFrame + mv * spd
-						if cfMode == "Tween Mode" then
-							CreateTween(hrp, "CFrame", tgt, 0.1, false)
+						local spd = tonumber(getgenv().Cframewalk) or 1
+						local fwd = Vector3.new(cam.CFrame.LookVector.X, 0, cam.CFrame.LookVector.Z).Unit
+						local rgt = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z).Unit
+						local moveDir = (rgt * mv.X - fwd * mv.Z).Unit
+						local tgt = hrp.CFrame + moveDir * spd
+						if cfMode == "Smooth Mode" then
+							hrp.CFrame = hrp.CFrame:Lerp(tgt, 0.1)
 						else
 							hrp.CFrame = tgt
 						end
@@ -816,9 +770,9 @@ AddToggle(Main5u6, {
 				end)
 			end
 		else
-			if cfCon then
-				cfCon:Disconnect()
-				cfCon = nil
+			if cfc then
+				cfc:Disconnect()
+				cfc = nil
 			end
 		end
 	end
