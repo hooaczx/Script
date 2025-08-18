@@ -1150,41 +1150,28 @@ AddToggle(Main5u6, {
     end
 })
 
-local _ct_, _st_ = nil, {}
+local _ct_, _st_, _open_lock_ = nil, {}, false
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
   Default = false,
   Callback = function(state)
     if state then
+      if _open_lock_ then return end
+      _open_lock_ = true
       if not _ct_ then
         _ct_ = RunService.RenderStepped:Connect(function()
           if #game:GetService("Players"):GetPlayers() <= 1 then return end
           for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
-            if pl ~= game:GetService("Players").LocalPlayer then 
+            if pl ~= game:GetService("Players").LocalPlayer then
               if pl.Character and pl.Character.Parent == workspace then
                 for _, part in ipairs(pl.Character:GetDescendants()) do
-                  if part:IsA("BasePart") then
-                    local partsCheck = {}
-                    partsCheck[1] = part
-                    local Parts = part:GetConnectedParts()
-                    for i = 1, #Parts do
-                      partsCheck[i + 1] = Parts[i]
-                    end
-                    for i = 1, #partsCheck do
-                      local p = partsCheck[i]
-                      local old = _st_[p]
-                      local cur = p.CanCollide
-                      if old == nil then
-                        _st_[p] = cur
-                        if cur then
-                          p.CanCollide = false
-                        end
-                      elseif old ~= cur then
-                        if cur then
-                          p.CanCollide = false
-                        end
-                        _st_[p] = p.CanCollide
+                  if part and part:IsA("BasePart") then
+                    if _st_[part] == nil then
+                      local cur = part.CanCollide
+                      _st_[part] = cur
+                      if cur == true then
+                        part.CanCollide = false
                       end
                     end
                   end
@@ -1200,11 +1187,12 @@ AddToggle(Main5u6, {
         _ct_ = nil
       end
       for p, o in pairs(_st_) do
-        if p and p:IsA("BasePart") then
+        if p and p.Parent and p:IsA("BasePart") then
           p.CanCollide = o
         end
       end
       table.clear(_st_)
+      _open_lock_ = false
     end
   end
 })
