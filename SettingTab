@@ -22,7 +22,7 @@ local lp = ps.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
 local gui, con, isOn, fpsV = nil, nil, false, 0
 local tpc, cfc = nil, nil
-local cfMode = "Nope"
+local cfMode, Opt = "None", "Nope"
 
 Service = setmetatable({}, {
     __index = function(Self, Index)
@@ -61,6 +61,54 @@ function CreateTween(instance, prop, value, time, tweenWait)
         tween.Completed:Wait()
     end
 end
+
+AddDropdown(Main5u6, {
+    Name = "Physics Visualization",
+    Default = "None",
+    Options = {
+        "None",
+        "Highlight Awake Parts",
+        "Show Non-Anchored",
+        "Show Physics Owners",
+        "Show Regions"
+    },
+    Callback = function(opt)
+        Opt = opt
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Visualization",
+    Default = false,
+    Callback = function(s)
+        if not s then return end
+        local ok, ps = pcall(function()
+            return settings():GetService("PhysicsSettings")
+        end)
+        if not ok or not ps then
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Oops!",
+                Text = "PhysicsSettings isn’t available right now 😅",
+                Duration = 5
+            })
+            return
+        end
+        if Opt == "None" then
+            ps.AreAwakePartsHighlighted = false
+            ps.AreNonAnchorsShown = false
+            ps.AreOwnersShown = false
+            ps.AreRegionsShown = false
+        elseif Opt == "Highlight Awake Parts" then
+            ps.AreAwakePartsHighlighted = s
+        elseif Opt == "Show Non-Anchored" then
+            ps.AreNonAnchorsShown = s
+        elseif Opt == "Show Physics Owners" then
+            ps.AreOwnersShown = s
+        elseif Opt == "Show Regions" then
+            ps.AreRegionsShown = s
+        end
+    end
+})
 
 local to = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/God%20mod%20obby"))()
 
