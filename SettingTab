@@ -23,6 +23,7 @@ local mouse = game.Players.LocalPlayer:GetMouse()
 local gui, con, isOn, fpsV = nil, nil, false, 0
 local tpc, cfc = nil, nil
 local cfMode, Opt = "None", "Nope"
+local TE = false
 
 Service = setmetatable({}, {
     __index = function(Self, Index)
@@ -81,7 +82,19 @@ AddToggle(Main5u6, {
     Name = "Visualization",
     Default = false,
     Callback = function(s)
-        if not s then return end
+        TE = s
+        if not TE then
+            local ok, ps = pcall(function()
+                return settings():GetService("PhysicsSettings")
+            end)
+            if ok and ps then
+                ps.AreAwakePartsHighlighted = false
+                ps.AreNonAnchorsShown = false
+                ps.AreOwnersShown = false
+                ps.AreRegionsShown = false
+            end
+            return
+        end
         local ok, ps = pcall(function()
             return settings():GetService("PhysicsSettings")
         end)
@@ -99,13 +112,13 @@ AddToggle(Main5u6, {
             ps.AreOwnersShown = false
             ps.AreRegionsShown = false
         elseif Opt == "Highlight Awake Parts" then
-            ps.AreAwakePartsHighlighted = s
+            ps.AreAwakePartsHighlighted = TE
         elseif Opt == "Show Non-Anchored" then
-            ps.AreNonAnchorsShown = s
+            ps.AreNonAnchorsShown = TE
         elseif Opt == "Show Physics Owners" then
-            ps.AreOwnersShown = s
+            ps.AreOwnersShown = TE
         elseif Opt == "Show Regions" then
-            ps.AreRegionsShown = s
+            ps.AreRegionsShown = TE
         end
     end
 })
