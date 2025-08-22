@@ -71,19 +71,25 @@ AddDropdown(Main5u6, {
         "Highlight Awake Parts",
         "Show Non-Anchored",
         "Show Physics Owners",
-        "Show Regions"
+        "Show Regions",
+        "Show Assemblies",
+        "Show Contact Islands",
+        "Show Contact Points",
+        "Show Gravity Forces",
+        "Show Joint Coordinates",
+        "Show Magnitudes of Forces/Torques",
+        "Show Mechanisms",
+        "Show Model Coordinates",
+        "Show Part Coordinates",
+        "Show Solver Islands",
+        "Show Terrain Replication Regions",
+        "Show Timesteps",
+        "Show Unaligned Parts",
+        "Show World Coordinates"
     },
     Callback = function(opt)
         Opt = opt
-    end
-})
-
-AddToggle(Main5u6, {
-    Name = "Visualization",
-    Default = false,
-    Callback = function(s)
-        TE = s
-        if not TE then
+        if TE then
             local ok, ps = pcall(function()
                 return settings():GetService("PhysicsSettings")
             end)
@@ -92,34 +98,117 @@ AddToggle(Main5u6, {
                 ps.AreNonAnchorsShown = false
                 ps.AreOwnersShown = false
                 ps.AreRegionsShown = false
+                ps.AreAssembliesShown = false
+                ps.AreContactIslandsShown = false
+                ps.AreContactPointsShown = false
+                ps.AreGravityForcesShownForSelectedOrHoveredAssemblies = false
+                ps.AreJointCoordinatesShown = false
+                ps.AreMagnitudesShownForDrawnForcesAndTorques = false
+                ps.AreMechanismsShown = false
+                ps.AreModelCoordsShown = false
+                ps.ArePartCoordsShown = false
+                ps.AreSolverIslandsShown = false
+                ps.AreTerrainReplicationRegionsShown = false
+                ps.AreTimestepsShown = false
+                ps.AreUnalignedPartsShown = false
+                ps.AreWorldCoordsShown = false
+                if Opt == "Highlight Awake Parts" then
+                    ps.AreAwakePartsHighlighted = TE
+                elseif Opt == "Show Non-Anchored" then
+                    ps.AreNonAnchorsShown = TE
+                elseif Opt == "Show Physics Owners" then
+                    ps.AreOwnersShown = TE
+                elseif Opt == "Show Regions" then
+                    ps.AreRegionsShown = TE
+                elseif Opt == "Show Assemblies" then
+                    ps.AreAssembliesShown = TE
+                elseif Opt == "Show Contact Islands" then
+                    ps.AreContactIslandsShown = TE
+                elseif Opt == "Show Contact Points" then
+                    ps.AreContactPointsShown = TE
+                elseif Opt == "Show Gravity Forces" then
+                    ps.AreGravityForcesShownForSelectedOrHoveredAssemblies = TE
+                elseif Opt == "Show Joint Coordinates" then
+                    ps.AreJointCoordinatesShown = TE
+                elseif Opt == "Show Magnitudes of Forces/Torques" then
+                    ps.AreMagnitudesShownForDrawnForcesAndTorques = TE
+                elseif Opt == "Show Mechanisms" then
+                    ps.AreMechanismsShown = TE
+                elseif Opt == "Show Model Coordinates" then
+                    ps.AreModelCoordsShown = TE
+                elseif Opt == "Show Part Coordinates" then
+                    ps.ArePartCoordsShown = TE
+                elseif Opt == "Show Solver Islands" then
+                    ps.AreSolverIslandsShown = TE
+                elseif Opt == "Show Terrain Replication Regions" then
+                    ps.AreTerrainReplicationRegionsShown = TE
+                elseif Opt == "Show Timesteps" then
+                    ps.AreTimestepsShown = TE
+                elseif Opt == "Show Unaligned Parts" then
+                    ps.AreUnalignedPartsShown = TE
+                elseif Opt == "Show World Coordinates" then
+                    ps.AreWorldCoordsShown = TE
+                end
             end
-            return
         end
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Visualization",
+    Default = false,
+    Callback = function(s)
+        TE = s
         local ok, ps = pcall(function()
             return settings():GetService("PhysicsSettings")
         end)
         if not ok or not ps then
             game:GetService("StarterGui"):SetCore("SendNotification", {
                 Title = "Oops!",
-                Text = "PhysicsSettings isn’t available right now 😅",
+                Text = "PhysicsSettings isn’t available right now😰",
                 Duration = 5
             })
             return
         end
-        if Opt == "None" then
+        if not TE then
             ps.AreAwakePartsHighlighted = false
             ps.AreNonAnchorsShown = false
             ps.AreOwnersShown = false
             ps.AreRegionsShown = false
-        elseif Opt == "Highlight Awake Parts" then
-            ps.AreAwakePartsHighlighted = TE
-        elseif Opt == "Show Non-Anchored" then
-            ps.AreNonAnchorsShown = TE
-        elseif Opt == "Show Physics Owners" then
-            ps.AreOwnersShown = TE
-        elseif Opt == "Show Regions" then
-            ps.AreRegionsShown = TE
+            ps.AreAssembliesShown = false
+            ps.AreContactIslandsShown = false
+            ps.AreContactPointsShown = false
+            ps.AreGravityForcesShownForSelectedOrHoveredAssemblies = false
+            ps.AreJointCoordinatesShown = false
+            ps.AreMagnitudesShownForDrawnForcesAndTorques = false
+            ps.AreMechanismsShown = false
+            ps.AreModelCoordsShown = false
+            ps.ArePartCoordsShown = false
+            ps.AreSolverIslandsShown = false
+            ps.AreTerrainReplicationRegionsShown = false
+            ps.AreTimestepsShown = false
+            ps.AreUnalignedPartsShown = false
+            ps.AreWorldCoordsShown = false
+            return
         end
+        ps.AreAwakePartsHighlighted = (Opt == "Highlight Awake Parts") and TE or false
+        ps.AreNonAnchorsShown = (Opt == "Show Non-Anchored") and TE or false
+        ps.AreOwnersShown = (Opt == "Show Physics Owners") and TE or false
+        ps.AreRegionsShown = (Opt == "Show Regions") and TE or false
+        ps.AreAssembliesShown = (Opt == "Show Assemblies") and TE or false
+        ps.AreContactIslandsShown = (Opt == "Show Contact Islands") and TE or false
+        ps.AreContactPointsShown = (Opt == "Show Contact Points") and TE or false
+        ps.AreGravityForcesShownForSelectedOrHoveredAssemblies = (Opt == "Show Gravity Forces") and TE or false
+        ps.AreJointCoordinatesShown = (Opt == "Show Joint Coordinates") and TE or false
+        ps.AreMagnitudesShownForDrawnForcesAndTorques = (Opt == "Show Magnitudes of Forces/Torques") and TE or false
+        ps.AreMechanismsShown = (Opt == "Show Mechanisms") and TE or false
+        ps.AreModelCoordsShown = (Opt == "Show Model Coordinates") and TE or false
+        ps.ArePartCoordsShown = (Opt == "Show Part Coordinates") and TE or false
+        ps.AreSolverIslandsShown = (Opt == "Show Solver Islands") and TE or false
+        ps.AreTerrainReplicationRegionsShown = (Opt == "Show Terrain Replication Regions") and TE or false
+        ps.AreTimestepsShown = (Opt == "Show Timesteps") and TE or false
+        ps.AreUnalignedPartsShown = (Opt == "Show Unaligned Parts") and TE or false
+        ps.AreWorldCoordsShown = (Opt == "Show World Coordinates") and TE or false
     end
 })
 
