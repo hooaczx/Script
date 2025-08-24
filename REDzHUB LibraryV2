@@ -3049,18 +3049,18 @@ functions.canClick = function(buttonName)
     end
 end
 functions.Look = function()
-  local c = workspace.CurrentCamera
-  local d = c.CFrame.LookVector
-  local lp = game.Players.LocalPlayer
-  local r = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-  if not r then return c.CFrame.Position + d * 100 end
-  local v = Vector3.new(d.X, 0, d.Z).Unit
-  return r.Position + v
+    local c = workspace.CurrentCamera
+    local d = c.CFrame.LookVector
+    local lp = game.Players.LocalPlayer
+    local r = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if not r then return c.CFrame.Position + d * 100 end
+    local v = Vector3.new(d.X, 0, d.Z).Unit
+    return r.Position + v
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
     if not functions.canClick("Free ShiftLock😌") or Tweening then return end
-    Tweening = true    
+    Tweening = true
     if not ShiftLockmaingui then
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
             local zx_char = Player.Character or Player.CharacterAdded:Wait()
@@ -3076,7 +3076,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             local zx_pos = zx_root.Position
             zx_look = Vector3.new(zx_look.X, zx_pos.Y, zx_look.Z)
             zx_root.CFrame = CFrame.new(zx_pos, zx_look)
-            CreateTween(zx_hum, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)            
+            CreateTween(zx_hum, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)
             local zx_players = game:GetService("Players")
             local zx_local = zx_players.LocalPlayer
             local zx_all = zx_players:GetPlayers()
@@ -3101,8 +3101,6 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             end
             local zx_ctr = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
             local zx_sz = ShiftlockCursor.AbsoluteSize
-            local zx_near, zx_dist = nil, math.huge
-            local zx_dir = zx_cam.CFrame.LookVector
             local zx_cyu = {}
             for _, zx_plr in pairs(zx_all) do
                 if zx_plr ~= zx_local and zx_plr.Character then
@@ -3114,14 +3112,10 @@ ShiftLockButton.MouseButton1Click:Connect(function()
                             local zx_inY = zx_scrPos.Y >= zx_ctr.Y - zx_sz.Y/2 and zx_scrPos.Y <= zx_ctr.Y + zx_sz.Y/2
                             if zx_inX and zx_inY then
                                 local to_target = zx_root_other.Position - zx_cam_pos
-                                local forward_dist = to_target:Dot(zx_dir)
+                                local forward_dist = to_target:Dot(zx_cam.CFrame.LookVector)
                                 if forward_dist > 0 then
                                     local dist2d = (Vector2.new(zx_scrPos.X, zx_scrPos.Y) - zx_ctr).Magnitude
-                                    table.insert(zx_cyu, {
-                                        player = zx_plr,
-                                        dist2d = dist2d,
-                                        forward_dist = forward_dist
-                                    })
+                                    table.insert(zx_cyu, {player = zx_plr, dist2d = dist2d, forward_dist = forward_dist})
                                 end
                             end
                         end
@@ -3142,21 +3136,24 @@ ShiftLockButton.MouseButton1Click:Connect(function()
                 end
                 CH = {}
             end
-            if zx_near then
+            if zx_near and zx_near.Character then
                 DisplayNameplayers.Text = zx_near.DisplayName
                 Nameplayers.Text = "@" .. zx_near.Name
                 useridplayers.Text = "id:" .. zx_near.UserId
                 imageplayers.Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. zx_near.UserId
                 if not CH[zx_near] and frameinfopy then
-                    local zx_hi = Create("Highlight", zx_near.Character, {
-                        Name = "PlayerHighlight",
-                        Adornee = zx_near.Character or zx_near.Character:FindFirstChild("HumanoidRootPart") or zx_near.Character:FindFirstChildWhichIsA("BasePart"),
-                        FillTransparency = 1,
-                        OutlineTransparency = 0,
-                        DepthMode = Enum.HighlightDepthMode.AlwaysOnTop,
-                        OutlineColor = Color3.fromRGB(0, 0, 255)
-                    })
-                    CH[zx_near] = zx_hi
+                    local adornee = zx_near.Character:FindFirstChild("HumanoidRootPart") or zx_near.Character:FindFirstChildWhichIsA("BasePart")
+                    if adornee then
+                        local zx_hi = Create("Highlight", zx_near.Character, {
+                            Name = "PlayerHighlight",
+                            Adornee = adornee,
+                            FillTransparency = 1,
+                            OutlineTransparency = 0,
+                            DepthMode = Enum.HighlightDepthMode.AlwaysOnTop,
+                            OutlineColor = Color3.fromRGB(0, 0, 255)
+                        })
+                        CH[zx_near] = zx_hi
+                    end
                 end
             else
                 DisplayNameplayers.Text = "nil"
@@ -3183,7 +3180,10 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             ShiftLockmaingui = nil
         end
         local hf = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
-        CreateTween(hf.Humanoid, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
+        local hf_hum = hf:FindFirstChildOfClass("Humanoid")
+        if hf_hum then
+            CreateTween(hf_hum, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
+        end
         Tweening = false
     end
 end)
