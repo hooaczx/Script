@@ -65,11 +65,10 @@ end
 
 local Physics_Visualization = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Physics_Visualization"))()
 Physics_Visualization(Main5u6, AddDropdown, AddToggle, Opt, TE)
-
 local to = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/God%20mod%20obby"))()
 
 AddToggle(Main5u6, {
-    Name = "God Mode (Bypass deadly parts in any obby[for obby game])",
+    Name = "Obby Kill Parts + Sit Parts Bypass",
     Default = false,
     Callback = function(state)
         to.toggle(state)
@@ -1022,61 +1021,6 @@ AddToggle(Main5u6, {
   Callback = function(state)
      M.toggle(state)
   end
-})
-
-local _b_t,_t_t,_a_t= nil, {}, false
- 
-AddToggle(Main5u6, {
-    Name = "Anti Sit",
-    Default = false,
-    Callback = function(_x_t)
-        _a_t = _x_t
-        if _a_t then
-            if not _b_t then
-                _b_t = game:GetService("RunService").Heartbeat:Connect(function()
-                    local _f_t = false
-                    local _c_t = false
-                    for _, v in pairs(workspace:GetDescendants()) do
-                        if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
-                            local _id_t = v:GetDebugId()
-                            if _t_t[_id_t] == nil then
-                                _t_t[_id_t] = v.Disabled
-                            end
-                            if v.Disabled ~= true then
-                                v.Disabled = true
-                                _c_t = true
-                            end
-                            if not v.Disabled then
-                                _f_t = true
-                            end
-                            if _t_t[_id_t] ~= v.Disabled then
-                                _t_t[_id_t] = v.Disabled
-                                _c_t = true
-                            end
-                        end
-                    end
-                    if not _f_t and not _c_t then
-                        _b_t:Disconnect()
-                        _b_t = nil
-                        _t_t = {}
-                    end
-                end)
-            end
-        else
-            if _b_t then
-                _b_t:Disconnect()
-                _b_t = nil
-            end
-            _t_t = {}
-            for _, v in pairs(workspace:GetDescendants()) do
-                if (v:IsA("Seat") or v:IsA("VehicleSeat")) and not v:FindFirstChild("SeatWeld") then
-                    if v.Disabled then
-                        v.Disabled = false
-                    end
-                end
-            end
-        end
-    end
 })
 
 local _c___, _p___
