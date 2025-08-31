@@ -219,33 +219,25 @@ funcs["A1"] = function(enable)
 		funcs["D4"] = RunService.RenderStepped:Connect(function()
 			local camera = workspace.CurrentCamera
 			local vs = camera.ViewportSize
-			local Color = _G.ESPColor or funcs["C4"].color
+			local baseColor = _G.ESPColor or funcs["C4"].color
 			for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
 				if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 					local hrp = player.Character.HumanoidRootPart
 					local pos, visible = camera:WorldToViewportPoint(hrp.Position)
 					local S = visible and pos.X >= 0 and pos.X <= vs.X and pos.Y >= 0 and pos.Y <= vs.Y
+					local isSpecial = false
+					if game.PlaceId == 205224386 then
+						if player.Character:FindFirstChild("ItScript", true) then
+							isSpecial = true
+						end
+					end
 					if S then
+						local Color = isSpecial and Color3.fromRGB(255, 0, 0) or baseColor
 						if not funcs["G8"][player] then
 							funcs["G8"][player] = {
-								Box = CreateDrawing("Square", {
-									Thickness = 1,
-									Filled = false,
-									Color = Color,
-									Visible = false,
-								}),
-								Name = CreateDrawing("Text", {
-									Size = 14,
-									Center = true,
-									Outline = true,
-									Color = Color,
-									Visible = false,
-								}),
-								Tracer = CreateDrawing("Line", {
-									Thickness = 1,
-									Color = Color,
-									Visible = false,
-								}),
+								Box = CreateDrawing("Square", {Thickness = 1, Filled = false, Color = Color, Visible = false}),
+								Name = CreateDrawing("Text", {Size = 14, Center = true, Outline = true, Color = Color, Visible = false}),
+								Tracer = CreateDrawing("Line", {Thickness = 1, Color = Color, Visible = false}),
 							}
 						end
 						local d = funcs["G8"][player]
@@ -256,7 +248,7 @@ funcs["A1"] = function(enable)
 						d.Box.Visible = funcs["C4"].box
 						d.Box.Color = Color
 						d.Name.Position = Vector2.new(pos.X, pos.Y - h / 2 - 18)
-						d.Name.Text = player.Name
+						d.Name.Text = isSpecial and (player.Name.." (it)") or player.Name
 						d.Name.Visible = funcs["C4"].box
 						d.Name.Color = Color
 						d.Tracer.From = Vector2.new(vs.X / 2, vs.Y)
@@ -279,7 +271,7 @@ funcs["A1"] = function(enable)
 								d.Visible = false
 							end
 						end
-						local h = Storage:FindFirstChild(player.Name)
+						local h = Storage:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 						if h then
 							h.Enabled = false
 						end
@@ -296,7 +288,7 @@ funcs["A1"] = function(enable)
 						end
 						funcs["G8"][player] = nil
 					end
-					local h = Storage:FindFirstChild(player.Name)
+					local h = Storage:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 					if h then
 						h:Destroy()
 					end
@@ -318,6 +310,7 @@ funcs["A1"] = function(enable)
 					end
 				end
 			end
+			for _, d in pairs(funcs["G8"]) do if d.Name and d.Name.Size ~= 14 then d.Name.Size = 14 end end
 		end)
 	else
 		if funcs["D4"] then
@@ -396,25 +389,24 @@ AddToggle(Main5u6, {
 AddColorPicker(Main5u6, {
 	Name = "ESP Player Color",
 	Default = Color3.fromRGB(0, 255, 0),
-	Callback = function(colorNew)
-		_G.ESPColor = colorNew
-		funcs["C4"].color = colorNew
+	Callback = function(cN)
+		_G.ESPColor = cN
+		funcs["C4"].color = cN
 		if _G.ESP then
 			if funcs["hF"] then
-				for _, highlight in pairs(funcs["hF"]:GetChildren()) do
-					highlight.FillColor = colorNew
-					highlight.OutlineColor = colorNew
+				for _, h in pairs(funcs["hF"]:GetChildren()) do
+					if not (funcs["G8"][game:GetService("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))] 
+					and funcs["G8"][game:GetService("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))].Name.Text:match("%((.-)%)"):lower():find("it")) then
+						h.FillColor = cN
+						h.OutlineColor = cN
+					end
 				end
 			end
-			for player, draw in pairs(funcs["G8"]) do
-				if draw.Box then
-					draw.Box.Color = colorNew
-				end
-				if draw.Name then
-					draw.Name.Color = colorNew
-				end
-				if draw.Tracer then
-					draw.Tracer.Color = colorNew
+			for p, d in pairs(funcs["G8"]) do
+				if not (d.Name.Text:match("%((.-)%)") and d.Name.Text:match("%((.-)%)"):lower():find("it")) then
+					if d.Box then d.Box.Color = cN end
+					if d.Name then d.Name.Color = cN end
+					if d.Tracer then d.Tracer.Color = cN end
 				end
 			end
 		end
