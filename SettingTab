@@ -225,14 +225,14 @@ funcs["A1"] = function(enable)
 					local hrp = player.Character.HumanoidRootPart
 					local pos, visible = camera:WorldToViewportPoint(hrp.Position)
 					local S = visible and pos.X >= 0 and pos.X <= vs.X and pos.Y >= 0 and pos.Y <= vs.Y
-					local isSpecial = false
+					local ish = false
 					if game.PlaceId == 205224386 then
 						if player.Character:FindFirstChild("ItScript", true) then
-							isSpecial = true
+							ish = true
 						end
 					end
 					if S then
-						local Color = isSpecial and Color3.fromRGB(255, 0, 0) or baseColor
+						local Color = ish and Color3.fromRGB(255, 0, 0) or baseColor
 						if not funcs["G8"][player] then
 							funcs["G8"][player] = {
 								Box = CreateDrawing("Square", {Thickness = 1, Filled = false, Color = Color, Visible = false}),
@@ -248,7 +248,7 @@ funcs["A1"] = function(enable)
 						d.Box.Visible = funcs["C4"].box
 						d.Box.Color = Color
 						d.Name.Position = Vector2.new(pos.X, pos.Y - h / 2 - 18)
-						d.Name.Text = isSpecial and (player.Name.." (it)") or player.Name
+						d.Name.Text = ish and (player.Name.." (it)") or player.Name
 						d.Name.Visible = funcs["C4"].box
 						d.Name.Color = Color
 						d.Tracer.From = Vector2.new(vs.X / 2, vs.Y)
