@@ -286,7 +286,7 @@ MakeNotifi = functionCreate.MakeNotifi
 function MakeWindow(Configs)
  local title = Configs.Hub.Title or "hcx hub"
  local Anim_Title = Configs.Hub.Animation or "by : 1hooaczx1"
- local d_Menu = {drag=false, sM=Vector2.zero, sP=Vector2.zero, clear={}}
+ d_Menu={drag=false,sM=Vector2.zero,sP=Vector2.zero,clear={}}
   
   local Menu = Create("Frame", ScreenGui, {
       BackgroundColor3 = Configs_HUB.Cor_Hub,
@@ -305,22 +305,23 @@ function MakeWindow(Configs)
       Speed = 3
   })Corner(Menu)
   d_Menu.clear[1] = Menu.InputBegan:Connect(function(i)
-    	if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-		  d_Menu.drag = true
-		  d_Menu.sM = game:GetService("UserInputService"):GetMouseLocation()
-		  d_Menu.sP = Menu.AbsolutePosition
-		  d_Menu.clear[4] = i.Changed:Connect(function()
-	      if i.UserInputState == Enum.UserInputState.End then d_Menu.drag = false end
+    	if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+		d_Menu.drag=true
+		d_Menu.sM=game:GetService("UserInputService"):GetMouseLocation()
+		d_Menu.sP=Menu.AbsolutePosition
+		d_Menu.clear[4]=i.Changed:Connect(function()
+			if i.UserInputState==Enum.UserInputState.End then d_Menu.drag=false end
 		end)
 	 end
   end)
   d_Menu.clear[2] = game:GetService("UserInputService").InputChanged:Connect(function(i)
-     if d_Menu.drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-		Menu.Position = UDim2.fromOffset(math.clamp(d_Menu.sP.X + (game:GetService("UserInputService"):GetMouseLocation() - d_Menu.sM).X, 0, workspace.CurrentCamera.ViewportSize.X - Menu.AbsoluteSize.X), math.clamp(d_Menu.sP.Y + (game:GetService("UserInputService"):GetMouseLocation() - d_Menu.sM).Y, 0, workspace.CurrentCamera.ViewportSize.Y - Menu.AbsoluteSize.Y))
+     if d_Menu.drag and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
+		local delta=game:GetService("UserInputService"):GetMouseLocation()-d_Menu.sM
+		Menu.Position=UDim2.fromOffset(math.clamp(d_Menu.sP.X+delta.X,0,workspace.CurrentCamera.ViewportSize.X-Menu.AbsoluteSize.X),math.clamp(d_Menu.sP.Y+delta.Y,0,workspace.CurrentCamera.ViewportSize.Y-Menu.AbsoluteSize.Y))
 	 end
   end)
   d_Menu.clear[3] = game:GetService("UserInputService").InputEnded:Connect(function(i)
-	if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then d_Menu.drag = false end
+	if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then d_Menu.drag=false end
   end)
 
   local TopBar = Create("Frame", Menu, {
