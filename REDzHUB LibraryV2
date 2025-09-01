@@ -335,7 +335,20 @@ function MakeWindow(Configs)
 	     d_Menu.drag = false dragInput = nil
        end
      end)
-
+     d_Menu.clear[5] = game:GetService("RunService").RenderStepped:Connect(function()
+	   local p, s = Menu.AbsolutePosition, Menu.AbsoluteSize
+	   local x, y, c = p.X, p.Y, false
+	   local w, h = s.X, s.Y
+	   local scr = d_Menu.cam.ViewportSize
+	   if x < 0 then x = 0 c = true end
+	   if y < 0 then y = 0 c = true end
+	   if x + w > scr.X then x = scr.X - w c = true end
+	   if y + h > scr.Y then y = scr.Y - h c = true end
+	   if c then
+		 local ox, oy = Menu.AnchorPoint.X * w, Menu.AnchorPoint.Y * h
+		 Menu.Position = UDim2.fromOffset(x + ox, y + oy)
+	   end
+      end)
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
     Size = UDim2.new(1, 0, 0.09, 0),
