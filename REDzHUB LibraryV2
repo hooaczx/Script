@@ -310,9 +310,8 @@ function MakeWindow(Configs)
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
         dragInput = i
         d_Menu.drag = true
-        d_Menu.sM = d_Menu.uis:GetMouseLocation()
-        local sz = Menu.AbsoluteSize
-        d_Menu.sP = Vector2.new(Menu.AbsolutePosition.X - sz.X * Menu.AnchorPoint.X, Menu.AbsolutePosition.Y - sz.Y * Menu.AnchorPoint.Y)
+        d_Menu.sM = i.Position or d_Menu.uis:GetMouseLocation()
+        d_Menu.sP = Menu.AbsolutePosition
         d_Menu.clear[4] = i.Changed:Connect(function()
             if i.UserInputState == Enum.UserInputState.End then
                 d_Menu.drag = false
@@ -322,19 +321,20 @@ function MakeWindow(Configs)
      end
   end)
   d_Menu.clear[2] = d_Menu.uis.InputChanged:Connect(function(i)
-    if d_Menu.drag and i == dragInput and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-        local delta = d_Menu.uis:GetMouseLocation() - d_Menu.sM
-        local sz, scr = Menu.AbsoluteSize, d_Menu.cam.ViewportSize
-        local x = math.clamp(d_Menu.sP.X + delta.X, 0, scr.X - sz.X)
-        local y = math.clamp(d_Menu.sP.Y + delta.Y, 0, scr.Y - sz.Y)
-        local ox, oy = Menu.AnchorPoint.X * sz.X, Menu.AnchorPoint.Y * sz.Y
-        Menu.Position = UDim2.fromOffset(x + ox, y + oy)
-     end
+      if not d_Menu.drag then return end
+      if not (i == dragInput or i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then return end
+      local now = i.Position or d_Menu.uis:GetMouseLocation()
+      local get = now - d_Menu.sM
+      local sz, scr = Menu.AbsoluteSize, d_Menu.cam.ViewportSize
+      local x = math.clamp(d_Menu.sP.X + get.X, 0, scr.X - sz.X)
+      local y = math.clamp(d_Menu.sP.Y + get.Y, 0, scr.Y - sz.Y)
+      local ox, oy = Menu.AnchorPoint.X * sz.X, Menu.AnchorPoint.Y * sz.Y
+      Menu.Position = UDim2.fromOffset(x + ox, y + oy)
   end)
   d_Menu.clear[3] = d_Menu.uis.InputEnded:Connect(function(i)
-    if i == dragInput then
-        d_Menu.drag = false dragInput = nil
-    end
+      if i == dragInput then
+          d_Menu.drag = false dragInput = nil
+      end
   end)
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
