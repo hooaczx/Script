@@ -288,48 +288,53 @@ function MakeWindow(Configs)
  local Anim_Title = Configs.Hub.Animation or "by : 1hooaczx1"
  d_Menu={drag=false,sM=Vector2.zero,sP=Vector2.zero,uis=game:GetService("UserInputService"),cam=workspace.CurrentCamera,clear={}}
   
-  local Menu = Create("Frame", ScreenGui, {
-      BackgroundColor3 = Configs_HUB.Cor_Hub,
-      Position = UDim2.new(0.77, 0, 0.227, 0),
-      AnchorPoint = Vector2.new(1, 0),
-      Active = true,
-      Draggable = true
-   })CreateGradient(Menu, {
-      Color = {
-         Color3.fromRGB(255, 255, 255),
-         Color3.fromRGB(0, 0, 0),
-         Color3.fromRGB(255, 0, 0)
-      },
-      Rotation = 45,
-      Tween = true,
-      Speed = 3
-  })Corner(Menu)
-  local di=nil
-  d_Menu.clear[1]=Menu.InputBegan:Connect(function(i)
-	if di then return end
-	if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
-		di=i d_Menu.drag=true d_Menu.sM=d_Menu.uis:GetMouseLocation()
-		d_Menu.clear[4]=i.Changed:Connect(function()
-			if i.UserInputState==Enum.UserInputState.End then d_Menu.drag=false di=nil end
-		end)
-	 end
+ local Menu = Create("Frame", ScreenGui, {
+    BackgroundColor3 = Configs_HUB.Cor_Hub,
+    Position = UDim2.new(0.77, 0, 0.227, 0),
+    AnchorPoint = Vector2.new(1, 0),
+    Active = true,
+    Draggable = true
+ })CreateGradient(Menu, {
+    Color = {
+        Color3.fromRGB(255, 255, 255),
+        Color3.fromRGB(0, 0, 0),
+        Color3.fromRGB(255, 0, 0)
+    },
+    Rotation = 45,
+    Tween = true,
+    Speed = 3
+ })Corner(Menu)
+ local dragInput = nil
+ d_Menu.clear[1] = Menu.InputBegan:Connect(function(i)
+    if dragInput then return end
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dragInput = i
+        d_Menu.drag = true
+        d_Menu.sM = d_Menu.uis:GetMouseLocation()
+        local sz = Menu.AbsoluteSize
+        d_Menu.sP = Vector2.new(Menu.AbsolutePosition.X - sz.X * Menu.AnchorPoint.X, Menu.AbsolutePosition.Y - sz.Y * Menu.AnchorPoint.Y)
+        d_Menu.clear[4] = i.Changed:Connect(function()
+            if i.UserInputState == Enum.UserInputState.End then
+                d_Menu.drag = false
+                dragInput = nil
+            end
+        end)
+     end
   end)
-  d_Menu.clear[2]=d_Menu.uis.InputChanged:Connect(function(i)
-	if d_Menu.drag and i==di and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-		local d=d_Menu.uis:GetMouseLocation()-d_Menu.sM
-		local sz,scr=Menu.AbsoluteSize,d_Menu.cam.ViewportSize
-		local p=Menu.Position
-		local bx=p.X.Offset-sz.X*Menu.AnchorPoint.X
-		local by=p.Y.Offset-sz.Y*Menu.AnchorPoint.Y
-		local x=math.clamp(bx+d.X,0,scr.X-sz.X)
-		local y=math.clamp(by+d.Y,0,scr.Y-sz.Y)
-		local ox,oy=Menu.AnchorPoint.X*sz.X,Menu.AnchorPoint.Y*sz.Y
-		Menu.Position=UDim2.fromOffset(x+ox,y+oy)
-		d_Menu.sM=d_Menu.uis:GetMouseLocation()
-	 end
+  d_Menu.clear[2] = d_Menu.uis.InputChanged:Connect(function(i)
+    if d_Menu.drag and i == dragInput and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local delta = d_Menu.uis:GetMouseLocation() - d_Menu.sM
+        local sz, scr = Menu.AbsoluteSize, d_Menu.cam.ViewportSize
+        local x = math.clamp(d_Menu.sP.X + delta.X, 0, scr.X - sz.X)
+        local y = math.clamp(d_Menu.sP.Y + delta.Y, 0, scr.Y - sz.Y)
+        local ox, oy = Menu.AnchorPoint.X * sz.X, Menu.AnchorPoint.Y * sz.Y
+        Menu.Position = UDim2.fromOffset(x + ox, y + oy)
+     end
   end)
-  d_Menu.clear[3]=d_Menu.uis.InputEnded:Connect(function(i)
-	if i==di then d_Menu.drag=false di=nil end
+  d_Menu.clear[3] = d_Menu.uis.InputEnded:Connect(function(i)
+    if i == dragInput then
+        d_Menu.drag = false dragInput = nil
+    end
   end)
   local TopBar = Create("Frame", Menu, {
     BackgroundTransparency = 1,
