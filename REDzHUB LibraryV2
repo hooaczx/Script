@@ -310,8 +310,9 @@ function MakeWindow(Configs)
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
         dragInput = i
         d_Menu.drag = true
-        d_Menu.sM = i.Position or d_Menu.uis:GetMouseLocation()
-        d_Menu.sP = Menu.AbsolutePosition
+        d_Menu.sM = i.Position and Vector2.new(i.Position.X, i.Position.Y) or d_Menu.uis:GetMouseLocation()
+        d_Menu.sP = Vector2.new(Menu.AbsolutePosition.X, Menu.AbsolutePosition.Y)
+        d_Menu.pointerOffset = d_Menu.sM - d_Menu.sP
         d_Menu.clear[4] = i.Changed:Connect(function()
             if i.UserInputState == Enum.UserInputState.End then
                 d_Menu.drag = false
@@ -323,13 +324,15 @@ function MakeWindow(Configs)
   d_Menu.clear[2] = d_Menu.uis.InputChanged:Connect(function(i)
       if not d_Menu.drag then return end
       if not (i == dragInput or i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then return end
-      local now = i.Position or d_Menu.uis:GetMouseLocation()
-      local get = now - d_Menu.sM
+      local now = (i.Position and Vector2.new(i.Position.X, i.Position.Y)) or d_Menu.uis:GetMouseLocation()
       local sz, scr = Menu.AbsoluteSize, d_Menu.cam.ViewportSize
-      local x = math.clamp(d_Menu.sP.X + get.X, 0, scr.X - sz.X)
-      local y = math.clamp(d_Menu.sP.Y + get.Y, 0, scr.Y - sz.Y)
+      local newTopLeft = now - (d_Menu.pointerOffset or Vector2.new(0,0))
+      newTopLeft = Vector2.new(
+          math.clamp(newTopLeft.X, 0, scr.X - sz.X),
+          math.clamp(newTopLeft.Y, 0, scr.Y - sz.Y)
+      )
       local ox, oy = Menu.AnchorPoint.X * sz.X, Menu.AnchorPoint.Y * sz.Y
-      Menu.Position = UDim2.fromOffset(x + ox, y + oy)
+      Menu.Position = UDim2.fromOffset(newTopLeft.X + ox, newTopLeft.Y + oy)
   end)
   d_Menu.clear[3] = d_Menu.uis.InputEnded:Connect(function(i)
       if i == dragInput then
@@ -5263,3 +5266,17 @@ function AddFeedBack(parent, Configs)
    end
    return Menu
 end
+MakeWindow({
+Hub = {
+    Title = "Test Script",
+    Animation = "Hi!"
+}})
+MinimizeButton({
+    Image = "rbxthumb://type=Asset&id=78948366103903&w=150&h=150",
+})
+MakeNotifi({
+  Title = "Hi",
+  Text = "I want to say that I hope you Enjoy My script",
+  Time = 5
+})
+local Main5u6 = MakeTab({Name = "Setting"})
