@@ -750,6 +750,8 @@ notify({
     local friendsCooldown = 0
     local friendsInTotal = 0
     local MarketplaceService = game:GetService("MarketplaceService")
+    local IconImageAssetId = MarketplaceService:GetProductInfo(PlaceId).IconImageAssetId
+    local ContentProvider = game:GetService("ContentProvider")
     local getgame = MarketplaceService:GetProductInfo(PlaceId)
     local gameName = getgame and getgame.Name or "Unknown"
     local AssetService = game:GetService("AssetService")
@@ -760,7 +762,7 @@ notify({
     local Player = players.LocalPlayer
     local Mouse = LocalPlayer:GetMouse()
     local HttpService, HttpGet = game:GetService("HttpService"), game.HttpGet
-    local View = nil
+    local View, oldicon = nil, nil
     local playerFrames = {}
     local displayedFriends = {}
     local infogamepass = {}
@@ -3546,7 +3548,11 @@ RunServerlock("Lock1", "no", function()
         end) 
       end
     end
-    iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..MarketplaceService:GetProductInfo(PlaceId).IconImageAssetId.."&fmt=png&wd=500&ht=500"
+    if IconImageAssetId ~= oldicon then
+       oldicon = IconImageAssetId
+       ContentProvider:PreloadAsync({"https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..IconImageAssetId.."&fmt=png&wd=500&ht=500"})
+       iconGame.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..IconImageAssetId.."&fmt=png&wd=500&ht=500"
+    end
     GameName.Text = "Game Name: " ..gameName
     functions.UpdatePlayerList()
     functions.updatePlaytime()
