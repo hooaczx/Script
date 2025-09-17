@@ -3612,14 +3612,22 @@ check_1 = RunService.RenderStepped:Connect(function()
     local _r8r1 = ((not is_sirhurt_closure and not (syn and DrawingImmediate)) and syn and syn.protect_gui and game:GetService("CoreGui")) or (typeof(get_hidden_gui) == "function" and get_hidden_gui()) or (typeof(gethui) == "function" and gethui()) or game:GetService("CoreGui")
     local foundUI = _r8r1:FindFirstChild("hcx hub library1")
     if not foundUI and ShiftLockmaingui then
-        for _, highlight in pairs(CH) do
-            if highlight then highlight:Destroy() end
+        for _, highlight in pairs(CH or {}) do
+            if highlight and highlight.Destroy then
+                highlight:Destroy()
+            end
         end
-        table.clear(CH)
-        ShiftLockButton.Image = States.Off
-        ShiftlockCursor.Visible = false
+        if CH then table.clear(CH) end
+        if ShiftLockButton and States then
+            ShiftLockButton.Image = States.Off
+        end
+        if ShiftlockCursor then
+            ShiftlockCursor.Visible = false
+        end
         frameinfopy = false
-        ShiftLockmaingui:Disconnect()
+        if ShiftLockmaingui and ShiftLockmaingui.Disconnect then
+            ShiftLockmaingui:Disconnect()
+        end
         ShiftLockmaingui = nil
         local char = game.Players.LocalPlayer.Character
         if char then
@@ -3633,40 +3641,59 @@ check_1 = RunService.RenderStepped:Connect(function()
     end
     if not foundUI then
         if not cameraback then
-            functions.Backfov()
-        end
-        if rainSound then rainSound:Destroy() rainSound = nil end
-        if notifyfriend then notifyfriend:Destroy() notifyfriend = nil end
-        if notifyfriendleave then notifyfriendleave:Destroy() notifyfriendleave = nil end
-        if click1 then click1:Destroy() click1 = nil end
-        if click2 then click2:Destroy() click2 = nil end
-        if falsetoggle then falsetoggle:Destroy() falsetoggle = nil end
-        if clicktoggle then clicktoggle:Destroy() clicktoggle = nil end
-        for name, conn in pairs(stopupdateall) do
-            if conn then conn:Disconnect() end
-            stopupdateall[name] = nil
-        end
-        if notificationgui then
-            for _, v in pairs(notificationgui) do
-                if v and v.Destroy then v:Destroy() end
+            if functions and functions.Backfov then
+                functions.Backfov()
             end
-            table.clear(notificationgui)
         end
+        if rainSound and rainSound.Destroy then rainSound:Destroy() rainSound = nil end
+        if notifyfriend and notifyfriend.Destroy then notifyfriend:Destroy() notifyfriend = nil end
+        if notifyfriendleave and notifyfriendleave.Destroy then notifyfriendleave:Destroy() notifyfriendleave = nil end
+        if click1 and click1.Destroy then click1:Destroy() click1 = nil end
+        if click2 and click2.Destroy then click2:Destroy() click2 = nil end
+        if falsetoggle and falsetoggle.Destroy then falsetoggle:Destroy() falsetoggle = nil end
+        if clicktoggle and clicktoggle.Destroy then clicktoggle:Destroy() clicktoggle = nil end
+        for name, conn in pairs(stopupdateall or {}) do
+            if conn and conn.Disconnect then
+                conn:Disconnect()
+            end
+            if stopupdateall then stopupdateall[name] = nil end
+        end
+        if stopupdateall then table.clear(stopupdateall) end
+
+        for _, v in pairs(notificationgui or {}) do
+            if v and v.Destroy then
+                v:Destroy()
+            end
+        end
+        if notificationgui then table.clear(notificationgui) end
         if d_Menu then
-           for _,x in pairs(d_Menu.clear) do if x then x:Disconnect() end end d_Menu.clear={} d_Menu.drag=false d_Menu={}
+           for _, x in pairs((d_Menu.clear) or {}) do
+               if x and x.Disconnect then
+                   x:Disconnect()
+               end
+           end
+           d_Menu.clear = {}
+           d_Menu.drag = false
         end
         if View then
-            local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+            local hum = game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
             if hum then
                 workspace.CurrentCamera.CameraSubject = hum
             end
-            for _, data in pairs(playerFrames) do
-                if data.UI and data.UI.Parent then
+            for _, data in pairs(playerFrames or {}) do
+                if data and data.UI and data.UI.Parent then
                     data.UI:Destroy()
                 end
             end
-            table.clear(CH)
-            table.clear(playerFrames)
+            if CH then
+                for _, highlight in pairs(CH or {}) do
+                    if highlight and highlight.Destroy then
+                        highlight:Destroy()
+                    end
+                end
+                table.clear(CH)
+            end
+            if playerFrames then table.clear(playerFrames) end
             View = nil
         end
     end
@@ -3680,8 +3707,8 @@ check_1 = RunService.RenderStepped:Connect(function()
         and not clicktoggle
         and (not CH or next(CH) == nil)
         and (not playerFrames or next(playerFrames) == nil)
-        and (not notificationgui or #notificationgui == 0) then
-        check_1:Disconnect()
+        and (not notificationgui or next(notificationgui) == nil) then
+        if check_1 and check_1.Disconnect then check_1:Disconnect() end
         check_1 = nil
     end
 end)
