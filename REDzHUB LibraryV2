@@ -3103,13 +3103,14 @@ ShiftLockButton.MouseButton1Click:Connect(function()
     if not ShiftLockmaingui then
         local ZX_r = {}
         local ZX_highlighted = nil
+        CH = {}
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
             local ZX_chr = Player.Character or Player.CharacterAdded:Wait()
             if not ZX_chr then return end
             local ZX_rp = ZX_chr:FindFirstChild("HumanoidRootPart")
             local ZX_h = ZX_chr:FindFirstChildOfClass("Humanoid")
             local ZX_cam = workspace.CurrentCamera
-            if not (ZX_rp and ZX_h and ZX_cam) then return end            
+            if not (ZX_rp and ZX_h and ZX_cam) then return end
             ZX_h.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
@@ -3171,6 +3172,11 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             table.sort(ZX_cy, function(a, b) return a.d2 < b.d2 end)
             local ZX_near = ZX_cy[1] and ZX_cy[1].plr or nil
             if ZX_near then
+                if not game.Players:FindFirstChild(ZX_near.Name) or not ZX_near.Character then
+                    ZX_near = nil
+                end
+            end
+            if ZX_near then
                 local ZX_last = ZX_r[ZX_near]
                 local ZX_namechg = not ZX_last or ZX_last.n ~= ZX_near.Name or ZX_last.d ~= ZX_near.DisplayName
                 local ZX_partsChanged = false
@@ -3231,19 +3237,20 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         end
         for _, ZX_hi in pairs(CH) do if ZX_hi then ZX_hi:Destroy() end end
         CH = {}
+        ZX_highlighted = nil
+        ZX_r = {}
         ShiftLockButton.Image = States.Off
         ShiftlockCursor.Visible = false
         if ShiftLockmaingui then
             ShiftLockmaingui:Disconnect()
             ShiftLockmaingui = nil
         end
-        ZX_r = nil
-        ZX_highlighted = nil
         local ZX_hf = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
         CreateTween(ZX_hf.Humanoid, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
         Tweening = false
     end
 end)
+
 
 local uiStates = {
     framek = {frame = framek, state = false},
