@@ -3109,7 +3109,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             local ZX_rp = ZX_chr:FindFirstChild("HumanoidRootPart")
             local ZX_h = ZX_chr:FindFirstChildOfClass("Humanoid")
             local ZX_cam = workspace.CurrentCamera
-            if not (ZX_rp and ZX_h and ZX_cam) then return end
+            if not (ZX_rp and ZX_h and ZX_cam) then return end            
             ZX_h.AutoRotate = false
             ShiftLockButton.Image = States.On
             ShiftlockCursor.Visible = true
@@ -3208,43 +3208,14 @@ ShiftLockButton.MouseButton1Click:Connect(function()
                     ZX_r[ZX_near] = {n = ZX_near.Name, d = ZX_near.DisplayName, u = ZX_near.UserId, pt = ZX_pt}
                 end
                 ZX_highlighted = ZX_near
-            end
-            for ZX_ply, ZX_val in pairs(ZX_r) do
-                if ZX_ply ~= ZX_highlighted then
-                    local ZX_in = false
-                    local ZX_chr2 = ZX_ply.Character
-                    if ZX_chr2 then
-                        for _, ZX_p in pairs(ZX_chr2:GetDescendants()) do
-                            if ZX_p:IsA("BasePart") and ZX_p.Transparency < 1 then
-                                local ZX_s2, ZX_on2 = ZX_cam:WorldToScreenPoint(ZX_p.Position)
-                                if ZX_on2 then
-                                    local ZX_inX = ZX_s2.X >= ZX_ctr.X - ZX_sz.X/2 and ZX_s2.X <= ZX_ctr.X + ZX_sz.X/2
-                                    local ZX_inY = ZX_s2.Y >= ZX_ctr.Y - ZX_sz.Y/2 and ZX_s2.Y <= ZX_ctr.Y + ZX_sz.Y/2
-                                    if ZX_inX and ZX_inY then
-                                        ZX_in = true
-                                        break
-                                    end
-                                end
-                            end
-                        end
+            else
+                if ZX_highlighted then
+                    if CH[ZX_highlighted] then
+                        CH[ZX_highlighted]:Destroy()
+                        CH[ZX_highlighted] = nil
                     end
-                    if not ZX_in then
-                        if CH[ZX_ply] then
-                            CH[ZX_ply]:Destroy()
-                            CH[ZX_ply] = nil
-                        end
-                        ZX_r[ZX_ply] = nil
-                        if ZX_ply == ZX_highlighted then
-                            ZX_highlighted = nil
-                            DisplayNameplayers.Text = "nil"
-                            Nameplayers.Text = "@nil"
-                            useridplayers.Text = "id:nil"
-                            imageplayers.Image = "rbxthumb://type=Asset&id=100283719478427&w=150&h=150"
-                        end
-                    end
+                    ZX_highlighted = nil
                 end
-            end
-            if not ZX_highlighted then
                 DisplayNameplayers.Text = "nil"
                 Nameplayers.Text = "@nil"
                 useridplayers.Text = "id:nil"
