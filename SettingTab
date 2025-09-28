@@ -64,7 +64,7 @@ function CreateTween(instance, prop, value, time, tweenWait)
 end
 
 if game.PlaceId == 7117492592 then
---Support Map Realistic Hand RP 🖐🤏 Without VR
+    --Support Map Realistic Hand RP 🖐🤏 Without VR
     AddToggle(Main5u6, { 
         Name = "Afk in Public Map(Turn off any Touching, by Hand)",
         Default = false,
@@ -73,21 +73,13 @@ if game.PlaceId == 7117492592 then
             local hLk9_Qp = {}
             if FpR9_zQ then
                 XjT_2wY = game:GetService("RunService").Heartbeat:Connect(function()
-                    local VnR7_sD = workspace:FindFirstChild("Characters")
-                    if not VnR7_sD then return end
                     local QyP_4m = {}
                     for _, ZtL6_B in ipairs(game:GetService("Players"):GetPlayers()) do
                         QyP_4m[ZtL6_B] = true
-                        local WbK3_J = VnR7_sD:FindFirstChild(ZtL6_B.Name)
-                        if WbK3_J then
-                            local NjH_8 = WbK3_J:FindFirstChild("LeftHandModel")
-                            if NjH_8 then
-                                if not hLk9_Qp[ZtL6_B] then
-                                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", ZtL6_B, true)
-                                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", ZtL6_B, true)
-                                    hLk9_Qp[ZtL6_B] = true
-                                end
-                            end
+                        if not hLk9_Qp[ZtL6_B] then
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", ZtL6_B, true)
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", ZtL6_B, true)
+                            hLk9_Qp[ZtL6_B] = true
                         end
                     end
                     for LqV_5 in pairs(hLk9_Qp) do
@@ -100,8 +92,8 @@ if game.PlaceId == 7117492592 then
                 if XjT_2wY then
                     XjT_2wY:Disconnect()
                     XjT_2wY = nil
-                    hLk9_Qp = {}
                 end
+                hLk9_Qp = {}
             end
         end
     })
