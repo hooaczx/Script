@@ -65,38 +65,46 @@ end
 
 if game.PlaceId == 7117492592 then
 --Support Map Realistic Hand RP 🖐🤏 Without VR
-AddToggle(Main5u6, { 
-    Name = "Afk in Public Map(Turn off any Touching, by Hand)",
-    Default = false,
-    Callback = function(XxKp9_aZ)
-        if XxKp9_aZ then
-            yJq4T_1 = game:GetService("RunService").Heartbeat:Connect(function()
-                local Tn9_sPwQ = workspace:FindFirstChild("Characters")
-                if not Tn9_sPwQ then return end
-                for _, KpZ1vL in ipairs(game:GetService("Players"):GetPlayers()) do
-                    local BqLmD_3 = Tn9_sPwQ:FindFirstChild(KpZ1vL.Name)
-                    local ZrW9_aX = BqLmD_3 and BqLmD_3:FindFirstChild("LeftHandModel")
-                    if ZrW9_aX then
-                        local GxM7vW = game:GetService("ReplicatedStorage"):FindFirstChild("Permissions")
-                        local zYt8_Ak = GxM7vW and GxM7vW:FindFirstChild(KpZ1vL.Name)
-                        if zYt8_Ak then
-                            local fNq9_Kw = zYt8_Ak:FindFirstChild("Touching")
-                            local vLr0_sD = zYt8_Ak:FindFirstChild("Abilities")
-                            if fNq9_Kw and fNq9_Kw.Value == false then
-                                game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", KpZ1vL, true)
-                            end
-                            if vLr0_sD and vLr0_sD.Value == false then
-                                game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", KpZ1vL, true)
+    AddToggle(Main5u6, { 
+        Name = "Afk in Public Map(Turn off any Touching, by Hand)",
+        Default = false,
+        Callback = function(XxKp9_aZ)
+            local yJq4T_1
+            if XxKp9_aZ then
+                yJq4T_1 = game:GetService("RunService").Heartbeat:Connect(function()
+                    local Tn9_sPwQ = workspace:FindFirstChild("Characters")
+                    if not Tn9_sPwQ then return end
+                    for _, KpZ1vL in ipairs(game:GetService("Players"):GetPlayers()) do
+                        local BqLmD_3 = Tn9_sPwQ:FindFirstChild(KpZ1vL.Name)
+                        if BqLmD_3 then
+                            local ZrW9_aX = BqLmD_3:FindFirstChild("LeftHandModel")
+                            if ZrW9_aX then
+                                local GxM7vW = game:GetService("ReplicatedStorage"):FindFirstChild("Permissions")
+                                if GxM7vW then
+                                    local zYt8_Ak = GxM7vW:FindFirstChild(KpZ1vL.Name)
+                                    if zYt8_Ak then
+                                        local fNq9_Kw = zYt8_Ak:FindFirstChild("Touching")
+                                        local vLr0_sD = zYt8_Ak:FindFirstChild("Abilities")
+                                        if fNq9_Kw and not fNq9_Kw.Value then
+                                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", KpZ1vL, true)
+                                        end
+                                        if vLr0_sD and not vLr0_sD.Value then
+                                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", KpZ1vL, true)
+                                        end
+                                    end
+                                end
                             end
                         end
                     end
+                end)
+            else
+                if yJq4T_1 then
+                    yJq4T_1:Disconnect()
+                    yJq4T_1 = nil
                 end
-            end)
-        else
-            if yJq4T_1 then yJq4T_1:Disconnect(); yJq4T_1 = nil end
+            end
         end
-    end
-})
+    })
 end
 
 local Physics_Visualization = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Physics_Visualization"))()
