@@ -68,39 +68,41 @@ if game.PlaceId == 7117492592 then
     AddToggle(Main5u6, { 
         Name = "Afk in Public Map(Turn off any Touching, by Hand)",
         Default = false,
-        Callback = function(XxKp9_aZ)
-            local yJq4T_1
-            if XxKp9_aZ then
-                yJq4T_1 = game:GetService("RunService").Heartbeat:Connect(function()
-                    local Tn9_sPwQ = workspace:FindFirstChild("Characters")
-                    if not Tn9_sPwQ then return end
-                    for _, KpZ1vL in ipairs(game:GetService("Players"):GetPlayers()) do
-                        local BqLmD_3 = Tn9_sPwQ:FindFirstChild(KpZ1vL.Name)
-                        if BqLmD_3 then
-                            local ZrW9_aX = BqLmD_3:FindFirstChild("LeftHandModel")
-                            if ZrW9_aX then
-                                local GxM7vW = game:GetService("ReplicatedStorage"):FindFirstChild("Permissions")
-                                if GxM7vW then
-                                    local zYt8_Ak = GxM7vW:FindFirstChild(KpZ1vL.Name)
-                                    if zYt8_Ak then
-                                        local fNq9_Kw = zYt8_Ak:FindFirstChild("Touching")
-                                        local vLr0_sD = zYt8_Ak:FindFirstChild("Abilities")
-                                        if fNq9_Kw and not fNq9_Kw.Value then
-                                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", KpZ1vL, true)
-                                        end
-                                        if vLr0_sD and not vLr0_sD.Value then
-                                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", KpZ1vL, true)
-                                        end
-                                    end
+        Callback = function(FpR9_zQ)
+            local XjT_2wY
+            local hLk9_Qp = {}
+            if FpR9_zQ then
+                XjT_2wY = game:GetService("RunService").Heartbeat:Connect(function()
+                    local VnR7_sD = workspace:FindFirstChild("Characters")
+                    if not VnR7_sD then return end
+                    local QyP_4m = {}
+                    for _, ZtL6_B in ipairs(game:GetService("Players"):GetPlayers()) do
+                        QyP_4m[ZtL6_B] = true
+                        local WbK3_J = VnR7_sD:FindFirstChild(ZtL6_B.Name)
+                        if WbK3_J then
+                            local NjH_8 = WbK3_J:FindFirstChild("LeftHandModel")
+                            if NjH_8 then
+                                if not hLk9_Qp[ZtL6_B] then
+                                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", ZtL6_B, true)
+                                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock.OnClientEvent:Wait()
+                                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", ZtL6_B, true)
+                                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock.OnClientEvent:Wait()
+                                    hLk9_Qp[ZtL6_B] = true
                                 end
                             end
                         end
                     end
+                    for LqV_5 in pairs(hLk9_Qp) do
+                        if not QyP_4m[LqV_5] then
+                            hLk9_Qp[LqV_5] = nil
+                        end
+                    end
                 end)
             else
-                if yJq4T_1 then
-                    yJq4T_1:Disconnect()
-                    yJq4T_1 = nil
+                if XjT_2wY then
+                    XjT_2wY:Disconnect()
+                    XjT_2wY = nil
+                    hLk9_Qp = {}
                 end
             end
         end
