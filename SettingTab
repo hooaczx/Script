@@ -106,51 +106,44 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
-        Callback = function(gQh5_zX)
-            local JpK2_yR
-            local tLn8_vB = {}
-            if gQh5_zX then
-                JpK2_yR = game:GetService("RunService").Heartbeat:Connect(function()
-                    local MvF4_sK = workspace:FindFirstChild("Monsters")
-                    if not MvF4_sK then return end
-                    local uPx7_cD = {}
-                    for _, mRz3_aV in ipairs(MvF4_sK:GetChildren()) do
-                        uPx7_cD[mRz3_aV] = true
-                        if not tLn8_vB[mRz3_aV] or not tLn8_vB[mRz3_aV].Parent then
+        Callback = function(TpY9_rQ)
+            local HbW2_xL
+            local GtK8_pR = {}
+            if TpY9_rQ then
+                HbW2_xL = game:GetService("RunService").Heartbeat:Connect(function()
+                    local Mn9_sQ = workspace:FindFirstChild("Monsters")
+                    if not Mn9_sQ then return end
+                    for _, m in ipairs(Mn9_sQ:GetChildren()) do
+                        if not GtK8_pR[m] or not GtK8_pR[m].Parent then
                             local hl = Instance.new("Highlight")
-                            hl.Name = "highlight_monster_" .. mRz3_aV.Name
-                            hl.Adornee = mRz3_aV
+                            hl.Name = "highlight_monster_" .. m.Name
+                            hl.Adornee = m
                             hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                             hl.OutlineTransparency = 0
                             hl.OutlineColor = Color3.new(1,1,1)
                             hl.FillColor = Color3.new(1,1,1)
-                            hl.Parent = mRz3_aV
+                            hl.Parent = m
                             game:GetService("TweenService"):Create(
                                 hl,
                                 TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
                                 {FillColor = Color3.new(0,0,0)}
                             ):Play()
-                            tLn8_vB[mRz3_aV] = hl
-                        end
-                    end
-                    for mon, hl in pairs(tLn8_vB) do
-                        if not uPx7_cD[mon] or not hl.Parent then
-                            if hl and hl.Parent then hl:Destroy() end
-                            tLn8_vB[mon] = nil
+                            GtK8_pR[m] = hl
                         end
                     end
                 end)
             else
-                if JpK2_yR then
-                    JpK2_yR:Disconnect()
-                    JpK2_yR = nil
+                if HbW2_xL then
+                    HbW2_xL:Disconnect()
+                    HbW2_xL = nil
                 end
-                for _, hl in pairs(tLn8_vB) do
+                -- ลบ Highlight ทุกตัวที่ยังอยู่
+                for m, hl in pairs(GtK8_pR) do
                     if hl and hl.Parent then
                         hl:Destroy()
                     end
                 end
-                tLn8_vB = {}
+                GtK8_pR = {}
             end
         end
     })
