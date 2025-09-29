@@ -65,74 +65,89 @@ end
 
 if game.PlaceId == 7117492592 then
     --Support Map Realistic Hand RP 🖐🤏 Without VR
-    local tAB = {}
-    AddToggle(Main5u6, {
+    AddToggle(Main5u6, { 
         Name = "Afk in Public Map[Realistic Hand RP 🖐🤏 Without VR](Anti Touching and Abilities by Hand)",
         Default = false,
-        Callback = function(on)
-            local hb
-            if on then
-                hb = game:GetService("RunService").Heartbeat:Connect(function()
-                    local seen = {}
-                    for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
-                        seen[pl] = true
-                        if not tAB[pl] then
-                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", pl, true)
-                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", pl, true)
-                            tAB[pl] = true
+        Callback = function(dFq9_xL)
+            local pVj2_rT
+            local wHk8_zB = {}
+            if dFq9_xL then
+                pVj2_rT = game:GetService("RunService").Heartbeat:Connect(function()
+                    local aNm3_cS = {}
+                    for _, uLk7_vQ in ipairs(game:GetService("Players"):GetPlayers()) do
+                        aNm3_cS[uLk7_vQ] = true
+                        if not wHk8_zB[uLk7_vQ] then
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", uLk7_vQ, true)
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", uLk7_vQ, true)
+                            wHk8_zB[uLk7_vQ] = true
                         end
                     end
-                    for pl in pairs(tAB) do
-                        if not seen[pl] then tAB[pl] = nil end
+                    for vQs1_yM in pairs(wHk8_zB) do
+                        if not aNm3_cS[vQs1_yM] then
+                            wHk8_zB[vQs1_yM] = nil
+                        end
                     end
                 end)
             else
-                if hb then hb:Disconnect() hb = nil end
-                for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", pl, false)
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", pl, false)
+                if pVj2_rT then pVj2_rT:Disconnect() pVj2_rT = nil end
+                for _, uLk7_vQ in ipairs(game:GetService("Players"):GetPlayers()) do
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", uLk7_vQ, false)
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", uLk7_vQ, false)
                 end
-                tAB = {}
+                wHk8_zB = {}
             end
         end
     })
 elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     --Support Map Nightmare Run
-    local hTbl = {}
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
-        Callback = function(on)
-            local hb
-            if on then
-                hb = game:GetService("RunService").Heartbeat:Connect(function()
-                    local mons = workspace:FindFirstChild("Monsters")
-                    if not mons then return end
-                    for _, m in ipairs(mons:GetChildren()) do
-                        if not hTbl[m] then
-                            local hl = Instance.new("Highlight")
-                            hl.Name = "highlight_monster_"..m.Name
-                            hl.Adornee = m
+        Callback = function(fGj8_tP)
+            local kLn5_rV
+            local tWx2_zQ = {}
+            if fGj8_tP then
+                kLn5_rV = game:GetService("RunService").Heartbeat:Connect(function()
+                    local monsters = workspace:FindFirstChild("Monsters")
+                    if not monsters then return end
+                    for _, mon in ipairs(monsters:GetChildren()) do
+                        local hl = mon:FindFirstChild("highlight_monster_"..mon.Name)
+                        if not hl then
+                            hl = Instance.new("Highlight")
+                            hl.Name = "highlight_monster_"..mon.Name
+                            hl.Adornee = mon
                             hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                             hl.OutlineTransparency = 0
                             hl.OutlineColor = Color3.new(1,1,1)
                             hl.FillColor = Color3.new(1,1,1)
-                            hl.Parent = m
+                            hl.Parent = mon
                             game:GetService("TweenService"):Create(
                                 hl,
                                 TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
                                 {FillColor = Color3.new(0,0,0)}
                             ):Play()
-                            hTbl[m] = hl
+                            tWx2_zQ[mon] = hl
+                        else
+                            tWx2_zQ[mon] = hl
                         end
                     end
                 end)
             else
-                if hb then hb:Disconnect() hb = nil end
-                for _, hl in pairs(hTbl) do
+                if kLn5_rV then kLn5_rV:Disconnect() kLn5_rV = nil end
+                for _, hl in pairs(tWx2_zQ) do
                     if hl and hl.Parent then hl:Destroy() end
                 end
-                hTbl = {}
+                tWx2_zQ = {}
+                local mt = workspace:FindFirstChild("Monsters")
+                if mt then
+                    for _, mon in ipairs(monsters:GetChildren()) do
+                        for _, c in ipairs(mon:GetChildren()) do
+                            if c:IsA("Highlight") and c.Name:match("^highlight_monster_") then
+                                c:Destroy()
+                            end
+                        end
+                    end
+                end
             end
         end
     })
