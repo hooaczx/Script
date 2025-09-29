@@ -65,39 +65,34 @@ end
 
 if game.PlaceId == 7117492592 then
     --Support Map Realistic Hand RP 🖐🤏 Without VR
-    AddToggle(Main5u6, { 
+    AddToggle(Main5u6, {
         Name = "Afk in Public Map[Realistic Hand RP 🖐🤏 Without VR](Anti Touching and Abilities by Hand)",
         Default = false,
-        Callback = function(kXv9_tQ)
-            local PqJ7_rL
-            local fGm3_wN = {}
-            if kXv9_tQ then
-                PqJ7_rL = game:GetService("RunService").Heartbeat:Connect(function()
-                    local cWn5_zR = {}
-                    for _, yLq8_vK in ipairs(game:GetService("Players"):GetPlayers()) do
-                        cWn5_zR[yLq8_vK] = true
-                        if not fGm3_wN[yLq8_vK] then
-                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", yLq8_vK, true)
-                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", yLq8_vK, true)
-                            fGm3_wN[yLq8_vK] = true
+        Callback = function(aXq)
+            local bLr
+            local tA = {}
+            if aXq then
+                bLr = game:GetService("RunService").Heartbeat:Connect(function()
+                    local pK = {}
+                    for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
+                        pK[pl] = true
+                        if not tA[pl] then
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", pl, true)
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", pl, true)
+                            tA[pl] = true
                         end
                     end
-                    for vSx2_qP in pairs(fGm3_wN) do
-                        if not cWn5_zR[vSx2_qP] then
-                            fGm3_wN[vSx2_qP] = nil
-                        end
+                    for pl in pairs(tA) do
+                        if not pK[pl] then tA[pl] = nil end
                     end
                 end)
             else
-                if PqJ7_rL then
-                    PqJ7_rL:Disconnect()
-                    PqJ7_rL = nil
+                if bLr then bLr:Disconnect() bLr = nil end
+                for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", pl, false)
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", pl, false)
                 end
-                for _, yLq8_vK in ipairs(game:GetService("Players"):GetPlayers()) do
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", yLq8_vK, false)
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", yLq8_vK, false)
-                end
-                fGm3_wN = {}
+                tA = {}
             end
         end
     })
@@ -106,17 +101,18 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
-        Callback = function(TpY9_rQ)
-            local HbW2_xL
-            local GtK8_pR = {}
-            if TpY9_rQ then
-                HbW2_xL = game:GetService("RunService").Heartbeat:Connect(function()
-                    local Mn9_sQ = workspace:FindFirstChild("Monsters")
-                    if not Mn9_sQ then return end
-                    for _, m in ipairs(Mn9_sQ:GetChildren()) do
-                        if not GtK8_pR[m] or not GtK8_pR[m].Parent then
+        Callback = function(cZp)
+            local dYr
+            local eWq = {}
+            local fTx = {}
+            if cZp then
+                dYr = game:GetService("RunService").Heartbeat:Connect(function()
+                    local mons = workspace:FindFirstChild("Monsters")
+                    if not mons then return end
+                    for _, m in ipairs(mons:GetChildren()) do
+                        if not eWq[m] then
                             local hl = Instance.new("Highlight")
-                            hl.Name = "highlight_monster_" .. m.Name
+                            hl.Name = "highlight_monster_"..m.Name
                             hl.Adornee = m
                             hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                             hl.OutlineTransparency = 0
@@ -128,21 +124,18 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                                 TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
                                 {FillColor = Color3.new(0,0,0)}
                             ):Play()
-                            GtK8_pR[m] = hl
+                            eWq[m] = true
+                            fTx[m] = hl
                         end
                     end
                 end)
             else
-                if HbW2_xL then
-                    HbW2_xL:Disconnect()
-                    HbW2_xL = nil
+                if dYr then dYr:Disconnect() dYr = nil end
+                for _, hl in pairs(fTx) do
+                    if hl and hl.Parent then hl:Destroy() end
                 end
-                for m, hl in pairs(GtK8_pR) do
-                    if hl and hl.Parent then
-                        hl:Destroy()
-                    end
-                end
-                GtK8_pR = {}
+                eWq = {}
+                fTx = {}
             end
         end
     })
