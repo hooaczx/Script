@@ -68,36 +68,36 @@ if game.PlaceId == 7117492592 then
     AddToggle(Main5u6, { 
         Name = "Afk in Public Map[Realistic Hand RP 🖐🤏 Without VR](Anti Touching and Abilities by Hand)",
         Default = false,
-        Callback = function(FpR9_zQ)
-            local XjT_2wY
-            local hLk9_Qp = {}
-            if FpR9_zQ then
-                XjT_2wY = game:GetService("RunService").Heartbeat:Connect(function()
-                    local QyP_4m = {}
-                    for _, ZtL6_B in ipairs(game:GetService("Players"):GetPlayers()) do
-                        QyP_4m[ZtL6_B] = true
-                        if not hLk9_Qp[ZtL6_B] then
-                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", ZtL6_B, true)
-                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", ZtL6_B, true)
-                            hLk9_Qp[ZtL6_B] = true
+        Callback = function(kXv9_tQ)
+            local PqJ7_rL
+            local fGm3_wN = {}
+            if kXv9_tQ then
+                PqJ7_rL = game:GetService("RunService").Heartbeat:Connect(function()
+                    local cWn5_zR = {}
+                    for _, yLq8_vK in ipairs(game:GetService("Players"):GetPlayers()) do
+                        cWn5_zR[yLq8_vK] = true
+                        if not fGm3_wN[yLq8_vK] then
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", yLq8_vK, true)
+                            game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", yLq8_vK, true)
+                            fGm3_wN[yLq8_vK] = true
                         end
                     end
-                    for LqV_5 in pairs(hLk9_Qp) do
-                        if not QyP_4m[LqV_5] then
-                            hLk9_Qp[LqV_5] = nil
+                    for vSx2_qP in pairs(fGm3_wN) do
+                        if not cWn5_zR[vSx2_qP] then
+                            fGm3_wN[vSx2_qP] = nil
                         end
                     end
                 end)
             else
-                if XjT_2wY then
-                    XjT_2wY:Disconnect()
-                    XjT_2wY = nil
+                if PqJ7_rL then
+                    PqJ7_rL:Disconnect()
+                    PqJ7_rL = nil
                 end
-                for _, ZtL6_B in ipairs(game:GetService("Players"):GetPlayers()) do
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", ZtL6_B, false)
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", ZtL6_B, false)
+                for _, yLq8_vK in ipairs(game:GetService("Players"):GetPlayers()) do
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", yLq8_vK, false)
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", yLq8_vK, false)
                 end
-                hLk9_Qp = {}
+                fGm3_wN = {}
             end
         end
     })
@@ -106,50 +106,51 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
-        Callback = function(TpY9_rQ)
-            local HbW2_xL
-            local GtK8_pR = {}
-            if TpY9_rQ then
-                HbW2_xL = game:GetService("RunService").Heartbeat:Connect(function()
-                    local Mn9_sQ = workspace:FindFirstChild("Monsters")
-                    if not Mn9_sQ then return end
-                    local CkV5_m = {}
-                    for _, m in ipairs(Mn9_sQ:GetChildren()) do
-                        CkV5_m[m] = true
-                        if not GtK8_pR[m] or not GtK8_pR[m].Parent then
+        Callback = function(gQh5_zX)
+            local JpK2_yR
+            local tLn8_vB = {}
+            if gQh5_zX then
+                JpK2_yR = game:GetService("RunService").Heartbeat:Connect(function()
+                    local MvF4_sK = workspace:FindFirstChild("Monsters")
+                    if not MvF4_sK then return end
+                    local uPx7_cD = {}
+                    for _, mRz3_aV in ipairs(MvF4_sK:GetChildren()) do
+                        uPx7_cD[mRz3_aV] = true
+                        if not tLn8_vB[mRz3_aV] or not tLn8_vB[mRz3_aV].Parent then
                             local hl = Instance.new("Highlight")
-                            hl.Name = "highlight_monster_" .. m.Name
-                            hl.Adornee = m
+                            hl.Name = "highlight_monster_" .. mRz3_aV.Name
+                            hl.Adornee = mRz3_aV
                             hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                             hl.OutlineTransparency = 0
                             hl.OutlineColor = Color3.new(1,1,1)
                             hl.FillColor = Color3.new(1,1,1)
-                            hl.Parent = m
+                            hl.Parent = mRz3_aV
                             game:GetService("TweenService"):Create(
                                 hl,
                                 TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
                                 {FillColor = Color3.new(0,0,0)}
                             ):Play()
-                            GtK8_pR[m] = hl
+                            tLn8_vB[mRz3_aV] = hl
                         end
                     end
-                    for monster in pairs(GtK8_pR) do
-                        if not CkV5_m[monster] then
-                            GtK8_pR[monster] = nil
+                    for mon, hl in pairs(tLn8_vB) do
+                        if not uPx7_cD[mon] or not hl.Parent then
+                            if hl and hl.Parent then hl:Destroy() end
+                            tLn8_vB[mon] = nil
                         end
                     end
                 end)
             else
-                if HbW2_xL then
-                    HbW2_xL:Disconnect()
-                    HbW2_xL = nil
+                if JpK2_yR then
+                    JpK2_yR:Disconnect()
+                    JpK2_yR = nil
                 end
-                for _, hl in pairs(GtK8_pR) do
+                for _, hl in pairs(tLn8_vB) do
                     if hl and hl.Parent then
                         hl:Destroy()
                     end
                 end
-                GtK8_pR = {}
+                tLn8_vB = {}
             end
         end
     })
