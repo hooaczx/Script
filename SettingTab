@@ -300,177 +300,162 @@ end function CreateHighlight(player)
 	end
 	return nil
 end local prevFlags = {
-		box = funcs["C4"].box,
-		tracer = funcs["C4"].tracer,
-		highlight = funcs["C4"].highlight,
-	}
-	funcs["A1"] = function(enable)
-		if enable then
-			if funcs["D4"] then
-				funcs["D4"]:Disconnect()
-				funcs["D4"] = nil
+	box = funcs["C4"].box,
+	tracer = funcs["C4"].tracer,
+	highlight = funcs["C4"].highlight,
+}
+funcs["A1"] = function(enable)
+	if enable then
+		if funcs["D4"] then
+			funcs["D4"]:Disconnect()
+			funcs["D4"] = nil
+		end
+		if not funcs["hF"] or not funcs["hF"].Parent then
+			funcs["hF"] = Create("Folder", (gethui and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
+		end
+		local Storage = funcs["hF"]
+		prevFlags.box = funcs["C4"].box
+		prevFlags.tracer = funcs["C4"].tracer
+		prevFlags.highlight = funcs["C4"].highlight
+		funcs["D4"] = RunService.RenderStepped:Connect(function()
+			local camera = workspace.CurrentCamera
+			local vs = camera.ViewportSize
+			local baseColor = _G.ESPColor or funcs["C4"].color
+			if prevFlags.box ~= funcs["C4"].box then
+				if not funcs["C4"].box then
+					for _, draw in pairs(funcs["G8"]) do
+						if draw.Box then
+							draw.Box:Remove()
+							draw.Box = nil
+						end
+						if draw.Name then
+							draw.Name:Remove()
+							draw.Name = nil
+						end
+					end
+				end
+				prevFlags.box = funcs["C4"].box
 			end
-			if not funcs["hF"] or not funcs["hF"].Parent then
-				funcs["hF"] = Create("Folder", (gethui and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
+			if prevFlags.tracer ~= funcs["C4"].tracer then
+				if not funcs["C4"].tracer then
+					for _, draw in pairs(funcs["G8"]) do
+						if draw.Tracer then
+							draw.Tracer:Remove()
+							draw.Tracer = nil
+						end
+					end
+				end
+				prevFlags.tracer = funcs["C4"].tracer
 			end
-			local Storage = funcs["hF"]
-			prevFlags.box = funcs["C4"].box
-			prevFlags.tracer = funcs["C4"].tracer
-			prevFlags.highlight = funcs["C4"].highlight
-			funcs["D4"] = RunService.RenderStepped:Connect(function()
-				local camera = workspace.CurrentCamera
-				local vs = camera.ViewportSize
-				local baseColor = _G.ESPColor or funcs["C4"].color
-				if prevFlags.box ~= funcs["C4"].box then
-					if not funcs["C4"].box then
-						for _, draw in pairs(funcs["G8"]) do
-							if draw.Box then
-								draw.Box:Remove()
-								draw.Box = nil
-							end
-							if draw.Name then
-								draw.Name:Remove()
-								draw.Name = nil
-							end
+			if prevFlags.highlight ~= funcs["C4"].highlight then
+				if not funcs["C4"].highlight then
+					if funcs["hF"] then
+						for _, h in pairs(funcs["hF"]:GetChildren()) do
+							h:Destroy()
 						end
+						if funcs["hF"].Parent then
+							funcs["hF"]:ClearAllChildren()
+							funcs["hF"]:Destroy()
+						end
+						funcs["hF"] = nil
 					end
-					prevFlags.box = funcs["C4"].box
-				end
-				if prevFlags.tracer ~= funcs["C4"].tracer then
-					if not funcs["C4"].tracer then
-						for _, draw in pairs(funcs["G8"]) do
-							if draw.Tracer then
-								draw.Tracer:Remove()
-								draw.Tracer = nil
-							end
-						end
+				else
+					if not funcs["hF"] or not funcs["hF"].Parent then
+						funcs["hF"] = Create("Folder", (gethui and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
 					end
-					prevFlags.tracer = funcs["C4"].tracer
 				end
-				if prevFlags.highlight ~= funcs["C4"].highlight then
-					if not funcs["C4"].highlight then
-						if funcs["hF"] then
-							for _, h in pairs(funcs["hF"]:GetChildren()) do
-								h:Destroy()
+				prevFlags.highlight = funcs["C4"].highlight
+			end
+			for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+				if player ~= game:GetService("Players").LocalPlayer then
+					if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+						local hrp = player.Character.HumanoidRootPart
+						local pos, visible = camera:WorldToViewportPoint(hrp.Position)
+						local onScreen = visible and pos.X >= 0 and pos.X <= vs.X and pos.Y >= 0 and pos.Y <= vs.Y
+						local ish = (game.PlaceId == 205224386) and player.Character:FindFirstChild("ItScript", true)
+						local Color = ish and Color3.fromRGB(255, 0, 0) or baseColor
+						funcs["G8"][player] = funcs["G8"][player] or {}
+						local d = funcs["G8"][player]
+						if funcs["C4"].box then
+							if not d.Box then
+								d.Box = CreateDrawing("Square", {Thickness = 1, Filled = false, Color = Color, Visible = false})
 							end
-							if funcs["hF"].Parent then
-								funcs["hF"]:ClearAllChildren()
-								funcs["hF"]:Destroy()
+							if not d.Name then
+								d.Name = CreateDrawing("Text", {Size = 14, Center = true, Outline = true, Color = Color, Visible = false})
 							end
-							funcs["hF"] = nil
 						end
-					else
-						if not funcs["hF"] or not funcs["hF"].Parent then
-							funcs["hF"] = Create("Folder", (gethui and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
-						end
-					end
-					prevFlags.highlight = funcs["C4"].highlight
-				end
-				for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
-					if player ~= game:GetService("Players").LocalPlayer then
-						if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-							local hrp = player.Character.HumanoidRootPart
-							local pos, visible = camera:WorldToViewportPoint(hrp.Position)
-							local onScreen = visible and pos.X >= 0 and pos.X <= vs.X and pos.Y >= 0 and pos.Y <= vs.Y
-							local ish = (game.PlaceId == 205224386) and player.Character:FindFirstChild("ItScript", true)
-							local Color = ish and Color3.fromRGB(255, 0, 0) or baseColor
-							funcs["G8"][player] = funcs["G8"][player] or {}
-							local d = funcs["G8"][player]
-							if funcs["C4"].box then
-								if not d.Box then
-									d.Box = CreateDrawing("Square", {Thickness = 1, Filled = false, Color = Color, Visible = false})
-								end
-								if not d.Name then
-									d.Name = CreateDrawing("Text", {Size = 14, Center = true, Outline = true, Color = Color, Visible = false})
-								end
-							end
-							if not funcs["C4"].box then
-								if d.Box then
-									d.Box:Remove()
-									d.Box = nil
-								end
-								if d.Name then
-									d.Name:Remove()
-									d.Name = nil
-								end
-							end
-							if funcs["C4"].tracer then
-								if not d.Tracer then
-									d.Tracer = CreateDrawing("Line", {Thickness = 1, Color = Color, Visible = false})
-								end
-							else
-								if d.Tracer then
-									d.Tracer:Remove()
-									d.Tracer = nil
-								end
-							end
+						if not funcs["C4"].box then
 							if d.Box then
-								local h = math.abs(camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0)).Y - camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 2.5, 0)).Y)
-								local w = h / 2
-								d.Box.Size = Vector2.new(w, h)
-								d.Box.Position = Vector2.new(pos.X - w / 2, pos.Y - h / 2)
-								d.Box.Color = Color
-								d.Box.Visible = funcs["C4"].box and onScreen
+								d.Box:Remove()
+								d.Box = nil
 							end
 							if d.Name then
-								local boxHalfY = (d.Box and d.Box.Size and d.Box.Size.Y/2) or 0
-								d.Name.Position = Vector2.new(pos.X, pos.Y - boxHalfY - 18)
-								d.Name.Text = ish and (player.Name.." (it)") or player.Name
-								d.Name.Color = Color
-								d.Name.Size = 14
-								d.Name.Visible = funcs["C4"].box and onScreen
+								d.Name:Remove()
+								d.Name = nil
 							end
-							if d.Tracer then
-								d.Tracer.From = Vector2.new(vs.X / 2, vs.Y)
-								d.Tracer.To = Vector2.new(pos.X, pos.Y)
-								d.Tracer.Color = Color
-								d.Tracer.Visible = funcs["C4"].tracer and onScreen
-							end
-							local hlName = player.Name.."Highlight_1hooaczx1"
-							local highlight = (funcs["hF"] and funcs["hF"]:FindFirstChild(hlName))
-							if funcs["C4"].highlight then
-								if not highlight then
-									highlight = CreateHighlight(player)
-								end
-								if highlight then
-									highlight.Enabled = onScreen and true or false
-									highlight.FillColor = Color
-									highlight.OutlineColor = Color
-								end
-							else
-								if highlight then
-									highlight:Destroy()
-								end
-							end
-							if not funcs["B1"][player] then
-								funcs["B1"][player] = player.CharacterAdded:Connect(function()
-									if funcs["C4"].highlight then
-										CreateHighlight(player)
-									end
-								end)
+						end
+						if funcs["C4"].tracer then
+							if not d.Tracer then
+								d.Tracer = CreateDrawing("Line", {Thickness = 1, Color = Color, Visible = false})
 							end
 						else
-							if funcs["G8"][player] then
-								for _, dd in pairs(funcs["G8"][player]) do
-									if dd and dd.Remove then dd:Remove() end
+							if d.Tracer then
+								d.Tracer:Remove()
+								d.Tracer = nil
+							end
+						end
+						if d.Box then
+							local h = math.abs(camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0)).Y - camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 2.5, 0)).Y)
+							local w = h / 2
+						    d.Box.Size = Vector2.new(w, h)
+							d.Box.Position = Vector2.new(pos.X - w / 2, pos.Y - h / 2)
+							d.Box.Color = Color
+							d.Box.Visible = funcs["C4"].box and onScreen
+						end
+						if d.Name then
+							local boxHalfY = (d.Box and d.Box.Size and d.Box.Size.Y/2) or 0
+							d.Name.Position = Vector2.new(pos.X, pos.Y - boxHalfY - 18)
+							d.Name.Text = ish and (player.Name.." (it)") or player.Name
+							d.Name.Color = Color
+							d.Name.Size = 14
+							d.Name.Visible = funcs["C4"].box and onScreen
+						end
+						if d.Tracer then
+							d.Tracer.From = Vector2.new(vs.X / 2, vs.Y)
+							d.Tracer.To = Vector2.new(pos.X, pos.Y)
+							d.Tracer.Color = Color
+							d.Tracer.Visible = funcs["C4"].tracer and onScreen
+						end
+						local hlName = player.Name.."Highlight_1hooaczx1"
+						local highlight = (funcs["hF"] and funcs["hF"]:FindFirstChild(hlName))
+						if funcs["C4"].highlight then
+							if not highlight then
+			                    highlight = CreateHighlight(player)
+							end
+							if highlight then
+								highlight.Enabled = onScreen and true or false
+								highlight.FillColor = Color
+								highlight.OutlineColor = Color
+							end
+						else
+							if highlight then
+								highlight:Destroy()
+							end
+						end
+						if not funcs["B1"][player] then
+							funcs["B1"][player] = player.CharacterAdded:Connect(function()
+								if funcs["C4"].highlight then
+									CreateHighlight(player)
 								end
-								funcs["G8"][player] = nil
-							end
-							if funcs["B1"][player] then
-								funcs["B1"][player]:Disconnect()
-								funcs["B1"][player] = nil
-							end
-							local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."Highlight_1hooaczx1")
-							if h then h:Destroy() end
+							end)
 						end
-					end
-				end
-				for player, draw in pairs(funcs["G8"]) do
-					if not game:GetService("Players"):FindFirstChild(player.Name) then
-						for _, d in pairs(draw) do
-							if d and d.Remove then d:Remove() end
+					else
+						if funcs["G8"][player] then
+							for _, dd in pairs(funcs["G8"][player]) do
+								if dd and dd.Remove then dd:Remove() end
+							end
+		      				funcs["G8"][player] = nil
 						end
-						funcs["G8"][player] = nil
 						if funcs["B1"][player] then
 							funcs["B1"][player]:Disconnect()
 							funcs["B1"][player] = nil
@@ -479,35 +464,49 @@ end local prevFlags = {
 						if h then h:Destroy() end
 					end
 				end
-				for _, d in pairs(funcs["G8"]) do
-					if d.Name and d.Name.Size ~= 14 then d.Name.Size = 14 end
-				end
-			end)
-		else
-			if funcs["D4"] then
-				funcs["D4"]:Disconnect()
-				funcs["D4"] = nil
 			end
-			for _, conn in pairs(funcs["B1"]) do
-				conn:Disconnect()
-			end
-			funcs["B1"] = {}
-			for _, draw in pairs(funcs["G8"]) do
-				for _, d in pairs(draw) do
-					if d and d.Remove then d:Remove() end
+			for player, draw in pairs(funcs["G8"]) do
+				if not game:GetService("Players"):FindFirstChild(player.Name) then
+					for _, d in pairs(draw) do
+						if d and d.Remove then d:Remove() end
+					end
+					funcs["G8"][player] = nil
+					if funcs["B1"][player] then
+						funcs["B1"][player]:Disconnect()
+						funcs["B1"][player] = nil
+					end
+					local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."Highlight_1hooaczx1")
+					if h then h:Destroy() end
 				end
 			end
-			funcs["G8"] = {}
-			if funcs["hF"] then
-				for _, h in pairs(funcs["hF"]:GetChildren()) do
-					h:Destroy()
-				end
-				if funcs["hF"].Parent then
-					funcs["hF"]:ClearAllChildren()
-					funcs["hF"]:Destroy()
-				end
-				funcs["hF"] = nil
+			for _, d in pairs(funcs["G8"]) do
+				if d.Name and d.Name.Size ~= 14 then d.Name.Size = 14 end
 			end
+		end)
+	else
+		if funcs["D4"] then
+			funcs["D4"]:Disconnect()
+			funcs["D4"] = nil
+		end
+		for _, conn in pairs(funcs["B1"]) do
+			conn:Disconnect()
+		end
+		funcs["B1"] = {}
+		for _, draw in pairs(funcs["G8"]) do
+			for _, d in pairs(draw) do
+				if d and d.Remove then d:Remove() end
+			end
+		end
+		funcs["G8"] = {}
+		if funcs["hF"] then
+			for _, h in pairs(funcs["hF"]:GetChildren()) do
+				h:Destroy()
+			end
+			if funcs["hF"].Parent then
+				funcs["hF"]:ClearAllChildren()
+				funcs["hF"]:Destroy()
+			end
+			funcs["hF"] = nil
 		end
 	end
 end
