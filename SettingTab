@@ -104,6 +104,37 @@ if game.PlaceId == 7117492592 then
     })
 elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     --Support Map Nightmare Run
+    AddToggle(Main5u6,{
+      Name="Auto pick up Cheeses Gor Event Monster Rat[Nightmare Run Game]",
+      Default=false,
+      Callback=function(v)
+           if v then
+              get = zc_runService.Heartbeat:Connect(function()
+                  local p = game:GetService("Players").LocalPlayer
+                  if not p then return end
+                  local ch = p.Character or p.CharacterAdded:Wait()
+                  local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
+                  if not hrp then return end
+                  local cheeses = workspace:FindFirstChild("Cheeses")
+                  if not cheeses then return end
+                  local list = cheeses:GetChildren()
+                  if #list == 0 then return end
+                  for _, cheese in ipairs(list) do
+                    if not v then return end
+                      if cheese and cheese:IsA("BasePart") then
+                            hrp.CFrame = cheese.CFrame repeat task.wait(0.1) until not cheese or not cheese:IsDescendantOf(workspace) task.wait(0.2)
+                        end
+                    end
+                end)
+            else
+               if get then
+                  get:Disconnect()
+                  get=nil
+               end
+           end
+       end
+    })
+
     local hTable = {}
     local vZq7_mK = nil
     AddToggle(Main5u6, {
