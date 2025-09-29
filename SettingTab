@@ -65,13 +65,14 @@ end
 
 if game.PlaceId == 7117492592 then
     --Support Map Realistic Hand RP 🖐🤏 Without VR
+    local wHk8_zB = {}
+    local pVj2_rT = nil
     AddToggle(Main5u6, { 
         Name = "Afk in Public Map[Realistic Hand RP 🖐🤏 Without VR](Anti Touching and Abilities by Hand)",
         Default = false,
         Callback = function(dFq9_xL)
-            local pVj2_rT
-            local wHk8_zB = {}
             if dFq9_xL then
+                if pVj2_rT then return end -- ถ้า Connection อยู่แล้ว ให้ไม่สร้างใหม่
                 pVj2_rT = game:GetService("RunService").Heartbeat:Connect(function()
                     local aNm3_cS = {}
                     for _, uLk7_vQ in ipairs(game:GetService("Players"):GetPlayers()) do
@@ -89,7 +90,10 @@ if game.PlaceId == 7117492592 then
                     end
                 end)
             else
-                if pVj2_rT then pVj2_rT:Disconnect() pVj2_rT = nil end
+                if pVj2_rT then
+                    pVj2_rT:Disconnect()
+                    pVj2_rT = nil
+                end
                 for _, uLk7_vQ in ipairs(game:GetService("Players"):GetPlayers()) do
                     game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", uLk7_vQ, false)
                     game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", uLk7_vQ, false)
@@ -100,14 +104,14 @@ if game.PlaceId == 7117492592 then
     })
 elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     --Support Map Nightmare Run
-    local vZq7_mK
+    local hTable = {}
+    local vZq7_mK = nil
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
         Callback = function(fGj8_tP)
-            local hTable = {}
             if fGj8_tP then
-                if vZq7_mK then vZq7_mK:Disconnect() vZq7_mK = nil end
+                if vZq7_mK then return end
                 vZq7_mK = game:GetService("RunService").Heartbeat:Connect(function()
                     local mt = workspace:FindFirstChild("Monsters")
                     if not mt then return end
@@ -141,9 +145,15 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                     end
                 end)
             else
-                if vZq7_mK then vZq7_mK:Disconnect() vZq7_mK = nil end
-                for _, hl in pairs(hTable) do
-                    if hl and hl.Parent then hl:Destroy() end
+                if vZq7_mK then
+                    vZq7_mK:Disconnect()
+                    vZq7_mK = nil
+                end
+                for mon, hl in pairs(hTable) do
+                    if hl and hl.Parent then
+                        hl:Destroy()
+                        hTable[mon] = nil
+                    end
                 end
                 hTable = {}
             end
