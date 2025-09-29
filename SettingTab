@@ -65,52 +65,51 @@ end
 
 if game.PlaceId == 7117492592 then
     --Support Map Realistic Hand RP 🖐🤏 Without VR
+    local tAB = {}
     AddToggle(Main5u6, {
         Name = "Afk in Public Map[Realistic Hand RP 🖐🤏 Without VR](Anti Touching and Abilities by Hand)",
         Default = false,
-        Callback = function(aXq)
-            local bLr
-            local tA = {}
-            if aXq then
-                bLr = game:GetService("RunService").Heartbeat:Connect(function()
-                    local pK = {}
+        Callback = function(on)
+            local hb
+            if on then
+                hb = game:GetService("RunService").Heartbeat:Connect(function()
+                    local seen = {}
                     for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
-                        pK[pl] = true
-                        if not tA[pl] then
+                        seen[pl] = true
+                        if not tAB[pl] then
                             game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", pl, true)
                             game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", pl, true)
-                            tA[pl] = true
+                            tAB[pl] = true
                         end
                     end
-                    for pl in pairs(tA) do
-                        if not pK[pl] then tA[pl] = nil end
+                    for pl in pairs(tAB) do
+                        if not seen[pl] then tAB[pl] = nil end
                     end
                 end)
             else
-                if bLr then bLr:Disconnect() bLr = nil end
+                if hb then hb:Disconnect() hb = nil end
                 for _, pl in ipairs(game:GetService("Players"):GetPlayers()) do
                     game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", pl, false)
                     game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", pl, false)
                 end
-                tA = {}
+                tAB = {}
             end
         end
     })
 elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     --Support Map Nightmare Run
+    local hTbl = {}
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
-        Callback = function(cZp)
-            local dYr
-            local eWq = {}
-            local fTx = {}
-            if cZp then
-                dYr = game:GetService("RunService").Heartbeat:Connect(function()
+        Callback = function(on)
+            local hb
+            if on then
+                hb = game:GetService("RunService").Heartbeat:Connect(function()
                     local mons = workspace:FindFirstChild("Monsters")
                     if not mons then return end
                     for _, m in ipairs(mons:GetChildren()) do
-                        if not eWq[m] then
+                        if not hTbl[m] then
                             local hl = Instance.new("Highlight")
                             hl.Name = "highlight_monster_"..m.Name
                             hl.Adornee = m
@@ -124,18 +123,16 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                                 TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
                                 {FillColor = Color3.new(0,0,0)}
                             ):Play()
-                            eWq[m] = true
-                            fTx[m] = hl
+                            hTbl[m] = hl
                         end
                     end
                 end)
             else
-                if dYr then dYr:Disconnect() dYr = nil end
-                for _, hl in pairs(fTx) do
+                if hb then hb:Disconnect() hb = nil end
+                for _, hl in pairs(hTbl) do
                     if hl and hl.Parent then hl:Destroy() end
                 end
-                eWq = {}
-                fTx = {}
+                hTbl = {}
             end
         end
     })
