@@ -104,10 +104,11 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
         Callback = function(fGj8_tP)
-            local vZq7_mK
-            local hTable = {}
+            local hTable = hTable or {}
+            hTable._vZq7_mK = hTable._vZq7_mK or nil
             if fGj8_tP then
-                vZq7_mK = game:GetService("RunService").Heartbeat:Connect(function()
+                if hTable._vZq7_mK then hTable._vZq7_mK:Disconnect() end
+                hTable._vZq7_mK = game:GetService("RunService").Heartbeat:Connect(function()
                     local mt = workspace:FindFirstChild("Monsters")
                     if not mt then return end
                     local now = {}
@@ -131,7 +132,7 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                         end
                     end
                     for mon in pairs(hTable) do
-                        if not now[mon] or not mon:IsDescendantOf(workspace) then
+                        if mon ~= "_vZq7_mK" and (not now[mon] or not mon:IsDescendantOf(workspace)) then
                             if hTable[mon] and hTable[mon].Parent then
                                 hTable[mon]:Destroy()
                             end
@@ -140,11 +141,16 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                     end
                 end)
             else
-                if vZq7_mK then vZq7_mK:Disconnect() vZq7_mK = nil end
-                for _, hl in pairs(hTable) do
-                    if hl and hl.Parent then hl:Destroy() end
+                if hTable._vZq7_mK then
+                    hTable._vZq7_mK:Disconnect()
+                    hTable._vZq7_mK = nil
                 end
-                hTable = {}
+                for mon, hl in pairs(hTable) do
+                    if mon ~= "_vZq7_mK" and hl and hl.Parent then
+                        hl:Destroy()
+                        hTable[mon] = nil
+                    end
+                end
             end
         end
     })
