@@ -3470,10 +3470,18 @@ RunServerlock("Lock1", "no", function()
         end
     end 
     if View and View.player and View.player.Character and View.player.Character:FindFirstChild("HumanoidRootPart") then
-        local hrp = View.player.Character:FindFirstChild("Humanoid")
-        if workspace.CurrentCamera.CameraSubject ~= hrp then
-            workspace.CurrentCamera.CameraSubject = hrp
-        end
+        local ch = View.player.Character:FindFirstChild("Humanoid")
+        local hrp = ch:FindFirstChild("HumanoidRootPart")
+        local hum = ch:FindFirstChild("Humanoid")
+        if hrp then
+           if workspace.CurrentCamera.CameraSubject ~= hum then
+              workspace.CurrentCamera.CameraSubject = hum
+           end
+        elseif hum then
+           if workspace.CurrentCamera.CameraSubject ~= hum then
+              workspace.CurrentCamera.CameraSubject = hum
+           end
+       end
     end
     if activeButton then
         for name, data in pairs(uiStates) do
