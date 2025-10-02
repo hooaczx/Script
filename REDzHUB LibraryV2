@@ -691,46 +691,45 @@ local function notify(params)
 end
 
 local d = {
-	greet = {
-		"Hey, ", "Yo, ", "Sup! ", "What’s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
-	},
-	emo = {
-		"🎉", "✨", "🔥", "🌟", "🎆", "🌈", "💪", "😊", "😎", "🌙", "🌞", "🍀", "🌺", "🌸", "☀️", "🌛"
-	}
+ greet = {
+  "Hey, ", "Yo, ", "Sup! ", "What’s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
+ },
+ emo = {
+  "🎉", "✨", "🔥", "🌟", "🎆", "🌈", "💪", "😊", "😎", "🌙", "🌞", "🍀", "🌺", "🌸", "☀️", "🌛"
+ }
 }
 local function r(t) return t[math.random(#t)] end
 local greetTxt = r(d.greet)
 local emoTxt = r(d.emo)
 function getTitleText()
-	local now = os.time()
-	local t = os.date("*t", now)
-	local y = t.year
-	local s = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
-	local e = os.time{year = y + 1, month = 1, day = 1, hour = 6, min = 0, sec = 0}
-	local n = s
-	if now >= s and now < e then
-		return string.format("🎉 Happy New Year %d! 🎆", y + 1)
-	else
-		local diff = n - now
-		if diff < 0 then diff = 0 end
-		local d = math.floor(diff / 86400)
-		local h = math.floor((diff % 86400) / 3600)
-		local m = math.floor((diff % 3600) / 60)
-		local sec = diff % 60
-		return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
-	end
+ local now = os.time()
+ local t = os.date("*t", now)
+ local y = t.year
+ local thisNY = os.time{year = y, month = 1, day = 1, hour = 0, min = 0, sec = 0}
+ local thisNYEnd = os.time{year = y, month = 1, day = 1, hour = 6, min = 1, sec = 0}
+ local nextNY = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
+ if now >= thisNY and now < thisNYEnd then
+  return string.format("🎉 Happy New Year %d! 🎆", y)
+ else
+  local diff = nextNY - now
+  if diff < 0 then diff = 0 end
+  local d = math.floor(diff / 86400)
+  local h = math.floor((diff % 86400) / 3600)
+  local m = math.floor((diff % 3600) / 60)
+  local sec = diff % 60
+  return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
+ end
 end
 notify({
-	Title = getTitleText(),
-	Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
-	buttonText = "Ok",
-	imageID = "18488884411",
-	guiSize = Vector2.new(400, 80),
-	updates = {
-		Title = getTitleText
-	}
-})
-
+ Title = getTitleText(),
+ Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
+ buttonText = "Ok",
+ imageID = "18488884411",
+ guiSize = Vector2.new(400, 80),
+ updates = {
+  Title = getTitleText
+ }
+ })
  function MinimizeButton(Configs)
     local functions = {} 
     local frameRefs, metaRefs, ddesug, stopupdateall, _XyZ, _cvZ = {}, {}, {}, {}, {}, {}
