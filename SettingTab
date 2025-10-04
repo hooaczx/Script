@@ -1334,6 +1334,7 @@ AddToggle(Main5u6, {
 })
 
 local _ct_,_st_,_mv_,_ol_ = nil,{}, {}, false
+local _ct_,_st_,_mv_,_ol_ = nil,{}, {}, false
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
@@ -1343,8 +1344,9 @@ AddToggle(Main5u6, {
       if _ol_ then return end
       _ol_ = true
       if not _ct_ then
-        _ct_ = game:GetService("RunService").RenderStepped:Connect(function()
-          local P = game:GetService("Players")
+        local RunService = game:GetService("RunService")
+        local P = game:GetService("Players")
+        _ct_ = RunService.RenderStepped:Connect(function()
           local pls = P:GetPlayers()
           if #pls <= 1 then return end
           local chars = {}
@@ -1353,11 +1355,11 @@ AddToggle(Main5u6, {
               if pl.Character and pl.Character.Parent == workspace then
                 for _,d in ipairs(pl.Character:GetDescendants()) do
                   if d and d:IsA("BasePart") then
-                    chars[d] = true
                     if _st_[d] == nil then
-                      local ok,cur = pcall(function() return d.CanCollide end)
-                      if ok then _st_[d] = cur if cur == true then pcall(function() d.CanCollide = false end) end end
+                      _st_[d] = d.CanCollide
+                      if d.CanCollide == true then d.CanCollide = false end
                     end
+                    chars[d] = true
                   end
                 end
               end
@@ -1365,43 +1367,47 @@ AddToggle(Main5u6, {
           end
           local conn = {}
           for _,obj in ipairs(workspace:GetDescendants()) do
-            local ok,a,b,aa,bb = pcall(function() return obj.Part0,obj.Part1,obj.Attachment0,obj.Attachment1 end)
-            if ok then
-              local p0,p1 = a,b
-              if (not p0) and aa and aa:IsA("Attachment") and aa.Parent and aa.Parent:IsA("BasePart") then p0 = aa.Parent end
-              if (not p1) and bb and bb:IsA("Attachment") and bb.Parent and bb.Parent:IsA("BasePart") then p1 = bb.Parent end
-              if p0 and p1 then
-                if chars[p0] and not conn[p1] then conn[p1] = true if _st_[p1] == nil then local ok2,cur = pcall(function() return p1.CanCollide end) if ok2 then _st_[p1] = cur if cur == true then pcall(function() p1.CanCollide = false end) end end end
-                if chars[p1] and not conn[p0] then conn[p0] = true if _st_[p0] == nil then local ok2,cur = pcall(function() return p0.CanCollide end) if ok2 then _st_[p0] = cur if cur == true then pcall(function() p0.CanCollide = false end) end end end
+            if obj:IsA("Constraint") or obj:IsA("Motor6D") or obj.ClassName == "Weld" or obj.ClassName == "ManualWeld" then
+              local p0, p1
+              p0 = obj.Part0
+              p1 = obj.Part1
+              if (not p0) then
+                local a0 = obj:FindFirstChild("Attachment0") or obj:FindFirstChild("AttachmentA")
+                if a0 and a0.Parent and a0.Parent:IsA("BasePart") then p0 = a0.Parent end
               end
-            end
-            local ok2,aa2,bb2,pa,pb = pcall(function() return obj.AttachmentA,obj.AttachmentB,obj.PartA,obj.PartB end)
-            if ok2 then
-              local ap = pa or (aa2 and aa2.Parent and aa2.Parent:IsA("BasePart") and aa2.Parent or nil)
-              local bp = pb or (bb2 and bb2.Parent and bb2.Parent:IsA("BasePart") and bb2.Parent or nil)
-              if ap and bp then
-                if chars[ap] and not conn[bp] then conn[bp] = true if _st_[bp] == nil then local ok3,cur = pcall(function() return bp.CanCollide end) if ok3 then _st_[bp] = cur if cur == true then pcall(function() bp.CanCollide = false end) end end end
-                if chars[bp] and not conn[ap] then conn[ap] = true if _st_[ap] == nil then local ok3,cur = pcall(function() return ap.CanCollide end) if ok3 then _st_[ap] = cur if cur == true then pcall(function() ap.CanCollide = false end) end end end
+              if (not p1) then
+                local a1 = obj:FindFirstChild("Attachment1") or obj:FindFirstChild("AttachmentB")
+                if a1 and a1.Parent and a1.Parent:IsA("BasePart") then p1 = a1.Parent end
+              end
+              if p0 and p1 then
+                if chars[p0] and not conn[p1] then
+                  conn[p1] = true
+                  if _st_[p1] == nil then _st_[p1] = p1.CanCollide if p1.CanCollide == true then p1.CanCollide = false end end
+                end
+                if chars[p1] and not conn[p0] then
+                  conn[p0] = true
+                  if _st_[p0] == nil then _st_[p0] = p0.CanCollide if p0.CanCollide == true then p0.CanCollide = false end end
+                end
               end
             end
             local cn = obj.ClassName
-            if (cn == "BodyVelocity" or cn == "BodyForce" or cn == "VectorForce" or cn == "LinearVelocity" or cn == "BodyGyro" or cn == "BodyPosition" or cn == "BodyAngularVelocity") then
+            if cn == "BodyVelocity" or cn == "BodyForce" or cn == "VectorForce" or cn == "LinearVelocity" or cn == "BodyGyro" or cn == "BodyPosition" or cn == "BodyAngularVelocity" then
               local anc = obj.Parent
               while anc and not anc:IsA("BasePart") do anc = anc.Parent end
               if anc and (chars[anc] or conn[anc]) then
                 if _mv_[obj] == nil then
                   local t = {}
-                  pcall(function() t.V = obj.Velocity end)
-                  pcall(function() t.M = obj.MaxForce end)
-                  pcall(function() t.F = obj.Force end)
-                  pcall(function() t.E = obj.Enabled end)
+                  if obj.ClassName == "BodyVelocity" then t.V = obj.Velocity; t.M = obj.MaxForce end
+                  if obj.ClassName == "BodyForce" then t.F = obj.Force end
+                  if obj.ClassName == "VectorForce" then t.F = obj.Force end
+                  if obj.ClassName == "LinearVelocity" then t.V = obj.Velocity end
+                  if obj:FindFirstChild("Enabled") then t.E = obj.Enabled end
                   _mv_[obj] = t
-                  pcall(function() if obj:IsA("BodyVelocity") then obj.Velocity = Vector3.new(0,0,0); if obj.MaxForce then obj.MaxForce = Vector3.new(0,0,0) end end end)
-                  pcall(function() if obj:IsA("BodyForce") then obj.Force = Vector3.new(0,0,0) end end)
-                  pcall(function() if obj:IsA("VectorForce") then obj.Force = Vector3.new(0,0,0) end end)
-                  pcall(function() if obj:IsA("LinearVelocity") then obj.Velocity = Vector3.new(0,0,0) end end)
-                  pcall(function() if obj:IsA("BodyPosition") and obj.MaxForce then obj.MaxForce = Vector3.new(0,0,0) end end)
-                  pcall(function() if obj:FindFirstChild("Enabled") then obj.Enabled = false end end)
+                  if obj.ClassName == "BodyVelocity" then obj.Velocity = Vector3.new(0,0,0) if obj.MaxForce then obj.MaxForce = Vector3.new(0,0,0) end end
+                  if obj.ClassName == "BodyForce" then obj.Force = Vector3.new(0,0,0) end
+                  if obj.ClassName == "VectorForce" then obj.Force = Vector3.new(0,0,0) end
+                  if obj.ClassName == "LinearVelocity" then obj.Velocity = Vector3.new(0,0,0) end
+                  if obj:FindFirstChild("Enabled") then obj.Enabled = false end
                 end
               end
             end
@@ -1413,7 +1419,7 @@ AddToggle(Main5u6, {
               local still = false
               if chars[p] or conn[p] then still = true end
               if not still then
-                pcall(function() p.CanCollide = orig end)
+                p.CanCollide = orig
                 _st_[p] = nil
               end
             end
@@ -1425,10 +1431,10 @@ AddToggle(Main5u6, {
               local anc = m.Parent
               while anc and not anc:IsA("BasePart") do anc = anc.Parent end
               if not (anc and (chars[anc] or conn[anc])) then
-                pcall(function() if orig.V then if m.Velocity then m.Velocity = orig.V end end end)
-                pcall(function() if orig.M then if m.MaxForce then m.MaxForce = orig.M end end end)
-                pcall(function() if orig.F then if m.Force then m.Force = orig.F end end end)
-                pcall(function() if orig.E ~= nil and m:FindFirstChild("Enabled") then m.Enabled = orig.E end end)
+                if orig.V then if m.ClassName == "BodyVelocity" or m.ClassName == "LinearVelocity" then m.Velocity = orig.V end end
+                if orig.M then if m.ClassName == "BodyVelocity" and m.MaxForce then m.MaxForce = orig.M end end
+                if orig.F then if m.ClassName == "BodyForce" or m.ClassName == "VectorForce" then m.Force = orig.F end end
+                if orig.E ~= nil and m:FindFirstChild("Enabled") then m.Enabled = orig.E end
                 _mv_[m] = nil
               end
             end
@@ -1436,19 +1442,21 @@ AddToggle(Main5u6, {
         end)
       end
     else
-      if _ct_ then pcall(function() _ct_:Disconnect() end) _ct_ = nil end
+      if _ct_ and _ct_.Disconnect then _ct_:Disconnect() _ct_ = nil end
       for p,o in pairs(_st_) do
-        if p and p.Parent and p:IsA("BasePart") then pcall(function() p.CanCollide = o end) end
+        if p and p.Parent and p:IsA("BasePart") then p.CanCollide = o end
       end
       for m,orig in pairs(_mv_) do
         if m and m.Parent then
-          pcall(function() if orig.V then if m.Velocity then m.Velocity = orig.V end end end)
-          pcall(function() if orig.M then if m.MaxForce then m.MaxForce = orig.M end end end)
-          pcall(function() if orig.F then if m.Force then m.Force = orig.F end end end)
-          pcall(function() if orig.E ~= nil and m:FindFirstChild("Enabled") then m.Enabled = orig.E end end)
+          if orig.V then if m.ClassName == "BodyVelocity" or m.ClassName == "LinearVelocity" then m.Velocity = orig.V end end
+          if orig.M then if m.ClassName == "BodyVelocity" and m.MaxForce then m.MaxForce = orig.M end end
+          if orig.F then if m.ClassName == "BodyForce" or m.ClassName == "VectorForce" then m.Force = orig.F end end
+          if orig.E ~= nil and m:FindFirstChild("Enabled") then m.Enabled = orig.E end
         end
       end
-      table.clear(_st_); table.clear(_mv_); _ol_ = false
+      for k in pairs(_st_) do _st_[k] = nil end
+      for k in pairs(_mv_) do _mv_[k] = nil end
+      _ol_ = false
     end
   end
 })
