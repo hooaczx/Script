@@ -1333,130 +1333,64 @@ AddToggle(Main5u6, {
     end
 })
 
-local _ct_,_st_,_mv_,_ol_ = nil,{}, {}, false
-local _ct_,_st_,_mv_,_ol_ = nil,{}, {}, false
+local _ct_, _st_, _open_lock_ = nil, setmetatable({}, { __mode = "k" }), false
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
   Default = false,
-  Callback = function(s)
-    if s then
-      if _ol_ then return end
-      _ol_ = true
+  Callback = function(state)
+    if state then
+      if _open_lock_ then return end
+      _open_lock_ = true
       if not _ct_ then
-        local RunService = game:GetService("RunService")
-        local P = game:GetService("Players")
-        _ct_ = RunService.RenderStepped:Connect(function()
-          local pls = P:GetPlayers()
-          if #pls <= 1 then return end
-          local chars = {}
-          for _,pl in ipairs(pls) do
-            if pl ~= P.LocalPlayer then
-              if pl.Character and pl.Character.Parent == workspace then
-                for _,d in ipairs(pl.Character:GetDescendants()) do
+        _ct_ = game:GetService("RunService").RenderStepped:Connect(function()
+          if #game:GetService("Players"):GetPlayers() <= 1 then return end
+          local pls = game:GetService("Players"):GetPlayers()
+          for i = 1, #pls do
+            local pl = pls[i]
+            if pl ~= game:GetService("Players").LocalPlayer then
+              local char = pl.Character
+              if char and char.Parent == workspace then
+                local desc = char:GetDescendants()
+                for j = 1, #desc do
+                  local d = desc[j]
                   if d and d:IsA("BasePart") then
                     if _st_[d] == nil then
-                      _st_[d] = d.CanCollide
-                      if d.CanCollide == true then d.CanCollide = false end
+                      local ok, orig = pcall(function() return d.CanCollide end)
+                      if ok and orig ~= nil then
+                        _st_[d] = orig
+                        if orig == true then
+                          pcall(function() d.CanCollide = false end)
+                        end
+                      end
+                    else
+                      if _st_[d] == true then
+                        local ok2, cur = pcall(function() return d.CanCollide end)
+                        if ok2 and cur == true then
+                          pcall(function() d.CanCollide = false end)
+                        end
+                      end
                     end
-                    chars[d] = true
                   end
                 end
-              end
-            end
-          end
-          local conn = {}
-          for _,obj in ipairs(workspace:GetDescendants()) do
-            if obj:IsA("Constraint") or obj:IsA("Motor6D") or obj.ClassName == "Weld" or obj.ClassName == "ManualWeld" then
-              local p0, p1
-              p0 = obj.Part0
-              p1 = obj.Part1
-              if (not p0) then
-                local a0 = obj:FindFirstChild("Attachment0") or obj:FindFirstChild("AttachmentA")
-                if a0 and a0.Parent and a0.Parent:IsA("BasePart") then p0 = a0.Parent end
-              end
-              if (not p1) then
-                local a1 = obj:FindFirstChild("Attachment1") or obj:FindFirstChild("AttachmentB")
-                if a1 and a1.Parent and a1.Parent:IsA("BasePart") then p1 = a1.Parent end
-              end
-              if p0 and p1 then
-                if chars[p0] and not conn[p1] then
-                  conn[p1] = true
-                  if _st_[p1] == nil then _st_[p1] = p1.CanCollide if p1.CanCollide == true then p1.CanCollide = false end end
-                end
-                if chars[p1] and not conn[p0] then
-                  conn[p0] = true
-                  if _st_[p0] == nil then _st_[p0] = p0.CanCollide if p0.CanCollide == true then p0.CanCollide = false end end
-                end
-              end
-            end
-            local cn = obj.ClassName
-            if cn == "BodyVelocity" or cn == "BodyForce" or cn == "VectorForce" or cn == "LinearVelocity" or cn == "BodyGyro" or cn == "BodyPosition" or cn == "BodyAngularVelocity" then
-              local anc = obj.Parent
-              while anc and not anc:IsA("BasePart") do anc = anc.Parent end
-              if anc and (chars[anc] or conn[anc]) then
-                if _mv_[obj] == nil then
-                  local t = {}
-                  if obj.ClassName == "BodyVelocity" then t.V = obj.Velocity; t.M = obj.MaxForce end
-                  if obj.ClassName == "BodyForce" then t.F = obj.Force end
-                  if obj.ClassName == "VectorForce" then t.F = obj.Force end
-                  if obj.ClassName == "LinearVelocity" then t.V = obj.Velocity end
-                  if obj:FindFirstChild("Enabled") then t.E = obj.Enabled end
-                  _mv_[obj] = t
-                  if obj.ClassName == "BodyVelocity" then obj.Velocity = Vector3.new(0,0,0) if obj.MaxForce then obj.MaxForce = Vector3.new(0,0,0) end end
-                  if obj.ClassName == "BodyForce" then obj.Force = Vector3.new(0,0,0) end
-                  if obj.ClassName == "VectorForce" then obj.Force = Vector3.new(0,0,0) end
-                  if obj.ClassName == "LinearVelocity" then obj.Velocity = Vector3.new(0,0,0) end
-                  if obj:FindFirstChild("Enabled") then obj.Enabled = false end
-                end
-              end
-            end
-          end
-          for p,orig in pairs(_st_) do
-            if not p or not p.Parent or not p:IsA("BasePart") then
-              _st_[p] = nil
-            else
-              local still = false
-              if chars[p] or conn[p] then still = true end
-              if not still then
-                p.CanCollide = orig
-                _st_[p] = nil
-              end
-            end
-          end
-          for m,orig in pairs(_mv_) do
-            if not m or not m.Parent then
-              _mv_[m] = nil
-            else
-              local anc = m.Parent
-              while anc and not anc:IsA("BasePart") do anc = anc.Parent end
-              if not (anc and (chars[anc] or conn[anc])) then
-                if orig.V then if m.ClassName == "BodyVelocity" or m.ClassName == "LinearVelocity" then m.Velocity = orig.V end end
-                if orig.M then if m.ClassName == "BodyVelocity" and m.MaxForce then m.MaxForce = orig.M end end
-                if orig.F then if m.ClassName == "BodyForce" or m.ClassName == "VectorForce" then m.Force = orig.F end end
-                if orig.E ~= nil and m:FindFirstChild("Enabled") then m.Enabled = orig.E end
-                _mv_[m] = nil
               end
             end
           end
         end)
       end
     else
-      if _ct_ and _ct_.Disconnect then _ct_:Disconnect() _ct_ = nil end
-      for p,o in pairs(_st_) do
-        if p and p.Parent and p:IsA("BasePart") then p.CanCollide = o end
+      if _ct_ then
+        _ct_:Disconnect()
+        _ct_ = nil
       end
-      for m,orig in pairs(_mv_) do
-        if m and m.Parent then
-          if orig.V then if m.ClassName == "BodyVelocity" or m.ClassName == "LinearVelocity" then m.Velocity = orig.V end end
-          if orig.M then if m.ClassName == "BodyVelocity" and m.MaxForce then m.MaxForce = orig.M end end
-          if orig.F then if m.ClassName == "BodyForce" or m.ClassName == "VectorForce" then m.Force = orig.F end end
-          if orig.E ~= nil and m:FindFirstChild("Enabled") then m.Enabled = orig.E end
+      for part, orig in pairs(_st_) do
+        if part and part.Parent and part:IsA("BasePart") then
+          pcall(function() part.CanCollide = orig end)
         end
+        _st_[part] = nil
       end
       for k in pairs(_st_) do _st_[k] = nil end
-      for k in pairs(_mv_) do _mv_[k] = nil end
-      _ol_ = false
+      _open_lock_ = false
     end
   end
 })
