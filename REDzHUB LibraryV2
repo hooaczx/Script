@@ -4226,10 +4226,11 @@ function MakeTab(Configs)
     local function applyColor()
         Callback(Color3.fromHSV(ColorH, ColorS, ColorV))
     end    
+
     local function updateColor()
-        ColorH = sel1.Position.Y.Scale
-        ColorS = 1 - sel2.Position.X.Scale
-        ColorV = 1 - sel2.Position.Y.Scale
+        ColorH = sel1.Position.Y.Scale or ColorH
+        ColorS = 1 - (sel2.Position.X.Scale or 0)
+        ColorV = 1 - (sel2.Position.Y.Scale or 0)
         UI_Grade.ImageColor3 = Color3.fromHSV(ColorH, 1, 1)
         picker.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
         applyColor()
@@ -4239,6 +4240,7 @@ function MakeTab(Configs)
     local drag1, drag2 = false, false
 
     local function moveSel1(pos)
+        if not pos then return end
         local gp, gs = grade.AbsolutePosition, grade.AbsoluteSize
         local x = math.clamp(pos.X - gp.X - sel1.AbsoluteSize.X / 2, 0, gs.X - sel1.AbsoluteSize.X)
         local y = math.clamp(pos.Y - gp.Y - sel1.AbsoluteSize.Y / 2, 0, gs.Y - sel1.AbsoluteSize.Y)
@@ -4247,31 +4249,41 @@ function MakeTab(Configs)
     end
 
     local function moveSel2(pos)
+        if not pos then return end
         local gp, gs = UI_Grade.AbsolutePosition, UI_Grade.AbsoluteSize
         local x = math.clamp(pos.X - gp.X - sel2.AbsoluteSize.X / 2, 0, gs.X - sel2.AbsoluteSize.X)
         local y = math.clamp(pos.Y - gp.Y - sel2.AbsoluteSize.Y / 2, 0, gs.Y - sel2.AbsoluteSize.Y)
         CreateTween(sel2, "Position", UDim2.new(x / gs.X, 0, y / gs.Y, 0), 0.25, true)
         updateColor()
     end
+
     local pickers = {}
 
     pickers["gr"] = grade.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag1 = true
-            moveSel1(input.Position)
+            if input.Position then
+                moveSel1(input.Position)
+            end
         end
     end)
 
     pickers["hr"] = UI_Grade.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             drag2 = true
-            moveSel2(input.Position)
+            if input.Position then
+                moveSel2(input.Position)
+            end
         end
     end)
 
     pickers["fr"] = UserInputService.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            if drag1 then moveSel1(input.Position) elseif drag2 then moveSel2(input.Position) end
+            if input.Position then
+                if drag1 then moveSel1(input.Position) 
+                elseif drag2 then moveSel2(input.Position) 
+                end
+            end
         end
     end)
 
@@ -4290,7 +4302,7 @@ function MakeTab(Configs)
             clearcolorpicker = nil
            end
            for name in pairs(pickers) do
-              if name then
+              if pickers[name] then
                 pickers[name]:Disconnect()
                 pickers[name] = nil
               end
