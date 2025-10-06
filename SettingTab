@@ -1334,7 +1334,7 @@ AddToggle(Main5u6, {
 })
 
 local a,b,c = nil, setmetatable({}, { __mode = "k" }), false
-local d,e,f = setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" })
+local d,e,f,g = {}, {}, {}, {}
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
@@ -1364,6 +1364,7 @@ AddToggle(Main5u6, {
               d[pl] = nil
               e[pl] = nil
               f[pl] = nil
+              g[pl] = nil
             end
           end
           for i = 1, #pls do
@@ -1385,6 +1386,7 @@ AddToggle(Main5u6, {
                   d[pl] = nil
                   e[pl] = nil
                   f[pl] = nil
+                  g[pl] = nil
                 end
               else
                 local hum = ch:FindFirstChildWhichIsA("Humanoid")
@@ -1403,9 +1405,30 @@ AddToggle(Main5u6, {
                     d[pl] = nil
                     e[pl] = nil
                     f[pl] = nil
+                    g[pl] = nil
                   end
                 else
-                  if e[pl] ~= ch or f[pl] ~= hum then
+                  local prev = g[pl]
+                  local cur = hum.Health
+                  if prev and prev <= 0 and cur > 0 then
+                    local parts = d[pl]
+                    if parts then
+                      for k = 1, #parts do
+                        local p = parts[k]
+                        if p and p.Parent and p:IsA("BasePart") then
+                          p.CanCollide = b[p]
+                        end
+                        b[p] = nil
+                      end
+                    end
+                    d[pl] = nil
+                    e[pl] = nil
+                    f[pl] = nil
+                    g[pl] = nil
+                  end
+                  g[pl] = cur
+
+                  if e[pl] ~= ch or f[pl] ~= hum or d[pl] == nil then
                     if e[pl] then
                       local parts = d[pl]
                       if parts then
@@ -1458,10 +1481,7 @@ AddToggle(Main5u6, {
         end)
       end
     else
-      if a then
-        a:Disconnect()
-        a = nil
-      end
+      if a then a:Disconnect() a = nil end
       for pl, parts in pairs(d) do
         if parts then
           for i = 1, #parts do
@@ -1476,6 +1496,7 @@ AddToggle(Main5u6, {
       for k in pairs(d) do d[k] = nil end
       for k in pairs(e) do e[k] = nil end
       for k in pairs(f) do f[k] = nil end
+      for k in pairs(g) do g[k] = nil end
       for k in pairs(b) do b[k] = nil end
       c = false
     end
