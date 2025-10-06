@@ -1334,7 +1334,7 @@ AddToggle(Main5u6, {
 })
 
 local _Zxa, _Zxb, _Zxc = nil, setmetatable({}, { __mode = "k" }), false
-local _Zxd, _Zxe, _Zxf, _Zxg, _Zxh, _Zxi = {}, {}, {}, {}, {}, {}
+local _Zxd, _ZXe, _ZXf, _Zxg, _Zxh, _Zxi = {}, {}, {}, {}, {}, {}
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
@@ -1345,133 +1345,115 @@ AddToggle(Main5u6, {
       _Zxc = true
       if not _Zxa then
         _Zxa = game:GetService("RunService").RenderStepped:Connect(function()
-          local _Zxp = game:GetService("Players"):GetPlayers()
-          if #_Zxp <= 1 then return end
-          local _Zxq = {}
-          for _Zxu = 1, #_Zxp do _Zxq[_Zxp[_Zxu]] = true end
-          for _Zxr in pairs(_Zxe) do
-            if not _Zxq[_Zxr] then
-              local _Zxl = _Zxd[_Zxr]
-              if _Zxl then
-                for _Zxv = 1, #_Zxl do
-                  local _Zxw = _Zxl[_Zxv]
+          local _Zxpls = game:GetService("Players"):GetPlayers()
+          if #_Zxpls <= 1 then return end
+          local _Zxpresent = {}
+          for _Zxi1 = 1, #_Zxpls do _Zxpresent[_Zxpls[_Zxi1]] = true end
+          for _Zxp, _ in pairs(_ZXe) do
+            if not _Zxpresent[_Zxp] then
+              local _Zxparts = _Zxd[_Zxp]
+              if _Zxparts then
+                for _Zxv = 1, #_Zxparts do
+                  local _Zxw = _Zxparts[_Zxv]
                   if _Zxw and _Zxw.Parent and _Zxw:IsA("BasePart") then
                     _Zxw.CanCollide = _Zxb[_Zxw]
                   end
                   _Zxb[_Zxw] = nil
                 end
               end
-              _Zxd[_Zxr] = nil; _Zxe[_Zxr] = nil; _Zxf[_Zxr] = nil; _Zxg[_Zxr] = nil; _Zxh[_Zxr] = nil; _Zxi[_Zxr] = nil
+              _Zxd[_Zxp] = nil; _ZXe[_Zxp] = nil; _ZXf[_Zxp] = nil; _Zxg[_Zxp] = nil; _Zxjh = nil; _Zxi[_Zxp] = nil
             end
           end
-          for _Zxu = 1, #_Zxp do
-            local _Zxp1 = _Zxp[_Zxu]
-            if _Zxp1 ~= game:GetService("Players").LocalPlayer then
-              local _Zxm = _Zxp1.Character
-              if not _Zxm or _Zxm.Parent ~= workspace then
-                if _Zxe[_Zxp1] then
-                  local _Zxl = _Zxd[_Zxp1]
-                  if _Zxl then
-                    for _Zxv = 1, #_Zxl do
-                      local _Zxw = _Zxl[_Zxv]
+          for _Zxi2 = 1, #_Zxpls do
+            local _Zxp = _Zxpls[_Zxi2]
+            if _Zxp ~= game:GetService("Players").LocalPlayer then
+              local _Zxch = _Zxp.Character
+              if not _Zxch or _Zxch.Parent ~= workspace then
+                if _ZXe[_Zxp] then
+                  local _Zxparts = _Zxd[_Zxp]
+                  if _Zxparts then
+                    for _Zxv = 1, #_Zxparts do
+                      local _Zxw = _Zxparts[_Zxv]
                       if _Zxw and _Zxw.Parent and _Zxw:IsA("BasePart") then
                         _Zxw.CanCollide = _Zxb[_Zxw]
                       end
                       _Zxb[_Zxw] = nil
                     end
                   end
-                  _Zxd[_Zxp1] = nil; _Zxe[_Zxp1] = nil; _Zxf[_Zxp1] = nil; _Zxg[_Zxp1] = nil; _Zxh[_Zxp1] = nil; _Zxi[_Zxp1] = nil
+                  _Zxd[_Zxp] = nil; _ZXe[_Zxp] = nil; _ZXf[_Zxp] = nil; _Zxg[_Zxp] = nil; _Zxjh = nil; _Zxi[_Zxp] = nil
                 end
               else
-                local _Zxn = _Zxm:FindFirstChildWhichIsA("Humanoid")
-                if not _Zxn then
-                  if _Zxe[_Zxp1] then
-                    local _Zxl = _Zxd[_Zxp1]
-                    if _Zxl then
-                      for _Zxv = 1, #_Zxl do
-                        local _Zxw = _Zxl[_Zxv]
+                local _Zxhum = _Zxch:FindFirstChildWhichIsA("Humanoid")
+                if not _Zxhum then
+                  if _ZXe[_Zxp] then
+                    local _Zxparts = _Zxd[_Zxp]
+                    if _Zxparts then
+                      for _Zxv = 1, #_Zxparts do
+                        local _Zxw = _Zxparts[_Zxv]
                         if _Zxw and _Zxw.Parent and _Zxw:IsA("BasePart") then
                           _Zxw.CanCollide = _Zxb[_Zxw]
                         end
                         _Zxb[_Zxw] = nil
                       end
                     end
-                    _Zxd[_Zxp1] = nil; _Zxe[_Zxp1] = nil; _Zxf[_Zxp1] = nil; _Zxg[_Zxp1] = nil; _Zxh[_Zxp1] = nil; _Zxi[_Zxp1] = nil
+                    _Zxd[_Zxp] = nil; _ZXe[_Zxp] = nil; _ZXf[_Zxp] = nil; _Zxg[_Zxp] = nil; _Zxjh = nil; _Zxi[_Zxp] = nil
                   end
                 else
-                  local _Zxo = _Zxg[_Zxp1]
-                  local _Zxj = _Zxn.Health
-                  if _Zxo and _Zxo <= 0 and _Zxj > 0 then
-                    local _Zxl = _Zxd[_Zxp1]
-                    if _Zxl then
-                      for _Zxv = 1, #_Zxl do
-                        local _Zxw = _Zxl[_Zxv]
+                  local _Zxprev = _Zxg[_Zxp]
+                  local _Zxcur = _Zxhum.Health
+                  if _Zxprev and _Zxprev <= 0 and _Zxcur > 0 then
+                    local _Zxparts = _Zxd[_Zxp]
+                    if _Zxparts then
+                      for _Zxv = 1, #_Zxparts do
+                        local _Zxw = _Zxparts[_Zxv]
                         if _Zxw and _Zxw.Parent and _Zxw:IsA("BasePart") then
                           _Zxw.CanCollide = _Zxb[_Zxw]
                         end
                         _Zxb[_Zxw] = nil
                       end
                     end
-                    _Zxd[_Zxp1] = nil; _Zxe[_Zxp1] = nil; _Zxf[_Zxp1] = nil; _Zxg[_Zxp1] = nil; _Zxh[_Zxp1] = nil; _Zxi[_Zxp1] = nil
+                    _Zxd[_Zxp] = nil; _ZXe[_Zxp] = nil; _ZXf[_Zxp] = nil; _Zxg[_Zxp] = nil; _Zxjh = nil; _Zxi[_Zxp] = nil
                   end
-                  _Zxg[_Zxp1] = _Zxj
-                  local _Zxr = false
-                  if _Zxe[_Zxp1] ~= _Zxm or _Zxf[_Zxp1] ~= _Zxn or _Zxd[_Zxp1] == nil then _Zxr = true end
-                  if not _Zxr then
-                    local _Zxl = _Zxd[_Zxp1]
-                    local _Zxs1 = 1
-                    local _Zxt = false
-                    for _Zxv = 1, #_Zxl do
-                      local _Zxw = _Zxl[_Zxv]
-                      if _Zxw and _Zxw.Parent and _Zxw:IsA("BasePart") then
-                        if _Zxb[_Zxw] == true and _Zxw.CanCollide == true then
-                          _Zxw.CanCollide = false
-                        end
-                        _Zxl[_Zxs1] = _Zxw
-                        _Zxs1 = _Zxs1 + 1
-                      else
-                        _Zxt = true
-                        _Zxb[_Zxw] = nil
-                      end
-                    end
-                    for _Zxv = _Zxs1, #_Zxl do _Zxl[_Zxv] = nil end
-                    if _Zxt then _Zxh[_Zxp1] = 0; _Zxr = true end
-                  end
-                  if _Zxr then
-                    _Zxe[_Zxp1] = _Zxm
-                    _Zxf[_Zxp1] = _Zxn
-                    _Zxd[_Zxp1] = {}
-                    _Zxh[_Zxp1] = 0
-                    _Zxi[_Zxp1] = (_Zxi[_Zxp1] or 0) + 1
-                    local _Zxs2 = _Zxm:GetDescendants()
-                    for _Zxv = 1, #_Zxs2 do
-                      local _Zxw = _Zxs2[_Zxv]
-                      if _Zxw and _Zxw:IsA("BasePart") then
-                        _Zxd[_Zxp1][#_Zxd[_Zxp1] + 1] = _Zxw
-                        if _Zxb[_Zxw] == nil then
-                          _Zxb[_Zxw] = _Zxw.CanCollide
-                          if _Zxb[_Zxw] == true then _Zxw.CanCollide = false end
+                  _Zxg[_Zxp] = _Zxcur
+                  local _Zxneed = (_ZXe[_Zxp] ~= _Zxch) or (_ZXf[_Zxp] ~= _Zxhum) or (_Zxd[_Zxp] == nil)
+                  if _Zxneed then
+                    _ZXe[_Zxp] = _Zxch
+                    _ZXf[_Zxp] = _Zxhum
+                    local _Zxnew = {}
+                    local _Zxdesc = _Zxch:GetDescendants()
+                    for _Zxv = 1, #_Zxdesc do
+                      local _Zxpart = _Zxdesc[_Zxv]
+                      if _Zxpart and _Zxpart:IsA("BasePart") then
+                        _Zxnew[#_Zxnew + 1] = _Zxpart
+                        if _Zxb[_Zxpart] == nil then
+                          _Zxb[_Zxpart] = _Zxpart.CanCollide
+                          if _Zxb[_Zxpart] == true then _Zxpart.CanCollide = false end
+                        else
+                          if _Zxb[_Zxpart] == true and _Zxpart.CanCollide == true then
+                            _Zxpart.CanCollide = false
+                          end
                         end
                       end
                     end
+                    _Zxd[_Zxp] = _Zxnew
                   else
-                    _Zxh[_Zxp1] = (_Zxh[_Zxp1] or 0) + 1
-                    if (_Zxi[_Zxp1] or 0) > 0 and _Zxh[_Zxp1] >= 4 then _Zxi[_Zxp1] = 0 end
-                  end
-                  if (_Zxi[_Zxp1] or 0) > 0 then
-                    local _Zxs2 = _Zxm:GetDescendants()
-                    local _Zxnew = false
-                    for _Zxv = 1, #_Zxs2 do
-                      local _Zxw = _Zxs2[_Zxv]
-                      if _Zxw and _Zxw:IsA("BasePart") and _Zxb[_Zxw] == nil then
-                        _Zxd[_Zxp1][#_Zxd[_Zxp1] + 1] = _Zxw
-                        _Zxb[_Zxw] = _Zxw.CanCollide
-                        if _Zxb[_Zxw] == true then _Zxw.CanCollide = false end
-                        _Zxnew = true
+                    local _Zxparts = _Zxd[_Zxp]
+                    if _Zxparts then
+                      local _Zxni = 1
+                      for _Zxv = 1, #_Zxparts do
+                        local _Zxpart = _Zxparts[_Zxv]
+                        if _Zxpart and _Zxpart.Parent and _Zxpart:IsA("BasePart") then
+                          if _Zxb[_Zxpart] == true and _Zxpart.CanCollide == true then
+                            _Zxpart.CanCollide = false
+                          end
+                          _Zxparts[_Zxni] = _Zxpart
+                          _Zxni = _Zxni + 1
+                        else
+                          _Zxb[_Zxpart] = nil
+                        end
                       end
+                      for _Zxv = _Zxni, #_Zxparts do _Zxparts[_Zxv] = nil end
                     end
-                    if _Zxnew then _Zxh[_Zxp1] = 0 else _Zxh[_Zxp1] = (_Zxh[_Zxp1] or 0) + 1 end
-                    if _Zxh[_Zxp1] >= 3 then _Zxi[_Zxp1] = 0 end
                   end
                 end
               end
@@ -1481,20 +1463,20 @@ AddToggle(Main5u6, {
       end
     else
       if _Zxa then _Zxa:Disconnect() _Zxa = nil end
-      for _Zxp1, _Zxl in pairs(_Zxd) do
-        if _Zxl then
-          for _Zxv = 1, #_Zxl do
-            local _Zxw = _Zxl[_Zxv]
-            if _Zxw and _Zxw.Parent and _Zxw:IsA("BasePart") then
-              _Zxw.CanCollide = _Zxb[_Zxw]
+      for _Zxp, _Zxparts in pairs(_Zxd) do
+        if _Zxparts then
+          for _Zxv = 1, #_Zxparts do
+            local _Zxpart = _Zxparts[_Zxv]
+            if _Zxpart and _Zxpart.Parent and _Zxpart:IsA("BasePart") then
+              _Zxpart.CanCollide = _Zxb[_Zxpart]
             end
-            _Zxb[_Zxw] = nil
+            _Zxb[_Zxpart] = nil
           end
         end
       end
       for _Zxu in pairs(_Zxd) do _Zxd[_Zxu] = nil end
-      for _Zxu in pairs(_Zxe) do _Zxe[_Zxu] = nil end
-      for _Zxu in pairs(_Zxf) do _Zxf[_Zxu] = nil end
+      for _Zxu in pairs(_ZXe) do _ZXe[_Zxu] = nil end
+      for _Zxu in pairs(_ZXf) do _ZXf[_Zxu] = nil end
       for _Zxu in pairs(_Zxg) do _Zxg[_Zxu] = nil end
       for _Zxu in pairs(_Zxh) do _Zxh[_Zxu] = nil end
       for _Zxu in pairs(_Zxi) do _Zxi[_Zxu] = nil end
