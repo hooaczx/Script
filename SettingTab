@@ -1333,44 +1333,56 @@ AddToggle(Main5u6, {
     end
 })
 
-local _ct_, _st_, _open_lock_ = nil, setmetatable({}, { __mode = "k" }), false
+local a,b,c = nil, setmetatable({}, { __mode = "k" }), false
+local d,e = setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" })
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
   Default = false,
-  Callback = function(state)
-    if state then
-      if _open_lock_ then return end
-      _open_lock_ = true
-      if not _ct_ then
-        _ct_ = game:GetService("RunService").RenderStepped:Connect(function()
+  Callback = function(s)
+    if s then
+      if c then return end
+      c = true
+      if not a then
+        a = game:GetService("RunService").RenderStepped:Connect(function()
           if #game:GetService("Players"):GetPlayers() <= 1 then return end
           local pls = game:GetService("Players"):GetPlayers()
           for i = 1, #pls do
             local pl = pls[i]
             if pl ~= game:GetService("Players").LocalPlayer then
-              local char = pl.Character
-              if char and char.Parent == workspace then
-                local desc = char:GetDescendants()
-                for j = 1, #desc do
-                  local d = desc[j]
-                  if d and d:IsA("BasePart") then
-                    if _st_[d] == nil then
-                      local ok, orig = pcall(function() return d.CanCollide end)
-                      if ok and orig ~= nil then
-                        _st_[d] = orig
-                        if orig == true then
-                          pcall(function() d.CanCollide = false end)
-                        end
-                      end
-                    else
-                      if _st_[d] == true then
-                        local ok2, cur = pcall(function() return d.CanCollide end)
-                        if ok2 and cur == true then
-                          pcall(function() d.CanCollide = false end)
+              local ch = pl.Character
+              if ch and ch.Parent == workspace then
+                if e[pl] ~= ch then
+                  e[pl] = ch
+                  d[pl] = {}
+                  local desc = ch:GetDescendants()
+                  for j = 1, #desc do
+                    local x = desc[j]
+                    if x and x:IsA("BasePart") then
+                      d[pl][#d[pl] + 1] = x
+                      if b[x] == nil then
+                        b[x] = x.CanCollide
+                        if b[x] == true then
+                          x.CanCollide = false
                         end
                       end
                     end
+                  end
+                else
+                  local parts = d[pl]
+                  if parts then
+                    local ni = 1
+                    for k = 1, #parts do
+                      local p = parts[k]
+                      if p and p.Parent and p:IsA("BasePart") then
+                        if b[p] == true and p.CanCollide == true then
+                          p.CanCollide = false
+                        end
+                        parts[ni] = p
+                        ni = ni + 1
+                      end
+                    end
+                    for m = ni, #parts do parts[m] = nil end
                   end
                 end
               end
@@ -1379,18 +1391,19 @@ AddToggle(Main5u6, {
         end)
       end
     else
-      if _ct_ then
-        _ct_:Disconnect()
-        _ct_ = nil
+      if a then
+        a:Disconnect()
+        a = nil
       end
-      for part, orig in pairs(_st_) do
-        if part and part.Parent and part:IsA("BasePart") then
-          pcall(function() part.CanCollide = orig end)
+      for p, orig in pairs(b) do
+        if p and p.Parent and p:IsA("BasePart") then
+          p.CanCollide = orig
         end
-        _st_[part] = nil
+        b[p] = nil
       end
-      for k in pairs(_st_) do _st_[k] = nil end
-      _open_lock_ = false
+      for k in pairs(d) do d[k] = nil end
+      for k in pairs(e) do e[k] = nil end
+      c = false
     end
   end
 })
