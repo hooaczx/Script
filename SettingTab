@@ -1334,7 +1334,7 @@ AddToggle(Main5u6, {
 })
 
 local a,b,c = nil, setmetatable({}, { __mode = "k" }), false
-local d,e = setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" })
+local d,e,f = setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" })
 
 AddToggle(Main5u6, {
   Name = "Anti Fling",
@@ -1345,44 +1345,111 @@ AddToggle(Main5u6, {
       c = true
       if not a then
         a = game:GetService("RunService").RenderStepped:Connect(function()
-          if #game:GetService("Players"):GetPlayers() <= 1 then return end
           local pls = game:GetService("Players"):GetPlayers()
+          if #pls <= 1 then return end
+          local present = {}
+          for i = 1, #pls do present[pls[i]] = true end
+          for pl, _ in pairs(e) do
+            if not present[pl] then
+              local parts = d[pl]
+              if parts then
+                for i = 1, #parts do
+                  local p = parts[i]
+                  if p and p.Parent and p:IsA("BasePart") then
+                    p.CanCollide = b[p]
+                  end
+                  b[p] = nil
+                end
+              end
+              d[pl] = nil
+              e[pl] = nil
+              f[pl] = nil
+            end
+          end
           for i = 1, #pls do
             local pl = pls[i]
             if pl ~= game:GetService("Players").LocalPlayer then
               local ch = pl.Character
-              if ch and ch.Parent == workspace then
-                if e[pl] ~= ch then
-                  e[pl] = ch
-                  d[pl] = {}
-                  local desc = ch:GetDescendants()
-                  for j = 1, #desc do
-                    local x = desc[j]
-                    if x and x:IsA("BasePart") then
-                      d[pl][#d[pl] + 1] = x
-                      if b[x] == nil then
-                        b[x] = x.CanCollide
-                        if b[x] == true then
-                          x.CanCollide = false
-                        end
-                      end
-                    end
-                  end
-                else
+              if not ch or ch.Parent ~= workspace then
+                if e[pl] then
                   local parts = d[pl]
                   if parts then
-                    local ni = 1
                     for k = 1, #parts do
                       local p = parts[k]
                       if p and p.Parent and p:IsA("BasePart") then
-                        if b[p] == true and p.CanCollide == true then
-                          p.CanCollide = false
+                        p.CanCollide = b[p]
+                      end
+                      b[p] = nil
+                    end
+                  end
+                  d[pl] = nil
+                  e[pl] = nil
+                  f[pl] = nil
+                end
+              else
+                local hum = ch:FindFirstChildWhichIsA("Humanoid")
+                if not hum then
+                  if e[pl] then
+                    local parts = d[pl]
+                    if parts then
+                      for k = 1, #parts do
+                        local p = parts[k]
+                        if p and p.Parent and p:IsA("BasePart") then
+                          p.CanCollide = b[p]
                         end
-                        parts[ni] = p
-                        ni = ni + 1
+                        b[p] = nil
                       end
                     end
-                    for m = ni, #parts do parts[m] = nil end
+                    d[pl] = nil
+                    e[pl] = nil
+                    f[pl] = nil
+                  end
+                else
+                  if e[pl] ~= ch or f[pl] ~= hum then
+                    if e[pl] then
+                      local parts = d[pl]
+                      if parts then
+                        for k = 1, #parts do
+                          local p = parts[k]
+                          if p and p.Parent and p:IsA("BasePart") then
+                            p.CanCollide = b[p]
+                          end
+                          b[p] = nil
+                        end
+                      end
+                    end
+                    e[pl] = ch
+                    f[pl] = hum
+                    d[pl] = {}
+                    local desc = ch:GetDescendants()
+                    for j = 1, #desc do
+                      local x = desc[j]
+                      if x and x:IsA("BasePart") then
+                        d[pl][#d[pl] + 1] = x
+                        if b[x] == nil then
+                          b[x] = x.CanCollide
+                          if b[x] == true then
+                            x.CanCollide = false
+                          end
+                        end
+                      end
+                    end
+                  else
+                    local parts = d[pl]
+                    if parts then
+                      local ni = 1
+                      for k = 1, #parts do
+                        local p = parts[k]
+                        if p and p.Parent and p:IsA("BasePart") then
+                          if b[p] == true and p.CanCollide == true then
+                            p.CanCollide = false
+                          end
+                          parts[ni] = p
+                          ni = ni + 1
+                        end
+                      end
+                      for m = ni, #parts do parts[m] = nil end
+                    end
                   end
                 end
               end
@@ -1395,14 +1462,21 @@ AddToggle(Main5u6, {
         a:Disconnect()
         a = nil
       end
-      for p, orig in pairs(b) do
-        if p and p.Parent and p:IsA("BasePart") then
-          p.CanCollide = orig
+      for pl, parts in pairs(d) do
+        if parts then
+          for i = 1, #parts do
+            local p = parts[i]
+            if p and p.Parent and p:IsA("BasePart") then
+              p.CanCollide = b[p]
+            end
+            b[p] = nil
+          end
         end
-        b[p] = nil
       end
       for k in pairs(d) do d[k] = nil end
       for k in pairs(e) do e[k] = nil end
+      for k in pairs(f) do f[k] = nil end
+      for k in pairs(b) do b[k] = nil end
       c = false
     end
   end
