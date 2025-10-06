@@ -314,7 +314,7 @@ funcs["C4"] = funcs["C4"] or {
 	tracer = true,
 	highlight = true,
 	color = Color3.fromRGB(0, 255, 0),
-}function CreateDrawing(type, properties)
+} function CreateDrawing(type, properties)
 	local obj = Drawing.new(type)
 	for prop, val in pairs(properties) do
 		obj[prop] = val
@@ -330,8 +330,11 @@ end function CreateHighlight(player)
 		local hlName = player.Name.."Highlight_1hooaczx1"
 		local existing = Storage:FindFirstChild(hlName)
 		if existing then
+			existing.Adornee = char
+			existing.Parent = Storage
 			existing.FillColor = _G.ESPColor or funcs["C4"].color
 			existing.OutlineColor = _G.ESPColor or funcs["C4"].color
+			existing.Enabled = true
 			return existing
 		end
 		return Create("Highlight", Storage, {
@@ -351,6 +354,7 @@ end local prevFlags = {
 	tracer = funcs["C4"].tracer,
 	highlight = funcs["C4"].highlight,
 }
+
 funcs["A1"] = function(enable)
 	if enable then
 		if funcs["D4"] then
@@ -476,8 +480,18 @@ funcs["A1"] = function(enable)
 						local hlName = player.Name.."Highlight_1hooaczx1"
 						local highlight = (funcs["hF"] and funcs["hF"]:FindFirstChild(hlName))
 						if funcs["C4"].highlight then
+							if not funcs["hF"] or not funcs["hF"].Parent then
+								funcs["hF"] = Create("Folder", (gethui and gethui()) or game:GetService("CoreGui"), {Name = "Highlight_Storage_Player"})
+							end
+							highlight = (funcs["hF"] and funcs["hF"]:FindFirstChild(hlName))
 							if not highlight then
-			                    highlight = CreateHighlight(player)
+			                    if player.Character then
+									highlight = CreateHighlight(player)
+								end
+							else
+								if highlight.Adornee ~= player.Character and player.Character then
+									highlight.Adornee = player.Character
+								end
 							end
 							if highlight then
 								highlight.Enabled = onScreen and true or false
@@ -489,23 +503,12 @@ funcs["A1"] = function(enable)
 								highlight:Destroy()
 							end
 						end
-						if not funcs["B1"][player] then
-							funcs["B1"][player] = player.CharacterAdded:Connect(function()
-								if funcs["C4"].highlight then
-									CreateHighlight(player)
-								end
-							end)
-						end
 					else
 						if funcs["G8"][player] then
 							for _, dd in pairs(funcs["G8"][player]) do
 								if dd and dd.Remove then dd:Remove() end
 							end
 		      				funcs["G8"][player] = nil
-						end
-						if funcs["B1"][player] then
-							funcs["B1"][player]:Disconnect()
-							funcs["B1"][player] = nil
 						end
 						local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 						if h then h:Destroy() end
@@ -526,6 +529,7 @@ funcs["A1"] = function(enable)
 					if h then h:Destroy() end
 				end
 			end
+
 			for _, d in pairs(funcs["G8"]) do
 				if d.Name and d.Name.Size ~= 14 then d.Name.Size = 14 end
 			end
