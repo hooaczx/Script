@@ -3141,84 +3141,113 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             local ZX_ctr = ShiftlockCursor.AbsolutePosition + (ShiftlockCursor.AbsoluteSize / 2)
             local ZX_sz = ShiftlockCursor.AbsoluteSize
             local ZX_dir = ZX_cam.CFrame.LookVector
-            local ZX_cy = {}
-            for _, ZX_plr in pairs(ZX_all) do
-                if ZX_plr ~= ZX_lp and ZX_plr.Character then
-                    local ZX_bestDist = math.huge
-                    local ZX_bestPart = nil
-                    for _, ZX_p in pairs(ZX_plr.Character:GetDescendants()) do
-                        if ZX_p:IsA("BasePart") and ZX_p.Transparency < 1 then
-                            local ZX_s, ZX_on = ZX_cam:WorldToScreenPoint(ZX_p.Position)
-                            if ZX_on then
-                                local ZX_inX = ZX_s.X >= ZX_ctr.X - ZX_sz.X/2 and ZX_s.X <= ZX_ctr.X + ZX_sz.X/2
-                                local ZX_inY = ZX_s.Y >= ZX_ctr.Y - ZX_sz.Y/2 and ZX_s.Y <= ZX_ctr.Y + ZX_sz.Y/2
-                                if ZX_inX and ZX_inY then
-                                    local ZX_d2 = (Vector2.new(ZX_s.X, ZX_s.Y) - ZX_ctr).Magnitude
-                                    local ZX_f = (ZX_p.Position - ZX_cp):Dot(ZX_dir)
-                                    if ZX_f > 0 and ZX_d2 < ZX_bestDist then
-                                        ZX_bestDist = ZX_d2
-                                        ZX_bestPart = ZX_p
+            local ZX_cd = {}
+            for i = 1, #ZX_all do
+                local pl = ZX_all[i]
+                if pl ~= ZX_lp then
+                    local ch = pl.Character
+                    if ch and ch.Parent == workspace then
+                        if not ZX_r[pl] or ZX_r[pl].char ~= ch then
+                            local t = {}
+                            local m = {}
+                            local desc = ch:GetDescendants()
+                            for d = 1, #desc do
+                                local p = desc[d]
+                                if p and p:IsA("BasePart") and p.Transparency < 1 then
+                                    t[#t + 1] = p
+                                    m[p] = true
+                                end
+                            end
+                            ZX_r[pl] = { char = ch, parts = t, pt = m, n = pl.Name, d = pl.DisplayName, u = pl.UserId }
+                        else
+                            local zx = ZX_r[pl]
+                            if zx and zx.parts then
+                                local tt = zx.parts
+                                local ni = 1
+                                for k = 1, #tt do
+                                    local p = tt[k]
+                                    if p and p.Parent and p:IsA("BasePart") and p.Transparency < 1 then
+                                        tt[ni] = p
+                                        ni = ni + 1
+                                    else
+                                        if zx.pt then zx.pt[p] = nil end
+                                    end
+                                end
+                                for k = ni, #tt do tt[k] = nil end
+                            end
+                        end
+                        local zx = ZX_r[pl]
+                        if zx and zx.parts then
+                            local ZX_b = math.huge
+                            local ZX_bp = nil
+                            for j = 1, #zx.parts do
+                                local p = zx.parts[j]
+                                if p and p.Parent and p:IsA("BasePart") and p.Transparency < 1 then
+                                    local spos, on = ZX_cam:WorldToScreenPoint(p.Position)
+                                    if on then
+                                        local inX = spos.X >= ZX_ctr.X - ZX_sz.X / 2 and spos.X <= ZX_ctr.X + ZX_sz.X / 2
+                                        local inY = spos.Y >= ZX_ctr.Y - ZX_sz.Y / 2 and spos.Y <= ZX_ctr.Y + ZX_sz.Y / 2
+                                        if inX and inY then
+                                            local d2 = (Vector2.new(spos.X, spos.Y) - ZX_ctr).Magnitude
+                                            local f = (p.Position - ZX_cp):Dot(ZX_dir)
+                                            if f > 0 and d2 < ZX_b then
+                                                ZX_b = d2
+                                                ZX_bp = p
+                                            end
+                                        end
                                     end
                                 end
                             end
+                            if ZX_bp then ZX_cd[#ZX_cd + 1] = { plr = pl, part = ZX_bp, d2 = ZX_b } end
                         end
-                    end
-                    if ZX_bestPart then
-                        table.insert(ZX_cy, {plr = ZX_plr, part = ZX_bestPart, d2 = ZX_bestDist})
+                    else
+                        ZX_r[pl] = nil
                     end
                 end
             end
-            table.sort(ZX_cy, function(a, b) return a.d2 < b.d2 end)
-            local ZX_near = ZX_cy[1] and ZX_cy[1].plr or nil
-            if ZX_near then
-                if not game.Players:FindFirstChild(ZX_near.Name) or not ZX_near.Character then
-                    ZX_near = nil
+            if #ZX_cd > 0 then
+                table.sort(ZX_cd, function(a, b) return a.d2 < b.d2 end)
+                local ZX_near = ZX_cd[1].plr
+                if ZX_near then
+                    if not game.Players:FindFirstChild(ZX_near.Name) or not ZX_near.Character then ZX_near = nil end
                 end
-            end
-            if ZX_near then
-                local ZX_last = ZX_r[ZX_near]
-                local ZX_namechg = not ZX_last or ZX_last.n ~= ZX_near.Name or ZX_last.d ~= ZX_near.DisplayName
-                local ZX_partsChanged = false
-                if ZX_last then
-                    for _, ZX_p in pairs(ZX_near.Character:GetDescendants()) do
-                        if ZX_p:IsA("BasePart") and ZX_p.Transparency < 1 and not ZX_last.pt[ZX_p] then
-                            ZX_partsChanged = true
-                            break
+                if ZX_near then
+                    local ZX_last = ZX_r[ZX_near]
+                    local ZX_namechg = not ZX_last or ZX_last.n ~= ZX_near.Name or ZX_last.d ~= ZX_near.DisplayName
+                    local ZX_partsChanged = false
+                    if ZX_last and ZX_last.char then
+                        for _, p in pairs(ZX_near.Character:GetDescendants()) do
+                            if p:IsA("BasePart") and p.Transparency < 1 and not (ZX_last.pt and ZX_last.pt[p]) then
+                                ZX_partsChanged = true
+                                break
+                            end
                         end
                     end
-                end
-                if not ZX_last or ZX_namechg or ZX_partsChanged or not CH[ZX_near] then
-                    DisplayNameplayers.Text = ZX_near.DisplayName
-                    Nameplayers.Text = "@" .. ZX_near.Name
-                    useridplayers.Text = "id:" .. ZX_near.UserId
-                    imageplayers.Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. ZX_near.UserId
-                    if CH[ZX_near] then CH[ZX_near]:Destroy() end
-                    if frameinfopy then
-                        local ZX_hi = Create("Highlight", ZX_near.Character, {
-                            Name = "ZX_PHl_hooaczx",
-                            Adornee = ZX_near.Character,
-                            FillTransparency = 1,
-                            OutlineTransparency = 0,
-                            DepthMode = Enum.HighlightDepthMode.AlwaysOnTop,
-                            OutlineColor = Color3.fromRGB(0, 0, 255)
-                        })
-                        CH[ZX_near] = ZX_hi
-                    end
-                    local ZX_pt = {}
-                    for _, ZX_p in pairs(ZX_near.Character:GetDescendants()) do
-                        if ZX_p:IsA("BasePart") and ZX_p.Transparency < 1 then
-                            ZX_pt[ZX_p] = true
+                    if not ZX_last or ZX_namechg or ZX_partsChanged or not CH[ZX_near] then
+                        DisplayNameplayers.Text = ZX_near.DisplayName
+                        Nameplayers.Text = "@" .. ZX_near.Name
+                        useridplayers.Text = "id:" .. ZX_near.UserId
+                        imageplayers.Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId=" .. ZX_near.UserId
+                        if CH[ZX_near] then CH[ZX_near]:Destroy() end
+                        if frameinfopy then
+                            local ZX_hi = Create("Highlight", ZX_near.Character, { Name = "ZX_PHl_hooaczx", Adornee = ZX_near.Character, FillTransparency = 1, OutlineTransparency = 0, DepthMode = Enum.HighlightDepthMode.AlwaysOnTop, OutlineColor = Color3.fromRGB(0, 0, 255) })
+                            CH[ZX_near] = ZX_hi
                         end
+                        local ZX_pt = {}
+                        for _, p in pairs(ZX_near.Character:GetDescendants()) do
+                            if p:IsA("BasePart") and p.Transparency < 1 then ZX_pt[p] = true end
+                        end
+                        ZX_r[ZX_near] = ZX_r[ZX_near] or {}
+                        ZX_r[ZX_near].pt = ZX_pt
+                        ZX_r[ZX_near].n = ZX_near.Name
+                        ZX_r[ZX_near].d = ZX_near.DisplayName
+                        ZX_r[ZX_near].u = ZX_near.UserId
                     end
-                    ZX_r[ZX_near] = {n = ZX_near.Name, d = ZX_near.DisplayName, u = ZX_near.UserId, pt = ZX_pt}
+                    ZX_highlighted = ZX_near
                 end
-                ZX_highlighted = ZX_near
             else
                 if ZX_highlighted then
-                    if CH[ZX_highlighted] then
-                        CH[ZX_highlighted]:Destroy()
-                        CH[ZX_highlighted] = nil
-                    end
+                    if CH[ZX_highlighted] then CH[ZX_highlighted]:Destroy() CH[ZX_highlighted] = nil end
                     ZX_highlighted = nil
                 end
                 DisplayNameplayers.Text = "nil"
@@ -3240,16 +3269,12 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         ZX_r = {}
         ShiftLockButton.Image = States.Off
         ShiftlockCursor.Visible = false
-        if ShiftLockmaingui then
-            ShiftLockmaingui:Disconnect()
-            ShiftLockmaingui = nil
-        end
+        if ShiftLockmaingui then ShiftLockmaingui:Disconnect() ShiftLockmaingui = nil end
         local ZX_hf = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
         CreateTween(ZX_hf.Humanoid, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
         Tweening = false
     end
 end)
-
 
 local uiStates = {
     framek = {frame = framek, state = false},
