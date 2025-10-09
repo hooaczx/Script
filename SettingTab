@@ -314,6 +314,8 @@ funcs["C4"] = funcs["C4"] or {
 	tracer = true,
 	highlight = true,
 	color = Color3.fromRGB(0, 255, 0),
+	team = false,
+	teamHighlight = false,
 } function CreateDrawing(type, properties)
 	local obj = Drawing.new(type)
 	for prop, val in pairs(properties) do
@@ -368,7 +370,7 @@ funcs["A1"] = function(enable)
 		prevFlags.box = funcs["C4"].box
 		prevFlags.tracer = funcs["C4"].tracer
 		prevFlags.highlight = funcs["C4"].highlight
-		funcs["D4"] = RunService.RenderStepped:Connect(function()
+		funcs["D4"] = game:GetService("RunService").RenderStepped:Connect(function()
 			local camera = workspace.CurrentCamera
 			local vs = camera.ViewportSize
 			local baseColor = _G.ESPColor or funcs["C4"].color
@@ -425,6 +427,17 @@ funcs["A1"] = function(enable)
 						local onScreen = visible and pos.X >= 0 and pos.X <= vs.X and pos.Y >= 0 and pos.Y <= vs.Y
 						local ish = (game.PlaceId == 205224386) and player.Character:FindFirstChild("ItScript", true)
 						local Color = ish and Color3.fromRGB(255, 0, 0) or baseColor
+						if funcs["C4"].teamHighlight and funcs["C4"].team and not ish then
+							local tc = nil
+							if player.Team and player.Team.TeamColor then
+								tc = player.Team.TeamColor.Color
+							elseif player.TeamColor then
+								tc = player.TeamColor.Color
+							end
+							if tc then
+								Color = tc
+							end
+						end
 						funcs["G8"][player] = funcs["G8"][player] or {}
 						local d = funcs["G8"][player]
 						if funcs["C4"].box then
@@ -458,7 +471,7 @@ funcs["A1"] = function(enable)
 						if d.Box then
 							local h = math.abs(camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 3, 0)).Y - camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 2.5, 0)).Y)
 							local w = h / 2
-						    d.Box.Size = Vector2.new(w, h)
+							d.Box.Size = Vector2.new(w, h)
 							d.Box.Position = Vector2.new(pos.X - w / 2, pos.Y - h / 2)
 							d.Box.Color = Color
 							d.Box.Visible = funcs["C4"].box and onScreen
@@ -485,7 +498,7 @@ funcs["A1"] = function(enable)
 							end
 							highlight = (funcs["hF"] and funcs["hF"]:FindFirstChild(hlName))
 							if not highlight then
-			                    if player.Character then
+								if player.Character then
 									highlight = CreateHighlight(player)
 								end
 							else
@@ -508,7 +521,7 @@ funcs["A1"] = function(enable)
 							for _, dd in pairs(funcs["G8"][player]) do
 								if dd and dd.Remove then dd:Remove() end
 							end
-		      				funcs["G8"][player] = nil
+							funcs["G8"][player] = nil
 						end
 						local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."Highlight_1hooaczx1")
 						if h then h:Destroy() end
@@ -529,7 +542,6 @@ funcs["A1"] = function(enable)
 					if h then h:Destroy() end
 				end
 			end
-
 			for _, d in pairs(funcs["G8"]) do
 				if d.Name and d.Name.Size ~= 14 then d.Name.Size = 14 end
 			end
@@ -565,12 +577,12 @@ end
 AddToggle(Main5u6, {
 	Name = "Box_ESP",
 	Default = false,
-	Callback = function(bool)
-		funcs["C4"].box = bool
+	Callback = function(b)
+		funcs["C4"].box = b
 		if _G.ESP then
 			for _, esp in pairs(funcs["G8"]) do
-				esp.Box.Visible = bool
-				esp.Name.Visible = bool
+				if esp.Box then esp.Box.Visible = b end
+				if esp.Name then esp.Name.Visible = b end
 			end
 		end
 	end
@@ -579,11 +591,11 @@ AddToggle(Main5u6, {
 AddToggle(Main5u6, {
 	Name = "Tracer_ESP",
 	Default = false,
-	Callback = function(bool)
-		funcs["C4"].tracer = bool
+	Callback = function(b)
+		funcs["C4"].tracer = b
 		if _G.ESP then
 			for _, esp in pairs(funcs["G8"]) do
-				esp.Tracer.Visible = bool
+				if esp.Tracer then esp.Tracer.Visible = b end
 			end
 		end
 	end
@@ -592,11 +604,67 @@ AddToggle(Main5u6, {
 AddToggle(Main5u6, {
 	Name = "Highlight_ESP",
 	Default = true,
-	Callback = function(bool)
-		funcs["C4"].highlight = bool
+	Callback = function(b)
+		funcs["C4"].highlight = b
 		if _G.ESP and funcs["hF"] then
 			for _, h in pairs(funcs["hF"]:GetChildren()) do
-				h.Enabled = bool
+				h.Enabled = b
+			end
+		end
+	end
+})
+
+AddToggle(Main5u6, {
+	Name = "Team_Highlight_ESP",
+	Default = false,
+	Callback = function(q)
+		local t = game:GetService("Teams"):GetTeams()
+		if #t <= 1 then
+			game:GetService("StarterGui"):SetCore("SendNotification", {
+				Title = "ESP",
+				Text = "This game has no teams or only a single team — the team color split mode cannot be used",
+				Duration = 4
+			})
+			funcs["C4"].teamHighlight = false
+			return
+		end
+		funcs["C4"].teamHighlight = q
+		if _G.ESP then
+			if funcs["hF"] then
+				for _, h in pairs(funcs["hF"]:GetChildren()) do
+					local pn = h.Name:match("^(.-)Highlight")
+					local ply = game:GetService("Players"):FindFirstChild(pn)
+					if ply then
+						local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
+						local nc = _G.ESPColor or funcs["C4"].color
+						if funcs["C4"].teamHighlight and funcs["C4"].team and not ish then
+							if ply.Team and ply.Team.TeamColor then
+								nc = ply.Team.TeamColor.Color
+							elseif ply.TeamColor then
+								nc = ply.TeamColor.Color
+							end
+						end
+						h.FillColor = nc
+						h.OutlineColor = nc
+					end
+				end
+			end
+			for p, d in pairs(funcs["G8"]) do
+				local ply = p
+				if typeof(ply) == "Instance" and ply:IsA("Player") then
+					local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
+					local nc = _G.ESPColor or funcs["C4"].color
+					if funcs["C4"].teamHighlight and funcs["C4"].team and not ish then
+						if ply.Team and ply.Team.TeamColor then
+							nc = ply.Team.TeamColor.Color
+						elseif ply.TeamColor then
+							nc = ply.TeamColor.Color
+						end
+					end
+					if d.Box then d.Box.Color = nc end
+					if d.Name then d.Name.Color = nc end
+					if d.Tracer then d.Tracer.Color = nc end
+				end
 			end
 		end
 	end
@@ -605,10 +673,66 @@ AddToggle(Main5u6, {
 AddToggle(Main5u6, {
 	Name = "ESP Player",
 	Default = false,
-	Callback = function(bool)
-		_G.ESP = bool
+	Callback = function(b)
+		_G.ESP = b
 		if type(funcs["A1"]) == "function" then
-			funcs["A1"](bool)
+			funcs["A1"](b)
+		end
+	end
+})
+
+AddToggle(Main5u6, {
+	Name = "Team_Color_ESP",
+	Default = false,
+	Callback = function(z)
+		local teams = game:GetService("Teams"):GetTeams()
+		if #teams <= 1 then
+			game:GetService("StarterGui"):SetCore("SendNotification", {
+				Title = "ESP",
+				Text = "This game has only one team. Team color mode cannot be applied.",
+				Duration = 4
+			})
+			funcs["C4"].team = false
+			return
+		end
+		funcs["C4"].team = z
+		if _G.ESP then
+			if funcs["hF"] then
+				for _, h in pairs(funcs["hF"]:GetChildren()) do
+					local pn = h.Name:match("^(.-)Highlight")
+					local ply = game:GetService("Players"):FindFirstChild(pn)
+					if ply then
+						local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
+						local nc = _G.ESPColor or funcs["C4"].color
+						if funcs["C4"].team and not ish then
+							if ply.Team and ply.Team.TeamColor then
+								nc = ply.Team.TeamColor.Color
+							elseif ply.TeamColor then
+								nc = ply.TeamColor.Color
+							end
+						end
+						h.FillColor = nc
+						h.OutlineColor = nc
+					end
+				end
+			end
+			for p, d in pairs(funcs["G8"]) do
+				local ply = p
+				if typeof(ply) == "Instance" and ply:IsA("Player") then
+					local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
+					local nc = _G.ESPColor or funcs["C4"].color
+					if funcs["C4"].team and not ish then
+						if ply.Team and ply.Team.TeamColor then
+							nc = ply.Team.TeamColor.Color
+						elseif ply.TeamColor then
+							nc = ply.TeamColor.Color
+						end
+					end
+					if d.Box then d.Box.Color = nc end
+					if d.Name then d.Name.Color = nc end
+					if d.Tracer then d.Tracer.Color = nc end
+				end
+			end
 		end
 	end
 })
@@ -617,6 +741,14 @@ AddColorPicker(Main5u6, {
 	Name = "ESP Player Color",
 	Default = Color3.fromRGB(0, 255, 0),
 	Callback = function(cN)
+		if funcs["C4"].team then
+			game:GetService("StarterGui"):SetCore("SendNotification", {
+				Title = "ESP",
+				Text = "Cannot change color while Team Color mode is enabled.",
+				Duration = 3
+			})
+			return
+		end
 		_G.ESPColor = cN
 		funcs["C4"].color = cN
 		if _G.ESP then
