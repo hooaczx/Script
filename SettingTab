@@ -856,7 +856,10 @@ AddToggle(Main5u6, {
 function _zx_set(p, v)
 	local _zx_c = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
 	local _zx_h = _zx_c and _zx_c:FindFirstChildOfClass("Humanoid")
-	if _zx_h and _zx_h[p] ~= v then
+	if not _zx_h then return end
+	if p == "WalkSpeed" and not _zx_ws then return end
+	if p == "JumpPower" and not _zx_jp then return end
+	if _zx_h[p] ~= v then
 		_zx_h[p] = v
 	end
 end
