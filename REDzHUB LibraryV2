@@ -764,6 +764,7 @@ notify({
     local View, oldicon = nil, nil
     local playerFrames = {}
     local displayedFriends = {}
+    local _z9, _p, _q, _s = _z9 or {}, _p or {}, _q or {}, _s or {}
     local infogamepass = {}
     local frameinfopy = false
     local Avatar = false
@@ -2039,43 +2040,54 @@ local friendnumber = Create("TextLabel", frameinfogui, {
 })
 TextSetColor(friendnumber)
 
+
+
 functions.checkFriends = function()
     if friendsCooldown <= 0 then
         friendsCooldown = 5
         local playersFriends = {}
-        local page = players:GetFriendsAsync(localPlayer.UserId)        
+        local existingIds = {}
+        local friendsInTotal = 0
+        local ok, page = pcall(function() return players:GetFriendsAsync(localPlayer.UserId) end)
+        if not ok or not page then return end
+        local t = 1
         repeat
             local info = page:GetCurrentPage()
+            local lst = {}
             for _, friendInfo in pairs(info) do
                 table.insert(playersFriends, friendInfo)
-            end
-            if not page.IsFinished then
-                page:AdvanceToNextPageAsync()
-            end
-        until page.IsFinished
-        local friendsInTotal = #playersFriends
-        functions.updateFriendsGUI = function(friends)
-            local existingIds = {}
-            for _, friend in ipairs(friends) do
-                existingIds[friend.Id] = true
-                if not displayedFriends[friend.Id] then
+                friendsInTotal = friendsInTotal + 1
+                local id = tostring(friendInfo.Id)
+                existingIds[id] = true
+                lst[#lst+1] = id
+                _q[id] = true
+                local th = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friendInfo.Id
+                local cached = _p[id]
+                local needCreate = not displayedFriends[id]
+                local changed = (not cached) or (cached.DisplayName ~= friendInfo.DisplayName) or (cached.Username ~= friendInfo.Username) or (cached.Thumb ~= th)
+                if changed then
+                    _p[id] = { DisplayName = friendInfo.DisplayName, Username = friendInfo.Username, Thumb = th }
+                end
+                if needCreate then
                     local frame = Create("Frame", friendsFrame1, {
                         Size = UDim2.new(0.95, 0, 0.18, 0),
                         BackgroundTransparency = 1,
-                        Name = tostring(friend.Id)
+                        Name = id
                     })
                     Corner(frame)
                     Stroke(frame)
                     Create("ImageLabel", frame, {
+                        Name = "Avatar",
                         Size = UDim2.new(0.078, 0, 0.95, 0),
                         Position = UDim2.new(0.005, 0, 0.015, 0),
                         BackgroundTransparency = 1,
-                        Image = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friend.Id
+                        Image = th
                     })
                     local friendDisplayName = Create("TextLabel", frame, {
+                        Name = "DisplayName",
                         Size = UDim2.new(0.81, 0, 0.5, 0),
                         Position = UDim2.new(0.089, 0, 0),
-                        Text = friend.DisplayName,
+                        Text = friendInfo.DisplayName,
                         BackgroundTransparency = 1,
                         TextColor3 = Configs_HUB.Cor_Text,
                         Font = Configs_HUB.Text_Font,
@@ -2083,33 +2095,48 @@ functions.checkFriends = function()
                         TextScaled = true
                     })
                     local friendUsername = Create("TextLabel", frame, {
+                        Name = "Username",
                         Size = UDim2.new(0.81, 0, 0.5, 0),
                         Position = UDim2.new(0.089, 0, 0.5, 0),
-                        Text = "@" .. friend.Username,
+                        Text = "@" .. friendInfo.Username,
                         BackgroundTransparency = 1,
                         TextColor3 = Color3.fromRGB(114, 117, 130),
                         Font = Configs_HUB.Text_Font,
                         TextXAlignment = "Left",
                         TextScaled = true
                     })
-                    displayedFriends[friend.Id] = frame
+                    displayedFriends[id] = frame
+                else
+                    if changed and displayedFriends[id] then
+                        local frm = displayedFriends[id]
+                        local d = frm:FindFirstChild("DisplayName")
+                        local u = frm:FindFirstChild("Username")
+                        if d and d.Text ~= friendInfo.DisplayName then d.Text = friendInfo.DisplayName end
+                        if u and u.Text ~= ("@" .. friendInfo.Username) then u.Text = "@" .. friendInfo.Username end
+                        local img = frm:FindFirstChild("Avatar") or frm:FindFirstChildWhichIsA("ImageLabel")
+                        if img and img.Image ~= th then img.Image = th end
+                    end
                 end
             end
-            for friendId, frame in pairs(displayedFriends) do
-                if not existingIds[tonumber(friendId)] then
-                    frame:Destroy()
-                    displayedFriends[friendId] = nil
-                end
+            if not _s[t] then _s[t] = lst end
+            t = t + 1
+            if not page.IsFinished then page:AdvanceToNextPageAsync() end
+        until page.IsFinished
+        for friendId, frame in pairs(displayedFriends) do
+            if not existingIds[tostring(friendId)] then
+                if frame and frame.Destroy then frame:Destroy() end
+                displayedFriends[friendId] = nil
+                _p[tostring(friendId)] = nil
+                _q[tostring(friendId)] = nil
             end
         end
-        functions.updateFriendsGUI(playersFriends)
         friendnumber.Text = "Connections: " .. friendsInTotal .. "/1000"
     else
         friendsCooldown = friendsCooldown - 1
     end
 end
 
-coroutine.wrap(functions.checkFriends)
+task.spawn(functions.checkFriends)
 
 local TimePlay = Create("TextLabel", frameinfogui, {
     Size = UDim2.new(0.205, 0, 0.07, 0),
@@ -2469,7 +2496,35 @@ functions.UpdateDescription = function(params)
         return
     end
     if c_8 and c_8.Parent then
-        c_8:Destroy()
+        for _, child in ipairs(c_8:GetChildren()) do
+            if child:IsA("TextLabel") then
+                -- แยก title กับ description โดยดูขนาดแนวตั้ง (ตามรูปแบบเดิม)
+                local yScale = child.Size and child.Size.Y and child.Size.Y.Scale or 0
+                if yScale >= 0.5 then
+                    -- description (ใหญ่)
+                    child.Text = c_3 or ""
+                    child.TextWrapped = c_5
+                    child.TextScaled = c_6
+                    child.TextSize = c_7
+                    if typeof(TextSetColor) == "function" then
+                        pcall(TextSetColor, child)
+                    end
+                else
+                    child.Text = c_2 or ""
+                    if typeof(TextSetColor) == "function" then
+                        pcall(TextSetColor, child)
+                    end
+                end
+            elseif child:IsA("ImageLabel") then
+                child.Image = c_4 or ""
+            end
+        end
+        metaRefs[c_1] = {
+            Text = c_2,
+            Description = c_3,
+            Image = c_4
+        }
+        return c_8
     end
     local c_10 = Create("Frame", descriptionframe, {
         Size = UDim2.new(0.8, 0, 0.4, 0),
@@ -2519,51 +2574,60 @@ functions.UpdateDescription = function(params)
         Description = c_3,
         Image = c_4
     }
+    return c_10
 end
 
 functions.getplayerdescription = function(userId)
     local zx_Desc = ddesug[userId]
-    local desc = ""
+    if zx_Desc and zx_Desc ~= "" then
+        return zx_Desc
+    end
+    local HttpService = game:GetService("HttpService")
     local success, response = pcall(function()
         return game:HttpGet("https://users.roblox.com/v1/users/" .. userId)
     end)
-    if success then
-        local data = HttpService:JSONDecode(response)
-        desc = data.description or ""
-        if desc == "" then
-            if userId == game.Players.LocalPlayer.UserId then
-                desc = "No description set for your account."
-            else
-                desc = "User has no description."
-            end
-        end
-        if zx_Desc == desc then
-            return zx_Desc
-        else
-            ddesug[userId] = desc
-            return desc
-        end
-    else
-        return zx_Desc or "Failed to load description" 
+    if not success or not response then
+        return zx_Desc or "Failed to load description"
     end
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(response)
+    end)
+    local desc = ""
+    if ok and data then
+        desc = data.description or ""
+    end
+    if desc == "" then
+        if userId == game.Players.LocalPlayer.UserId then
+            desc = "No description set for your account."
+        else
+            desc = "User has no description."
+        end
+    end
+    if zx_Desc == desc then
+        return zx_Desc
+    end
+    ddesug[userId] = desc
+    return desc
 end
 
 functions.getGameDesc = function(_id)
     local cachedDesc = _XyZ[_id]
+    if cachedDesc and cachedDesc ~= "" then
+        return cachedDesc
+    end
+    local MarketplaceService = game:GetService("MarketplaceService")
     local success, productInfo = pcall(function()
-        return game:GetService("MarketplaceService"):GetProductInfo(_id)
+        return MarketplaceService:GetProductInfo(_id)
     end)
-    if success and productInfo then
-        local desc = productInfo.Description or "This game has no description"
-        if cachedDesc == desc then
-            return cachedDesc
-        else
-            _XyZ[_id] = desc
-            return desc
-        end
-    else
+    if not success or not productInfo then
         return cachedDesc or "Failed to load game description"
     end
+    local desc = productInfo.Description or "This game has no description"
+    if cachedDesc == desc then
+        return cachedDesc
+    end
+    _XyZ[_id] = desc
+    return desc
 end
 
 functions.startUpdating = function()
@@ -2620,16 +2684,40 @@ end
 function gf(u)
     local f, fl, c1, c2 = {}, {}, "", ""
     repeat
-        local r = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://friends.roblox.com/v1/users/"..u.."/followers?limit=100&cursor="..c1))
-        if not r or not r.data then return "Error_Followers", "Error_Followings" end
-        for _, v in pairs(r.data) do f[#f+1] = v end
-        c1 = r.nextPageCursor or ""
+        local ok, response = pcall(function()
+            return game:HttpGet("https://friends.roblox.com/v1/users/"..u.."/followers?limit=100&cursor="..c1)
+        end)
+        if not ok or not response then
+            return "Error_Followers", "Error_Followings"
+        end
+        local ok2, data = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(response)
+        end)
+        if not ok2 or not data or not data.data then
+            return "Error_Followers", "Error_Followings"
+        end
+        for i = 1, #data.data do
+            f[#f+1] = data.data[i]
+        end
+        c1 = data.nextPageCursor or ""
     until c1 == ""
     repeat
-        local r = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://friends.roblox.com/v1/users/"..u.."/followings?limit=100&cursor="..c2))
-        if not r or not r.data then return "Error_Followers", "Error_Followings" end
-        for _, v in pairs(r.data) do fl[#fl+1] = v end
-        c2 = r.nextPageCursor or ""
+        local ok, response = pcall(function()
+            return game:HttpGet("https://friends.roblox.com/v1/users/"..u.."/followings?limit=100&cursor="..c2)
+        end)
+        if not ok or not response then
+            return "Error_Followers", "Error_Followings"
+        end
+        local ok2, data = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(response)
+        end)
+        if not ok2 or not data or not data.data then
+            return "Error_Followers", "Error_Followings"
+        end
+        for i = 1, #data.data do
+            fl[#fl+1] = data.data[i]
+        end
+        c2 = data.nextPageCursor or ""
     until c2 == ""
     return f, fl
 end
@@ -3744,11 +3832,10 @@ check_1 = RunService.RenderStepped:Connect(function()
             if hum then
                 workspace.CurrentCamera.CameraSubject = hum
             end
-            for _, data in pairs(playerFrames or {}) do
-                if data and data.UI and data.UI.Parent then
-                    data.UI:Destroy()
-                end
+            for _, d in pairs(playerFrames or {}) do
+                if d and d.UI and d.UI.Parent then d.UI:Destroy() end
             end
+            if _z9 then table.clear(_z9) end if _p then table.clear(_p) end if _q then table.clear(_q) end if _s then table.clear(_s) end
             if CH then
                 for _, highlight in pairs(CH or {}) do
                     if highlight and highlight.Destroy then
