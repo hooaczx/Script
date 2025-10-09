@@ -1580,16 +1580,30 @@ functions.UpdatePlayerList = function()
     local _lp = _ps.LocalPlayer
     local _plrs = _ps:GetPlayers()
     frametext.Text = "Players in Server " .. string.format("%d/%d", #_plrs, _ps.MaxPlayers)
-    local _ids = {}    
+    local _idslist = {}
+    for _, _p in ipairs(_plrs) do
+        _idslist[#_idslist + 1] = tostring(_p.UserId)
+    end
+    local h = table.concat(_idslist, ",")
+    local prev = ScrollBarPlayers:GetAttribute("x")
+    if prev and prev == h then
+        return
+    end
+    ScrollBarPlayers:SetAttribute("x", h)
+    local _ids = {}
     for _, _p in ipairs(_plrs) do
         _ids[_p.UserId] = true
         local _isF = false
         if _p ~= _lp then
-            local success, isFriend = pcall(function()
-                return _p:IsFriendsWith(_lp.UserId)
-            end)
-            if success and isFriend then
-                _isF = true
+            if not playerFrames[_p.UserId] or playerFrames[_p.UserId].Friend == nil then
+                local ok, isFriend = pcall(function()
+                    return _p:IsFriendsWith(_lp.UserId)
+                end)
+                if ok and isFriend then
+                    _isF = true
+                end
+            else
+                _isF = playerFrames[_p.UserId].Friend
             end
         end
         if not playerFrames[_p.UserId] then
@@ -1666,7 +1680,8 @@ functions.UpdatePlayerList = function()
             playerFrames[_p.UserId] = {
                 UI = _f,
                 DisplayName = _p.DisplayName,
-                Username = _p.Name
+                Username = _p.Name,
+                Friend = _isF
             }
         else
             if playerFrames[_p.UserId].DisplayName ~= _p.DisplayName then
@@ -1680,7 +1695,7 @@ functions.UpdatePlayerList = function()
                 local _il = playerFrames[_p.UserId].UI:FindFirstChild("Info")
                 if _il then
                     local _info = "@" .. _p.Name
-                    if _isF then
+                    if playerFrames[_p.UserId].Friend then
                         _info = _info .. " • Your Friend"
                     end
                     _il.Text = _info
@@ -1694,7 +1709,7 @@ functions.UpdatePlayerList = function()
             if _data.UI and _data.UI.Parent then
                 _data.UI:Destroy()
             end
-            playerFrames[_id] = nil            
+            playerFrames[_id] = nil
             if View and View.player and View.player.UserId == _id then
                 local _char = _lp.Character
                 if _char then
@@ -2086,8 +2101,6 @@ local friendnumber = Create("TextLabel", frameinfogui, {
     TextScaled = true
 })
 TextSetColor(friendnumber)
-
-
 
 functions.checkFriends = function()
     if friendsCooldown <= 0 then
