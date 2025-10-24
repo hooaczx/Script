@@ -196,7 +196,7 @@ local Menu_Notifi = Create("Frame", ScreenGui, {
 
 functionCreate.MakeNotifi = function(Configs)
   local Title = Configs.Title or "REDz HUB"
-  local text = Configs.Text or "Notificaเธฃเธเธฃเธo"
+  local text = Configs.Text or "Notificaรงรฃo"
   local timewait = Configs.Time or 5
   
   local Frame1 = Create("Frame", Menu_Notifi, {
@@ -367,7 +367,7 @@ function MakeWindow(Configs)
     Size = UDim2.new(0.05, 0, 1, 0),
     Position = UDim2.new(0.95, 0, 0, 0),
     TextColor3 = Configs_HUB.Cor_Text,
-    Text = "ร—",
+    Text = "×",
     TextScaled = true,
     BackgroundTransparency = 1
   })Corner(Close_Button)
@@ -692,10 +692,10 @@ end
 
 local d = {
  greet = {
-  "Hey, ", "Yo, ", "Sup! ", "Whatโ€s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
+  "Hey, ", "Yo, ", "Sup! ", "What’s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
  },
  emo = {
-  "๐", "โจ", "๐”ฅ", "๐", "๐", "๐", "๐’ช", "๐", "๐", "๐", "๐", "๐€", "๐บ", "๐ธ", "โ€๏ธ", "๐"
+  "🎉", "✨", "🔥", "🌟", "🎆", "🌈", "💪", "😊", "😎", "🌙", "🌞", "🍀", "🌺", "🌸", "☀️", "🌛"
  }
 }
 local function r(t) return t[math.random(#t)] end
@@ -709,7 +709,7 @@ function getTitleText()
  local thisNYEnd = os.time{year = y, month = 1, day = 1, hour = 6, min = 1, sec = 0}
  local nextNY = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
  if now >= thisNY and now < thisNYEnd then
-  return string.format("๐ Happy New Year %d! ๐", y)
+  return string.format("🎉 Happy New Year %d! 🎆", y)
  else
   local diff = nextNY - now
   if diff < 0 then diff = 0 end
@@ -717,7 +717,7 @@ function getTitleText()
   local h = math.floor((diff % 86400) / 3600)
   local m = math.floor((diff % 3600) / 60)
   local sec = diff % 60
-  return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!โฐ", greetTxt, d, h, m, sec)
+  return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
  end
 end
 notify({
@@ -772,7 +772,7 @@ notify({
     local waitswitchpage = false
     local image = Configs.Image or ""
     text1_1 = ""
-    text1_2 = "\nFollowers๐””:Loading...\nFollowings๐‘ฅ:Loading..."
+    text1_2 = "\nFollowers🔔:Loading...\nFollowings👥:Loading..."
     functions.RunServerlock = function(lockName, Time, callback)
         if stopupdateall[lockName] then
            stopupdateall[lockName]:Disconnect()
@@ -1627,7 +1627,7 @@ functions.UpdatePlayerList = function()
             })
             local _info = "@" .. _p.Name
             if _isF then
-                _info = _info .. " โ€ข Your Friend"
+                _info = _info .. " • Your Friend"
             end
             local _il = Create("TextLabel", _f, {
                 Size = UDim2.new(0.81, 0, 0.5, 0),
@@ -1696,7 +1696,7 @@ functions.UpdatePlayerList = function()
                 if _il then
                     local _info = "@" .. _p.Name
                     if playerFrames[_p.UserId].Friend then
-                        _info = _info .. " โ€ข Your Friend"
+                        _info = _info .. " • Your Friend"
                     end
                     _il.Text = _info
                 end
@@ -2451,7 +2451,7 @@ info_C.MouseButton1Click:Connect(function()
 			TextTransparency = 0
 		})
 		c_1:Play()
-		info_C.Text = "ร—"
+		info_C.Text = "×"
 	else
 		local c2 = TweenService:Create(info_TC, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			TextTransparency = 1
@@ -2558,10 +2558,10 @@ functions.UpdateDescription = function(params)
     if c_8 and c_8.Parent then
         for _, child in ipairs(c_8:GetChildren()) do
             if child:IsA("TextLabel") then
-                -- เนเธขเธ title เธเธฑเธ description เนเธ”เธขเธ”เธนเธเธเธฒเธ”เนเธเธงเธ•เธฑเนเธ (เธ•เธฒเธกเธฃเธนเธเนเธเธเน€เธ”เธดเธก)
+                -- แยก title กับ description โดยดูขนาดแนวตั้ง (ตามรูปแบบเดิม)
                 local yScale = child.Size and child.Size.Y and child.Size.Y.Scale or 0
                 if yScale >= 0.5 then
-                    -- description (เนเธซเธเน)
+                    -- description (ใหญ่)
                     child.Text = c_3 or ""
                     child.TextWrapped = c_5
                     child.TextScaled = c_6
@@ -2951,7 +2951,7 @@ function functions.RestoreEnvironment()
     hasSaved = false
 end
 
-functions.createSettingSection(scrollingSettingFrame, "Rain๐ง", 
+functions.createSettingSection(scrollingSettingFrame, "Rain🌧", 
     [[This will make the clouds in the sky look like it's raining and there's the sound of rain, but now there's no rain. There's just the sound and changing the sky. For games that have already been entered and you try using this script and the sky doesn't change, it's still the same sky as it was in the game. That means that the game is protected]],
     function(isLightingEnabled)
         if isLightingEnabled then
@@ -3198,7 +3198,7 @@ local useridplayers = Create("TextLabel", frameinfoplayer, {
 local noplayers = Create("TextLabel", frameinfoplayer, {
     Size = UDim2.new(0.77, 0, 1, 0),
     Position = UDim2.new(0.23, 0, 0, 0),
-    Text = "Server No Player๐”",
+    Text = "Server No Player😔",
     TextXAlignment = "Left",
     BackgroundTransparency = 1,
     TextColor3 = Configs_HUB.Cor_Text,
@@ -3245,7 +3245,7 @@ functions.Look = function()
 end
 
 ShiftLockButton.MouseButton1Click:Connect(function()
-    if not functions.canClick("Free ShiftLock๐") or Tweening then return end
+    if not functions.canClick("Free ShiftLock😌") or Tweening then return end
     Tweening = true
     if not ShiftLockmaingui then
         local ZX_r = {}
@@ -3672,7 +3672,7 @@ RunServerlock("Lock1", "no", function()
     end
     CH = {}
     text1_1 = string.format(
-        "DisplayName: %s\nUserId: %s\nAccountโ’๏ธ: %s",
+        "DisplayName: %s\nUserId: %s\nAccount⚒️: %s",
         game.Players.LocalPlayer.DisplayName,
         game.Players.LocalPlayer.UserId,
         functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
@@ -3795,12 +3795,12 @@ RunServerlock("Lock3", 10, function()
       end
       RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
       local fol, folw = gf(game.Players.LocalPlayer.UserId)
-      text1_2 = string.format("\nFollowers๐””:%s\nFollowings๐‘ฅ:%s", formatNumber(#folw), formatNumber(#fol))
+      text1_2 = string.format("\nFollowers🔔:%s\nFollowings👥:%s", formatNumber(#folw), formatNumber(#fol))
       frame9.Text = text1_1..text1_2
       local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
       local creatorInfo = getCreatorGameandGroupinfo(_cvZ)
       frame199.Text = string.format(
-          "Name: %s\nDisplayName: %s\nUserId: %s\nGroup Status: %s\nAccountโ’๏ธ: %s",
+          "Name: %s\nDisplayName: %s\nUserId: %s\nGroup Status: %s\nAccount⚒️: %s",
           creatorInfo.Username,
           creatorInfo.DisplayName,
           tostring(creatorInfo.UserId),
