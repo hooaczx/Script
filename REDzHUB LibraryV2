@@ -739,12 +739,12 @@ notify({
     local minimiz7 = true
     local PlayerList = true
     local minimize9 = false
-    local player = game.Players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
-    local Players = game:GetService("Players") or game:FindFirstChildOfClass("Players")
-    local players = game:GetService("Players") or game:FindFirstChildOfClass("Players")
-    local localPlayer = players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
-    local LocalPlayer = players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
-    local maxPlayers = players.MaxPlayers or game:FindFirstChildOfClass("Players").MaxPlayers
+    local player = game:FindFirstChildOfClass("Players").LocalPlayer
+    local Players = game:FindFirstChildOfClass("Players")
+    local players = game:FindFirstChildOfClass("Players")
+    local localPlayer = game:FindFirstChildOfClass("Players").LocalPlayer
+    local LocalPlayer = game:FindFirstChildOfClass("Players").LocalPlayer
+    local maxPlayers = game:FindFirstChildOfClass("Players").MaxPlayers
     local PlaceId = game.PlaceId
     local friendsCooldown = 0
     local friendsInTotal = 0
@@ -1557,7 +1557,7 @@ local unviewallplayerbutton = Create("ImageButton", framep, {
 })
 
 unviewallplayerbutton.MouseButton1Click:Connect(function()
-    local localChar = game:GetService("Players").LocalPlayer.Character
+    local localChar = game:FindFirstChildOfClass("Players").LocalPlayer.Character
     if localChar then
         local hum = localChar:WaitForChild("Humanoid")
         if hum then
@@ -1576,7 +1576,7 @@ unviewallplayerbutton.MouseButton1Click:Connect(function()
 end)
 
 functions.UpdatePlayerList = function()
-    local _ps = game:GetService("Players")
+    local _ps = game:FindFirstChildOfClass("Players")
     local _lp = _ps.LocalPlayer
     local _plrs = _ps:GetPlayers()
     frametext.Text = "Players in Server " .. string.format("%d/%d", #_plrs, _ps.MaxPlayers)
@@ -3040,7 +3040,7 @@ local connectionhideName = {}
 function functions.toggleHideName(state)
     togglehideName = state
     if state then
-        player = game.Players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
+        player = game:FindFirstChildOfClass("Players").LocalPlayer
         if player.Character then
             for _, gui in ipairs(player.Character:GetDescendants()) do
                 if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
@@ -3073,7 +3073,7 @@ function functions.toggleHideName(state)
             conn:Disconnect()
         end
         connectionhideName = {}
-        player = game.Players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
+        player = game:FindFirstChildOfClass("Players").LocalPlayer
         if player.Character then
             for _, gui in ipairs(player.Character:GetDescendants()) do
                 if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
@@ -3237,7 +3237,7 @@ end
 functions.Look = function()
   local c = workspace.CurrentCamera
   local d = c.CFrame.LookVector
-  local lp = game.Players.LocalPlayer
+  local lp = game:FindFirstChildOfClass("Players").LocalPlayer
   local r = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
   if not r then return c.CFrame.Position + d * 100 end
   local v = Vector3.new(d.X, 0, d.Z).Unit
@@ -3266,7 +3266,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             ZX_look = Vector3.new(ZX_look.X, ZX_pos.Y, ZX_look.Z)
             ZX_rp.CFrame = CFrame.new(ZX_pos, ZX_look)
             CreateTween(ZX_h, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)
-            local ZX_plrs = game:GetService("Players")
+            local ZX_plrs = game:FindFirstChildOfClass("Players")
             local ZX_lp = ZX_plrs.LocalPlayer
             local ZX_all = ZX_plrs:GetPlayers()
             local ZX_cp = ZX_cam.CFrame.Position
@@ -3418,7 +3418,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         ShiftLockButton.Image = States.Off
         ShiftlockCursor.Visible = false
         if ShiftLockmaingui then ShiftLockmaingui:Disconnect() ShiftLockmaingui = nil end
-        local ZX_hf = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+        local ZX_hf = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
         CreateTween(ZX_hf.Humanoid, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
         Tweening = false
     end
@@ -3673,9 +3673,9 @@ RunServerlock("Lock1", "no", function()
     CH = {}
     text1_1 = string.format(
         "DisplayName: %s\nUserId: %s\nAccount⚒️: %s",
-        game.Players.LocalPlayer.DisplayName,
-        game.Players.LocalPlayer.UserId,
-        functions.getAccountCreationDate(game.Players.LocalPlayer.AccountAge)
+        game:FindFirstChildOfClass("Players").LocalPlayer.DisplayName,
+        game:FindFirstChildOfClass("Players").LocalPlayer.UserId,
+        functions.getAccountCreationDate(game:FindFirstChildOfClass("Players").LocalPlayer.AccountAge)
     )frame9.Text = text1_1 .. text1_2
     if Avatar then
         iconAvaterGamecreator.Visible = true
@@ -3794,7 +3794,7 @@ RunServerlock("Lock3", 10, function()
          )
       end
       RobloxVersion.Text = "Roblox Version: "..info["Roblox Version"]
-      local fol, folw = gf(game.Players.LocalPlayer.UserId)
+      local fol, folw = gf(game:FindFirstChildOfClass("Players").LocalPlayer.UserId)
       text1_2 = string.format("\nFollowers🔔:%s\nFollowings👥:%s", formatNumber(#folw), formatNumber(#fol))
       frame9.Text = text1_1..text1_2
       local getCreatorGameandGroupinfo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Group%7CCreatorGame%7Cinfo"))()
@@ -3841,7 +3841,7 @@ check_1 = RunService.RenderStepped:Connect(function()
             ShiftLockmaingui:Disconnect()
         end
         ShiftLockmaingui = nil
-        local char = game.Players.LocalPlayer.Character
+        local char = game:FindFirstChildOfClass("Players").LocalPlayer.Character
         if char then
             local hum = char:FindFirstChildOfClass("Humanoid")
             if hum then
