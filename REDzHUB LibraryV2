@@ -739,12 +739,12 @@ notify({
     local minimiz7 = true
     local PlayerList = true
     local minimize9 = false
-    local player = game.Players.LocalPlayer
-    local Players = game:GetService("Players")
-    local players = game:GetService("Players")
-    local localPlayer = players.LocalPlayer
-    local LocalPlayer = players.LocalPlayer
-    local maxPlayers = players.MaxPlayers
+    local player = game.Players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
+    local Players = game:GetService("Players") or game:FindFirstChildOfClass("Players")
+    local players = game:GetService("Players") or game:FindFirstChildOfClass("Players")
+    local localPlayer = players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
+    local LocalPlayer = players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
+    local maxPlayers = players.MaxPlayers or game:FindFirstChildOfClass("Players").MaxPlayers
     local PlaceId = game.PlaceId
     local friendsCooldown = 0
     local friendsInTotal = 0
@@ -3040,7 +3040,7 @@ local connectionhideName = {}
 function functions.toggleHideName(state)
     togglehideName = state
     if state then
-        player = game.Players.LocalPlayer
+        player = game.Players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
         if player.Character then
             for _, gui in ipairs(player.Character:GetDescendants()) do
                 if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
@@ -3073,7 +3073,7 @@ function functions.toggleHideName(state)
             conn:Disconnect()
         end
         connectionhideName = {}
-        player = game.Players.LocalPlayer
+        player = game.Players.LocalPlayer or game:FindFirstChildOfClass("Players").LocalPlayer
         if player.Character then
             for _, gui in ipairs(player.Character:GetDescendants()) do
                 if gui:IsA("BillboardGui") or gui:IsA("SurfaceGui") then
