@@ -10,16 +10,16 @@ getgenv().TPJpBst = 0
 getgenv().TPWalk = false
 getgenv().Cframewalk = 0
 getgenv().NV_Brightness = 0
-local player = game:GetService("Players").LocalPlayer
+local player = game:FindFirstChildOfClass("Players").LocalPlayer
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = player
-local players = game:GetService('Players')
+local players = game:FindFirstChildOfClass('Players')
 local lplr = players.LocalPlayer
-local ps = game:GetService("Players")
+local ps = game:FindFirstChildOfClass("Players")
 local lp = ps.LocalPlayer
-local mouse = game.Players.LocalPlayer:GetMouse()
+local mouse = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
 local gui, con, isOn, fpsV = nil, nil, false, 0
 local tpc, cfc = nil, nil
 local cfMode, Opt = "None", "Nope"
@@ -27,7 +27,13 @@ local TE = false
 
 Service = setmetatable({}, {
     __index = function(Self, Index)
-        local NewService = game:GetService(Index)
+        local NewService
+        pcall(function()
+            NewService = game:GetService(Index)
+        end)
+        if not NewService and Index == "Players" then
+            NewService = game:FindFirstChildOfClass("Players")
+        end
         if NewService then
             Self[Index] = NewService
         end
@@ -35,7 +41,7 @@ Service = setmetatable({}, {
     end
 })
 
-local localPuppet = Service.Players.LocalPlayer
+local localPuppet = Service.Players and Service.Players.LocalPlayer
 
 function SendDetailedNotification(title, text, duration)
     game.StarterGui:SetCore("SendNotification", {
@@ -419,8 +425,8 @@ funcs["A1"] = function(enable)
 				end
 				prevFlags.highlight = funcs["C4"].highlight
 			end
-			for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
-				if player ~= game:GetService("Players").LocalPlayer then
+			for _, player in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do
+				if player ~= game:FindFirstChildOfClass("Players").LocalPlayer then
 					if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 						local hrp = player.Character.HumanoidRootPart
 						local pos, visible = camera:WorldToViewportPoint(hrp.Position)
@@ -529,7 +535,7 @@ funcs["A1"] = function(enable)
 				end
 			end
 			for player, draw in pairs(funcs["G8"]) do
-				if not game:GetService("Players"):FindFirstChild(player.Name) then
+				if not game:FindFirstChildOfClass("Players"):FindFirstChild(player.Name) then
 					for _, d in pairs(draw) do
 						if d and d.Remove then d:Remove() end
 					end
@@ -633,7 +639,7 @@ AddToggle(Main5u6, {
 			if funcs["hF"] then
 				for _, h in pairs(funcs["hF"]:GetChildren()) do
 					local pn = h.Name:match("^(.-)Highlight")
-					local ply = game:GetService("Players"):FindFirstChild(pn)
+					local ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
 					if ply then
 						local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
 						local nc = _G.ESPColor or funcs["C4"].color
@@ -700,7 +706,7 @@ AddToggle(Main5u6, {
 			if funcs["hF"] then
 				for _, h in pairs(funcs["hF"]:GetChildren()) do
 					local pn = h.Name:match("^(.-)Highlight")
-					local ply = game:GetService("Players"):FindFirstChild(pn)
+					local ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
 					if ply then
 						local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
 						local nc = _G.ESPColor or funcs["C4"].color
@@ -754,8 +760,8 @@ AddColorPicker(Main5u6, {
 		if _G.ESP then
 			if funcs["hF"] then
 				for _, h in pairs(funcs["hF"]:GetChildren()) do
-					if not (funcs["G8"][game:GetService("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))] 
-					and funcs["G8"][game:GetService("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))].Name.Text:match("%((.-)%)"):lower():find("it")) then
+					if not (funcs["G8"][game:FindFirstChildOfClass("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))] 
+					and funcs["G8"][game:FindFirstChildOfClass("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))].Name.Text:match("%((.-)%)"):lower():find("it")) then
 						h.FillColor = cN
 						h.OutlineColor = cN
 					end
@@ -913,8 +919,8 @@ AddToggle(Main5u6, {
   Default = false,
   Callback = function(state)
     getgenv().loopZoom = state
-    local player = game:GetService("Players").LocalPlayer
-    local camera = game:GetService("Workspace").CurrentCamera
+    local player = game:FindFirstChildOfClass("Players").LocalPlayer
+    local camera = workspace.CurrentCamera
     if camera then
       if state then
         if not getgenv().originalFOV then
@@ -948,7 +954,7 @@ AddTextBox(Main5u6, {
   Callback = function(value)
     getgenv().CameraZoom = tonumber(value)
     if getgenv().isZoomActive then
-      game.Players.LocalPlayer.CameraMaxZoomDistance = getgenv().CameraZoom
+      game:FindFirstChildOfClass("Players").LocalPlayer.CameraMaxZoomDistance = getgenv().CameraZoom
     end
   end
 })
@@ -958,7 +964,7 @@ AddToggle(Main5u6, {
   Default = false,
   Callback = function(state)
     getgenv().isZoomActive = state
-    local camera = game:GetService("Workspace").CurrentCamera
+    local camera = workspace.CurrentCamera
     if camera then
       if state then
         if not getgenv().initialMaxZoom then
@@ -986,7 +992,7 @@ AddToggle(Main5u6, {
 })
 
 function _zx_set(p, v)
-	local _zx_c = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+	local _zx_c = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
 	local _zx_h = _zx_c and _zx_c:FindFirstChildOfClass("Humanoid")
 	if not _zx_h then return end
 	if p == "WalkSpeed" and not _zx_ws then return end
@@ -1067,7 +1073,7 @@ AddToggle(Main5u6, {
 		if state then
 			if not tpc then
 				local rs = game:GetService("RunService")
-				local plr = game.Players.LocalPlayer
+				local plr = game:FindFirstChildOfClass("Players").LocalPlayer
 				tpc = rs.Heartbeat:Connect(function()
 					local ch = plr.Character
 					local hum = ch and ch:FindFirstChildOfClass("Humanoid")
@@ -1113,7 +1119,7 @@ AddToggle(Main5u6, {
 	Callback = function(state)
 		if state then
 			if not cfc then
-				local plr = game.Players.LocalPlayer
+				local plr = game:FindFirstChildOfClass("Players").LocalPlayer
 				local rs = game:GetService("RunService")
 				local cam = workspace.CurrentCamera
 				cfc = rs.RenderStepped:Connect(function()
@@ -1162,7 +1168,7 @@ AddSlider(Main5u6, {
 			if _h_ then _h_:Disconnect() _h_ = nil end
 			_H_ = nil
 			_c_ = game:GetService("RunService").Heartbeat:Connect(function()
-				local _ch_ = game.Players.LocalPlayer.Character
+				local _ch_ = game:FindFirstChildOfClass("Players").LocalPlayer.Character
 				if _ch_ then
 					local _hum_ = _ch_:FindFirstChildOfClass("Humanoid")
 					if _hum_ and _hum_ ~= _H_ then
@@ -1196,7 +1202,7 @@ AddSlider(Main5u6, {
 	end
 })
 
-local _P, _ori, _id = game.Players.LocalPlayer, game.Players.LocalPlayer.UserId
+local _P, _ori, _id = game:FindFirstChildOfClass("Players").LocalPlayer, game:FindFirstChildOfClass("Players").LocalPlayer.UserId
 
 AddTextBox(Main5u6, {
 	Name = "Custom Profile in leaderboard",
@@ -1219,7 +1225,7 @@ AddToggle(Main5u6, {
 
 getgenv()._pN = false
 local _w, _oN, _cN
-for _,p in ipairs(game.Players:GetPlayers()) do if p==game.Players.LocalPlayer then _oN=p.Name break end end
+for _,p in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do if p==game:FindFirstChildOfClass("Players").LocalPlayer then _oN=p.Name break end end
 
 local function _m(n,r,s)
 	s = s or getgenv()._pN
@@ -1392,7 +1398,7 @@ AddToggle(Main5u6, {
             _c___ = game:GetService("UserInputService").InputEnded:Connect(function(_i___, _g___)
                 if _g___ or not _p___ or (_i___.Position - _p___).Magnitude > 5 then return end
                 if _i___.UserInputType ~= Enum.UserInputType.Touch and _i___.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
-                local _m___ = game.Players.LocalPlayer:GetMouse()
+                local _m___ = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
                 local _b___ = false
                 if _i___.UserInputType == Enum.UserInputType.MouseButton1 then
                     _b___ = game:GetService("GuiService"):IsMouseOverGui()
@@ -1414,7 +1420,7 @@ AddToggle(Main5u6, {
                 if game:GetService("UserInputService"):GetFocusedTextBox() or _b___ then return end
                 if _m___.Target and _m___.Target.Transparency < 1 then
                     local _p2___ = _m___.Hit.p
-                    local _c2___ = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+                    local _c2___ = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
                     local _h2___ = _c2___:WaitForChild("HumanoidRootPart")
                     _h2___.CFrame = CFrame.new(_p2___)
                 end
@@ -1438,7 +1444,7 @@ AddToggle(Main5u6, {
         if x1 then
           if not x2 then
             x2 = RunService.Heartbeat:Connect(function()
-                local x5 = game:GetService("Players").LocalPlayer
+                local x5 = game:FindFirstChildOfClass("Players").LocalPlayer
                 local x6, x7, x8, x9 = nil, nil, nil, 0.1
                 x6 = x5.Character
                 x7 = x6 and x6:FindFirstChild("HumanoidRootPart")
@@ -1484,7 +1490,7 @@ AddToggle(Main5u6, {
       _Zxc = true
       if not _Zxa then
         _Zxa = game:GetService("RunService").RenderStepped:Connect(function()
-          local _Zxpls = game:GetService("Players"):GetPlayers()
+          local _Zxpls = game:FindFirstChildOfClass("Players"):GetPlayers()
           if #_Zxpls <= 1 then return end
           local _Zxpresent = {}
           for _Zxu = 1, #_Zxpls do _Zxpresent[_Zxpls[_Zxu]] = true end
@@ -1667,7 +1673,7 @@ else
             if state then
                 if not ncpDflt then 
                     ncpDflt = game:GetService("RunService").Stepped:Connect(function()
-                        local character = game.Players.LocalPlayer.Character
+                        local character = game:FindFirstChildOfClass("Players").LocalPlayer.Character
                         if character then
                             for _, part in ipairs(character:GetDescendants()) do
                                 if part:IsA("BasePart") then
@@ -1703,7 +1709,7 @@ AddToggle(Main5u6, {
     Default = true,
     Callback = function(state)
         if state then
-            if not antiIdle then antiIdle = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+            if not antiIdle then antiIdle = game:FindFirstChildOfClass("Players").LocalPlayer.Idled:Connect(function()
                 game:GetService("VirtualUser"):CaptureController()
                 game:GetService("VirtualUser"):ClickButton2(Vector2.new())
             end)
@@ -1794,7 +1800,7 @@ AddToggle(Main5u6, {
 		if _t_t._e_e then
 			if not _t_t.hbt then
 				_t_t.hbt = game:GetService("RunService").Heartbeat:Connect(function()
-					local Plr = game:GetService("Players").LocalPlayer
+					local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
 					local char = Plr.Character
 					local hrp = char and char:FindFirstChild("HumanoidRootPart")
 					if not char or not hrp then
@@ -1845,7 +1851,7 @@ AddToggle(Main5u6, {
 		if _l_t._on then
 			if not _l_t._hbt then
 				_l_t._hbt = game:GetService("RunService").Heartbeat:Connect(function()
-					local c = game.Players.LocalPlayer.Character
+					local c = game:FindFirstChildOfClass("Players").LocalPlayer.Character
 					local hrp = c and c:FindFirstChild("HumanoidRootPart")
 					if hrp then
 						if not _l_t._lt then
@@ -1978,16 +1984,6 @@ AddToggle(Main5u6, {
 	Name="FpsAndPingAndPos",
 	Default=false,
 	Callback=addui
-})
-
-local ZX_T = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/CloneCharacter"))()
-
-AddToggle(Main5u6, {
-	Name = "Friend?",
-	Default = false,
-	Callback = function(_z)
-	    ZX_T.toggleClone(_z)
-	end
 })
 
 local _d, _i, _e, _c, _x = 14.4, 8, false, nil, 1
