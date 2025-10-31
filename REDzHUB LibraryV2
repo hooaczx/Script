@@ -2103,97 +2103,122 @@ local friendnumber = Create("TextLabel", frameinfogui, {
 TextSetColor(friendnumber)
 
 functions.checkFriends = function()
-    if friendsCooldown <= 0 then
-        friendsCooldown = 5
-        local playersFriends = {}
-        local existingIds = {}
-        local friendsInTotal = 0
-        local ok, page = pcall(function() return players:GetFriendsAsync(localPlayer.UserId) end)
-        if not ok or not page then return end
-        local t = 1
-        repeat
-            local info = page:GetCurrentPage()
-            local lst = {}
-            for _, friendInfo in pairs(info) do
-                table.insert(playersFriends, friendInfo)
-                friendsInTotal = friendsInTotal + 1
-                local id = tostring(friendInfo.Id)
-                existingIds[id] = true
-                lst[#lst+1] = id
-                _q[id] = true
-                local th = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friendInfo.Id
-                local cached = _p[id]
-                local needCreate = not displayedFriends[id]
-                local changed = (not cached) or (cached.DisplayName ~= friendInfo.DisplayName) or (cached.Username ~= friendInfo.Username) or (cached.Thumb ~= th)
-                if changed then
-                    _p[id] = { DisplayName = friendInfo.DisplayName, Username = friendInfo.Username, Thumb = th }
-                end
-                if needCreate then
-                    local frame = Create("Frame", friendsFrame1, {
-                        Size = UDim2.new(0.95, 0, 0.18, 0),
-                        BackgroundTransparency = 1,
-                        Name = id
-                    })
-                    Corner(frame)
-                    Stroke(frame)
-                    Create("ImageLabel", frame, {
-                        Name = "Avatar",
-                        Size = UDim2.new(0.078, 0, 0.95, 0),
-                        Position = UDim2.new(0.005, 0, 0.015, 0),
-                        BackgroundTransparency = 1,
-                        Image = th
-                    })
-                    local friendDisplayName = Create("TextLabel", frame, {
-                        Name = "DisplayName",
-                        Size = UDim2.new(0.81, 0, 0.5, 0),
-                        Position = UDim2.new(0.089, 0, 0),
-                        Text = friendInfo.DisplayName,
-                        BackgroundTransparency = 1,
-                        TextColor3 = Configs_HUB.Cor_Text,
-                        Font = Configs_HUB.Text_Font,
-                        TextXAlignment = "Left",
-                        TextScaled = true
-                    })
-                    local friendUsername = Create("TextLabel", frame, {
-                        Name = "Username",
-                        Size = UDim2.new(0.81, 0, 0.5, 0),
-                        Position = UDim2.new(0.089, 0, 0.5, 0),
-                        Text = "@" .. friendInfo.Username,
-                        BackgroundTransparency = 1,
-                        TextColor3 = Color3.fromRGB(114, 117, 130),
-                        Font = Configs_HUB.Text_Font,
-                        TextXAlignment = "Left",
-                        TextScaled = true
-                    })
-                    displayedFriends[id] = frame
-                else
-                    if changed and displayedFriends[id] then
-                        local frm = displayedFriends[id]
-                        local d = frm:FindFirstChild("DisplayName")
-                        local u = frm:FindFirstChild("Username")
-                        if d and d.Text ~= friendInfo.DisplayName then d.Text = friendInfo.DisplayName end
-                        if u and u.Text ~= ("@" .. friendInfo.Username) then u.Text = "@" .. friendInfo.Username end
-                        local img = frm:FindFirstChild("Avatar") or frm:FindFirstChildWhichIsA("ImageLabel")
-                        if img and img.Image ~= th then img.Image = th end
-                    end
-                end
-            end
-            if not _s[t] then _s[t] = lst end
-            t = t + 1
-            if not page.IsFinished then page:AdvanceToNextPageAsync() end
-        until page.IsFinished
-        for friendId, frame in pairs(displayedFriends) do
-            if not existingIds[tostring(friendId)] then
-                if frame and frame.Destroy then frame:Destroy() end
-                displayedFriends[friendId] = nil
-                _p[tostring(friendId)] = nil
-                _q[tostring(friendId)] = nil
-            end
-        end
-        friendnumber.Text = "Connections: " .. friendsInTotal .. "/1000"
-    else
-        friendsCooldown = friendsCooldown - 1
-    end
+	if friendsCooldown <= 0 then
+		friendsCooldown = 5
+		local playersFriends = {}
+		local existingIds = {}
+		local friendsInTotal = 0
+		local ok, page = pcall(function() return players:GetFriendsAsync(localPlayer.UserId) end)
+		if not ok or not page then return end
+		local t = 1
+		repeat
+			local info = page:GetCurrentPage()
+			local lst = {}
+			for _, friendInfo in pairs(info) do
+				table.insert(playersFriends, friendInfo)
+				friendsInTotal = friendsInTotal + 1
+				local id = tostring(friendInfo.Id)
+				existingIds[id] = true
+				lst[#lst+1] = id
+				_q[id] = true
+				local th = "http://www.roblox.com/Thumbs/Avatar.ashx?x=500&y=500&Format=Png&userId="..friendInfo.Id
+				local cached = _p[id]
+				local needCreate = not displayedFriends[id]
+				local changed = (not cached) or (cached.DisplayName ~= friendInfo.DisplayName) or (cached.Username ~= friendInfo.Username) or (cached.Thumb ~= th)
+				if changed then
+					_p[id] = { DisplayName = friendInfo.DisplayName, Username = friendInfo.Username, Thumb = th }
+				end
+				if needCreate then
+					local frame = Create("Frame", friendsFrame1, {
+						Size = UDim2.new(0.95, 0, 0.18, 0),
+						BackgroundTransparency = 1,
+						Name = id
+					})
+					Corner(frame)
+					Stroke(frame)
+					Create("ImageLabel", frame, {
+						Name = "Avatar",
+						Size = UDim2.new(0.078, 0, 0.95, 0),
+						Position = UDim2.new(0.005, 0, 0.015, 0),
+						BackgroundTransparency = 1,
+						Image = th
+					})
+					local friendDisplayName = Create("TextLabel", frame, {
+						Name = "DisplayName",
+						Size = UDim2.new(0.81, 0, 0.5, 0),
+						Position = UDim2.new(0.089, 0, 0),
+						Text = friendInfo.DisplayName,
+						BackgroundTransparency = 1,
+						TextColor3 = Configs_HUB.Cor_Text,
+						Font = Configs_HUB.Text_Font,
+						TextXAlignment = "Left",
+						TextScaled = true
+					})
+					local friendUsername = Create("TextLabel", frame, {
+						Name = "Username",
+						Size = UDim2.new(0.81, 0, 0.5, 0),
+						Position = UDim2.new(0.089, 0, 0.5, 0),
+						Text = "@" .. friendInfo.Username,
+						BackgroundTransparency = 1,
+						TextColor3 = Color3.fromRGB(114, 117, 130),
+						Font = Configs_HUB.Text_Font,
+						TextXAlignment = "Left",
+						TextScaled = true
+					})
+					displayedFriends[id] = frame
+				else
+					if changed and displayedFriends[id] then
+						local frm = displayedFriends[id]
+						local d = frm:FindFirstChild("DisplayName")
+						local u = frm:FindFirstChild("Username")
+						if d and d.Text ~= friendInfo.DisplayName then d.Text = friendInfo.DisplayName end
+						if u and u.Text ~= ("@" .. friendInfo.Username) then u.Text = "@" .. friendInfo.Username end
+						local img = frm:FindFirstChild("Avatar") or frm:FindFirstChildWhichIsA("ImageLabel")
+						if img and img.Image ~= th then img.Image = th end
+					end
+				end
+			end
+			if not _s[t] then _s[t] = lst end
+			t = t + 1
+			if not page.IsFinished then page:AdvanceToNextPageAsync() end
+		until page.IsFinished
+		if friendsInTotal == 0 then
+			for friendId, frame in pairs(displayedFriends) do
+				if frame and frame.Destroy then frame:Destroy() end
+			end
+			displayedFriends = {}
+			_p = {}
+			_q = {}
+			for _, ch in pairs(friendsFrame1:GetChildren()) do
+				if ch:IsA("Frame") then ch:Destroy() end
+			end
+			local fr = Create("Frame", friendsFrame1, { Name = "NoFriends", Size = UDim2.new(1,0,1,0), BackgroundColor3 = Color3.fromRGB(0,0,0), BackgroundTransparency = 0.7 })
+			Corner(fr)
+			Stroke(fr)
+			Create("TextLabel", fr, {
+				Size = UDim2.new(1,0,1,0),
+				Text = "You have no friends. Add friends to see them listed here",
+				TextScaled = true,
+				BackgroundTransparency = 1,
+                TextColor3 = Color3.fromRGB(114, 117, 130),
+				Font = Configs_HUB.Text_Font,
+				TextXAlignment = "Left",
+			})
+			friendnumber.Text = "Connections: 0/1000"
+			return
+		end
+		for friendId, frame in pairs(displayedFriends) do
+			if not existingIds[tostring(friendId)] then
+				if frame and frame.Destroy then frame:Destroy() end
+				displayedFriends[friendId] = nil
+				_p[tostring(friendId)] = nil
+				_q[tostring(friendId)] = nil
+			end
+		end
+		friendnumber.Text = "Connections: " .. friendsInTotal .. "/1000"
+	else
+		friendsCooldown = friendsCooldown - 1
+	end
 end
 
 task.spawn(functions.checkFriends)
