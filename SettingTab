@@ -335,7 +335,7 @@ end function CreateHighlight(player)
 	end
 	local Storage = funcs["hF"]
 	if char then
-		local hlName = player.Name.."Highlight_1hooaczx1"
+		local hlName = player.Name.."_"..tostring(player.UserId).."Highlight_1hooaczx1"
 		local existing = Storage:FindFirstChild(hlName)
 		if existing then
 			existing.Adornee = char
@@ -361,9 +361,7 @@ end local prevFlags = {
 	box = funcs["C4"].box,
 	tracer = funcs["C4"].tracer,
 	highlight = funcs["C4"].highlight,
-}
-
-funcs["A1"] = function(enable)
+} funcs["A1"] = function(enable)
 	if enable then
 		if funcs["D4"] then
 			funcs["D4"]:Disconnect()
@@ -425,8 +423,10 @@ funcs["A1"] = function(enable)
 				end
 				prevFlags.highlight = funcs["C4"].highlight
 			end
-			for _, player in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do
-				if player ~= game:FindFirstChildOfClass("Players").LocalPlayer then
+			local playersSvc = game:FindFirstChildOfClass("Players")
+			local playerList = playersSvc and playersSvc:GetPlayers() or {}
+			for _, player in ipairs(playerList) do
+				if playersSvc and player ~= playersSvc.LocalPlayer then
 					if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 						local hrp = player.Character.HumanoidRootPart
 						local pos, visible = camera:WorldToViewportPoint(hrp.Position)
@@ -444,8 +444,10 @@ funcs["A1"] = function(enable)
 								Color = tc
 							end
 						end
-						funcs["G8"][player] = funcs["G8"][player] or {}
-						local d = funcs["G8"][player]
+						local idKey = tostring(player.UserId)
+						funcs["G8"][idKey] = funcs["G8"][idKey] or {}
+						local d = funcs["G8"][idKey]
+						d._player = player
 						if funcs["C4"].box then
 							if not d.Box then
 								d.Box = CreateDrawing("Square", {Thickness = 1, Filled = false, Color = Color, Visible = false})
@@ -496,7 +498,7 @@ funcs["A1"] = function(enable)
 							d.Tracer.Color = Color
 							d.Tracer.Visible = funcs["C4"].tracer and onScreen
 						end
-						local hlName = player.Name.."Highlight_1hooaczx1"
+						local hlName = player.Name.."_"..tostring(player.UserId).."Highlight_1hooaczx1"
 						local highlight = (funcs["hF"] and funcs["hF"]:FindFirstChild(hlName))
 						if funcs["C4"].highlight then
 							if not funcs["hF"] or not funcs["hF"].Parent then
@@ -523,28 +525,36 @@ funcs["A1"] = function(enable)
 							end
 						end
 					else
-						if funcs["G8"][player] then
-							for _, dd in pairs(funcs["G8"][player]) do
+						local idKey = tostring(player.UserId)
+						if funcs["G8"][idKey] then
+							for _, dd in pairs(funcs["G8"][idKey]) do
 								if dd and dd.Remove then dd:Remove() end
 							end
-							funcs["G8"][player] = nil
+							funcs["G8"][idKey] = nil
 						end
-						local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."Highlight_1hooaczx1")
+						local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."_"..tostring(player.UserId).."Highlight_1hooaczx1")
 						if h then h:Destroy() end
 					end
 				end
 			end
-			for player, draw in pairs(funcs["G8"]) do
-				if not game:FindFirstChildOfClass("Players"):FindFirstChild(player.Name) then
+			for idKey, draw in pairs(funcs["G8"]) do
+				local exists = false
+				for _, pl in ipairs(playerList) do
+					if tostring(pl.UserId) == tostring(idKey) then
+						exists = true
+						break
+					end
+				end
+				if not exists then
 					for _, d in pairs(draw) do
 						if d and d.Remove then d:Remove() end
 					end
-					funcs["G8"][player] = nil
-					if funcs["B1"][player] then
-						funcs["B1"][player]:Disconnect()
-						funcs["B1"][player] = nil
+					funcs["G8"][idKey] = nil
+					if funcs["B1"][idKey] then
+						funcs["B1"][idKey]:Disconnect()
+						funcs["B1"][idKey] = nil
 					end
-					local h = funcs["hF"] and funcs["hF"]:FindFirstChild(player.Name.."Highlight_1hooaczx1")
+					local h = funcs["hF"] and funcs["hF"]:FindFirstChild(("%s_%sHighlight_1hooaczx1"):format(draw._player and draw._player.Name or "", idKey))
 					if h then h:Destroy() end
 				end
 			end
@@ -581,20 +591,6 @@ funcs["A1"] = function(enable)
 end
 
 AddToggle(Main5u6, {
-	Name = "Box_ESP",
-	Default = false,
-	Callback = function(b)
-		funcs["C4"].box = b
-		if _G.ESP then
-			for _, esp in pairs(funcs["G8"]) do
-				if esp.Box then esp.Box.Visible = b end
-				if esp.Name then esp.Name.Visible = b end
-			end
-		end
-	end
-})
-
-AddToggle(Main5u6, {
 	Name = "Tracer_ESP",
 	Default = false,
 	Callback = function(b)
@@ -624,22 +620,40 @@ AddToggle(Main5u6, {
 	Name = "Team_Highlight_ESP",
 	Default = false,
 	Callback = function(q)
-		local t = game:GetService("Teams"):GetTeams()
-		if #t <= 1 then
-			game:GetService("StarterGui"):SetCore("SendNotification", {
-				Title = "ESP",
-				Text = "This game has no teams or only a single team — the team color split mode cannot be used",
-				Duration = 4
-			})
-			funcs["C4"].teamHighlight = false
-			return
+		if q then
+			local t = game:GetService("Teams"):GetTeams()
+			if #t == 0 then
+				game:GetService("StarterGui"):SetCore("SendNotification", {
+					Title = "ESP",
+					Text = "This game has no teams — the team color split mode cannot be used",
+					Duration = 4
+				})
+				funcs["C4"].teamHighlight = false
+				return
+			elseif #t == 1 then
+				game:GetService("StarterGui"):SetCore("SendNotification", {
+					Title = "ESP",
+					Text = "This game has only one team — the team color split mode cannot be used",
+					Duration = 4
+				})
+				funcs["C4"].teamHighlight = false
+				return
+			end
 		end
 		funcs["C4"].teamHighlight = q
 		if _G.ESP then
 			if funcs["hF"] then
 				for _, h in pairs(funcs["hF"]:GetChildren()) do
-					local pn = h.Name:match("^(.-)Highlight")
-					local ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
+					local pn, pid = h.Name:match("^(.-)_(%d+)Highlight")
+					local ply
+					if pid then
+						for _, pl in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do
+							if tostring(pl.UserId) == pid then ply = pl break end
+						end
+					end
+					if not ply and pn then
+						ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
+					end
 					if ply then
 						local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
 						local nc = _G.ESPColor or funcs["C4"].color
@@ -655,8 +669,8 @@ AddToggle(Main5u6, {
 					end
 				end
 			end
-			for p, d in pairs(funcs["G8"]) do
-				local ply = p
+			for idKey, d in pairs(funcs["G8"]) do
+				local ply = d._player
 				if typeof(ply) == "Instance" and ply:IsA("Player") then
 					local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
 					local nc = _G.ESPColor or funcs["C4"].color
@@ -691,22 +705,40 @@ AddToggle(Main5u6, {
 	Name = "Team_Color_ESP",
 	Default = false,
 	Callback = function(z)
-		local teams = game:GetService("Teams"):GetTeams()
-		if #teams <= 1 then
-			game:GetService("StarterGui"):SetCore("SendNotification", {
-				Title = "ESP",
-				Text = "This game has only one team. Team color mode cannot be applied.",
-				Duration = 4
-			})
-			funcs["C4"].team = false
-			return
+		if z then
+			local teams = game:GetService("Teams"):GetTeams()
+			if #teams == 0 then
+				game:GetService("StarterGui"):SetCore("SendNotification", {
+					Title = "ESP",
+					Text = "This game has no teams — Team color mode cannot be applied.",
+					Duration = 4
+				})
+				funcs["C4"].team = false
+				return
+			elseif #teams == 1 then
+				game:GetService("StarterGui"):SetCore("SendNotification", {
+					Title = "ESP",
+					Text = "This game has only one team — Team color mode cannot be applied.",
+					Duration = 4
+				})
+				funcs["C4"].team = false
+				return
+			end
 		end
 		funcs["C4"].team = z
 		if _G.ESP then
 			if funcs["hF"] then
 				for _, h in pairs(funcs["hF"]:GetChildren()) do
-					local pn = h.Name:match("^(.-)Highlight")
-					local ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
+					local pn, pid = h.Name:match("^(.-)_(%d+)Highlight")
+					local ply
+					if pid then
+						for _, pl in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do
+							if tostring(pl.UserId) == pid then ply = pl break end
+						end
+					end
+					if not ply and pn then
+						ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
+					end
 					if ply then
 						local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
 						local nc = _G.ESPColor or funcs["C4"].color
@@ -722,8 +754,8 @@ AddToggle(Main5u6, {
 					end
 				end
 			end
-			for p, d in pairs(funcs["G8"]) do
-				local ply = p
+			for idKey, d in pairs(funcs["G8"]) do
+				local ply = d._player
 				if typeof(ply) == "Instance" and ply:IsA("Player") then
 					local ish = (game.PlaceId == 205224386) and ply.Character and ply.Character:FindFirstChild("ItScript", true)
 					local nc = _G.ESPColor or funcs["C4"].color
@@ -760,15 +792,25 @@ AddColorPicker(Main5u6, {
 		if _G.ESP then
 			if funcs["hF"] then
 				for _, h in pairs(funcs["hF"]:GetChildren()) do
-					if not (funcs["G8"][game:FindFirstChildOfClass("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))] 
-					and funcs["G8"][game:FindFirstChildOfClass("Players"):FindFirstChild(h.Name:match("^(.-)Highlight"))].Name.Text:match("%((.-)%)"):lower():find("it")) then
+					local pn, pid = h.Name:match("^(.-)_(%d+)Highlight")
+					local ply
+					if pid then
+						for _, pl in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do
+							if tostring(pl.UserId) == pid then ply = pl break end
+						end
+					end
+					if not ply and pn then
+						ply = game:FindFirstChildOfClass("Players"):FindFirstChild(pn)
+					end
+					if not (ply and ply.Character and ply.Character:FindFirstChild("ItScript", true)) then
 						h.FillColor = cN
 						h.OutlineColor = cN
 					end
 				end
 			end
-			for p, d in pairs(funcs["G8"]) do
-				if not (d.Name.Text:match("%((.-)%)") and d.Name.Text:match("%((.-)%)"):lower():find("it")) then
+			for idKey, d in pairs(funcs["G8"]) do
+				local ply = d._player
+				if not (ply and ply.Character and ply.Character:FindFirstChild("ItScript", true)) then
 					if d.Box then d.Box.Color = cN end
 					if d.Name then d.Name.Color = cN end
 					if d.Tracer then d.Tracer.Color = cN end
