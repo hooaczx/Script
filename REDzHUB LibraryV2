@@ -2657,7 +2657,7 @@ functions.getplayerdescription = function(userId)
         desc = data.description or ""
     end
     if desc == "" then
-        if userId == game.Players.LocalPlayer.UserId then
+        if userId == game:FindFirstChildOfClass("Players").LocalPlayer.UserId then
             desc = "No description set for your account."
         else
             desc = "User has no description."
@@ -2692,7 +2692,7 @@ end
 
 functions.startUpdating = function()
     functions.__ = (functions.__ or 0) + 1
-    local _a = game:GetService("Players").LocalPlayer.AccountAge
+    local _a = game:FindFirstChildOfClass("Players").LocalPlayer.AccountAge
     local _b = _a * 86400 + functions.__
     local _c = math.floor(_b / 31536000)
     _b = _b % 31536000
