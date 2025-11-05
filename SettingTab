@@ -208,23 +208,28 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
     })
 end
 
-(loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Physics_Visualization"))())(Main5u6, AddDropdown, AddToggle, Opt, TE)
+local Physics_Visualization = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Physics_Visualization"))()
+Physics_Visualization(Main5u6, AddDropdown, AddToggle, Opt, TE)
+local to = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/God%20mod%20obby"))()
 
 AddToggle(Main5u6, {
     Name = "Obby Kill Parts + Sit Parts Bypass",
     Default = false,
     Callback = function(state)
-       (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/God%20mod%20obby"))()).toggle(state)
+        to.toggle(state)
     end
 })
+
+local M = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/CharacterForceField"))()
+local module = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()
 
 AddDropdown(Main5u6, {
     Name = "Detection Zone And ForceField Color Mode",
     Default = "Normal",
     Options = {"Normal", "Rainbow"},
     Callback = function(mode)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/CharacterForceField"))()).mode(mode)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()).setColorMode(mode)
+        M.mode(mode)
+        module.setColorMode(mode)
     end
 })
 
@@ -234,7 +239,7 @@ AddTextBox(Main5u6, {
     PlaceholderText = "Enter number",
     ClearText = true,
     Callback = function(value)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()).setDetectionRadius(value)
+        module.setDetectionRadius(value)
     end
 })
 
@@ -242,7 +247,7 @@ AddToggle(Main5u6, {
     Name = "Zone Visibility",
     Default = false,
     Callback = function(state)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()).toggleVisibility(state)
+        module.toggleVisibility(state)
     end
 })
 
@@ -250,7 +255,7 @@ AddToggle(Main5u6, {
     Name = "LookAt Player",
     Default = false,
     Callback = function(state)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()).toggleLookAt(state)
+        module.toggleLookAt(state)
     end
 })
 
@@ -258,7 +263,7 @@ AddToggle(Main5u6, {
     Name = "Character ForceField",
     Default = false,
     Callback = function(state)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/CharacterForceField"))()).tgl(state)
+        M.tgl(state)
     end
 })
 
@@ -266,16 +271,18 @@ AddColorPicker(Main5u6, {
     Name = "Detection Zone And Character ForceField Color",
     Default = Color3.fromRGB(255, 255, 255),
     Callback = function(color)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/CharacterForceField"))()).clr(color)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Forcefield"))()).setColor(color)
+       M.clr(color)
+       module.setColor(color)
     end
 })
+
+local t_f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Float"))()
 
 AddToggle(Main5u6, {
     Name = "Float (for R15/R6)",
     Default = false,
     Callback = function(state)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Float"))()).togglefloat(state)
+        t_f.togglefloat(state)
     end
 })
 
@@ -1206,7 +1213,7 @@ else
      Name = "Swimming",
      Default = false,
      Callback = function(state)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Swimming"))()).t["0101"](state)
+        S.t["0101"](state)
      end
    })
 end
@@ -1294,13 +1301,15 @@ AddToggle(Main5u6, {
 	end
 })
 
+local C = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()
+
 AddTextBox(Main5u6, {
     Name = "CustomNameTag",
     Default = "Enter",
     PlaceholderText = "Enter name",
     ClearText = true,
     Callback = function(value)
-      (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()).changeName(value)
+      C.changeName(value)
     end
 })
 
@@ -1308,7 +1317,7 @@ AddToggle(Main5u6, {
     Name = "NameTag",
     Default = false,
     Callback = function(value)
-      (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()).toggle(value)
+      C.toggle(value)
     end
 })
 
@@ -1316,7 +1325,7 @@ AddColorPicker(Main5u6, {
     Name = "NameTagColor",
     Default = Color3.fromRGB(255, 255, 255),
     Callback = function(color)
-       (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()).changeColor(color)
+       C.changeColor(color)
     end
 })
 
@@ -1327,15 +1336,17 @@ AddSlider(Main5u6, {
     MaxValue = 10,
     Default = 1,
     Callback = function(value)
-      (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()).changeHeight(value)
+      C.changeHeight(value)
     end
 })
+
+local f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()
 
 AddToggle(Main5u6, {
     Name = "Aura",
     Default = false,
     Callback = function(state)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()).aura(state, CreateTween)
+        f.aura(state, CreateTween)
     end
 })
 
@@ -1343,7 +1354,7 @@ AddColorPicker(Main5u6, {
     Name = "Aura Color",
     Default = _G._AuraColor or Color3.fromRGB(255, 255, 255),
     Callback = function(color)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()).SetAuraColor(color)
+        f.SetAuraColor(color)
     end
 })
 
@@ -1354,7 +1365,7 @@ AddSlider(Main5u6, {
     MaxValue = 10,
     Default = 0,
     Callback = function(value)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()).SetHaloDistance(value)
+        f.SetHaloDistance(value)
     end
 })
 
@@ -1363,7 +1374,7 @@ AddDropdown(Main5u6, {
     Default = "up",
     Options = {"up", "down", "left", "right", "front", "back"},
     Callback = function(option)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()).SetAuraMode(option)
+        f.SetAuraMode(option)
     end
 })
 
@@ -1374,15 +1385,17 @@ AddSlider(Main5u6, {
     MaxValue = 10,
     Default = 0,
     Callback = function(value)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()).SetAuraDistance(value)
+        f.SetAuraDistance(value)
     end
 })
+
+local M = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Dodgeplayers"))()
 
 AddToggle(Main5u6, {
   Name = "Dodge players on touch",
   Default = false,
   Callback = function(state)
-     (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Dodgeplayers"))()).toggle(state)
+     M.toggle(state)
   end
 })
 
@@ -1471,11 +1484,13 @@ AddToggle(Main5u6, {
     end
 })
 
+local Anti_teleport_server = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Anti%20Teleport%20Server"))()
+
 AddToggle(Main5u6, {
     Name = "Anti Place Teleport(if was called Teleport from server this script cannot block it)",
     Default = false,
     Callback = function(s_1)
-        (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Anti%20Teleport%20Server"))()).Toggle(s_1)
+        Anti_teleport_server.Toggle(s_1)
     end
 })
 
@@ -1774,11 +1789,13 @@ AddToggle(Main5u6, {
 	end
 })
 
+local cm = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Cameranoclip"))()
+
 AddToggle(Main5u6, {
     Name = "Camera Noclip",
     Default = false,
     Callback = function(value)
-       (loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Cameranoclip"))())(value)
+       cm(value)
     end
 })
 
