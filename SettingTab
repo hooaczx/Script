@@ -1425,7 +1425,7 @@ AddToggle(Main5u6, {
   end
 })
 
-local _c___, _p___
+local _c___, _p___, _r___, _loop___, _mloop___
 
 AddToggle(Main5u6, {
     Name = "ClickTp",
@@ -1441,35 +1441,48 @@ AddToggle(Main5u6, {
                 if _g___ or not _p___ or (_i___.Position - _p___).Magnitude > 5 then return end
                 if _i___.UserInputType ~= Enum.UserInputType.Touch and _i___.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
                 local _m___ = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
-                local _b___ = false
-                if _i___.UserInputType == Enum.UserInputType.MouseButton1 then
-                    _b___ = game:GetService("GuiService"):IsMouseOverGui()
-                    local _h___ = ((not is_sirhurt_closure and not (syn and DrawingImmediate)) and syn and syn.protect_gui and game:GetService("CoreGui")) or (typeof(get_hidden_gui) == "function" and get_hidden_gui()) or (typeof(gethui) == "function" and gethui()) or game:GetService("CoreGui")
-                    if _m___.Target and (_m___.Target:IsDescendantOf(_h___) or _m___.Target:IsDescendantOf(game:GetService("CoreGui"))) then
-                        _b___ = true
-                    end
-                end
-                if _m___.Target then
-                    local parent = _m___.Target
-                    while parent do
-                        if parent:IsA("GuiObject") then
-                            _b___ = true
-                            break
-                        end
-                        parent = parent.Parent
-                    end
-                end
-                if game:GetService("UserInputService"):GetFocusedTextBox() or _b___ then return end
                 if _m___.Target and _m___.Target.Transparency < 1 then
                     local _p2___ = _m___.Hit.p
                     local _c2___ = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
                     local _h2___ = _c2___:WaitForChild("HumanoidRootPart")
                     _h2___.CFrame = CFrame.new(_p2___)
+
+                    if _r___ then
+                        _r___.CFrame = CFrame.new(_p2___)
+                    end
+                end
+            end)
+            _loop___ = game:GetService("RunService").Heartbeat:Connect(function()
+                if not _r___ or not _r___.Parent then
+                    local pos = Vector3.new(0, 0, 0)
+                    _r___ = Instance.new("Part")
+                    _r___.Anchored = true
+                    _r___.CanCollide = false
+                    _r___.Shape = Enum.PartType.Ball
+                    _r___.Size = Vector3.new(2, 2, 2)
+                    _r___.Color = Color3.fromRGB(0, 255, 0)
+                    _r___.Material = Enum.Material.ForceField
+                    _r___.Transparency = 0.2
+                    _r___.CFrame = CFrame.new(pos)
+                    _r___.Name = "ClickTP_Marker"
+                    _r___.Parent = workspace
+                end
+            end)
+            _mloop___ = game:GetService("RunService").RenderStepped:Connect(function()
+                local _u___ = game:GetService("UserInputService")
+                local _m___ = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
+                if _u___:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) or _u___.TouchEnabled then
+                    if _m___ and _m___.Target and _r___ then
+                        _r___.CFrame = CFrame.new(_m___.Hit.p)
+                    end
                 end
             end)
         elseif _c___ then
             _c___:Disconnect()
             _c___ = nil
+            if _loop___ then _loop___:Disconnect() _loop___ = nil end
+            if _mloop___ then _mloop___:Disconnect() _mloop___ = nil end
+            if _r___ then _r___:Destroy() _r___ = nil end
         end
     end
 })
