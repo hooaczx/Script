@@ -624,11 +624,24 @@ AddToggle(Main5u6, {
  Name = "Team_Highlight_ESP",
  Default = false,
  Callback = function(q)
+  if not q then
+   funcs["C4"].teamHighlight = false
+   return
+  end
   local t = game:GetService("Teams"):GetTeams()
-  if #t <= 1 then
+  if #t == 0 then
    game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "ESP",
-    Text = "This game has no teams or only a single team — the team color split mode cannot be used",
+    Text = "This game has no teams",
+    Duration = 4
+   })
+   funcs["C4"].teamHighlight = false
+   return
+  end
+  if #t == 1 then
+   game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "ESP",
+    Text = "Not available — requires at least 2 teams",
     Duration = 4
    })
    funcs["C4"].teamHighlight = false
@@ -691,11 +704,24 @@ AddToggle(Main5u6, {
  Name = "Team_Color_ESP",
  Default = false,
  Callback = function(z)
+  if not z then
+   funcs["C4"].team = false
+   return
+  end
   local teams = game:GetService("Teams"):GetTeams()
-  if #teams <= 1 then
+  if #teams == 0 then
    game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "ESP",
-    Text = "This game has only one team. Team color mode cannot be applied.",
+    Text = "This game has no teams",
+    Duration = 4
+   })
+   funcs["C4"].team = false
+   return
+  end
+  if #teams == 1 then
+   game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "ESP",
+    Text = "Not available — requires at least 2 teams",
     Duration = 4
    })
    funcs["C4"].team = false
