@@ -2895,48 +2895,58 @@ local funcs = {
     "clip","copy","copy_to_clipboard","to_clipboard","toClipboard"
 }
 local backups, origSet = {}, Clipboard and Clipboard.set
-for _, f in ipairs(funcs) do backups[f] = getgenv()[f] end
+for _, f in ipairs(funcs) do
+    local v = getgenv()[f]
+    if v ~= nil then backups[f] = {env = getgenv(), val = v} end
+end
 functions.createSettingSection(scrollingSettingFrame,
 "Anti Copy", [[This script will prevent you from copying using "toclipboard" and "setclipboard" to copy. It will notify you on the screen. If you feel annoyed, you can turn it off]],
 function()
    Anticopy1 = not Anticopy1
-   local handler = Anticopy1 and function(d)
-      notify({Title = "Attempted to copy", Text = tostring(d), buttonText = "ok", imageID = "", guiSize = Vector2.new(400, 70)})
+   local handler = Anticopy1 and function(d) notify({Title = "Attempted to copy", Text = tostring(d), buttonText = "ok", imageID = "", guiSize = Vector2.new(400, 70)}) end
+   for k,entry in pairs(backups) do
+      if type(entry)=="table" and entry.env then
+         if entry.env[k]~=nil then entry.env[k] = handler or entry.val else backups[k]=nil end
+      end
    end
-   for _, f in ipairs(funcs) do
-      getgenv()[f] = handler or backups[f]
-   end
-   if Clipboard then Clipboard.set = handler or origSet end
-   for _, env in ipairs({_G, getgenv(), (type(getrenv)=="function" and pcall(getrenv) and (pcall(getrenv) and (select(2, pcall(getrenv)) or getrenv())) ) and getrenv() or nil, (syn and syn) or nil, (Clipboard and Clipboard) or nil}) do
+   local scanEnvs = {_G, getgenv()}
+   if type(getrenv)=="function" then local ok,ge = pcall(getrenv) if ok and ge then table.insert(scanEnvs,ge) end end
+   if syn then table.insert(scanEnvs,syn) end
+   if Clipboard then table.insert(scanEnvs,Clipboard) end
+   for _,env in ipairs(scanEnvs) do
       if env then
          for k,v in pairs(env) do
-            if type(k) == "string" then
+            if type(k)=="string" then
                local kl = k:lower()
-               if (kl:find("clip") or kl:find("copy") or kl:find("board")) then
-                  local exists = false
-                  for _, n in ipairs(funcs) do if n == k then exists = true break end end
-                  if not exists then table.insert(funcs, k) end
-                  if backups[k] == nil then backups[k] = env[k] end
-                  env[k] = handler or backups[k]
+               if kl:find("clip") or kl:find("copy") or kl:find("board") then
+                  if backups[k]==nil then backups[k]={env=env,val=v} end
+                  env[k] = Anticopy1 and handler or backups[k].val
+                  local exists=false
+                  for _,n in ipairs(funcs) do if n==k then exists=true break end end
+                  if not exists then table.insert(funcs,k) end
                end
             end
          end
       end
    end
-   local ok, gc = pcall(function() return getgc and getgc() end)
-   if ok and type(gc) == "table" then
-      for _, obj in ipairs(gc) do
-         if type(obj) == "function" then
-            local info = pcall(debug.getinfo, obj)
-            if info then
-               local di = debug.getinfo(obj)
-               if di and di.name then
-                  local nm = tostring(di.name):lower()
-                  if nm:find("clip") or nm:find("copy") or nm:find("board") then
-                     local key = di.name
-                     if backups[key] == nil then backups[key] = obj end
-                     if getgenv()[key] then getgenv()[key] = handler or backups[key] end
-                  end
+   if Clipboard then
+      if origSet and backups["_clipboardset"]==nil then backups["_clipboardset"]={env=Clipboard,val=origSet} end
+      if backups["_clipboardset"] and backups["_clipboardset"].env then
+         local e=backups["_clipboardset"].env
+         e.set = Anticopy1 and handler or backups["_clipboardset"].val
+      end
+   end
+   local ok,gc = pcall(function() return getgc and getgc() end)
+   if ok and type(gc)=="table" then
+      for _,obj in ipairs(gc) do
+         if type(obj)=="function" then
+            local ok2,di = pcall(debug.getinfo,obj)
+            if ok2 and di and di.name and type(di.name)=="string" then
+               local nm = di.name:lower()
+               if nm:find("clip") or nm:find("copy") or nm:find("board") then
+                  local key = di.name
+                  if backups[key]==nil then backups[key]={env=getgenv(),val=obj} end
+                  if getgenv()[key]~=nil then getgenv()[key]=Anticopy1 and handler or backups[key].val end
                end
             end
          end
