@@ -2884,15 +2884,16 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
 
 local Anticopy1 = false
 local funcs = {
-    "setclipboard", "toclipboard", "set_clipboard",
-    "setClipboard","SetClipboard",
+    "setclipboard","setClipboard","SetClipboard",
+    "set_clipboard","toclipboard","toClipboard",
     "writeclipboard","writeClipboard",
     "Clipboard.set","Clipboard.Set","clipboard.set","clipboard.Set",
+    "GM_setClipboard","GM.setClipboard",
     "setrbxclipboard","set_rbx_clipboard",
-    "GM_setClipboard",
     "set_system_clipboard","set_device_clipboard",
-    "adb.set_clipboard","appium.setClipboard",
-    "clip","copy","copy_to_clipboard","to_clipboard","toClipboard"
+    "adb.set_clipboard","adb.clip","clipper.set","clipper.get",
+    "appium.setClipboard","driver.set_clipboard","driver.setClipboardText",
+    "clip","copy","copy_to_clipboard","to_clipboard","paste","getClipboard","get_clipboard"
 }
 local backups, origSet = {}, Clipboard and Clipboard.set
 for _, f in ipairs(funcs) do
@@ -2900,7 +2901,7 @@ for _, f in ipairs(funcs) do
     if v ~= nil then backups[f] = {env = getgenv(), val = v} end
 end
 functions.createSettingSection(scrollingSettingFrame,
-"Anti Copy", [[This script will prevent you from copying using "toclipboard" and "setclipboard" to copy. It will notify you on the screen. If you feel annoyed, you can turn it off]],
+"Anti Copy", [[This script will prevent you from copying using "toclipboard" and "setclipboard" and more to copy. It will notify you on the screen. If you feel annoyed, you can turn it off]],
 function()
    Anticopy1 = not Anticopy1
    local handler = Anticopy1 and function(d) notify({Title = "Attempted to copy", Text = tostring(d), buttonText = "ok", imageID = "", guiSize = Vector2.new(400, 70)}) end
