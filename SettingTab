@@ -1445,17 +1445,16 @@ AddToggle(Main5u6, {
                     local _p2___ = _m___.Hit.p
                     local _c2___ = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
                     local _h2___ = _c2___:WaitForChild("HumanoidRootPart")
-                    _h2___.CFrame = CFrame.new(_p2___)
                     if _r___ then
-                        _r___.CFrame = CFrame.new(_p2___)
+                        if _r___.Tweening then _r___.Tweening:Cancel() end; _r___.Tweening = game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1}); _r___.Tweening:Play(); _r___.Tweening.Completed:Wait(); _r___.Tweening = game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.new(_p2___)}); _r___.Tweening:Play(); _r___.Tweening.Completed:Wait(); _r___.Tweening = game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0.2}); _r___.Tweening:Play()
                     end
+                    _h2___.CFrame = CFrame.new(_p2___)
+                    if _r___ then _r___.CFrame = CFrame.new(_p2___) end
                 end
             end)
             _loop___ = game:GetService("RunService").Heartbeat:Connect(function()
                 if not _r___ or not workspace:FindFirstChild("ClickTP_Marker_hooaczx") then
-                    if _r___ then
-                        _r___:Destroy()
-                    end 
+                    if _r___ then _r___:Destroy() end
                     _r___ = Instance.new("Part")
                     _r___.Anchored = true
                     _r___.CanCollide = false
