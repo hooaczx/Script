@@ -2883,7 +2883,17 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
   })
 
 local Anticopy1 = false
-local funcs = {"setclipboard", "toclipboard", "set_clipboard"}
+local funcs = {
+    "setclipboard", "toclipboard", "set_clipboard",
+    "setClipboard","SetClipboard",
+    "writeclipboard","writeClipboard",
+    "Clipboard.set","Clipboard.Set","clipboard.set","clipboard.Set",
+    "setrbxclipboard","set_rbx_clipboard",
+    "GM_setClipboard",
+    "set_system_clipboard","set_device_clipboard",
+    "adb.set_clipboard","appium.setClipboard",
+    "clip","copy","copy_to_clipboard","to_clipboard","toClipboard"
+}
 local backups, origSet = {}, Clipboard and Clipboard.set
 for _, f in ipairs(funcs) do backups[f] = getgenv()[f] end
 functions.createSettingSection(scrollingSettingFrame,
@@ -2893,8 +2903,45 @@ function()
    local handler = Anticopy1 and function(d)
       notify({Title = "Attempted to copy", Text = tostring(d), buttonText = "ok", imageID = "", guiSize = Vector2.new(400, 70)})
    end
-   for _, f in ipairs(funcs) do getgenv()[f] = handler or backups[f] end
+   for _, f in ipairs(funcs) do
+      getgenv()[f] = handler or backups[f]
+   end
    if Clipboard then Clipboard.set = handler or origSet end
+   for _, env in ipairs({_G, getgenv(), (type(getrenv)=="function" and pcall(getrenv) and (pcall(getrenv) and (select(2, pcall(getrenv)) or getrenv())) ) and getrenv() or nil, (syn and syn) or nil, (Clipboard and Clipboard) or nil}) do
+      if env then
+         for k,v in pairs(env) do
+            if type(k) == "string" then
+               local kl = k:lower()
+               if (kl:find("clip") or kl:find("copy") or kl:find("board")) then
+                  local exists = false
+                  for _, n in ipairs(funcs) do if n == k then exists = true break end end
+                  if not exists then table.insert(funcs, k) end
+                  if backups[k] == nil then backups[k] = env[k] end
+                  env[k] = handler or backups[k]
+               end
+            end
+         end
+      end
+   end
+   local ok, gc = pcall(function() return getgc and getgc() end)
+   if ok and type(gc) == "table" then
+      for _, obj in ipairs(gc) do
+         if type(obj) == "function" then
+            local info = pcall(debug.getinfo, obj)
+            if info then
+               local di = debug.getinfo(obj)
+               if di and di.name then
+                  local nm = tostring(di.name):lower()
+                  if nm:find("clip") or nm:find("copy") or nm:find("board") then
+                     local key = di.name
+                     if backups[key] == nil then backups[key] = obj end
+                     if getgenv()[key] then getgenv()[key] = handler or backups[key] end
+                  end
+               end
+            end
+         end
+      end
+   end
 end, copyEnabled)
 
 functions.createSettingSection(scrollingSettingFrame, "Show frame info players", 
