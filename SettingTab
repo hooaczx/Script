@@ -1446,15 +1446,17 @@ AddToggle(Main5u6, {
                     local _c2___ = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
                     local _h2___ = _c2___:WaitForChild("HumanoidRootPart")
                     if _r___ then
-                        if _r___:FindFirstChild("TweenValue") then
-                            _r___:FindFirstChild("TweenValue"):Destroy()
+                        if _r___:FindFirstChild("TweenValue_hooaczx") then
+                            _r___:FindFirstChild("TweenValue_hooaczx"):Destroy()
                         end
-                        Instance.new("BoolValue", _r___).Name = "TweenValue"
-                        game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1}):Play()
-                        task.wait(0.15)
-                        game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.new(_p2___)}):Play()
-                        task.wait(0.35)
-                        game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0.2}):Play()
+                        Instance.new("BoolValue", _r___).Name = "TweenValue_hooaczx"
+                        task.spawn(function()
+                            game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1}):Play()
+                            task.wait(0.15)
+                            game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.new(_p2___)}):Play()
+                            task.wait(0.35)
+                            game:GetService("TweenService"):Create(_r___, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 0.2}):Play()
+                        end)
                     end
                     _h2___.CFrame = CFrame.new(_p2___)
                     if _r___ then _r___.CFrame = CFrame.new(_p2___) end
@@ -1467,7 +1469,7 @@ AddToggle(Main5u6, {
                     _r___.Anchored = true
                     _r___.CanCollide = false
                     _r___.Shape = Enum.PartType.Ball
-                    _r___.Size = Vector3.new(0.8, 0.8, 0.8)
+                    _r___.Size = Vector3.new(1, 1, 1)
                     _r___.Color = Color3.fromRGB(0, 255, 0)
                     _r___.Material = Enum.Material.ForceField
                     _r___.Transparency = 0.2
