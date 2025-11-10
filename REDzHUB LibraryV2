@@ -2733,28 +2733,26 @@ end
 functions.startUpdating()
 
 functions.updatePlaytime = function()
-    local now = os.time()
-    local pt = now - game:FindFirstChildOfClass("Players").LocalPlayer:GetJoinTime()
-    local m = 60
-    local h = 3600
-    local d = 86400
-    local mo = 2592000
-    local y = 31536000
+    if not script:GetAttribute("JoinTime") then
+        script:SetAttribute("JoinTime", tick())
+    end
+    local pt = tick() - script:GetAttribute("JoinTime")
+    local m,h,d,mo,y = 60,3600,86400,2592000,31536000
     local ft = ""
     if pt < m then
         ft = string.format("%02d", pt)
     elseif pt < h then
-        ft = string.format("%d:%02d", math.floor(pt / m), pt % m)
+        ft = string.format("%d:%02d", math.floor(pt/m), pt % m)
     elseif pt < d then
-        ft = string.format("%d:%02d:%02d", math.floor(pt / h), math.floor((pt % h) / m), pt % m)
+        ft = string.format("%d:%02d:%02d", math.floor(pt/h), math.floor((pt%h)/m), pt%m)
     elseif pt < mo then
-        ft = string.format("%d:%02d:%02d:%02d", math.floor(pt / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
+        ft = string.format("%d:%02d:%02d:%02d", math.floor(pt/d), math.floor((pt%d)/h), math.floor((pt%h)/m), pt%m)
     elseif pt < y then
-        ft = string.format("%d:%02d:%02d:%02d:%02d", math.floor(pt / mo), math.floor((pt % mo) / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
+        ft = string.format("%d:%02d:%02d:%02d:%02d", math.floor(pt/mo), math.floor((pt%mo)/d), math.floor((pt%d)/h), math.floor((pt%h)/m), pt%m)
     else
-        ft = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(pt / y), math.floor((pt % y) / mo), math.floor((pt % mo) / d), math.floor((pt % d) / h), math.floor((pt % h) / m), pt % m)
+        ft = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(pt/y), math.floor((pt%y)/mo), math.floor((pt%mo)/d), math.floor((pt%d)/h), math.floor((pt%h)/m), pt%m)
     end
-    TimePlay.Text = "Time Play: " .. ft .. "\nThis shows how long you've been playing"
+    TimePlay.Text = "Time Play: "..ft.."\nThis shows how long you've been playing"
 end
 
 functions.updatePlaytime()
