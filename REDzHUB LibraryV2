@@ -2733,26 +2733,15 @@ end
 functions.startUpdating()
 
 functions.updatePlaytime = function()
-    if not script:GetAttribute("JoinTime") then
-        script:SetAttribute("JoinTime", tick())
-    end
-    local pt = tick() - script:GetAttribute("JoinTime")
-    local m,h,d,mo,y = 60,3600,86400,2592000,31536000
-    local ft = ""
-    if pt < m then
-        ft = string.format("%02d", pt)
-    elseif pt < h then
-        ft = string.format("%d:%02d", math.floor(pt/m), pt % m)
-    elseif pt < d then
-        ft = string.format("%d:%02d:%02d", math.floor(pt/h), math.floor((pt%h)/m), pt%m)
-    elseif pt < mo then
-        ft = string.format("%d:%02d:%02d:%02d", math.floor(pt/d), math.floor((pt%d)/h), math.floor((pt%h)/m), pt%m)
-    elseif pt < y then
-        ft = string.format("%d:%02d:%02d:%02d:%02d", math.floor(pt/mo), math.floor((pt%mo)/d), math.floor((pt%d)/h), math.floor((pt%h)/m), pt%m)
-    else
-        ft = string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(pt/y), math.floor((pt%y)/mo), math.floor((pt%mo)/d), math.floor((pt%d)/h), math.floor((pt%h)/m), pt%m)
-    end
-    TimePlay.Text = "Time Play: "..ft.."\nThis shows how long you've been playing"
+    TimePlay.Text = "Time Play: " .. (function(pt)
+        if pt < 60 then return string.format("%02d", pt)
+        elseif pt < 3600 then return string.format("%d:%02d", math.floor(pt/60), pt%60)
+        elseif pt < 86400 then return string.format("%d:%02d:%02d", math.floor(pt/3600), math.floor((pt%3600)/60), pt%60)
+        elseif pt < 2592000 then return string.format("%d:%02d:%02d:%02d", math.floor(pt/86400), math.floor((pt%86400)/3600), math.floor((pt%3600)/60), pt%60)
+        elseif pt < 31536000 then return string.format("%d:%02d:%02d:%02d:%02d", math.floor(pt/2592000), math.floor((pt%2592000)/86400), math.floor((pt%86400)/3600), math.floor((pt%3600)/60), pt%60)
+        else return string.format("%d:%02d:%02d:%02d:%02d:%02d", math.floor(pt/31536000), math.floor((pt%31536000)/2592000), math.floor((pt%2592000)/86400), math.floor((pt%86400)/3600), math.floor((pt%3600)/60), pt%60)
+        end
+    end)(os.time() - jt) .. "\nThis shows how long you've been playing"
 end
 
 functions.updatePlaytime()
