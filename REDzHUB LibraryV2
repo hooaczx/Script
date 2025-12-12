@@ -587,89 +587,52 @@ local soundId2 = "rbxassetid://4499400560"
 local notificationgui = {}
 
 local function notify(params)
-    local Title = params.Title or "Default Title"
-    local Text = params.Text or "Default Message"
-    local buttondeleteText = params.buttonText or "OK"
-    local image = params.image or params.imageID or "18488884411"
-    local guiSize = params.guiSize or Vector2.new(400, 70)
-    local duration = params.duration
-    local position = params.Position or UDim2.new(0.5, -guiSize.X / 2, 0.45, 50)
-    local updates = params.updates    
-
-    local NotificationLabelText = Create("TextLabel", ScreenGui, {
-        Size = UDim2.new(0, guiSize.X, 0, guiSize.Y),
-        BackgroundTransparency = 1,
-        Text = Text,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Position = position
-    })
-    local sound2 = Create("Sound", NotificationLabelText, {
-        SoundId = soundId1,
-        Volume = 0.2,
-        PlaybackSpeed = 0.9
-    })
+    local Title=params.Title or "Default Title"
+    local Text=params.Text or "Default Message"
+    local buttondeleteText=params.buttonText or "OK"
+    local image=params.image or params.imageID or "18488884411"
+    local guiSize=params.guiSize or Vector2.new(400,70)
+    local duration=params.duration
+    local position=params.Position or UDim2.new(0.5,-guiSize.X/2,0.45,50)
+    local updates=params.updates
+    local NotificationLabelText=Create("TextLabel",ScreenGui,{Size=UDim2.new(0,guiSize.X,0,guiSize.Y),BackgroundTransparency=1,Text=Text,TextScaled=true,TextColor3=Color3.fromRGB(255,255,255),Position=position})
+    local sound2=Create("Sound",NotificationLabelText,{SoundId=soundId1,Volume=0.2,PlaybackSpeed=0.9})
     sound2:Play()
-
-    local NotificationImage = Create("ImageLabel", NotificationLabelText, {
-        Size = UDim2.new(0, 70, 0, 70),
-        Position = UDim2.new(-0.2, 0, 0, 0),
-        Image = "rbxassetid://" .. image,
-        BackgroundTransparency = 1
-    })
-    local NotificationLabelTitle = Create("TextLabel", NotificationLabelText, {
-        Size = UDim2.new(1, 0, 0.4, 0),
-        BackgroundTransparency = 1,
-        Text = Title,
-        TextScaled = true,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Position = UDim2.new(0, 0, -0.4, 0)
-    })
-    local OkButton = Create("TextButton", NotificationLabelText, {
-        Size = UDim2.new(1, 0, 0.4, 0),
-        Position = UDim2.new(0, 0, 1, 0),
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextScaled = true,
-        Text = buttondeleteText,
-        BackgroundTransparency = 1
-    })
-    local sound1 = Create("Sound", OkButton, {
-        SoundId = soundId2,
-        Volume = 0.2,
-        PlaybackSpeed = 0.9
-    })
-
-    local _Title = NotificationLabelTitle.Text
-    local _Text = NotificationLabelText.Text
-    local _Image = NotificationImage.Image
+    local NotificationImage=Create("ImageLabel",NotificationLabelText,{Size=UDim2.new(0,70,0,70),Position=UDim2.new(-0.2,0,0,0),Image="rbxassetid://"..image,BackgroundTransparency=1})
+    local NotificationLabelTitle=Create("TextLabel",NotificationLabelText,{Size=UDim2.new(1,0,0.4,0),BackgroundTransparency=1,Text=Title,TextScaled=true,TextColor3=Color3.fromRGB(255,255,255),Position=UDim2.new(0,0,-0.4,0)})
+    local OkButton=Create("TextButton",NotificationLabelText,{Size=UDim2.new(1,0,0.4,0),Position=UDim2.new(0,0,1,0),TextColor3=Color3.fromRGB(255,255,255),TextScaled=true,Text=buttondeleteText,BackgroundTransparency=1})
+    local sound1=Create("Sound",OkButton,{SoundId=soundId2,Volume=0.2,PlaybackSpeed=0.9})
+    local _Title=NotificationLabelTitle.Text
+    local _Text=NotificationLabelText.Text
+    local _Image=NotificationImage.Image
     local ____
-    if type(updates) == "table" and next(updates) then
-        ____ = RunService.RenderStepped:Connect(function()
-            for key, fn in pairs(updates) do
-                local value = (type(fn) == "function") and fn() or tostring(fn)
-                if key == "Title" and value ~= _Title then
-                    NotificationLabelTitle.Text = value
-                    _Title = value
-                elseif key == "Text" and value ~= _Text then
-                    NotificationLabelText.Text = value
-                    _Text = value
-                elseif key == "Image" and value ~= _Image then
-                    NotificationImage.Image = "rbxassetid://" .. tostring(value)
-                    _Image = NotificationImage.Image
+    if type(updates)=="table" and next(updates) then
+        ____=RunService.RenderStepped:Connect(function()
+            for key,fn in pairs(updates) do
+                local value=(type(fn)=="function") and fn() or tostring(fn)
+                if key=="Title" and value~=_Title then
+                    NotificationLabelTitle.Text=value
+                    _Title=value
+                elseif key=="Text" and value~=_Text then
+                    NotificationLabelText.Text=value
+                    _Text=value
+                elseif key=="Image" and value~=_Image then
+                    NotificationImage.Image="rbxassetid://"..tostring(value)
+                    _Image=NotificationImage.Image
                 end
             end
         end)
     end
-    table.insert(notificationgui, NotificationLabelText)
-    if #notificationgui > 1 then
-        local oldNotification = table.remove(notificationgui, 1)
+    table.insert(notificationgui,NotificationLabelText)
+    if #notificationgui>1 then
+        local oldNotification=table.remove(notificationgui,1)
         oldNotification:Destroy()
     end
-    local tween = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(position.X.Scale, position.X.Offset, position.Y.Scale, position.Y.Offset - (#notificationgui * 60))})
+    local tween=TweenService:Create(NotificationLabelText,TweenInfo.new(0.5),{Position=UDim2.new(position.X.Scale,position.X.Offset,position.Y.Scale,position.Y.Offset-(#notificationgui*60))})
     tween:Play()
     if duration then
-        delay(duration, function()
-            local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
+        delay(duration,function()
+            local tweenOut=TweenService:Create(NotificationLabelText,TweenInfo.new(0.5),{Position=UDim2.new(0.5,-guiSize.X/2,0.45,100),TextTransparency=1})
             tweenOut:Play()
             tweenOut.Completed:Connect(function()
                 if updateConnection then updateConnection:Disconnect() end
@@ -679,56 +642,52 @@ local function notify(params)
     end
     OkButton.MouseButton1Click:Connect(function()
         sound1:Play()
-        local tweenOut = TweenService:Create(NotificationLabelText, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -guiSize.X / 2, 0.45, 100), TextTransparency = 1})
+        local tweenOut=TweenService:Create(NotificationLabelText,TweenInfo.new(0.5),{Position=UDim2.new(0.5,-guiSize.X/2,0.45,100),TextTransparency=1})
         tweenOut:Play()
         tweenOut.Completed:Connect(function()
             sound2:Destroy()
             sound1:Destroy()
-            if ____ then ____:Disconnect() ____ = nil end
+            if ____ then ____:Disconnect() ____=nil end
             NotificationLabelText:Destroy()
         end)
-    end)
-end
-
-local d = {
- greet = {
-  "Hey, ", "Yo, ", "Sup! ", "What’s up? ", "Hello, ", "Look! ", "Heads up! ", "Check it! ", "Yo yo! ", "Hiya! ", "Howdy! ", "Heya! ", "Ahoy! ", "Greetings! "
- },
- emo = {
-  "🎉", "✨", "🔥", "🌟", "🎆", "🌈", "💪", "😊", "😎", "🌙", "🌞", "🍀", "🌺", "🌸", "☀️", "🌛"
- }
-}
-local function r(t) return t[math.random(#t)] end
-local greetTxt = r(d.greet)
-local emoTxt = r(d.emo)
-function getTitleText()
- local now = os.time()
- local t = os.date("*t", now)
- local y = t.year
- local thisNY = os.time{year = y, month = 1, day = 1, hour = 0, min = 0, sec = 0}
- local thisNYEnd = os.time{year = y, month = 1, day = 1, hour = 6, min = 1, sec = 0}
- local nextNY = os.time{year = y + 1, month = 1, day = 1, hour = 0, min = 0, sec = 0}
- if now >= thisNY and now < thisNYEnd then
-  return string.format("🎉 Happy New Year %d! 🎆", y)
- else
-  local diff = nextNY - now
-  if diff < 0 then diff = 0 end
-  local d = math.floor(diff / 86400)
-  local h = math.floor((diff % 86400) / 3600)
-  local m = math.floor((diff % 3600) / 60)
-  local sec = diff % 60
-  return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰", greetTxt, d, h, m, sec)
+     end)
+  end
+  local d={greet={"Hey, ","Yo, ","Sup! ","What’s up? ","Hello, ","Look! ","Heads up! ","Check it! ","Yo yo! ","Hiya! ","Howdy! ","Heya! ","Ahoy! ","Greetings! "},emo={"🎉","✨","🔥","🌟","🎆","🌈","💪","😊","😎","🌙","🌞","🍀","🌺","🌸","☀️","🌛"}}
+  local function r(t) return t[math.random(#t)] end
+  local greetTxt=r(d.greet)
+  local emoTxt=r(d.emo)
+  function getTitleText()
+      local now=os.time()
+      local t=os.date("*t",now)
+      local y=t.year
+      local nextNY=os.time{year=y+1,month=1,day=1,hour=0,min=0,sec=0}
+      local diff=nextNY-now
+      if diff<0 then diff=0 end
+      local d=math.floor(diff/86400)
+      local h=math.floor((diff%86400)/3600)
+      local m=math.floor((diff%3600)/60)
+      local sec=diff%60
+      return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰",greetTxt,d,h,m,sec)
+  end
+  function getNYText()
+     local now=os.time()
+     local t=os.date("*t",now)
+     local y=t.year
+     local startNY=os.time{year=y,month=1,day=1,hour=0,min=0,sec=0}
+     local endNY=os.time{year=y,month=1,day=1,hour=6,min=1,sec=0}
+     if now>=startNY and now<endNY then
+        return "🎉 Happy New Year "..y.."! 🎆\nWishing you a joyful new year!"
+     else
+        return "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand"
+     end
  end
-end
-notify({
- Title = getTitleText(),
- Text = "Hope you enjoy using it\nWhen I update the Gui, I would like to say that it may cause the ui to not work or crash, so please understand",
- buttonText = "Ok",
- imageID = "18488884411",
- guiSize = Vector2.new(400, 80),
- updates = {
-  Title = getTitleText
- }
+ notify({
+ Title=getTitleText(),
+ Text=getNYText(),
+ buttonText="Ok",
+ imageID="18488884411",
+ guiSize=Vector2.new(400,80),
+ updates={Title=getTitleText,Text=getNYText}
  })
  function MinimizeButton(Configs)
     local functions = {} 
