@@ -292,7 +292,7 @@ AddToggle(Main5u6, {
             _zz.i = 1
             _zz.busy = false
             _zz.c = game:GetService("RunService").RenderStepped:Connect(function()
-                if not _zz.on or _zz.busy then return end
+                if not _zz.on then return end
                 local pl = game:GetService("Players"):GetPlayers()
                 if #pl == 0 then return end
                 if _zz.i > #pl then _zz.i = 1 end
@@ -306,54 +306,30 @@ AddToggle(Main5u6, {
                     _zz.i += 1
                     return
                 end
-                _zz.busy = true
-                local dt = { p = {}, q = {} }
-                _zz.d[p] = dt
-                for _, part in pairs(ch:GetDescendants()) do
-                    if part:IsA("BasePart") and part.CanCollide ~= nil then
-                        table.insert(dt.q, part)
-                    end
-                end
-                for _, acc in pairs(ch:GetChildren()) do
-                    if acc:IsA("Accessory") or acc:IsA("Tool") then
-                        for _, sub in pairs(acc:GetDescendants()) do
-                            if sub:IsA("BasePart") and sub.CanCollide ~= nil then
-                                table.insert(dt.q, sub)
-                            end
-                        end
-                    end
-                end
-                task.spawn(function()
-                    while _zz.on and #dt.q > 0 do
-                        local o = table.remove(dt.q, 1)
-                        if o and o.Parent then
+                if not _zz.d[p] then
+                    _zz.busy = true
+                    local dt = { map = {} }
+                    _zz.d[p] = dt
+                    for _, part in pairs(ch:GetDescendants()) do
+                        if part:IsA("BasePart") and part.CanCollide ~= nil then
                             local n
-                            if o:IsA("MeshPart") then
+                            if part:IsA("MeshPart") then
                                 n = Instance.new("MeshPart")
-                                n.MeshId = o.MeshId
-                                n.TextureID = o.TextureID
-                            elseif o:IsA("Part") then
-                                n = Instance.new("Part")
-                                n.Shape = o.Shape
-                            elseif o:IsA("WedgePart") then
-                                n = Instance.new("WedgePart")
-                            elseif o:IsA("CornerWedgePart") then
-                                n = Instance.new("CornerWedgePart")
+                                n.MeshId = part.MeshId
+                                n.TextureID = part.TextureID
                             else
-                                n = Instance.new(o.ClassName)
+                                n = Instance.new(part.ClassName)
                             end
-                            n.Size = o.Size
-                            n.CFrame = o.CFrame
-                            n.Color = o.Color
-                            n.Material = o.Material
+                            n.Size = part.Size
+                            n.CFrame = part.CFrame
+                            n.Color = part.Color
+                            n.Material = part.Material
                             n.Anchored = false
-                            n.CanCollide = true
                             n.Massless = true
-                            n.AssemblyLinearVelocity = Vector3.zero
-                            n.AssemblyAngularVelocity = Vector3.zero
+                            n.CanCollide = true
                             n.Transparency = 1
                             n.Parent = workspace
-                            local sm = o:FindFirstChildOfClass("SpecialMesh")
+                            local sm = part:FindFirstChildOfClass("SpecialMesh")
                             if sm then
                                 local s = Instance.new("SpecialMesh", n)
                                 pcall(function() s.MeshType = sm.MeshType end)
@@ -361,35 +337,34 @@ AddToggle(Main5u6, {
                                 s.TextureId = sm.TextureId
                                 s.Scale = sm.Scale
                             end
-                            dt.p[o] = n
-                            task.spawn(function()
-                                while _zz.on and o and o.Parent and n and n.Parent do
-                                    n.CFrame = o.CFrame
-                                    n.AssemblyLinearVelocity = Vector3.zero
-                                    n.AssemblyAngularVelocity = Vector3.zero
-                                    task.wait()
-                                end
-                                if n and n.Parent then n:Destroy() end
-                            end)
+                            dt.map[part] = n
                         end
-                        task.wait()
                     end
-                    _zz.d[p] = nil
                     _zz.i += 1
                     _zz.busy = false
-                end)
+                    return
+                end
+                for orig, clone in pairs(_zz.d[p].map) do
+                    if orig and orig.Parent and clone and clone.Parent then
+                        clone.CFrame = orig.CFrame
+                        clone.AssemblyLinearVelocity = Vector3.zero
+                        clone.AssemblyAngularVelocity = Vector3.zero
+                    else
+                        if clone and clone.Parent then clone:Destroy() end
+                        _zz.d[p].map[orig] = nil
+                    end
+                end
             end)
         else
             if _zz.c then _zz.c:Disconnect() end
-            for _, a in pairs(_zz.d or {}) do
-                for _, b in pairs(a.p or {}) do
-                    if b and b.Parent then
-                        b:Destroy()
-                    end
+            for _, d in pairs(_zz.d or {}) do
+                for _, p in pairs(d.map or {}) do
+                    if p and p.Parent then p:Destroy() end
                 end
             end
             table.clear(_zz)
         end
+
         task.delay(0, function()
             _lk = false
         end)
