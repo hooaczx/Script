@@ -280,10 +280,25 @@ AddColorPicker(Main5u6, {
 local _zz = {}
 local _lk = false
 
-AddToggle(Main5u6, {
+AddToggle(Main5u6,{
     Name = "Collision Players",
     Default = false,
     Callback = function(x)
+        if x then
+            if _ANTI_ACTIVE and _ANTI_ACTIVE ~= "Collision" then
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Warning",
+                    Text = "Please turn off " .. tostring(_ANTI_ACTIVE) .. " first",
+                    Duration = 3
+                })
+                return
+            end
+            _ANTI_ACTIVE = "Collision"
+        else
+            if _ANTI_ACTIVE == "Collision" then
+                _ANTI_ACTIVE = nil
+            end
+        end
         if _lk then return end
         _lk = true
         _zz.on = x
@@ -292,82 +307,95 @@ AddToggle(Main5u6, {
             _zz.i = 1
             _zz.busy = false
             _zz.c = game:GetService("RunService").RenderStepped:Connect(function()
-                if not _zz.on then return end
+                if not _zz.on or _zz.busy then return end
+                local lp = game:FindFirstChildOfClass("Players").LocalPlayer
                 local pl = game:GetService("Players"):GetPlayers()
                 if #pl == 0 then return end
                 if _zz.i > #pl then _zz.i = 1 end
                 local p = pl[_zz.i]
-                if p == game.Players.LocalPlayer then
-                    _zz.i += 1
-                    return
-                end
+                _zz.i += 1
+                if p == lp then return end
                 local ch = p.Character
                 if not ch then
-                    _zz.i += 1
+                    if _zz.d[p.UserId] then
+                        for orig, data in pairs(_zz.d[p.UserId].map or {}) do
+                            if data.clone and data.clone.Parent then data.clone:Destroy() end
+                        end
+                        _zz.d[p.UserId] = nil
+                    end
                     return
                 end
-                if not _zz.d[p] then
-                    _zz.busy = true
-                    local dt = { map = {} }
-                    _zz.d[p] = dt
-                    for _, part in pairs(ch:GetDescendants()) do
-                        if part:IsA("BasePart") and part.CanCollide ~= nil then
-                            local n
-                            if part:IsA("MeshPart") then
-                                n = Instance.new("MeshPart")
-                                n.MeshId = part.MeshId
-                                n.TextureID = part.TextureID
+                _zz.busy = true
+                local uid = p.UserId
+                if not _zz.d[uid] then _zz.d[uid] = { map = {}, queue = {} } end
+                local dt = _zz.d[uid]
+                for _, part in pairs(ch:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide ~= nil then
+                        if not dt.map[part] then table.insert(dt.queue, part) end
+                    end
+                end
+                task.spawn(function()
+                    while _zz.on and #dt.queue > 0 do
+                        local orig = table.remove(dt.queue, 1)
+                        if orig and orig.Parent and not dt.map[orig] then
+                            local clone
+                            if orig:IsA("MeshPart") then
+                                clone = Instance.new("MeshPart")
+                                pcall(function() clone.MeshType = orig.MeshType end)
+                                clone.MeshId = orig.MeshId
+                                clone.TextureID = orig.TextureID
                             else
-                                n = Instance.new(part.ClassName)
+                                clone = Instance.new(orig.ClassName)
                             end
-                            n.Size = part.Size
-                            n.CFrame = part.CFrame
-                            n.Color = part.Color
-                            n.Material = part.Material
-                            n.Anchored = false
-                            n.Massless = true
-                            n.CanCollide = true
-                            n.Transparency = 1
-                            n.Parent = workspace
-                            local sm = part:FindFirstChildOfClass("SpecialMesh")
+                            clone.Size = orig.Size
+                            clone.CFrame = orig.CFrame
+                            clone.Color = orig.Color
+                            clone.Material = orig.Material
+                            clone.Anchored = true
+                            clone.CanCollide = true
+                            clone.Massless = true
+                            clone.Transparency = 1
+                            clone.Parent = workspace
+                            local sm = orig:FindFirstChildOfClass("SpecialMesh")
                             if sm then
-                                local s = Instance.new("SpecialMesh", n)
+                                local s = Instance.new("SpecialMesh")
                                 pcall(function() s.MeshType = sm.MeshType end)
                                 s.MeshId = sm.MeshId
                                 s.TextureId = sm.TextureId
                                 s.Scale = sm.Scale
+                                s.Parent = clone
                             end
-                            dt.map[part] = n
+                            dt.map[orig] = { clone = clone, lastCFrame = orig.CFrame, lastSize = orig.Size }
+                        end
+                        task.wait()
+                    end
+                    for orig, data in pairs(dt.map or {}) do
+                        if not orig or not orig.Parent then
+                            if data.clone and data.clone.Parent then data.clone:Destroy() end
+                            dt.map[orig] = nil
+                        else
+                            if data.lastCFrame ~= orig.CFrame or data.lastSize ~= orig.Size then
+                                data.clone.CFrame = orig.CFrame
+                                data.clone.Size = orig.Size
+                                data.lastCFrame = orig.CFrame
+                                data.lastSize = orig.Size
+                            end
                         end
                     end
-                    _zz.i += 1
                     _zz.busy = false
-                    return
-                end
-                for orig, clone in pairs(_zz.d[p].map) do
-                    if orig and orig.Parent and clone and clone.Parent then
-                        clone.CFrame = orig.CFrame
-                        clone.AssemblyLinearVelocity = Vector3.zero
-                        clone.AssemblyAngularVelocity = Vector3.zero
-                    else
-                        if clone and clone.Parent then clone:Destroy() end
-                        _zz.d[p].map[orig] = nil
-                    end
-                end
+                end)
             end)
         else
             if _zz.c then _zz.c:Disconnect() end
             for _, d in pairs(_zz.d or {}) do
-                for _, p in pairs(d.map or {}) do
-                    if p and p.Parent then p:Destroy() end
+                for _, v in pairs(d.map or {}) do
+                    if v.clone and v.clone.Parent then v.clone:Destroy() end
                 end
             end
             table.clear(_zz)
         end
 
-        task.delay(0, function()
-            _lk = false
-        end)
+        task.delay(0, function() _lk = false end)
     end
 })
 
