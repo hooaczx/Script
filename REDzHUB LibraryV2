@@ -653,42 +653,23 @@ local function notify(params)
         end)
      end)
   end
-local d={greet={"Hey, ","Yo, ","Sup! ","What’s up? ","Hello, ","Look! ","Heads up! ","Check it! ","Yo yo! ","Hiya! ","Howdy! ","Heya! ","Ahoy! ","Greetings! "},emo={"🎉","✨","🔥","🌟","🎆","🌈","💪","😊","😎","🌙","🌞","🍀","🌺","🌸","☀️","🌛"}}
-local function r(t) return t[math.random(#t)] end
-local greetTxt=r(d.greet)
-local emoTxt=r(d.emo)
-function getTitleText()
-    local now=DateTime.now().UnixTimestamp
-    local t=os.date("!*t",now)
-    local y=t.year
-    local nextNY=os.time{year=y+1,month=1,day=1,hour=0,min=0,sec=0}
-    local diff=nextNY-now
-    if diff<0 then diff=0 end
-    local d=math.floor(diff/86400)
-    local h=math.floor((diff%86400)/3600)
-    local m=math.floor((diff%3600)/60)
-    local sec=diff%60
-    return string.format("%s %d:%02d:%02d:%02d Countdown to New Year!⏰",greetTxt,d,h,m,sec)
- end
- function getNYText()
-    local now=DateTime.now().UnixTimestamp
-    local t=os.date("!*t",now)
-    local y=t.year
-    local startNY=os.time{year=y,month=1,day=1,hour=0,min=0,sec=0}
-    local endNY=os.time{year=y,month=1,day=1,hour=6,min=1,sec=0}
-    if now>=startNY and now<endNY then
+function getNYText()
+    local nw = os.time()
+    local x = os.date("*t", nw)
+    local y = x.year
+    if x.month == 1 and x.day == 1 and x.hour < 6 then
         return "🎉 Happy New Year "..y.."! 🎆\nWishing you a joyful new year!"
     else
-        return "Hope you enjoy using it!\n\nWhen I update the GUI, some updates may cause the UI to not load, not work properly, or even crash. If that happens, please wait until I fix it.\nThis script does not use any key system, and it will not have one in the future. If you’re worried about a key system being added later, you don’t need to be.\nYou can use this script immediately after running it in your executor, and you can also use it together with other scripts since this UI does not overlap or conflict with other UIs.\nAs mentioned before, if an update causes the UI to break or not show up at all, please be patient and wait until it’s fixed."
+        return "Hope you enjoy using it!\n\nWhen I update the GUI, some updates may cause the UI to not load, not work properly, or even crash. If that happens, please wait until I fix it.\nThis script does not use any key system, and it will not have one in the future. If you're worried about a key system being added later, you don't need to be.\nYou can use this script immediately after running it in your executor, and you can also use it together with other scripts since this UI does not overlap or conflict with other UIs.\nAs mentioned before, if an update causes the UI to break or not show up at all, please be patient and wait until it's fixed"
     end
  end
  notify({
-    Title=getTitleText(),
-    Text=getNYText(),
-    buttonText="Ok",
-    imageID="18488884411",
-    guiSize=Vector2.new(400,80),
-    updates={Title=getTitleText,Text=getNYText}
+    Title = "Hi!",
+    Text = getNYText(),
+    buttonText = "Ok",
+    imageID = "18488884411",
+    guiSize = Vector2.new(400,80),
+    updates = {Title = getTitleText, Text = getNYText}
  })
  function MinimizeButton(Configs)
     local functions = {} 
