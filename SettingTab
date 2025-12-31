@@ -1268,58 +1268,7 @@ AddToggle(Main5u6, {
 getgenv()._pN = false
 local _w, _oN, _cN, _bk = {}, nil, nil, {}
 for _,p in ipairs(game:FindFirstChildOfClass("Players"):GetPlayers()) do if p == game:FindFirstChildOfClass("Players").LocalPlayer then _oN = p.Name break end end
-
-local function _m(n, r)
-	if r or not getgenv()._pN then
-		for v,t in pairs(_bk) do
-			if v and v:IsA("TextLabel") then
-				v.Text = t
-			end
-		end
-		for _,x in ipairs(_w) do
-			x:Disconnect()
-		end
-		table.clear(_bk)
-		table.clear(_w)
-		return
-	end
-	if _cN then
-		for v,t in pairs(_bk) do
-			if v and v:IsA("TextLabel") then
-				v.Text = t
-			end
-		end
-		table.clear(_bk)
-	end
-	if not (n and _oN) then return end
-	_cN = n
-	for _,v in ipairs(game:GetDescendants()) do
-		if v:IsA("TextLabel") and v.Text and v.Text:find(_oN) then
-			if not _bk[v] then
-				_bk[v] = v.Text
-			end
-			v.Text = _bk[v]:gsub(_oN, n)
-			table.insert(_w, v:GetPropertyChangedSignal("Text"):Connect(function()
-				if getgenv()._pN and _bk[v] then
-					v.Text = _bk[v]:gsub(_oN, n)
-				end
-			end))
-		end
-	end
-	table.insert(_w, game.DescendantAdded:Connect(function(v)
-		if v:IsA("TextLabel") and v.Text and v.Text:find(_oN) then
-			if not _bk[v] then
-				_bk[v] = v.Text
-			end
-			v.Text = _bk[v]:gsub(_oN, n)
-			table.insert(_w, v:GetPropertyChangedSignal("Text"):Connect(function()
-				if getgenv()._pN and _bk[v] then
-					v.Text = _bk[v]:gsub(_oN, n)
-				end
-			end))
-		end
-	end))
-end
+local function _m(n,r)if r then for v,t in pairs(_bk)do if v and v:IsA("TextLabel")then v.Text=t end end for _,c in pairs(_w)do c:Disconnect()end table.clear(_bk)table.clear(_w)return end if not getgenv()._pN then return end if n then _cN=n end if not(_cN and _oN)then return end for v,t in pairs(_bk)do if v and v:IsA("TextLabel")then v.Text=t:gsub(_oN,_cN)end end for _,v in ipairs(game:GetDescendants())do if v:IsA("TextLabel")and v.Text and v.Text:find(_oN)then if not _bk[v]then _bk[v]=v.Text v.Text=v.Text:gsub(_oN,_cN)_w[v]=v:GetPropertyChangedSignal("Text"):Connect(function()if getgenv()._pN and _bk[v]then v.Text=_bk[v]:gsub(_oN,_cN)end end)end end end if not _w._a then _w._a=game.DescendantAdded:Connect(function(v)if v:IsA("TextLabel")and v.Text and v.Text:find(_oN)and not _bk[v]then _bk[v]=v.Text v.Text=v.Text:gsub(_oN,_cN)_w[v]=v:GetPropertyChangedSignal("Text"):Connect(function()if getgenv()._pN and _bk[v]then v.Text=_bk[v]:gsub(_oN,_cN)end end)end end)end end
 
 AddTextBox(Main5u6, {
 	Name = "Custom Name",
