@@ -4152,8 +4152,11 @@ function MakeTab(Configs)
    function AddToggle(parent, Configs)
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
+    local TwoToggle = Configs.TwoToggle
+    local NotificationTitle = Configs.NotificationTitle
+    local NotificationText = Configs.NotificationText
     local Callback = Configs.Callback or function() end
-    
+
     local TextButton = Create("TextButton", parent, {
         Size = UDim2.new(0.95, 0, 0.12, 0),
         BackgroundColor3 = Configs_HUB.Cor_Options,
@@ -4163,7 +4166,7 @@ function MakeTab(Configs)
     })
     Corner(TextButton)
     Stroke(TextButton)
-    
+
     local TextLabel = Create("TextLabel", TextButton, {
         TextColor3 = Configs_HUB.Cor_Text,
         TextWrapped = true,
@@ -4171,12 +4174,12 @@ function MakeTab(Configs)
         TextSize = 12,
         Text = ToggleName,
         Size = UDim2.new(0.93, 0, 1, 0),
-        Position = UDim2.new(0.012 + 0.08, 0, 0, 0),
+        Position = UDim2.new(0.092, 0, 0, 0),
         BackgroundTransparency = 1,
         TextXAlignment = "Left",
         Font = Configs_HUB.Text_Font
     })
-    
+
     local Frame1 = Create("Frame", TextButton, {
         Size = UDim2.new(0.07, 0, 0.6, 0),
         Position = UDim2.new(0.012, 0, 0.22, 0),
@@ -4184,15 +4187,16 @@ function MakeTab(Configs)
     })
     Corner(Frame1, {CornerRadius = UDim.new(1, 0)})
     local Stroke1 = Stroke(Frame1, {Thickness = 2})
-    
+
     local Frame2 = Create("Frame", Frame1, {
         Size = UDim2.new(0.5, 0, 0.9, 0),
         Position = UDim2.new(0, 0, 0.47, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Configs_HUB.Cor_Stroke
-    })local Stroke2 = Stroke(Frame2, {Thickness = 1})
+    })
+    local Stroke2 = Stroke(Frame2, {Thickness = 1})
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
-    
+
     local OnOff = false
     if Default then
         OnOff = true
@@ -4203,6 +4207,7 @@ function MakeTab(Configs)
         CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
     end
     Callback(OnOff)
+
     local function ResetToggle()
         OnOff = false
         CreateTween(Frame2, "Position", UDim2.new(0, 0, 0.47, 0), 0.2, false)
@@ -4212,55 +4217,66 @@ function MakeTab(Configs)
         CreateTween(TextLabel, "TextColor3", Configs_HUB.Cor_Text, 0.2, false)
         Callback(false)
     end
+
     local cleartoggle
     cleartoggle = parent.AncestryChanged:Connect(function(_, parent)
         if not parent and OnOff then
-           ResetToggle()
-           if cleartoggle then
-            cleartoggle:Disconnect()
-            cleartoggle = nil
-           end
+            ResetToggle()
+            if cleartoggle then
+                cleartoggle:Disconnect()
+                cleartoggle = nil
+            end
         end
     end)
-    
-    local function CreateEffect(text, parent)
-     local EffectLabel = Create("TextLabel", parent, {
-         Text = text,
-         TextColor3 = Configs_HUB.Cor_Text,
-         Font = Configs_HUB.Text_Font,
-         BackgroundTransparency = 1,
-         Size = UDim2.new(0.3, 0, 0.3, 0),
-         Position = UDim2.new(0.35, 0, -0.2, 0)
-     })
-     local UIScale = Create("UIScale", EffectLabel, {Scale = 0.5})
-     CreateTween(UIScale, "Scale", 1, 0.2, false)
-     CreateTween(EffectLabel, "Position", UDim2.new(0.35, 0, -0.2, 0), 0.3, false)
-     CreateTween(EffectLabel, "TextTransparency", 1, 0.5, false)
 
-      task.delay(0.3, function()
-          EffectLabel:Destroy()
-      end)
+    local function CreateEffect(text, parent)
+        local EffectLabel = Create("TextLabel", parent, {
+            Text = text,
+            TextColor3 = Configs_HUB.Cor_Text,
+            Font = Configs_HUB.Text_Font,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(0.3, 0, 0.3, 0),
+            Position = UDim2.new(0.35, 0, -0.2, 0)
+        })
+        local UIScale = Create("UIScale", EffectLabel, {Scale = 0.5})
+        CreateTween(UIScale, "Scale", 1, 0.2, false)
+        CreateTween(EffectLabel, "Position", UDim2.new(0.35, 0, -0.2, 0), 0.3, false)
+        CreateTween(EffectLabel, "TextTransparency", 1, 0.5, false)
+        task.delay(0.3, function()
+            EffectLabel:Destroy()
+        end)
     end
-    
+
     TextButton.MouseButton1Click:Connect(function()
-      if not OnOff then
-          clicktoggle:Play()
-          OnOff = true
-          CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
-          CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-          CreateTween(Stroke1, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-          CreateTween(Stroke2, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
-          CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
-          CreateEffect("ON", Frame1)
-          Callback(true)
-      else
-          falsetoggle:Play()
-          ResetToggle()
-          CreateEffect("OFF", Frame1)
-         end
-      end)
-     return {Frame2, Stroke1, OnOff, Callback}
-   end
+        if not OnOff then
+            if TwoToggle and TwoToggle.OnOff then
+                if NotificationTitle and NotificationText then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = NotificationTitle,
+                        Text = NotificationText,
+                        Duration = 3
+                    })
+                end
+                return
+            end
+            clicktoggle:Play()
+            OnOff = true
+            CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
+            CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(Stroke1, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(Stroke2, "Color", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateTween(TextLabel, "TextColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
+            CreateEffect("ON", Frame1)
+            Callback(true)
+        else
+            falsetoggle:Play()
+            ResetToggle()
+            CreateEffect("OFF", Frame1)
+        end
+    end)
+
+    return {Frame2, Stroke1, OnOff, Callback}
+  end
 
   function AddTextBox(parent, Configs)
     local TextBoxName = Configs.Name or "TextBox!!"
