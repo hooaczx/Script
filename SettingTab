@@ -276,6 +276,92 @@ AddColorPicker(Main5u6, {
     end
 })
 
+local _zz = {}
+local _lk = false
+
+AddToggle(Main5u6,{
+ Name="Collision Players",
+ Default=false,
+ Callback=function(x)
+  if _lk then return end
+  _lk = true
+  _zz.on = x
+  if x then
+   _zz.d=_zz.d or {}
+   _zz.i=_zz.i or 1
+   _zz.c=game:GetService("RunService").RenderStepped:Connect(function()
+    if not _zz.on then return end
+    local pl=game:GetService("Players"):GetPlayers()
+    if #pl==0 then return end
+    if _zz.i>#pl then _zz.i=1 end
+    local p=pl[_zz.i]
+    _zz.i+=1
+    if p==game:GetService("Players").LocalPlayer then return end
+    local ch=p.Character
+    if not ch then return end
+    _zz.d[p]=_zz.d[p] or {p={},q={}}
+    local dt=_zz.d[p]
+    for _,v in pairs(ch:GetDescendants()) do
+     if v:IsA("BasePart") and v.CanCollide~=nil and not dt.p[v] then
+      table.insert(dt.q,v)
+     end
+    end
+    local o=table.remove(dt.q,1)
+    if o and o.Parent and not dt.p[o] then
+     local n
+     if o:IsA("MeshPart") then
+      n=Instance.new("MeshPart")
+      n.MeshId=o.MeshId
+      n.TextureID=o.TextureID
+     else
+      n=Instance.new(o.ClassName)
+     end
+     n.Size=o.Size
+     n.CFrame=o.CFrame
+     n.Anchored=true
+     n.CanCollide=true
+     n.Transparency=1
+     n.Parent=workspace
+     dt.p[o]={c=n,f=o.CFrame,s=o.Size,m=o:IsA("MeshPart") and o.MeshId or "",t=o:IsA("MeshPart") and o.TextureID or ""}
+    end
+    for r,e in pairs(dt.p) do
+     if not r or not r.Parent then
+      if e.c and e.c.Parent then e.c:Destroy() end
+      dt.p[r]=nil
+     else
+      if e.f~=r.CFrame or e.s~=r.Size then
+       e.c.CFrame=r.CFrame
+       e.c.Size=r.Size
+       e.f=r.CFrame
+       e.s=r.Size
+      end
+      if r:IsA("MeshPart") and (e.m~=r.MeshId or e.t~=r.TextureID) then
+       e.c.MeshId=r.MeshId
+       e.c.TextureID=r.TextureID
+       e.m=r.MeshId
+       e.t=r.TextureID
+      end
+     end
+    end
+   end)
+   task.delay(0,function()
+    _lk=false
+   end)
+  else
+   if _zz.c then _zz.c:Disconnect() _zz.c=nil end
+   for _,a in pairs(_zz.d or {}) do
+    for _,b in pairs(a.p) do
+     if b.c and b.c.Parent then b.c:Destroy() end
+    end
+   end
+   table.clear(_zz)
+   task.delay(0,function()
+    _lk=false
+   end)
+  end
+ end
+})
+
 local t_f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Float"))()
 
 AddToggle(Main5u6, {
