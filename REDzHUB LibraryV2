@@ -4250,17 +4250,17 @@ function MakeTab(Configs)
     end
 
     TextButton.MouseButton1Click:Connect(function()
-        if not OnOff then
-            if TwoToggle and TwoToggle.OnOff then
-                if NotificationTitle and NotificationText then
-                    game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = NotificationTitle,
-                        Text = NotificationText,
-                        Duration = 3
-                    }) locktoggle:Play()
-                end
-                return
+        if TwoToggle and TwoToggle.OnOff then
+            if NotificationTitle and NotificationText then
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = NotificationTitle,
+                    Text = NotificationText,
+                    Duration = 3
+                }) locktoggle:Play()
             end
+            return
+        end
+        if not OnOff then
             clicktoggle:Play()
             OnOff = true
             CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
@@ -4277,7 +4277,7 @@ function MakeTab(Configs)
         end
     end)
 
-    return {Frame2, Stroke1, OnOff, Callback}
+    return {Frame2=Frame2, Stroke1=Stroke1, OnOff=OnOff, Callback=Callback}
   end
 
   function AddTextBox(parent, Configs)
