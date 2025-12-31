@@ -22,7 +22,6 @@ local lp = ps.LocalPlayer
 local mouse = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
 local gui, con, isOn, fpsV = nil, nil, false, 0
 local tpc, cfc = nil, nil
-local _ANTI_ACTIVE = _ANTI_ACTIVE
 local cfMode, Opt = "None", "Nope"
 local TE = false
 
@@ -279,26 +278,12 @@ AddColorPicker(Main5u6, {
 
 local _zz = {}
 local _lk = false
-
-AddToggle(Main5u6, {
+local ed_2 = AddToggle(Main5u6, {
     Name = "Collision Players",
     Default = false,
+    NotificationTitle="Warning",
+    NotificationText="Please turn off Anti Fling first"
     Callback = function(x)
-        if x then
-            if _ANTI_ACTIVE and _ANTI_ACTIVE ~= "Collision" then
-                game:GetService("StarterGui"):SetCore("SendNotification", {
-                    Title = "Warning",
-                    Text = "Please turn off Anti Fling first",
-                    Duration = 3
-                })
-                return
-            end
-            _ANTI_ACTIVE = "Collision"
-        else
-            if _ANTI_ACTIVE == "Collision" then
-                _ANTI_ACTIVE = nil
-            end
-        end
         if _lk then return end
         _lk = true
         _zz.on = x
@@ -1640,22 +1625,10 @@ local _Zxq = { index = 1 }
 AddToggle(Main5u6, {
   Name = "Anti Fling",
   Default = false,
+  TwoToggle=ed_2,
+  NotificationTitle="Warning",
+  NotificationText="Please turn off Collision Players first",
   Callback = function(_Zxs)
-    if _Zxs then
-      if _ANTI_ACTIVE and _ANTI_ACTIVE ~= "AntiFling" then
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-          Title = "Warning",
-          Text = "Please turn off Collision Players first",
-          Duration = 3
-        })
-        return
-      end
-      _ANTI_ACTIVE = "AntiFling"
-    else
-      if _ANTI_ACTIVE == "AntiFling" then
-        _ANTI_ACTIVE = nil
-      end
-    end
     if _Zxs then
       if _Zxc then return end
       _Zxc = true
