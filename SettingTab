@@ -295,9 +295,7 @@ AddToggle(Main5u6, {
                 if not _zz.on or _zz.busy then return end
                 local pl = game:GetService("Players"):GetPlayers()
                 if #pl == 0 then return end
-                if _zz.i > #pl then
-                    _zz.i = 1
-                end
+                if _zz.i > #pl then _zz.i = 1 end
                 local p = pl[_zz.i]
                 if p == game.Players.LocalPlayer then
                     _zz.i += 1
@@ -313,20 +311,7 @@ AddToggle(Main5u6, {
                 _zz.d[p] = dt
                 for _, part in pairs(ch:GetDescendants()) do
                     if part:IsA("BasePart") and part.CanCollide ~= nil then
-                        local n = part.Name:lower()
-                        local pn = part.Parent and part.Parent.Name:lower() or ""
-                        local ok = false
-                        if n:match("arm") or n:match("leg") or
-                           pn:match("arm") or pn:match("leg") then
-                            ok = true
-                        elseif part.Name == "HumanoidRootPart"
-                            or part.Name == "Head"
-                            or part.Name:lower():match("torso") then
-                            ok = true
-                        end
-                        if ok then
-                            table.insert(dt.q, part)
-                        end
+                        table.insert(dt.q, part)
                     end
                 end
                 for _, acc in pairs(ch:GetChildren()) do
@@ -361,8 +346,11 @@ AddToggle(Main5u6, {
                             n.CFrame = o.CFrame
                             n.Color = o.Color
                             n.Material = o.Material
-                            n.Anchored = true
+                            n.Anchored = false
                             n.CanCollide = true
+                            n.Massless = true
+                            n.AssemblyLinearVelocity = Vector3.zero
+                            n.AssemblyAngularVelocity = Vector3.zero
                             n.Transparency = 1
                             n.Parent = workspace
                             local sm = o:FindFirstChildOfClass("SpecialMesh")
@@ -374,26 +362,25 @@ AddToggle(Main5u6, {
                                 s.Scale = sm.Scale
                             end
                             dt.p[o] = n
+                            task.spawn(function()
+                                while _zz.on and o and o.Parent and n and n.Parent do
+                                    n.CFrame = o.CFrame
+                                    n.AssemblyLinearVelocity = Vector3.zero
+                                    n.AssemblyAngularVelocity = Vector3.zero
+                                    task.wait()
+                                end
+                                if n and n.Parent then n:Destroy() end
+                            end)
                         end
                         task.wait()
-                    end
-                    for _, c in pairs(dt.p) do
-                        if c and c.Parent then
-                            c:Destroy()
-                        end
                     end
                     _zz.d[p] = nil
                     _zz.i += 1
                     _zz.busy = false
                 end)
             end)
-            task.delay(0, function()
-                _lk = false
-            end)
         else
-            if _zz.c then
-                _zz.c:Disconnect()
-            end
+            if _zz.c then _zz.c:Disconnect() end
             for _, a in pairs(_zz.d or {}) do
                 for _, b in pairs(a.p or {}) do
                     if b and b.Parent then
@@ -402,10 +389,10 @@ AddToggle(Main5u6, {
                 end
             end
             table.clear(_zz)
-            task.delay(0, function()
-                _lk = false
-            end)
         end
+        task.delay(0, function()
+            _lk = false
+        end)
     end
 })
 
