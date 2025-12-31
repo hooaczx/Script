@@ -577,6 +577,7 @@ Close_Button.MouseButton1Click:Connect(CreateClose)
 
 local clicktoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://6042053626", Volume = 0.1})
 local falsetoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://9083627113", Volume = 0.1})
+local locktoggle = Create("Sound", ScreenGui, {SoundId = "rbxassetid://123392106001089", Volume = 0.1})
 local click1 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://7475853483", Volume = 0.1})
 local click2 = Create("Sound", ScreenGui, {SoundId = "rbxassetid://8432836186", Volume = 0.1})
 local notifyfriend = Create("Sound", ScreenGui, {SoundId = "rbxassetid://1862045322", Volume = 0.2, PlaybackSpeed = 0.9})
@@ -3891,6 +3892,7 @@ check_1 = RunService.RenderStepped:Connect(function()
         if click2 and click2.Destroy then click2:Destroy() click2 = nil end
         if falsetoggle and falsetoggle.Destroy then falsetoggle:Destroy() falsetoggle = nil end
         if clicktoggle and clicktoggle.Destroy then clicktoggle:Destroy() clicktoggle = nil end
+        if locktoggle and locktoggle.Destroy then locktoggle:Destroy() locktoggle = nil end
         for name, conn in pairs(stopupdateall or {}) do
             if conn and conn.Disconnect then
                 conn:Disconnect()
@@ -4255,7 +4257,7 @@ function MakeTab(Configs)
                         Title = NotificationTitle,
                         Text = NotificationText,
                         Duration = 3
-                    })
+                    }) locktoggle
                 end
                 return
             end
