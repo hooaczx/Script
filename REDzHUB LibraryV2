@@ -3439,7 +3439,19 @@ local uiStates = {
     frameinfogui = {frame = frameinfogui, state = false},
     Menu = {frame = Menu, state = true},
     frameSetting = {frame = frameSetting, state = false}
-}local activeButton, cameraback = nil, true
+}local activeButton, cameraback, slip = nil, true, nil
+RunServerlock("ghostY", "no", function()
+    if not ScrollBar or not ScrollBar.Parent then
+        if slip then slip:Disconnect() slip = nil end
+        if ScrollBar then ScrollBar:SetAttribute("zBind", nil) ScrollBar:SetAttribute("zPos", nil) end return end
+        if not ScrollBar:GetAttribute("zBind") then ScrollBar:SetAttribute("zBind", true)
+        slip = ScrollBar:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+            if ScrollBar and ScrollBar.Parent then
+                ScrollBar:SetAttribute("zPos", ScrollBar.CanvasPosition)
+            end
+        end)
+    end
+end)
 
 local strokeeffect = Create("Frame", frame, {
     Size = UDim2.new(0.06, 0, 0.6, 0),
