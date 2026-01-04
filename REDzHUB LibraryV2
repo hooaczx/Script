@@ -3472,9 +3472,6 @@ functions.closeOtherUI = function(exceptName)
     for name, data in pairs(uiStates) do
         if name ~= exceptName and data.state then
             if name == "Menu" then
-                if Containers and Containers:IsA("ScrollingFrame") then
-                    data.canvasPos = Containers.CanvasPosition
-                end
                 if IsMinimizedu then
                     data.state = false
                     CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0, 0), 0.15, true)
@@ -3577,7 +3574,6 @@ infoToggleButton.MouseButton1Click:Connect(function()
 end)
 
 Button.MouseButton1Click:Connect(function()
-Button.MouseButton1Click:Connect(function()
     if switchtodescription or ifClick or (switchtodescription and ifClick) then return end
     if not functions.canClick() then return end
     functions.MoveStrokePosition(Button)
@@ -3596,9 +3592,14 @@ Button.MouseButton1Click:Connect(function()
             Menu.Visible = true
             click1:Play()
             CreateTween(Menu, "Size", UDim2.new(0.576, 0, 0.545, 0), 0.3, false)
-            if uiStates.Menu.canvasPos and Containers and Containers:IsA("ScrollingFrame") then
-                Containers.CanvasPosition = uiStates.Menu.canvasPos
-            end
+            task.defer(function()
+                if ScrollBar then
+                    local p = ScrollBar:GetAttribute("zPos")
+                    if p then
+                        ScrollBar.CanvasPosition = p
+                    end
+                end
+            end)
         end
     else
         if Containers and Containers:IsA("ScrollingFrame") then
