@@ -1396,8 +1396,8 @@ else
 				if _r._c~=_c then _r._c=_c _r._m={} _r._d={} _r._h={} end
 				local _h=_c:FindFirstChildOfClass("Humanoid")
 				if _h then
-					if _r._h.ps~=_h.PlatformStand then _r._h.ps=_h.PlatformStand end
-					if _r._h.ar~=_h.AutoRotate then _r._h.ar=_h.AutoRotate end
+					if _r._h.ps==nil then _r._h.ps=_h.PlatformStand end
+					if _r._h.ar==nil then _r._h.ar=_h.AutoRotate end
 					_h.PlatformStand=true
 					_h.AutoRotate=false
 					_h:ChangeState(Enum.HumanoidStateType.Physics)
@@ -1418,37 +1418,24 @@ else
 							_r._m[_m6]=_rec
 							_r._d[#_r._d+1]={_m6,_rec}
 						end
-						if _m6.Part0:IsA("BasePart") then
-							_m6.Part0.Anchored=false
-							if _m6.Part0.Massless~=nil then
-								_m6.Part0.Massless=false
-							end
-							_m6.Part0.CanCollide=true
-						end
-						if _m6.Part1:IsA("BasePart") then
-							_m6.Part1.Anchored=false
-							if _m6.Part1.Massless~=nil then
-								_m6.Part1.Massless=false
-							end
-							_m6.Part1.CanCollide=true
-						end
+
 						if not (_rec.a0 and _rec.a0.Parent) then
-							_rec.a0=Instance.new("Attachment",_m6.Part0)
+							_rec.a0=Instance.new("Attachment")
 							_rec.a0.Name="rag_a0"
+							_rec.a0.Parent=_m6.Part0
 						end
 						if not (_rec.a1 and _rec.a1.Parent) then
-							_rec.a1=Instance.new("Attachment",_m6.Part1)
+							_rec.a1=Instance.new("Attachment")
 							_rec.a1.Name="rag_a1"
+							_rec.a1.Parent=_m6.Part1
 						end
 						_rec.a0.CFrame=_m6.C0
 						_rec.a1.CFrame=_m6.C1
 						if not (_rec.j and _rec.j.Parent) then
-							_rec.j=Instance.new("BallSocketConstraint",_m6.Part0)
+							_rec.j=Instance.new("BallSocketConstraint")
 							_rec.j.Attachment0=_rec.a0
 							_rec.j.Attachment1=_rec.a1
-							pcall(function()
-								_rec.j.LimitsEnabled=false
-							end)
+							_rec.j.Parent=_m6.Part0
 						end
 						_m6.Enabled=false
 					end
@@ -1459,8 +1446,8 @@ else
 			if _r._c then
 				local _h=_r._c:FindFirstChildOfClass("Humanoid")
 				if _h then
-					if _r._h.ps~=nil then _h.PlatformStand=_r._h.ps end
-					if _r._h.ar~=nil then _h.AutoRotate=_r._h.ar end
+					_h.PlatformStand=false
+					_h.AutoRotate=true
 					_h:ChangeState(Enum.HumanoidStateType.GettingUp)
 				end
 
@@ -1470,13 +1457,6 @@ else
 					if _rec.a0 then _rec.a0:Destroy() end
 					if _rec.a1 then _rec.a1:Destroy() end
 					if _rec.j then _rec.j:Destroy() end
-				end
-				wait(0.05)
-				if _h then
-					if _r._h.ps~=nil then _h.PlatformStand=_r._h.ps end
-					pcall(function()
-						_h:ChangeState(Enum.HumanoidStateType.Running)
-					end)
 				end
 			end
 			_r._c=nil _r._m={} _r._d={} _r._h={}
