@@ -1373,11 +1373,88 @@ AddSlider(Main5u6, {
 
 if game.PlaceId == 16116270224 or game.PlaceId == 16552821455 or game.PlaceId == 18984416148 or game.PlaceId == 113160965141072 then
     AddWarningMessage(Main5u6, {
+        WarningMessage = "Ragdoll, Removed due to security concerns, may be banned from the game",
+        ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
+    })
+    AddWarningMessage(Main5u6, {
         WarningMessage = "Swimming, Removed due to security concerns, may be banned from the game",
         ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
     })
 else
+   local _r={_o=false,_c=nil,_m={},_d={},_h={},_x=nil}
+
+   AddToggle(Main5u6,{
+	Name="Ragdoll(Only u See it)",
+	Default=false,
+	Callback=function(_s)
+		_r._o=_s
+		if _s then
+			if _r._x then _r._x:Disconnect() end
+			_r._x=game:GetService("RunService").Heartbeat:Connect(function()
+				if not _r._o then return end
+				local _c=game:GetService("Players").LocalPlayer.Character
+				if not _c then return end
+				if _r._c~=_c then _r._c=_c _r._m={} _r._d={} _r._h={} end
+
+				local _h=_c:FindFirstChildOfClass("Humanoid")
+				if _h then
+					if _r._h.ps~=_h.PlatformStand then _r._h.ps=_h.PlatformStand end
+					if _r._h.ar~=_h.AutoRotate then _r._h.ar=_h.AutoRotate end
+					_h.PlatformStand=true
+					_h.AutoRotate=false
+					_h:ChangeState(Enum.HumanoidStateType.Physics)
+				end
+
+				for _m6,_rec in pairs(_r._m) do
+					if not _m6.Parent or not _m6:IsDescendantOf(_c) then
+						if _rec.a0 then _rec.a0:Destroy() end
+						if _rec.a1 then _rec.a1:Destroy() end
+						if _rec.j then _rec.j:Destroy() end
+						_r._m[_m6]=nil
+					end
+				end
+
+				for _,_m6 in ipairs(_c:GetDescendants()) do
+					if _m6:IsA("Motor6D") and _m6.Part0 and _m6.Part1 then
+						local _rec=_r._m[_m6]
+						if not _rec then _rec={} _r._m[_m6]=_rec _r._d[#_r._d+1]={_m6,_rec} end
+						if not (_rec.a0 and _rec.a0.Parent) then _rec.a0=Instance.new("Attachment",_m6.Part0) end
+						if not (_rec.a1 and _rec.a1.Parent) then _rec.a1=Instance.new("Attachment",_m6.Part1) end
+						_rec.a0.CFrame=_m6.C0
+						_rec.a1.CFrame=_m6.C1
+						if not (_rec.j and _rec.j.Parent) then
+							_rec.j=Instance.new("BallSocketConstraint",_m6.Part0)
+							_rec.j.Attachment0=_rec.a0
+							_rec.j.Attachment1=_rec.a1
+						end
+						_m6.Enabled=false
+					end
+				end
+			end)
+		else
+			if _r._x then _r._x:Disconnect() _r._x=nil end
+			if _r._c then
+				local _h=_r._c:FindFirstChildOfClass("Humanoid")
+				if _h then
+					if _r._h.ps~=nil then _h.PlatformStand=_r._h.ps end
+					if _r._h.ar~=nil then _h.AutoRotate=_r._h.ar end
+					_h:ChangeState(Enum.HumanoidStateType.GettingUp)
+				end
+				for i=1,#_r._d do
+					local _m6,_rec=_r._d[i][1],_r._d[i][2]
+					if _m6 then _m6.Enabled=true end
+					if _rec.a0 then _rec.a0:Destroy() end
+					if _rec.a1 then _rec.a1:Destroy() end
+					if _rec.j then _rec.j:Destroy() end
+				end
+			end
+			_r._c=nil _r._m={} _r._d={} _r._h={}
+		end
+	 end
+   })
+
    local S = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Swimming"))()
+
    AddToggle(Main5u6, {
      Name = "Swimming",
      Default = false,
