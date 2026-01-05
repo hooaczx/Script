@@ -1381,142 +1381,137 @@ if game.PlaceId == 16116270224 or game.PlaceId == 16552821455 or game.PlaceId ==
         ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
     })
 else
-   local _rA={_o=false,_c=nil,_m={},_d={},_h={},_x=nil}
+   local _r={_o=false,_c=nil,_m={},_d={},_h={},_x=nil}
    AddToggle(Main5u6,{
     Name="Ragdoll(Only u See it)",
     Default=false,
     TwoToggle="group2",
     NotificationTitle="Warning",
     NotificationText="Please turn off No-Clip first",
-    Callback=function(_sA)
-        _rA._o=_sA
-        if _sA then
-            if _rA._x then _rA._x:Disconnect() end
-            _rA._x=game:GetService("RunService").Heartbeat:Connect(function()
-                if not _rA._o then return end
-                local _cA=game:GetService("Players").LocalPlayer.Character
-                if not _cA then return end
-                if _rA._c~=_cA then
-                    _rA._c=_cA
-                    _rA._m={}
-                    _rA._d={}
-                    _rA._h={}
-                end
-                local _hA=_cA:FindFirstChildOfClass("Humanoid")
-                if _hA then
-                    if _rA._h.ps==nil then _rA._h.ps=_hA.PlatformStand end
-                    if _rA._h.ar==nil then _rA._h.ar=_hA.AutoRotate end
-                    _hA.PlatformStand=true
-                    _hA.AutoRotate=false
-                    _hA:ChangeState(Enum.HumanoidStateType.Physics)
-                end
-                for _,pA in ipairs(_cA:GetDescendants()) do
-                    if pA:IsA("BasePart") then
-                        local nameLower=pA.Name:lower()
-                        if nameLower:match("torso") or nameLower:match("upperarm") or nameLower:match("lowerarm") or nameLower:match("leg") or nameLower:match("head") or nameLower:match("root") then
-                            local _recA=_rA._m[pA]
-                            if not _recA then
-                                _recA={pa=pA.Anchored,pc=pA.CanCollide,pm=pA.Massless}
-                                _rA._m[pA]=_recA
-                                _rA._d[#_rA._d+1]={pA,_recA}
-                            else
-                                if pA.Anchored~=false then _recA.pa=pA.Anchored end
-                                if pA.CanCollide~=true then _recA.pc=pA.CanCollide end
-                                if pA.Massless~=false then _recA.pm=pA.Massless end
-                            end
-                            if pA.Anchored then pA.Anchored=false end
-                            if not pA.CanCollide then pA.CanCollide=true end
-                            if pA.Massless then pA.Massless=false end
-                        end
-                    end
-                end
-                for _m6A,_recA in pairs(_rA._m) do
-                    if _m6A:IsA("Motor6D") and (not _m6A.Parent or not _m6A:IsDescendantOf(_cA)) then
-                        if _recA.a0 then _recA.a0:Destroy() end
-                        if _recA.a1 then _recA.a1:Destroy() end
-                        if _recA.j then _recA.j:Destroy() end
-                        _rA._m[_m6A]=nil
-                    end
-                end
-                for i=#_rA._d,1,-1 do
-                    local _oA=_rA._d[i][1]
-                    if not _oA or not _oA.Parent or not _oA:IsDescendantOf(_cA) then
-                        table.remove(_rA._d,i)
-                    end
-                end
-                for _,_m6A in ipairs(_cA:GetDescendants()) do
-                    if _m6A:IsA("Motor6D") and _m6A.Part0 and _m6A.Part1 then
-                        local name0,_recA=_m6A.Part0.Name:lower(),_rA._m[_m6A]
-                        if name0:match("torso") or name0:match("upperarm") or name0:match("lowerarm") or name0:match("leg") or name0:match("head") or name0:match("root") then
-                            if not _recA then
-                                _recA={}
-                                _rA._m[_m6A]=_recA
-                                _rA._d[#_rA._d+1]={_m6A,_recA}
-                            end
-                            if not (_recA.a0 and _recA.a0.Parent) then
-                                _recA.a0=Instance.new("Attachment")
-                                _recA.a0.Name="_a0_X1_"
-                                _recA.a0.Parent=_m6A.Part0
-                            end
-                            if not (_recA.a1 and _recA.a1.Parent) then
-                                _recA.a1=Instance.new("Attachment")
-                                _recA.a1.Name="_a1_X1_"
-                                _recA.a1.Parent=_m6A.Part1
-                            end
-                            _recA.a0.CFrame=_m6A.C0
-                            _recA.a1.CFrame=_m6A.C1
-                            if not (_recA.j and _recA.j.Parent) then
-                                _recA.j=Instance.new("BallSocketConstraint")
-                                _recA.j.Name="_j_X1_"
-                                _recA.j.Attachment0=_recA.a0
-                                _recA.j.Attachment1=_recA.a1
-                                _recA.j.LimitsEnabled=true
-                                _recA.j.UpperAngle=30
-                                _recA.j.TwistLimitsEnabled=true
-                                _recA.j.TwistLowerAngle=-20
-                                _recA.j.TwistUpperAngle=20
-                                _recA.j.Restitution=0
-                                _recA.j.MaxFrictionTorque=50
-                                _recA.j.Parent=_m6A.Part0
-                            end
-                            if _m6A.Enabled then
-                                _m6A.Enabled=false
-                            end
-                        end
-                    end
-                end
-            end)
-        else
-            if _rA._x then _rA._x:Disconnect() _rA._x=nil end
-            if _rA._c then
-                local _cA=_rA._c
-                local _hA=_cA:FindFirstChildOfClass("Humanoid")
-                if _hA then
-                    _hA.PlatformStand=_rA._h.ps or false
-                    _hA.AutoRotate=_rA._h.ar~=false
-                    _hA:ChangeState(Enum.HumanoidStateType.Running)
-                end
-                for i=1,#_rA._d do
-                    local _oA,_recA=_rA._d[i][1],_rA._d[i][2]
-                    if _oA then
-                        if _oA:IsA("BasePart") then
-                            _oA.Anchored=_recA.pa
-                            _oA.CanCollide=_recA.pc
-                            _oA.Massless=_recA.pm
-                        elseif _oA:IsA("Motor6D") then
-                            _oA.Enabled=true
-                        end
-                    end
-                    if _recA.a0 then _recA.a0:Destroy() end
-                    if _recA.a1 then _recA.a1:Destroy() end
-                    if _recA.j then _recA.j:Destroy() end
-                end
-            end
-            _rA._c=nil
-            _rA._m={}
-            _rA._d={}
-            _rA._h={}
-        end
+    Callback=function(_s)
+	 _r._o=_s
+	 if _s then
+		 if _r._x then _r._x:Disconnect() end
+		 _r._x=game:GetService("RunService").Heartbeat:Connect(function()
+			 if not _r._o then return end
+			 local _c=game:GetService("Players").LocalPlayer.Character
+			 if not _c then return end
+			 if _r._c~=_c then
+				_r._c=_c
+				_r._m={}
+				_r._d={}
+				_r._h={}
+			 end
+			 local _h=_c:FindFirstChildOfClass("Humanoid")
+			 if _h then
+				if _r._h.ps==nil then _r._h.ps=_h.PlatformStand end
+				if _r._h.ar==nil then _r._h.ar=_h.AutoRotate end
+				_h.PlatformStand=true
+				_h.AutoRotate=false
+				_h:ChangeState(Enum.HumanoidStateType.Physics)
+			 end
+			 for _,p in ipairs(_c:GetDescendants()) do
+				if p:IsA("BasePart") then
+					local _rec=_r._m[p]
+					if not _rec then
+						_rec={pa=p.Anchored,pc=p.CanCollide,pm=p.Massless}
+						_r._m[p]=_rec
+						_r._d[#_r._d+1]={p,_rec}
+					else
+						if p.Anchored~=false then _rec.pa=p.Anchored end
+						if p.CanCollide~=true then _rec.pc=p.CanCollide end
+						if p.Massless~=false then _rec.pm=p.Massless end
+					end
+					if p.Anchored then p.Anchored=false end
+					if not p.CanCollide then p.CanCollide=true end
+					if p.Massless then p.Massless=false end
+				 end
+			 end
+			 for _m6,_rec in pairs(_r._m) do
+				if _m6:IsA("Motor6D") and (not _m6.Parent or not _m6:IsDescendantOf(_c)) then
+					if _rec.a0 then _rec.a0:Destroy() end
+					if _rec.a1 then _rec.a1:Destroy() end
+					if _rec.j then _rec.j:Destroy() end
+					_r._m[_m6]=nil
+				  end
+			  end
+			  for i=#_r._d,1,-1 do
+				local _o=_r._d[i][1]
+				if not _o or not _o.Parent or not _o:IsDescendantOf(_c) then
+					table.remove(_r._d,i)
+			  	  end
+			  end
+			  for _,_m6 in ipairs(_c:GetDescendants()) do
+				 if _m6:IsA("Motor6D") and _m6.Part0 and _m6.Part1 then
+					 local _rec=_r._m[_m6]
+					 if not _rec then
+						_rec={}
+						_r._m[_m6]=_rec
+						_r._d[#_r._d+1]={_m6,_rec}
+					 end
+					 if not (_rec.a0 and _rec.a0.Parent) then
+						_rec.a0=Instance.new("Attachment")
+						_rec.a0.Name="xq9a0_hooaczx"
+						_rec.a0.Parent=_m6.Part0
+					 end
+					 if not (_rec.a1 and _rec.a1.Parent) then
+						_rec.a1=Instance.new("Attachment")
+						_rec.a1.Name="xq9a1_hooaczx"
+						_rec.a1.Parent=_m6.Part1
+					 end
+					 _rec.a0.CFrame=_m6.C0
+					 _rec.a1.CFrame=_m6.C1
+					 if not (_rec.j and _rec.j.Parent) then
+						_rec.j=Instance.new("BallSocketConstraint")
+						_rec.j.Name="xq9b_hooaczx"
+						_rec.j.Attachment0=_rec.a0
+						_rec.j.Attachment1=_rec.a1
+						_rec.j.LimitsEnabled=true
+						_rec.j.UpperAngle=30
+						_rec.j.TwistLimitsEnabled=true
+						_rec.j.TwistLowerAngle=-20
+						_rec.j.TwistUpperAngle=20
+						_rec.j.Restitution=0
+						_rec.j.MaxFrictionTorque=50
+						_rec.j.Parent=_m6.Part0
+					 end
+					 if _m6.Enabled then
+					 	 _m6.Enabled=false
+					 end
+				  end
+			  end
+		  end)
+	   else
+		   if _r._x then _r._x:Disconnect() _r._x=nil end
+		   if _r._c then
+			   local _c=_r._c
+			   local _h=_c:FindFirstChildOfClass("Humanoid")
+			   if _h then
+				   _h.PlatformStand=_r._h.ps or false
+				   _h.AutoRotate=_r._h.ar~=false
+				   _h:ChangeState(Enum.HumanoidStateType.Running)
+			   end
+			   for i=1,#_r._d do
+				   local _o,_rec=_r._d[i][1],_r._d[i][2]
+				   if _o then
+					   if _o:IsA("BasePart") then
+						   _o.Anchored=_rec.pa
+						   _o.CanCollide=_rec.pc
+						   _o.Massless=_rec.pm
+					   elseif _o:IsA("Motor6D") then
+						   _o.Enabled=true
+					   end
+				   end
+			   	   if _rec.a0 then _rec.a0:Destroy() end
+				   if _rec.a1 then _rec.a1:Destroy() end
+				   if _rec.j then _rec.j:Destroy() end
+			   end
+		   end
+		   _r._c=nil
+		   _r._m={}
+		   _r._d={}
+		   _r._h={}
+    	end
      end
    })
 
