@@ -1435,7 +1435,7 @@ else
 				 if _m6:IsA("Motor6D") and _m6.Part0 and _m6.Part1 then
 					 local _rec=_r._m[_m6]
 					 if not _rec then
-						_rec={}
+						_rec={a0=nil,a1=nil,j=nil}
 						_r._m[_m6]=_rec
 						_r._d[#_r._d+1]={_m6,_rec}
 					 end
@@ -1466,14 +1466,14 @@ else
 	   else
 		   if _r._x then _r._x:Disconnect() _r._x=nil end
 		   if _r._c then
-			   local _h=_r._c:FindFirstChildOfClass("Humanoid")
+			   local _c=_r._c
+			   local _h=_c:FindFirstChildOfClass("Humanoid")
 			   if _h then
-				   _h.PlatformStand=false
-				   _h.AutoRotate=true
-				   _h:ChangeState(Enum.HumanoidStateType.GettingUp)
+				   _h.PlatformStand=_r._h.ps or false
+				   _h.AutoRotate=_r._h.ar~=false
+				   _h:ChangeState(Enum.HumanoidStateType.Running)
 			   end
-			   for i=1,#_r._d do
-				   local _m6,_rec=_r._d[i][1],_r._d[i][2]
+			   for _m6,_rec in pairs(_r._m) do
 				   if _m6 then _m6.Enabled=true end
 			   	   if _rec.a0 then _rec.a0:Destroy() end
 				   if _rec.a1 then _rec.a1:Destroy() end
