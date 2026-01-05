@@ -1382,7 +1382,6 @@ if game.PlaceId == 16116270224 or game.PlaceId == 16552821455 or game.PlaceId ==
     })
 else
    local _r={_o=false,_c=nil,_m={},_d={},_h={},_x=nil}
-
    AddToggle(Main5u6,{
 	Name="Ragdoll(Only u See it)",
 	Default=false,
@@ -1395,7 +1394,6 @@ else
 				local _c=game:GetService("Players").LocalPlayer.Character
 				if not _c then return end
 				if _r._c~=_c then _r._c=_c _r._m={} _r._d={} _r._h={} end
-
 				local _h=_c:FindFirstChildOfClass("Humanoid")
 				if _h then
 					if _r._h.ps~=_h.PlatformStand then _r._h.ps=_h.PlatformStand end
@@ -1404,7 +1402,6 @@ else
 					_h.AutoRotate=false
 					_h:ChangeState(Enum.HumanoidStateType.Physics)
 				end
-
 				for _m6,_rec in pairs(_r._m) do
 					if not _m6.Parent or not _m6:IsDescendantOf(_c) then
 						if _rec.a0 then _rec.a0:Destroy() end
@@ -1413,19 +1410,45 @@ else
 						_r._m[_m6]=nil
 					end
 				end
-
 				for _,_m6 in ipairs(_c:GetDescendants()) do
 					if _m6:IsA("Motor6D") and _m6.Part0 and _m6.Part1 then
 						local _rec=_r._m[_m6]
-						if not _rec then _rec={} _r._m[_m6]=_rec _r._d[#_r._d+1]={_m6,_rec} end
-						if not (_rec.a0 and _rec.a0.Parent) then _rec.a0=Instance.new("Attachment",_m6.Part0) end
-						if not (_rec.a1 and _rec.a1.Parent) then _rec.a1=Instance.new("Attachment",_m6.Part1) end
+						if not _rec then
+							_rec={}
+							_r._m[_m6]=_rec
+							_r._d[#_r._d+1]={_m6,_rec}
+						end
+						if _m6.Part0:IsA("BasePart") then
+							_m6.Part0.Anchored=false
+							if _m6.Part0.Massless~=nil then
+								_m6.Part0.Massless=false
+							end
+							_m6.Part0.CanCollide=true
+						end
+						if _m6.Part1:IsA("BasePart") then
+							_m6.Part1.Anchored=false
+							if _m6.Part1.Massless~=nil then
+								_m6.Part1.Massless=false
+							end
+							_m6.Part1.CanCollide=true
+						end
+						if not (_rec.a0 and _rec.a0.Parent) then
+							_rec.a0=Instance.new("Attachment",_m6.Part0)
+							_rec.a0.Name="rag_a0"
+						end
+						if not (_rec.a1 and _rec.a1.Parent) then
+							_rec.a1=Instance.new("Attachment",_m6.Part1)
+							_rec.a1.Name="rag_a1"
+						end
 						_rec.a0.CFrame=_m6.C0
 						_rec.a1.CFrame=_m6.C1
 						if not (_rec.j and _rec.j.Parent) then
 							_rec.j=Instance.new("BallSocketConstraint",_m6.Part0)
 							_rec.j.Attachment0=_rec.a0
 							_rec.j.Attachment1=_rec.a1
+							pcall(function()
+								_rec.j.LimitsEnabled=false
+							end)
 						end
 						_m6.Enabled=false
 					end
@@ -1440,12 +1463,20 @@ else
 					if _r._h.ar~=nil then _h.AutoRotate=_r._h.ar end
 					_h:ChangeState(Enum.HumanoidStateType.GettingUp)
 				end
+
 				for i=1,#_r._d do
 					local _m6,_rec=_r._d[i][1],_r._d[i][2]
 					if _m6 then _m6.Enabled=true end
 					if _rec.a0 then _rec.a0:Destroy() end
 					if _rec.a1 then _rec.a1:Destroy() end
 					if _rec.j then _rec.j:Destroy() end
+				end
+				wait(0.05)
+				if _h then
+					if _r._h.ps~=nil then _h.PlatformStand=_r._h.ps end
+					pcall(function()
+						_h:ChangeState(Enum.HumanoidStateType.Running)
+					end)
 				end
 			end
 			_r._c=nil _r._m={} _r._d={} _r._h={}
