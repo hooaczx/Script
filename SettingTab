@@ -1418,24 +1418,21 @@ else
 						_r._m[_m6]=_rec
 						_r._d[#_r._d+1]={_m6,_rec}
 					 end
-					 if _m6.Part0 and not _rec.p[_m6.Part0] then
-						_rec.p[_m6.Part0]={a=_m6.Part0.Anchored,m=_m6.Part0.Massless}
+					 for _,_p in ipairs({_m6.Part0,_m6.Part1}) do
+						 if _p and not _rec.p[_p] then
+							_rec.p[_p]={a=_p.Anchored,m=_p.Massless}
+						 end
+						 if _p then
+							if _p.Anchored~=false then
+								_rec.p[_p].a=_p.Anchored
+							end
+							if _p.Massless~=false then
+								_rec.p[_p].m=_p.Massless
+							end
+							_p.Anchored=false
+							_p.Massless=false
+						 end
 					 end
-					 if _m6.Part1 and not _rec.p[_m6.Part1] then
-						_rec.p[_m6.Part1]={a=_m6.Part1.Anchored,m=_m6.Part1.Massless}
-					 end
-					 if _m6.Part0 then
-						_rec.p[_m6.Part0].a=_m6.Part0.Anchored
-						_rec.p[_m6.Part0].m=_m6.Part0.Massless
-					 end
-					 if _m6.Part1 then
-						_rec.p[_m6.Part1].a=_m6.Part1.Anchored
-						_rec.p[_m6.Part1].m=_m6.Part1.Massless
-					 end
-					 _m6.Part0.Anchored=false
-					 _m6.Part1.Anchored=false
-					 _m6.Part0.Massless=false
-					 _m6.Part1.Massless=false
 					 if not (_rec.a0 and _rec.a0.Parent) then
 						_rec.a0=Instance.new("Attachment")
 						_rec.a0.Name="rag_a0"
