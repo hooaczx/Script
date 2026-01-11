@@ -2889,40 +2889,145 @@ function()
    end
 end, copyEnabled)
 
+function short(d) local t="" if d.Url or d.url then t="URL:\n"..tostring(d.Url or d.url):sub(1,60) end if d.Method or d.method then t=t.."\n\nMETHOD:\n"..tostring(d.Method or d.method) end if d.Body or d.body then local b=tostring(d.Body or d.body) if b~="" then t=t.."\n\nBODY:\n"..b:sub(1,80) end end return t end
 local AntiWebhook = false
-local __rqX9
+local __a,__b,__c,__d,__e,__f,__g,__h,__i,__j,__k
 functions.createSettingSection(scrollingSettingFrame,
-"Anti Webhook", [[This script will detect Discord webhook requests and block and display the information being sent in those webhook requests]],
+"Anti Webhook", [[Shows what data webhook requests were trying to send]],
 function()
    AntiWebhook = not AntiWebhook
-   local handler = AntiWebhook and function(d)
-      notify({Title="Attempted Webhook",Text=tostring(d),buttonText="ok",imageID="",guiSize=Vector2.new(400,70)})
+   local handler = function(d)
+      notify({Title="Attempted Webhook",Text=short(d),buttonText="ok",imageID="",guiSize=Vector2.new(400,70)})
    end
-   if AntiWebhook and not __rqX9 then
-      __rqX9 = hookfunction(request,function(req)
-         if type(req)~="table" then
-            return __rqX9(req)
-         end
+   if request and not __a then
+      __a = hookfunction(request,function(req)
+         if not AntiWebhook then return __a(req) end
+         if type(req)~="table" then return __a(req) end
          local url=tostring(req.Url or req.url or "")
          local lurl=url:lower()
          if lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") or lurl:find("discordapp") or lurl:find("discordcdn") then
-            local info="WEBHOOK URL:\n"..url
-            if req.Method or req.method then
-               info=info.."\n\nMETHOD:\n"..tostring(req.Method or req.method)
-            end
-            if req.Headers or req.headers then
-               info=info.."\n\nHEADERS:\n"..tostring(req.Headers or req.headers)
-            end
-            if req.Body or req.body then
-               local b=tostring(req.Body or req.body)
-               if b~="" then
-                  info=info.."\n\nBODY:\n"..b
-               end
-            end
-            handler(info)
+            handler(req)
             return nil
          end
-         return __rqX9(req)
+         return __a(req)
+      end)
+   end
+   if http_request and not __b then
+      __b = hookfunction(http_request,function(req)
+         if not AntiWebhook then return __b(req) end
+         if type(req)~="table" then return __b(req) end
+         local url=tostring(req.Url or req.url or "")
+         local lurl=url:lower()
+         if lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") then
+            handler(req)
+            return nil
+         end
+         return __b(req)
+      end)
+   end
+   if syn and syn.request and not __c then
+      __c = hookfunction(syn.request,function(req)
+         if not AntiWebhook then return __c(req) end
+         if type(req)~="table" then return __c(req) end
+         local url=tostring(req.Url or req.url or "")
+         if url:lower():find("discord") or url:lower():find("webhook") then
+            handler(req)
+            return nil
+         end
+         return __c(req)
+      end)
+   end
+   if fluxus and fluxus.request and not __d then
+      __d = hookfunction(fluxus.request,function(req)
+         if not AntiWebhook then return __d(req) end
+         if type(req)~="table" then return __d(req) end
+         local url=tostring(req.Url or req.url or "")
+         if url:lower():find("discord") or url:lower():find("webhook") then
+            handler(req)
+            return nil
+         end
+         return __d(req)
+      end)
+   end
+   if http and http.request and not __e then
+      __e = hookfunction(http.request,function(req)
+         if not AntiWebhook then return __e(req) end
+         if type(req)~="table" then return __e(req) end
+         local url=tostring(req.Url or req.url or "")
+         if url:lower():find("discord") or url:lower():find("webhook") then
+            handler(req)
+            return nil
+         end
+         return __e(req)
+      end)
+   end
+   if not __f then
+      __f = hookfunction(game:GetService("HttpService").PostAsync,function(self,url,...)
+         if not AntiWebhook then return __f(self,url,...) end
+         local lurl=tostring(url):lower()
+         if lurl:find("discord") or lurl:find("webhook") then
+            handler({Url=url})
+            return nil
+         end
+         return __f(self,url,...)
+      end)
+   end
+   if not __g then
+      __g = hookfunction(game:GetService("HttpService").RequestAsync,function(self,opt)
+         if not AntiWebhook then return __g(self,opt) end
+         if type(opt)=="table" then
+            local url=tostring(opt.Url or "")
+            local lurl=url:lower()
+            if lurl:find("discord") or lurl:find("webhook") then
+               handler(opt)
+               return nil
+            end
+         end
+         return __g(self,opt)
+      end)
+   end
+   if not __h then
+      __h = hookfunction(game.HttpGet,function(self,url,...)
+         if not AntiWebhook then return __h(self,url,...) end
+         local lurl=tostring(url):lower()
+         if lurl:find("discord") or lurl:find("webhook") then
+            handler({Url=url})
+            return nil
+         end
+         return __h(self,url,...)
+      end)
+   end
+   if not __i then
+      __i = hookfunction(game.HttpGetAsync,function(self,url,...)
+         if not AntiWebhook then return __i(self,url,...) end
+         local lurl=tostring(url):lower()
+         if lurl:find("discord") or lurl:find("webhook") then
+            handler({Url=url})
+            return nil
+         end
+         return __i(self,url,...)
+      end)
+   end
+   if not __j then
+      __j = hookfunction(game.HttpPost,function(self,url,...)
+         if not AntiWebhook then return __j(self,url,...) end
+         local lurl=tostring(url):lower()
+         if lurl:find("discord") or lurl:find("webhook") then
+            handler({Url=url})
+            return nil
+         end
+         return __j(self,url,...)
+      end)
+   end
+   if not __k then
+      __k = hookfunction(game.HttpPostAsync,function(self,url,...)
+         if not AntiWebhook then return __k(self,url,...) end
+         local lurl=tostring(url):lower()
+         if lurl:find("discord") or lurl:find("webhook") then
+            handler({Url=url})
+            return nil
+         end
+         return __k(self,url,...)
       end)
    end
 end, WEBHOOKEnabled)
