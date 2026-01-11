@@ -3650,30 +3650,29 @@ RunServerlock("Lock1", "no", function()
         end
     end 
     if View and View.player then
-        local cam=workspace.CurrentCamera
-        if not cam_xx.a then
-            cam_xx.a=true
-            cam_xx.b=cam.CameraType
-            cam_xx.c=cam.CameraSubject
-        end
-        local ch = View.player.Character or View.player.CharacterAdded:Wait()
-        local hrp = ch:FindFirstChild("HumanoidRootPart")
-        local hum = ch:FindFirstChild("Humanoid")
-        if hrp then
-           if cam.CameraSubject ~= hum then
-              cam.CameraSubject = hum
-           end
-        elseif hum then
-           if cam.CameraSubject ~= hum then
-              cam.CameraSubject = hum
-           end
+       local cam = workspace.CurrentCamera
+       cam_xx = cam_xx or {}
+       if not cam_xx.ok then
+           cam_xx.t = cam.CameraType
+           cam_xx.s = cam.CameraSubject
+           cam_xx.c = cam.CFrame
+           cam_xx.ok = true
        end
-    else
-        if cam_xx.a then
-            local cam=workspace.CurrentCamera
-            cam.CameraType=cam_xx.b
-            cam.CameraSubject=cam_xx.c
-            cam_xx={}
+       local ch = View.player.Character or View.player.CharacterAdded:Wait()
+       local hrp = ch:FindFirstChild("HumanoidRootPart")
+       local hum = ch:FindFirstChild("Humanoid")
+       if hrp then
+           cam.CameraType = Enum.CameraType.Scriptable
+           cam.CFrame = CFrame.new(hrp.Position + Vector3.new(0,3,6), hrp.Position)
+           task.defer(function()
+               if cam_xx and cam_xx.ok then
+                  cam.CameraType = cam_xx.t
+                  cam.CameraSubject = cam_xx.s
+                  cam.CFrame = cam_xx.c
+               end
+           end)
+        elseif hum then
+           cam.CameraSubject = hum
         end
     end
     if activeButton then
@@ -3927,8 +3926,7 @@ check_1 = RunService.RenderStepped:Connect(function()
             if playerFrames then table.clear(playerFrames) end
             View = nil
         end
-        if cam_xx then table.clear(cam_xx) end
-        cam_xx=nil
+        if cam_xx then table.clear(cam_xx) cam_xx=nil end
     end
     if not foundUI
         and not rainSound
