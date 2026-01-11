@@ -2808,7 +2808,8 @@ local scrollingSettingFrame = Create("ScrollingFrame", frameSetting, {
   })
 
 local Anticopy1 = false
-local funcs = {
+local backups, origSet = {}, Clipboard and Clipboard.set
+for _, f in ipairs({
     "setclipboard","setClipboard","SetClipboard",
     "set_clipboard","toclipboard","toClipboard",
     "writeclipboard","writeClipboard",
@@ -2819,9 +2820,7 @@ local funcs = {
     "adb.set_clipboard","adb.clip","clipper.set","clipper.get",
     "appium.setClipboard","driver.set_clipboard","driver.setClipboardText",
     "clip","copy","copy_to_clipboard","to_clipboard","paste","getClipboard","get_clipboard"
-}
-local backups, origSet = {}, Clipboard and Clipboard.set
-for _, f in ipairs(funcs) do
+}) do
     local v = getgenv()[f]
     if v ~= nil then backups[f] = {env = getgenv(), val = v} end
 end
@@ -2843,13 +2842,20 @@ function()
       if env then
          for k,v in pairs(env) do
             if type(k)=="string" then
-               local kl = k:lower()
-               if kl:find("clip") or kl:find("copy") or kl:find("board") then
+               if k=="setclipboard" or k=="setClipboard" or k=="SetClipboard"
+               or k=="set_clipboard" or k=="toclipboard" or k=="toClipboard"
+               or k=="writeclipboard" or k=="writeClipboard"
+               or k=="Clipboard.set" or k=="Clipboard.Set"
+               or k=="clipboard.set" or k=="clipboard.Set"
+               or k=="GM_setClipboard" or k=="GM.setClipboard"
+               or k=="setrbxclipboard" or k=="set_rbx_clipboard"
+               or k=="set_system_clipboard" or k=="set_device_clipboard"
+               or k=="adb.set_clipboard" or k=="adb.clip" or k=="clipper.set" or k=="clipper.get"
+               or k=="appium.setClipboard" or k=="driver.set_clipboard" or k=="driver.setClipboardText"
+               or k=="clip" or k=="copy" or k=="copy_to_clipboard" or k=="to_clipboard"
+               or k=="paste" or k=="getClipboard" or k=="get_clipboard" then
                   if backups[k]==nil then backups[k]={env=env,val=v} end
                   env[k] = Anticopy1 and handler or backups[k].val
-                  local exists=false
-                  for _,n in ipairs(funcs) do if n==k then exists=true break end end
-                  if not exists then table.insert(funcs,k) end
                end
             end
          end
@@ -2868,8 +2874,11 @@ function()
          if type(obj)=="function" then
             local ok2,di = pcall(debug.getinfo,obj)
             if ok2 and di and di.name and type(di.name)=="string" then
-               local nm = di.name:lower()
-               if nm:find("clip") or nm:find("copy") or nm:find("board") then
+               if di.name=="setclipboard" or di.name=="setClipboard" or di.name=="SetClipboard"
+               or di.name=="set_clipboard" or di.name=="toclipboard" or di.name=="toClipboard"
+               or di.name=="writeclipboard" or di.name=="writeClipboard"
+               or di.name=="Clipboard.set" or di.name=="Clipboard.Set"
+               or di.name=="clipboard.set" or di.name=="clipboard.Set" then
                   local key = di.name
                   if backups[key]==nil then backups[key]={env=getgenv(),val=obj} end
                   if getgenv()[key]~=nil then getgenv()[key]=Anticopy1 and handler or backups[key].val end
@@ -2879,6 +2888,44 @@ function()
       end
    end
 end, copyEnabled)
+
+local AntiWebhook = false
+local __rqX9
+functions.createSettingSection(scrollingSettingFrame,
+"Anti Webhook", [[This script will detect Discord webhook requests and block and display the information being sent in those webhook requests]],
+function()
+   AntiWebhook = not AntiWebhook
+   local handler = AntiWebhook and function(d)
+      notify({Title="Attempted Webhook",Text=tostring(d),buttonText="ok",imageID="",guiSize=Vector2.new(400,70)})
+   end
+   if AntiWebhook and not __rqX9 then
+      __rqX9 = hookfunction(request,function(req)
+         if type(req)~="table" then
+            return __rqX9(req)
+         end
+         local url=tostring(req.Url or req.url or "")
+         local lurl=url:lower()
+         if lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") or lurl:find("discordapp") or lurl:find("discordcdn") then
+            local info="WEBHOOK URL:\n"..url
+            if req.Method or req.method then
+               info=info.."\n\nMETHOD:\n"..tostring(req.Method or req.method)
+            end
+            if req.Headers or req.headers then
+               info=info.."\n\nHEADERS:\n"..tostring(req.Headers or req.headers)
+            end
+            if req.Body or req.body then
+               local b=tostring(req.Body or req.body)
+               if b~="" then
+                  info=info.."\n\nBODY:\n"..b
+               end
+            end
+            handler(info)
+            return nil
+         end
+         return __rqX9(req)
+      end)
+   end
+end, WEBHOOKEnabled)
 
 functions.createSettingSection(scrollingSettingFrame, "Show frame info players", 
 [[Displays a frame with the player's image, username, and User ID when ShiftLock is active. Player info appears when you center the ShiftLock icon over a player or point the Icon to that player]], function(state)
