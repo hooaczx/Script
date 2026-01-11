@@ -1381,7 +1381,7 @@ if game.PlaceId == 16116270224 or game.PlaceId == 16552821455 or game.PlaceId ==
         ImageId = "rbxthumb://type=Asset&id=116573046454042&w=420&h=420"
     })
 else
-   local _r={_o=false,_c=nil,_m={},_d={},_h={},_x=nil}
+   local _r={_o=false,_c=nil,_m={},_d={},_h={},_a={},_x=nil}
    AddToggle(Main5u6,{
     Name="Ragdoll(Only u See it)",
     Default=false,
@@ -1401,6 +1401,7 @@ else
 				_r._m={}
 				_r._d={}
 				_r._h={}
+				_r._a={}
 			 end
 			 local _h=_c:FindFirstChildOfClass("Humanoid")
 			 if _h then
@@ -1409,6 +1410,28 @@ else
 				_h.PlatformStand=true
 				_h.AutoRotate=false
 				_h:ChangeState(Enum.HumanoidStateType.Physics)
+				local _an=_h:FindFirstChildOfClass("Animator")
+				if _an then
+					for _tr,_rec in pairs(_r._a) do
+						if not _tr or not _tr.Parent or _tr.Parent~=_an then
+							_r._a[_tr]=nil
+						end
+					end
+					for _,_tr in ipairs(_an:GetPlayingAnimationTracks()) do
+						local _rec=_r._a[_tr]
+						if not _rec then
+							_rec={sp=_tr.Speed,wt=_tr.Weight,tm=_tr.TimePosition,lp=_tr.Looped,pl=_tr.IsPlaying}
+							_r._a[_tr]=_rec
+						else
+							if _tr.Speed~=_rec.sp then _rec.sp=_tr.Speed end
+							if _tr.Weight~=_rec.wt then _rec.wt=_tr.Weight end
+							if _tr.TimePosition~=_rec.tm then _rec.tm=_tr.TimePosition end
+							if _tr.Looped~=_rec.lp then _rec.lp=_tr.Looped end
+							if _tr.IsPlaying~=_rec.pl then _rec.pl=_tr.IsPlaying end
+						end
+						_tr:AdjustSpeed(0)
+					end
+				end
 			 end
 			 for _,p in ipairs(_c:GetDescendants()) do
 				if p:IsA("BasePart") then
@@ -1418,13 +1441,13 @@ else
 						_r._m[p]=_rec
 						_r._d[#_r._d+1]={p,_rec}
 					else
-						if p.Anchored~=false then _rec.pa=p.Anchored end
-						if p.CanCollide~=true then _rec.pc=p.CanCollide end
-						if p.Massless~=false then _rec.pm=p.Massless end
+						if p.Anchored~=_rec.pa then _rec.pa=p.Anchored end
+						if p.CanCollide~=_rec.pc then _rec.pc=p.CanCollide end
+						if p.Massless~=_rec.pm then _rec.pm=p.Massless end
 					end
-					if p.Anchored then p.Anchored=false end
-					if not p.CanCollide then p.CanCollide=true end
-					if p.Massless then p.Massless=false end
+					p.Anchored=false
+					p.CanCollide=true
+					p.Massless=false
 				 end
 			 end
 			 for _m6,_rec in pairs(_r._m) do
@@ -1451,33 +1474,30 @@ else
 					 end
 					 if not (_rec.a0 and _rec.a0.Parent) then
 						_rec.a0=Instance.new("Attachment")
-						_rec.a0.Name="xq9a0_hooaczx"
+						_rec.a0.Name="rag_a0_hooaczx"
 						_rec.a0.Parent=_m6.Part0
 					 end
 					 if not (_rec.a1 and _rec.a1.Parent) then
 						_rec.a1=Instance.new("Attachment")
-						_rec.a1.Name="xq9a1_hooaczx"
+						_rec.a1.Name="rag_a1_hooaczx"
 						_rec.a1.Parent=_m6.Part1
 					 end
 					 _rec.a0.CFrame=_m6.C0
 					 _rec.a1.CFrame=_m6.C1
 					 if not (_rec.j and _rec.j.Parent) then
 						_rec.j=Instance.new("BallSocketConstraint")
-						_rec.j.Name="xq9b_hooaczx"
+						_rec.j.Name="rag_bs_hooaczx"
 						_rec.j.Attachment0=_rec.a0
 						_rec.j.Attachment1=_rec.a1
 						_rec.j.LimitsEnabled=true
-						_rec.j.UpperAngle=30
+						_rec.j.UpperAngle=90
 						_rec.j.TwistLimitsEnabled=true
-						_rec.j.TwistLowerAngle=-20
-						_rec.j.TwistUpperAngle=20
-						_rec.j.Restitution=0
+						_rec.j.TwistLowerAngle=-90
+						_rec.j.TwistUpperAngle=90
 						_rec.j.MaxFrictionTorque=50
 						_rec.j.Parent=_m6.Part0
 					 end
-					 if _m6.Enabled then
-					 	 _m6.Enabled=false
-					 end
+					 _m6.Enabled=false
 				  end
 			  end
 		  end)
@@ -1489,7 +1509,16 @@ else
 			   if _h then
 				   _h.PlatformStand=_r._h.ps or false
 				   _h.AutoRotate=_r._h.ar~=false
-				   _h:ChangeState(Enum.HumanoidStateType.Running)
+				   _h:ChangeState(Enum.HumanoidStateType.GettingUp)
+				   local _an=_h:FindFirstChildOfClass("Animator")
+				   if _an then
+					   for _tr,_rec in pairs(_r._a) do
+						   if _tr and _tr.Parent==_an and _rec.pl then
+							   _tr:AdjustSpeed(_rec.sp)
+							   _tr.TimePosition=_rec.tm
+						   end
+					   end
+				   end
 			   end
 			   for i=1,#_r._d do
 				   local _o,_rec=_r._d[i][1],_r._d[i][2]
@@ -1511,6 +1540,7 @@ else
 		   _r._m={}
 		   _r._d={}
 		   _r._h={}
+		   _r._a={}
     	end
      end
    })
