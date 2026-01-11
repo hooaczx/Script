@@ -703,6 +703,7 @@ function getNYText()
     local Mouse = LocalPlayer:GetMouse()
     local HttpService, HttpGet = game:GetService("HttpService"), game.HttpGet
     local View, oldicon = nil, nil
+    local cam_xx={}
     local playerFrames = {}
     local displayedFriends = {}
     local _z9, _p, _q, _s = _z9 or {}, _p or {}, _q or {}, _s or {}
@@ -2524,10 +2525,8 @@ functions.UpdateDescription = function(params)
     if c_8 and c_8.Parent then
         for _, child in ipairs(c_8:GetChildren()) do
             if child:IsA("TextLabel") then
-                -- แยก title กับ description โดยดูขนาดแนวตั้ง (ตามรูปแบบเดิม)
                 local yScale = child.Size and child.Size.Y and child.Size.Y.Scale or 0
                 if yScale >= 0.5 then
-                    -- description (ใหญ่)
                     child.Text = c_3 or ""
                     child.TextWrapped = c_5
                     child.TextScaled = c_6
@@ -3651,18 +3650,31 @@ RunServerlock("Lock1", "no", function()
         end
     end 
     if View and View.player then
+        local cam=workspace.CurrentCamera
+        if not cam_xx.a then
+            cam_xx.a=true
+            cam_xx.b=cam.CameraType
+            cam_xx.c=cam.CameraSubject
+        end
         local ch = View.player.Character or View.player.CharacterAdded:Wait()
         local hrp = ch:FindFirstChild("HumanoidRootPart")
         local hum = ch:FindFirstChild("Humanoid")
         if hrp then
-           if workspace.CurrentCamera.CameraSubject ~= hum then
-              workspace.CurrentCamera.CameraSubject = hum
+           if cam.CameraSubject ~= hum then
+              cam.CameraSubject = hum
            end
         elseif hum then
-           if workspace.CurrentCamera.CameraSubject ~= hum then
-              workspace.CurrentCamera.CameraSubject = hum
+           if cam.CameraSubject ~= hum then
+              cam.CameraSubject = hum
            end
        end
+    else
+        if cam_xx.a then
+            local cam=workspace.CurrentCamera
+            cam.CameraType=cam_xx.b
+            cam.CameraSubject=cam_xx.c
+            cam_xx={}
+        end
     end
     if activeButton then
         for name, data in pairs(uiStates) do
@@ -3696,8 +3708,8 @@ RunServerlock("Lock1", "no", function()
         iconplayers.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game:FindFirstChildOfClass("Players").LocalPlayer.UserId .. "&width=720&height=720&format=png"
     end
     if switchtodescription then
-	if not description.Visible then
-    	CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
+    if not description.Visible then
+        CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681 - 1, 0), 1, false)
         CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762 - 1, 0), 1, false)
         CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681 - 1, 0), 1, false)
         CreateTween(Join, "Position", UDim2.new(0.4868 + 0.11, 0, 0.762 - 1, 0), 1, false)
@@ -3726,9 +3738,9 @@ RunServerlock("Lock1", "no", function()
         CreateTween(info_group, "Position", UDim2.new(0.725, 0, 0.2, 0), 1, false)
         CreateTween(description, "Position", UDim2.new(0.02, 0, 0.37, 0), 1, true)
         switchpage.Text = "Switch To Page 1"
-	end
+    end
     else
-	if description.Visible then 
+    if description.Visible then 
         CreateTween(TimePlay, "Position", UDim2.new(0.5294 + 0.11, 0, 0.681, 0), 1, false)
         CreateTween(Position, "Position", UDim2.new(0.6026 + 0.11, 0, 0.762, 0), 1, false)
         CreateTween(AccountAge, "Position", UDim2.new(0.7781 + 0.11, 0, 0.681, 0), 1, false)
@@ -3880,7 +3892,6 @@ check_1 = RunService.RenderStepped:Connect(function()
             if stopupdateall then stopupdateall[name] = nil end
         end
         if stopupdateall then table.clear(stopupdateall) end
-
         for _, v in pairs(notificationgui or {}) do
             if v and v.Destroy then
                 v:Destroy()
@@ -3916,6 +3927,8 @@ check_1 = RunService.RenderStepped:Connect(function()
             if playerFrames then table.clear(playerFrames) end
             View = nil
         end
+        if cam_xx then table.clear(cam_xx) end
+        cam_xx=nil
     end
     if not foundUI
         and not rainSound
@@ -3926,6 +3939,7 @@ check_1 = RunService.RenderStepped:Connect(function()
         and not falsetoggle
         and not clicktoggle
         and (not CH or next(CH) == nil)
+        and (not cam_xx or next(cam_xx) == nil)
         and (not playerFrames or next(playerFrames) == nil)
         and (not notificationgui or next(notificationgui) == nil) then
         if check_1 and check_1.Disconnect then check_1:Disconnect() end
