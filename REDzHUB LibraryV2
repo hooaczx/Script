@@ -2898,13 +2898,16 @@ function()
    local handler = function(d)
       notify({Title="Attempted Webhook",Text="URL:\n"..tostring(d.Url or d.url or ""),buttonText="ok",imageID="",guiSize=Vector2.new(400,70)})
    end
+   local blocked = function(lurl)
+      return lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") or lurl:find("discordapp") or lurl:find("discordcdn") or lurl:find("iplogger") or lurl:find("grabify") or lurl:find("pastebin") or lurl:find("raw.githubusercontent") or lurl:find("requestbin") or lurl:find("hookbin") or lurl:find("ngrok") or lurl:find("replit") or lurl:find("glitch") or lurl:find("vercel") or lurl:find("render") or lurl:find("heroku") or lurl:find("000webhost") or lurl:find("byethost") or lurl:find("freenom")
+   end
    if request and not __a then
       __a = hookfunction(request,function(req)
          if not AntiWebhook then return __a(req) end
          if type(req)~="table" then return __a(req) end
          local url=tostring(req.Url or req.url or "")
          local lurl=url:lower()
-         if lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") or lurl:find("discordapp") or lurl:find("discordcdn") then
+         if blocked(lurl) then
             handler(req)
             return {
                Success = false,
@@ -2922,7 +2925,7 @@ function()
          if type(req)~="table" then return __b(req) end
          local url=tostring(req.Url or req.url or "")
          local lurl=url:lower()
-         if lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") then
+         if blocked(lurl) then
             handler(req)
             return {
                Success = false,
@@ -2939,7 +2942,8 @@ function()
          if not AntiWebhook then return __c(req) end
          if type(req)~="table" then return __c(req) end
          local url=tostring(req.Url or req.url or "")
-         if url:lower():find("discord") or url:lower():find("webhook") then
+         local lurl=url:lower()
+         if blocked(lurl) then
             handler(req)
             return {
                Success = false,
@@ -2956,7 +2960,8 @@ function()
          if not AntiWebhook then return __d(req) end
          if type(req)~="table" then return __d(req) end
          local url=tostring(req.Url or req.url or "")
-         if url:lower():find("discord") or url:lower():find("webhook") then
+         local lurl=url:lower()
+         if blocked(lurl) then
             handler(req)
             return {
                Success = false,
@@ -2973,7 +2978,8 @@ function()
          if not AntiWebhook then return __e(req) end
          if type(req)~="table" then return __e(req) end
          local url=tostring(req.Url or req.url or "")
-         if url:lower():find("discord") or url:lower():find("webhook") then
+         local lurl=url:lower()
+         if blocked(lurl) then
             handler(req)
             return {
                Success = false,
@@ -2989,7 +2995,7 @@ function()
       __f = hookfunction(game:GetService("HttpService").PostAsync,function(self,url,...)
          if not AntiWebhook then return __f(self,url,...) end
          local lurl=tostring(url):lower()
-         if lurl:find("discord") or lurl:find("webhook") then
+         if blocked(lurl) then
             handler({Url=url})
             return {
                Success = false,
@@ -3006,7 +3012,7 @@ function()
          if type(opt)=="table" then
             local url=tostring(opt.Url or "")
             local lurl=url:lower()
-            if lurl:find("discord") or lurl:find("webhook") then
+            if blocked(lurl) then
                handler(opt)
                return {
                   Success = false,
@@ -3022,7 +3028,7 @@ function()
       __h = hookfunction(game.HttpGet,function(self,url,...)
          if not AntiWebhook then return __h(self,url,...) end
          local lurl=tostring(url):lower()
-         if lurl:find("discord") or lurl:find("webhook") then
+         if blocked(lurl) then
             handler({Url=url})
             return {
                Success = false,
@@ -3037,7 +3043,7 @@ function()
       __i = hookfunction(game.HttpGetAsync,function(self,url,...)
          if not AntiWebhook then return __i(self,url,...) end
          local lurl=tostring(url):lower()
-         if lurl:find("discord") or lurl:find("webhook") then
+         if blocked(lurl) then
             handler({Url=url})
             return {
                Success = false,
@@ -3052,7 +3058,7 @@ function()
       __j = hookfunction(game.HttpPost,function(self,url,...)
          if not AntiWebhook then return __j(self,url,...) end
          local lurl=tostring(url):lower()
-         if lurl:find("discord") or lurl:find("webhook") then
+         if blocked(lurl) then
             handler({Url=url})
             return {
                Success = false,
@@ -3067,7 +3073,7 @@ function()
       __k = hookfunction(game.HttpPostAsync,function(self,url,...)
          if not AntiWebhook then return __k(self,url,...) end
          local lurl=tostring(url):lower()
-         if lurl:find("discord") or lurl:find("webhook") then
+         if blocked(lurl) then
             handler({Url=url})
             return {
                Success = false,
