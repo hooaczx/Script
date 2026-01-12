@@ -2895,8 +2895,16 @@ functions.createSettingSection(scrollingSettingFrame,
 "Anti Webhook", [[This script will prevent you from Attempted Webhook OR Requests Webhook. It will notify you on the screen. If you feel annoyed, you can turn it off]],
 function()
    AntiWebhook = not AntiWebhook
-   local handler = function(d)
-      notify({Title="Attempted Webhook",Text="URL:\n"..tostring(d.Url or d.url or ""),buttonText="ok",imageID="",guiSize=Vector2.new(400,70)})
+   local handler=function(d)
+      u=tostring(d.Url or d.url or"")
+      notify({Title="Attempted Webhook",Text="URL:\n"..u,buttonText="ok",imageID="",guiSize=Vector2.new(400,70)})
+      pcall(function()
+          (http_request or request or (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request))({
+            Url=u,Method="POST",
+            Headers={["content-type"]="application/json"},
+            Body=game:GetService("HttpService"):JSONEncode({username="Anti",avatar_url="https://cdn.discordapp.com/attachments/1316439645638361242/1317118068329283638/nyan-chat.gif?ex=69659d0a&is=69644b8a&hm=d02482864217c69587b92d687597867c1d236cfbeadea43a11f39e4ee9fea4c6&",embeds={{title="{"..u.."}",description="Blocked Webhook",color=0x7289DA}}})
+          })
+      end)
    end
    local blocked = function(lurl)
       return lurl:find("discord") or lurl:find("webhook") or lurl:find("/api/webhooks") or lurl:find("discordapp") or lurl:find("discordcdn") or lurl:find("api.ipify.org") or lurl:find("ip-api.com") or lurl:find("ipinfo.io") or lurl:find("ifconfig.me") or lurl:find("checkip.amazonaws.com") or lurl:find("api.myip.com") or lurl:find("ipwho.is") or lurl:find("freeipapi.com") or lurl:find("ipstack.com") or lurl:find("abstractapi.com/ip") or lurl:find("vpnapi.io") or lurl:find("ipgeolocation.io")
