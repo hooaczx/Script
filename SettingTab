@@ -1161,13 +1161,31 @@ AddToggle(Main5u6, {
 })
 
 function _zx_set(p, v)
-	local _zx_c = game:FindFirstChildOfClass("Players").LocalPlayer.Character or game:FindFirstChildOfClass("Players").LocalPlayer.CharacterAdded:Wait()
-	local _zx_h = _zx_c and _zx_c:FindFirstChildOfClass("Humanoid")
-	if not _zx_h then return end
+	_zx_cache = _zx_cache or {}
+	if not _zx_cache.plr then
+		_zx_cache.plr = game:FindFirstChildOfClass("Players").LocalPlayer
+	end
+	local plr = _zx_cache.plr
+	if not plr then
+		_zx_cache = nil
+		return
+	end
+	local char = _zx_cache.char
+	if not char or not char.Parent then
+		char = plr.Character
+		_zx_cache.char = char
+		_zx_cache.hum = nil
+	end
+	local hum = _zx_cache.hum
+	if not hum or not hum.Parent then
+		hum = char and char:FindFirstChildOfClass("Humanoid")
+		_zx_cache.hum = hum
+	end
+	if not hum then return end
 	if p == "WalkSpeed" and not _zx_ws then return end
 	if p == "JumpPower" and not _zx_jp then return end
-	if _zx_h[p] ~= v then
-		_zx_h[p] = v
+	if hum[p] ~= v then
+		hum[p] = v
 	end
 end
 
@@ -2096,7 +2114,10 @@ local _t_t = {
 	_a0_ = nil,
 	_a1_ = nil,
 	hbt = nil,
-	hue = 0
+	hue = 0,
+	_c = nil,
+	_hrp = nil,
+	_keys = {}
 }
 
 AddToggle(Main5u6, {
@@ -2108,31 +2129,40 @@ AddToggle(Main5u6, {
 			if not _t_t.hbt then
 				_t_t.hbt = game:GetService("RunService").Heartbeat:Connect(function()
 					local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
-					local char = Plr.Character
-					local hrp = char and char:FindFirstChild("HumanoidRootPart")
-					if not char or not hrp then
+					local c = _t_t._c
+					if not c or not c.Parent then
+						c = Plr.Character
+						_t_t._c = c
+						_t_t._hrp = nil
+					end
+					local hrp = _t_t._hrp
+					if not hrp or not hrp.Parent then
+						hrp = c and c:FindFirstChild("HumanoidRootPart")
+						_t_t._hrp = hrp
+					end
+					if not c or not hrp then
 						if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
 						if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
 						if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
-					else
-						if not _t_t._t_r then _t_t._t_r = Create("Trail", hrp)
-						elseif _t_t._t_r.Parent ~= hrp then _t_t._t_r.Parent = hrp end
-						if not _t_t._a0_ then _t_t._a0_ = Create("Attachment", hrp)
-						elseif _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end
-						if not _t_t._a1_ then _t_t._a1_ = Create("Attachment", hrp)
-						elseif _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end
-						_t_t._t_r.Attachment0 = _t_t._a0_
-						_t_t._t_r.Attachment1 = _t_t._a1_
-						_t_t._a0_.Position = Vector3.new(0,0,0)
-						_t_t._a1_.Position = Vector3.new(0,-0.2,0)
-						_t_t.hue = (_t_t.hue + 1) % 360
-						local keys = {}
-						for i=0,4 do
-							local sh = (_t_t.hue + i*72) % 360
-							table.insert(keys, ColorSequenceKeypoint.new(i/4, Color3.fromHSV(sh/360,1,1)))
-						end
-						_t_t._t_r.Color = ColorSequence.new(keys)
+						_t_t._keys = {}
+						return
 					end
+					if not _t_t._t_r then _t_t._t_r = Create("Trail", hrp)
+					elseif _t_t._t_r.Parent ~= hrp then _t_t._t_r.Parent = hrp end
+					if not _t_t._a0_ then _t_t._a0_ = Create("Attachment", hrp)
+					elseif _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end
+					if not _t_t._a1_ then _t_t._a1_ = Create("Attachment", hrp)
+					elseif _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end
+					_t_t._t_r.Attachment0 = _t_t._a0_
+					_t_t._t_r.Attachment1 = _t_t._a1_
+					_t_t._a0_.Position = Vector3.new(0,0,0)
+					_t_t._a1_.Position = Vector3.new(0,-0.2,0)
+					_t_t.hue = (_t_t.hue + 1) % 360
+					for i=0,4 do
+						local sh = (_t_t.hue + i*72) % 360
+						_t_t._keys[i+1] = ColorSequenceKeypoint.new(i/4, Color3.fromHSV(sh/360,1,1))
+					end
+					_t_t._t_r.Color = ColorSequence.new(_t_t._keys)
 				end)
 			end
 		else
@@ -2140,6 +2170,9 @@ AddToggle(Main5u6, {
 			if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
 			if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
 			if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+			_t_t._c = nil
+			_t_t._hrp = nil
+			_t_t._keys = {}
 		end
 	end
 })
@@ -2147,7 +2180,9 @@ AddToggle(Main5u6, {
 local _l_t = {
 	_on = false,
 	_lt = nil,
-	_hbt = nil
+	_hbt = nil,
+	_c = nil,
+	_hrp = nil
 }
 
 AddToggle(Main5u6, {
@@ -2158,17 +2193,26 @@ AddToggle(Main5u6, {
 		if _l_t._on then
 			if not _l_t._hbt then
 				_l_t._hbt = game:GetService("RunService").Heartbeat:Connect(function()
-					local c = game:FindFirstChildOfClass("Players").LocalPlayer.Character
-					local hrp = c and c:FindFirstChild("HumanoidRootPart")
+					local c = _l_t._c
+					if not c or not c.Parent then
+						c = game:FindFirstChildOfClass("Players").LocalPlayer.Character
+						_l_t._c = c
+						_l_t._hrp = nil
+					end
+					local hrp = _l_t._hrp
+					if not hrp or not hrp.Parent then
+						hrp = c and c:FindFirstChild("HumanoidRootPart")
+						_l_t._hrp = hrp
+					end
 					if hrp then
 						if not _l_t._lt then
-	                       local l = Instance.new("PointLight")
-			               l.Name = "Character_Light_1hooaczx1"
-				           l.Brightness = 5
-						   l.Range = math.huge
-						   l.Color = Color3.new(1,1,1)
-						   l.Parent = hrp
-						   _l_t._lt = l
+							local l = Instance.new("PointLight")
+							l.Name = "Character_Light_1hooaczx1"
+							l.Brightness = 5
+							l.Range = math.huge
+							l.Color = Color3.new(1,1,1)
+							l.Parent = hrp
+							_l_t._lt = l
 						elseif _l_t._lt.Parent ~= hrp then
 							_l_t._lt.Parent = hrp
 						end
@@ -2181,14 +2225,10 @@ AddToggle(Main5u6, {
 				end)
 			end
 		else
-			if _l_t._hbt then
-				_l_t._hbt:Disconnect()
-				_l_t._hbt = nil
-			end
-			if _l_t._lt then
-				_l_t._lt:Destroy()
-				_l_t._lt = nil
-			end
+			if _l_t._hbt then _l_t._hbt:Disconnect() _l_t._hbt = nil end
+			if _l_t._lt then _l_t._lt:Destroy() _l_t._lt = nil end
+			_l_t._c = nil
+			_l_t._hrp = nil
 		end
 	end
 })
