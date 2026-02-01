@@ -3665,70 +3665,38 @@ RunServerlock("Lock1", "no", function()
                 viewButton.Image = "rbxassetid://96859795672738"
             end
         end
-    end 
+    end
     if View and View.player then
-      v_a1 = v_a1 or {}
-      v_a1.cd = v_a1.cd or 0
-      v_a1.lcp = v_a1.lcp or workspace.CurrentCamera.CFrame.Position
-      v_a1.lhp = v_a1.lhp or nil
-      v_a1.wm = v_a1.wm ~= false
-      v_a1.lp = v_a1.lp or View.player
-      v_a1.cm = v_a1.cm or false
-      if v_a1.lp ~= View.player then
-         v_a1.lp = View.player
-         v_a1.lhp = nil
-         v_a1.lcp = workspace.CurrentCamera.CFrame.Position
-         v_a1.wm = true
-         v_a1.cm = false
-         v_a1.cd = os.clock()
+      cam_xx = cam_xx or {}
+      cam_xx.cooldown = cam_xx.cooldown or 0
+      if not cam_xx.ok then
+         cam_xx.t = workspace.CurrentCamera.CameraType
+         cam_xx.s = workspace.CurrentCamera.CameraSubject
+         cam_xx.c = workspace.CurrentCamera.CFrame
+         cam_xx.ok = true
       end
-      if not v_a1.ok then
-         v_a1.ot = workspace.CurrentCamera.CameraType
-         v_a1.os = workspace.CurrentCamera.CameraSubject
-         v_a1.oc = workspace.CurrentCamera.CFrame
-         v_a1.ok = true
-      end
-      local v_b2 = game:FindFirstChildOfClass("Players") and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
-      local v_c3 = v_b2 and (View.player.Character or View.player.CharacterAdded:Wait())
-      local v_d4 = v_c3 and v_c3:FindFirstChild("HumanoidRootPart")
-      if v_b2 and v_c3 and v_c3:IsDescendantOf(workspace) and v_c3:FindFirstChild("Humanoid") then
+      if game:FindFirstChildOfClass("Players")
+      and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid") then
           workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-          workspace.CurrentCamera.CameraSubject = v_c3:FindFirstChild("Humanoid")
-      elseif v_b2 and v_c3 and v_c3:IsDescendantOf(workspace) and v_d4 then
+          workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid")
+      elseif game:FindFirstChildOfClass("Players")
+      and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
           workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-          workspace.CurrentCamera.CameraSubject = v_d4
-      elseif not v_b2 and os.clock() - v_a1.cd >= 6 then
-          v_a1.cd = os.clock()
+          workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
+      elseif game:FindFirstChildOfClass("Players")
+      and not game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and os.clock() - cam_xx.cooldown >= 6 then
+          cam_xx.cooldown = os.clock()
           game:GetService("StarterGui"):SetCore("SendNotification",{
             Title = "Player left",
             Text = "him left game",
             Icon = "rbxassetid://99041893368154",
             Duration = 6
           })
-      end
-      if v_d4 then
-          local v_e5 = workspace.CurrentCamera.CFrame.Position
-          if v_e5 ~= v_a1.lcp then
-              v_a1.cm = true
-          end
-          if v_a1.lhp and v_d4.Position ~= v_a1.lhp then
-              if v_a1.wm and v_a1.cm then
-                  if v_e5 == v_a1.lcp and os.clock() - v_a1.cd >= 6 then
-                      v_a1.cd = os.clock()
-                      v_a1.wm = false
-                      game:GetService("StarterGui"):SetCore("SendNotification",{
-                        Title = "View Failed",
-                        Text = "players too far away CameraSubject not work",
-                        Icon = "rbxassetid://99041893368154",
-                        Duration = 6
-                      })
-                  end
-              end
-          else
-              v_a1.wm = true
-          end
-          v_a1.lhp = v_d4.Position
-          v_a1.lcp = v_e5
       end
     end
     if activeButton then
