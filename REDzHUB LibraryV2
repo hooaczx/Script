@@ -3668,26 +3668,32 @@ RunServerlock("Lock1", "no", function()
     end 
     if View and View.player then
       cam_xx = cam_xx or {}
-      cam_xx.notify = cam_xx.notify or false
+      cam_xx.cooldown = cam_xx.cooldown or 0
       if not cam_xx.ok then
          cam_xx.t = workspace.CurrentCamera.CameraType
          cam_xx.s = workspace.CurrentCamera.CameraSubject
          cam_xx.c = workspace.CurrentCamera.CFrame
          cam_xx.ok = true
       end
-      if (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace) and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid") then
+      if game:FindFirstChildOfClass("Players") and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name) and (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace) and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid") then
           workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
           workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid")
-          cam_xx.notify = false
-      elseif (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace) and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
+      elseif game:FindFirstChildOfClass("Players") and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name) and (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace) and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
           workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
           workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
-          cam_xx.notify = false
-      elseif not cam_xx.notify then
-          cam_xx.notify = true
+      elseif game:FindFirstChildOfClass("Players") and not game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name) and os.clock() - cam_xx.cooldown >= 3 then
+          cam_xx.cooldown = os.clock()
+          game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Player Leave",
+            Text = "Look around. Press unview to return to you",
+            Icon = "rbxassetid://99041893368154",
+            Duration = 3
+          })
+      elseif os.clock() - cam_xx.cooldown >= 3 then
+          cam_xx.cooldown = os.clock()
           game:GetService("StarterGui"):SetCore("SendNotification",{
             Title = "View Failed",
-            Text = "Player is not loaded on your client.",
+            Text = "Player is too far or bug to view he(he still in-game)",
             Icon = "rbxassetid://99041893368154",
             Duration = 3
           })
