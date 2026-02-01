@@ -308,7 +308,8 @@ function MakeWindow(Configs)
  d_Menu.clear[1] = Menu.InputBegan:Connect(function(i)
     if dragInput then return end
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-        Menu.Draggable = false
+        local ap = Menu.AbsolutePosition
+        Menu.Position = UDim2.fromOffset(ap.X + Menu.AnchorPoint.X * Menu.AbsoluteSize.X, ap.Y + Menu.AnchorPoint.Y * Menu.AbsoluteSize.Y)
         dragInput = i
         d_Menu.drag = true
         d_Menu.sM = i.Position and Vector2.new(i.Position.X, i.Position.Y) or d_Menu.uis:GetMouseLocation()
@@ -318,7 +319,6 @@ function MakeWindow(Configs)
             if i.UserInputState == Enum.UserInputState.End then
                 d_Menu.drag = false
                 dragInput = nil
-                Menu.Draggable = true
             end
         end)
      end
@@ -328,7 +328,7 @@ function MakeWindow(Configs)
       if not (i == dragInput or i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then return end
       local now = (i.Position and Vector2.new(i.Position.X, i.Position.Y)) or d_Menu.uis:GetMouseLocation()
       local sz, scr = Menu.AbsoluteSize, d_Menu.cam.ViewportSize
-      local newTopLeft = now - (d_Menu.pointerOffset or Vector2.new(0,0))
+      local newTopLeft = now - d_Menu.pointerOffset
       newTopLeft = Vector2.new(
           math.clamp(newTopLeft.X, 0, scr.X - sz.X),
           math.clamp(newTopLeft.Y, 0, scr.Y - sz.Y)
@@ -339,7 +339,6 @@ function MakeWindow(Configs)
   d_Menu.clear[3] = d_Menu.uis.InputEnded:Connect(function(i)
       if i == dragInput then
           d_Menu.drag = false dragInput = nil
-          Menu.Draggable = true
       end
   end)
   local TopBar = Create("Frame", Menu, {
