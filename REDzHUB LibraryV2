@@ -3670,22 +3670,28 @@ RunServerlock("Lock1", "no", function()
       cam_xx = cam_xx or {}
       cam_xx.notify = cam_xx.notify or false
       if not cam_xx.ok then
-          cam_xx.t = workspace.CurrentCamera.CameraType
-          cam_xx.s = workspace.CurrentCamera.CameraSubject
-          cam_xx.c = workspace.CurrentCamera.CFrame
-          cam_xx.ok = true
+         cam_xx.t = workspace.CurrentCamera.CameraType
+         cam_xx.s = workspace.CurrentCamera.CameraSubject
+         cam_xx.c = workspace.CurrentCamera.CFrame
+         cam_xx.ok = true
       end
-      local ch = View.player.Character or View.player.CharacterAdded:Wait()
-      local hrp = ch:FindFirstChild("HumanoidRootPart")
-      local hum = ch:FindFirstChild("Humanoid")
-      if hum then
-         workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-         workspace.CurrentCamera.CameraSubject = hum
-         cam_xx.notify = false
+      if (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace) and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid") then
+          workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+          workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid")
+          cam_xx.notify = false
+      elseif (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace) and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
+          workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+          workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
+          cam_xx.notify = false
       elseif not cam_xx.notify then
-         cam_xx.notify = true
-         game:GetService("StarterGui"):SetCore("SendNotification",{Title="View Failed",Text="Unable to view this player.",Icon="rbxassetid://99041893368154",Duration=3}) -- แจ้งเตือนไม่สามารถส่องผู้เล่นได้
-       end
+          cam_xx.notify = true
+          game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "View Failed",
+            Text = "Player is not loaded on your client.",
+            Icon = "rbxassetid://99041893368154",
+            Duration = 3
+          })
+      end
     end
     if activeButton then
         for name, data in pairs(uiStates) do
