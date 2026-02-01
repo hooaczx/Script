@@ -3667,11 +3667,20 @@ RunServerlock("Lock1", "no", function()
         end
     end 
     if View and View.player then
+    if View and View.player then
       v_a1 = v_a1 or {}
       v_a1.cd = v_a1.cd or 0
       v_a1.lcp = v_a1.lcp or workspace.CurrentCamera.CFrame.Position
       v_a1.lhp = v_a1.lhp or nil
       v_a1.wm = v_a1.wm ~= false
+      v_a1.lp = v_a1.lp or View.player
+      if v_a1.lp ~= View.player then
+         v_a1.lp = View.player
+         v_a1.lhp = nil
+         v_a1.lcp = workspace.CurrentCamera.CFrame.Position
+         v_a1.wm = true
+         v_a1.cd = os.clock()
+      end
       if not v_a1.ok then
          v_a1.ot = workspace.CurrentCamera.CameraType
          v_a1.os = workspace.CurrentCamera.CameraSubject
