@@ -3673,11 +3673,13 @@ RunServerlock("Lock1", "no", function()
       v_a1.lhp = v_a1.lhp or nil
       v_a1.wm = v_a1.wm ~= false
       v_a1.lp = v_a1.lp or View.player
+      v_a1.cm = v_a1.cm or false
       if v_a1.lp ~= View.player then
          v_a1.lp = View.player
          v_a1.lhp = nil
          v_a1.lcp = workspace.CurrentCamera.CFrame.Position
          v_a1.wm = true
+         v_a1.cm = false
          v_a1.cd = os.clock()
       end
       if not v_a1.ok then
@@ -3705,9 +3707,12 @@ RunServerlock("Lock1", "no", function()
           })
       end
       if v_d4 then
+          local v_e5 = workspace.CurrentCamera.CFrame.Position
+          if v_e5 ~= v_a1.lcp then
+              v_a1.cm = true
+          end
           if v_a1.lhp and v_d4.Position ~= v_a1.lhp then
-              if v_a1.wm then
-                  local v_e5 = workspace.CurrentCamera.CFrame.Position
+              if v_a1.wm and v_a1.cm then
                   if v_e5 == v_a1.lcp and os.clock() - v_a1.cd >= 6 then
                       v_a1.cd = os.clock()
                       v_a1.wm = false
@@ -3723,7 +3728,7 @@ RunServerlock("Lock1", "no", function()
               v_a1.wm = true
           end
           v_a1.lhp = v_d4.Position
-          v_a1.lcp = workspace.CurrentCamera.CFrame.Position
+          v_a1.lcp = v_e5
       end
     end
     if activeButton then
