@@ -2640,14 +2640,13 @@ functions.getGameDesc = function(_id)
     if cachedDesc and cachedDesc ~= "" then
         return cachedDesc
     end
-    local MarketplaceService = game:GetService("MarketplaceService")
-    local success, productInfo = pcall(function()
-        return MarketplaceService:GetProductInfo(_id)
+    local success, result = pcall(function()
+        return game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games?universeIds=".._id))
     end)
-    if not success or not productInfo then
+    if not success or not result or not result.data or not result.data[1] then
         return cachedDesc or "Failed to load game description"
     end
-    local desc = productInfo.Description or "This game has no description"
+    local desc = result.data[1].description or "This game has no description"
     if cachedDesc == desc then
         return cachedDesc
     end
@@ -3668,30 +3667,25 @@ RunServerlock("Lock1", "no", function()
         end
     end 
     if View and View.player then
-       local cam = workspace.CurrentCamera
-       cam_xx = cam_xx or {}
-       if not cam_xx.ok then
-           cam_xx.t = cam.CameraType
-           cam_xx.s = cam.CameraSubject
-           cam_xx.c = cam.CFrame
-           cam_xx.ok = true
+      cam_xx = cam_xx or {}
+      cam_xx.notify = cam_xx.notify or false
+      if not cam_xx.ok then
+          cam_xx.t = workspace.CurrentCamera.CameraType
+          cam_xx.s = workspace.CurrentCamera.CameraSubject
+          cam_xx.c = workspace.CurrentCamera.CFrame
+          cam_xx.ok = true
+      end
+      local ch = View.player.Character or View.player.CharacterAdded:Wait()
+      local hrp = ch:FindFirstChild("HumanoidRootPart")
+      local hum = ch:FindFirstChild("Humanoid")
+      if hum then
+         workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+         workspace.CurrentCamera.CameraSubject = hum
+         cam_xx.notify = false
+      elseif not cam_xx.notify then
+         cam_xx.notify = true
+         game:GetService("StarterGui"):SetCore("SendNotification",{Title="View Failed",Text="Unable to view this player.",Icon="rbxassetid://99041893368154",Duration=3}) -- แจ้งเตือนไม่สามารถส่องผู้เล่นได้
        end
-       local ch = View.player.Character or View.player.CharacterAdded:Wait()
-       local hrp = ch:FindFirstChild("HumanoidRootPart")
-       local hum = ch:FindFirstChild("Humanoid")
-       if hrp then
-           cam.CameraType = Enum.CameraType.Scriptable
-           cam.CFrame = CFrame.new(hrp.Position + Vector3.new(0,3,6), hrp.Position)
-           task.defer(function()
-               if cam_xx and cam_xx.ok then
-                  cam.CameraType = cam_xx.t
-                  cam.CameraSubject = cam_xx.s
-                  cam.CFrame = cam_xx.c
-               end
-           end)
-        elseif hum then
-           cam.CameraSubject = hum
-        end
     end
     if activeButton then
         for name, data in pairs(uiStates) do
@@ -3853,7 +3847,7 @@ RunServerlock("Lock3", 10, function()
        if description.Visible then
           functions.UpdateDescription({fromFrame = 1,Text = "Your Description Account", description=functions.getplayerdescription(game:FindFirstChildOfClass("Players").LocalPlayer.UserId), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..game:FindFirstChildOfClass("Players").LocalPlayer.UserId.."&width=720&height=720&format=png", textscaled = true})
           functions.UpdateDescription({fromFrame = 2,Text = "Creator Game Account Description", description=functions.getplayerdescription(tostring(creatorInfo.UserId)), image = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(creatorInfo.UserId).."&width=720&height=720&format=png", textscaled = true})
-          functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(PlaceId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..MarketplaceService:GetProductInfo(PlaceId).IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
+          functions.UpdateDescription({fromFrame = 3,Text = "Game Description", description = functions.getGameDesc(game.GameId), image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..MarketplaceService:GetProductInfo(PlaceId).IconImageAssetId.."&fmt=png&wd=500&ht=500", textscaled = true})
           functions.UpdateDescription({fromFrame = 4,Text = "Group Description", description = creatorInfo.GroupDescription, image = creatorInfo.GroupIcon, textscaled = true})
     end
 end)
