@@ -3676,24 +3676,27 @@ RunServerlock("Lock1", "no", function()
          cam_xx.ok = true
       end
       if game:FindFirstChildOfClass("Players")
-      and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name) then
-          if (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
-          and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid") then
-              workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-              workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid")
-          elseif (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
-          and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
-              workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-              workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
-          elseif os.clock() - cam_xx.cooldown >= 3 then
-              cam_xx.cooldown = os.clock()
-              game:GetService("StarterGui"):SetCore("SendNotification",{
-                Title = "View Failed",
-                Text = "Player too far or not loaded (in-game)",
-                Icon = "rbxassetid://99041893368154",
-                Duration = 3
-              })
-          end
+      and not game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and os.clock() - cam_xx.cooldown >= 3 then
+          cam_xx.cooldown = os.clock()
+          game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Player Leave",
+            Text = "Look around. Press unview to return.",
+            Icon = "rbxassetid://99041893368154",
+            Duration = 3
+          })
+      elseif game:FindFirstChildOfClass("Players")
+      and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid") then
+          workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+          workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("Humanoid")
+      elseif game:FindFirstChildOfClass("Players")
+      and game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
+      and (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
+          workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+          workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
       elseif os.clock() - cam_xx.cooldown >= 3 then
           cam_xx.cooldown = os.clock()
           game:GetService("StarterGui"):SetCore("SendNotification",{
