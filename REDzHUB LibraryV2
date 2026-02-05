@@ -4160,28 +4160,36 @@ function MakeTab(Configs)
         if not Default.Enabled then
             Default = false
         else
+            local gameOk = true
             if Default.GameId then
-                if game.PlaceId ~= Default.GameId then
-                    Default = false
-                else
-                    if Default.PlayerName then
-                        if game.Players.LocalPlayer and game.Players.LocalPlayer.Name == Default.PlayerName then
-                            Default = true
-                        else
-                            Default = false
-                        end
-                    else
-                        Default = true
+                local gid = Default.GameId
+                local matched = false
+                if type(gid) == "table" then
+                    for _,v in ipairs(gid) do
+                        if game.PlaceId == v then matched = true break end
                     end
-                end
-            elseif Default.PlayerName then
-                if game.Players.LocalPlayer and game.Players.LocalPlayer.Name == Default.PlayerName then
-                    Default = true
                 else
-                    Default = false
+                    if game.PlaceId == gid then matched = true end
                 end
-            else
+                gameOk = matched
+            end
+            local playerOk = true
+            if Default.PlayerName then
+                local pn = Default.PlayerName
+                local matched2 = false
+                if type(pn) == "table" then
+                    for _,v in ipairs(pn) do
+                        if game.Players.LocalPlayer and game.Players.LocalPlayer.Name == v then matched2 = true break end
+                    end
+                else
+                    if game.Players.LocalPlayer and game.Players.LocalPlayer.Name == pn then matched2 = true end
+                end
+                playerOk = matched2
+            end
+            if gameOk and playerOk then
                 Default = true
+            else
+                Default = false
             end
         end
     end
