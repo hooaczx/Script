@@ -4136,9 +4136,9 @@ function MakeTab(Configs)
     })TextSetColor(WarningLabel)
   end
 
-   local ToggleGroups = ToggleGroups or {}
-   local waitno = false
-   function AddToggle(parent, Configs)
+  local ToggleGroups = ToggleGroups or {}
+  local waitno = false
+  function AddToggle(parent, Configs)
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
     local TwoToggle = Configs.TwoToggle
@@ -4156,6 +4156,35 @@ function MakeTab(Configs)
     local Stroke2 = Stroke(Frame2, {Thickness = 1})
     Corner(Frame2, {CornerRadius = UDim.new(1, 0)})
     local OnOff = false
+    if type(Default) == "table" then
+        if not Default.Enabled then
+            Default = false
+        else
+            if Default.GameId then
+                if game.PlaceId ~= Default.GameId then
+                    Default = false
+                else
+                    if Default.PlayerName then
+                        if game.Players.LocalPlayer and game.Players.LocalPlayer.Name == Default.PlayerName then
+                            Default = true
+                        else
+                            Default = false
+                        end
+                    else
+                        Default = true
+                    end
+                end
+            elseif Default.PlayerName then
+                if game.Players.LocalPlayer and game.Players.LocalPlayer.Name == Default.PlayerName then
+                    Default = true
+                else
+                    Default = false
+                end
+            else
+                Default = true
+            end
+        end
+    end
     if Default then
         OnOff = true
         CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
