@@ -70,49 +70,47 @@ functionCreate.Stroke = function(parent, props)
 end
 
 functionCreate.CreateGradient = function(parent, props)
-    local new = Instance.new("UIGradient")
-    new.Parent = parent
-
-    local defaultColors = {
-        Color3.fromRGB(255, 255, 255),
-        Color3.fromRGB(127, 127, 127),
-        Color3.fromRGB(0, 0, 0)
-    }
+    local g = Instance.new("UIGradient")
+    g.Parent = parent
     if props and props.Color then
-        local colorList = props.Color
-        local colorCount = math.min(#colorList, 3)
-        local colorKeypoints = {}
-        for i = 1, colorCount do
-            local position = (i - 1) / (colorCount - 1)
-            table.insert(colorKeypoints, ColorSequenceKeypoint.new(position, colorList[i]))
+        local kp = {}
+        local count = math.min(#props.Color, 3)
+        for i = 1, count do
+            local pos = (i - 1) / (count - 1)
+            kp[#kp + 1] = ColorSequenceKeypoint.new(pos, props.Color[i])
         end
-        new.Color = ColorSequence.new(colorKeypoints)
+        g.Color = ColorSequence.new(kp)
     else
-        new.Color = ColorSequence.new(defaultColors[1], defaultColors[2], defaultColors[3])
+        g.Color = ColorSequence.new(
+            Color3.fromRGB(255,255,255),
+            Color3.fromRGB(127,127,127),
+            Color3.fromRGB(0,0,0)
+        )
     end
-    if props and props.Rotation then
-        new.Rotation = props.Rotation
+    if props then
+        if props.Rotation then
+            g.Rotation = props.Rotation
+        end
+        if props.Intensity then
+            local k = g.Color.Keypoints
+            g.Color = ColorSequence.new(
+                k[1].Value:Lerp(Color3.new(0,0,0), props.Intensity),
+                k[#k].Value:Lerp(Color3.new(0,0,0), props.Intensity)
+            )
+        end
+        if props.Offset then
+            g.Offset = props.Offset
+        end
+        if props.Tween then
+            local t = TweenService:Create(
+                g,
+                TweenInfo.new(props.Speed or 2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true),
+                {Rotation = g.Rotation + 360}
+            )
+            t:Play()
+        end
     end
-    if props and props.Intensity then
-        local color1 = new.Color.Keypoints[1].Value
-        local color2 = new.Color.Keypoints[#new.Color.Keypoints].Value
-
-        local intensifiedColor1 = color1:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
-        local intensifiedColor2 = color2:Lerp(Color3.fromRGB(0, 0, 0), props.Intensity)
-
-        new.Color = ColorSequence.new(intensifiedColor1, intensifiedColor2)
-    end
-    if props and props.Offset then
-        new.Offset = props.Offset
-    end
-    if props and props.Tween then
-        local speed = props.Speed or 2
-        local goal = {Rotation = new.Rotation + 360}
-        local tweenInfo = TweenInfo.new(speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true)
-        local tween = TweenService:Create(new, tweenInfo, goal)
-        tween:Play()
-    end
-    return new
+    return g
 end
 
 functionCreate.CreateTween = function(instance, prop, value, time, tweenWait)
@@ -132,37 +130,37 @@ functionCreate.CreateTween1 = function(instance, property, goal, duration, easin
     return tween
 end
 
-functionCreate.TextSetColor = function(instance)
-  if not instance or not instance.Parent then return end
-  local connectionTextSetColor = {}
-  local isMouseHovered = false
-  connectionTextSetColor.MouseEnter = instance.MouseEnter:Connect(function()
-    isMouseHovered = true
+functionCreate.TextSetColor = function(obj)
+  if not obj or not obj.Parent then return end
+  local stuff = {}
+  local on = false
+  stuff.MouseEnter = obj.MouseEnter:Connect(function()
+    on = true
   end)
-  connectionTextSetColor.MouseLeave = instance.MouseLeave:Connect(function()
-    isMouseHovered = false
+  stuff.MouseLeave = obj.MouseLeave:Connect(function()
+    on = false
   end)
-  connectionTextSetColor.RenderStepped = RunService.RenderStepped:Connect(function()
-    if isMouseHovered then
-      CreateTween(instance, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
+  stuff.RenderStepped = RunService.RenderStepped:Connect(function()
+    if on then
+      CreateTween(obj, "TextColor3", Color3.fromRGB(30, 140, 200), 0.4, true)
     else
-      CreateTween(instance, "TextColor3", Configs_HUB.Cor_Text, 0.4, false)
+      CreateTween(obj, "TextColor3", Configs_HUB.Cor_Text, 0.4, false)
     end
   end)
-  local function cleanup()
-    for _, connection in pairs(connectionTextSetColor) do
-      if connection then
-        connection:Disconnect()
+  local function stop()
+    for _, v in pairs(stuff) do
+      if v then
+        v:Disconnect()
       end
     end
-    connectionTextSetColor = {}
+    stuff = {}
   end
-  connectionTextSetColor.AncestryChanged = instance.AncestryChanged:Connect(function(_, parent)
-    if parent == nil and instance.Parent == nil then
-       cleanup()
+  stuff.AncestryChanged = obj.AncestryChanged:Connect(function(_, parent)
+    if parent == nil and obj.Parent == nil then
+       stop()
       end
    end)
- end
+end
 
 SetProps = functionCreate.SetProps
 Corner = functionCreate.Corner
