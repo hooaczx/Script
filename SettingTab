@@ -359,6 +359,7 @@ AddToggle(Main5u6, {
                                     O3l4O5l6.Anchored = true
                                     O3l4O5l6.CanCollide = true
                                     O3l4O5l6.Transparency = 1
+                                    O3l4O5l6:SetAttribute("CollisionClone", true)
                                     O3l4O5l6.Parent = workspace
                                     O5l6O7l8.map[O9l0O1l2] = {
                                         clone = O3l4O5l6,
@@ -372,35 +373,6 @@ AddToggle(Main5u6, {
                         end
                     end
                 end
-                for O4l5O6l7,l5O6l7O8 in pairs(O5l6O7l8.map) do
-                    if not l8O9l0O1[O4l5O6l7] or not O4l5O6l7:IsDescendantOf(l3O4l5O6) or not l5O6l7O8.clone or not l5O6l7O8.clone.Parent then
-                        if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
-                        O5l6O7l8.map[O4l5O6l7] = nil
-                    end
-                end
-                for O4l5O6l7,l5O6l7O8 in pairs(O5l6O7l8.map) do
-                    if O4l5O6l7 and O4l5O6l7:IsDescendantOf(l3O4l5O6) and l5O6l7O8.clone and l5O6l7O8.clone.Parent then
-                        local l6O7l8O9 = false
-                        if l5O6l7O8.lastCFrame ~= O4l5O6l7.CFrame then l6O7l8O9 = true end
-                        if l5O6l7O8.lastSize ~= O4l5O6l7.Size then l6O7l8O9 = true end
-                        if O4l5O6l7:IsA("MeshPart") and (l5O6l7O8.lastMeshId ~= O4l5O6l7.MeshId or l5O6l7O8.lastTexture ~= O4l5O6l7.TextureID) then l6O7l8O9 = true end
-                        if l6O7l8O9 then
-                            l5O6l7O8.clone.CFrame = O4l5O6l7.CFrame
-                            l5O6l7O8.clone.Size = O4l5O6l7.Size
-                            if l5O6l7O8.clone:IsA("MeshPart") and O4l5O6l7:IsA("MeshPart") then
-                                l5O6l7O8.clone.MeshId = O4l5O6l7.MeshId
-                                l5O6l7O8.clone.TextureID = O4l5O6l7.TextureID
-                            end
-                            l5O6l7O8.lastCFrame = O4l5O6l7.CFrame
-                            l5O6l7O8.lastSize = O4l5O6l7.Size
-                            l5O6l7O8.lastMeshId = O4l5O6l7:IsA("MeshPart") and O4l5O6l7.MeshId or ""
-                            l5O6l7O8.lastTexture = O4l5O6l7:IsA("MeshPart") and O4l5O6l7.TextureID or ""
-                        end
-                    else
-                        if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
-                        O5l6O7l8.map[O4l5O6l7] = nil
-                    end
-                end
             end)
         else
             l0O1lI2.on = false
@@ -408,9 +380,9 @@ AddToggle(Main5u6, {
                 l0O1lI2.c:Disconnect()
                 l0O1lI2.c = nil
             end
-            for _, O7l8O9l0 in pairs(l0O1lI2.d or {}) do
-                for _, l8O9l0O1 in pairs(O7l8O9l0.map or {}) do
-                    if l8O9l0O1.clone then l8O9l0O1.clone:Destroy() end
+            for _,v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("BasePart") and v:GetAttribute("CollisionClone") then
+                    v:Destroy()
                 end
             end
             l0O1lI2.d = {}
