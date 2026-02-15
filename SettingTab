@@ -276,160 +276,145 @@ AddColorPicker(Main5u6, {
     end
 })
 
-local _Zq = {}
-local _Tg = false
+local qx9v = {}
+local t7m2 = false
 AddToggle(Main5u6, {
     Name = "Collision Players",
     Default = false,
     TwoToggle = "group1",
     NotificationTitle = "Warning",
     NotificationText = "Please turn off Anti Fling first",
-    Callback = function(_Cb)
-        if _Tg then return end
-        _Tg = true
-        _Zq.on = _Cb
-        if _Cb then
-            _Zq.d = {}
-            _Zq.i = 1
-            _Zq.c = game:GetService("RunService").RenderStepped:Connect(function()
-                if not _Zq.on then return end
-                local _Pl = game:GetService("Players")
-                local _Ps = _Pl:GetPlayers()
-                if #_Ps == 0 then return end
-                local _P = _Ps[_Zq.i]
-                _Zq.i += 1
-                if _Zq.i > #_Ps then _Zq.i = 1 end
-                if _P == _Pl.LocalPlayer then return end
-                local _UID = _P.UserId
-                local _Char = _P.Character
-                if not _Char then
-                    if _Zq.d[_UID] then
-                        for _orig, _ent in pairs(_Zq.d[_UID].map or {}) do
-                            if _ent.clone and _ent.clone.Parent then _ent.clone:Destroy() end
+    Callback = function(k41x)
+        if t7m2 then return end
+        t7m2 = true
+        qx9v.on = k41x
+        if k41x then
+            qx9v.zz = {}
+            qx9v.ii = 1
+            qx9v.rs = game:GetService("RunService").RenderStepped:Connect(function()
+                if not qx9v.on then return end
+                local p01 = game:GetService("Players")
+                local p02 = p01:GetPlayers()
+                if #p02 == 0 then return end
+                local p03 = p02[qx9v.ii]
+                qx9v.ii += 1
+                if qx9v.ii > #p02 then qx9v.ii = 1 end
+                if p03 == p01.LocalPlayer then return end
+                local uid77 = p03.UserId
+                local ch88 = p03.Character
+                if not ch88 then
+                    if qx9v.zz[uid77] then
+                        for a1,b1 in pairs(qx9v.zz[uid77].mp or {}) do
+                            if b1.cl and b1.cl.Parent then b1.cl:Destroy() end
                         end
-                        _Zq.d[_UID] = nil
+                        if qx9v.zz[uid77].ad then qx9v.zz[uid77].ad:Disconnect() end
+                        if qx9v.zz[uid77].rm then qx9v.zz[uid77].rm:Disconnect() end
+                        qx9v.zz[uid77] = nil
                     end
                     return
                 end
-                _Zq.d[_UID] = _Zq.d[_UID] or { map = setmetatable({}, { __mode = "k" }), queue = {}, charRef = nil }
-                local _Rec = _Zq.d[_UID]
-                if _Rec.charRef ~= _Char then
-                    local _cur = {}
-                    for _, _part in pairs(_Char:GetDescendants()) do
-                        if _part:IsA("BasePart") and _part.CanCollide ~= nil then
-                            local _n = _part.Name:lower()
-                            local _pn = _part.Parent and _part.Parent.Name:lower() or ""
-                            local _limb = false
-                            if _n:match("arm") or _n:match("leg") or _pn:match("arm") or _pn:match("leg") then
-                                _limb = true
-                            elseif _part.Name == "HumanoidRootPart" or _part.Name == "Head" or _part.Name:match("torso") then
-                                _limb = true
-                            end
-                            if _limb then _cur[_part] = true end
-                        end
+                qx9v.zz[uid77] = qx9v.zz[uid77] or {mp = setmetatable({}, {__mode="k"}),ql = {},ref = nil,ad = nil,rm = nil}
+                local rec44 = qx9v.zz[uid77]
+                if rec44.ref ~= ch88 then
+                    for a2,b2 in pairs(rec44.mp) do
+                        if b2.cl and b2.cl.Parent then b2.cl:Destroy() end
                     end
-                    for _, _c in pairs(_Char:GetChildren()) do
-                        if _c:IsA("Accessory") or _c:IsA("Tool") then
-                            for _, _pp in pairs(_c:GetDescendants()) do
-                                if _pp:IsA("BasePart") and _pp.CanCollide ~= nil then
-                                    _cur[_pp] = true
-                                end
-                            end
+                    if rec44.ad then rec44.ad:Disconnect() end
+                    if rec44.rm then rec44.rm:Disconnect() end
+                    rec44.mp = setmetatable({}, {__mode="k"})
+                    rec44.ql = {}
+                    rec44.ref = ch88
+                    rec44.ad = ch88.DescendantAdded:Connect(function(obj9)
+                        if not obj9:IsA("BasePart") then return end
+                        if rec44.mp[obj9] then return end
+                        table.insert(rec44.ql, obj9)
+                    end)
+                    rec44.rm = ch88.DescendantRemoving:Connect(function(obj8)
+                        if rec44.mp[obj8] then
+                            local en = rec44.mp[obj8]
+                            if en.cl and en.cl.Parent then en.cl:Destroy() end
+                            rec44.mp[obj8] = nil
                         end
-                    end
-                    for _orig, _ent in pairs(_Rec.map) do
-                        if not _orig or not _orig.Parent or not _cur[_orig] then
-                            if _ent.clone and _ent.clone.Parent then _ent.clone:Destroy() end
-                            _Rec.map[_orig] = nil
-                        end
-                    end
-                    for _part, _dummy in pairs(_cur) do
-                        if not _Rec.map[_part] and not table.find(_Rec.queue, _part) then
-                            table.insert(_Rec.queue, _part)
-                        end
-                    end
-                    _Rec.charRef = _Char
+                    end)
                 end
-                if #_Rec.queue > 0 then
-                    local _Pp = table.remove(_Rec.queue, 1)
-                    if _Pp and _Pp.Parent and not _Rec.map[_Pp] then
-                        local _cl
-                        if _Pp:IsA("MeshPart") then
-                            _cl = Instance.new("MeshPart")
-                            pcall(function() _cl.MeshType = _Pp.MeshType end)
-                            _cl.MeshId = _Pp.MeshId
-                            _cl.TextureID = _Pp.TextureID
-                        elseif _Pp:IsA("CornerWedgePart") then
-                            _cl = Instance.new("CornerWedgePart")
-                        elseif _Pp:IsA("WedgePart") then
-                            _cl = Instance.new("WedgePart")
-                        elseif _Pp:IsA("Part") then
-                            _cl = Instance.new("Part")
-                            _cl.Shape = _Pp.Shape
-                        else
-                            _cl = nil
+                if #rec44.ql > 0 then
+                    local px1 = table.remove(rec44.ql,1)
+                    if px1 and px1.Parent and not rec44.mp[px1] then
+                        local clx
+                        if px1:IsA("MeshPart") then
+                            clx = Instance.new("MeshPart")
+                            pcall(function() clx.MeshType = px1.MeshType end)
+                            clx.MeshId = px1.MeshId
+                            clx.TextureID = px1.TextureID
+                        elseif px1:IsA("CornerWedgePart") then
+                            clx = Instance.new("CornerWedgePart")
+                        elseif px1:IsA("WedgePart") then
+                            clx = Instance.new("WedgePart")
+                        elseif px1:IsA("Part") then
+                            clx = Instance.new("Part")
+                            clx.Shape = px1.Shape
                         end
-                        if _cl then
-                            _cl.Size = _Pp.Size
-                            _cl.CFrame = _Pp.CFrame
-                            _cl.Color = _Pp.Color
-                            _cl.Material = _Pp.Material
-                            _cl.Anchored = true
-                            _cl.CanCollide = true
-                            _cl.Transparency = 1
-                            _cl.Parent = workspace
-                            local _sm = _Pp:FindFirstChildOfClass("SpecialMesh")
-                            if _sm then
-                                local _nm = Instance.new("SpecialMesh", _cl)
-                                pcall(function() _nm.MeshType = _sm.MeshType end)
-                                _nm.MeshId = _sm.MeshId
-                                _nm.TextureId = _sm.TextureId
-                                _nm.Scale = _sm.Scale
-                            end
-                            _Rec.map[_Pp] = {
-                                clone = _cl,
-                                lastC = _Pp.CFrame,
-                                lastS = _Pp.Size,
-                                lastM = _Pp:IsA("MeshPart") and _Pp.MeshId or "",
-                                lastT = _Pp:IsA("MeshPart") and _Pp.TextureID or ""
+                        if clx then
+                            clx.Size = px1.Size
+                            clx.CFrame = px1.CFrame
+                            clx.Color = px1.Color
+                            clx.Material = px1.Material
+                            clx.Anchored = true
+                            clx.CanCollide = true
+                            clx.Transparency = 1
+                            clx.Parent = workspace
+                            rec44.mp[px1] = {
+                                cl = clx,
+                                lc = px1.CFrame,
+                                ls = px1.Size,
+                                lm = px1:IsA("MeshPart") and px1.MeshId or "",
+                                lt = px1:IsA("MeshPart") and px1.TextureID or "",
+                                evTick = tick()
                             }
                         end
                     end
                 end
-                for _orig, _entry in pairs(_Rec.map) do
-                    if not _orig or not _orig.Parent or (_Rec.charRef and not _orig:IsDescendantOf(_Rec.charRef)) then
-                        if _entry.clone and _entry.clone.Parent then _entry.clone:Destroy() end
-                        _Rec.map[_orig] = nil
+                for opx,enty in pairs(rec44.mp) do
+                    if not opx or not opx.Parent or not opx:IsDescendantOf(rec44.ref) then
+                        if enty.cl and enty.cl.Parent then enty.cl:Destroy() end
+                        rec44.mp[opx] = nil
                     else
-                        local _need = false
-                        if _entry.lastC ~= _orig.CFrame then _need = true end
-                        if _entry.lastS ~= _orig.Size then _need = true end
-                        if _orig:IsA("MeshPart") and (_entry.lastM ~= _orig.MeshId or _entry.lastT ~= _orig.TextureID) then _need = true end
-                        if _need then
-                            _entry.clone.CFrame = _orig.CFrame
-                            _entry.clone.Size = _orig.Size
-                            if _entry.clone:IsA("MeshPart") and _orig:IsA("MeshPart") then
-                                _entry.clone.MeshId = _orig.MeshId
-                                _entry.clone.TextureID = _orig.TextureID
+                        if enty.evTick and tick() - enty.evTick < 0.15 then
+                            continue
+                        end
+                        local need77 = false
+                        if enty.lc ~= opx.CFrame then need77 = true end
+                        if enty.ls ~= opx.Size then need77 = true end
+                        if opx:IsA("MeshPart") and (enty.lm ~= opx.MeshId or enty.lt ~= opx.TextureID) then
+                            need77 = true
+                        end
+                        if need77 then
+                            enty.cl.CFrame = opx.CFrame
+                            enty.cl.Size = opx.Size
+                            if enty.cl:IsA("MeshPart") and opx:IsA("MeshPart") then
+                                enty.cl.MeshId = opx.MeshId
+                                enty.cl.TextureID = opx.TextureID
                             end
-                            _entry.lastC = _orig.CFrame
-                            _entry.lastS = _orig.Size
-                            _entry.lastM = _orig:IsA("MeshPart") and _orig.MeshId or ""
-                            _entry.lastT = _orig:IsA("MeshPart") and _orig.TextureID or ""
+                            enty.lc = opx.CFrame
+                            enty.ls = opx.Size
+                            enty.lm = opx:IsA("MeshPart") and opx.MeshId or ""
+                            enty.lt = opx:IsA("MeshPart") and opx.TextureID or ""
                         end
                     end
                 end
             end)
         else
-            if _Zq.c then _Zq.c:Disconnect() end
-            for _, _v in pairs(_Zq.d or {}) do
-                for _, _e in pairs(_v.map or {}) do
-                    if _e.clone and _e.clone.Parent then _e.clone:Destroy() end
+            if qx9v.rs then qx9v.rs:Disconnect() end
+            for _,v9 in pairs(qx9v.zz or {}) do
+                for _,e9 in pairs(v9.mp or {}) do
+                    if e9.cl and e9.cl.Parent then e9.cl:Destroy() end
                 end
+                if v9.ad then v9.ad:Disconnect() end
+                if v9.rm then v9.rm:Disconnect() end
             end
-            table.clear(_Zq)
+            table.clear(qx9v)
         end
-        task.delay(0, function() _Tg = false end)
+        task.delay(0,function() t7m2=false end)
     end
 })
 
