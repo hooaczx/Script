@@ -287,10 +287,16 @@ AddToggle(Main5u6, {
     Callback = function(Il0O1l2)
         if O0l1I2l3 then return end
         O0l1I2l3 = true
+        if Il0O1l2 == l0O1lI2.on then
+            O0l1I2l3 = false
+            return
+        end
         l0O1lI2.on = Il0O1l2
         if Il0O1l2 then
             l0O1lI2.d = {}
+            l0O1lI2.z = {}
             l0O1lI2.i = 1
+            if l0O1lI2.c then l0O1lI2.c:Disconnect() end
             l0O1lI2.c = game:GetService("RunService").RenderStepped:Connect(function()
                 if not l0O1lI2.on then return end
                 local O1lI2l3O = game:GetService("Players"):GetPlayers()
@@ -304,7 +310,10 @@ AddToggle(Main5u6, {
                 if not l3O4l5O6 then
                     if l0O1lI2.d[O2l3O4l5] then
                         for O4l5O6l7,l5O6l7O8 in pairs(l0O1lI2.d[O2l3O4l5].map) do
-                            if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
+                            if l5O6l7O8.clone then
+                                l5O6l7O8.clone:Destroy()
+                                l0O1lI2.z[l5O6l7O8.clone] = nil
+                            end
                         end
                         l0O1lI2.d[O2l3O4l5] = nil
                     end
@@ -314,7 +323,10 @@ AddToggle(Main5u6, {
                 local O5l6O7l8 = l0O1lI2.d[O2l3O4l5]
                 if O5l6O7l8.ref ~= l3O4l5O6 then
                     for O6l7O8l9,l7O8l9O0 in pairs(O5l6O7l8.map) do
-                        if l7O8l9O0.clone then l7O8l9O0.clone:Destroy() end
+                        if l7O8l9O0.clone then
+                            l7O8l9O0.clone:Destroy()
+                            l0O1lI2.z[l7O8l9O0.clone] = nil
+                        end
                     end
                     O5l6O7l8.map = {}
                     O5l6O7l8.ref = l3O4l5O6
@@ -356,6 +368,7 @@ AddToggle(Main5u6, {
                                     O3l4O5l6.CanCollide = true
                                     O3l4O5l6.Transparency = 1
                                     O3l4O5l6.Parent = workspace
+                                    l0O1lI2.z[O3l4O5l6] = true
                                     O5l6O7l8.map[O9l0O1l2] = {
                                         clone = O3l4O5l6,
                                         lastCFrame = O9l0O1l2.CFrame,
@@ -370,17 +383,16 @@ AddToggle(Main5u6, {
                 end
                 for O4l5O6l7,l5O6l7O8 in pairs(O5l6O7l8.map) do
                     if not l8O9l0O1[O4l5O6l7] or not O4l5O6l7:IsDescendantOf(l3O4l5O6) or not l5O6l7O8.clone or not l5O6l7O8.clone.Parent then
-                        if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
+                        if l5O6l7O8.clone then
+                            l5O6l7O8.clone:Destroy()
+                            l0O1lI2.z[l5O6l7O8.clone] = nil
+                        end
                         O5l6O7l8.map[O4l5O6l7] = nil
                     end
                 end
                 for O4l5O6l7,l5O6l7O8 in pairs(O5l6O7l8.map) do
                     if O4l5O6l7 and O4l5O6l7:IsDescendantOf(l3O4l5O6) and l5O6l7O8.clone and l5O6l7O8.clone.Parent then
-                        local l6O7l8O9 = false
-                        if l5O6l7O8.lastCFrame ~= O4l5O6l7.CFrame then l6O7l8O9 = true end
-                        if l5O6l7O8.lastSize ~= O4l5O6l7.Size then l6O7l8O9 = true end
-                        if O4l5O6l7:IsA("MeshPart") and (l5O6l7O8.lastMeshId ~= O4l5O6l7.MeshId or l5O6l7O8.lastTexture ~= O4l5O6l7.TextureID) then l6O7l8O9 = true end
-                        if l6O7l8O9 then
+                        if l5O6l7O8.lastCFrame ~= O4l5O6l7.CFrame or l5O6l7O8.lastSize ~= O4l5O6l7.Size or (O4l5O6l7:IsA("MeshPart") and (l5O6l7O8.lastMeshId ~= O4l5O6l7.MeshId or l5O6l7O8.lastTexture ~= O4l5O6l7.TextureID)) then
                             l5O6l7O8.clone.CFrame = O4l5O6l7.CFrame
                             l5O6l7O8.clone.Size = O4l5O6l7.Size
                             if l5O6l7O8.clone:IsA("MeshPart") and O4l5O6l7:IsA("MeshPart") then
@@ -393,21 +405,29 @@ AddToggle(Main5u6, {
                             l5O6l7O8.lastTexture = O4l5O6l7:IsA("MeshPart") and O4l5O6l7.TextureID or ""
                         end
                     else
-                        if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
+                        if l5O6l7O8.clone then
+                            l5O6l7O8.clone:Destroy()
+                            l0O1lI2.z[l5O6l7O8.clone] = nil
+                        end
                         O5l6O7l8.map[O4l5O6l7] = nil
                     end
                 end
             end)
         else
-            if l0O1lI2.c then l0O1lI2.c:Disconnect() end
-            for _, O7l8O9l0 in pairs(l0O1lI2.d or {}) do
-                for _, l8O9l0O1 in pairs(O7l8O9l0.map or {}) do
-                    if l8O9l0O1.clone then l8O9l0O1.clone:Destroy() end
+            l0O1lI2.on = false
+            if l0O1lI2.c then
+                l0O1lI2.c:Disconnect()
+                l0O1lI2.c = nil
+            end
+            for O9l0O1l2,_ in pairs(l0O1lI2.z or {}) do
+                if O9l0O1l2 and O9l0O1l2.Parent then
+                    O9l0O1l2:Destroy()
                 end
             end
-            l0O1lI2.d = nil
+            l0O1lI2.z = {}
+            l0O1lI2.d = {}
         end
-        task.delay(0, function() O0l1I2l3 = false end)
+        O0l1I2l3 = false
     end
 })
 
