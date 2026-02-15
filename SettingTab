@@ -291,6 +291,7 @@ AddToggle(Main5u6, {
         if k41x then
             qx9v.zz = {}
             qx9v.ii = 1
+            if qx9v.rs then qx9v.rs:Disconnect() qx9v.rs=nil end
             qx9v.rs = game:GetService("RunService").RenderStepped:Connect(function()
                 if not qx9v.on then return end
                 local p01 = game:GetService("Players")
@@ -305,124 +306,104 @@ AddToggle(Main5u6, {
                 if not ch88 then
                     if qx9v.zz[uid77] then
                         for a1,b1 in pairs(qx9v.zz[uid77].mp or {}) do
-                            if b1.cl and b1.cl.Parent then b1.cl:Destroy() end
+                            if b1.cl then b1.cl:Destroy() end
                         end
                         if qx9v.zz[uid77].ad then qx9v.zz[uid77].ad:Disconnect() end
                         if qx9v.zz[uid77].rm then qx9v.zz[uid77].rm:Disconnect() end
-                        qx9v.zz[uid77] = nil
+                        qx9v.zz[uid77]=nil
                     end
                     return
                 end
-                qx9v.zz[uid77] = qx9v.zz[uid77] or {mp = setmetatable({}, {__mode="k"}),ql = {},ref = nil,ad = nil,rm = nil}
-                local rec44 = qx9v.zz[uid77]
-                if rec44.ref ~= ch88 then
+                qx9v.zz[uid77]=qx9v.zz[uid77] or {mp=setmetatable({},{__mode="k"}),ql={},ref=nil,ad=nil,rm=nil}
+                local rec44=qx9v.zz[uid77]
+                if rec44.ref~=ch88 then
                     for a2,b2 in pairs(rec44.mp) do
-                        if b2.cl and b2.cl.Parent then b2.cl:Destroy() end
+                        if b2.cl then b2.cl:Destroy() end
                     end
                     if rec44.ad then rec44.ad:Disconnect() end
                     if rec44.rm then rec44.rm:Disconnect() end
-                    rec44.mp = setmetatable({}, {__mode="k"})
-                    rec44.ql = {}
-                    rec44.ref = ch88
-                    rec44.ad = ch88.DescendantAdded:Connect(function(obj9)
+                    rec44.mp=setmetatable({},{__mode="k"})
+                    rec44.ql={}
+                    rec44.ref=ch88
+                    rec44.ad=ch88.DescendantAdded:Connect(function(obj9)
                         if not obj9:IsA("BasePart") then return end
                         if rec44.mp[obj9] then return end
-                        table.insert(rec44.ql, obj9)
+                        table.insert(rec44.ql,obj9)
                     end)
-                    rec44.rm = ch88.DescendantRemoving:Connect(function(obj8)
+                    rec44.rm=ch88.DescendantRemoving:Connect(function(obj8)
                         if rec44.mp[obj8] then
-                            local en = rec44.mp[obj8]
-                            if en.cl and en.cl.Parent then en.cl:Destroy() end
-                            rec44.mp[obj8] = nil
+                            local en=rec44.mp[obj8]
+                            if en.cl then en.cl:Destroy() end
+                            rec44.mp[obj8]=nil
                         end
                     end)
                 end
-                if #rec44.ql > 0 then
-                    local px1 = table.remove(rec44.ql,1)
+                if #rec44.ql>0 then
+                    local px1=table.remove(rec44.ql,1)
                     if px1 and px1.Parent and not rec44.mp[px1] then
                         local clx
                         if px1:IsA("MeshPart") then
-                            clx = Instance.new("MeshPart")
-                            pcall(function() clx.MeshType = px1.MeshType end)
-                            clx.MeshId = px1.MeshId
-                            clx.TextureID = px1.TextureID
+                            clx=Instance.new("MeshPart")
+                            pcall(function() clx.MeshType=px1.MeshType end)
+                            clx.MeshId=px1.MeshId
+                            clx.TextureID=px1.TextureID
                         elseif px1:IsA("CornerWedgePart") then
-                            clx = Instance.new("CornerWedgePart")
+                            clx=Instance.new("CornerWedgePart")
                         elseif px1:IsA("WedgePart") then
-                            clx = Instance.new("WedgePart")
+                            clx=Instance.new("WedgePart")
                         elseif px1:IsA("Part") then
-                            clx = Instance.new("Part")
-                            clx.Shape = px1.Shape
+                            clx=Instance.new("Part")
+                            clx.Shape=px1.Shape
                         end
                         if clx then
-                            clx.Size = px1.Size
-                            clx.CFrame = px1.CFrame
-                            clx.Color = px1.Color
-                            clx.Material = px1.Material
-                            clx.Anchored = true
-                            clx.CanCollide = true
-                            clx.Transparency = 1
-                            clx.Parent = workspace
-                            rec44.mp[px1] = {
-                                cl = clx,
-                                lc = px1.CFrame,
-                                ls = px1.Size,
-                                lm = px1:IsA("MeshPart") and px1.MeshId or "",
-                                lt = px1:IsA("MeshPart") and px1.TextureID or "",
-                                evTick = tick()
-                            }
+                            clx.Size=px1.Size
+                            clx.CFrame=px1.CFrame
+                            clx.Color=px1.Color
+                            clx.Material=px1.Material
+                            clx.Anchored=true
+                            clx.CanCollide=true
+                            clx.Transparency=1
+                            clx.Parent=workspace
+                            rec44.mp[px1]={cl=clx,lc=px1.CFrame,ls=px1.Size,lm=px1:IsA("MeshPart") and px1.MeshId or "",lt=px1:IsA("MeshPart") and px1.TextureID or "",evTick=tick()}
                         end
                     end
                 end
                 for opx,enty in pairs(rec44.mp) do
                     if not opx or not opx.Parent or not opx:IsDescendantOf(rec44.ref) then
-                        if enty.cl and enty.cl.Parent then enty.cl:Destroy() end
-                        rec44.mp[opx] = nil
+                        if enty.cl then enty.cl:Destroy() end
+                        rec44.mp[opx]=nil
                     else
-                        if enty.evTick and tick() - enty.evTick < 0.15 then
-                            continue
-                        end
-                        local need77 = false
-                        if enty.lc ~= opx.CFrame then need77 = true end
-                        if enty.ls ~= opx.Size then need77 = true end
-                        if opx:IsA("MeshPart") and (enty.lm ~= opx.MeshId or enty.lt ~= opx.TextureID) then
-                            need77 = true
-                        end
+                        if enty.evTick and tick()-enty.evTick<0.15 then continue end
+                        local need77=false
+                        if enty.lc~=opx.CFrame then need77=true end
+                        if enty.ls~=opx.Size then need77=true end
+                        if opx:IsA("MeshPart") and (enty.lm~=opx.MeshId or enty.lt~=opx.TextureID) then need77=true end
                         if need77 then
-                            enty.cl.CFrame = opx.CFrame
-                            enty.cl.Size = opx.Size
+                            enty.cl.CFrame=opx.CFrame
+                            enty.cl.Size=opx.Size
                             if enty.cl:IsA("MeshPart") and opx:IsA("MeshPart") then
-                                enty.cl.MeshId = opx.MeshId
-                                enty.cl.TextureID = opx.TextureID
+                                enty.cl.MeshId=opx.MeshId
+                                enty.cl.TextureID=opx.TextureID
                             end
-                            enty.lc = opx.CFrame
-                            enty.ls = opx.Size
-                            enty.lm = opx:IsA("MeshPart") and opx.MeshId or ""
-                            enty.lt = opx:IsA("MeshPart") and opx.TextureID or ""
+                            enty.lc=opx.CFrame
+                            enty.ls=opx.Size
+                            enty.lm=opx:IsA("MeshPart") and opx.MeshId or ""
+                            enty.lt=opx:IsA("MeshPart") and opx.TextureID or ""
                         end
                     end
                 end
             end)
         else
-            qx9v.on = false
-            if qx9v.rs then
-                qx9v.rs:Disconnect()
-                qx9v.rs = nil
-            end
+            qx9v.on=false
+            if qx9v.rs then qx9v.rs:Disconnect() qx9v.rs=nil end
             for _,v9 in pairs(qx9v.zz or {}) do
                 for _,e9 in pairs(v9.mp or {}) do
-                    if e9.cl and e9.cl.Parent then e9.cl:Destroy() end
+                    if e9.cl then e9.cl:Destroy() end
                 end
                 if v9.ad then v9.ad:Disconnect() end
                 if v9.rm then v9.rm:Disconnect() end
-                v9.mp = {}
-                v9.ql = {}
-                v9.ref = nil
-                v9.ad = nil
-                v9.rm = nil
             end
-            qx9v.zz = nil
-            qx9v.ii = nil
+            qx9v.zz=nil
         end
         task.delay(0,function() t7m2=false end)
     end
