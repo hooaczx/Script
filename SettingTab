@@ -404,7 +404,10 @@ AddToggle(Main5u6, {
                 end
             end)
         else
-            if qx9v.rs then qx9v.rs:Disconnect() end
+            if qx9v.rs then
+                qx9v.rs:Disconnect()
+                qx9v.rs = nil
+            end
             for _,v9 in pairs(qx9v.zz or {}) do
                 for _,e9 in pairs(v9.mp or {}) do
                     if e9.cl and e9.cl.Parent then e9.cl:Destroy() end
@@ -412,7 +415,8 @@ AddToggle(Main5u6, {
                 if v9.ad then v9.ad:Disconnect() end
                 if v9.rm then v9.rm:Disconnect() end
             end
-            table.clear(qx9v)
+            qx9v.zz = {}
+            qx9v.on = false
         end
         task.delay(0,function() t7m2=false end)
     end
