@@ -276,136 +276,138 @@ AddColorPicker(Main5u6, {
     end
 })
 
-local qx9v = {}
-local t7m2 = false
+local l0O1lI2 = {}
+local O0l1I2l3 = false
 AddToggle(Main5u6, {
     Name = "Collision Players",
     Default = false,
     TwoToggle = "group1",
     NotificationTitle = "Warning",
     NotificationText = "Please turn off Anti Fling first",
-    Callback = function(k41x)
-        if t7m2 then return end
-        t7m2 = true
-        qx9v.on = k41x
-        if k41x then
-            qx9v.zz = {}
-            qx9v.ii = 1
-            if qx9v.rs then qx9v.rs:Disconnect() qx9v.rs=nil end
-            qx9v.rs = game:GetService("RunService").RenderStepped:Connect(function()
-                if not qx9v.on then return end
-                local p01 = game:GetService("Players")
-                local p02 = p01:GetPlayers()
-                if #p02 == 0 then return end
-                local p03 = p02[qx9v.ii]
-                qx9v.ii += 1
-                if qx9v.ii > #p02 then qx9v.ii = 1 end
-                if p03 == p01.LocalPlayer then return end
-                local uid77 = p03.UserId
-                local ch88 = p03.Character
-                if not ch88 then
-                    if qx9v.zz[uid77] then
-                        for a1,b1 in pairs(qx9v.zz[uid77].mp or {}) do
-                            if b1.cl then b1.cl:Destroy() end
+    Callback = function(Il0O1l2)
+        if O0l1I2l3 then return end
+        O0l1I2l3 = true
+        l0O1lI2.on = Il0O1l2
+        if Il0O1l2 then
+            l0O1lI2.d = {}
+            l0O1lI2.i = 1
+            l0O1lI2.c = game:GetService("RunService").RenderStepped:Connect(function()
+                if not l0O1lI2.on then return end
+                local O1lI2l3O = game:GetService("Players"):GetPlayers()
+                if #O1lI2l3O == 0 then return end
+                local lI2l3O4l = O1lI2l3O[l0O1lI2.i]
+                l0O1lI2.i += 1
+                if l0O1lI2.i > #O1lI2l3O then l0O1lI2.i = 1 end
+                if lI2l3O4l == game:GetService("Players").LocalPlayer then return end
+                local O2l3O4l5 = lI2l3O4l.UserId
+                local l3O4l5O6 = lI2l3O4l.Character
+                if not l3O4l5O6 then
+                    if l0O1lI2.d[O2l3O4l5] then
+                        for O4l5O6l7,l5O6l7O8 in pairs(l0O1lI2.d[O2l3O4l5].map) do
+                            if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
                         end
-                        if qx9v.zz[uid77].ad then qx9v.zz[uid77].ad:Disconnect() end
-                        if qx9v.zz[uid77].rm then qx9v.zz[uid77].rm:Disconnect() end
-                        qx9v.zz[uid77]=nil
+                        l0O1lI2.d[O2l3O4l5] = nil
                     end
                     return
                 end
-                qx9v.zz[uid77]=qx9v.zz[uid77] or {mp=setmetatable({},{__mode="k"}),ql={},ref=nil,ad=nil,rm=nil}
-                local rec44=qx9v.zz[uid77]
-                if rec44.ref~=ch88 then
-                    for a2,b2 in pairs(rec44.mp) do
-                        if b2.cl then b2.cl:Destroy() end
+                l0O1lI2.d[O2l3O4l5] = l0O1lI2.d[O2l3O4l5] or { map = {}, ref = nil }
+                local O5l6O7l8 = l0O1lI2.d[O2l3O4l5]
+                if O5l6O7l8.ref ~= l3O4l5O6 then
+                    for O6l7O8l9,l7O8l9O0 in pairs(O5l6O7l8.map) do
+                        if l7O8l9O0.clone then l7O8l9O0.clone:Destroy() end
                     end
-                    if rec44.ad then rec44.ad:Disconnect() end
-                    if rec44.rm then rec44.rm:Disconnect() end
-                    rec44.mp=setmetatable({},{__mode="k"})
-                    rec44.ql={}
-                    rec44.ref=ch88
-                    rec44.ad=ch88.DescendantAdded:Connect(function(obj9)
-                        if not obj9:IsA("BasePart") then return end
-                        if rec44.mp[obj9] then return end
-                        table.insert(rec44.ql,obj9)
-                    end)
-                    rec44.rm=ch88.DescendantRemoving:Connect(function(obj8)
-                        if rec44.mp[obj8] then
-                            local en=rec44.mp[obj8]
-                            if en.cl then en.cl:Destroy() end
-                            rec44.mp[obj8]=nil
-                        end
-                    end)
+                    O5l6O7l8.map = {}
+                    O5l6O7l8.ref = l3O4l5O6
                 end
-                if #rec44.ql>0 then
-                    local px1=table.remove(rec44.ql,1)
-                    if px1 and px1.Parent and not rec44.mp[px1] then
-                        local clx
-                        if px1:IsA("MeshPart") then
-                            clx=Instance.new("MeshPart")
-                            pcall(function() clx.MeshType=px1.MeshType end)
-                            clx.MeshId=px1.MeshId
-                            clx.TextureID=px1.TextureID
-                        elseif px1:IsA("CornerWedgePart") then
-                            clx=Instance.new("CornerWedgePart")
-                        elseif px1:IsA("WedgePart") then
-                            clx=Instance.new("WedgePart")
-                        elseif px1:IsA("Part") then
-                            clx=Instance.new("Part")
-                            clx.Shape=px1.Shape
+                local l8O9l0O1 = {}
+                for _,O9l0O1l2 in pairs(l3O4l5O6:GetDescendants()) do
+                    if O9l0O1l2:IsA("BasePart") then
+                        local l0O1l2O3 = O9l0O1l2.Name:lower()
+                        local O1l2O3l4 = O9l0O1l2.Parent and O9l0O1l2.Parent.Name:lower() or ""
+                        local l2O3l4O5 = false
+                        if l0O1l2O3:match("arm") or l0O1l2O3:match("leg") or O1l2O3l4:match("arm") or O1l2O3l4:match("leg") then
+                            l2O3l4O5 = true
+                        elseif O9l0O1l2.Name == "HumanoidRootPart" or O9l0O1l2.Name == "Head" or O9l0O1l2.Name:match("torso") then
+                            l2O3l4O5 = true
                         end
-                        if clx then
-                            clx.Size=px1.Size
-                            clx.CFrame=px1.CFrame
-                            clx.Color=px1.Color
-                            clx.Material=px1.Material
-                            clx.Anchored=true
-                            clx.CanCollide=true
-                            clx.Transparency=1
-                            clx.Parent=workspace
-                            rec44.mp[px1]={cl=clx,lc=px1.CFrame,ls=px1.Size,lm=px1:IsA("MeshPart") and px1.MeshId or "",lt=px1:IsA("MeshPart") and px1.TextureID or "",evTick=tick()}
-                        end
-                    end
-                end
-                for opx,enty in pairs(rec44.mp) do
-                    if not opx or not opx.Parent or not opx:IsDescendantOf(rec44.ref) then
-                        if enty.cl then enty.cl:Destroy() end
-                        rec44.mp[opx]=nil
-                    else
-                        if enty.evTick and tick()-enty.evTick<0.15 then continue end
-                        local need77=false
-                        if enty.lc~=opx.CFrame then need77=true end
-                        if enty.ls~=opx.Size then need77=true end
-                        if opx:IsA("MeshPart") and (enty.lm~=opx.MeshId or enty.lt~=opx.TextureID) then need77=true end
-                        if need77 then
-                            enty.cl.CFrame=opx.CFrame
-                            enty.cl.Size=opx.Size
-                            if enty.cl:IsA("MeshPart") and opx:IsA("MeshPart") then
-                                enty.cl.MeshId=opx.MeshId
-                                enty.cl.TextureID=opx.TextureID
+                        if l2O3l4O5 then
+                            l8O9l0O1[O9l0O1l2] = true
+                            if not O5l6O7l8.map[O9l0O1l2] then
+                                local O3l4O5l6
+                                if O9l0O1l2:IsA("MeshPart") then
+                                    O3l4O5l6 = Instance.new("MeshPart")
+                                    pcall(function() O3l4O5l6.MeshType = O9l0O1l2.MeshType end)
+                                    O3l4O5l6.MeshId = O9l0O1l2.MeshId
+                                    O3l4O5l6.TextureID = O9l0O1l2.TextureID
+                                elseif O9l0O1l2:IsA("Part") then
+                                    O3l4O5l6 = Instance.new("Part")
+                                    O3l4O5l6.Shape = O9l0O1l2.Shape
+                                elseif O9l0O1l2:IsA("WedgePart") then
+                                    O3l4O5l6 = Instance.new("WedgePart")
+                                elseif O9l0O1l2:IsA("CornerWedgePart") then
+                                    O3l4O5l6 = Instance.new("CornerWedgePart")
+                                end
+                                if O3l4O5l6 then
+                                    O3l4O5l6.Size = O9l0O1l2.Size
+                                    O3l4O5l6.CFrame = O9l0O1l2.CFrame
+                                    O3l4O5l6.Color = O9l0O1l2.Color
+                                    O3l4O5l6.Material = O9l0O1l2.Material
+                                    O3l4O5l6.Anchored = true
+                                    O3l4O5l6.CanCollide = true
+                                    O3l4O5l6.Transparency = 1
+                                    O3l4O5l6.Parent = workspace
+                                    O5l6O7l8.map[O9l0O1l2] = {
+                                        clone = O3l4O5l6,
+                                        lastCFrame = O9l0O1l2.CFrame,
+                                        lastSize = O9l0O1l2.Size,
+                                        lastMeshId = O9l0O1l2:IsA("MeshPart") and O9l0O1l2.MeshId or "",
+                                        lastTexture = O9l0O1l2:IsA("MeshPart") and O9l0O1l2.TextureID or ""
+                                    }
+                                end
                             end
-                            enty.lc=opx.CFrame
-                            enty.ls=opx.Size
-                            enty.lm=opx:IsA("MeshPart") and opx.MeshId or ""
-                            enty.lt=opx:IsA("MeshPart") and opx.TextureID or ""
                         end
+                    end
+                end
+                for O4l5O6l7,l5O6l7O8 in pairs(O5l6O7l8.map) do
+                    if not l8O9l0O1[O4l5O6l7] or not O4l5O6l7:IsDescendantOf(l3O4l5O6) or not l5O6l7O8.clone or not l5O6l7O8.clone.Parent then
+                        if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
+                        O5l6O7l8.map[O4l5O6l7] = nil
+                    end
+                end
+                for O4l5O6l7,l5O6l7O8 in pairs(O5l6O7l8.map) do
+                    if O4l5O6l7 and O4l5O6l7:IsDescendantOf(l3O4l5O6) and l5O6l7O8.clone and l5O6l7O8.clone.Parent then
+                        local l6O7l8O9 = false
+                        if l5O6l7O8.lastCFrame ~= O4l5O6l7.CFrame then l6O7l8O9 = true end
+                        if l5O6l7O8.lastSize ~= O4l5O6l7.Size then l6O7l8O9 = true end
+                        if O4l5O6l7:IsA("MeshPart") and (l5O6l7O8.lastMeshId ~= O4l5O6l7.MeshId or l5O6l7O8.lastTexture ~= O4l5O6l7.TextureID) then l6O7l8O9 = true end
+                        if l6O7l8O9 then
+                            l5O6l7O8.clone.CFrame = O4l5O6l7.CFrame
+                            l5O6l7O8.clone.Size = O4l5O6l7.Size
+                            if l5O6l7O8.clone:IsA("MeshPart") and O4l5O6l7:IsA("MeshPart") then
+                                l5O6l7O8.clone.MeshId = O4l5O6l7.MeshId
+                                l5O6l7O8.clone.TextureID = O4l5O6l7.TextureID
+                            end
+                            l5O6l7O8.lastCFrame = O4l5O6l7.CFrame
+                            l5O6l7O8.lastSize = O4l5O6l7.Size
+                            l5O6l7O8.lastMeshId = O4l5O6l7:IsA("MeshPart") and O4l5O6l7.MeshId or ""
+                            l5O6l7O8.lastTexture = O4l5O6l7:IsA("MeshPart") and O4l5O6l7.TextureID or ""
+                        end
+                    else
+                        if l5O6l7O8.clone then l5O6l7O8.clone:Destroy() end
+                        O5l6O7l8.map[O4l5O6l7] = nil
                     end
                 end
             end)
         else
-            qx9v.on=false
-            if qx9v.rs then qx9v.rs:Disconnect() qx9v.rs=nil end
-            for _,v9 in pairs(qx9v.zz or {}) do
-                for _,e9 in pairs(v9.mp or {}) do
-                    if e9.cl then e9.cl:Destroy() end
+            if l0O1lI2.c then l0O1lI2.c:Disconnect() end
+            for _, O7l8O9l0 in pairs(l0O1lI2.d or {}) do
+                for _, l8O9l0O1 in pairs(O7l8O9l0.map or {}) do
+                    if l8O9l0O1.clone then l8O9l0O1.clone:Destroy() end
                 end
-                if v9.ad then v9.ad:Disconnect() end
-                if v9.rm then v9.rm:Disconnect() end
             end
-            qx9v.zz=nil
+            l0O1lI2.d = nil
         end
-        task.delay(0,function() t7m2=false end)
+        task.delay(0, function() O0l1I2l3 = false end)
     end
 })
 
