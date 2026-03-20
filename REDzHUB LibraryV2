@@ -1232,7 +1232,12 @@ functions.UpdatePlaces = function()
                 TextScaled = true
             })
             tb.MouseButton1Click:Connect(function()
-               TeleportService:TeleportAsync(mainPlace.PlaceId, {game.Players.LocalPlayer})
+                local s, res = pcall(function() return game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/multiget-place-details?placeIds="..mainPlace.PlaceId)) end)
+                if s and res[1] and res[1].universeId ~= game.GameId then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Teleport Failed", Text = "different place was detected. And it cannot be taken there because it's blocked by the game.", Duration = 5})
+                else
+                    TeleportService:Teleport(mainPlace.PlaceId, game.Players.LocalPlayer)
+                end
             end)
             Create("UIGradient", tb, {
                 Color = ColorSequence.new{
@@ -1379,7 +1384,12 @@ functions.UpdatePlaces = function()
                         TextScaled = true
                     })
                     tb2.MouseButton1Click:Connect(function()
-                        TeleportService:TeleportAsync(place.PlaceId, {game.Players.LocalPlayer})
+                        local s, res = pcall(function() return game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/multiget-place-details?placeIds="..place.PlaceId)) end)
+                        if s and res[1] and res[1].universeId ~= game.GameId then
+                            game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Teleport Failed", Text = "different place was detected. And it cannot be taken there because it's blocked by the game.", Duration = 5})
+                        else
+                            TeleportService:Teleport(place.PlaceId, game.Players.LocalPlayer)
+                        end
                     end)
                     Create("UIGradient", tb2, {
                         Color = ColorSequence.new{
