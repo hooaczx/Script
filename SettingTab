@@ -1852,7 +1852,7 @@ AddToggle(Main5u6, {
       if _Zxc then return end
       _Zxc = true
       if not _Zxa then
-        _Zxa = game:GetService("RunService").RenderStepped:Connect(function()
+        _Zxa = game:GetService("RunService").PreSimulation:Connect(function()
           local _Zxpls = game:GetService("Players"):GetPlayers()
           if #_Zxpls <= 1 then return end
           local _Zxpresent = {}
@@ -1866,7 +1866,12 @@ AddToggle(Main5u6, {
                 for i = 1, #_Zparts do
                   local pt = _Zparts[i]
                   if pt and pt.Parent and pt:IsA("BasePart") then
-                    pt.CanCollide = _Zxb[pt]
+                    local st = _Zxb[pt]
+                    if st then
+                      pt.CanCollide = st[1]
+                      pt.CanTouch = st[2]
+                      pt.CanQuery = st[3]
+                    end
                   end
                   _Zxb[pt] = nil
                 end
@@ -1908,10 +1913,16 @@ AddToggle(Main5u6, {
               if part:IsA("BasePart") then
                 _Znew[#_Znew+1] = part
                 if _Zxb[part] == nil then
-                  _Zxb[part] = part.CanCollide
+                  _Zxb[part] = { part.CanCollide, part.CanTouch, part.CanQuery }
                 end
-                if _Zxb[part] and part.CanCollide then
+                if part.CanCollide then
                   part.CanCollide = false
+                end
+                if part.CanTouch then
+                  part.CanTouch = false
+                end
+                if part.CanQuery then
+                  part.CanQuery = false
                 end
               end
             end
@@ -1923,8 +1934,16 @@ AddToggle(Main5u6, {
               for i = 1, #_Zparts do
                 local pt = _Zparts[i]
                 if pt and pt.Parent and pt:IsA("BasePart") then
-                  if _Zxb[pt] and pt.CanCollide then
-                    pt.CanCollide = false
+                  if _Zxb[pt] then
+                    if pt.CanCollide then
+                      pt.CanCollide = false
+                    end
+                    if pt.CanTouch then
+                      pt.CanTouch = false
+                    end
+                    if pt.CanQuery then
+                      pt.CanQuery = false
+                    end
                   end
                   _Zparts[n] = pt
                   n += 1
@@ -1941,9 +1960,17 @@ AddToggle(Main5u6, {
             for i = 1, #_Zcheck do
               local pt = _Zcheck[i]
               if pt and pt.Parent and pt:IsA("BasePart") then
-                if _Zxb[pt] and pt.CanCollide then
-                  _Zall = false
-                  pt.CanCollide = false
+                if _Zxb[pt] then
+                  if pt.CanCollide then
+                    _Zall = false
+                    pt.CanCollide = false
+                  end
+                  if pt.CanTouch then
+                    pt.CanTouch = false
+                  end
+                  if pt.CanQuery then
+                    pt.CanQuery = false
+                  end
                 end
               else
                 _Zall = false
@@ -1966,7 +1993,12 @@ AddToggle(Main5u6, {
         for i = 1, #parts do
           local pt = parts[i]
           if pt and pt.Parent and pt:IsA("BasePart") then
-            pt.CanCollide = _Zxb[pt]
+            local st = _Zxb[pt]
+            if st then
+              pt.CanCollide = st[1]
+              pt.CanTouch = st[2]
+              pt.CanQuery = st[3]
+            end
           end
           _Zxb[pt] = nil
         end
