@@ -213,6 +213,7 @@ Physics_Visualization(Main5u6, AddDropdown, AddToggle, Opt, TE)
 local to = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/AntiTouch"))()
 local Fo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Unpov1"))()
 local re = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/IdleAnchor"))()
+local r_e = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/TouchFling"))()
 
 AddToggle(Main5u6, {
     Name = "Obby Kill Parts + Sit Parts Bypass",
@@ -1801,39 +1802,11 @@ AddToggle(Main5u6, {
     end
 })
 
-local x1 = false
-local x2
-local x3
-
 AddToggle(Main5u6, {
     Name = "Touch Fling",
     Default = false,
     Callback = function(x4)
-        x1 = x4
-        if x1 then
-          if not x2 then
-            x2 = RunService.Heartbeat:Connect(function()
-                local x5 = game:FindFirstChildOfClass("Players").LocalPlayer
-                local x6, x7, x8, x9 = nil, nil, nil, 0.1
-                x6 = x5.Character
-                x7 = x6 and x6:FindFirstChild("HumanoidRootPart")
-                if x7 then
-                    x8 = x7.Velocity
-                    x7.Velocity = x8 * 10000 + Vector3.new(0, 10000, 0)
-                    RunService.RenderStepped:Wait()
-                    x7.Velocity = x8
-                    RunService.Stepped:Wait()
-                    x7.Velocity = x8 + Vector3.new(0, x9, 0)
-                    x9 = -x9
-                 end
-              end)
-           end
-        else
-            if x2 then
-                x2:Disconnect()
-                x2 = nil
-            end
-        end
+       r_e.Toggle(x4)
     end
 })
 
