@@ -212,6 +212,7 @@ local Physics_Visualization = loadstring(game:HttpGet("https://raw.githubusercon
 Physics_Visualization(Main5u6, AddDropdown, AddToggle, Opt, TE)
 local to = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/AntiTouch"))()
 local Fo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Unpov1"))()
+local re = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/IdleAnchor"))()
 
 AddToggle(Main5u6, {
     Name = "Obby Kill Parts + Sit Parts Bypass",
@@ -1846,6 +1847,17 @@ AddToggle(Main5u6, {
     end
 })
 
+AddToggle(Main5u6, {
+    Name = "Idle Anchor (Lock cframe when no move character, is you move= normal)",
+    Default = false,
+    TwoToggle = "group9",
+    NotificationTitle="Warning",
+    NotificationText="Please turn off Character Lock CFrame first",
+    Callback = function(s_1)
+        re.Toggle(s_1)
+    end
+})
+
 local _Zxa, _Zxb, _Zxc = nil, setmetatable({}, { __mode = "k" }), false
 local _Zxd, _Zxe, _Zxf, _Zxg, _Zxh, _Zxi, _Zxk = {}, {}, {}, {}, {}, {}, {}
 local _Zxq = { index = 1 }
@@ -2106,6 +2118,9 @@ local __7Z = {
 AddToggle(Main5u6, {
 	Name = "Character Lock CFrame",
 	Default = false,
+    TwoToggle = "group9",
+    NotificationTitle="Warning",
+    NotificationText="Please turn off Idle Anchor first",
     Callback = function(Uu)
 		__7Z.Vv = Uu
 		if not Uu then
