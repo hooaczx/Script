@@ -215,6 +215,7 @@ local Fo = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Sc
 local re = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/IdleAnchor"))()
 local r_e = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/TouchFling"))()
 local g_e = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Fall%20off%20map%20not%20dead"))()
+local gj_e = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/refs/heads/main/Gravity"))()
 
 AddToggle(Main5u6, {
     Name = "Obby Kill Parts + Sit Parts Bypass",
@@ -276,6 +277,24 @@ AddToggle(Main5u6, {
     Default = false,
     Callback = function(state)
         module.toggleLookAt(state)
+    end
+})
+
+AddTextBox(Main5u6, {
+    Name = "Gravity Control",
+    Default = "Enter",
+    PlaceholderText = "Enter number",
+    ClearText = true,
+    Callback = function(value)
+        gj_e.Update(value)
+    end
+})
+
+AddToggle(Main5u6, {
+    Name = "Gravity",
+    Default = false,
+    Callback = function(state)
+        gj_e.Toggle(state)
     end
 })
 
