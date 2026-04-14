@@ -8,7 +8,8 @@ local Configs_HUB = {
   Cor_DarkText = Color3.fromRGB(140, 140, 140),
   Corner_Radius = UDim.new(0, 4),
   Text_Font = Enum.Font.FredokaOne
-}
+}_G.__SCRIPT_hcx__ = (_G.__SCRIPT_hcx__ or 0) + 1
+local __ver = _G.__SCRIPT_hcx__
 
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
@@ -641,21 +642,11 @@ function getNYText()
  function MinimizeButton(Configs)
     local functions = {} 
     local frameRefs, metaRefs, ddesug, stopupdateall, _XyZ, _cvZ = {}, {}, {}, {}, {}, {}
-    local minimize1 = false
-    local minimize = true
-    local minimize3 = false
-    local minimiz7 = true
-    local PlayerList = true
-    local minimize9 = false
-    local player = game:FindFirstChildOfClass("Players").LocalPlayer
-    local Players = game:FindFirstChildOfClass("Players")
-    local players = game:FindFirstChildOfClass("Players")
-    local localPlayer = game:FindFirstChildOfClass("Players").LocalPlayer
-    local LocalPlayer = game:FindFirstChildOfClass("Players").LocalPlayer
-    local maxPlayers = game:FindFirstChildOfClass("Players").MaxPlayers
-    local PlaceId = game.PlaceId
-    local friendsCooldown = 0
-    local friendsInTotal = 0
+    local minimize1, minimize, minimize3, minimiz7, PlayerList, minimize9 = false, true, false, true, true, false
+    local player, Players, players = game:FindFirstChildOfClass("Players").LocalPlayer, game:FindFirstChildOfClass("Players"), game:FindFirstChildOfClass("Players")
+    local localPlayer, LocalPlayer = game:FindFirstChildOfClass("Players").LocalPlayer, game:FindFirstChildOfClass("Players").LocalPlayer
+    local maxPlayers, PlaceId = game:FindFirstChildOfClass("Players").MaxPlayers, game.PlaceId
+    local friendsCooldown, friendsInTotal = 0, 0
     local MarketplaceService = game:GetService("MarketplaceService")
     local IconImageAssetId = MarketplaceService:GetProductInfo(PlaceId).IconImageAssetId
     local ContentProvider = game:GetService("ContentProvider")
@@ -669,16 +660,15 @@ function getNYText()
     local Player = players.LocalPlayer
     local Mouse = LocalPlayer:GetMouse()
     local HttpService, HttpGet = game:GetService("HttpService"), game.HttpGet
-    local View, oldicon = nil, nil
+    local oldicon = nil
+    local PlayerIcons={View={Off="rbxassetid://96859795672738",On="rbxassetid://137903829820448"},Follow={Off="rbxassetid://97807899534380",On="rbxassetid://74005694918819"}}
+    local View, Following, FollowOrigin, FollowMode = nil, nil, nil, false
     local cam_xx={}
     local playerFrames = {}
     local displayedFriends = {}
     local _z9, _p, _q, _s = _z9 or {}, _p or {}, _q or {}, _s or {}
     local infogamepass = {}
-    local frameinfopy = false
-    local Avatar = false
-    local switchtodescription = false
-    local waitswitchpage = false
+    local frameinfopy, Avatar, switchtodescription, waitswitchpage = false, false, false, false
     local image = Configs.Image or ""
     text1_1 = ""
     text1_2 = "\nFollowers🔔:Loading...\nFollowings👥:Loading..."
@@ -1467,31 +1457,75 @@ local ScrollBarPlayers = Create("ScrollingFrame", framep, {
       PaddingBottom = UDim.new(0.003, 0)
   })
 
-local unviewallplayerbutton = Create("ImageButton", framep, {
+local Stop_button = Create("TextButton", framep, {
     Size = UDim2.new(0.07, 0, 0.1, 0),
-    Position = UDim2.new(0.93, 0, 0.9, 0),
+    Position = UDim2.new(0.90, 0, 0.9, 0),
+    BackgroundColor3 = Configs_HUB.Cor_Options,
+    Text = "StopView",
+    BackgroundTransparency = 1,
+    TextColor3 = Configs_HUB.Cor_Text,
+    Font = Configs_HUB.Text_Font,
+})local switch_mode = Create("ImageButton", framep, {
+    Size = UDim2.new(0.07, 0, 0.1, 0),
+    Position = UDim2.new(0.01, 0, 0.9, 0),
     BackgroundColor3 = Configs_HUB.Cor_Options,
     BackgroundTransparency = 1,
-    Image = "rbxassetid://137903829820448"
-})
-
-unviewallplayerbutton.MouseButton1Click:Connect(function()
-    local localChar = game:FindFirstChildOfClass("Players").LocalPlayer.Character
-    if localChar then
-        local hum = localChar:WaitForChild("Humanoid")
-        if hum then
-            workspace.CurrentCamera.CameraSubject = hum
+    Image = "rbxassetid://93917932838439"
+})switch_mode.MouseButton1Click:Connect(function()
+    FollowMode = not FollowMode
+    Stop_button.Text = FollowMode and "StopFollow" or "StopView"
+    local _char=game:FindFirstChildOfClass("Players").LocalPlayer.Character
+    local _hrp=_char and _char:FindFirstChild("HumanoidRootPart")
+    local _hum=_char and _char:FindFirstChildOfClass("Humanoid")
+    if Following then
+        if _hrp and FollowOrigin then
+            local c=_hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() _hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
         end
+        if Following.button then Following.button.Image=PlayerIcons.Follow.Off end
+        Following=nil
+        FollowOrigin=nil
+    end
+    if View then
+        if View.button then View.button.Image=PlayerIcons.View.Off end
+        View=nil
+    end
+    if _hum then
+        workspace.CurrentCamera.CameraSubject=_hum
+        workspace.CurrentCamera.CameraType=Enum.CameraType.Custom
+    end
+    for _,d in pairs(playerFrames) do
+        if d.UI then
+            local b=d.UI:FindFirstChildOfClass("ImageButton")
+            if b then
+                b.Image=FollowMode and PlayerIcons.Follow.Off or PlayerIcons.View.Off
+            end
+        end
+    end
+end)Stop_button.MouseButton1Click:Connect(function()
+    local localChar = game:FindFirstChildOfClass("Players").LocalPlayer.Character
+    local hrp = localChar and localChar:FindFirstChild("HumanoidRootPart")
+    local hum = localChar and localChar:FindFirstChildOfClass("Humanoid")
+    if FollowMode then
+        if hrp and FollowOrigin then
+            local c=hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+        end
+        Following=nil
+        FollowOrigin=nil
+    else
+        View=nil
+    end
+    if hum then
+        workspace.CurrentCamera.CameraSubject=hum
+        workspace.CurrentCamera.CameraType=Enum.CameraType.Custom
     end
     for _, data in pairs(playerFrames) do
         if data.UI then
             local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
             if viewButton then
-                viewButton.Image = "rbxassetid://96859795672738"
+                viewButton.Image = FollowMode and PlayerIcons.Follow.Off or PlayerIcons.View.Off
             end
         end
     end
-    View = nil
 end)
 
 functions.UpdatePlayerList = function()
@@ -1573,25 +1607,78 @@ functions.UpdatePlayerList = function()
                     Position = UDim2.new(0.905, 0, 0.025, 0),
                     BackgroundColor3 = Configs_HUB.Cor_Options,
                     BackgroundTransparency = 1,
-                    Image = "rbxassetid://96859795672738"
+                    Image = FollowMode and PlayerIcons.Follow.Off or PlayerIcons.View.Off
                 })
                 _btn.MouseButton1Click:Connect(function()
-                    if View and View.button == _btn then
-                        _btn.Image = "rbxassetid://96859795672738"
-                        View = nil
-                    else
-                        if View and View.button then
-                            View.button.Image = "rbxassetid://96859795672738"
-                        end
-                        if _p and _p.Parent then
-                            View = {
-                                player = _p,
-                                button = _btn
-                            }
-                            _btn.Image = "rbxassetid://137903829820448"
+                    local _char = _lp.Character
+                    local _hrp = _char and _char:FindFirstChild("HumanoidRootPart")
+                    local _hum = _char and _char:FindFirstChildOfClass("Humanoid")
+                    if FollowMode then
+                        if Following and Following.button == _btn then
+                            if _hrp and FollowOrigin then
+                                local c=_hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() _hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+                            end
+                            Following=nil
+                            FollowOrigin=nil
+                            _btn.Image=PlayerIcons.Follow.Off
+                            if _hum then
+                                workspace.CurrentCamera.CameraSubject=_hum
+                                workspace.CurrentCamera.CameraType=Enum.CameraType.Custom
+                            end
                         else
-                            View = nil
-                            _btn.Image = "rbxassetid://96859795672738"
+                            if Following and Following.button then
+                                Following.button.Image=PlayerIcons.Follow.Off
+                            end
+                            if View and View.button then
+                                View.button.Image=PlayerIcons.View.Off
+                                View=nil
+                            end
+                            if _hrp and not FollowOrigin then
+                                FollowOrigin=_hrp.Position
+                            end
+                            if _p and _p.Parent then
+                                Following={player=_p,button=_btn}
+                                _btn.Image=PlayerIcons.Follow.On
+                            else
+                                Following=nil
+                                _btn.Image=PlayerIcons.Follow.Off
+                            end
+                            if _hum then
+                                workspace.CurrentCamera.CameraSubject=_hum
+                                workspace.CurrentCamera.CameraType=Enum.CameraType.Custom
+                            end
+                        end
+                    else
+                        if View and View.button == _btn then
+                            _btn.Image=PlayerIcons.View.Off
+                            View=nil
+                            if _hum then
+                                workspace.CurrentCamera.CameraSubject=_hum
+                                workspace.CurrentCamera.CameraType=Enum.CameraType.Custom
+                            end
+                        else
+                            if View and View.button then
+                                View.button.Image=PlayerIcons.View.Off
+                            end
+                            if Following and Following.button then
+                                if _hrp and FollowOrigin then
+                                    local c=_hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() _hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+                                end
+                                Following.button.Image=PlayerIcons.Follow.Off
+                                Following=nil
+                                FollowOrigin=nil
+                                if _hum then
+                                    workspace.CurrentCamera.CameraSubject=_hum
+                                    workspace.CurrentCamera.CameraType=Enum.CameraType.Custom
+                                end
+                            end
+                            if _p and _p.Parent then
+                                View={player=_p,button=_btn}
+                                _btn.Image=PlayerIcons.View.On
+                            else
+                                View=nil
+                                _btn.Image=PlayerIcons.View.Off
+                            end
                         end
                     end
                 end)
@@ -1640,10 +1727,30 @@ functions.UpdatePlayerList = function()
                 end
                 View = nil
             end
+            if Following and Following.player and Following.player.UserId == _id then
+                local _char = _lp.Character
+                local _hrp = _char and _char:FindFirstChild("HumanoidRootPart")
+                if _hrp and FollowOrigin then
+                    local c=_hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() _hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+                end
+                local _hum = _char and _char:FindFirstChildOfClass("Humanoid")
+                if _hum then
+                    workspace.CurrentCamera.CameraSubject = _hum
+                    workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+                end
+                Following = nil
+                FollowOrigin = nil
+            end
         end
     end
     if View and (not View.player or not View.player.Parent) then
-        View = nil
+        local _char=_lp.Character local _hum=_char and _char:FindFirstChildOfClass("Humanoid") if _hum then workspace.CurrentCamera.CameraSubject=_hum workspace.CurrentCamera.CameraType=Enum.CameraType.Custom end
+        View=nil
+    end
+    if Following and (not Following.player or not Following.player.Parent) then
+        local _char=_lp.Character local _hrp=_char and _char:FindFirstChild("HumanoidRootPart") if _hrp and FollowOrigin then local c=_hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() _hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22) end local _hum=_char and _char:FindFirstChildOfClass("Humanoid") if _hum then workspace.CurrentCamera.CameraSubject=_hum workspace.CurrentCamera.CameraType=Enum.CameraType.Custom end
+        Following=nil
+        FollowOrigin=nil
     end
 end
 
@@ -3638,8 +3745,12 @@ RunServerlock("Lock1", "no", function()
     for _, data in pairs(playerFrames) do
         if data.UI then
             local viewButton = data.UI:FindFirstChildOfClass("ImageButton")
-            if viewButton and (not View or (View and View.button ~= viewButton)) then
-                viewButton.Image = "rbxassetid://96859795672738"
+            if viewButton then
+                if FollowMode then
+                    viewButton.Image = (Following and Following.button == viewButton) and PlayerIcons.Follow.On or PlayerIcons.Follow.Off
+                else
+                    viewButton.Image = (View and View.button == viewButton) and PlayerIcons.View.On or PlayerIcons.View.Off
+                end
             end
         end
     end
@@ -3666,6 +3777,37 @@ RunServerlock("Lock1", "no", function()
           workspace.CurrentCamera.CameraSubject = (View.player.Character or View.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
       elseif game:FindFirstChildOfClass("Players")
       and not game:FindFirstChildOfClass("Players"):FindFirstChild(View.player.Name)
+      and os.clock() - cam_xx.cooldown >= 6 then
+          cam_xx.cooldown = os.clock()
+          game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Player left",
+            Text = "him left game",
+            Icon = "rbxassetid://99041893368154",
+            Duration = 6
+          })
+      end
+    end
+    if Following and Following.player then
+      cam_xx = cam_xx or {}
+      cam_xx.cooldown = cam_xx.cooldown or 0
+      local localChar = game:FindFirstChildOfClass("Players").LocalPlayer.Character
+      local localHum = localChar and localChar:FindFirstChildOfClass("Humanoid")
+      local localHrp = localChar and localChar:FindFirstChild("HumanoidRootPart")
+      if localHum then
+          workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+          workspace.CurrentCamera.CameraSubject = localHum
+      end
+      if game:FindFirstChildOfClass("Players")
+      and game:FindFirstChildOfClass("Players"):FindFirstChild(Following.player.Name)
+      and (Following.player.Character or Following.player.CharacterAdded:Wait()):IsDescendantOf(workspace)
+      and (Following.player.Character or Following.player.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart") then
+          local _tchar = Following.player.Character or Following.player.CharacterAdded:Wait()
+          local _thrp = _tchar and _tchar:FindFirstChild("HumanoidRootPart")
+          if localHrp and _thrp then
+              local p=_thrp.Position-(_thrp.CFrame.LookVector*1.5) local c=localHrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() localHrp.CFrame=CFrame.new(c.Position:Lerp(p,0.5).X,c.Position:Lerp(p,0.5).Y,c.Position:Lerp(p,0.5).Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+          end
+      elseif game:FindFirstChildOfClass("Players")
+      and not game:FindFirstChildOfClass("Players"):FindFirstChild(Following.player.Name)
       and os.clock() - cam_xx.cooldown >= 6 then
           cam_xx.cooldown = os.clock()
           game:GetService("StarterGui"):SetCore("SendNotification",{
@@ -3844,7 +3986,7 @@ end)
 check_1 = RunService.RenderStepped:Connect(function()
     local _r8r1 = ((not is_sirhurt_closure and not (syn and DrawingImmediate)) and syn and syn.protect_gui and game:GetService("CoreGui")) or (typeof(get_hidden_gui) == "function" and get_hidden_gui()) or (typeof(gethui) == "function" and gethui()) or game:GetService("CoreGui")
     local foundUI = _r8r1:FindFirstChild("hcx hub library1")
-    if not foundUI and ShiftLockmaingui then
+    if __ver ~= _G.__SCRIPT_hcx__ or (not foundUI and ShiftLockmaingui) then
         for _, highlight in pairs(CH or {}) do
             if highlight and highlight.Destroy then
                 highlight:Destroy()
@@ -3873,7 +4015,7 @@ check_1 = RunService.RenderStepped:Connect(function()
         end
         Tweening = false
     end
-    if not foundUI then
+    if __ver ~= _G.__SCRIPT_hcx__ or not foundUI then
         if not cameraback then
             if functions and functions.Backfov then
                 functions.Backfov()
@@ -3907,15 +4049,39 @@ check_1 = RunService.RenderStepped:Connect(function()
            xQp.clear = {}
            xQp.drag=false
         end
-        if View then
-            local hum = game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-            if hum then
-                workspace.CurrentCamera.CameraSubject = hum
+        if View or Following then
+            local _plr = game.Players.LocalPlayer
+            local _char = _plr.Character
+            local _hum = _char and _char:FindFirstChildOfClass("Humanoid")            
+            if FollowOrigin then
+                local _n
+                _n = game:GetService("RunService").Heartbeat:Connect(function()
+                    local c = _plr.Character
+                    if not c then return end
+                    local hrp = c:FindFirstChild("HumanoidRootPart")
+                    local hum = c:FindFirstChildOfClass("Humanoid")
+                    if hrp and hum then
+                        local cf=hrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=cf:GetComponents()
+                        hrp.CFrame=CFrame.new(FollowOrigin.X,FollowOrigin.Y,FollowOrigin.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+                        workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+                        workspace.CurrentCamera.CameraSubject = hum
+                        if _n then _n:Disconnect() _n=nil end
+                    end
+                end)
+            else
+                if _char then
+                    local hum = _char:FindFirstChildOfClass("Humanoid") or _char:WaitForChild("Humanoid")
+                    workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+                    workspace.CurrentCamera.CameraSubject = hum
+                end
             end
             for _, d in pairs(playerFrames or {}) do
                 if d and d.UI and d.UI.Parent then d.UI:Destroy() end
             end
-            if _z9 then table.clear(_z9) end if _p then table.clear(_p) end if _q then table.clear(_q) end if _s then table.clear(_s) end
+            if _z9 then table.clear(_z9) end
+            if _p then table.clear(_p) end
+            if _q then table.clear(_q) end
+            if _s then table.clear(_s) end
             if CH then
                 for _, highlight in pairs(CH or {}) do
                     if highlight and highlight.Destroy then
@@ -3926,10 +4092,12 @@ check_1 = RunService.RenderStepped:Connect(function()
             end
             if playerFrames then table.clear(playerFrames) end
             View = nil
+            Following = nil
+            FollowOrigin = nil
         end
         if cam_xx then table.clear(cam_xx) cam_xx=nil end
     end
-    if not foundUI
+    if (__ver ~= _G.__SCRIPT_hcx__ or not foundUI)
         and not rainSound
         and not (not notificationgui or next(notificationgui) == nil)
         and not click1
