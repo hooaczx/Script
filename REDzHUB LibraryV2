@@ -3804,7 +3804,7 @@ RunServerlock("Lock1", "no", function()
           local _tchar = Following.player.Character or Following.player.CharacterAdded:Wait()
           local _thrp = _tchar and _tchar:FindFirstChild("HumanoidRootPart")
           if localHrp and _thrp then
-              local p=_thrp.Position-(_thrp.CFrame.LookVector*1.5) local c=localHrp.CFrame local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=c:GetComponents() localHrp.CFrame=CFrame.new(c.Position:Lerp(p,0.5).X,c.Position:Lerp(p,0.5).Y,c.Position:Lerp(p,0.5).Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
+             local lv=_thrp.CFrame.LookVector local flat=Vector3.new(lv.X,0,lv.Z) local p=_thrp.Position-(flat.Magnitude>0 and flat.Unit or Vector3.zero)*1.5 local c=localHrp.CFrame local raw=c.Position:Lerp(p,0.05) local pos=Vector3.new(raw.X,math.max(raw.Y,_thrp.Position.Y),raw.Z) local cf=c:Lerp(CFrame.new(pos,_thrp.Position),0.25) local _,_,_,r00,r01,r02,r10,r11,r12,r20,r21,r22=cf:GetComponents() localHrp.CFrame=CFrame.new(pos.X,pos.Y,pos.Z,r00,r01,r02,r10,r11,r12,r20,r21,r22)
           end
       elseif game:FindFirstChildOfClass("Players")
       and not game:FindFirstChildOfClass("Players"):FindFirstChild(Following.player.Name)
