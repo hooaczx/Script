@@ -4479,6 +4479,8 @@ function MakeTab(Configs)
   end
 
   function AddTextBox(parent, Configs)
+    local MinValue = Configs.MinValue
+    local MaxValue = Configs.MaxValue
     local TextBoxName = Configs.Name or "TextBox!!"
     local Default = Configs.Default or "TextBox"
     local placeholderText = Configs.PlaceholderText or "TextBox"
@@ -4532,6 +4534,24 @@ function MakeTab(Configs)
     end)
     
     TextBox.FocusLost:Connect(function()
+      local num = tonumber(TextBox.Text)
+      
+      if num then
+        if MinValue and num < MinValue then
+          game:GetService("StarterGui"):SetCore("SendNotification",{Title="ใส่เกินที่กำหนดค่าต่ำสุด",Text=tostring(MinValue),Duration=3})
+          TextBox.Text = tostring(MinValue)
+          Callback(MinValue)
+          return
+        end
+        
+        if MaxValue and num > MaxValue then
+          game:GetService("StarterGui"):SetCore("SendNotification",{Title="ใส่เกินกว่าที่กำหนด",Text=tostring(MaxValue),Duration=3})
+          TextBox.Text = tostring(MaxValue)
+          Callback(MaxValue)
+          return
+        end
+      end
+      
       Callback(TextBox.Text)
     end)
   end
