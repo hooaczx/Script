@@ -4537,14 +4537,14 @@ function MakeTab(Configs)
         CreateTween(Line, "Size", UDim2.new(0, 0, 0.07, 0), 0.3, true)
         CreateTween(Line, "Size", UDim2.new(1, 0, 0.07, 0), 0.3, true)
     end)
-    
     _b = TextBox.FocusLost:Connect(function()
         if not _weirdCleanupMagic_x9Z then return end
-        local num = tonumber(TextBox.Text)
-        if not num then
+        local raw = TextBox.Text
+        local cleaned = raw:gsub("%D","")
+        if not cleaned then
             if not TextBox:GetAttribute("TypeNotify") then
                 TextBox:SetAttribute("TypeNotify", true)
-                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Invalid Input",Text="Numbers only",Duration=3,Icon="rbxassetid://7733658504"})
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Invalid Input",Text="Numbers only",Duration=3,Icon="rbxassetid://99041893368154"})
                 task.delay(3,function()
                     if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("TypeNotify", nil) end
                 end)
@@ -4552,10 +4552,12 @@ function MakeTab(Configs)
             Callback(TextBox.Text)
             return
         end
+        local num = tonumber(cleaned)
+        TextBox.Text = tostring(num)
         if MinValue and num < MinValue then
             if not TextBox:GetAttribute("MinNotify") then
                 TextBox:SetAttribute("MinNotify", true)
-                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Below minimum limit",Text=tostring(MinValue),Duration=3,Icon="rbxassetid://7733658504"})
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Below minimum limit",Text=tostring(MinValue),Duration=3,Icon="rbxassetid://99041893368154"})
                 task.delay(3,function()
                     if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MinNotify", nil) end
                 end)
@@ -4567,7 +4569,7 @@ function MakeTab(Configs)
         if MaxValue and num > MaxValue then
             if not TextBox:GetAttribute("MaxNotify") then
                 TextBox:SetAttribute("MaxNotify", true)
-                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Above maximum limit",Text=tostring(MaxValue),Duration=3,Icon="rbxassetid://7733658504"})
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Above maximum limit",Text=tostring(MaxValue),Duration=3,Icon="rbxassetid://99041893368154"})
                 task.delay(3,function()
                     if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MaxNotify", nil) end
                 end)
@@ -4576,6 +4578,7 @@ function MakeTab(Configs)
             Callback(MaxValue)
             return
         end
+        
         Callback(num)
     end)
     
