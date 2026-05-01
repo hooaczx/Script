@@ -4481,78 +4481,109 @@ function MakeTab(Configs)
   function AddTextBox(parent, Configs)
     local MinValue = Configs.MinValue
     local MaxValue = Configs.MaxValue
+    local Default = Configs.Default
     local TextBoxName = Configs.Name or "TextBox!!"
-    local Default = Configs.Default or "TextBox"
     local placeholderText = Configs.PlaceholderText or "TextBox"
     local ClearText = Configs.ClearText or false
     local Callback = Configs.Callback or function() end
+    if not tonumber(Default) then Default = "1" end
+    if MinValue and tonumber(Default) < MinValue then Default = tostring(MinValue) end
+    if MaxValue and tonumber(Default) > MaxValue then Default = tostring(MaxValue) end
     
     local Frame = Create("Frame", parent, {
-      Size = UDim2.new(0.95, 0, 0.1, 0),
-      BackgroundColor3 = Configs_HUB.Cor_Options,
-      Name = "Frame"
+        Size = UDim2.new(0.95, 0, 0.1, 0),
+        BackgroundColor3 = Configs_HUB.Cor_Options,
+        Name = "Frame"
     })Corner(Frame)Stroke(Frame)
     
     local TextLabel = Create("TextButton", Frame, {
-      TextSize = 12,
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = TextBoxName,
-      TextWrapped = true,
-      TextScaled = true,
-      Size = UDim2.new(0.66, 0, 1, 0),
-      Position = UDim2.new(0.34, 0, 0, 0),
-      BackgroundTransparency = 1,
-      TextXAlignment = "Left",
-      Font = Configs_HUB.Text_Font
-    })
-    TextSetColor(TextLabel)
+        TextSize = 12,
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = TextBoxName,
+        TextWrapped = true,
+        TextScaled = true,
+        Size = UDim2.new(0.66, 0, 1, 0),
+        Position = UDim2.new(0.34, 0, 0, 0),
+        BackgroundTransparency = 1,
+        TextXAlignment = "Left",
+        Font = Configs_HUB.Text_Font
+    })TextSetColor(TextLabel)
     
     local TextBox = Create("TextBox", Frame, {
-      Size = UDim2.new(0.3, 0, 0.82, 0),
-      Position = UDim2.new(0.03, 0, 0.1, 0),
-      TextColor3 = Configs_HUB.Cor_Text,
-      Text = Default,
-      ClearTextOnFocus = ClearText,
-      PlaceholderText = placeholderText,
-      TextWrapped = true,
-      TextScaled = true,
-      Font = Configs_HUB.Text_Font,
-      BackgroundTransparency = 1
+        Size = UDim2.new(0.3, 0, 0.82, 0),
+        Position = UDim2.new(0.03, 0, 0.1, 0),
+        TextColor3 = Configs_HUB.Cor_Text,
+        Text = Default,
+        ClearTextOnFocus = ClearText,
+        PlaceholderText = placeholderText,
+        TextWrapped = true,
+        TextScaled = true,
+        Font = Configs_HUB.Text_Font,
+        BackgroundTransparency = 1
     })
     
     local Line = Create("Frame", TextBox, {
-      Size = UDim2.new(1, 0, 0.07, 0),
-      Position = UDim2.new(0.5, 0, 1, 0),
-      AnchorPoint = Vector2.new(0.5, 0.5),
-      BackgroundColor3 = Configs_HUB.Cor_Stroke,
-      BorderSizePixel = 0
+        Size = UDim2.new(1, 0, 0.07, 0),
+        Position = UDim2.new(0.5, 0, 1, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = Configs_HUB.Cor_Stroke,
+        BorderSizePixel = 0
     })
-    
-    TextBox.MouseEnter:Connect(function()
-      CreateTween(Line, "Size", UDim2.new(0, 0, 0.07, 0), 0.3, true)
-      CreateTween(Line, "Size", UDim2.new(1, 0, 0.07, 0), 0.3, true)
+
+    _weirdCleanupMagic_x9Z = true
+    _a = TextBox.MouseEnter:Connect(function()
+        if not _weirdCleanupMagic_x9Z then return end
+        CreateTween(Line, "Size", UDim2.new(0, 0, 0.07, 0), 0.3, true)
+        CreateTween(Line, "Size", UDim2.new(1, 0, 0.07, 0), 0.3, true)
     end)
     
-    TextBox.FocusLost:Connect(function()
-      local num = tonumber(TextBox.Text)
-      
-      if num then
+    _b = TextBox.FocusLost:Connect(function()
+        if not _weirdCleanupMagic_x9Z then return end
+        local num = tonumber(TextBox.Text)
+        if not num then
+            TextBox.Text = "1"
+            Callback(1)
+            return
+        end
         if MinValue and num < MinValue then
-          game:GetService("StarterGui"):SetCore("SendNotification",{Title="ใส่เกินที่กำหนดค่าต่ำสุด",Text=tostring(MinValue),Duration=3})
-          TextBox.Text = tostring(MinValue)
-          Callback(MinValue)
-          return
+            if not TextBox:GetAttribute("MinNotify") then
+                TextBox:SetAttribute("MinNotify", true)
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Below minimum limit",Text=tostring(MinValue),Duration=3})
+                task.delay(3,function()
+                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MinNotify", nil) end
+                end)
+            end
+            TextBox.Text = tostring(MinValue)
+            Callback(MinValue)
+            return
         end
-        
         if MaxValue and num > MaxValue then
-          game:GetService("StarterGui"):SetCore("SendNotification",{Title="ใส่เกินกว่าที่กำหนด",Text=tostring(MaxValue),Duration=3})
-          TextBox.Text = tostring(MaxValue)
-          Callback(MaxValue)
-          return
+            if not TextBox:GetAttribute("MaxNotify") then
+                TextBox:SetAttribute("MaxNotify", true)
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Above maximum limit",Text=tostring(MaxValue),Duration=3})
+                task.delay(3,function()
+                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MaxNotify", nil) end
+                end)
+            end
+            TextBox.Text = tostring(MaxValue)
+            Callback(MaxValue)
+            return
         end
-      end
-      
-      Callback(TextBox.Text)
+        Callback(num)
+    end)
+    
+    local _c
+    _c = Frame.AncestryChanged:Connect(function()
+        if not Frame:IsDescendantOf(game) then
+            _weirdCleanupMagic_x9Z = false
+            if TextBox then
+                TextBox:SetAttribute("MinNotify", nil)
+                TextBox:SetAttribute("MaxNotify", nil)
+            end
+            if _a then _a:Disconnect() end
+            if _b then _b:Disconnect() end
+            if _c then _c:Disconnect() end
+        end
     end)
   end
 
