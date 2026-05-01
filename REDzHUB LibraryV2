@@ -4537,22 +4537,33 @@ function MakeTab(Configs)
         CreateTween(Line, "Size", UDim2.new(0, 0, 0.07, 0), 0.3, true)
         CreateTween(Line, "Size", UDim2.new(1, 0, 0.07, 0), 0.3, true)
     end)
+    
     _b = TextBox.FocusLost:Connect(function()
         if not _weirdCleanupMagic_x9Z then return end
         local raw = TextBox.Text
         local cleaned = raw:gsub("%D","")
-        if not cleaned then
-            if not TextBox:GetAttribute("TypeNotify") then
-                TextBox:SetAttribute("TypeNotify", true)
-                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Invalid Input",Text="Numbers only",Duration=3,Icon="rbxassetid://99041893368154"})
+        if cleaned == "" then
+            if not TextBox:GetAttribute("OnlyTextNotify") then
+                TextBox:SetAttribute("OnlyTextNotify", true)
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Invalid Input",Text="No numbers found",Duration=3,Icon="rbxassetid://99041893368154"})
                 task.delay(3,function()
-                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("TypeNotify", nil) end
+                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("OnlyTextNotify", nil) end
                 end)
             end
             Callback(TextBox.Text)
             return
         end
+        if cleaned ~= raw then
+            if not TextBox:GetAttribute("TypeNotify") then
+                TextBox:SetAttribute("TypeNotify", true)
+                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Filtered Input",Text="Removed invalid characters",Duration=3,Icon="rbxassetid://99041893368154"})
+                task.delay(3,function()
+                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("TypeNotify", nil) end
+                end)
+            end
+        end
         local num = tonumber(cleaned)
+        if not num then return end
         TextBox.Text = tostring(num)
         if MinValue and num < MinValue then
             if not TextBox:GetAttribute("MinNotify") then
@@ -4578,7 +4589,6 @@ function MakeTab(Configs)
             Callback(MaxValue)
             return
         end
-        
         Callback(num)
     end)
     
@@ -4590,6 +4600,7 @@ function MakeTab(Configs)
                 TextBox:SetAttribute("MinNotify", nil)
                 TextBox:SetAttribute("MaxNotify", nil)
                 TextBox:SetAttribute("TypeNotify", nil)
+                TextBox:SetAttribute("OnlyTextNotify", nil)
             end
             if _a then _a:Disconnect() end
             if _b then _b:Disconnect() end
