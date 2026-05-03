@@ -4562,7 +4562,10 @@ function MakeTab(Configs)
                 end)
             end
         end
-        local num = tonumber(cleaned)
+        local num
+        if not cleaned:match("%.$") then
+            num = tonumber(cleaned)
+        end
         if num then
             TextBox.Text = tostring(num)
         else
