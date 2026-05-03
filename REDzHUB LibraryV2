@@ -4541,7 +4541,7 @@ function MakeTab(Configs)
     _b = TextBox.FocusLost:Connect(function()
         if not _weirdCleanupMagic_x9Z then return end
         local raw = TextBox.Text
-        local cleaned = raw:gsub("%D","")
+        local cleaned = raw:gsub("[^%d%.]","")
         if cleaned == "" then
             if not TextBox:GetAttribute("OnlyTextNotify") then
                 TextBox:SetAttribute("OnlyTextNotify", true)
@@ -4561,6 +4561,12 @@ function MakeTab(Configs)
                     if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("TypeNotify", nil) end
                 end)
             end
+        end
+        local firstDot = cleaned:find("%.")
+        if firstDot then
+            local int = cleaned:sub(1, firstDot-1):gsub("%.","")
+            local dec = cleaned:sub(firstDot+1):gsub("%.","")
+            cleaned = int .. "." .. dec
         end
         local num = tonumber(cleaned)
         if not num then return end
