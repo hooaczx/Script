@@ -4562,40 +4562,41 @@ function MakeTab(Configs)
                 end)
             end
         end
-        local firstDot = cleaned:find("%.")
-        if firstDot then
-            local int = cleaned:sub(1, firstDot-1):gsub("%.","")
-            local dec = cleaned:sub(firstDot+1):gsub("%.","")
-            cleaned = int .. "." .. dec
-        end
         local num = tonumber(cleaned)
-        if not num then return end
-        TextBox.Text = tostring(num)
-        if MinValue and num < MinValue then
-            if not TextBox:GetAttribute("MinNotify") then
-                TextBox:SetAttribute("MinNotify", true)
-                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Below minimum limit",Text=tostring(MinValue),Duration=3,Icon="rbxassetid://99041893368154"})
-                task.delay(3,function()
-                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MinNotify", nil) end
-                end)
-            end
-            TextBox.Text = tostring(MinValue)
-            Callback(MinValue)
-            return
+        if num then
+            TextBox.Text = tostring(num)
+        else
+            TextBox.Text = cleaned
         end
-        if MaxValue and num > MaxValue then
-            if not TextBox:GetAttribute("MaxNotify") then
-                TextBox:SetAttribute("MaxNotify", true)
-                game:GetService("StarterGui"):SetCore("SendNotification",{Title="Above maximum limit",Text=tostring(MaxValue),Duration=3,Icon="rbxassetid://99041893368154"})
-                task.delay(3,function()
-                    if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MaxNotify", nil) end
-                end)
+        if num then
+            if MinValue and num < MinValue then
+                if not TextBox:GetAttribute("MinNotify") then
+                    TextBox:SetAttribute("MinNotify", true)
+                    game:GetService("StarterGui"):SetCore("SendNotification",{Title="Below minimum limit",Text=tostring(MinValue),Duration=3,Icon="rbxassetid://99041893368154"})
+                    task.delay(3,function()
+                        if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MinNotify", nil) end
+                    end)
+                end
+                TextBox.Text = tostring(MinValue)
+                Callback(MinValue)
+                return
             end
-            TextBox.Text = tostring(MaxValue)
-            Callback(MaxValue)
-            return
+            if MaxValue and num > MaxValue then
+                if not TextBox:GetAttribute("MaxNotify") then
+                    TextBox:SetAttribute("MaxNotify", true)
+                    game:GetService("StarterGui"):SetCore("SendNotification",{Title="Above maximum limit",Text=tostring(MaxValue),Duration=3,Icon="rbxassetid://99041893368154"})
+                    task.delay(3,function()
+                        if TextBox and _weirdCleanupMagic_x9Z then TextBox:SetAttribute("MaxNotify", nil) end
+                    end)
+                end
+                TextBox.Text = tostring(MaxValue)
+                Callback(MaxValue)
+                return
+            end
+            Callback(num)
+        else
+            Callback(TextBox.Text)
         end
-        Callback(num)
     end)
     
     local _c
