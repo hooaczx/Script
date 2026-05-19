@@ -3361,7 +3361,9 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         local ZX_highlighted = nil
         CH = {}
         ShiftLockmaingui = RunService.RenderStepped:Connect(function()
-            local ZX_chr = Player.Character or Player.CharacterAdded:Wait()
+            local ZX_plrs = game:FindFirstChildOfClass("Players")
+            local ZX_lp = ZX_plrs.LocalPlayer
+            local ZX_chr = ZX_lp.Character
             if not ZX_chr then return end
             local ZX_rp = ZX_chr:FindFirstChild("HumanoidRootPart")
             local ZX_h = ZX_chr:FindFirstChildOfClass("Humanoid")
@@ -3375,8 +3377,6 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             ZX_look = Vector3.new(ZX_look.X, ZX_pos.Y, ZX_look.Z)
             ZX_rp.CFrame = CFrame.new(ZX_pos, ZX_look)
             CreateTween(ZX_h, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)
-            local ZX_plrs = game:FindFirstChildOfClass("Players")
-            local ZX_lp = ZX_plrs.LocalPlayer
             local ZX_all = ZX_plrs:GetPlayers()
             local ZX_cp = ZX_cam.CFrame.Position
             if #ZX_all == 1 and ZX_lp.Name == ZX_all[1].Name then
@@ -3515,7 +3515,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             Tweening = false
         end)
     else
-        local ZX_chr3 = Player.Character
+        local ZX_chr3 = game:FindFirstChildOfClass("Players").LocalPlayer.Character
         if ZX_chr3 then
             local ZX_h3 = ZX_chr3:FindFirstChildOfClass("Humanoid")
             if ZX_h3 then ZX_h3.AutoRotate = true end
