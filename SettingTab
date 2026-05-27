@@ -69,7 +69,47 @@ function CreateTween(instance, prop, value, time, tweenWait)
     end
 end
 
-if game.PlaceId == 7117492592 then
+if game.PlaceId == 205224386 then
+    --Support Hide and Seek Extreme
+    local wHk8_zB = {}
+    local pVj2_rT = nil
+    AddToggle(Main5u6, { 
+        Name = "Collect Coins[Hide and Seek Extreme](Collect,No Tp You To Coin)",
+        Default = false,
+        Callback = function(dFq9_xL)
+            if dFq9_xL then
+                if pVj2_rT then return end
+                pVj2_rT = game:GetService("RunService").Heartbeat:Connect(function()
+                    local aNm3_cS = {}
+                    local vObjects = workspace:FindFirstChild("GameObjects")
+                    if vObjects then
+                        for _, vItem in ipairs(vObjects:GetChildren()) do
+                            if vItem.Name == "Credit" and vItem:FindFirstChild("TouchInterest") then
+                                aNm3_cS[vItem] = true
+                                if not wHk8_zB[vItem] then
+                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, vItem, 0)
+                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, vItem, 1)
+                                    wHk8_zB[vItem] = true
+                                end
+                            end
+                        end
+                    end
+                    for vKey in pairs(wHk8_zB) do
+                        if not aNm3_cS[vKey] then
+                            wHk8_zB[vKey] = nil
+                        end
+                    end
+                end)
+            else
+                if pVj2_rT then
+                    pVj2_rT:Disconnect()
+                    pVj2_rT = nil
+                end
+                wHk8_zB = {}
+            end
+        end
+    })
+elseif game.PlaceId == 7117492592 then
     --Support Map Realistic Hand RP 🖐🤏 Without VR
     local wHk8_zB = {}
     local pVj2_rT = nil
