@@ -1,5 +1,75 @@
 local Main5u5 = MakeTab({Name = " About_Game"})
+local Main5u6 = MakeTab({Name = "Setting"})
 zW4_bK = {["Small"] = false, ["Big"] = false, ["Random"] = false}
+local function isNumber(str)
+    return tonumber(str) ~= nil or str == 'inf'
+end
+local camera = workspace.CurrentCamera
+local _zx_dWS, _zx_dJP = 16, 50
+local _zx_ws, _zx_jp
+getgenv().TPSpeed = 0
+getgenv().TPJpBst = 0
+getgenv().TPWalk = false
+getgenv().Cframewalk = 0
+getgenv().NV_Brightness = 0
+local player = game:FindFirstChildOfClass("Players").LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = player
+local players = game:FindFirstChildOfClass('Players')
+local lplr = players.LocalPlayer
+local ps = game:FindFirstChildOfClass("Players")
+local lp = ps.LocalPlayer
+local mouse = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
+local gui, con, isOn, fpsV = nil, nil, false, 0
+local tpc, cfc = nil, nil
+local cfMode, Opt = "None", "Nope"
+local TE = false
+
+Service = setmetatable({}, {
+    __index = function(Self, Index)
+        local NewService
+        pcall(function()
+            NewService = game:GetService(Index)
+        end)
+        if not NewService and Index == "Players" then
+            NewService = game:FindFirstChildOfClass("Players")
+        end
+        if NewService then
+            Self[Index] = NewService
+        end
+        return NewService
+    end
+})
+
+local localPuppet = Service.Players and Service.Players.LocalPlayer
+
+function SendDetailedNotification(title, text, duration)
+    game.StarterGui:SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = duration or 5
+    })
+end
+
+function Create(instance, parent, props)
+    local new = Instance.new(instance, parent)
+    if props then
+        for prop, value in pairs(props) do
+            new[prop] = value
+        end
+    end
+    return new
+end
+
+function CreateTween(instance, prop, value, time, tweenWait)
+    local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
+    tween:Play()
+    if tweenWait then
+        tween.Completed:Wait()
+    end
+end
 
 AddButton(Main5u5, {
     Name = "Rejoin Game",
@@ -82,77 +152,6 @@ AddButton(Main5u5, {
         end
     end
 })
-
-local Main5u6 = MakeTab({Name = "Setting"})
-local function isNumber(str)
-    return tonumber(str) ~= nil or str == 'inf'
-end
-local camera = workspace.CurrentCamera
-local _zx_dWS, _zx_dJP = 16, 50
-local _zx_ws, _zx_jp
-getgenv().TPSpeed = 0
-getgenv().TPJpBst = 0
-getgenv().TPWalk = false
-getgenv().Cframewalk = 0
-getgenv().NV_Brightness = 0
-local player = game:FindFirstChildOfClass("Players").LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local LocalPlayer = player
-local players = game:FindFirstChildOfClass('Players')
-local lplr = players.LocalPlayer
-local ps = game:FindFirstChildOfClass("Players")
-local lp = ps.LocalPlayer
-local mouse = game:FindFirstChildOfClass("Players").LocalPlayer:GetMouse()
-local gui, con, isOn, fpsV = nil, nil, false, 0
-local tpc, cfc = nil, nil
-local cfMode, Opt = "None", "Nope"
-local TE = false
-
-Service = setmetatable({}, {
-    __index = function(Self, Index)
-        local NewService
-        pcall(function()
-            NewService = game:GetService(Index)
-        end)
-        if not NewService and Index == "Players" then
-            NewService = game:FindFirstChildOfClass("Players")
-        end
-        if NewService then
-            Self[Index] = NewService
-        end
-        return NewService
-    end
-})
-
-local localPuppet = Service.Players and Service.Players.LocalPlayer
-
-function SendDetailedNotification(title, text, duration)
-    game.StarterGui:SetCore("SendNotification", {
-        Title = title,
-        Text = text,
-        Duration = duration or 5
-    })
-end
-
-function Create(instance, parent, props)
-    local new = Instance.new(instance, parent)
-    if props then
-        for prop, value in pairs(props) do
-            new[prop] = value
-        end
-    end
-    return new
-end
-
-function CreateTween(instance, prop, value, time, tweenWait)
-    local tween = TweenService:Create(instance, TweenInfo.new(time, Enum.EasingStyle.Linear), {[prop] = value})
-    tween:Play()
-    if tweenWait then
-        tween.Completed:Wait()
-    end
-end
 
 if game.PlaceId == 205224386 then
     local dZ7_xL = {["c"] = {}, ["n"] = false}
@@ -277,7 +276,7 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                     for _, mon in ipairs(mt:GetChildren()) do
                         if not qW3_vB.m[mon] then
                             local hl = Instance.new("Highlight")
-                            hl.Adornee, hl.Parent, hl.DepthMode = mon, mon, Enum.HighlightDepthMode.AlwaysOnTop
+                            hl.FillColor, hl.OutlineColor, hl.OutlineTransparency hl.Adornee, hl.Parent, hl.DepthMode = Color3.new(1,1,1), Color3.new(1,1,1), 0, mon, mon, Enum.HighlightDepthMode.AlwaysOnTop
                             game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0,0,0)}):Play()
                             qW3_vB.m[mon] = hl
                         end
