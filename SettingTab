@@ -69,180 +69,142 @@ function CreateTween(instance, prop, value, time, tweenWait)
     end
 end
 
-if game.PlaceId == 205224386 then
-    --Support Hide and Seek Extreme
-    local wHk8_zB = {}
-    local pVj2_rT = nil
+elseif game.PlaceId == 205224386 then
+    local dZ7_xL = {["c"] = {}, ["n"] = false}
+    local vB9_mK = nil
     AddToggle(Main5u6, { 
-        Name = "Collect Coins[Hide and Seek Extreme](Collect,No Tp You To Coin)",
+        Name = "Collect Coins[Hide and Seek Extreme](Just Collect, No Tp You To Coin)",
         Default = false,
-        Callback = function(dFq9_xL)
-            if dFq9_xL then
-                if pVj2_rT then return end
-                pVj2_rT = game:GetService("RunService").Heartbeat:Connect(function()
-                    local aNm3_cS = {}
-                    local vObjects = workspace:FindFirstChild("GameObjects")
-                    if vObjects then
-                        for _, vItem in ipairs(vObjects:GetChildren()) do
-                            if vItem.Name == "Credit" and vItem:FindFirstChild("TouchInterest") then
-                                aNm3_cS[vItem] = true
-                                if not wHk8_zB[vItem] then
-                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, vItem, 0)
-                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, vItem, 1)
-                                    wHk8_zB[vItem] = true
+        Callback = function(jH5_oP)
+            if jH5_oP then
+                if vB9_mK then return end
+                vB9_mK = game:GetService("RunService").Heartbeat:Connect(function()
+                    local bW2_yU = workspace:FindFirstChild("GameObjects")
+                    local cE8_iO, dN6_sK = 0, 0
+                    if bW2_yU then
+                        for _, vItem in ipairs(bW2_yU:GetChildren()) do
+                            if vItem.Name == "Credit" then
+                                cE8_iO = cE8_iO + 1
+                                if vItem:FindFirstChild("TouchInterest") then
+                                    if not dZ7_xL.c[vItem] then
+                                        firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, vItem, 0)
+                                        firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, vItem, 1)
+                                        dZ7_xL.c[vItem] = true
+                                    end
                                 end
                             end
                         end
                     end
-                    for vKey in pairs(wHk8_zB) do
-                        if not aNm3_cS[vKey] then
-                            wHk8_zB[vKey] = nil
+                    for _ in pairs(dZ7_xL.c) do dN6_sK = dN6_sK + 1 end
+                    if cE8_iO > 0 and dN6_sK > 0 and not dZ7_xL.n then
+                        dZ7_xL.n = true
+                        pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Collect Coin✅",Text="Collected: "..dN6_sK.."/"..cE8_iO,Icon="rbxassetid://99041893368154",Duration=5}) end)
+                        task.delay(6, function() dZ7_xL.n = false end)
+                    end
+                    if cE8_iO == 0 and dN6_sK > 0 then
+                        pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Collect Coin✅",Text="Collected all coins successfully.",Icon="rbxassetid://99041893368154",Duration=5}) end)
+                        table.clear(dZ7_xL.c)
+                    end
+                    for vKey in pairs(dZ7_xL.c) do
+                        if not vKey:IsDescendantOf(workspace) then
+                            dZ7_xL.c[vKey] = nil
                         end
                     end
                 end)
             else
-                if pVj2_rT then
-                    pVj2_rT:Disconnect()
-                    pVj2_rT = nil
+                if vB9_mK then
+                    vB9_mK:Disconnect()
+                    vB9_mK = nil
                 end
-                wHk8_zB = {}
+                table.clear(dZ7_xL.c)
+                dZ7_xL.n = false
             end
         end
     })
 elseif game.PlaceId == 7117492592 then
-    --Support Map Realistic Hand RP 🖐🤏 Without VR
-    local wHk8_zB = {}
-    local pVj2_rT = nil
+    local sA5_fG = {["p"] = {}}
+    local gH2_jK = nil
     AddToggle(Main5u6, { 
         Name = "Afk in Public Map[Realistic Hand RP 🖐🤏 Without VR](Anti Touching and Abilities by Hand)",
         Default = false,
         Callback = function(dFq9_xL)
             if dFq9_xL then
-                if pVj2_rT then return end
-                pVj2_rT = game:GetService("RunService").Heartbeat:Connect(function()
-                    local aNm3_cS = {}
+                if gH2_jK then return end
+                gH2_jK = game:GetService("RunService").Heartbeat:Connect(function()
                     for _, uLk7_vQ in ipairs(game:GetService("Players"):GetPlayers()) do
-                        aNm3_cS[uLk7_vQ] = true
-                        if not wHk8_zB[uLk7_vQ] then
+                        if not sA5_fG.p[uLk7_vQ] then
                             game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", uLk7_vQ, true)
                             game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", uLk7_vQ, true)
-                            wHk8_zB[uLk7_vQ] = true
-                        end
-                    end
-                    for vQs1_yM in pairs(wHk8_zB) do
-                        if not aNm3_cS[vQs1_yM] then
-                            wHk8_zB[vQs1_yM] = nil
+                            sA5_fG.p[uLk7_vQ] = true
                         end
                     end
                 end)
             else
-                if pVj2_rT then
-                    pVj2_rT:Disconnect()
-                    pVj2_rT = nil
+                if gH2_jK then
+                    gH2_jK:Disconnect()
+                    gH2_jK = nil
                 end
-                for _, uLk7_vQ in ipairs(game:GetService("Players"):GetPlayers()) do
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", uLk7_vQ, false)
-                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", uLk7_vQ, false)
+                for vQs1_yM in pairs(sA5_fG.p) do
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Touching", vQs1_yM, false)
+                    game:GetService("ReplicatedStorage").Remotes.PermissionsRequestBlock:FireServer("Abilities", vQs1_yM, false)
                 end
-                wHk8_zB = {}
+                table.clear(sA5_fG.p)
             end
         end
     })
 elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
-    --Support Map Nightmare Run
+    local xZ9_mN = {["c"] = nil}
     AddToggle(Main5u6,{
-      Name="Auto Pick Up Cheeses For Gamepass Event Monster Rat[Nightmare Run Game]",
-      Default=false,
-      Callback=function(v)
-           if v then
-              get = game:GetService("RunService").Heartbeat:Connect(function()
-                  local p = game:GetService("Players").LocalPlayer
-                if not p then return end
-                local ch = p.Character or p.CharacterAdded:Wait()
-                local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
-                if not hrp then return end
-                local cheesess = workspace:FindFirstChild("Cheeses")
-                if not cheesess then return end
-                local cheeses = cheesess:GetChildren()
-                if #cheeses == 0 then return end
-                for _, cheese in ipairs(cheeses) do
-                    if not v then return end
-                    if cheese and cheese:IsDescendantOf(workspace) then
-                        local pos
-                        if cheese:IsA("BasePart") then
-                            pos = cheese.CFrame
-                        elseif cheese:IsA("Model") and cheese.PrimaryPart then
-                            pos = cheese.PrimaryPart.CFrame
-                        end
-                        if pos then
-                            hrp.CFrame = pos
-                            repeat task.wait(0.1) until not cheese or not cheese:IsDescendantOf(workspace)
-                            task.wait(0.2)
+        Name="Auto Pick Up Cheeses For Gamepass Event Monster Rat[Nightmare Run Game]",
+        Default=false,
+        Callback=function(v)
+            if v then
+                xZ9_mN.c = game:GetService("RunService").Heartbeat:Connect(function()
+                    local p = game:GetService("Players").LocalPlayer
+                    local ch = p.Character or p.CharacterAdded:Wait()
+                    local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
+                    local cL = workspace:FindFirstChild("Cheeses")
+                    if hrp and cL then
+                        for _, c in ipairs(cL:GetChildren()) do
+                            if v and c:IsDescendantOf(workspace) then
+                                hrp.CFrame = (c:IsA("BasePart") and c.CFrame) or (c:IsA("Model") and c.PrimaryPart and c.PrimaryPart.CFrame) or hrp.CFrame
+                                task.wait(0.2)
+                            end
                         end
                     end
-                end
-            end)
+                end)
             else
-               if get then
-                  get:Disconnect()
-                  get=nil
-               end
-           end
-       end
+                if xZ9_mN.c then xZ9_mN.c:Disconnect() xZ9_mN.c = nil end
+            end
+        end
     })
-
-    local hTable = {}
-    local vZq7_mK = nil
+    local qW3_vB = {["m"] = {}}
+    local eR8_zX = nil
     AddToggle(Main5u6, {
         Name = "ESP Monsters[Nightmare Run Game]",
         Default = false,
         Callback = function(fGj8_tP)
             if fGj8_tP then
-                if vZq7_mK then return end
-                vZq7_mK = game:GetService("RunService").Heartbeat:Connect(function()
+                if eR8_zX then return end
+                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
                     local mt = workspace:FindFirstChild("Monsters")
                     if not mt then return end
-                    local now = {}
                     for _, mon in ipairs(mt:GetChildren()) do
-                        now[mon] = true
-                        if not hTable[mon] or not hTable[mon].Parent then
+                        if not qW3_vB.m[mon] then
                             local hl = Instance.new("Highlight")
-                            hl.Name = "highlight_monster_"..mon.Name
-                            hl.Adornee = mon
-                            hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                            hl.OutlineTransparency = 0
-                            hl.OutlineColor = Color3.new(1,1,1)
-                            hl.FillColor = Color3.new(1,1,1)
-                            hl.Parent = mon
-                            game:GetService("TweenService"):Create(
-                                hl,
-                                TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
-                                { FillColor = Color3.new(0,0,0) }
-                            ):Play()
-                            hTable[mon] = hl
+                            hl.Adornee, hl.Parent, hl.DepthMode = mon, mon, Enum.HighlightDepthMode.AlwaysOnTop
+                            game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0,0,0)}):Play()
+                            qW3_vB.m[mon] = hl
                         end
                     end
-                    for mon in pairs(hTable) do
-                        if not now[mon] or not mon:IsDescendantOf(workspace) then
-                            if hTable[mon] and hTable[mon].Parent then
-                                hTable[mon]:Destroy()
-                            end
-                            hTable[mon] = nil
-                        end
+                    for mon, hl in pairs(qW3_vB.m) do
+                        if not mon:IsDescendantOf(workspace) then hl:Destroy() qW3_vB.m[mon] = nil end
                     end
                 end)
             else
-                if vZq7_mK then
-                    vZq7_mK:Disconnect()
-                    vZq7_mK = nil
-                end
-                for mon, hl in pairs(hTable) do
-                    if hl and hl.Parent then
-                        hl:Destroy()
-                        hTable[mon] = nil
-                    end
-                end
-                hTable = {}
+                if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
+                for _, hl in pairs(qW3_vB.m) do hl:Destroy() end
+                table.clear(qW3_vB.m)
             end
         end
     })
