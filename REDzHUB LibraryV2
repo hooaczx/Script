@@ -4314,6 +4314,11 @@ function MakeTab(Configs)
   local ToggleGroups = ToggleGroups or {}
   local waitno = false
   function AddToggle(parent, Configs)
+    if not parent or not parent:IsDescendantOf(game) then 
+        local Callback = Configs.Callback or function() end
+        Callback(false)
+        return nil 
+    end
     local ToggleName = Configs.Name or "Toggle!!"
     local Default = Configs.Default or false
     local TwoToggle = Configs.TwoToggle
@@ -4368,6 +4373,11 @@ function MakeTab(Configs)
             end
         end
     end
+    if not parent or not parent:IsDescendantOf(game) then
+        Callback(false)
+        TextButton:Destroy()
+        return nil
+    end
     if Default then
         OnOff = true
         CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
@@ -4405,6 +4415,7 @@ function MakeTab(Configs)
         end
     end)
     local function CreateEffect(text, parent)
+        if not parent or not parent:IsDescendantOf(game) then return end
         local EffectLabel = Create("TextLabel", parent, {Text = text,TextColor3 = Configs_HUB.Cor_Text,Font = Configs_HUB.Text_Font,BackgroundTransparency = 1,Size = UDim2.new(0.3, 0, 0.3, 0),Position = UDim2.new(0.35, 0, -0.2, 0)})
         local UIScale = Create("UIScale", EffectLabel, {Scale = 0.5})
         CreateTween(UIScale, "Scale", 1, 0.2, false)
@@ -4455,7 +4466,7 @@ function MakeTab(Configs)
                 if locktoggle then locktoggle:Play() end
                 return
             end
-            clicktoggle:Play()
+            if clicktoggle then clicktoggle:Play() end
             OnOff = true
             CreateTween(Frame2, "Position", UDim2.new(0.5, 0, 0.47, 0), 0.2, false)
             CreateTween(Frame2, "BackgroundColor3", Color3.fromRGB(30, 140, 200), 0.2, false)
@@ -4465,7 +4476,7 @@ function MakeTab(Configs)
             CreateEffect("ON", Frame1)
             Callback(true)
         else
-            falsetoggle:Play()
+            if falsetoggle then falsetoggle:Play() end
             ResetToggle()
             CreateEffect("OFF", Frame1)
         end
@@ -4479,6 +4490,11 @@ function MakeTab(Configs)
   end
 
   function AddTextBox(parent, Configs)
+    if not parent or not parent:IsDescendantOf(game) then 
+        local Callback = Configs.Callback or function() end
+        Callback(Configs.Default or "TextBox")
+        return nil 
+    end
     local MinValue = Configs.MinValue
     local MaxValue = Configs.MaxValue
     local Default = Configs.Default or "TextBox"
@@ -4531,6 +4547,12 @@ function MakeTab(Configs)
         BorderSizePixel = 0
     })
     
+    if not parent or not parent:IsDescendantOf(game) then
+        Callback(Default)
+        Frame:Destroy()
+        return nil
+    end
+
     _weirdCleanupMagic_x9Z = true
     _a = TextBox.MouseEnter:Connect(function()
         if not _weirdCleanupMagic_x9Z then return end
@@ -4619,6 +4641,139 @@ function MakeTab(Configs)
     end)
   end
 
+function AddSlider(parent, Configs)
+    if not parent or not parent:IsDescendantOf(game) then 
+        local Callback = Configs.Callback or function() end
+        Callback(Configs.Default or 25)
+        return nil 
+    end
+    local SName = Configs.Name or Configs.Title or "Slider!"
+    local SDesc = Configs.Description or ""
+    local Min = Configs.MinValue or Configs.Min or 10
+    local Max = Configs.MaxValue or Configs.Max or 100
+    local Increase = Configs.Increase or 1
+    local Default = Configs.Default or 25
+    local Callback = Configs.Callback or function() end
+    local ClearSlider = {}
+    Min, Max = Min / Increase, Max / Increase
+
+    local Frame = Create("Frame", parent, {
+        Size = UDim2.new(0.95, 0, 0.1, 0),
+        BackgroundColor3 = (Configs_HUB and Configs_HUB.Cor_Options) or Color3.new(0.2, 0.2, 0.2),
+        Name = "SliderFrame"
+    })
+    Corner(Frame)
+    Stroke(Frame)
+
+    local TitleLabel = Create("TextLabel", Frame, {
+        Text = SName,
+        Size = UDim2.new(0.615, 0, 1, 0),
+        Position = UDim2.new(0.385, 0, 0, 0),
+        BackgroundTransparency = 1,
+        Font = (Configs_HUB and Configs_HUB.Text_Font) or Enum.Font.SourceSans,
+        TextColor3 = (Configs_HUB and Configs_HUB.Cor_Text) or Color3.new(1, 1, 1),
+        TextWrapped = true,
+        TextScaled = true,
+    })
+    TextSetColor(TitleLabel)
+
+    local SliderBar = Create("Frame", Frame, {
+        Size = UDim2.new(0.27, 0, 0.15, 0),
+        Position = UDim2.new(0.015, 0, 0.45, 0),
+        BackgroundTransparency = 0
+    })
+    Corner(SliderBar)
+
+    local Indicator = Create("TextButton", SliderBar, {
+        BackgroundColor3 = Configs_HUB.Cor_Text,
+        Size = UDim2.new(0.1, 0, 6, 0),
+        Position = UDim2.new(0, 0, 0, 0),
+        Text = ""
+    })
+    Corner(Indicator)
+
+    local SliderIcon = Create("Frame", SliderBar, {
+        BackgroundColor3 = Color3.fromRGB(30, 140, 200),
+        Size = UDim2.new(0.08, 0, 1, 0),
+        Position = UDim2.new(0, 0, 0, 0)
+    })
+    Corner(SliderIcon)
+
+    local LabelVal = Create("TextLabel", Frame, {
+        Font = Configs_HUB.Text_Font,
+        Size = UDim2.new(0.08, 0, 1, 0),
+        Text = "0",
+        Position = UDim2.new(0.305, 0, 0, 0),
+        TextScaled = true,
+        TextColor3 = Configs_HUB.Cor_Text,
+        BackgroundTransparency = 1
+    })
+
+    local UIScale = Create("UIScale", LabelVal)
+    
+    if not parent or not parent:IsDescendantOf(game) then
+        Callback(Default)
+        Frame:Destroy()
+        return nil
+    end
+    
+    local function UpdateLabel(NewValue)
+        local Number = tonumber(NewValue * Increase)
+        Number = math.floor(Number * 100) / 100
+        Default = Number
+        LabelVal.Text = tostring(Number)
+        task.spawn(Callback, Number)
+    end
+
+    local function ControlPos()
+        local MousePos = UserInputService:GetMouseLocation()
+        local APos = MousePos.X - SliderBar.AbsolutePosition.X
+        local ClampedPos = math.clamp(APos / SliderBar.AbsoluteSize.X, 0, 1)
+        SliderIcon.Size = UDim2.new(ClampedPos, 0, 1, 0)
+        Indicator.Position = UDim2.new(ClampedPos, 0, -2.5, 0)
+    end
+
+    ClearSlider.close1 = Indicator.MouseButton1Down:Connect(function()
+        CreateTween(Indicator, "Transparency", 0, 0.3)
+        while UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+            task.wait()
+            ControlPos()
+        end
+        CreateTween(Indicator, "Transparency", 0.2, 0.3)
+        UpdateLabel(Indicator.Position.X.Scale * (Max - Min) + Min)
+    end)
+
+    ClearSlider.close2 = Indicator:GetPropertyChangedSignal("Position"):Connect(function()
+        UpdateLabel((Indicator.Position.X.Scale * (Max - Min) + Min))
+    end)
+
+    ClearSlider.close3 = LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
+        UIScale.Scale = 0.3
+        CreateTween(UIScale, "Scale", 1.2, 0.1)
+        CreateTween(LabelVal, "Rotation", math.random(-1, 1) * 5, 0.15, true)
+        CreateTween(UIScale, "Scale", 1, 0.2)
+        CreateTween(LabelVal, "Rotation", 0, 0.1)
+    end)
+
+    local function SetSlider(NewValue)
+        local MinV, MaxV = Min * Increase, Max * Increase
+        local SliderPos = (NewValue - MinV) / (MaxV - MinV)
+        CreateTween(Indicator, "Position", UDim2.new(SliderPos, 0, -2.5, 0), 0.3, true)
+        UpdateLabel(NewValue)
+    end
+    SetSlider(Default)
+
+    local function Clear()
+        for _, Clear in pairs(ClearSlider) do
+            Clear:Disconnect()
+        end
+        ClearSlider = {}
+        SetSlider(0)
+    end
+
+    ClearSlider.close4 = Frame.AncestryChanged:Connect(Clear)
+  end
+  
   function AddColorPicker(parent, Configs)
     local name = Configs.Name or "Color Picker"
     local Default = Configs.Default or Color3.fromRGB(0, 0, 200)
@@ -5085,128 +5240,6 @@ function MakeTab(Configs)
         Stroke(NewButton)
     end
     return {TextButton = TextButton, LabelName = LabelName, ScrollBar = ScrollBar, AddMessage = AddMessageToTable}
-  end
-
-  function AddSlider(parent, Configs)
-    local SName = Configs.Name or Configs.Title or "Slider!"
-    local SDesc = Configs.Description or ""
-    local Min = Configs.MinValue or Configs.Min or 10
-    local Max = Configs.MaxValue or Configs.Max or 100
-    local Increase = Configs.Increase or 1
-    local Default = Configs.Default or 25
-    local Callback = Configs.Callback or function() end
-    local ClearSlider = {}
-    Min, Max = Min / Increase, Max / Increase
-
-    local Frame = Create("Frame", parent, {
-        Size = UDim2.new(0.95, 0, 0.1, 0),
-        BackgroundColor3 = (Configs_HUB and Configs_HUB.Cor_Options) or Color3.new(0.2, 0.2, 0.2),
-        Name = "SliderFrame"
-    })
-    Corner(Frame)
-    Stroke(Frame)
-
-    local TitleLabel = Create("TextLabel", Frame, {
-        Text = SName,
-        Size = UDim2.new(0.615, 0, 1, 0),
-        Position = UDim2.new(0.385, 0, 0, 0),
-        BackgroundTransparency = 1,
-        Font = (Configs_HUB and Configs_HUB.Text_Font) or Enum.Font.SourceSans,
-        TextColor3 = (Configs_HUB and Configs_HUB.Cor_Text) or Color3.new(1, 1, 1),
-        TextWrapped = true,
-        TextScaled = true,
-    })
-    TextSetColor(TitleLabel)
-
-    local SliderBar = Create("Frame", Frame, {
-        Size = UDim2.new(0.27, 0, 0.15, 0),
-        Position = UDim2.new(0.015, 0, 0.45, 0),
-        BackgroundTransparency = 0
-    })
-    Corner(SliderBar)
-
-    local Indicator = Create("TextButton", SliderBar, {
-        BackgroundColor3 = Configs_HUB.Cor_Text,
-        Size = UDim2.new(0.1, 0, 6, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        Text = ""
-    })
-    Corner(Indicator)
-
-    local SliderIcon = Create("Frame", SliderBar, {
-        BackgroundColor3 = Color3.fromRGB(30, 140, 200),
-        Size = UDim2.new(0.08, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0)
-    })
-    Corner(SliderIcon)
-
-    local LabelVal = Create("TextLabel", Frame, {
-        Font = Configs_HUB.Text_Font,
-        Size = UDim2.new(0.08, 0, 1, 0),
-        Text = "0",
-        Position = UDim2.new(0.305, 0, 0, 0),
-        TextScaled = true,
-        TextColor3 = Configs_HUB.Cor_Text,
-        BackgroundTransparency = 1
-    })
-
-    local UIScale = Create("UIScale", LabelVal)
-    
-    local function UpdateLabel(NewValue)
-        local Number = tonumber(NewValue * Increase)
-        Number = math.floor(Number * 100) / 100
-        Default = Number
-        LabelVal.Text = tostring(Number)
-        task.spawn(Callback, Number)
-    end
-
-    local function ControlPos()
-        local MousePos = UserInputService:GetMouseLocation()
-        local APos = MousePos.X - SliderBar.AbsolutePosition.X
-        local ClampedPos = math.clamp(APos / SliderBar.AbsoluteSize.X, 0, 1)
-        SliderIcon.Size = UDim2.new(ClampedPos, 0, 1, 0)
-        Indicator.Position = UDim2.new(ClampedPos, 0, -2.5, 0)
-    end
-
-    ClearSlider.close1 = Indicator.MouseButton1Down:Connect(function()
-        CreateTween(Indicator, "Transparency", 0, 0.3)
-        while UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
-            task.wait()
-            ControlPos()
-        end
-        CreateTween(Indicator, "Transparency", 0.2, 0.3)
-        UpdateLabel(Indicator.Position.X.Scale * (Max - Min) + Min)
-    end)
-
-    ClearSlider.close2 = Indicator:GetPropertyChangedSignal("Position"):Connect(function()
-        UpdateLabel((Indicator.Position.X.Scale * (Max - Min) + Min))
-    end)
-
-    ClearSlider.close3 = LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
-        UIScale.Scale = 0.3
-        CreateTween(UIScale, "Scale", 1.2, 0.1)
-        CreateTween(LabelVal, "Rotation", math.random(-1, 1) * 5, 0.15, true)
-        CreateTween(UIScale, "Scale", 1, 0.2)
-        CreateTween(LabelVal, "Rotation", 0, 0.1)
-    end)
-
-    local function SetSlider(NewValue)
-        local MinV, MaxV = Min * Increase, Max * Increase
-        local SliderPos = (NewValue - MinV) / (MaxV - MinV)
-        CreateTween(Indicator, "Position", UDim2.new(SliderPos, 0, -2.5, 0), 0.3, true)
-        UpdateLabel(NewValue)
-    end
-    SetSlider(Default)
-
-    local function Clear()
-        for _, Clear in pairs(ClearSlider) do
-            Clear:Disconnect()
-        end
-        ClearSlider = {}
-        SetSlider(0)
-    end
-
-    ClearSlider.close4 = Frame.AncestryChanged:Connect(Clear)
   end
 
   function TypeTextLabel(TextLabel, Text, Delay)
