@@ -1874,6 +1874,9 @@ local f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Scr
 AddToggle(Main5u6, {
     Name = "Aura",
     Default = false,
+    TwoToggle = "group9",
+    NotificationTitle="Warning",
+    NotificationText="Please turn off Character Lock CFrame or Idle Anchor first",
     Callback = function(state)
         f.aura(state, CreateTween)
     end
@@ -2023,7 +2026,7 @@ AddToggle(Main5u6, {
     Default = {Enabled = true, GameId = 7304314747, PlayerName = "hooaczx"},
     TwoToggle = "group9",
     NotificationTitle="Warning",
-    NotificationText="Please turn off Character Lock CFrame first",
+    NotificationText="Please turn off Character Lock CFrame or Aura first",
     Callback = function(s_1)
         re.Toggle(s_1)
     end
@@ -2291,7 +2294,7 @@ AddToggle(Main5u6, {
 	Default = false,
     TwoToggle = "group9",
     NotificationTitle="Warning",
-    NotificationText="Please turn off Idle Anchor first",
+    NotificationText="Please turn off Idle Anchor or Aura first",
     Callback = function(Uu)
 		__7Z.Vv = Uu
 		if not Uu then
@@ -2371,18 +2374,30 @@ AddToggle(Main5u6, {
 						hrp = c and c:FindFirstChild("HumanoidRootPart")
 						_t_t._hrp = hrp
 					end
+					local fld = Plr:FindFirstChild("PlayerGui") and (Plr._fld_storage_1hooaczx1 or Instance.new("Folder"))
+					if fld and not Plr:FindFirstChild("_fld_storage_1hooaczx1") then fld.Name = "_fld_storage_1hooaczx1" fld.Parent = Plr end
+					if fld then Plr._fld_storage_1hooaczx1 = fld end
+					if r and r ~= lastR and fld then
+						for _,v in ipairs(fld:GetChildren()) do if v.Name == "Trail" or v.Name == "Attachment" then v:Destroy() end end
+					end
+					if fld then
+						for _,v in ipairs(fld:GetChildren()) do
+							if (v.Name == "Trail" or v.Name == "Attachment") and v.Parent ~= hrp then v:Destroy() end
+						end
+					end
 					if not c or not hrp then
 						if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
 						if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
 						if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+						if fld then for _,v in ipairs(fld:GetChildren()) do if v.Name == "Trail" or v.Name == "Attachment" then v:Destroy() end end end
 						_t_t._keys = {}
 						return
 					end
-					if not _t_t._t_r then _t_t._t_r = Create("Trail", hrp)
+					if not _t_t._t_r then _t_t._t_r = Create("Trail", fld) _t_t._t_r.Parent = hrp
 					elseif _t_t._t_r.Parent ~= hrp then _t_t._t_r.Parent = hrp end
-					if not _t_t._a0_ then _t_t._a0_ = Create("Attachment", hrp)
+					if not _t_t._a0_ then _t_t._a0 = Create("Attachment", fld) _t_t._a0_.Parent = hrp
 					elseif _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end
-					if not _t_t._a1_ then _t_t._a1_ = Create("Attachment", hrp)
+					if not _t_t._a1_ then _t_t._a1_ = Create("Attachment", fld) _t_t._a1_.Parent = hrp
 					elseif _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end
 					_t_t._t_r.Attachment0 = _t_t._a0_
 					_t_t._t_r.Attachment1 = _t_t._a1_
@@ -2401,6 +2416,9 @@ AddToggle(Main5u6, {
 			if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
 			if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
 			if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+			local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
+			local fld = Plr and Plr:FindFirstChild("_fld_storage_1hooaczx1")
+			if fld then for _,v in ipairs(fld:GetChildren()) do if v.Name == "Trail" or v.Name == "Attachment" then v:Destroy() end end end
 			_t_t._c = nil
 			_t_t._hrp = nil
 			_t_t._keys = {}
@@ -2424,9 +2442,10 @@ AddToggle(Main5u6, {
 		if _l_t._on then
 			if not _l_t._hbt then
 				_l_t._hbt = game:GetService("RunService").Heartbeat:Connect(function()
+					local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
 					local c = _l_t._c
 					if not c or not c.Parent then
-						c = game:FindFirstChildOfClass("Players").LocalPlayer.Character
+						c = Plr.Character
 						_l_t._c = c
 						_l_t._hrp = nil
 					end
@@ -2435,6 +2454,14 @@ AddToggle(Main5u6, {
 						hrp = c and c:FindFirstChild("HumanoidRootPart")
 						_l_t._hrp = hrp
 					end
+					local fld = Plr:FindFirstChild("PlayerGui") and (Plr._fld_storage_1hooaczx1 or Instance.new("Folder"))
+					if fld and not Plr:FindFirstChild("_fld_storage_1hooaczx1") then fld.Name = "_fld_storage_1hooaczx1" fld.Parent = Plr end
+					if fld then Plr._fld_storage_1hooaczx1 = fld end
+					if fld then
+						for _,v in ipairs(fld:GetChildren()) do
+							if v.Name == "Character_Light_1hooaczx1" and v.Parent ~= hrp then v:Destroy() end
+						end
+					end
 					if hrp then
 						if not _l_t._lt then
 							local l = Instance.new("PointLight")
@@ -2442,22 +2469,24 @@ AddToggle(Main5u6, {
 							l.Brightness = 5
 							l.Range = math.huge
 							l.Color = Color3.new(1,1,1)
+							l.Parent = fld
 							l.Parent = hrp
 							_l_t._lt = l
 						elseif _l_t._lt.Parent ~= hrp then
 							_l_t._lt.Parent = hrp
 						end
 					else
-						if _l_t._lt then
-							_l_t._lt:Destroy()
-							_l_t._lt = nil
-						end
+						if _l_t._lt then _l_t._lt:Destroy() _l_t._lt = nil end
+						if fld then for _,v in ipairs(fld:GetChildren()) do if v.Name == "Character_Light_1hooaczx1" then v:Destroy() end end end
 					end
 				end)
 			end
 		else
 			if _l_t._hbt then _l_t._hbt:Disconnect() _l_t._hbt = nil end
 			if _l_t._lt then _l_t._lt:Destroy() _l_t._lt = nil end
+			local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
+			local fld = Plr and Plr:FindFirstChild("_fld_storage_1hooaczx1")
+			if fld then for _,v in ipairs(fld:GetChildren()) do if v.Name == "Character_Light_1hooaczx1" then v:Destroy() end end end
 			_l_t._c = nil
 			_l_t._hrp = nil
 		end
