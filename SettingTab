@@ -2277,11 +2277,7 @@ AddToggle(Main5u6, {
 					local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
 					local c = _t_t._c
 					if not c or not c.Parent then
-						if _t_t._c and _t_t._c:FindFirstChild("_fld_storage_1hooaczx1") then _t_t._c._fld_storage_1hooaczx1:Destroy() end
 						c = Plr.Character _t_t._c = c _t_t._hrp = nil
-						if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
-						if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
-						if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
 					end
 					local hrp = _t_t._hrp
 					if not hrp or not hrp.Parent then
@@ -2295,11 +2291,19 @@ AddToggle(Main5u6, {
 					end
 					local fld = c:FindFirstChild("_fld_storage_1hooaczx1") or Instance.new("Folder")
 					if fld and not c:FindFirstChild("_fld_storage_1hooaczx1") then fld.Name = "_fld_storage_1hooaczx1" fld.Parent = c end
-					if not _t_t._a0_ then _t_t._a0_ = Instance.new("Attachment") _t_t._a0_.Name = "Attachment" _t_t._a0_.Parent = hrp else if _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end end
-					if not _t_t._a1_ then _t_t._a1_ = Instance.new("Attachment") _t_t._a1_.Name = "Attachment" _t_t._a1_.Parent = hrp else if _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end end
-					if not _t_t._t_r then _t_t._t_r = Instance.new("Trail") _t_t._t_r.Name = "Trail" _t_t._t_r.Parent = fld else if _t_t._t_r.Parent ~= fld then _t_t._t_r.Parent = fld end end
+					if fld then
+						local r1 = fld:FindFirstChild("TrailRef") or Instance.new("ObjectValue", fld) r1.Name = "TrailRef" r1.Value = _t_t._t_r
+						local r2 = fld:FindFirstChild("A0Ref") or Instance.new("ObjectValue", fld) r2.Name = "A0Ref" r2.Value = _t_t._a0_
+						local r3 = fld:FindFirstChild("A1Ref") or Instance.new("ObjectValue", fld) r3.Name = "A1Ref" r3.Value = _t_t._a1_
+					end
+					if not _t_t._t_r then _t_t._t_r = Instance.new("Trail") _t_t._t_r.Name = "Trail" _t_t._t_r.Parent = hrp
+					elseif _t_t._t_r.Parent ~= hrp then _t_t._t_r.Parent = hrp end
+					if not _t_t._a0_ then _t_t._a0_ = Instance.new("Attachment") _t_t._a0_.Name = "Attachment" _t_t._a0_.Parent = hrp
+					elseif _t_t._a0_.Parent ~= hrp then _t_t._a0_.Parent = hrp end
+					if not _t_t._a1_ then _t_t._a1_ = Instance.new("Attachment") _t_t._a1_.Name = "Attachment" _t_t._a1_.Parent = hrp
+					elseif _t_t._a1_.Parent ~= hrp then _t_t._a1_.Parent = hrp end
 					_t_t._t_r.Attachment0 = _t_t._a0_ _t_t._t_r.Attachment1 = _t_t._a1_
-					_t_t._a0_.Position = Vector3.new(0, 0.5, 0) _t_t._a1_.Position = Vector3.new(0, -0.5, 0)
+					_t_t._a0_.Position = Vector3.new(0,0,0) _t_t._a1_.Position = Vector3.new(0,-0.2,0)
 					_t_t.hue = (_t_t.hue + 1) % 360
 					for i=0,4 do
 						local sh = (_t_t.hue + i*72) % 360
@@ -2312,7 +2316,7 @@ AddToggle(Main5u6, {
 			if _t_t.hbt then _t_t.hbt:Disconnect() _t_t.hbt = nil end
 			if _t_t._t_r then _t_t._t_r:Destroy() _t_t._t_r = nil end
 			if _t_t._a0_ then _t_t._a0_:Destroy() _t_t._a0_ = nil end
-			if _t_t._a1_ then _t_t._a1_:Destroy() _t_t._a1_ = nil end
+			if _t_t._a1_ then _t_t._a1_:Destroy() _v_t._a1_ = nil end
 			local Plr = game:FindFirstChildOfClass("Players").LocalPlayer local c = Plr.Character
 			local fld = c and c:FindFirstChild("_fld_storage_1hooaczx1") if fld then fld:Destroy() end
 			_t_t._c = nil _t_t._hrp = nil _t_t._keys = {}
@@ -2339,9 +2343,7 @@ AddToggle(Main5u6, {
 					local Plr = game:FindFirstChildOfClass("Players").LocalPlayer
 					local c = _l_t._c
 					if not c or not c.Parent then
-						if _l_t._c and _l_t._c:FindFirstChild("_fld_storage_1hooaczx1") and not _t_t._e_e then _l_t._c._fld_storage_1hooaczx1:Destroy() end
 						c = Plr.Character _l_t._c = c _l_t._hrp = nil
-						if _l_t._lt then _l_t._lt:Destroy() _l_t._lt = nil end
 					end
 					local hrp = _l_t._hrp
 					if not hrp or not hrp.Parent then
@@ -2352,10 +2354,17 @@ AddToggle(Main5u6, {
 					end
 					local fld = c:FindFirstChild("_fld_storage_1hooaczx1") or Instance.new("Folder")
 					if fld and not c:FindFirstChild("_fld_storage_1hooaczx1") then fld.Name = "_fld_storage_1hooaczx1" fld.Parent = c end
-					if not _l_t._lt then
-						_l_t._lt = Instance.new("PointLight") _l_t._lt.Name = "Character_Light_1hooaczx1" _l_t._lt.Brightness = 5 _l_t._lt.Range = math.huge _l_t._lt.Color = Color3.new(1,1,1) _l_t._lt.Parent = fld
+					if fld then
+						local r1 = fld:FindFirstChild("LightRef") or Instance.new("ObjectValue", fld) r1.Name = "LightRef" r1.Value = _l_t._lt
+					end
+					if hrp then
+						if not _l_t._lt then
+							local l = Instance.new("PointLight") l.Name = "Character_Light_1hooaczx1" l.Brightness = 5 l.Range = math.huge l.Color = Color3.new(1,1,1) l.Parent = hrp _l_t._lt = l
+						elseif _l_t._lt.Parent ~= hrp then
+							_l_t._lt.Parent = hrp
+						end
 					else
-						if _l_t._lt.Parent ~= fld then _l_t._lt.Parent = fld end
+						if _l_t._lt then _l_t._lt:Destroy() _l_t._lt = nil end
 					end
 				end)
 			end
@@ -2363,8 +2372,7 @@ AddToggle(Main5u6, {
 			if _l_t._hbt then _l_t._hbt:Disconnect() _l_t._hbt = nil end
 			if _l_t._lt then _l_t._lt:Destroy() _l_t._lt = nil end
 			local Plr = game:FindFirstChildOfClass("Players").LocalPlayer local c = Plr.Character
-			local fld = c and c:FindFirstChild("_fld_storage_1hooaczx1")
-			if fld and not c:FindFirstChild("Trail") then fld:Destroy() end
+			local fld = c and c:FindFirstChild("_fld_storage_1hooaczx1") if fld then fld:Destroy() end
 			_l_t._c = nil _l_t._hrp = nil
 		end
 	end
