@@ -379,6 +379,9 @@ else
     AddToggle(Main5u6, {
       Name = "invisible ui",      
       Default = {Enabled = true, GameId = 7304314747, PlayerName = "hooaczx"},
+      TwoToggle = "groupk9",
+      NotificationTitle="Warning",
+      NotificationText="Please turn off Aura first",
       Callback = function(state)
           gnj_e.Toggle(state)
       end
@@ -1830,97 +1833,6 @@ AddToggle(Main5u6, {
 	end
 })
 
-local C = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/FreeNameTag"))()
-
-AddTextBox(Main5u6, {
-    Name = "CustomNameTag",
-    Default = "Enter",
-    PlaceholderText = "Enter name",
-    ClearText = true,
-    Callback = function(value)
-      C.changeName(value)
-    end
-})
-
-AddToggle(Main5u6, {
-    Name = "NameTag",
-    Default = false,
-    Callback = function(value)
-      C.toggle(value)
-    end
-})
-
-AddColorPicker(Main5u6, {
-    Name = "NameTagColor",
-    Default = Color3.fromRGB(255, 255, 255),
-    Callback = function(color)
-       C.changeColor(color)
-    end
-})
-
-AddSlider(Main5u6, {
-    Name = "NameTagheight",
-    Increase = 0.1,
-    MinValue = 1,
-    MaxValue = 10,
-    Default = 1,
-    Callback = function(value)
-      C.changeHeight(value)
-    end
-})
-
-local f = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/AuraCharacter"))()
-
-AddToggle(Main5u6, {
-    Name = "Aura",
-    Default = false,
-    TwoToggle = "group9",
-    NotificationTitle="Warning",
-    NotificationText="Please turn off Character Lock CFrame or Idle Anchor first",
-    Callback = function(state)
-        f.aura(state, CreateTween)
-    end
-})
-
-AddColorPicker(Main5u6, {
-    Name = "Aura Color",
-    Default = _G._AuraColor or Color3.fromRGB(255, 255, 255),
-    Callback = function(color)
-        f.SetAuraColor(color)
-    end
-})
-
-AddSlider(Main5u6, {
-    Name = "Halo Height",
-    Increase = 0.1,
-    MinValue = 0,
-    MaxValue = 10,
-    Default = 0,
-    Callback = function(value)
-        f.SetHaloDistance(value)
-    end
-})
-
-AddDropdown(Main5u6, {
-    Name = "Aura Mode",
-    Default = "up",
-    Options = {"up", "down", "left", "right", "front", "back"},
-    Callback = function(option)
-        f.SetAuraMode(option)
-    end
-})
-
-AddSlider(Main5u6, {
-    Name = "Aura Distance",
-    Increase = 0.1,
-    MinValue = 0,
-    MaxValue = 10,
-    Default = 0,
-    Callback = function(value)
-        f.SetAuraDistance(value)
-    end
-})
-
 local M = loadstring(game:HttpGet("https://raw.githubusercontent.com/hooaczx/Script/main/Dodgeplayers"))()
 
 AddToggle(Main5u6, {
@@ -2026,7 +1938,7 @@ AddToggle(Main5u6, {
     Default = {Enabled = true, GameId = 7304314747, PlayerName = "hooaczx"},
     TwoToggle = "group9",
     NotificationTitle="Warning",
-    NotificationText="Please turn off Character Lock CFrame or Aura first",
+    NotificationText="Please turn off Character Lock CFrame first",
     Callback = function(s_1)
         re.Toggle(s_1)
     end
@@ -2294,7 +2206,7 @@ AddToggle(Main5u6, {
 	Default = false,
     TwoToggle = "group9",
     NotificationTitle="Warning",
-    NotificationText="Please turn off Idle Anchor or Aura first",
+    NotificationText="Please turn off Idle Anchor first",
     Callback = function(Uu)
 		__7Z.Vv = Uu
 		if not Uu then
