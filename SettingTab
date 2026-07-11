@@ -248,6 +248,16 @@ if game.PlaceId == 2413927524 then
                             end
                         end
                     end
+                    local ss = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("ScrapSpawns")
+                    if ss then
+                        for _, sc in ipairs(ss:GetDescendants()) do
+                            if sc.Name == "Scrap" and not __15[sc] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __15[sc], __16[sc] = {hl}, tw
+                            end
+                        end
+                    end
                     for sc, data in pairs(__15) do
                         if not sc:IsDescendantOf(workspace) then
                             if __16[sc] then __16[sc]:Cancel() end
