@@ -165,14 +165,13 @@ if game.PlaceId == 2413927524 then
             if fGj8_tP then
                 if eR8_zX then return end
                 eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
-                    for _, m in ipairs(workspace:GetDescendants()) do
-                        if m:IsA("Model") and m.Name == "Rake" then
-                            local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
-                            if not __11[m] then
-                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
-                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                                __11[m], __12[m] = {hl, target}, tw
-                            end
+                    local m = workspace:FindFirstChild("Rake")
+                    if m and m:IsA("Model") then
+                        local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
+                        if not __11[m] then
+                            local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
+                            local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                            __11[m], __12[m] = {hl, target}, tw
                         end
                     end
                     for m, data in pairs(__11) do
@@ -190,42 +189,6 @@ if game.PlaceId == 2413927524 then
                     if data[1] then data[1]:Destroy() end
                 end
                 table.clear(__11) table.clear(__12)
-            end
-        end
-    })
-    AddToggle(Main5u6, {
-        Name = "ESP Scrap[The Rake REMASTERED]",
-        Default = true,
-        Callback = function(fGj8_tP)
-            if fGj8_tP then
-                if eR8_zX3 then return end
-                eR8_zX3 = game:GetService("RunService").Heartbeat:Connect(function()
-                    for _, d in ipairs(workspace:GetDescendants()) do
-                        if d.Name == "InsideParts" then
-                            for _, sc in ipairs(d:GetChildren()) do
-                                if (sc:IsA("BasePart") or sc:IsA("Model")) and not __15[sc] then
-                                    local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
-                                    local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                                    __15[sc], __16[sc] = {hl}, tw
-                                end
-                            end
-                        end
-                    end
-                    for sc, data in pairs(__15) do
-                        if not sc:IsDescendantOf(workspace) then
-                            if __16[sc] then __16[sc]:Cancel() end
-                            if data[1] then data[1]:Destroy() end
-                            __15[sc], __16[sc] = nil, nil
-                        end
-                    end
-                end)
-            else
-                if eR8_zX3 then eR8_zX3:Disconnect() eR8_zX3 = nil end
-                for sc, data in pairs(__15) do
-                    if __16[sc] then __16[sc]:Cancel() end
-                    if data[1] then data[1]:Destroy() end
-                end
-                table.clear(__15) table.clear(__16)
             end
         end
     })
@@ -265,6 +228,41 @@ if game.PlaceId == 2413927524 then
                     if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end
                 end
                 table.clear(__13) table.clear(__14)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "ESP Scrap[The Rake REMASTERED]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX3 then return end
+                eR8_zX3 = game:GetService("RunService").Heartbeat:Connect(function()
+                    local dp = workspace:FindFirstChild("Debris") and workspace.Debris:FindFirstChild("SupplyCrates") and workspace.Debris.SupplyCrates:FindFirstChild("Box") and workspace.Debris.SupplyCrates.Box:FindFirstChild("InsideParts")
+                    if dp then
+                        for _, sc in ipairs(dp:GetChildren()) do
+                            if sc.Name == "Scrap" and not __15[sc] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __15[sc], __16[sc] = {hl}, tw
+                            end
+                        end
+                    end
+                    for sc, data in pairs(__15) do
+                        if not sc:IsDescendantOf(workspace) then
+                            if __16[sc] then __16[sc]:Cancel() end
+                            if data[1] then data[1]:Destroy() end
+                            __15[sc], __16[sc] = nil, nil
+                        end
+                    end
+                end)
+            else
+                if eR8_zX3 then eR8_zX3:Disconnect() eR8_zX3 = nil end
+                for sc, data in pairs(__15) do
+                    if __16[sc] then __16[sc]:Cancel() end
+                    if data[1] then data[1]:Destroy() end
+                end
+                table.clear(__15) table.clear(__16)
             end
         end
     })
