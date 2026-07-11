@@ -152,8 +152,84 @@ AddButton(Main5u5, {
         end
     end
 })
-
-if game.PlaceId == 205224386 then
+if game.PlaceId == 2413927524 then
+    local __11, __12 = {}, {}
+    local __13, __14 = {}, {}
+    local eR8_zX, eR8_zX2 = nil, nil
+    AddToggle(Main5u6, {
+        Name = "ESP Rake[The Rake REMASTERED]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX then return end
+                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
+                    local mt = workspace:FindFirstChild("Monsters")
+                    if not mt then return end
+                    for _, m in ipairs(mt:GetChildren()) do
+                        local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
+                        if not __11[m] then
+                            local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = target hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = target
+                            local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                            __11[m], __12[m] = {hl, target}, tw
+                        end
+                    end
+                    for m, data in pairs(__11) do
+                        if not m:IsDescendantOf(workspace) or not data[2]:IsDescendantOf(workspace) then
+                            if __12[m] then __12[m]:Cancel() end
+                            if data[1] then data[1]:Destroy() end
+                            __11[m], __12[m] = nil, nil
+                        end
+                    end
+                end)
+            else
+                if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
+                for m, data in pairs(__11) do
+                    if __12[m] then __12[m]:Cancel() end
+                    if data[1] then data[1]:Destroy() end
+                end
+                table.clear(__11) table.clear(__12)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "ESP Power Generator & Shop[The Rake REMASTERED]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX2 then return end
+                eR8_zX2 = game:GetService("RunService").Heartbeat:Connect(function()
+                    local gp = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("PowerStation") and workspace.Map.PowerStation:FindFirstChild("StationFolder") and workspace.Map.PowerStation.StationFolder:FindFirstChild("ZapPart")
+                    if gp and not __13[gp] then
+                        local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = gp hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = gp
+                        local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                        __13[gp], __14[gp] = hl, tw
+                    end
+                    local sm = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("LocationPoints") and workspace.Filter.LocationPoints:FindFirstChild("ShopMSG")
+                    if sm and not __13[sm] then
+                        local p = Instance.new("Part") p.Name = "\226\128\139\7\8\9" p.Size = sm.Size p.CFrame = sm.CFrame p.Anchored = true p.CanCollide = false p.Transparency = 1 p.Parent = workspace
+                        local hl = Instance.new("Highlight") hl.Name = "\226\128\139\7\8\9" hl.Adornee = p hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 0.5, 1) hl.FillColor = Color3.new(0, 0.5, 1) hl.Parent = p
+                        local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                        __13[sm], __14[sm] = {p, hl}, tw
+                    end
+                    for obj, data in pairs(__13) do
+                        if not obj:IsDescendantOf(workspace) then
+                            if __14[obj] then __14[obj]:Cancel() end
+                            if typeof(data) == "table" then data[1]:Destroy() data[2]:Destroy() else data:Destroy() end
+                            __13[obj], __14[obj] = nil, nil
+                        end
+                    end
+                end)
+            else
+                if eR8_zX2 then eR8_zX2:Disconnect() eR8_zX2 = nil end
+                for obj, data in pairs(__13) do
+                    if __14[obj] then __14[obj]:Cancel() end
+                    if typeof(data) == "table" then data[1]:Destroy() data[2]:Destroy() else data:Destroy() end
+                end
+                table.clear(__13) table.clear(__14)
+            end
+        end
+    })
+elseif game.PlaceId == 205224386 then
     local dZ7_xL = {["c"] = {}, ["n"] = false}
     local vB9_mK = nil
     AddToggle(Main5u6, { 
@@ -164,7 +240,7 @@ if game.PlaceId == 205224386 then
                 if vB9_mK then return end
                 vB9_mK = game:GetService("RunService").Heartbeat:Connect(function()
                     local bW2_yU = workspace:FindFirstChild("GameObjects")
-                    local cE8_iO, dN6_sK = 0, 0
+                    local cE8_iO = 0
                     if bW2_yU then
                         for _, vItem in ipairs(bW2_yU:GetChildren()) do
                             if vItem.Name == "Credit" then
@@ -179,14 +255,11 @@ if game.PlaceId == 205224386 then
                             end
                         end
                     end
-                    for _ in pairs(dZ7_xL.c) do dN6_sK = dN6_sK + 1 end
-                    if cE8_iO > 0 and dN6_sK > 0 and not dZ7_xL.n then
+                    if cE8_iO == 0 and not dZ7_xL.n and next(dZ7_xL.c) ~= nil then
                         dZ7_xL.n = true
-                        pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Collect Coin✅",Text="Collected: "..dN6_sK.."/"..cE8_iO,Icon="rbxassetid://99041893368154",Duration=5}) end)
-                        task.delay(6, function() dZ7_xL.n = false end)
-                    end
-                    if cE8_iO == 0 and dN6_sK > 0 then
                         pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Collect Coin✅",Text="Collected all coins successfully.",Icon="rbxassetid://99041893368154",Duration=5}) end)
+                        task.wait(2)
+                        dZ7_xL.n = false
                         table.clear(dZ7_xL.c)
                     end
                     for vKey in pairs(dZ7_xL.c) do
@@ -276,8 +349,8 @@ elseif game.PlaceId == 89490917156284 or game.PlaceId == 97464845197302 then
                     for _, mon in ipairs(mt:GetChildren()) do
                         if not qW3_vB.m[mon] then
                             local hl = Instance.new("Highlight")
-                            hl.FillColor, hl.OutlineColor, hl.OutlineTransparency, hl.Adornee, hl.Parent, hl.DepthMode = Color3.new(1,1,1), Color3.new(1,1,1), 0, mon, mon, Enum.HighlightDepthMode.AlwaysOnTop
-                            game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0,0,0)}):Play()
+                            hl.FillColor, hl.OutlineColor, hl.OutlineTransparency, hl.Adornee, hl.Parent, hl.DepthMode = Color3.new(1, 0.6, 0), Color3.new(1, 0.6, 0), 0, mon, mon, Enum.HighlightDepthMode.AlwaysOnTop
+                            game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}):Play()
                             qW3_vB.m[mon] = hl
                         end
                     end
