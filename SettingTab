@@ -206,9 +206,61 @@ if game.PlaceId == 2413927524 then
                         local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
                         __13[gp], __14[gp] = {nil, hl}, tw
                     end
+if game.PlaceId == 2413927524 then
+    local __11, __12 = {}, {}
+    local __13, __14 = {}, {}
+    local eR8_zX, eR8_zX2 = nil, nil
+    AddToggle(Main5u6, {
+        Name = "ESP Rake[The Rake REMASTERED]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX then return end
+                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
+                    for _, m in ipairs(workspace:GetDescendants()) do
+                        if m:IsA("Model") and m.Name == "Rake" then
+                            local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
+                            if not __11[m] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __11[m], __12[m] = {hl, target}, tw
+                            end
+                        end
+                    end
+                    for m, data in pairs(__11) do
+                        if not m:IsDescendantOf(workspace) or not data[2]:IsDescendantOf(workspace) then
+                            if __12[m] then __12[m]:Cancel() end
+                            if data[1] then data[1]:Destroy() end
+                            __11[m], __12[m] = nil, nil
+                        end
+                    end
+                end)
+            else
+                if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
+                for m, data in pairs(__11) do
+                    if __12[m] then __12[m]:Cancel() end
+                    if data[1] then data[1]:Destroy() end
+                end
+                table.clear(__11) table.clear(__12)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "ESP Power Generator & Shop[The Rake REMASTERED]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX2 then return end
+                eR8_zX2 = game:GetService("RunService").Heartbeat:Connect(function()
+                    local gp = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("PowerStation") and workspace.Map.PowerStation:FindFirstChild("StationFolder") and workspace.Map.PowerStation.StationFolder:FindFirstChild("ZapPart")
+                    if gp and not __13[gp] then
+                        local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = gp hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = gp
+                        local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                        __13[gp], __14[gp] = {hl}, tw
+                    end
                     local sm = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("LocationPoints") and workspace.Filter.LocationPoints:FindFirstChild("ShopMSG")
                     if sm and not __13[sm] then
-                        local p = Instance.new("Part") p.Name = "\226\128\139\7\8\9" p.Size = sm.Size p.CFrame = sm.CFrame p.Anchored = true p.CanCollide = false p.Transparency = 1 p.Parent = workspace
+                        local p = Instance.new("Part") p.Name = "\226\128\139\7\8\9" p.Size = sm.Size p.CFrame = sm.CFrame p.Anchored = true p.CanCollide = false p.Transparency = 0 p.Parent = workspace
                         local hl = Instance.new("Highlight") hl.Name = "\226\128\139\7\8\9" hl.Adornee = p hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 0.5, 1) hl.FillColor = Color3.new(0, 0.5, 1) hl.Parent = p
                         local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
                         __13[sm], __14[sm] = {p, hl}, tw
@@ -216,7 +268,7 @@ if game.PlaceId == 2413927524 then
                     for obj, data in pairs(__13) do
                         if not obj:IsDescendantOf(workspace) then
                             if __14[obj] then __14[obj]:Cancel() end
-                            if typeof(data) == "table" then if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end else data:Destroy() end
+                            if #data == 2 then data[1]:Destroy() data[2]:Destroy() else data[1]:Destroy() end
                             __13[obj], __14[obj] = nil, nil
                         end
                     end
@@ -225,12 +277,13 @@ if game.PlaceId == 2413927524 then
                 if eR8_zX2 then eR8_zX2:Disconnect() eR8_zX2 = nil end
                 for obj, data in pairs(__13) do
                     if __14[obj] then __14[obj]:Cancel() end
-                    if typeof(data) == "table" then if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end else data:Destroy() end
+                    if #data == 2 then data[1]:Destroy() data[2]:Destroy() else data[1]:Destroy() end
                 end
                 table.clear(__13) table.clear(__14)
-            end
-        end
-    })
+             end
+          end
+       })
+     end
 elseif game.PlaceId == 205224386 then
     local dZ7_xL = {["c"] = {}, ["n"] = false}
     local vB9_mK = nil
