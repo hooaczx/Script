@@ -156,7 +156,8 @@ AddButton(Main5u5, {
 if game.PlaceId == 2413927524 then
     local __11, __12 = {}, {}
     local __13, __14 = {}, {}
-    local eR8_zX, eR8_zX2 = nil, nil
+    local __15, __16 = {}, {}
+    local eR8_zX, eR8_zX2, eR8_zX3 = nil, nil, nil
     AddToggle(Main5u6, {
         Name = "ESP Rake[The Rake REMASTERED]",
         Default = true,
@@ -193,6 +194,42 @@ if game.PlaceId == 2413927524 then
         end
     })
     AddToggle(Main5u6, {
+        Name = "ESP Scrap[The Rake REMASTERED]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX3 then return end
+                eR8_zX3 = game:GetService("RunService").Heartbeat:Connect(function()
+                    for _, d in ipairs(workspace:GetDescendants()) do
+                        if d.Name == "InsideParts" then
+                            for _, sc in ipairs(d:GetChildren()) do
+                                if (sc:IsA("BasePart") or sc:IsA("Model")) and not __15[sc] then
+                                    local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
+                                    local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                    __15[sc], __16[sc] = {hl}, tw
+                                end
+                            end
+                        end
+                    end
+                    for sc, data in pairs(__15) do
+                        if not sc:IsDescendantOf(workspace) then
+                            if __16[sc] then __16[sc]:Cancel() end
+                            if data[1] then data[1]:Destroy() end
+                            __15[sc], __16[sc] = nil, nil
+                        end
+                    end
+                end)
+            else
+                if eR8_zX3 then eR8_zX3:Disconnect() eR8_zX3 = nil end
+                for sc, data in pairs(__15) do
+                    if __16[sc] then __16[sc]:Cancel() end
+                    if data[1] then data[1]:Destroy() end
+                end
+                table.clear(__15) table.clear(__16)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
         Name = "ESP Power Generator & Shop[The Rake REMASTERED]",
         Default = true,
         Callback = function(fGj8_tP)
@@ -201,9 +238,10 @@ if game.PlaceId == 2413927524 then
                 eR8_zX2 = game:GetService("RunService").Heartbeat:Connect(function()
                     local gp = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("PowerStation") and workspace.Map.PowerStation:FindFirstChild("StationFolder") and workspace.Map.PowerStation.StationFolder:FindFirstChild("ZapPart")
                     if gp and not __13[gp] then
-                        local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = gp hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = gp
+                        local p = Instance.new("Part") p.Name = "\226\128\139\4\5\6" p.Size = gp.Size - Vector3.new(0.1, 0.1, 0.1) p.CFrame = gp.CFrame p.Anchored = true p.CanCollide = false p.Transparency = 0 p.Parent = workspace
+                        local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = p hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = p
                         local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                        __13[gp], __14[gp] = {gp, hl}, tw
+                        __13[gp], __14[gp] = {p, hl}, tw
                     end
                     local sm = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("LocationPoints") and workspace.Filter.LocationPoints:FindFirstChild("ShopMSG")
                     if sm and not __13[sm] then
@@ -215,7 +253,7 @@ if game.PlaceId == 2413927524 then
                     for obj, data in pairs(__13) do
                         if not obj:IsDescendantOf(workspace) then
                             if __14[obj] then __14[obj]:Cancel() end
-                            if data[1] == obj then if data[2] then data[2]:Destroy() end else if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end end
+                            if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end
                             __13[obj], __14[obj] = nil, nil
                         end
                     end
@@ -224,7 +262,7 @@ if game.PlaceId == 2413927524 then
                 if eR8_zX2 then eR8_zX2:Disconnect() eR8_zX2 = nil end
                 for obj, data in pairs(__13) do
                     if __14[obj] then __14[obj]:Cancel() end
-                    if data[1] == obj then if data[2] then data[2]:Destroy() end else if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end end
+                    if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end
                 end
                 table.clear(__13) table.clear(__14)
             end
