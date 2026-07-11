@@ -158,41 +158,37 @@ if game.PlaceId == 2413927524 then
     local __13, __14 = {}, {}
     local __15, __16 = {}, {}
     local eR8_zX, eR8_zX2, eR8_zX3 = nil, nil, nil
-    local __timeRef = 0
-    local __timeDir = 1
     AddToggle(Main5u6, {
         Name = "ESP Rake[The Rake REMASTERED]",
         Default = true,
         Callback = function(fGj8_tP)
             if fGj8_tP then
                 if eR8_zX then return end
-                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function(dt)
-                    __timeRef = __timeRef + (dt / 2) * __timeDir
-                    if __timeRef >= 1 then __timeRef = 1 __timeDir = -1 elseif __timeRef <= 0 then __timeRef = 0 __timeDir = 1 end
-                    local alpha = game:GetService("TweenService"):GetValue(__timeRef, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
                     local m = workspace:FindFirstChild("Rake")
                     if m and m:IsA("Model") then
                         local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
                         if not __11[m] then
                             local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
-                            __11[m] = {hl, target}
+                            local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                            __11[m], __12[m] = {hl, target}, tw
                         end
                     end
-                    for obj, data in pairs(__11) do
-                        if not obj:IsDescendantOf(workspace) or not data[2]:IsDescendantOf(workspace) then
+                    for m, data in pairs(__11) do
+                        if not m:IsDescendantOf(workspace) or not data[2]:IsDescendantOf(workspace) then
+                            if __12[m] then __12[m]:Cancel() end
                             if data[1] then data[1]:Destroy() end
-                            __11[obj] = nil
-                        else
-                            data[1].FillColor = Color3.new(1, 0.6, 0):Lerp(Color3.new(0, 0, 0), alpha)
+                            __11[m], __12[m] = nil, nil
                         end
                     end
                 end)
             else
                 if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
-                for obj, data in pairs(__11) do
+                for m, data in pairs(__11) do
+                    if __12[m] then __12[m]:Cancel() end
                     if data[1] then data[1]:Destroy() end
                 end
-                table.clear(__11)
+                table.clear(__11) table.clear(__12)
             end
         end
     })
@@ -202,37 +198,36 @@ if game.PlaceId == 2413927524 then
         Callback = function(fGj8_tP)
             if fGj8_tP then
                 if eR8_zX2 then return end
-                eR8_zX2 = game:GetService("RunService").Heartbeat:Connect(function(dt)
-                    __timeRef = __timeRef + (dt / 2) * __timeDir
-                    if __timeRef >= 1 then __timeRef = 1 __timeDir = -1 elseif __timeRef <= 0 then __timeRef = 0 __timeDir = 1 end
-                    local alpha = game:GetService("TweenService"):GetValue(__timeRef, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+                eR8_zX2 = game:GetService("RunService").Heartbeat:Connect(function()
                     local gp = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("PowerStation") and workspace.Map.PowerStation:FindFirstChild("StationFolder") and workspace.Map.PowerStation.StationFolder:FindFirstChild("ZapPart")
                     if gp and not __13[gp] then
                         local p = Instance.new("Part") p.Name = "\226\128\139\4\5\6" p.Size = gp.Size - Vector3.new(0.1, 0.1, 0.1) p.CFrame = gp.CFrame p.Anchored = true p.CanCollide = false p.Transparency = 0 p.Parent = workspace
                         local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = p hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = p
-                        __13[gp] = {p, hl, Color3.new(0, 1, 0)}
+                        local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                        __13[gp], __14[gp] = {p, hl}, tw
                     end
                     local sm = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("LocationPoints") and workspace.Filter.LocationPoints:FindFirstChild("ShopMSG")
                     if sm and not __13[sm] then
                         local p = Instance.new("Part") p.Name = "\226\128\139\7\8\9" p.Size = sm.Size p.CFrame = sm.CFrame p.Anchored = true p.CanCollide = false p.Transparency = 0 p.Parent = workspace
                         local hl = Instance.new("Highlight") hl.Name = "\226\128\139\7\8\9" hl.Adornee = p hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 0.5, 1) hl.FillColor = Color3.new(0, 0.5, 1) hl.Parent = p
-                        __13[sm] = {p, hl, Color3.new(0, 0.5, 1)}
+                        local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                        __13[sm], __14[sm] = {p, hl}, tw
                     end
                     for obj, data in pairs(__13) do
                         if not obj:IsDescendantOf(workspace) then
+                            if __14[obj] then __14[obj]:Cancel() end
                             if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end
-                            __13[obj] = nil
-                        else
-                            data[2].FillColor = data[3]:Lerp(Color3.new(0, 0, 0), alpha)
+                            __13[obj], __14[obj] = nil, nil
                         end
                     end
                 end)
             else
                 if eR8_zX2 then eR8_zX2:Disconnect() eR8_zX2 = nil end
                 for obj, data in pairs(__13) do
+                    if __14[obj] then __14[obj]:Cancel() end
                     if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end
                 end
-                table.clear(__13)
+                table.clear(__13) table.clear(__14)
             end
         end
     })
@@ -242,60 +237,58 @@ if game.PlaceId == 2413927524 then
         Callback = function(fGj8_tP)
             if fGj8_tP then
                 if eR8_zX3 then return end
-                eR8_zX3 = game:GetService("RunService").Heartbeat:Connect(function(dt)
-                    __timeRef = __timeRef + (dt / 2) * __timeDir
-                    if __timeRef >= 1 then __timeRef = 1 __timeDir = -1 elseif __timeRef <= 0 then __timeRef = 0 __timeDir = 1 end
-                    local alpha = game:GetService("TweenService"):GetValue(__timeRef, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-                    local dp = workspace:FindFirstChild("Debris") and workspace.Debris:FindFirstChild("SupplyCrates") and workspace.Debris.SupplyCrates:FindFirstChild("Box")
+                eR8_zX3 = game:GetService("RunService").Heartbeat:Connect(function()
+                    local dp = workspace:FindFirstChild("Debris") and workspace.Debris:FindFirstChild("SupplyCrates") and workspace.Debris.SupplyCrates:FindFirstChild("Box") and workspace.Debris.SupplyCrates.Box:FindFirstChild("InsideParts")
                     if dp then
-                        local b = dp:FindFirstChild("body")
-                        if b and not __15[b] then
-                            local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = b hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 0) hl.FillColor = Color3.new(1, 1, 0) hl.Parent = b
-                            __15[b] = {hl, Color3.new(1, 1, 0)}
-                        end
-                        local ip = dp:FindFirstChild("InsideParts")
-                        if ip then
-                            for _, sc in ipairs(ip:GetChildren()) do
-                                if sc.Name == "Scrap" and not __15[sc] then
-                                    local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
-                                    __15[sc] = {hl, Color3.new(1, 1, 1)}
-                                end
+                        for _, sc in ipairs(dp:GetChildren()) do
+                            if sc.Name == "Scrap" and not __15[sc] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __15[sc], __16[sc] = {hl}, tw
                             end
                         end
+                    end
+                    local bx = workspace:FindFirstChild("Debris") and workspace.Debris:FindFirstChild("SupplyCrates") and workspace.Debris.SupplyCrates:FindFirstChild("Box") and workspace.Debris.SupplyCrates.Box:FindFirstChild("body")
+                    if bx and not __15[bx] then
+                        local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = bx hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 0) hl.FillColor = Color3.new(1, 1, 0) hl.Parent = bx
+                        local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                        __15[bx], __16[bx] = {hl}, tw
                     end
                     local ss = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("ScrapSpawns")
                     if ss then
                         for _, sc in ipairs(ss:GetDescendants()) do
                             if sc.Name == "Scrap" and not __15[sc] then
                                 local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = sc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 1, 1) hl.FillColor = Color3.new(1, 1, 1) hl.Parent = sc
-                                __15[sc] = {hl, Color3.new(1, 1, 1)}
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __15[sc], __16[sc] = {hl}, tw
                             end
                         end
                     end
                     local tr = workspace:FindFirstChild("Debris") and workspace.Debris:FindFirstChild("Traps")
                     if tr then
-                        for _, t in ipairs(tr:GetChildren()) do
-                            if not __15[t] then
-                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = t hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0, 0) hl.FillColor = Color3.new(1, 0, 0) hl.Parent = t
-                               __15[t] = {hl, Color3.new(1, 0, 0)}
+                        for _, tc in ipairs(tr:GetChildren()) do
+                            if not __15[tc] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\10\11\12" hl.Adornee = tc hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0, 0) hl.FillColor = Color3.new(1, 0, 0) hl.Parent = tc
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __15[tc], __16[tc] = {hl}, tw
                             end
                         end
                     end
                     for sc, data in pairs(__15) do
                         if not sc:IsDescendantOf(workspace) then
+                            if __16[sc] then __16[sc]:Cancel() end
                             if data[1] then data[1]:Destroy() end
-                            __15[sc] = nil
-                        else
-                            data[1].FillColor = data[2]:Lerp(Color3.new(0, 0, 0), alpha)
+                            __15[sc], __16[sc] = nil, nil
                         end
                     end
                 end)
             else
                 if eR8_zX3 then eR8_zX3:Disconnect() eR8_zX3 = nil end
                 for sc, data in pairs(__15) do
+                    if __16[sc] then __16[sc]:Cancel() end
                     if data[1] then data[1]:Destroy() end
                 end
-                table.clear(__15)
+                table.clear(__15) table.clear(__16)
             end
         end
     })
