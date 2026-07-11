@@ -203,7 +203,7 @@ if game.PlaceId == 2413927524 then
                     if gp and not __13[gp] then
                         local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = gp hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = gp
                         local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                        __13[gp], __14[gp] = {hl}, tw
+                        __13[gp], __14[gp] = {gp, hl}, tw
                     end
                     local sm = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("LocationPoints") and workspace.Filter.LocationPoints:FindFirstChild("ShopMSG")
                     if sm and not __13[sm] then
@@ -215,7 +215,7 @@ if game.PlaceId == 2413927524 then
                     for obj, data in pairs(__13) do
                         if not obj:IsDescendantOf(workspace) then
                             if __14[obj] then __14[obj]:Cancel() end
-                            if #data == 2 then data[1]:Destroy() data[2]:Destroy() else data[1]:Destroy() end
+                            if data[1] == obj then if data[2] then data[2]:Destroy() end else if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end end
                             __13[obj], __14[obj] = nil, nil
                         end
                     end
@@ -224,7 +224,7 @@ if game.PlaceId == 2413927524 then
                 if eR8_zX2 then eR8_zX2:Disconnect() eR8_zX2 = nil end
                 for obj, data in pairs(__13) do
                     if __14[obj] then __14[obj]:Cancel() end
-                    if #data == 2 then data[1]:Destroy() data[2]:Destroy() else data[1]:Destroy() end
+                    if data[1] == obj then if data[2] then data[2]:Destroy() end else if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end end
                 end
                 table.clear(__13) table.clear(__14)
             end
