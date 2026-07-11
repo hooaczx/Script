@@ -163,14 +163,16 @@ if game.PlaceId == 2413927524 then
             if fGj8_tP then
                 if eR8_zX then return end
                 eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
-                    local mt = workspace:FindFirstChild("Monsters")
+                    local mt = workspace:FindFirstChild("Monsters") or workspace:FindFirstChild("Debris")
                     if not mt then return end
                     for _, m in ipairs(mt:GetChildren()) do
-                        local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
-                        if not __11[m] then
-                            local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = target hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = target
-                            local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                            __11[m], __12[m] = {hl, target}, tw
+                        if m.Name == "Rake" or m:FindFirstChild("Humanoid") then
+                            local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
+                            if not __11[m] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __11[m], __12[m] = {hl, target}, tw
+                            end
                         end
                     end
                     for m, data in pairs(__11) do
@@ -202,7 +204,7 @@ if game.PlaceId == 2413927524 then
                     if gp and not __13[gp] then
                         local hl = Instance.new("Highlight") hl.Name = "\226\128\139\4\5\6" hl.Adornee = gp hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = gp
                         local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                        __13[gp], __14[gp] = hl, tw
+                        __13[gp], __14[gp] = {nil, hl}, tw
                     end
                     local sm = workspace:FindFirstChild("Filter") and workspace.Filter:FindFirstChild("LocationPoints") and workspace.Filter.LocationPoints:FindFirstChild("ShopMSG")
                     if sm and not __13[sm] then
@@ -214,7 +216,7 @@ if game.PlaceId == 2413927524 then
                     for obj, data in pairs(__13) do
                         if not obj:IsDescendantOf(workspace) then
                             if __14[obj] then __14[obj]:Cancel() end
-                            if typeof(data) == "table" then data[1]:Destroy() data[2]:Destroy() else data:Destroy() end
+                            if typeof(data) == "table" then if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end else data:Destroy() end
                             __13[obj], __14[obj] = nil, nil
                         end
                     end
@@ -223,7 +225,7 @@ if game.PlaceId == 2413927524 then
                 if eR8_zX2 then eR8_zX2:Disconnect() eR8_zX2 = nil end
                 for obj, data in pairs(__13) do
                     if __14[obj] then __14[obj]:Cancel() end
-                    if typeof(data) == "table" then data[1]:Destroy() data[2]:Destroy() else data:Destroy() end
+                    if typeof(data) == "table" then if data[1] then data[1]:Destroy() end if data[2] then data[2]:Destroy() end else data:Destroy() end
                 end
                 table.clear(__13) table.clear(__14)
             end
