@@ -154,7 +154,7 @@ AddButton(Main5u5, {
 })
 
 if game.PlaceId == 12432097393 then
-    local eR8_zX, lastState = nil, nil
+    local eR8_zX = nil
     local __11, __12 = {}, {}
     AddToggle(Main5u6, {
         Name = "Auto PASSIVE[TIS: The Transfeyyr]",
@@ -163,19 +163,20 @@ if game.PlaceId == 12432097393 then
             if fGj8_tP then
                 if eR8_zX then return end
                 eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
-                    local p = game:GetService("Players").LocalPlayer if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character.HumanoidRootPart:FindFirstChild("InfoGui") and p.Character.HumanoidRootPart.InfoGui:FindFirstChild("TextLabel") and p.PlayerGui:FindFirstChild("Menu") and p.PlayerGui.Menu:FindFirstChild("ScrollingFrame") and p.PlayerGui.Menu.ScrollingFrame:FindFirstChild("PassiveMode") and p.PlayerGui.Menu.ScrollingFrame.PassiveMode:FindFirstChild("TextLabel") then
+                    local p = game:GetService("Players").LocalPlayer if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character.HumanoidRootPart:FindFirstChild("InfoGui") and p.Character.HumanoidRootPart.InfoGui:FindFirstChild("TextLabel") then
                         if __11[p.Name] and __11[p.Name] ~= p.Character then if __12[p.Name] then __12[p.Name]:Cancel() __12[p.Name] = nil end if typeof(__11[p.Name]) == "table" and __11[p.Name][1] then __11[p.Name][1]:Destroy() end __11[p.Name] = nil end __11[p.Name] = p.Character
-                        local isP = string.find(p.Character.HumanoidRootPart.InfoGui.TextLabel.Text, "%(PASSIVE%)") local menuT = p.PlayerGui.Menu.ScrollingFrame.PassiveMode.TextLabel.Text
-                        if menuT == "IN-COMBAT" then if not isP and lastState ~= true then lastState = true game:GetService("ReplicatedStorage").PlayerStuff.Passive:FireServer(true) end else if isP and lastState ~= false then lastState = false game:GetService("ReplicatedStorage").PlayerStuff.Passive:FireServer(false) end end
+                        local isP = string.find(p.Character.HumanoidRootPart.InfoGui.TextLabel.Text, "%(PASSIVE%)")
+                        if not isP then game:GetService("ReplicatedStorage").PlayerStuff.Passive:FireServer(true) end
                     else if p and __11[p.Name] then if __12[p.Name] then __12[p.Name]:Cancel() __12[p.Name] = nil end if typeof(__11[p.Name]) == "table" and __11[p.Name][1] then __11[p.Name][1]:Destroy() end __11[p.Name] = nil end end
                 end)
             else
                 if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
+                game:GetService("ReplicatedStorage").PlayerStuff.Passive:FireServer(false)
                 for m, data in pairs(__11) do
                     if __12[m] then __12[m]:Cancel() end
                     if typeof(data) == "table" and data[1] then data[1]:Destroy() end
                 end
-                table.clear(__11) table.clear(__12) lastState = nil
+                table.clear(__11) table.clear(__12)
             end
         end
     })
