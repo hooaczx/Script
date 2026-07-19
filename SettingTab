@@ -153,7 +153,73 @@ AddButton(Main5u5, {
     end
 })
 
-if game.PlaceId == 12432097393 then
+if game.PlaceId == 134922313437159 then
+    local __13, __14 = {}, {}
+    local __15, __16 = {}, {}
+    local eR8_zX = nil
+    AddToggle(Main5u6, {
+        Name = "ESP Weapon & Bandage-Medkit & ItemTransforms[Another Infection Game]",
+        Default = true,
+        Callback = function(fGj8_tP)
+            if fGj8_tP then
+                if eR8_zX then return end
+                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
+                    local shelves = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("RandomSpawns") and workspace.Map.RandomSpawns:FindFirstChild("Shelves")
+                    if shelves then
+                        for _, shelf in pairs(shelves:GetChildren()) do
+                            if shelf.Name == "DoubleShelf" or shelf.Name == "GlassShelf" then
+                                for _, part in pairs(shelf:GetChildren()) do
+                                    if part:IsA("BasePart") then
+                                        local item = part:FindFirstChild("Medkit") or part:FindFirstChild("Bandage")
+                                        if item and not __13[item] then
+                                            local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = item hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 1, 0) hl.FillColor = Color3.new(0, 1, 0) hl.Parent = item
+                                            local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                            __13[item], __14[item] = {hl, item}, tw
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    local transforms = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("ItemTransforms")
+                    if transforms then
+                        for _, item in pairs(transforms:GetChildren()) do
+                            if not __13[item] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = item hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0, 0) hl.FillColor = Color3.new(1, 0, 0) hl.Parent = item
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __13[item], __14[item] = {hl, item}, tw
+                            end
+                        end
+                    end
+                    local weapons = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("MapWeapons")
+                    if weapons then
+                        for _, item in pairs(weapons:GetChildren()) do
+                            if not __13[item] then
+                                local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = item hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(0, 0.6, 1) hl.FillColor = Color3.new(0, 0.6, 1) hl.Parent = item
+                                local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
+                                __13[item], __14[item] = {hl, item}, tw
+                            end
+                        end
+                    end
+                    for item, data in pairs(__13) do
+                        if not item:IsDescendantOf(workspace) then
+                            if __14[item] then __14[item]:Cancel() end
+                            if data[1] then data[1]:Destroy() end
+                            __13[item], __14[item] = nil, nil
+                        end
+                    end
+                end)
+            else
+                if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
+                for item, data in pairs(__13) do
+                    if __14[item] then __14[item]:Cancel() end
+                    if data[1] then data[1]:Destroy() end
+                end
+                table.clear(__13) table.clear(__14)
+            end
+        end
+    })
+elseif game.PlaceId == 12432097393 then
     local eR8_zX = nil
     local __11, __12 = {}, {}
     AddToggle(Main5u6, {
