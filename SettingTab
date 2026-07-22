@@ -1,6 +1,6 @@
 local Main5u5 = MakeTab({Name = " About_Game"})
 local Main5u6 = MakeTab({Name = "Setting"})
-zW4_bK = {["Small"] = false, ["Big"] = false, ["Random"] = false}
+zW4_bK = {["Small"] = false, ["Big"] = false, ["Random"] = false, ["Ping"] = false}
 local function isNumber(str)
     return tonumber(str) ~= nil or str == 'inf'
 end
@@ -92,13 +92,18 @@ AddButton(Main5u5, {
 AddButton(Main5u5, {
     Name = "Join Random Server",
     Callback = function()
-        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] then
+        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] and not zW4_bK["Ping"] then
             zW4_bK["Random"] = true
             pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="Searching for Random server...",Icon="rbxassetid://99041893368154",Duration=5}) end)
             local sA5_fG = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?limit=100"))
             local gH2_jK = nil
-            local rD = sA5_fG.data[math.random(1, #sA5_fG.data)]
-            if rD.playing < rD.maxPlayers then gH2_jK = rD.id end
+            local validServers = {}
+            for _, v in ipairs(sA5_fG.data) do
+                if v.id ~= game.JobId and v.playing < (v.maxPlayers - 1) then
+                    table.insert(validServers, v.id)
+                end
+            end
+            if #validServers > 0 then gH2_jK = validServers[math.random(1, #validServers)] end
             if gH2_jK then
                 game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, gH2_jK, game.Players.LocalPlayer)
             else
@@ -106,7 +111,36 @@ AddButton(Main5u5, {
                 zW4_bK["Random"] = false
             end
         else
-            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
+            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or zW4_bK["Ping"] and "Small Ping Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
+        end
+    end
+})
+
+AddButton(Main5u5, {
+    Name = "Join Small Ping Server",
+    Callback = function()
+        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] and not zW4_bK["Ping"] then
+            zW4_bK["Ping"] = true
+            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="Searching for Low Ping server...",Icon="rbxassetid://99041893368154",Duration=5}) end)
+            local sA5_fG = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?limit=100"))
+            local gH2_jK = nil
+            local bestPing = math.huge
+            for _, v in ipairs(sA5_fG.data) do
+                if v.id ~= game.JobId and v.playing < (v.maxPlayers - 1) and v.ping then
+                    if v.ping < bestPing then
+                        bestPing = v.ping
+                        gH2_jK = v.id
+                    end
+                end
+            end
+            if gH2_jK then
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, gH2_jK, game.Players.LocalPlayer)
+            else
+                pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="No suitable Small Ping server found.",Icon="rbxassetid://99041893368154",Duration=5}) end)
+                zW4_bK["Ping"] = false
+            end
+        else
+            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or zW4_bK["Ping"] and "Small Ping Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
         end
     end
 })
@@ -114,12 +148,12 @@ AddButton(Main5u5, {
 AddButton(Main5u5, {
     Name = "Join Big Server",
     Callback = function()
-        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] then
+        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] and not zW4_bK["Ping"] then
             zW4_bK["Big"] = true
             pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="Searching for Big server...",Icon="rbxassetid://99041893368154",Duration=5}) end)
             local sA5_fG = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Desc&limit=100"))
             local gH2_jK = nil
-            for _, v in ipairs(sA5_fG.data) do if v.playing < v.maxPlayers then gH2_jK = v.id break end end
+            for _, v in ipairs(sA5_fG.data) do if v.id ~= game.JobId and v.playing < (v.maxPlayers - 1) then gH2_jK = v.id break end end
             if gH2_jK then
                 game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, gH2_jK, game.Players.LocalPlayer)
             else
@@ -127,7 +161,7 @@ AddButton(Main5u5, {
                 zW4_bK["Big"] = false
             end
         else
-            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
+            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or zW4_bK["Ping"] and "Small Ping Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
         end
     end
 })
@@ -135,12 +169,12 @@ AddButton(Main5u5, {
 AddButton(Main5u5, {
     Name = "Join Small Server",
     Callback = function()
-        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] then
+        if not zW4_bK["Small"] and not zW4_bK["Big"] and not zW4_bK["Random"] and not zW4_bK["Ping"] then
             zW4_bK["Small"] = true
             pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="Searching for Small server...",Icon="rbxassetid://99041893368154",Duration=5}) end)
             local sA5_fG = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
             local gH2_jK = nil
-            for _, v in ipairs(sA5_fG.data) do if v.playing < v.maxPlayers then gH2_jK = v.id break end end
+            for _, v in ipairs(sA5_fG.data) do if v.id ~= game.JobId and v.playing < (v.maxPlayers - 1) then gH2_jK = v.id break end end
             if gH2_jK then
                 game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, gH2_jK, game.Players.LocalPlayer)
             else
@@ -148,7 +182,7 @@ AddButton(Main5u5, {
                 zW4_bK["Small"] = false
             end
         else
-            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
+            pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Server",Text="You have already selected: "..(zW4_bK["Small"] and "Small Server" or zW4_bK["Big"] and "Big Server" or zW4_bK["Ping"] and "Small Ping Server" or "Random Server"),Icon="rbxassetid://99041893368154",Duration=5}) end)
         end
     end
 })
