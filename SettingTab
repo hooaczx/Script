@@ -1286,23 +1286,42 @@ funcs["A1"] = function(_x90)
 											_rs52 and _re53 and {_t23.Position, _rs52.Position},
 											_rs52 and _re53 and {_rs52.Position, _re53.Position},
 											_re53 and _rh54 and {_re53.Position, _rh54.Position},
-											_lhip55 and _lknee56 and {_lt24.Position, _lhip55.Position},
-											_lhip55 and _lknee56 and {_lhip55.Position, _lknee56.Position},
+											_lhip55 and _lknee56 and {_lt24.Position, _lhip55.Position, _lhip55.Position, _lknee56.Position},
 											_lknee56 and _lfoot57 and {_lknee56.Position, _lfoot57.Position},
-											_rhip58 and _rknee59 and {_lt24.Position, _rhip58.Position},
-											_rhip58 and _rknee59 and {_rhip58.Position, _rknee59.Position},
+											_rhip58 and _rknee59 and {_lt24.Position, _rhip58.Position, _rhip58.Position, _rknee59.Position},
 											_rknee59 and _rfoot60 and {_rknee59.Position, _rfoot60.Position}
 										}
 										for _, _b62 in ipairs(_bns61) do
 											if _b62 and _idx25 <= #_d14.Stickman then
-												local _pa63, _oa64 = _k1:WorldToViewportPoint(_b62[1])
-												local _pb65, _ob66 = _k1:WorldToViewportPoint(_b62[2])
-												if _oa64 and _ob66 and _pa63.Z > 0 and _pb65.Z > 0 then
-													local _l67 = _d14.Stickman[_idx25]
-													_l67.From = Vector2.new(_pa63.X, _pa63.Y)
-													_l67.To = Vector2.new(_pb65.X, _pb65.Y)
-													_l67.Visible = true
-													_idx25 = _idx25 + 1
+												if #_b62 == 4 then
+													local _pa63, _oa64 = _k1:WorldToViewportPoint(_b62[1])
+													local _pb65, _ob66 = _k1:WorldToViewportPoint(_b62[2])
+													local _pc1, _oc1 = _k1:WorldToViewportPoint(_b62[3])
+													local _pd1, _od1 = _k1:WorldToViewportPoint(_b62[4])
+													if _oa64 and _ob66 and _pa63.Z > 0 and _pb65.Z > 0 then
+														local _l67 = _d14.Stickman[_idx25]
+														_l67.From = Vector2.new(_pa63.X, _pa63.Y)
+														_l67.To = Vector2.new(_pb65.X, _pb65.Y)
+														_l67.Visible = true
+														_idx25 = _idx25 + 1
+													end
+													if _oc1 and _od1 and _pc1.Z > 0 and _pd1.Z > 0 and _idx25 <= #_d14.Stickman then
+														local _l67_2 = _d14.Stickman[_idx25]
+														_l67_2.From = Vector2.new(_pc1.X, _pc1.Y)
+														_l67_2.To = Vector2.new(_pd1.X, _pd1.Y)
+														_l67_2.Visible = true
+														_idx25 = _idx25 + 1
+													end
+												else
+													local _pa63, _oa64 = _k1:WorldToViewportPoint(_b62[1])
+													local _pb65, _ob66 = _k1:WorldToViewportPoint(_b62[2])
+													if _oa64 and _ob66 and _pa63.Z > 0 and _pb65.Z > 0 then
+														local _l67 = _d14.Stickman[_idx25]
+														_l67.From = Vector2.new(_pa63.X, _pa63.Y)
+														_l67.To = Vector2.new(_pb65.X, _pb65.Y)
+														_l67.Visible = true
+														_idx25 = _idx25 + 1
+													end
 												end
 											end
 										end
