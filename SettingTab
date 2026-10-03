@@ -286,9 +286,9 @@ elseif game.PlaceId == 12432097393 then
     })
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local __11, __12 = {}, {}
+    local __13, __14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
     local eR8_zX = nil
     local _x9K_2p = nil
-    local _0x1A, _0x2B = 0, 0
     AddToggle(Main5u6, {
         Name = "Npc[Unseen Liminality]",
         Default = true,
@@ -334,20 +334,21 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
             if _m7_Q then
                 if _x9K_2p then return end
                 _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
-                    local _p1 = game:GetService("Players").LocalPlayer local _c2, _b3 = _p1.Character, _p1:FindFirstChildOfClass("Backpack") local _s4, _d5 = false, false
-                    if _b3 then for _, v in pairs(_b3:GetChildren()) do if v.Name == "Soda" then _s4 = true elseif v.Name == "Evil Duck" then _d5 = true end end end
-                    if _c2 then for _, v in pairs(_c2:GetChildren()) do if v.Name == "Soda" then _s4 = true elseif v.Name == "Evil Duck" then _d5 = true end end end
-                    if _s4 and _d5 then return end
+                    local _p1 = game:GetService("Players").LocalPlayer local _c2, _b3 = _p1.Character, _p1:FindFirstChildOfClass("Backpack")
+                    __13["Soda"], __13["Evil Duck"] = false, false
+                    if _b3 then for _, v in pairs(_b3:GetChildren()) do if __13[v.Name] ~= nil then __13[v.Name] = true end end end
+                    if _c2 then for _, v in pairs(_c2:GetChildren()) do if __13[v.Name] ~= nil then __13[v.Name] = true end end end
+                    if __13["Soda"] and __13["Evil Duck"] then return end
                     local _t6 = tick()
-                    if not _s4 and (_t6 - _0x1A >= 2) then
-                        _0x1A = _t6
+                    if not __13["Soda"] and (_t6 - __14["Soda"] >= 2.5) then
+                        __14["Soda"] = _t6
                         game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
                             [1] = "VendingMachine",
                             [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("Lobby"):WaitForChild("VendingMachine"):WaitForChild("Vending")
                         })
                     end
-                    if not _d5 and (_t6 - _0x2B >= 2) then
-                        _0x2B = _t6
+                    if not __13["Evil Duck"] and (_t6 - __14["Evil Duck"] >= 2.5) then
+                        __14["Evil Duck"] = _t6
                         game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
                             [1] = "EvilDuck",
                             [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Players"):WaitForChild(_p1.Name),
@@ -357,6 +358,8 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 end)
             else
                 if _x9K_2p then _x9K_2p:Disconnect() _x9K_2p = nil end
+                __13["Soda"], __13["Evil Duck"] = false, false
+                __14["Soda"], __14["Evil Duck"] = 0, 0
             end
         end
     })
