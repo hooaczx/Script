@@ -287,6 +287,8 @@ elseif game.PlaceId == 12432097393 then
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local __11, __12 = {}, {}
     local eR8_zX = nil
+    local _x9K_2p = nil
+    local _0x1A, _0x2B = 0, 0
     AddToggle(Main5u6, {
         Name = "Npc[Unseen Liminality]",
         Default = true,
@@ -322,6 +324,43 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                     if data[1] then data[1]:Destroy() end
                 end
                 table.clear(__11) table.clear(__12)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Auto Get Item Soda & Evil Duck",
+        Default = true,
+        Callback = function(_m7_Q)
+            if _m7_Q then
+                if _x9K_2p then return end
+                _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _p1, _t6 = game:GetService("Players").LocalPlayer, tick() local _c2, _b3 = _p1.Character, _p1:FindFirstChild("Backpack") local _s4, _d5 = (_b3 and _b3:FindFirstChild("Soda")) or (_c2 and _c2:FindFirstChild("Soda")), (_b3 and _b3:FindFirstChild("Evil Duck")) or (_c2 and _c2:FindFirstChild("Evil Duck"))
+                    if not _s4 and (_t6 - _0x1A >= 1.5) then
+                        task.wait(0.1)
+                        local _s4_check = (_b3 and _b3:FindFirstChild("Soda")) or (_c2 and _c2:FindFirstChild("Soda"))
+                        if not _s4_check then
+                            _0x1A = _t6
+                            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
+                                [1] = "VendingMachine",
+                                [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("Lobby"):WaitForChild("VendingMachine"):WaitForChild("Vending")
+                            })
+                        end
+                    end
+                    if not _d5 and (_t6 - _0x2B >= 1.5) then
+                        task.wait(0.1)
+                        local _d5_check = (_b3 and _b3:FindFirstChild("Evil Duck")) or (_c2 and _c2:FindFirstChild("Evil Duck"))
+                        if not _d5_check then
+                            _0x2B = _t6
+                            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
+                                [1] = "EvilDuck",
+                                [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Players"):WaitForChild(_p1.Name),
+                                [3] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("UNGROUPED!"):WaitForChild("EvilDuck"):WaitForChild("EvilDuckToy")
+                            })
+                        end
+                    end
+                end)
+            else
+                if _x9K_2p then _x9K_2p:Disconnect() _x9K_2p = nil end
             end
         end
     })
