@@ -334,26 +334,28 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
             if _m7_Q then
                 if _x9K_2p then return end
                 _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
-                    local _p1 = game:GetService("Players").LocalPlayer local _c2, _b3 = _p1.Character, _p1:FindFirstChildOfClass("Backpack")
-                    __13["Soda"], __13["Evil Duck"] = false, false
-                    if _b3 then for _, v in pairs(_b3:GetChildren()) do if __13[v.Name] ~= nil then __13[v.Name] = true end end end
-                    if _c2 then for _, v in pairs(_c2:GetChildren()) do if __13[v.Name] ~= nil then __13[v.Name] = true end end end
-                    if __13["Soda"] and __13["Evil Duck"] then return end
+                    local _p1 = game:GetService("Players").LocalPlayer
+                    local _c2, _b3 = _p1.Character, _p1:FindFirstChildOfClass("Backpack")
+                    __13["Soda"] = (_b3 and _b3:FindFirstChild("Soda") ~= nil) or (_c2 and _c2:FindFirstChild("Soda") ~= nil)
+                    __13["Evil Duck"] = (_b3 and _b3:FindFirstChild("Evil Duck") ~= nil) or (_c2 and _c2:FindFirstChild("Evil Duck") ~= nil)
                     local _t6 = tick()
-                    if not __13["Soda"] and (_t6 - __14["Soda"] >= 2.5) then
-                        __14["Soda"] = _t6
-                        game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
-                            [1] = "VendingMachine",
-                            [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("Lobby"):WaitForChild("VendingMachine"):WaitForChild("Vending")
-                        })
-                    end
-                    if not __13["Evil Duck"] and (_t6 - __14["Evil Duck"] >= 2.5) then
-                        __14["Evil Duck"] = _t6
-                        game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
-                            [1] = "EvilDuck",
-                            [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Players"):WaitForChild(_p1.Name),
-                            [3] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("UNGROUPED!"):WaitForChild("EvilDuck"):WaitForChild("EvilDuckToy")
-                        })
+                    if not __13["Soda"] then
+                        if (_t6 - __14["Soda"] >= 2.5) then
+                            __14["Soda"] = _t6
+                            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
+                                [1] = "VendingMachine",
+                                [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("Lobby"):WaitForChild("VendingMachine"):WaitForChild("Vending")
+                            })
+                        end
+                    elseif not __13["Evil Duck"] then
+                        if (_t6 - __14["Evil Duck"] >= 2.5) then
+                            __14["Evil Duck"] = _t6
+                            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
+                                [1] = "EvilDuck",
+                                [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Players"):WaitForChild(_p1.Name),
+                                [3] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("UNGROUPED!"):WaitForChild("EvilDuck"):WaitForChild("EvilDuckToy")
+                            })
+                        end
                     end
                 end)
             else
