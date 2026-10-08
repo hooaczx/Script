@@ -341,20 +341,27 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                     local _t6 = tick()
                     if not __13["Soda"] then
                         if (_t6 - __14["Soda"] >= 2.5) then
-                            __14["Soda"] = _t6
-                            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
-                                [1] = "VendingMachine",
-                                [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("Lobby"):WaitForChild("VendingMachine"):WaitForChild("Vending")
-                            })
+                            local _vTarget = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Map") and workspace.GameObjects.Map:FindFirstChild("Lobby") and workspace.GameObjects.Map.Lobby:FindFirstChild("VendingMachine") and workspace.GameObjects.Map.Lobby.VendingMachine:FindFirstChild("Vending")
+                            if _vTarget then
+                                __14["Soda"] = _t6
+                                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
+                                    [1] = "VendingMachine",
+                                    [2] = _vTarget
+                                })
+                            end
                         end
                     elseif not __13["Evil Duck"] then
                         if (_t6 - __14["Evil Duck"] >= 2.5) then
-                            __14["Evil Duck"] = _t6
-                            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
-                                [1] = "EvilDuck",
-                                [2] = workspace:WaitForChild("GameObjects"):WaitForChild("Players"):WaitForChild(_p1.Name),
-                                [3] = workspace:WaitForChild("GameObjects"):WaitForChild("Map"):WaitForChild("UNGROUPED!"):WaitForChild("EvilDuck"):WaitForChild("EvilDuckToy")
-                            })
+                            local _pTarget = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Players") and workspace.GameObjects.Players:FindFirstChild(_p1.Name)
+                            local _dTarget = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Map") and workspace.GameObjects.Map:FindFirstChild("UNGROUPED!") and workspace.GameObjects.Map["UNGROUPED!"]:FindFirstChild("EvilDuck") and workspace.GameObjects.Map["UNGROUPED!"].EvilDuck:FindFirstChild("EvilDuckToy")
+                            if _pTarget and _dTarget then
+                                __14["Evil Duck"] = _t6
+                                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
+                                    [1] = "EvilDuck",
+                                    [2] = _pTarget,
+                                    [3] = _dTarget
+                                })
+                            end
                         end
                     end
                 end)
