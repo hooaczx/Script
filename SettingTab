@@ -395,6 +395,11 @@ elseif game.PlaceId == 71739455261863 then
                                             firetouchinterest(_hrp, _hb, 0)
                                             firetouchinterest(_hrp, _hb, 1)
                                             zQ9_xK[_hb] = true
+                                            local _now = os.clock()
+                                            if not zQ9_xK._last or (_now - zQ9_xK._last) >= 5 then
+                                                zQ9_xK._last = _now
+                                                pcall(function() game:GetService("StarterGui"):SetCore("SendNotification",{Title="Crystal✅",Text="Collected successfully.",Icon="rbxassetid://94657672839324",Duration=5}) end)
+                                            end
                                         end
                                     end
                                 end
@@ -404,12 +409,14 @@ elseif game.PlaceId == 71739455261863 then
                     if cE8_iO == 0 and zQ9_xK._flag and next(zQ9_xK) ~= nil then
                         zQ9_xK._flag = false
                         task.wait(2)
-                        table.clear(zQ9_xK)
+                        for vKey in pairs(zQ9_xK) do
+                            zQ9_xK[vKey] = nil
+                        end
                     elseif cE8_iO > 0 then
                         zQ9_xK._flag = true
                     end
                     for vKey in pairs(zQ9_xK) do
-                        if vKey ~= "_flag" and type(vKey) == "userdata" and not vKey:IsDescendantOf(workspace) then
+                        if vKey ~= "_flag" and vKey ~= "_last" and type(vKey) == "userdata" and not vKey:IsDescendantOf(workspace) then
                             zQ9_xK[vKey] = nil
                         end
                     end
@@ -419,7 +426,9 @@ elseif game.PlaceId == 71739455261863 then
                     _x9K_2p:Disconnect()
                     _x9K_2p = nil
                 end
-                table.clear(zQ9_xK)
+                for vKey in pairs(zQ9_xK) do
+                    zQ9_xK[vKey] = nil
+                end
             end
         end
     })
