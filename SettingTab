@@ -371,65 +371,58 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
 elseif game.PlaceId == 71739455261863 then
-    local __11, __12 = {}, {}
-    AddToggle(Main5u6, {
-        Name = "Auto Collect Crystal[Quicksand]",
-        Default = true,
-        Callback = function(_m7_Q)
-            if _m7_Q then
-                if _x9K_2p then return end
-                _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
-                    local _c = workspace:FindFirstChild("CrystalFolder")
-                    if not _c then return end
-                    local _l, _s = _c:GetChildren(), {}
-                    for _, v in ipairs(_l) do _s[v] = true end
-                    for i, v in pairs(__11) do
-                        if not _s[v] or v.Parent ~= _c then
-                            __11[i], __12[i] = nil, nil
-                        else
-                            local _hb = v:FindFirstChild("Hitbox")
-                            local _ti = _hb and _hb:FindFirstChild("TouchInterest")
-                            if __12[i] ~= _ti then __12[i] = _ti end
-                        end
-                    end
-                    for _, v in ipairs(_l) do
-                        local _e = false
-                        for _, ex in pairs(__11) do
-                            if ex == v then _e = true break end
-                        end
-                        if not _e then
-                            local _i = 1
-                            while __11[_i] or __12[_i] do _i = _i + 1 end
-                            __11[_i] = v
-                            local _hb = v:FindFirstChild("Hitbox")
-                            __12[_i] = _hb and _hb:FindFirstChild("TouchInterest")
-                        end
-                    end
-                    local _p = game:GetService("Players").LocalPlayer
-                    local _hrp = _p.Character and _p.Character:FindFirstChild("HumanoidRootPart")
-                    if _hrp then
-                        for i, _ti in pairs(__12) do
-                            local _v = __11[i]
-                            local _hb = _v and _v:FindFirstChild("Hitbox")
-                            if _ti and _v and _v.Parent == _c and _hb and _ti.Parent == _hb then
-                                task.spawn(function()
-                                    if _hrp.Parent and _hb.Parent then
-                                        firetouchinterest(_hrp, _hb, 0)
-                                        task.wait()
-                                        firetouchinterest(_hrp, _hb, 1)
-                                    end
-                                end)
-                            end
-                        end
-                    end
-                end)
-            else
-                if _x9K_2p then _x9K_2p:Disconnect() _x9K_2p = nil end
-                for i in pairs(__11) do __11[i] = nil end
-                for i in pairs(__12) do __12[i] = nil end
-            end
-        end
-    })
+    local _x9K_2p = nil
+    local zQ9_xK = {}
+    AddToggle(Main5u6, {
+        Name = "Auto Collect Crystal[Quicksand]",
+        Default = true,
+        Callback = function(jH5_oP)
+            if jH5_oP then
+                if _x9K_2p then return end
+                _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
+                    local bW2_yU = workspace:FindFirstChild("CrystalFolder")
+                    local cE8_iO = 0
+                    if bW2_yU then
+                        for _, vItem in ipairs(bW2_yU:GetChildren()) do
+                            local _hb = vItem:FindFirstChild("Hitbox")
+                            if _hb then
+                                cE8_iO = cE8_iO + 1
+                                if _hb:FindFirstChild("TouchInterest") then
+                                    if not zQ9_xK[_hb] then
+                                        local _p = game:GetService("Players").LocalPlayer
+                                        local _hrp = _p.Character and _p.Character:FindFirstChild("HumanoidRootPart")
+                                        if _hrp then
+                                            firetouchinterest(_hrp, _hb, 0)
+                                            firetouchinterest(_hrp, _hb, 1)
+                                            zQ9_xK[_hb] = true
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    if cE8_iO == 0 and zQ9_xK._flag and next(zQ9_xK) ~= nil then
+                        zQ9_xK._flag = false
+                        task.wait(2)
+                        table.clear(zQ9_xK)
+                    elseif cE8_iO > 0 then
+                        zQ9_xK._flag = true
+                    end
+                    for vKey in pairs(zQ9_xK) do
+                        if vKey ~= "_flag" and type(vKey) == "userdata" and not vKey:IsDescendantOf(workspace) then
+                            zQ9_xK[vKey] = nil
+                        end
+                    end
+                end)
+            else
+                if _x9K_2p then
+                    _x9K_2p:Disconnect()
+                    _x9K_2p = nil
+                end
+                table.clear(zQ9_xK)
+            end
+        end
+    })
 elseif game.PlaceId == 2413927524 then
     local __11, __12 = {}, {}
     local __13, __14 = {}, {}
