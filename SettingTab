@@ -381,45 +381,43 @@ elseif game.PlaceId == 71739455261863 then
                 _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
                     local _c = workspace:FindFirstChild("CrystalFolder")
                     if not _c then return end
-                    local _l = _c:GetChildren()
-                    for i, v in ipairs(__11) do
-                        local _f = false
-                        for _, child in ipairs(_l) do
-                            if child == v then _f = true break end
+                    local _l, _s = _c:GetChildren(), {}
+                    for _, v in ipairs(_l) do _s[v] = true end
+                    for i, v in pairs(__11) do
+                        if not _s[v] or v.Parent ~= _c then
+                            __11[i], __12[i] = nil, nil
+                        else
+                            local _hb = v:FindFirstChild("Hitbox")
+                            local _ti = _hb and _hb:FindFirstChild("TouchInterest")
+                            if __12[i] ~= _ti then __12[i] = _ti end
                         end
-                        if not _f then __11[i], __12[i] = nil, nil end
                     end
                     for _, v in ipairs(_l) do
                         local _e = false
-                        for _, ex in ipairs(__11) do
+                        for _, ex in pairs(__11) do
                             if ex == v then _e = true break end
                         end
                         if not _e then
-                            local _added = false
-                            for i = 1, math.max(#__11, #__12, 1) do
-                                if not __11[i] and not __12[i] then
-                                    __11[i] = v
-                                    local _hb = v:FindFirstChild("Hitbox")
-                                    __12[i] = _hb and _hb:FindFirstChild("TouchInterest")
-                                    _added = true
-                                    break
-                                end
-                            end
-                            if not _added then
-                                table.insert(__11, v)
-                                local _hb = v:FindFirstChild("Hitbox")
-                                table.insert(__12, _hb and _hb:FindFirstChild("TouchInterest"))
-                            end
+                            local _i = 1
+                            while __11[_i] or __12[_i] do _i = _i + 1 end
+                            __11[_i] = v
+                            local _hb = v:FindFirstChild("Hitbox")
+                            __12[_i] = _hb and _hb:FindFirstChild("TouchInterest")
                         end
                     end
-                    local _hrp = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    local _p = game:GetService("Players").LocalPlayer
+                    local _hrp = _p.Character and _p.Character:FindFirstChild("HumanoidRootPart")
                     if _hrp then
-                        for i, _ti in ipairs(__12) do
-                            if _ti and __11[i] and __11[i]:FindFirstChild("Hitbox") then
+                        for i, _ti in pairs(__12) do
+                            local _v = __11[i]
+                            local _hb = _v and _v:FindFirstChild("Hitbox")
+                            if _ti and _v and _v.Parent == _c and _hb and _ti.Parent == _hb then
                                 task.spawn(function()
-                                    firetouchinterest(_hrp, __11[i].Hitbox, 0)
-                                    task.wait()
-                                    firetouchinterest(_hrp, __11[i].Hitbox, 1)
+                                    if _hrp.Parent and _hb.Parent then
+                                        firetouchinterest(_hrp, _hb, 0)
+                                        task.wait()
+                                        firetouchinterest(_hrp, _hb, 1)
+                                    end
                                 end)
                             end
                         end
@@ -427,8 +425,8 @@ elseif game.PlaceId == 71739455261863 then
                 end)
             else
                 if _x9K_2p then _x9K_2p:Disconnect() _x9K_2p = nil end
-                for i = 1, #__11 do __11[i] = nil end
-                for i = 1, #__12 do __12[i] = nil end
+                for i in pairs(__11) do __11[i] = nil end
+                for i in pairs(__12) do __12[i] = nil end
             end
         end
     })
