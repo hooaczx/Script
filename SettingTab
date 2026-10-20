@@ -287,11 +287,12 @@ elseif game.PlaceId == 12432097393 then
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local __11, __12 = {}, {}
     local __13, __14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
-    local zQ9_xK = { _last = 0, _busy = false }
+    local __15 = {}
     local eR8_zX = nil
     local _x9K_2p = nil
+    local _pP9_zK = nil
     AddToggle(Main5u6, {
-        Name = "Npc[Unseen Liminality]",
+        Name = "Esp Npc[Unseen Liminality]",
         Default = true,
         Callback = function(fGj8_tP)
             if fGj8_tP then
@@ -328,34 +329,53 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
             end
         end
     })
-    AddButton(Main5u6, {
-        Name = "Collect All PointsOfInterest",
-        Callback = function()
-            if zQ9_xK._busy then return end
-            zQ9_xK._busy = true
-            task.spawn(function()
-                local _k9L_m2 = {}
-                local _z8X_pQ = game:GetService("Players").LocalPlayer.Character and (game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") or game:GetService("Players").LocalPlayer.Character.PrimaryPart)
-                local _q1W_7v = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
-                if _q1W_7v and _z8X_pQ then
-                    for _, _v in pairs(_q1W_7v:GetChildren()) do
-                        local _t = _v:FindFirstChildWhichIsA("TouchTransmitter", true)
-                        if _t and _t.Parent then table.insert(_k9L_m2, _t.Parent) end
+    AddToggle(Main5u6, {
+        Name = "Esp PointsOfInterest[Unseen Liminality]",
+        Default = true,
+        Callback = function(_q7_W)
+            if _q7_W then
+                if _pP9_zK then return end
+                _pP9_zK = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fPoi = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
+                    local _clr = Color3.new(0, 0.3 + ((math.sin(tick() * 3) + 1) / 2 * 0.7), 0)
+                    if _fPoi then
+                        for _, _vP in pairs(_fPoi:GetChildren()) do
+                            local _tP = _vP:IsA("BasePart") and _vP or _vP:FindFirstChildWhichIsA("BasePart", true)
+                            if _tP and not __15[_vP] then
+                                local _sq = Drawing.new("Square")
+                                _sq.Thickness = 1
+                                _sq.Filled = false
+                                _sq.Visible = false
+                                __15[_vP] = {box = _sq, part = _tP}
+                            end
+                        end
                     end
-                end
-                for _, _p in ipairs(_k9L_m2) do
-                    if _z8X_pQ and _p and _p:IsDescendantOf(workspace) then
-                        pcall(function() firetouchinterest(_z8X_pQ, _p, 0) task.wait(0.05) firetouchinterest(_z8X_pQ, _p, 1) end)
+                    for _mP, _dP in pairs(__15) do
+                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
+                            local _pos, _vis = workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position)
+                            if _vis and _pos.Z > 0 then
+                                local _h = math.abs(workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position + Vector3.new(0, _dP.part.Size.Y / 2, 0)).Y - workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position - Vector3.new(0, _dP.part.Size.Y / 2, 0)).Y)
+                                local _w = math.abs(workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position + Vector3.new(_dP.part.Size.X / 2, 0, 0)).X - workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position - Vector3.new(_dP.part.Size.X / 2, 0, 0)).X)
+                                _dP.box.Size = Vector2.new(math.max(_w, 5), math.max(_h, 5))
+                                _dP.box.Position = Vector2.new(_pos.X - _dP.box.Size.X / 2, _pos.Y - _dP.box.Size.Y / 2)
+                                _dP.box.Color = _clr
+                                _dP.box.Visible = true
+                            else
+                                _dP.box.Visible = false
+                            end
+                        else
+                            if _dP.box then _dP.box:Remove() end
+                            __15[_mP] = nil
+                        end
                     end
+                end)
+            else
+                if _pP9_zK then _pP9_zK:Disconnect() _pP9_zK = nil end
+                for _mP, _dP in pairs(__15) do
+                    if _dP.box then _dP.box:Remove() end
                 end
-                table.clear(_k9L_m2)
-                local _j4M_9x = os.clock()
-                if not zQ9_xK._last or (_j4M_9x - zQ9_xK._last) >= 5 then
-                    zQ9_xK._last = _j4M_9x
-                    pcall(function() game:GetService("StarterGui"):SetCore("SendNotification", {Title = "PointsOfInterest", Text = "You already have all of them. (No additional points found or wait for game update)", Icon = "rbxassetid://131810953775770", Duration = 5}) end)
-                end
-                zQ9_xK._busy = false
-            end)
+                table.clear(__15)
+            end
         end
     })
     AddToggle(Main5u6, {
