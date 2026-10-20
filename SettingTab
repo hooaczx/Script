@@ -342,29 +342,38 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                         for _, _vP in pairs(_fPoi:GetChildren()) do
                             local _tP = _vP:IsA("BasePart") and _vP or _vP:FindFirstChildWhichIsA("BasePart", true)
                             if _tP and not __15[_vP] then
-                                local _sq = Drawing.new("Square")
-                                _sq.Thickness = 1
-                                _sq.Filled = false
-                                _sq.Visible = false
-                                __15[_vP] = {box = _sq, part = _tP}
+                                local _lines = {}
+                                for _i = 1, 4 do
+                                    local _l = Drawing.new("Line")
+                                    _l.Thickness = 1.5
+                                    _l.Visible = false
+                                    table.insert(_lines, _l)
+                                end
+                                __15[_vP] = {lines = _lines, part = _tP}
                             end
                         end
                     end
                     for _mP, _dP in pairs(__15) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _pos, _vis = workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position)
-                            if _vis and _pos.Z > 0 then
-                                local _h = math.abs(workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position + Vector3.new(0, _dP.part.Size.Y / 2, 0)).Y - workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position - Vector3.new(0, _dP.part.Size.Y / 2, 0)).Y)
-                                local _w = math.abs(workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position + Vector3.new(_dP.part.Size.X / 2, 0, 0)).X - workspace.CurrentCamera:WorldToViewportPoint(_dP.part.Position - Vector3.new(_dP.part.Size.X / 2, 0, 0)).X)
-                                _dP.box.Size = Vector2.new(math.max(_w, 5), math.max(_h, 5))
-                                _dP.box.Position = Vector2.new(_pos.X - _dP.box.Size.X / 2, _pos.Y - _dP.box.Size.Y / 2)
-                                _dP.box.Color = _clr
-                                _dP.box.Visible = true
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size
+                            local _x, _z = _sz.X / 2, _sz.Z / 2
+                            local _p1, _v1 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(-_x, 0, -_z)).Position)
+                            local _p2, _v2 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(_x, 0, -_z)).Position)
+                            local _p3, _v3 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(_x, 0, _z)).Position)
+                            local _p4, _v4 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(-_x, 0, _z)).Position)
+                            if _v1 and _v2 and _v3 and _v4 and _p1.Z > 0 and _p2.Z > 0 and _p3.Z > 0 and _p4.Z > 0 then
+                                local _pts = {Vector2.new(_p1.X, _p1.Y), Vector2.new(_p2.X, _p2.Y), Vector2.new(_p3.X, _p3.Y), Vector2.new(_p4.X, _p4.Y)}
+                                for _idx, _line in ipairs(_dP.lines) do
+                                    _line.From = _pts[_idx]
+                                    _line.To = _pts[_idx % 4 + 1]
+                                    _line.Color = _clr
+                                    _line.Visible = true
+                                end
                             else
-                                _dP.box.Visible = false
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
                             end
                         else
-                            if _dP.box then _dP.box:Remove() end
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                             __15[_mP] = nil
                         end
                     end
@@ -372,7 +381,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
             else
                 if _pP9_zK then _pP9_zK:Disconnect() _pP9_zK = nil end
                 for _mP, _dP in pairs(__15) do
-                    if _dP.box then _dP.box:Remove() end
+                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                 end
                 table.clear(__15)
             end
