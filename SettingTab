@@ -285,95 +285,89 @@ elseif game.PlaceId == 12432097393 then
         end
     })
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
-    elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
-    local __11, __12 = {}, {}
-    local __13, __14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
-    local __15, __17 = {}, {}
-    local _G8_M = {}
-    local eR8_zX, _x9K_2p, _pP9_zK, _pK8_zQ = nil, nil, nil, nil
+    local _k11, _k12 = {}, {}
+    local _k13, _k14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
+    local _k15, _k17 = {}, {}
+    local _g8M = {}
+    local _e8X, _x9P, _pK9, _pQ8 = nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp Npc[Unseen Liminality]",
         Default = true,
-        Callback = function(fGj8_tP)
-            if fGj8_tP then
-                if eR8_zX then return end
-                eR8_zX = game:GetService("RunService").Heartbeat:Connect(function()
-                    local folder = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("NPCs")
-                    if folder then
-                        for _, m in pairs(folder:GetChildren()) do
-                            if m and m:IsA("Model") then
-                                local target = m:FindFirstChild("HumanoidRootPart") or m:FindFirstChild("PrimaryPart") or m
-                                if not __11[m] then
-                                    local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
-                                    local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
-                                    __11[m], __12[m] = {hl, target}, tw
-                                    _G8_M[m] = true
+        Callback = function(_f8P)
+            if _f8P then
+                if _e8X then return end
+                _e8X = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _fN = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("NPCs")
+                    if _fN then
+                        for _, _m in pairs(_fN:GetChildren()) do
+                            if _m and _m:IsA("Model") then
+                                local _tN = _m:FindFirstChild("HumanoidRootPart") or _m:FindFirstChild("PrimaryPart") or _m
+                                if not _k11[_m] then
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0.6, 0) _hl.FillColor = Color3.new(1, 0.6, 0) _hl.Parent = _m
+                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
+                                    _k11[_m], _k12[_m] = {_hl, _tN}, _tw
+                                    _g8M[_m] = true
                                 end
                             end
                         end
                     end
-                    for m, data in pairs(__11) do
-                        if not m:IsDescendantOf(workspace) or not data[2]:IsDescendantOf(workspace) then
-                            if __12[m] then __12[m]:Cancel() end
-                            if data[1] then data[1]:Destroy() end
-                            __11[m], __12[m] = nil, nil
-                            _G8_M[m] = nil
+                    for _m, _d in pairs(_k11) do
+                        if not _m:IsDescendantOf(workspace) or not _d[2]:IsDescendantOf(workspace) then
+                            if _k12[_m] then _k12[_m]:Cancel() end
+                            if _d[1] then _d[1]:Destroy() end
+                            _k11[_m], _k12[_m] = nil, nil
+                            _g8M[_m] = nil
                         end
                     end
                 end)
             else
-                if eR8_zX then eR8_zX:Disconnect() eR8_zX = nil end
-                for m, data in pairs(__11) do
-                    if __12[m] then __12[m]:Cancel() end
-                    if data[1] then data[1]:Destroy() end
-                    _G8_M[m] = nil
+                if _e8X then _e8X:Disconnect() _e8X = nil end
+                for _m, _d in pairs(_k11) do
+                    if _k12[_m] then _k12[_m]:Cancel() end
+                    if _d[1] then _d[1]:Destroy() end
+                    _g8M[_m] = nil
                 end
-                table.clear(__11) table.clear(__12)
+                table.clear(_k11) table.clear(_k12)
             end
         end
     })
     AddToggle(Main5u6, {
         Name = "Esp PointsOfInterest[Unseen Liminality]",
         Default = true,
-        Callback = function(_q7_W)
-            if _q7_W then
-                if _pP9_zK then return end
-                _pP9_zK = game:GetService("RunService").RenderStepped:Connect(function()
-                    local _fPoi = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
-                    local _clr = Color3.new(0, 0.3 + ((math.sin(tick() * 3) + 1) / 2 * 0.7), 0)
-                    local _cam = workspace.CurrentCamera
-                    if _fPoi then
-                        for _, _vP in pairs(_fPoi:GetChildren()) do
-                            local _tP = _vP:IsA("BasePart") and _vP or _vP:FindFirstChildWhichIsA("BasePart", true)
-                            if _tP and not __15[_vP] then
-                                local _lines = {}
-                                for _i = 1, 4 do
-                                    local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false
-                                    table.insert(_lines, _l)
-                                end
-                                __15[_vP] = {lines = _lines, part = _tP}
-                                _G8_M[_vP] = true
+        Callback = function(_q7W)
+            if _q7W then
+                if _pK9 then return end
+                _pK9 = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fP = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
+                    local _cL = Color3.new(0, 0.3 + ((math.sin(tick() * 3) + 1) / 2 * 0.7), 0)
+                    if _fP then
+                        for _, _v in pairs(_fP:GetChildren()) do
+                            local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                            if _tP and not _k15[_v] then
+                                local _lns = {}
+                                for _i = 1, 4 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                                _k15[_v] = {lines = _lns, part = _tP}
+                                _g8M[_v] = true
                             end
                         end
                     end
-                    for _mP, _dP in pairs(__15) do
+                    for _mP, _dP in pairs(_k15) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
                             local _cf, _sz = _dP.part.CFrame, _dP.part.Size
                             local _x, _z = _sz.X / 2, _sz.Z / 2
-                            local _w1 = (_cf * CFrame.new(-_x, -_sz.Y / 2, -_z)).Position
-                            local _w2 = (_cf * CFrame.new(_x, -_sz.Y / 2, -_z)).Position
-                            local _w3 = (_cf * CFrame.new(_x, -_sz.Y / 2, _z)).Position
-                            local _w4 = (_cf * CFrame.new(-_x, -_sz.Y / 2, _z)).Position
-                            local _p1, _v1 = _cam:WorldToViewportPoint(_w1)
-                            local _p2, _v2 = _cam:WorldToViewportPoint(_w2)
-                            local _p3, _v3 = _cam:WorldToViewportPoint(_w3)
-                            local _p4, _v4 = _cam:WorldToViewportPoint(_w4)
-                            if _v1 and _v2 and _v3 and _v4 and _p1.Z > 0 and _p2.Z > 0 and _p3.Z > 0 and _p4.Z > 0 then
-                                local _pts = {Vector2.new(_p1.X, _p1.Y), Vector2.new(_p2.X, _p2.Y), Vector2.new(_p3.X, _p3.Y), Vector2.new(_p4.X, _p4.Y)}
+                            local _cam = workspace.CurrentCamera
+                            local _w = {(_cf * CFrame.new(-_x, -_sz.Y / 2, -_z)).Position, (_cf * CFrame.new(_x, -_sz.Y / 2, -_z)).Position, (_cf * CFrame.new(_x, -_sz.Y / 2, _z)).Position, (_cf * CFrame.new(-_x, -_sz.Y / 2, _z)).Position}
+                            local _pts, _anyV = {}, false
+                            for _i = 1, 4 do
+                                local _sp, _vOn = _cam:WorldToScreenPoint(_w[_i])
+                                if _sp.Z > -2 then _anyV = true end
+                                _pts[_i] = Vector2.new(math.clamp(_sp.X, 0, _cam.ViewportSize.X), math.clamp(_sp.Y, 0, _cam.ViewportSize.Y))
+                            end
+                            if _anyV then
                                 for _idx, _line in ipairs(_dP.lines) do
                                     _line.From = _pts[_idx]
                                     _line.To = _pts[_idx % 4 + 1]
-                                    _line.Color = _clr
+                                    _line.Color = _cL
                                     _line.Visible = true
                                 end
                             else
@@ -381,81 +375,60 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             end
                         else
                             if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
-                            __15[_mP] = nil
-                            _G8_M[_mP] = nil
+                            _k15[_mP] = nil
+                            _g8M[_mP] = nil
                         end
                     end
                 end)
             else
-                if _pP9_zK then _pP9_zK:Disconnect() _pP9_zK = nil end
-                for _mP, _dP in pairs(__15) do
+                if _pK9 then _pK9:Disconnect() _pK9 = nil end
+                for _mP, _dP in pairs(_k15) do
                     if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
-                    _G8_M[_mP] = nil
+                    _g8M[_mP] = nil
                 end
-                table.clear(__15)
+                table.clear(_k15)
             end
         end
     })
     AddToggle(Main5u6, {
         Name = "Esp Pictures[Unseen Liminality]",
         Default = true,
-        Callback = function(_q8_W)
-            if _q8_W then
-                if _pK8_zQ then return end
-                _pK8_zQ = game:GetService("RunService").RenderStepped:Connect(function()
+        Callback = function(_q8W)
+            if _q8W then
+                if _pQ8 then return end
+                _pQ8 = game:GetService("RunService").RenderStepped:Connect(function()
                     local _fPic = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Pictures")
-                    local _clr = Color3.new(0, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 1)
-                    local _cam = workspace.CurrentCamera
+                    local _cL = Color3.new(0, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 1)
                     if _fPic then
-                        for _, _vP in pairs(_fPic:GetChildren()) do
-                            local _tP = _vP:IsA("BasePart") and _vP or _vP:FindFirstChildWhichIsA("BasePart", true)
-                            if _tP and not __17[_vP] then
-                                local _lines = {}
-                                for _i = 1, 12 do
-                                    local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false
-                                    table.insert(_lines, _l)
-                                end
-                                __17[_vP] = {lines = _lines, part = _tP}
-                                _G8_M[_vP] = true
+                        for _, _v in pairs(_fPic:GetChildren()) do
+                            local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                            if _tP and not _k17[_v] then
+                                local _lns = {}
+                                for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                                _k17[_v] = {lines = _lns, part = _tP}
+                                _g8M[_v] = true
                             end
                         end
                     end
-                    for _mP, _dP in pairs(__17) do
+                    for _mP, _dP in pairs(_k17) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
                             local _cf, _sz = _dP.part.CFrame, _dP.part.Size
                             local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
-                            local _wPos = {
-                                (_cf * CFrame.new(-_x, -_y, -_z)).Position,
-                                (_cf * CFrame.new(_x, -_y, -_z)).Position,
-                                (_cf * CFrame.new(_x, -_y, _z)).Position,
-                                (_cf * CFrame.new(-_x, -_y, _z)).Position,
-                                (_cf * CFrame.new(-_x, _y, -_z)).Position,
-                                (_cf * CFrame.new(_x, _y, -_z)).Position,
-                                (_cf * CFrame.new(_x, _y, _z)).Position,
-                                (_cf * CFrame.new(-_x, _y, _z)).Position
-                            }
-                            local _cp = {}
-                            local _visAll = true
+                            local _cam = workspace.CurrentCamera
+                            local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
+                            local _cp, _anyV = {}, false
                             for _i = 1, 8 do
-                                local _screenPos, _onScreen = _cam:WorldToViewportPoint(_wPos[_i])
-                                if not _onScreen or _screenPos.Z <= 0 then
-                                    _visAll = false
-                                    break
-                                end
-                                _cp[_i] = Vector2.new(_screenPos.X, _screenPos.Y)
+                                local _sp = _cam:WorldToScreenPoint(_wP[_i])
+                                if _sp.Z > -2 then _anyV = true end
+                                _cp[_i] = Vector2.new(math.clamp(_sp.X, 0, _cam.ViewportSize.X), math.clamp(_sp.Y, 0, _cam.ViewportSize.Y))
                             end
-
-                            if _visAll then
-                                local _edges = {
-                                    {1,2}, {2,3}, {3,4}, {4,1},
-                                    {5,6}, {6,7}, {7,8}, {8,5},
-                                    {1,5}, {2,6}, {3,7}, {4,8}
-                                }
-                                for _i, _edge in ipairs(_edges) do
+                            if _anyV then
+                                local _eg = {{1,2},{2,3},{3,4},{4,1},{5,6},{6,7},{7,8},{8,5},{1,5},{2,6},{3,7},{4,8}}
+                                for _i, _e in ipairs(_eg) do
                                     local _line = _dP.lines[_i]
-                                    _line.From = _cp[_edge[1]]
-                                    _line.To = _cp[_edge[2]]
-                                    _line.Color = _clr
+                                    _line.From = _cp[_e[1]]
+                                    _line.To = _cp[_e[2]]
+                                    _line.Color = _cL
                                     _line.Visible = true
                                 end
                             else
@@ -463,61 +436,54 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             end
                         else
                             if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
-                            __17[_mP] = nil
-                            _G8_M[_mP] = nil
+                            _k17[_mP] = nil
+                            _g8M[_mP] = nil
                         end
                     end
                 end)
             else
-                if _pK8_zQ then _pK8_zQ:Disconnect() _pK8_zQ = nil end
-                for _mP, _dP in pairs(__17) do
+                if _pQ8 then _pQ8:Disconnect() _pQ8 = nil end
+                for _mP, _dP in pairs(_k17) do
                     if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
-                    _G8_M[_mP] = nil
+                    _g8M[_mP] = nil
                 end
-                table.clear(__17)
+                table.clear(_k17)
             end
         end
     })
     AddToggle(Main5u6, {
         Name = "Auto Get Item Soda & Evil Duck[Unseen Liminality]",
         Default = true,
-        Callback = function(_m7_Q)
-            if _m7_Q then
-                if _x9K_2p then return end
-                _x9K_2p = game:GetService("RunService").Heartbeat:Connect(function()
+        Callback = function(_m7Q)
+            if _m7Q then
+                if _x9P then return end
+                _x9P = game:GetService("RunService").Heartbeat:Connect(function()
                     local _p1 = game:GetService("Players").LocalPlayer local _c2, _b3 = _p1.Character, _p1:FindFirstChildOfClass("Backpack")
-                    __13["Soda"], __13["Evil Duck"] = false, false
-                    if _b3 then for _, v in pairs(_b3:GetChildren()) do if __13[v.Name] ~= nil then __13[v.Name] = true end end end
-                    if _c2 then for _, v in pairs(_c2:GetChildren()) do if __13[v.Name] ~= nil then __13[v.Name] = true end end end
-                    if __13["Soda"] and __13["Evil Duck"] then return end
+                    _k13["Soda"], _k13["Evil Duck"] = false, false
+                    if _b3 then for _, v in pairs(_b3:GetChildren()) do if _k13[v.Name] ~= nil then _k13[v.Name] = true end end end
+                    if _c2 then for _, v in pairs(_c2:GetChildren()) do if _k13[v.Name] ~= nil then _k13[v.Name] = true end end end
+                    if _k13["Soda"] and _k13["Evil Duck"] then return end
                     local _t6 = tick()
-                    if not __13["Soda"] then
-                        if (_t6 - __14["Soda"] >= 2.5) then
+                    if not _k13["Soda"] then
+                        if (_t6 - _k14["Soda"] >= 2.5) then
                             if workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Map") and workspace.GameObjects.Map:FindFirstChild("Lobby") and workspace.GameObjects.Map.Lobby:FindFirstChild("VendingMachine") then
-                                __14["Soda"] = _t6
-                                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
-                                    [1] = "VendingMachine",
-                                    [2] = workspace.GameObjects.Map.Lobby.VendingMachine.Vending
-                                })
+                                _k14["Soda"] = _t6
+                                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({[1] = "VendingMachine", [2] = workspace.GameObjects.Map.Lobby.VendingMachine.Vending})
                             end
                         end
-                    elseif not __13["Evil Duck"] then
-                        if (_t6 - __14["Evil Duck"] >= 2.5) then
+                    elseif not _k13["Evil Duck"] then
+                        if (_t6 - _k14["Evil Duck"] >= 2.5) then
                             if workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Players") and workspace.GameObjects.Players:FindFirstChild(_p1.Name) and workspace.GameObjects.Map:FindFirstChild("UNGROUPED!") and workspace.GameObjects.Map["UNGROUPED!"]:FindFirstChild("EvilDuck") then
-                                __14["Evil Duck"] = _t6
-                                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({
-                                    [1] = "EvilDuck",
-                                    [2] = workspace.GameObjects.Players:FindFirstChild(_p1.Name),
-                                    [3] = workspace.GameObjects.Map["UNGROUPED!"].EvilDuck.EvilDuckToy
-                                })
+                                _k14["Evil Duck"] = _t6
+                                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Interactions"):FireServer({[1] = "EvilDuck", [2] = workspace.GameObjects.Players:FindFirstChild(_p1.Name), [3] = workspace.GameObjects.Map["UNGROUPED!"].EvilDuck.EvilDuckToy})
                             end
                         end
                     end
                 end)
             else
-                if _x9K_2p then _x9K_2p:Disconnect() _x9K_2p = nil end
-                __13["Soda"], __13["Evil Duck"] = false, false
-                __14["Soda"], __14["Evil Duck"] = 0, 0
+                if _x9P then _x9P:Disconnect() _x9P = nil end
+                _k13["Soda"], _k13["Evil Duck"] = false, false
+                _k14["Soda"], _k14["Evil Duck"] = 0, 0
             end
         end
     })
