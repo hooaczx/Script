@@ -287,6 +287,7 @@ elseif game.PlaceId == 12432097393 then
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local __11, __12 = {}, {}
     local __13, __14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
+    local zQ9_xK = { _last = 0, _busy = false }
     local eR8_zX = nil
     local _x9K_2p = nil
     AddToggle(Main5u6, {
@@ -325,6 +326,36 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 end
                 table.clear(__11) table.clear(__12)
             end
+        end
+    })
+    AddButton(Main5u6, {
+        Name = "Collect All PointsOfInterest",
+        Callback = function()
+            if zQ9_xK._busy then return end
+            zQ9_xK._busy = true
+            task.spawn(function()
+                local _k9L_m2 = {}
+                local _z8X_pQ = game:GetService("Players").LocalPlayer.Character and (game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") or game:GetService("Players").LocalPlayer.Character.PrimaryPart)
+                local _q1W_7v = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
+                if _q1W_7v and _z8X_pQ then
+                    for _, _v in pairs(_q1W_7v:GetChildren()) do
+                        local _t = _v:FindFirstChildWhichIsA("TouchTransmitter", true)
+                        if _t and _t.Parent then table.insert(_k9L_m2, _t.Parent) end
+                    end
+                end
+                for _, _p in ipairs(_k9L_m2) do
+                    if _z8X_pQ and _p and _p:IsDescendantOf(workspace) then
+                        pcall(function() firetouchinterest(_z8X_pQ, _p, 0) task.wait(0.05) firetouchinterest(_z8X_pQ, _p, 1) end)
+                    end
+                end
+                table.clear(_k9L_m2)
+                local _j4M_9x = os.clock()
+                if not zQ9_xK._last or (_j4M_9x - zQ9_xK._last) >= 5 then
+                    zQ9_xK._last = _j4M_9x
+                    pcall(function() game:GetService("StarterGui"):SetCore("SendNotification", {Title = "PointsOfInterest", Text = "You already have all of them. (No additional points found or wait for game update)", Icon = "rbxassetid://131810953775770", Duration = 5}) end)
+                end
+                zQ9_xK._busy = false
+            end)
         end
     })
     AddToggle(Main5u6, {
