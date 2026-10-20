@@ -285,6 +285,7 @@ elseif game.PlaceId == 12432097393 then
         end
     })
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
+    elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local _k11, _k12 = {}, {}
     local _k13, _k14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
     local _k15, _k17 = {}, {}
@@ -356,14 +357,14 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             local _cf, _sz = _dP.part.CFrame, _dP.part.Size
                             local _x, _z = _sz.X / 2, _sz.Z / 2
                             local _cam = workspace.CurrentCamera
-                            local _w = {(_cf * CFrame.new(-_x, -_sz.Y / 2, -_z)).Position, (_cf * CFrame.new(_x, -_sz.Y / 2, -_z)).Position, (_cf * CFrame.new(_x, -_sz.Y / 2, _z)).Position, (_cf * CFrame.new(-_x, -_sz.Y / 2, _z)).Position}
-                            local _pts, _anyV = {}, false
+                            local _w = {(_cf * CFrame.new(-_x, 0, -_z)).Position, (_cf * CFrame.new(_x, 0, -_z)).Position, (_cf * CFrame.new(_x, 0, _z)).Position, (_cf * CFrame.new(-_x, 0, _z)).Position}
+                            local _pts, _allV = {}, true
                             for _i = 1, 4 do
-                                local _sp, _vOn = _cam:WorldToScreenPoint(_w[_i])
-                                if _sp.Z > -2 then _anyV = true end
-                                _pts[_i] = Vector2.new(math.clamp(_sp.X, 0, _cam.ViewportSize.X), math.clamp(_sp.Y, 0, _cam.ViewportSize.Y))
+                                local _sp, _vOn = _cam:WorldToViewportPoint(_w[_i])
+                                if _sp.Z <= 0 then _allV = false break end
+                                _pts[_i] = Vector2.new(_sp.X, _sp.Y)
                             end
-                            if _anyV then
+                            if _allV then
                                 for _idx, _line in ipairs(_dP.lines) do
                                     _line.From = _pts[_idx]
                                     _line.To = _pts[_idx % 4 + 1]
@@ -416,13 +417,13 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
                             local _cam = workspace.CurrentCamera
                             local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
-                            local _cp, _anyV = {}, false
+                            local _cp, _allV = {}, true
                             for _i = 1, 8 do
-                                local _sp = _cam:WorldToScreenPoint(_wP[_i])
-                                if _sp.Z > -2 then _anyV = true end
-                                _cp[_i] = Vector2.new(math.clamp(_sp.X, 0, _cam.ViewportSize.X), math.clamp(_sp.Y, 0, _cam.ViewportSize.Y))
+                                local _sp, _vOn = _cam:WorldToViewportPoint(_wP[_i])
+                                if _sp.Z <= 0 then _allV = false break end
+                                _cp[_i] = Vector2.new(_sp.X, _sp.Y)
                             end
-                            if _anyV then
+                            if _allV then
                                 local _eg = {{1,2},{2,3},{3,4},{4,1},{5,6},{6,7},{7,8},{8,5},{1,5},{2,6},{3,7},{4,8}}
                                 for _i, _e in ipairs(_eg) do
                                     local _line = _dP.lines[_i]
