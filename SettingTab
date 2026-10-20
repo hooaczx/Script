@@ -287,9 +287,9 @@ elseif game.PlaceId == 12432097393 then
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local _k11, _k12 = {}, {}
     local _k13, _k14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
-    local _k15, _k17 = {}, {}
+    local _k15, _k17, _k18 = {}, {}, {}
     local _g8M = {}
-    local _e8X, _x9P, _pK9, _pQ8 = nil, nil, nil, nil
+    local _e8X, _x9P, _pK9, _pQ8, _pW2 = nil, nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp Npc[Unseen Liminality]",
         Default = true,
@@ -332,6 +332,42 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
     AddToggle(Main5u6, {
+        Name = "Esp Weapon[Unseen Liminality]",
+        Default = true,
+        Callback = function(_f9W)
+            if _f9W then
+                if _pW2 then return end
+                _pW2 = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _wP = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Map") and workspace.GameObjects.Map:FindFirstChild("ClarksStore") and workspace.GameObjects.Map.ClarksStore:FindFirstChild("Weapon")
+                    if _wP then
+                        if not _k18[_wP] then
+                            local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\7\8\9" _hl.Adornee = _wP _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.fromRGB(150, 220, 50) _hl.FillColor = Color3.fromRGB(255, 140, 30) _hl.Parent = _wP
+                            local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.fromRGB(80, 180, 40)}) _tw:Play()
+                            _k18[_wP] = {_hl, _tw}
+                            _g8M[_wP] = true
+                        end
+                    end
+                    for _oW, _dW in pairs(_k18) do
+                        if not _oW:IsDescendantOf(workspace) then
+                            if _dW[2] then _dW[2]:Cancel() end
+                            if _dW[1] then _dW[1]:Destroy() end
+                            _k18[_oW] = nil
+                            _g8M[_oW] = nil
+                        end
+                    end
+                end)
+            else
+                if _pW2 then _pW2:Disconnect() _pW2 = nil end
+                for _oW, _dW in pairs(_k18) do
+                    if _dW[2] then _dW[2]:Cancel() end
+                    if _dW[1] then _dW[1]:Destroy() end
+                    _g8M[_oW] = nil
+                end
+                table.clear(_k18)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
         Name = "Esp PointsOfInterest[Unseen Liminality]",
         Default = true,
         Callback = function(_q7W)
@@ -339,17 +375,22 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 if _pK9 then return end
                 _pK9 = game:GetService("RunService").RenderStepped:Connect(function()
                     local _fP = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
+                    if not _fP or #_fP:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k15) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k15[_mP], _g8M[_mP] = nil, nil
+                        end
+                        return
+                    end
                     local _cL = Color3.new(0, 0.3 + ((math.sin(tick() * 3) + 1) / 2 * 0.7), 0)
                     local _cam = workspace.CurrentCamera
-                    if _fP then
-                        for _, _v in pairs(_fP:GetChildren()) do
-                            local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
-                            if _tP and not _k15[_v] then
-                                local _lns = {}
-                                for _i = 1, 4 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                                _k15[_v] = {lines = _lns, part = _tP}
-                                _g8M[_v] = true
-                            end
+                    for _, _v in pairs(_fP:GetChildren()) do
+                        local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                        if _tP and not _k15[_v] then
+                            local _lns = {}
+                            for _i = 1, 4 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k15[_v] = {lines = _lns, part = _tP}
+                            _g8M[_v] = true
                         end
                     end
                     for _mP, _dP in pairs(_k15) do
@@ -398,17 +439,22 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 if _pQ8 then return end
                 _pQ8 = game:GetService("RunService").RenderStepped:Connect(function()
                     local _fPic = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Pictures")
+                    if not _fPic or #_fPic:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k17) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k17[_mP], _g8M[_mP] = nil, nil
+                        end
+                        return
+                    end
                     local _cL = Color3.new(0, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 1)
                     local _cam = workspace.CurrentCamera
-                    if _fPic then
-                        for _, _v in pairs(_fPic:GetChildren()) do
-                            local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
-                            if _tP and not _k17[_v] then
-                                local _lns = {}
-                                for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                                _k17[_v] = {lines = _lns, part = _tP}
-                                _g8M[_v] = true
-                            end
+                    for _, _v in pairs(_fPic:GetChildren()) do
+                        local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                        if _tP and not _k17[_v] then
+                            local _lns = {}
+                            for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k17[_v] = {lines = _lns, part = _tP}
+                            _g8M[_v] = true
                         end
                     end
                     for _mP, _dP in pairs(_k17) do
@@ -453,7 +499,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
     })
     AddToggle(Main5u6, {
         Name = "Auto Buy Soda & Collect Evil Duck[Unseen Liminality]",
-        Default = false,
+        Default = true,
         Callback = function(_m7Q)
             if _m7Q then
                 if _x9P then return end
