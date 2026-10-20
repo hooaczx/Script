@@ -285,12 +285,12 @@ elseif game.PlaceId == 12432097393 then
         end
     })
 elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
+    elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game.PlaceId == 82797688803922 then
     local __11, __12 = {}, {}
     local __13, __14 = {["Soda"] = false, ["Evil Duck"] = false}, {["Soda"] = 0, ["Evil Duck"] = 0}
-    local __15 = {}
-    local eR8_zX = nil
-    local _x9K_2p = nil
-    local _pP9_zK = nil
+    local __15, __17 = {}, {}
+    local _G8_M = {}
+    local eR8_zX, _x9K_2p, _pP9_zK, _pK8_zQ = nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp Npc[Unseen Liminality]",
         Default = true,
@@ -307,6 +307,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                                     local hl = Instance.new("Highlight") hl.Name = "\226\128\139\1\2\3" hl.Adornee = m hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop hl.OutlineColor = Color3.new(1, 0.6, 0) hl.FillColor = Color3.new(1, 0.6, 0) hl.Parent = m
                                     local tw = game:GetService("TweenService"):Create(hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) tw:Play()
                                     __11[m], __12[m] = {hl, target}, tw
+                                    _G8_M[m] = true
                                 end
                             end
                         end
@@ -316,6 +317,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             if __12[m] then __12[m]:Cancel() end
                             if data[1] then data[1]:Destroy() end
                             __11[m], __12[m] = nil, nil
+                            _G8_M[m] = nil
                         end
                     end
                 end)
@@ -324,6 +326,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 for m, data in pairs(__11) do
                     if __12[m] then __12[m]:Cancel() end
                     if data[1] then data[1]:Destroy() end
+                    _G8_M[m] = nil
                 end
                 table.clear(__11) table.clear(__12)
             end
@@ -338,18 +341,18 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 _pP9_zK = game:GetService("RunService").RenderStepped:Connect(function()
                     local _fPoi = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("PointsOfInterest")
                     local _clr = Color3.new(0, 0.3 + ((math.sin(tick() * 3) + 1) / 2 * 0.7), 0)
+                    local _cam = workspace.CurrentCamera
                     if _fPoi then
                         for _, _vP in pairs(_fPoi:GetChildren()) do
                             local _tP = _vP:IsA("BasePart") and _vP or _vP:FindFirstChildWhichIsA("BasePart", true)
                             if _tP and not __15[_vP] then
                                 local _lines = {}
                                 for _i = 1, 4 do
-                                    local _l = Drawing.new("Line")
-                                    _l.Thickness = 1.5
-                                    _l.Visible = false
+                                    local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false
                                     table.insert(_lines, _l)
                                 end
                                 __15[_vP] = {lines = _lines, part = _tP}
+                                _G8_M[_vP] = true
                             end
                         end
                     end
@@ -357,10 +360,14 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
                             local _cf, _sz = _dP.part.CFrame, _dP.part.Size
                             local _x, _z = _sz.X / 2, _sz.Z / 2
-                            local _p1, _v1 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(-_x, 0, -_z)).Position)
-                            local _p2, _v2 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(_x, 0, -_z)).Position)
-                            local _p3, _v3 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(_x, 0, _z)).Position)
-                            local _p4, _v4 = workspace.CurrentCamera:WorldToViewportPoint((_cf * CFrame.new(-_x, 0, _z)).Position)
+                            local _w1 = (_cf * CFrame.new(-_x, -_sz.Y / 2, -_z)).Position
+                            local _w2 = (_cf * CFrame.new(_x, -_sz.Y / 2, -_z)).Position
+                            local _w3 = (_cf * CFrame.new(_x, -_sz.Y / 2, _z)).Position
+                            local _w4 = (_cf * CFrame.new(-_x, -_sz.Y / 2, _z)).Position
+                            local _p1, _v1 = _cam:WorldToViewportPoint(_w1)
+                            local _p2, _v2 = _cam:WorldToViewportPoint(_w2)
+                            local _p3, _v3 = _cam:WorldToViewportPoint(_w3)
+                            local _p4, _v4 = _cam:WorldToViewportPoint(_w4)
                             if _v1 and _v2 and _v3 and _v4 and _p1.Z > 0 and _p2.Z > 0 and _p3.Z > 0 and _p4.Z > 0 then
                                 local _pts = {Vector2.new(_p1.X, _p1.Y), Vector2.new(_p2.X, _p2.Y), Vector2.new(_p3.X, _p3.Y), Vector2.new(_p4.X, _p4.Y)}
                                 for _idx, _line in ipairs(_dP.lines) do
@@ -375,6 +382,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                         else
                             if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                             __15[_mP] = nil
+                            _G8_M[_mP] = nil
                         end
                     end
                 end)
@@ -382,8 +390,91 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                 if _pP9_zK then _pP9_zK:Disconnect() _pP9_zK = nil end
                 for _mP, _dP in pairs(__15) do
                     if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                    _G8_M[_mP] = nil
                 end
                 table.clear(__15)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Esp Pictures[Unseen Liminality]",
+        Default = true,
+        Callback = function(_q8_W)
+            if _q8_W then
+                if _pK8_zQ then return end
+                _pK8_zQ = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fPic = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Pictures")
+                    local _clr = Color3.new(0, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 1)
+                    local _cam = workspace.CurrentCamera
+                    if _fPic then
+                        for _, _vP in pairs(_fPic:GetChildren()) do
+                            local _tP = _vP:IsA("BasePart") and _vP or _vP:FindFirstChildWhichIsA("BasePart", true)
+                            if _tP and not __17[_vP] then
+                                local _lines = {}
+                                for _i = 1, 12 do
+                                    local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false
+                                    table.insert(_lines, _l)
+                                end
+                                __17[_vP] = {lines = _lines, part = _tP}
+                                _G8_M[_vP] = true
+                            end
+                        end
+                    end
+                    for _mP, _dP in pairs(__17) do
+                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size
+                            local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
+                            local _wPos = {
+                                (_cf * CFrame.new(-_x, -_y, -_z)).Position,
+                                (_cf * CFrame.new(_x, -_y, -_z)).Position,
+                                (_cf * CFrame.new(_x, -_y, _z)).Position,
+                                (_cf * CFrame.new(-_x, -_y, _z)).Position,
+                                (_cf * CFrame.new(-_x, _y, -_z)).Position,
+                                (_cf * CFrame.new(_x, _y, -_z)).Position,
+                                (_cf * CFrame.new(_x, _y, _z)).Position,
+                                (_cf * CFrame.new(-_x, _y, _z)).Position
+                            }
+                            local _cp = {}
+                            local _visAll = true
+                            for _i = 1, 8 do
+                                local _screenPos, _onScreen = _cam:WorldToViewportPoint(_wPos[_i])
+                                if not _onScreen or _screenPos.Z <= 0 then
+                                    _visAll = false
+                                    break
+                                end
+                                _cp[_i] = Vector2.new(_screenPos.X, _screenPos.Y)
+                            end
+
+                            if _visAll then
+                                local _edges = {
+                                    {1,2}, {2,3}, {3,4}, {4,1},
+                                    {5,6}, {6,7}, {7,8}, {8,5},
+                                    {1,5}, {2,6}, {3,7}, {4,8}
+                                }
+                                for _i, _edge in ipairs(_edges) do
+                                    local _line = _dP.lines[_i]
+                                    _line.From = _cp[_edge[1]]
+                                    _line.To = _cp[_edge[2]]
+                                    _line.Color = _clr
+                                    _line.Visible = true
+                                end
+                            else
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                        else
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                            __17[_mP] = nil
+                            _G8_M[_mP] = nil
+                        end
+                    end
+                end)
+            else
+                if _pK8_zQ then _pK8_zQ:Disconnect() _pK8_zQ = nil end
+                for _mP, _dP in pairs(__17) do
+                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                    _G8_M[_mP] = nil
+                end
+                table.clear(__17)
             end
         end
     })
