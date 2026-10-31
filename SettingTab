@@ -449,12 +449,14 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                     local _cL = Color3.new(0, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 1)
                     local _cam = workspace.CurrentCamera
                     for _, _v in pairs(_fPic:GetChildren()) do
-                        local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
-                        if _tP and not _k17[_v] then
-                            local _lns = {}
-                            for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                            _k17[_v] = {lines = _lns, part = _tP}
-                            _g8M[_v] = true
+                        if _v:FindFirstChild("PictureUI") then
+                            local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                            if _tP and not _k17[_v] then
+                                local _lns = {}
+                                for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                                _k17[_v] = {lines = _lns, part = _tP}
+                                _g8M[_v] = true
+                            end
                         end
                     end
                     for _mP, _dP in pairs(_k17) do
