@@ -303,9 +303,26 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             if _m and _m:IsA("Model") then
                                 local _tN = _m:FindFirstChild("HumanoidRootPart") or _m:FindFirstChild("PrimaryPart") or _m
                                 if not _k11[_m] then
-                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0.6, 0) _hl.FillColor = Color3.new(1, 0.6, 0) _hl.Parent = _m
-                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
-                                    _k11[_m], _k12[_m] = {_hl, _tN}, _tw
+                                    local _sN = _m.Name
+                                    local _oCol, _fCol, _tTxt = Color3.new(1, 0.6, 0), Color3.new(1, 0.6, 0), nil
+                                    if _sN == "Misremembered" then
+                                        _oCol, _fCol = Color3.new(0, 1, 0), Color3.new(0, 1, 0)
+                                    elseif _sN == "Mimic" then
+                                        _oCol, _fCol = Color3.new(1, 1, 1), Color3.new(1, 1, 1)
+                                        _tTxt = Drawing.new("Text")
+                                        _tTxt.Text = "This not your Friend"
+                                        _tTxt.Size = 16
+                                        _tTxt.Center = true
+                                        _tTxt.Outline = true
+                                        _tTxt.OutlineColor = Color3.new(0, 0, 0)
+                                        _tTxt.Color = Color3.new(1, 0, 0)
+                                        _tTxt.Visible = false
+                                    end
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = _oCol _hl.FillColor = _fCol _hl.Parent = _m
+                                    local _tw = (_sN == "Mimic") and game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) or nil
+                                    if _tw then _tw:Play() end
+                                    _k11[_m] = {_hl, _tN, _tTxt}
+                                    _k12[_m] = _tw
                                     _g8M[_m] = true
                                 end
                             end
@@ -313,16 +330,28 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                     end
                     for _m, _d in pairs(_k11) do
                         if not _m:IsDescendantOf(workspace) or not _d[2]:IsDescendantOf(workspace) then
+                            if _d[3] then _d[3]:Remove() end
                             if _k12[_m] then _k12[_m]:Cancel() end
                             if _d[1] then _d[1]:Destroy() end
                             _k11[_m], _k12[_m] = nil, nil
                             _g8M[_m] = nil
+                        else
+                            if _d[3] then
+                                local _sPos, _onV = workspace.CurrentCamera:WorldToViewportPoint(_d[2].Position + Vector3.new(0, _d[2].Size.Y / 2 + 1.5, 0))
+                                if _onV and _sPos.Z > 0 then
+                                    _d[3].Position = Vector2.new(_sPos.X, _sPos.Y)
+                                    _d[3].Visible = true
+                                else
+                                    _d[3].Visible = false
+                                end
+                            end
                         end
                     end
                 end)
             else
                 if _e8X then _e8X:Disconnect() _e8X = nil end
                 for _m, _d in pairs(_k11) do
+                    if _d[3] then _d[3]:Remove() end
                     if _k12[_m] then _k12[_m]:Cancel() end
                     if _d[1] then _d[1]:Destroy() end
                     _g8M[_m] = nil
