@@ -368,6 +368,76 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
     AddToggle(Main5u6, {
+        Name = "Esp Pumpkin(EVENT Halloween 2026)[Unseen Liminality]",
+        Default = true,
+        Callback = function(_q9W)
+            if _q9W then
+                if _pX9 then return end
+                _pX9 = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fPun = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("EVENTPUMPKINS")
+                    if not _fPun or #_fPun:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k19) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k19[_mP], _g8M[_mP] = nil, nil
+                        end
+                        return
+                    end
+                    local _cL = Color3.new(1, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 0)
+                    local _cam = workspace.CurrentCamera
+                    for _, _v in pairs(_fPun:GetChildren()) do
+                        local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                        if _tP and not _k19[_v] then
+                            local _lns = {}
+                            for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k19[_v] = {lines = _lns, part = _tP}
+                            _g8M[_v] = true
+                        end
+                    end
+                    for _mP, _dP in pairs(_k19) do
+                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size
+                            local _r = math.max(_sz.X, _sz.Y, _sz.Z) / 2
+                            local _seg = 16
+                            local _wP = {}
+                            for _i = 1, _seg do
+                                local _th = (_i - 1) * (2 * math.pi / _seg)
+                                table.insert(_wP, (_cf * CFrame.new(math.cos(_th) * _r, math.sin(_th) * _r, 0)).Position)
+                            end
+                            local _cp, _allV = {}, true
+                            for _i = 1, _seg do
+                                local _sp, _vOn = _cam:WorldToViewportPoint(_wP[_i])
+                                if not _vOn or _sp.Z <= 0 then _allV = false break end
+                                _cp[_i] = Vector2.new(_sp.X, _sp.Y)
+                            end
+                            if _allV then
+                                for _i = 1, _seg do
+                                    local _line = _dP.lines[_i]
+                                    _line.From = _cp[_i]
+                                    _line.To = _cp[_i % _seg + 1]
+                                    _line.Color = _cL
+                                    _line.Visible = true
+                                end
+                            else
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                        else
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                            _k19[_mP] = nil
+                            _g8M[_mP] = nil
+                        end
+                    end
+                end)
+            else
+                if _pX9 then _pX9:Disconnect() _pX9 = nil end
+                for _mP, _dP in pairs(_k19) do
+                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                    _g8M[_mP] = nil
+                end
+                table.clear(_k19)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
         Name = "Esp PointsOfInterest[Unseen Liminality]",
         Default = true,
         Callback = function(_q7W)
@@ -432,6 +502,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
     AddToggle(Main5u6, {
+    AddToggle(Main5u6, {
         Name = "Esp Pictures[Unseen Liminality]",
         Default = true,
         Callback = function(_q8W)
@@ -461,7 +532,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                     end
                     for _mP, _dP in pairs(_k17) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 5
                             local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
                             local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
                             local _cp, _allV = {}, true
