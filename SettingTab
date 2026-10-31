@@ -437,9 +437,6 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         Callback = function(_q8W)
             if _q8W then
                 if _pQ8 then return end
-                if not _z9Q then _z9Q = Drawing.new("Line") _z9Q.Thickness = 1.5 _z9Q.Visible = false end
-                if not _m3X then _m3X = Drawing.new("Line") _m3X.Thickness = 1.5 _m3X.Visible = false end
-                if not _b8K then _b8K = Drawing.new("Line") _b8K.Thickness = 1.5 _b8K.Visible = false end
                 _pQ8 = game:GetService("RunService").RenderStepped:Connect(function()
                     local _fPic = workspace:FindFirstChild("GameObjects") and workspace.GameObjects:FindFirstChild("Pictures")
                     if not _fPic or #_fPic:GetChildren() == 0 then
@@ -447,9 +444,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
                             _k17[_mP], _g8M[_mP] = nil, nil
                         end
-                        if _z9Q then _z9Q.Visible = false end
-                        if _m3X then _m3X.Visible = false end
-                        if _b8K then _b8K.Visible = false end
+                        if _x9T then _x9T:Remove() _x9T = nil end
                         return
                     end
                     local _cL = Color3.new(0, 0.4 + ((math.sin(tick() * 3) + 1) / 2 * 0.6), 1)
@@ -465,13 +460,16 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             end
                         end
                     end
-                    local _x7V = math.huge
-                    local _h8J = nil
-                    local _p2M = game:GetService("Players").LocalPlayer
-                    local _j4N = _p2M.Character and _p2M.Character:FindFirstChild("HumanoidRootPart")
+                    local _h7x = game:GetService("Players").LocalPlayer.Character and (game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") or game:GetService("Players").LocalPlayer.Character:FindFirstChild("PrimaryPart"))
+                    local _z8k, _b9m = nil, math.huge
+                    if not _x9T then
+                        _x9T = Drawing.new("Line")
+                        _x9T.Thickness = 1.5
+                        _x9T.Visible = false
+                    end
                     for _mP, _dP in pairs(_k17) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 15
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 7
                             local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
                             local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
                             local _cp, _allV = {}, true
@@ -489,20 +487,15 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                                     _line.Color = _cL
                                     _line.Visible = true
                                 end
-                                local _sSum = Vector2.new(0, 0)
-                                for _i = 1, 8 do _sSum = _sSum + _cp[_i] end
-                                local _cntr = _sSum / 8
-                                if _j4N then
-                                    local _posA = Vector3.new(_j4N.Position.X, 0, _j4N.Position.Z)
-                                    local _posB = Vector3.new(_dP.part.Position.X, 0, _dP.part.Position.Z)
-                                    local _dst = (_posA - _posB).Magnitude
-                                    if _dst < _x7V then
-                                        _x7V = _dst
-                                        _h8J = _cntr
-                                    end
-                                end
                             else
                                 for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                            if _h7x then
+                                local _d4v = (Vector3.new(_h7x.Position.X, 0, _h7x.Position.Z) - Vector3.new(_dP.part.Position.X, 0, _dP.part.Position.Z)).Magnitude
+                                if _d4v < _b9m then
+                                    _b9m = _d4v
+                                    _z8k = _dP.part
+                                end
                             end
                         else
                             if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
@@ -510,47 +503,24 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
                             _g8M[_mP] = nil
                         end
                     end
-                    if _h8J and _z9Q and _m3X and _b8K then
-                        local _vSize = _cam.ViewportSize
-                        local _scrCntr = Vector2.new(_vSize.X / 2, _vSize.Y / 2)
-                        _z9Q.From = _scrCntr
-                        _z9Q.To = _h8J
-                        _z9Q.Color = _cL
-                        _z9Q.Visible = true
-                        local _vDir = (_h8J - _scrCntr)
-                        if _vDir.Magnitude > 0 then
-                            _vDir = _vDir.Unit
-                            local _pVec = Vector2.new(-_vDir.Y, _vDir.X)
-                            local _tPos = _h8J
-                            local _lSz = 12
-                            local _wSz = 6
-                            local _bPos = _tPos - (_vDir * _lSz)
-                            local _lPt = _bPos + (_pVec * _wSz)
-                            local _rPt = _bPos - (_pVec * _wSz)
-                            _z9Q.To = _bPos
-                            _m3X.From = _bPos
-                            _m3X.To = _tPos
-                            _m3X.Color = _cL
-                            _m3X.Visible = true
-                            _b8K.From = _bPos
-                            _b8K.To = _lPt
-                            _b8K.Color = _cL
-                            _b8K.Visible = true
+                    if _h7x and _z8k then
+                        local _s1, _v1 = _cam:WorldToViewportPoint(_h7x.Position)
+                        local _s2, _v2 = _cam:WorldToViewportPoint(_z8k.Position)
+                        if _v1 and _v2 and _s1.Z > 0 and _s2.Z > 0 then
+                            _x9T.From = Vector2.new(_s1.X, _s1.Y)
+                            _x9T.To = Vector2.new(_s2.X, _s2.Y)
+                            _x9T.Color = _cL
+                            _x9T.Visible = true
                         else
-                            _m3X.Visible = false
-                            _b8K.Visible = false
+                            _x9T.Visible = false
                         end
                     else
-                        if _z9Q then _z9Q.Visible = false end
-                        if _m3X then _m3X.Visible = false end
-                        if _b8K then _b8K.Visible = false end
+                        if _x9T then _x9T.Visible = false end
                     end
                 end)
             else
                 if _pQ8 then _pQ8:Disconnect() _pQ8 = nil end
-                if _z9Q then _z9Q:Remove() _z9Q = nil end
-                if _m3X then _m3X:Remove() _m3X = nil end
-                if _b8K then _b8K:Remove() _b8K = nil end
+                if _x9T then _x9T:Remove() _x9T = nil end
                 for _mP, _dP in pairs(_k17) do
                     if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                     _g8M[_mP] = nil
