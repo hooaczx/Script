@@ -297,21 +297,19 @@ elseif game.PlaceId == 72804151483711 then
                     local _fWorms = workspace:FindFirstChild("ActiveWorms")
                     if _fWorms then
                         for _, _wModel in pairs(_fWorms:GetChildren()) do
-                            if _wModel and _wModel:IsA("Model") then
-                                if _wModel.Name == "WormSpawn" then
-                                    local _tP = _wModel:IsA("BasePart") and _wModel or _wModel:FindFirstChildWhichIsA("BasePart", true)
-                                    if _tP and not _w19[_wModel] then
-                                        local _lns = {}
-                                        for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                                        _w19[_wModel] = {lines = _lns, part = _tP}
-                                    end
-                                else
-                                    local _tN = _wModel:FindFirstChild("HumanoidRootPart") or _wModel:FindFirstChild("PrimaryPart") or _wModel
-                                    if _tN and not _w20[_wModel] then
-                                        local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\4\5\6" _hl.Adornee = _wModel _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0, 0) _hl.FillColor = Color3.new(1, 0, 0) _hl.Parent = _wModel
-                                        local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
-                                        _w20[_wModel] = {_hl, _tN, _tw}
-                                    end
+                            if _wModel and _wModel.Name == "WormSpawn" then
+                                local _tP = _wModel:IsA("BasePart") and _wModel or _wModel:FindFirstChildWhichIsA("BasePart", true)
+                                if _tP and not _w19[_wModel] then
+                                    local _lns = {}
+                                    for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                                    _w19[_wModel] = {lines = _lns, part = _tP}
+                                end
+                            elseif _wModel and _wModel:IsA("Model") then
+                                local _tN = _wModel:FindFirstChild("HumanoidRootPart") or _wModel:FindFirstChild("PrimaryPart") or _wModel
+                                if _tN and not _w20[_wModel] then
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\4\5\6" _hl.Adornee = _wModel _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0, 0) _hl.FillColor = Color3.new(1, 0, 0) _hl.Parent = _wModel
+                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
+                                    _w20[_wModel] = {_hl, _tN, _tw}
                                 end
                             end
                         end
