@@ -285,37 +285,35 @@ elseif game.PlaceId == 12432097393 then
         end
     })
 elseif game.PlaceId == 72804151483711 then
-    local _w19, _w20 = {}, {}
-    local _wW2 = nil
+    local _k98, _k99, _k00 = {}, {}, nil
     AddToggle(Main5u6, {
         Name = "Esp Worm[INCHWORM]",
         Default = true,
-        Callback = function(_wQ1)
-            if _wQ1 then
-                if _wW2 then return end
-                _wW2 = game:GetService("RunService").RenderStepped:Connect(function()
-                    local _fWorms = workspace:FindFirstChild("ActiveWorms")
-                    if _fWorms then
-                        for _, _wModel in pairs(_fWorms:GetChildren()) do
-                            if _wModel and _wModel.Name == "WormSpawn" then
-                                local _tP = _wModel:IsA("BasePart") and _wModel or _wModel:FindFirstChildWhichIsA("BasePart", true)
-                                if _tP and not _w19[_wModel] then
-                                    local _lns = {}
-                                    for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                                    _w19[_wModel] = {lines = _lns, part = _tP}
+        Callback = function(_z12)
+            if _z12 then
+                if _k00 then return end
+                _k00 = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _a23 = workspace:FindFirstChild("ActiveWorms")
+                    if _a23 then
+                        for _, _b45 in pairs(_a23:GetChildren()) do
+                            if _b45 and _b45.Name == "WormSpawn" then
+                                local _c67 = _b45:FindFirstChild("Meshes/eggsplat_Group") or _b45
+                                if _c67 and _c67:IsA("BasePart") and not _k98[_b45] then
+                                    local _d89 = {}
+                                    for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_d89, _l) end
+                                    _k98[_b45] = {lines = _d89, part = _c67}
                                 end
-                            elseif _wModel and _wModel:IsA("Model") then
-                                local _tN = _wModel:FindFirstChild("HumanoidRootPart") or _wModel:FindFirstChild("PrimaryPart") or _wModel
-                                if _tN and not _w20[_wModel] then
-                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\4\5\6" _hl.Adornee = _wModel _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0, 0) _hl.FillColor = Color3.new(1, 0, 0) _hl.Parent = _wModel
+                            elseif _b45 and _b45:IsA("Model") then
+                                local _e01 = _b45:FindFirstChild("HumanoidRootPart") or _b45:FindFirstChild("PrimaryPart") or _b45
+                                if _e01 and not _k99[_b45] then
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\7\8\9" _hl.Adornee = _b45 _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0, 0) _hl.FillColor = Color3.new(1, 0, 0) _hl.Parent = _b45
                                     local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
-                                    _w20[_wModel] = {_hl, _tN, _tw}
+                                    _k99[_b45] = {_hl, _e01, _tw}
                                 end
                             end
                         end
                     end
-                    local _cam = workspace.CurrentCamera
-                    for _mP, _dP in pairs(_w19) do
+                    for _mP, _dP in pairs(_k98) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
                             local _cf, _sz = _dP.part.CFrame, _dP.part.Size
                             local _rx, _rz = _sz.X / 2, _sz.Z / 2
@@ -327,7 +325,7 @@ elseif game.PlaceId == 72804151483711 then
                             end
                             local _cp, _allV = {}, true
                             for _i = 1, _seg do
-                                local _sp, _vOn = _cam:WorldToViewportPoint(_wP[_i])
+                                local _sp, _vOn = workspace.CurrentCamera:WorldToViewportPoint(_wP[_i])
                                 if not _vOn or _sp.Z <= 0 then _allV = false break end
                                 _cp[_i] = Vector2.new(_sp.X, _sp.Y)
                             end
@@ -344,28 +342,28 @@ elseif game.PlaceId == 72804151483711 then
                             end
                         else
                             if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
-                            _w19[_mP] = nil
+                            _k98[_mP] = nil
                         end
                     end
-                    for _m, _d in pairs(_w20) do
+                    for _m, _d in pairs(_k99) do
                         if not _m:IsDescendantOf(workspace) or not _d[2]:IsDescendantOf(workspace) then
                             if _d[3] then _d[3]:Cancel() end
                             if _d[1] then _d[1]:Destroy() end
-                            _w20[_m] = nil
+                            _k99[_m] = nil
                         end
                     end
                 end)
             else
-                if _wW2 then _wW2:Disconnect() _wW2 = nil end
-                for _mP, _dP in pairs(_w19) do
+                if _k00 then _k00:Disconnect() _k00 = nil end
+                for _mP, _dP in pairs(_k98) do
                     if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                 end
-                table.clear(_w19)
-                for _m, _d in pairs(_w20) do
+                table.clear(_k98)
+                for _m, _d in pairs(_k99) do
                     if _d[3] then _d[3]:Cancel() end
                     if _d[1] then _d[1]:Destroy() end
                 end
-                table.clear(_w20)
+                table.clear(_k99)
             end
         end
     })
