@@ -298,7 +298,7 @@ elseif game.PlaceId == 72804151483711 then
                         for _, _b45 in pairs(_a23:GetChildren()) do
                             if _b45 and _b45.Name == "WormSpawn" then
                                 local _c67 = _b45:FindFirstChild("Meshes/eggsplat_Group") or _b45
-                                if _c67 and _c67:IsA("BasePart") and not _k98[_b45] then
+                                if _c67 and _c67:IsA("Model") and not _k98[_b45] then
                                     local _d89 = {}
                                     for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_d89, _l) end
                                     _k98[_b45] = {lines = _d89, part = _c67}
@@ -315,7 +315,7 @@ elseif game.PlaceId == 72804151483711 then
                     end
                     for _mP, _dP in pairs(_k98) do
                         if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size
+                            local _cf, _sz = _dP.part:GetBoundingBox()
                             local _rx, _rz = _sz.X / 2, _sz.Z / 2
                             local _seg = 16
                             local _wP = {}
