@@ -650,6 +650,77 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
             end
         end
     })
+elseif game.PlaceId == 118393847400636 then
+    local _k11, _k21 = {}, {}
+    local _e8X, _p8X = nil, nil
+    AddToggle(Main5u6, {
+        Name = "Esp FoodBowls[Kittenville]",
+        Default = true,
+        Callback = function(_f8P)
+            if _f8P then
+                if _e8X then return end
+                _e8X = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _fN = workspace:FindFirstChild("DBDArena") and workspace.DBDArena:FindFirstChild("DBDStuffs") and workspace.DBDArena.DBDStuffs:FindFirstChild("FoodBowls")
+                    if _fN then
+                        for _, _m in pairs(_fN:GetChildren()) do
+                            if _m and _m.Name:find("^FeedingStation") then
+                                if not _k11[_m] then
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 1, 1) _hl.FillColor = Color3.new(1, 1, 1) _hl.Parent = _m
+                                    _k11[_m] = _hl
+                                end
+                            end
+                        end
+                    end
+                    for _m, _hl in pairs(_k11) do
+                        if not _m:IsDescendantOf(workspace) then
+                            if _hl then _hl:Destroy() end
+                            _k11[_m] = nil
+                        end
+                    end
+                end)
+            else
+                if _e8X then _e8X:Disconnect() _e8X = nil end
+                for _m, _hl in pairs(_k11) do
+                    if _hl then _hl:Destroy() end
+                end
+                table.clear(_k11)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Esp Pumpkin[Kittenville]",
+        Default = true,
+        Callback = function(_f8P)
+            if _f8P then
+                if _p8X then return end
+                _p8X = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _fN = workspace:FindFirstChild("DBDArena") and workspace.DBDArena:FindFirstChild("DBDStuffs") and workspace.DBDArena.DBDStuffs:FindFirstChild("PumpkinSpawns")
+                    if _fN then
+                        for _, _m in pairs(_fN:GetChildren()) do
+                            if _m then
+                                if not _k21[_m] then
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0.5, 0) _hl.FillColor = Color3.new(1, 0.5, 0) _hl.Parent = _m
+                                    _k21[_m] = _hl
+                                end
+                            end
+                        end
+                    end
+                    for _m, _hl in pairs(_k21) do
+                        if not _m:IsDescendantOf(workspace) then
+                            if _hl then _hl:Destroy() end
+                            _k21[_m] = nil
+                        end
+                    end
+                end)
+            else
+                if _p8X then _p8X:Disconnect() _p8X = nil end
+                for _m, _hl in pairs(_k21) do
+                    if _hl then _hl:Destroy() end
+                end
+                table.clear(_k21)
+            end
+        end
+    })
 elseif game.PlaceId == 71739455261863 then
     local _x9K_2p = nil
     local zQ9_xK = {}
