@@ -651,7 +651,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
 elseif game.PlaceId == 118393847400636 then
-    local _k11, _k21 = {}, {}
+    local _k11, _k12, _k21, _k22 = {}, {}, {}, {}
     local _e8X, _p8X = nil, nil
     AddToggle(Main5u6, {
         Name = "Esp FoodBowls[Kittenville]",
@@ -665,25 +665,28 @@ elseif game.PlaceId == 118393847400636 then
                         for _, _m in pairs(_fN:GetChildren()) do
                             if _m and _m.Name:find("^FeedingStation") then
                                 if not _k11[_m] then
-                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 1, 1) _hl.FillColor = Color3.new(1, 1, 1) _hl.Parent = _m
-                                    _k11[_m] = _hl
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(0, 0.6, 1) _hl.FillColor = Color3.new(0, 0.6, 1) _hl.Parent = _m
+                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
+                                    _k11[_m], _k12[_m] = _hl, _tw
                                 end
                             end
                         end
                     end
                     for _m, _hl in pairs(_k11) do
                         if not _m:IsDescendantOf(workspace) then
+                            if _k12[_m] then _k12[_m]:Cancel() end
                             if _hl then _hl:Destroy() end
-                            _k11[_m] = nil
+                            _k11[_m], _k12[_m] = nil, nil
                         end
                     end
                 end)
             else
                 if _e8X then _e8X:Disconnect() _e8X = nil end
                 for _m, _hl in pairs(_k11) do
+                    if _k12[_m] then _k12[_m]:Cancel() end
                     if _hl then _hl:Destroy() end
                 end
-                table.clear(_k11)
+                table.clear(_k11) table.clear(_k12)
             end
         end
     })
@@ -699,25 +702,28 @@ elseif game.PlaceId == 118393847400636 then
                         for _, _m in pairs(_fN:GetChildren()) do
                             if _m then
                                 if not _k21[_m] then
-                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 0.5, 0) _hl.FillColor = Color3.new(1, 0.5, 0) _hl.Parent = _m
-                                    _k21[_m] = _hl
+                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _m _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 1, 0) _hl.FillColor = Color3.new(1, 1, 0) _hl.Parent = _m
+                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
+                                    _k21[_m], _k22[_m] = _hl, _tw
                                 end
                             end
                         end
                     end
                     for _m, _hl in pairs(_k21) do
                         if not _m:IsDescendantOf(workspace) then
+                            if _k22[_m] then _k22[_m]:Cancel() end
                             if _hl then _hl:Destroy() end
-                            _k21[_m] = nil
+                            _k21[_m], _k22[_m] = nil, nil
                         end
                     end
                 end)
             else
                 if _p8X then _p8X:Disconnect() _p8X = nil end
                 for _m, _hl in pairs(_k21) do
+                    if _k22[_m] then _k22[_m]:Cancel() end
                     if _hl then _hl:Destroy() end
                 end
-                table.clear(_k21)
+                table.clear(_k21) table.clear(_k22)
             end
         end
     })
