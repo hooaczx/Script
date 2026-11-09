@@ -651,8 +651,8 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
 elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
-    local _k11, _k12, _k21, _k31, _k41, _k51 = {}, {}, {}, {}, {}, {}
-    local _e8X, _p8X, _b8X, _s8X, _c8X = nil, nil, nil, nil, nil
+    local _k11, _k12, _k21, _k31, _k41, _k51, _k61 = {}, {}, {}, {}, {}, {}, {}
+    local _e8X, _p8X, _b8X, _s8X, _c8X, _o8X = nil, nil, nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp FoodBowls[Kittenville]",
         Default = true,
@@ -756,7 +756,42 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
         end
     })
     AddToggle(Main5u6, {
-        Name = "Esp Box-Event[Kittenville]",
+        Name = "Auto Obby[Kittenville Open World]",
+        Default = true,
+        Callback = function(_z9K)
+            if _z9K then
+                if _o8X then return end
+                _o8X = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _z9X = workspace:FindFirstChild("ObbyTowerRewardsLocal")
+                    if _z9X then
+                        for _, _m8Z in pairs(_z9X:GetChildren()) do
+                            if _m8Z.Name == "Box" then
+                                local _o7K = _m8Z:FindFirstChild("Object")
+                                local _b6L = _o7K and _o7K:FindFirstChild("Box")
+                                local _t5M = _b6L and _b6L:FindFirstChild("TouchInterest")
+                                if _t5M and _t5M:IsA("TouchTransmitter") then
+                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _b6L, 0)
+                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _b6L, 1)
+                                end
+                            elseif _m8Z.Name == "Chest" then
+                                local _o7K = _m8Z:FindFirstChild("Object")
+                                local _h4N = _o7K and _o7K:FindFirstChild("Head")
+                                local _t5M = _h4N and _h4N:FindFirstChild("TouchInterest")
+                                if _t5M and _t5M:IsA("TouchTransmitter") then
+                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _h4N, 0)
+                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _h4N, 1)
+                                end
+                            end
+                        end
+                    end
+                end)
+            else
+                if _o8X then _o8X:Disconnect() _o8X = nil end
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Esp Box-Event[Kittenville Open World]",
         Default = true,
         Callback = function(_q8W)
             if _q8W then
@@ -822,7 +857,7 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
         end
     })
     AddToggle(Main5u6, {
-        Name = "Esp Shell[Kittenville]",
+        Name = "Esp Shell[Kittenville Open World]",
         Default = true,
         Callback = function(_q8W)
             if _q8W then
@@ -888,7 +923,7 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
         end
     })
     AddToggle(Main5u6, {
-        Name = "Esp Coin[Kittenville]",
+        Name = "Esp Coin[Kittenville Open World]",
         Default = true,
         Callback = function(_q8W)
             if _q8W then
