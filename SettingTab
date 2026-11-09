@@ -650,9 +650,9 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
             end
         end
     })
-elseif game.PlaceId == 118393847400636 then
-    local _k11, _k12, _k21 = {}, {}, {}
-    local _e8X, _p8X = nil, nil
+elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
+    local _k11, _k12, _k21, _k31, _k41, _k51 = {}, {}, {}, {}, {}, {}
+    local _e8X, _p8X, _b8X, _s8X, _c8X = nil, nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp FoodBowls[Kittenville]",
         Default = true,
@@ -749,9 +749,196 @@ elseif game.PlaceId == 118393847400636 then
             else
                 if _p8X then _p8X:Disconnect() _p8X = nil end
                 for _mP, _dP in pairs(_k21) do
-                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                    if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
                 end
                 table.clear(_k21)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Esp Box-Event[Kittenville]",
+        Default = true,
+        Callback = function(_q8W)
+            if _q8W then
+                if _b8X then return end
+                _b8X = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fP = workspace:FindFirstChild("BoxEventDestructibles")
+                    if not _fP or #_fP:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k31) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k31[_mP] = nil
+                        end
+                        return
+                    end
+                    local _cL = Color3.new(1, 0.4, 0.7)
+                    for _, _v in pairs(_fP:GetChildren()) do
+                        if _v and (_v.Name:find("Box") or _v.Name:find("Chest")) and not _k31[_v] then
+                            local _lns = {}
+                            for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k31[_v] = {lines = _lns, model = _v}
+                        end
+                    end
+                    for _mP, _dP in pairs(_k31) do
+                        if _mP:IsDescendantOf(workspace) and _dP.model and _dP.model:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.model:GetBoundingBox()
+                            local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
+                            local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
+                            local _cp, _allV = {}, true
+                            for _i = 1, 8 do
+                                local _sp, _vOn = workspace.CurrentCamera:WorldToViewportPoint(_wP[_i])
+                                if not _vOn or _sp.Z <= 0 then _allV = false break end
+                                _cp[_i] = Vector2.new(_sp.X, _sp.Y)
+                            end
+                            if _allV then
+                                local _eg = {{1,2},{2,3},{3,4},{4,1},{5,6},{6,7},{7,8},{8,5},{1,5},{2,6},{3,7},{4,8}}
+                                for _i, _e in ipairs(_eg) do
+                                    local _line = _dP.lines[_i]
+                                    _line.From = _cp[_e[1]]
+                                    _line.To = _cp[_e[2]]
+                                    _line.Color = _cL
+                                    _line.Visible = true
+                                end
+                            else
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                        else
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                            _k31[_mP] = nil
+                        end
+                    end
+                end)
+            else
+                if _b8X then _b8X:Disconnect() _b8X = nil end
+                for _mP, _dP in pairs(_k31) do
+                    if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                end
+                table.clear(_k31)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Esp Shells[Kittenville]",
+        Default = true,
+        Callback = function(_q8W)
+            if _q8W then
+                if _s8X then return end
+                _s8X = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fP = workspace:FindFirstChild("Shells")
+                    if not _fP or #_fP:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k41) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k41[_mP] = nil
+                        end
+                        return
+                    end
+                    local _cL = Color3.new(1, 1, 1)
+                    for _, _v in pairs(_fP:GetChildren()) do
+                        if _v and not _k41[_v] then
+                            local _lns = {}
+                            for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k41[_v] = {lines = _lns, model = _v}
+                        end
+                    end
+                    for _mP, _dP in pairs(_k41) do
+                        if _mP:IsDescendantOf(workspace) and _dP.model and _dP.model:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.model:GetBoundingBox()
+                            local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
+                            local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
+                            local _cp, _allV = {}, true
+                            for _i = 1, 8 do
+                                local _sp, _vOn = workspace.CurrentCamera:WorldToViewportPoint(_wP[_i])
+                                if not _vOn or _sp.Z <= 0 then _allV = false break end
+                                _cp[_i] = Vector2.new(_sp.X, _sp.Y)
+                            end
+                            if _allV then
+                                local _eg = {{1,2},{2,3},{3,4},{4,1},{5,6},{6,7},{7,8},{8,5},{1,5},{2,6},{3,7},{4,8}}
+                                for _i, _e in ipairs(_eg) do
+                                    local _line = _dP.lines[_i]
+                                    _line.From = _cp[_e[1]]
+                                    _line.To = _cp[_e[2]]
+                                    _line.Color = _cL
+                                    _line.Visible = true
+                                end
+                            else
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                        else
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                            _k41[_mP] = nil
+                        end
+                    end
+                end)
+            else
+                if _s8X then _s8X:Disconnect() _s8X = nil end
+                for _mP, _dP in pairs(_k41) do
+                    if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                end
+                table.clear(_k41)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Esp Coins[Kittenville]",
+        Default = true,
+        Callback = function(_q8W)
+            if _q8W then
+                if _c8X then return end
+                _c8X = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fP = workspace:FindFirstChild("Coins")
+                    if not _fP or #_fP:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k51) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k51[_mP] = nil
+                        end
+                        return
+                    end
+                    local _cL = Color3.new(1, 1, 0)
+                    for _, _v in pairs(_fP:GetChildren()) do
+                        if _v and not _k51[_v] then
+                            local _lns = {}
+                            for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k51[_v] = {lines = _lns, model = _v}
+                        end
+                    end
+                    for _mP, _dP in pairs(_k51) do
+                        if _mP:IsDescendantOf(workspace) and _dP.model and _dP.model:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.model:GetBoundingBox()
+                            local _rx, _ry = (_sz.X / 2), (_sz.Y / 2)
+                            local _seg = 16
+                            local _wP = {}
+                            for _i = 1, _seg do
+                                local _th = (_i - 1) * (2 * math.pi / _seg)
+                                table.insert(_wP, (_cf * CFrame.new(math.cos(_th) * _rx, math.sin(_th) * _ry, 0)).Position)
+                            end
+                            local _cp, _allV = {}, true
+                            for _i = 1, _seg do
+                                local _sp, _vOn = workspace.CurrentCamera:WorldToViewportPoint(_wP[_i])
+                                if not _vOn or _sp.Z <= 0 then _allV = false break end
+                                _cp[_i] = Vector2.new(_sp.X, _sp.Y)
+                            end
+                            if _allV then
+                                for _i = 1, _seg do
+                                    local _line = _dP.lines[_i]
+                                    _line.From = _cp[_i]
+                                    _line.To = _cp[_i % _seg + 1]
+                                    _line.Color = _cL
+                                    _line.Visible = true
+                                end
+                            else
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                        else
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                            _k51[_mP] = nil
+                        end
+                    end
+                end)
+            else
+                if _c8X then _c8X:Disconnect() _c8X = nil end
+                for _mP, _dP in pairs(_k51) do
+                    if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                end
+                table.clear(_k51)
             end
         end
     })
