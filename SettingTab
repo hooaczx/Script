@@ -651,7 +651,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
 elseif game.PlaceId == 118393847400636 then
-    local _k11, _k12, _k21, _k22 = {}, {}, {}, {}
+    local _k11, _k12, _k21 = {}, {}, {}
     local _e8X, _p8X = nil, nil
     AddToggle(Main5u6, {
         Name = "Esp FoodBowls[Kittenville]",
@@ -694,38 +694,63 @@ elseif game.PlaceId == 118393847400636 then
     AddToggle(Main5u6, {
         Name = "Esp Pumpkin[Kittenville]",
         Default = true,
-        Callback = function(_f8P)
-            if _f8P then
+        Callback = function(_q8W)
+            if _q8W then
                 if _p8X then return end
-                _p8X = game:GetService("RunService").Heartbeat:Connect(function()
-                    local _fN = workspace:FindFirstChild("DBDArena") and workspace.DBDArena:FindFirstChild("DBDStuffs") and workspace.DBDArena.DBDStuffs:FindFirstChild("PumpkinSpawns")
-                    if _fN then
-                        for _, _m in pairs(_fN:GetChildren()) do
-                            if _m then
-                                local _target = _m:IsA("Model") and _m or _m:FindFirstChildWhichIsA("BasePart") or _m
-                                if not _k21[_m] then
-                                    local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _target _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(1, 1, 0) _hl.FillColor = Color3.new(1, 1, 0) _hl.Parent = _target
-                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
-                                    _k21[_m], _k22[_m] = _hl, _tw
-                                end
-                            end
+                _p8X = game:GetService("RunService").RenderStepped:Connect(function()
+                    local _fP = workspace:FindFirstChild("DBDArena") and workspace.DBDArena:FindFirstChild("DBDStuffs") and workspace.DBDArena.DBDStuffs:FindFirstChild("PumpkinSpawns")
+                    if not _fP or #_fP:GetChildren() == 0 then
+                        for _mP, _dP in pairs(_k21) do
+                            if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                            _k21[_mP] = nil
+                        end
+                        return
+                    end
+                    local _cL = Color3.new(1, 0.5 + ((math.sin(tick() * 3) + 1) / 2 * 0.5), 0)
+                    local _cam = workspace.CurrentCamera
+                    for _, _v in pairs(_fP:GetChildren()) do
+                        local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
+                        if _tP and not _k21[_v] then
+                            local _lns = {}
+                            for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                            _k21[_v] = {lines = _lns, part = _tP}
                         end
                     end
-                    for _m, _hl in pairs(_k21) do
-                        if not _m:IsDescendantOf(workspace) then
-                            if _k22[_m] then _k22[_m]:Cancel() end
-                            if _hl then _hl:Destroy() end
-                            _k21[_m], _k22[_m] = nil, nil
+                    for _mP, _dP in pairs(_k21) do
+                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 0.75
+                            local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
+                            local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
+                            local _cp, _allV = {}, true
+                            for _i = 1, 8 do
+                                local _sp, _vOn = _cam:WorldToViewportPoint(_wP[_i])
+                                if not _vOn or _sp.Z <= 0 then _allV = false break end
+                                _cp[_i] = Vector2.new(_sp.X, _sp.Y)
+                            end
+                            if _allV then
+                                local _eg = {{1,2},{2,3},{3,4},{4,1},{5,6},{6,7},{7,8},{8,5},{1,5},{2,6},{3,7},{4,8}}
+                                for _i, _e in ipairs(_eg) do
+                                    local _line = _dP.lines[_i]
+                                    _line.From = _cp[_e[1]]
+                                    _line.To = _cp[_e[2]]
+                                    _line.Color = _cL
+                                    _line.Visible = true
+                                end
+                            else
+                                for _, _line in ipairs(_dP.lines) do _line.Visible = false end
+                            end
+                        else
+                            if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                            _k21[_mP] = nil
                         end
                     end
                 end)
             else
                 if _p8X then _p8X:Disconnect() _p8X = nil end
-                for _m, _hl in pairs(_k21) do
-                    if _k22[_m] then _k22[_m]:Cancel() end
-                    if _hl then _hl:Destroy() end
+                for _mP, _dP in pairs(_k21) do
+                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                 end
-                table.clear(_k21) table.clear(_k22)
+                table.clear(_k21)
             end
         end
     })
