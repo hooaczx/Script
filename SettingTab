@@ -763,37 +763,14 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
                 if _o8X then return end
                 _o8X = game:GetService("RunService").Heartbeat:Connect(function()
                     local _x9L = workspace:FindFirstChild("ObbyTowerRewardsLocal")
-                    if not _x9L or #_x9L:GetChildren() == 0 then return end
-                    for _, _n4K in pairs(_x9L:GetChildren()) do
-                        if _n4K.Name == "Box" then
-                            local _p2V = _n4K:FindFirstChild("Object")
-                            if _p2V then
-                                for _, _q8B in pairs(_p2V:GetChildren()) do
-                                    if _q8B.Name == "Box" and not _z7Q[_q8B] then
-                                        local _r1N = _q8B:FindFirstChildWhichIsA("BasePart")
-                                        local _s9L = _q8B:FindFirstChild("TouchInterest")
-                                        if _s9L and _r1N and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 0)
-                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 1)
-                                            _z7Q[_q8B] = true
-                                        end
-                                    end
-                                end
-                            end
-                        elseif _n4K.Name == "Chest" then
-                            local _p2V = _n4K:FindFirstChild("Object")
-                            if _p2V then
-                                for _, _t3C in pairs(_p2V:GetChildren()) do
-                                    if _t3C.Name == "Head" and not _z7Q[_t3C] then
-                                        local _r1N = _t3C:FindFirstChildWhichIsA("BasePart")
-                                        local _s9L = _t3C:FindFirstChild("TouchInterest")
-                                        if _s9L and _r1N and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 0)
-                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 1)
-                                            _z7Q[_t3C] = true
-                                        end
-                                    end
-                                end
+                    if not _x9L or #_x9L:GetChildren() == 0 then table.clear(_z7Q) return end
+                    for _, _n4K in pairs(_x9L:GetDescendants()) do
+                        if _n4K:IsA("TouchTransmitter") and not _z7Q[_n4K] then
+                            local _r1N = _n4K.Parent
+                            if _r1N and _r1N:IsA("BasePart") and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 0)
+                                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 1)
+                                _z7Q[_n4K] = true
                             end
                         end
                     end
