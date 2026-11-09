@@ -692,13 +692,13 @@ elseif game.PlaceId == 118393847400636 then
         end
     })
     AddToggle(Main5u6, {
-        Name = "Esp Pumpkin[Kittenville]",
+        Name = "Esp Pumpkin Collectible[Kittenville]",
         Default = true,
         Callback = function(_q8W)
             if _q8W then
                 if _p8X then return end
                 _p8X = game:GetService("RunService").RenderStepped:Connect(function()
-                    local _fP = workspace:FindFirstChild("DBDArena") and workspace.DBDArena:FindFirstChild("DBDStuffs") and workspace.DBDArena.DBDStuffs:FindFirstChild("PumpkinSpawns")
+                    local _fP = workspace:FindFirstChild("MyPumpkins")
                     if not _fP or #_fP:GetChildren() == 0 then
                         for _mP, _dP in pairs(_k21) do
                             if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
@@ -708,17 +708,18 @@ elseif game.PlaceId == 118393847400636 then
                     end
                     local _cL = Color3.new(1, 0.5 + ((math.sin(tick() * 3) + 1) / 2 * 0.5), 0)
                     local _cam = workspace.CurrentCamera
-                    for _, _v in pairs(_fP:GetChildren()) do
-                        local _tP = _v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true)
-                        if _tP and not _k21[_v] then
+                    local _targetObj = _fP:GetChildren()[5]
+                    if _targetObj then
+                        local _tP = _targetObj:IsA("BasePart") and _targetObj or _targetObj:FindFirstChildWhichIsA("BasePart", true)
+                        if _tP and not _k21[_targetObj] then
                             local _lns = {}
                             for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                            _k21[_v] = {lines = _lns, part = _tP}
+                            _k21[_targetObj] = {lines = _lns, part = _tP}
                         end
                     end
                     for _mP, _dP in pairs(_k21) do
-                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 0.75
+                        if _mP == _targetObj and _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 0.375
                             local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
                             local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
                             local _cp, _allV = {}, true
