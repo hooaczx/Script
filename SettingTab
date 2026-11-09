@@ -699,7 +699,7 @@ elseif game.PlaceId == 118393847400636 then
                 if _p8X then return end
                 _p8X = game:GetService("RunService").RenderStepped:Connect(function()
                     local _fP = workspace:FindFirstChild("MyPumpkins")
-                    if not _fP or #_fP:GetChildren() == 0 then
+                    if not _fP then
                         for _mP, _dP in pairs(_k21) do
                             if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
                             _k21[_mP] = nil
@@ -708,32 +708,38 @@ elseif game.PlaceId == 118393847400636 then
                     end
                     local _cL = Color3.new(1, 0.5 + ((math.sin(tick() * 3) + 1) / 2 * 0.5), 0)
                     local _cam = workspace.CurrentCamera
-                    local _targetObj = _fP:GetChildren()[5]
-                    if _targetObj then
-                        local _tP = _targetObj:IsA("BasePart") and _targetObj or _targetObj:FindFirstChildWhichIsA("BasePart", true)
-                        if _tP and not _k21[_targetObj] then
-                            local _lns = {}
-                            for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                            _k21[_targetObj] = {lines = _lns, part = _tP}
+                    for _, _v in pairs(_fP:GetChildren()) do
+                        if _v and not _k21[_v] then
+                            local _tP = _v:IsA("Model") and (_v.PrimaryPart or _v:FindFirstChildWhichIsA("BasePart")) or (_v:IsA("BasePart") and _v or _v:FindFirstChildWhichIsA("BasePart", true))
+                            if _tP then
+                                local _lns = {}
+                                for _i = 1, 16 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
+                                _k21[_v] = {lines = _lns, part = _tP}
+                            end
                         end
                     end
                     for _mP, _dP in pairs(_k21) do
-                        if _mP == _targetObj and _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 0.375
-                            local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
-                            local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
+                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.part:GetBoundingBox()
+                            _sz = _sz * 0.375
+                            local _rx, _rz = _sz.X / 2, _sz.Z / 2
+                            local _seg = 16
+                            local _wP = {}
+                            for _i = 1, _seg do
+                                local _th = (_i - 1) * (2 * math.pi / _seg)
+                                table.insert(_wP, (_cf * CFrame.new(math.cos(_th) * _rx, 0, math.sin(_th) * _rz)).Position)
+                            end
                             local _cp, _allV = {}, true
-                            for _i = 1, 8 do
+                            for _i = 1, _seg do
                                 local _sp, _vOn = _cam:WorldToViewportPoint(_wP[_i])
                                 if not _vOn or _sp.Z <= 0 then _allV = false break end
                                 _cp[_i] = Vector2.new(_sp.X, _sp.Y)
                             end
                             if _allV then
-                                local _eg = {{1,2},{2,3},{3,4},{4,1},{5,6},{6,7},{7,8},{8,5},{1,5},{2,6},{3,7},{4,8}}
-                                for _i, _e in ipairs(_eg) do
+                                for _i = 1, _seg do
                                     local _line = _dP.lines[_i]
-                                    _line.From = _cp[_e[1]]
-                                    _line.To = _cp[_e[2]]
+                                    _line.From = _cp[_i]
+                                    _line.To = _cp[_i % _seg + 1]
                                     _line.Color = _cL
                                     _line.Visible = true
                                 end
@@ -749,7 +755,7 @@ elseif game.PlaceId == 118393847400636 then
             else
                 if _p8X then _p8X:Disconnect() _p8X = nil end
                 for _mP, _dP in pairs(_k21) do
-                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
+                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end info = nil end
                 end
                 table.clear(_k21)
             end
