@@ -711,12 +711,15 @@ elseif game.PlaceId == 118393847400636 then
                         if _v and not _k21[_v] then
                             local _lns = {}
                             for _i = 1, 12 do local _l = Drawing.new("Line") _l.Thickness = 1.5 _l.Visible = false table.insert(_lns, _l) end
-                            _k21[_v] = {lines = _lns, part = _v}
+                            _k21[_v] = {lines = _lns, model = _v}
                         end
                     end
                     for _mP, _dP in pairs(_k21) do
-                        if _mP:IsDescendantOf(workspace) and _dP.part and _dP.part:IsDescendantOf(workspace) then
-                            local _cf, _sz = _dP.part.CFrame, _dP.part.Size * 0.5
+                        if _mP:IsDescendantOf(workspace) and _dP.model and _dP.model:IsDescendantOf(workspace) then
+                            local _cf, _sz = _dP.model:GetBoundingBox()
+                            local _origY = _sz.Y
+                            _sz = _sz * 0.5
+                            _cf = _cf * CFrame.new(0, -(_origY * 0.25), 0)
                             local _x, _y, _z = _sz.X / 2, _sz.Y / 2, _sz.Z / 2
                             local _wP = {(_cf * CFrame.new(-_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, -_z)).Position, (_cf * CFrame.new(_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, -_y, _z)).Position, (_cf * CFrame.new(-_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, -_z)).Position, (_cf * CFrame.new(_x, _y, _z)).Position, (_cf * CFrame.new(-_x, _y, _z)).Position}
                             local _cp, _allV = {}, true
@@ -746,7 +749,7 @@ elseif game.PlaceId == 118393847400636 then
             else
                 if _p8X then _p8X:Disconnect() _p8X = nil end
                 for _mP, _dP in pairs(_k21) do
-                    if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
+                    if _dP.lines then for _, _line in ipairs(_dP.lines) do _line:Remove() end end
                 end
                 table.clear(_k21)
             end
