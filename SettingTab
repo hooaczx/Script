@@ -651,7 +651,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
         end
     })
 elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
-    local _k11, _k12, _k21, _k31, _k41, _k51, _k61 = {}, {}, {}, {}, {}, {}, {}
+    local _k11, _k12, _k21, _k31, _k41, _k51, _z7Q = {}, {}, {}, {}, {}, {}, {}
     local _e8X, _p8X, _b8X, _s8X, _c8X, _o8X = nil, nil, nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp FoodBowls[Kittenville]",
@@ -758,28 +758,41 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
     AddToggle(Main5u6, {
         Name = "Auto Obby[Kittenville Open World]",
         Default = true,
-        Callback = function(_z9K)
-            if _z9K then
+        Callback = function(_m7W)
+            if _m7W then
                 if _o8X then return end
                 _o8X = game:GetService("RunService").Heartbeat:Connect(function()
-                    local _z9X = workspace:FindFirstChild("ObbyTowerRewardsLocal")
-                    if _z9X then
-                        for _, _m8Z in pairs(_z9X:GetChildren()) do
-                            if _m8Z.Name == "Box" then
-                                local _o7K = _m8Z:FindFirstChild("Object")
-                                local _b6L = _o7K and _o7K:FindFirstChild("Box")
-                                local _t5M = _b6L and _b6L:FindFirstChild("TouchInterest")
-                                if _t5M and _t5M:IsA("TouchTransmitter") then
-                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _b6L, 0)
-                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _b6L, 1)
+                    local _x9L = workspace:FindFirstChild("ObbyTowerRewardsLocal")
+                    if not _x9L or #_x9L:GetChildren() == 0 then return end
+                    for _, _n4K in pairs(_x9L:GetChildren()) do
+                        if _n4K.Name == "Box" then
+                            local _p2V = _n4K:FindFirstChild("Object")
+                            if _p2V then
+                                for _, _q8B in pairs(_p2V:GetChildren()) do
+                                    if _q8B.Name == "Box" and not _z7Q[_q8B] then
+                                        local _r1N = _q8B:FindFirstChildWhichIsA("BasePart")
+                                        local _s9L = _q8B:FindFirstChild("TouchInterest")
+                                        if _s9L and _r1N and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 0)
+                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 1)
+                                            _z7Q[_q8B] = true
+                                        end
+                                    end
                                 end
-                            elseif _m8Z.Name == "Chest" then
-                                local _o7K = _m8Z:FindFirstChild("Object")
-                                local _h4N = _o7K and _o7K:FindFirstChild("Head")
-                                local _t5M = _h4N and _h4N:FindFirstChild("TouchInterest")
-                                if _t5M and _t5M:IsA("TouchTransmitter") then
-                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _h4N, 0)
-                                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _h4N, 1)
+                            end
+                        elseif _n4K.Name == "Chest" then
+                            local _p2V = _n4K:FindFirstChild("Object")
+                            if _p2V then
+                                for _, _t3C in pairs(_p2V:GetChildren()) do
+                                    if _t3C.Name == "Head" and not _z7Q[_t3C] then
+                                        local _r1N = _t3C:FindFirstChildWhichIsA("BasePart")
+                                        local _s9L = _t3C:FindFirstChild("TouchInterest")
+                                        if _s9L and _r1N and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 0)
+                                            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, _r1N, 1)
+                                            _z7Q[_t3C] = true
+                                        end
+                                    end
                                 end
                             end
                         end
@@ -787,6 +800,7 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
                 end)
             else
                 if _o8X then _o8X:Disconnect() _o8X = nil end
+                table.clear(_z7Q)
             end
         end
     })
