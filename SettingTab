@@ -763,30 +763,33 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
                 if _o8X then return end
                 _o8X = game:GetService("RunService").Heartbeat:Connect(function()
                     local _x9L = workspace:FindFirstChild("ObbyTowerRewardsLocal")
+                    local _r1N = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    if not _r1N then return end
                     if not _x9L or #_x9L:GetChildren() == 0 then
-                        if _z7Q[1] and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                            local _r1N = game.Players.LocalPlayer.Character.HumanoidRootPart
+                        if _z7Q[1] then
                             _r1N.CFrame = _z7Q[1]
-                            if (Vector3.new(_r1N.Position.X, 0, _r1N.Position.Z) - Vector3.new(_z7Q[1].Position.X, 0, _z7Q[1].Position.Z)).Magnitude < 2 then
+                            local _d3X = Vector3.new(_r1N.Position.X, 0, _r1N.Position.Z) - Vector3.new(_z7Q[1].Position.X, 0, _z7Q[1].Position.Z)
+                            if _d3X.Magnitude < 0.1 then
                                 table.clear(_z7Q)
                             end
                         end
                         return
                     end
-                    local _r1N = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                    if not _r1N then return end
                     if not _z7Q[1] then
                         _z7Q[1] = _r1N.CFrame
                     end
                     for _, _n4K in pairs(_x9L:GetChildren()) do
                         if (_n4K.Name == "Box" or _n4K.Name == "Chest") and not _z7Q[_n4K] then
-                            _z7Q[_n4K] = true
                             local _p2V = _n4K:IsA("Model") and _n4K.PrimaryPart or _n4K:FindFirstChildWhichIsA("BasePart")
                             if not _p2V and _n4K:IsA("Model") then
                                 _p2V = _n4K:FindFirstChildWhichIsA("BasePart", true)
                             end
                             if _p2V then
                                 _r1N.CFrame = _p2V.CFrame + Vector3.new(0, 3, 0)
+                                local _d2V = Vector3.new(_r1N.Position.X, 0, _r1N.Position.Z) - Vector3.new(_p2V.Position.X, 0, _p2V.Position.Z + 3)
+                                if _d2V.Magnitude < 0.1 then
+                                    _z7Q[_n4K] = true
+                                end
                             end
                             return
                         end
