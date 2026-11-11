@@ -652,7 +652,7 @@ elseif game.PlaceId == 123175177502192 or game.PlaceId == 73572787132710 or game
     })
 elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
     local _k11, _k12, _k21, _k31, _k41, _k51, _z7Q = {}, {}, {}, {}, {}, {}, {}
-    local _e8X, _p8X, _b8X, _s8X, _c8X, _o8X = nil, nil, nil, nil, nil, nil
+    local _e8X, _p8X, _b8X, _s8X, _c8X, _o8X, _o9X = nil, nil, nil, nil, nil, nil, nil
     AddToggle(Main5u6, {
         Name = "Esp FoodBowls[Kittenville]",
         Default = true,
@@ -752,6 +752,30 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
                     if _dP.lines then for _, _l in ipairs(_dP.lines) do _l:Remove() end end
                 end
                 table.clear(_k21)
+            end
+        end
+    })
+    AddToggle(Main5u6, {
+        Name = "Auto Daily Reward[Kittenville]",
+        Default = false,
+        Callback = function(_m7W)
+            if _m7W then
+                if _o9X then return end
+                local _lT = 0
+                _o9X = game:GetService("RunService").Heartbeat:Connect(function()
+                    local _cT = os.clock()
+                    if _cT - _lT >= 30 then
+                        _lT = _cT
+                        pcall(function()
+                            local _rs = game:GetService("ReplicatedStorage")
+                            if _rs:FindFirstChild("RemoteEvents") and _rs.RemoteEvents:FindFirstChild("Rewards") and _rs.RemoteEvents.Rewards:FindFirstChild("PromptClaimRankReward") then
+                                _rs.RemoteEvents.Rewards.PromptClaimRankReward:InvokeServer()
+                            end
+                        end)
+                    end
+                end)
+            else
+                if _o9X then _o9X:Disconnect() _o9X = nil end
             end
         end
     })
