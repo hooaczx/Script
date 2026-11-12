@@ -802,36 +802,29 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
                     if not _z7Q[1] then
                         _z7Q[1] = _r1N.CFrame
                     end
+                    local _s8K = {}
                     for _, _n4K in pairs(_x9L:GetChildren()) do
                         if (_n4K.Name == "Box" or _n4K.Name == "Chest") and not _z7Q[_n4K] then
                             local _p2V = _n4K:IsA("Model") and _n4K.PrimaryPart or _n4K:FindFirstChildWhichIsA("BasePart")
+                            if not _p2V and _n4K:IsA("Model") then
+                                _p2V = _n4K:FindFirstChildWhichIsA("BasePart", true)
+                            end
                             if _p2V then
-                                if not _z7Q[2] then
-                                    _z7Q[2] = {}
-                                    for _, _n4K in pairs(_x9L:GetChildren()) do
-                                        if _n4K.Name == "Box" or _n4K.Name == "Chest" then
-                                            local _p2V = _n4K:IsA("Model") and _n4K.PrimaryPart or _n4K:FindFirstChildWhichIsA("BasePart")
-                                            if _p2V then
-                                                table.insert(_z7Q[2], {Object = _n4K, Part = _p2V, Height = _p2V.Position.Y})
-                                            end
-                                        end
-                                    end
-                                    table.sort(_z7Q[2], function(_a1, _b1)
-                                        if _a1.Object.Name == "Chest" then return false end
-                                        if _b1.Object.Name == "Chest" then return true end
-                                        return _a1.Height < _b1.Height
-                                    end)
-                                end
-                                for _, _n4K in ipairs(_z7Q[2]) do
-                                    if not _z7Q[_n4K.Object] then
-                                        _r1N.CFrame = _n4K.Part.CFrame + Vector3.new(0, 3, 0)
-                                        local _d2V = Vector3.new(_r1N.Position.X, 0, _r1N.Position.Z) - Vector3.new(_n4K.Part.Position.X, 0, _n4K.Part.Position.Z)
-                                        if _d2V.Magnitude < 0.1 then
-                                            _z7Q[_n4K.Object] = true
-                                        end
-                                        return
-                                    end
-                                end
+                                table.insert(_s8K, {obj = _n4K, part = _p2V})
+                            end
+                        end
+                    end
+                    table.sort(_s8K, function(_a, _b)
+                        return _a.part.Position.Y < _b.part.Position.Y
+                    end)
+                    for _, _item in ipairs(_s8K) do
+                        local _n4K = _item.obj
+                        local _p2V = _item.part
+                        if not _z7Q[_n4K] then
+                            _r1N.CFrame = _p2V.CFrame + Vector3.new(0, 3, 0)
+                            local _d2V = Vector3.new(_r1N.Position.X, 0, _r1N.Position.Z) - Vector3.new(_p2V.Position.X, 0, _p2V.Position.Z + 3)
+                            if _d2V.Magnitude < 0.1 then
+                                _z7Q[_n4K] = true
                             end
                             return
                         end
