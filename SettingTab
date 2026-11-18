@@ -667,22 +667,15 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
                                 local _target = _m:IsA("Model") and _m or _m:FindFirstChildWhichIsA("BasePart") or _m
                                 if not _k11[_m] then
                                     local _hl = Instance.new("Highlight") _hl.Name = "\226\128\139\1\2\3" _hl.Adornee = _target _hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop _hl.OutlineColor = Color3.new(0, 0.6, 1) _hl.FillColor = Color3.new(0, 0.6, 1) _hl.Parent = _target
-                                    local _tw = game:GetService("TweenService"):Create(_hl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)}) _tw:Play()
-                                    _k11[_m], _k12[_m] = _hl, _tw
+                                    _k11[_m], _k12[_m] = _hl, os.clock()
                                 end
-                                if _m:GetAttribute("Done") then
-                                    _k11[_m].FillColor = Color3.new(0, 1, 0)
-                                    _k11[_m].OutlineColor = Color3.new(0, 1, 0)
-                                else
-                                    _k11[_m].OutlineColor = Color3.new(0, 0.6, 1)
-                                    if _k12[_m] then _k12[_m]:Play() end
-                                end
+                                _k11[_m].OutlineColor = _m:GetAttribute("Done") and Color3.new(0, 1, 0) or Color3.new(0, 0.6, 1)
+                                _k11[_m].FillColor = (_m:GetAttribute("Done") and Color3.new(0, 1, 0) or Color3.new(0, 0.6, 1)):Lerp(Color3.new(0, 0, 0), game:GetService("TweenService"):GetValue((((os.clock() - _k12[_m]) % 4) <= 2 and ((os.clock() - _k12[_m]) % 4) / 2 or (4 - ((os.clock() - _k12[_m]) % 4)) / 2), Enum.EasingStyle.Quad, Enum.EasingDirection.InOut))
                             end
                         end
                     end
                     for _m, _hl in pairs(_k11) do
                         if not _m:IsDescendantOf(workspace) then
-                            if _k12[_m] then _k12[_m]:Cancel() end
                             if _hl then _hl:Destroy() end
                             _k11[_m], _k12[_m] = nil, nil
                         end
@@ -691,7 +684,6 @@ elseif game.PlaceId == 118393847400636 or game.PlaceId == 137070467293686 then
             else
                 if _e8X then _e8X:Disconnect() _e8X = nil end
                 for _m, _hl in pairs(_k11) do
-                    if _k12[_m] then _k12[_m]:Cancel() end
                     if _hl then _hl:Destroy() end
                 end
                 table.clear(_k11) table.clear(_k12)
