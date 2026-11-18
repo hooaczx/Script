@@ -1895,7 +1895,7 @@ funcs["A1"] = function(_x90)
 						local _r7 = _p6.Character.HumanoidRootPart
 						local _pos8, _vis9 = _k1:WorldToViewportPoint(_r7.Position)
 						local _on10 = _vis9 and _pos8.X >= 0 and _pos8.X <= _v2.X and _pos8.Y >= 0 and _pos8.Y <= _v2.Y
-						local _ish11 = (game.PlaceId == 205224386) and _p6.Character:FindFirstChild("ItScript", true)
+						local _ish11 = ((game.PlaceId == 205224386) and _p6.Character:FindFirstChild("ItScript", true)) or ((game.PlaceId == 118393847400636) and _p6.Character:FindFirstChild("DBDKillerLight", true))
 						local _clr12 = _ish11 and Color3.fromRGB(255, 0, 0) or _c3
 						if funcs["C4"].teamHighlight and funcs["C4"].team and not _ish11 then
 							local _tc13 = nil
@@ -2153,8 +2153,21 @@ funcs["A1"] = function(_x90)
 							end
 							if _hl80 then
 								_hl80.Enabled = _on10 and true or false
-								_hl80.FillColor = _clr12
 								_hl80.OutlineColor = _clr12
+								if not _d14.Tween then
+									_d14.LastColor = _clr12
+									_hl80.FillColor = _clr12
+									_d14.Tween = game:GetService("TweenService"):Create(_hl80, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)})
+									_d14.Tween:Play()
+								elseif _d14.LastColor ~= _clr12 then
+									_d14.LastColor = _clr12
+									_hl80.FillColor = _clr12
+									if _d14.Tween then
+										_d14.Tween:Cancel()
+										_d14.Tween = game:GetService("TweenService"):Create(_hl80, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FillColor = Color3.new(0, 0, 0)})
+										_d14.Tween:Play()
+									end
+								end
 							end
 						else
 							if _hl80 then
@@ -2163,6 +2176,10 @@ funcs["A1"] = function(_x90)
 						end
 					else
 						if funcs["G8"][_p6] then
+							if funcs["G8"][_p6].Tween then
+								funcs["G8"][_p6].Tween:Cancel()
+								funcs["G8"][_p6].Tween = nil
+							end
 							for _, _dd81 in pairs(funcs["G8"][_p6]) do
 								if type(_dd81) == "table" then
 									for _, _l82 in ipairs(_dd81) do
@@ -2181,6 +2198,10 @@ funcs["A1"] = function(_x90)
 			end
 			for _p84, _dw85 in pairs(funcs["G8"]) do
 				if not game:FindFirstChildOfClass("Players"):FindFirstChild(_p84.Name) then
+					if _dw85.Tween then
+						_dw85.Tween:Cancel()
+						_dw85.Tween = nil
+					end
 					for _, _d86 in pairs(_dw85) do
 						if type(_d86) == "table" then
 							for _, _l87 in ipairs(_d86) do
@@ -2213,6 +2234,10 @@ funcs["A1"] = function(_x90)
 		end
 		funcs["B1"] = {}
 		for _, _dw91 in pairs(funcs["G8"]) do
+			if _dw91.Tween then
+				_dw91.Tween:Cancel()
+				_dw91.Tween = nil
+			end
 			for _, _d92 in pairs(_dw91) do
 				if type(_d92) == "table" then
 					for _, _l93 in ipairs(_d92) do
