@@ -3368,16 +3368,18 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             if not ZX_h.SeatPart and not ZX_h.Sit and ZX_h:GetState() ~= Enum.HumanoidStateType.Seated then
                 local ZX_cf = ZX_rp.CFrame
                 local ZX_up = ZX_cf.UpVector
-                local ZX_target = ZX_look - ZX_pos
-                ZX_target = ZX_target - ZX_up * ZX_target:Dot(ZX_up)
-                local ZX_current = ZX_cf.LookVector
-                ZX_current = ZX_current - ZX_up * ZX_current:Dot(ZX_up)
+                local ZX_target = Vector3.new(ZX_look.X - ZX_pos.X, 0, ZX_look.Z - ZX_pos.Z)
+                local ZX_current = Vector3.new(ZX_cf.LookVector.X, 0, ZX_cf.LookVector.Z)
+                if ZX_current.Magnitude < 0.001 then
+                    ZX_current = Vector3.yAxis:Cross(ZX_cf.RightVector)
+                    ZX_current = Vector3.new(ZX_current.X, 0, ZX_current.Z)
+                end
                 if ZX_target.Magnitude > 0.001 and ZX_current.Magnitude > 0.001 then
                     ZX_target = ZX_target.Unit
                     ZX_current = ZX_current.Unit
-                    local ZX_angle = math.atan2(ZX_up:Dot(ZX_current:Cross(ZX_target)), ZX_current:Dot(ZX_target))
+                    local ZX_angle = math.atan2(ZX_current:Cross(ZX_target).Y, ZX_current:Dot(ZX_target))
                     if math.abs(ZX_angle) > 0.0001 then
-                        ZX_rp.CFrame = CFrame.new(ZX_rp.Position) * CFrame.fromAxisAngle(ZX_up, ZX_angle) * (ZX_cf - ZX_cf.Position)
+                        ZX_rp.CFrame = CFrame.new(ZX_pos) * CFrame.fromAxisAngle(Vector3.yAxis, ZX_angle) * (ZX_cf - ZX_pos)
                     end
                 end
             end
@@ -3536,7 +3538,7 @@ ShiftLockButton.MouseButton1Click:Connect(function()
         CreateTween(ZX_hf.Humanoid, "CameraOffset", Vector3.new(0, 0, 0), 0.5, true)
         Tweening = false
     end
-end)
+end) 
 
 local uiStates = {
     framek = {frame = framek, state = false},
