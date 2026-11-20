@@ -3365,8 +3365,20 @@ ShiftLockButton.MouseButton1Click:Connect(function()
             ShiftlockCursor.Visible = true
             local ZX_look = functions.Look()
             local ZX_pos = ZX_rp.Position
-            ZX_look = Vector3.new(ZX_look.X, ZX_pos.Y, ZX_look.Z)
-            ZX_rp.CFrame = CFrame.new(ZX_pos, ZX_look)
+            if not ZX_h.SeatPart and not ZX_h.Sit and ZX_h:GetState() ~= Enum.HumanoidStateType.Seated then
+                local ZX_target = Vector3.new(ZX_look.X - ZX_pos.X, 0, ZX_look.Z - ZX_pos.Z)
+                local ZX_current = Vector3.new(ZX_rp.CFrame.LookVector.X, 0, ZX_rp.CFrame.LookVector.Z)
+                if ZX_current.Magnitude < 0.001 then
+                    ZX_current = Vector3.yAxis:Cross(ZX_rp.CFrame.RightVector)
+                    ZX_current = Vector3.new(ZX_current.X, 0, ZX_current.Z)
+                end
+                if ZX_target.Magnitude > 0.001 and ZX_current.Magnitude > 0.001 then
+                    ZX_target = ZX_target.Unit
+                    ZX_current = ZX_current.Unit
+                    local ZX_angle = math.atan2(ZX_current:Cross(ZX_target).Y, ZX_current:Dot(ZX_target))
+                    ZX_rp.CFrame = CFrame.new(ZX_pos) * CFrame.Angles(0, ZX_angle, 0) * (ZX_rp.CFrame - ZX_pos)
+                end
+            end
             CreateTween(ZX_h, "CameraOffset", Vector3.new(1.9, 0, 0), 0.5, false)
             local ZX_all = ZX_plrs:GetPlayers()
             local ZX_cp = ZX_cam.CFrame.Position
